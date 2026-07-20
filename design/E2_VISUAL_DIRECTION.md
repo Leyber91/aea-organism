@@ -485,8 +485,13 @@ review law: 5 > 1 > 2 > 10 > 6 > 4 > 12-drop > 3 > 7 > 8 > 9 > 11. The top four 
 ride the P0–P1 window: 5, 1, 2 (already in the packet) + 10 (pulled forward). Vanity
 tail: 9 (nobody screenshots the starfield) and 11 (4 seconds per act, already
 [DECISION-LUIS]) — ship-if-free; 8 is identity-critical, not vanity, and correctly
-waits for the trace feature at P1. Amendments: move 11 and any visible-texture dither
-are `[DECISION-LUIS]`. — edited 2026-07-20 (nine-critic closure)
+waits for the trace feature at P1. Parked S-cost riders from the same review, no
+dedicated ticket: the dock terminal's beat swap gets the existing .rin row animation
+(t-body is cut hard at world.html:620) — ride any session already touching the
+terminal; and the fixed-px layout (620px terminal, 520px quick strip) is fine for
+Phase A desktop but MANDATORY to revisit before Phase B strangers on unknown displays.
+Amendments: move 11 and any visible-texture dither are `[DECISION-LUIS]`.
+— edited 2026-07-20 (nine-critic closure)
 
 ## 7. SOURCES
 
