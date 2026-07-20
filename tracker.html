@@ -1,0 +1,318 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE TRACKER · THE PROBE</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;200;300;400;600&display=swap" rel="stylesheet">
+<style>
+/* two-ink law: amber #ffb000/#d4a24c = live/fired/current/done only · blue-gray = structure. NO third ink. */
+:root{--bg0:#050a10;--bg1:#0a1420;--hot:#ffb000;--warm:#d4a24c;
+ --st70:rgba(120,155,175,.70);--st45:rgba(120,155,175,.45);--st28:rgba(120,155,175,.28);
+ --st14:rgba(120,155,175,.14);--st08:rgba(120,155,175,.08);--ink:#e6edf3}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:linear-gradient(180deg,var(--bg0),var(--bg1) 130%);color:var(--ink);
+ font:13px/1.5 'IBM Plex Mono',Consolas,monospace;overflow:hidden}
+body{display:flex;flex-direction:column;padding:12px 16px}
+.lb{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--warm);font-weight:400}
+.mut{color:var(--st45)}
+header{display:flex;align-items:baseline;gap:16px;flex:none;padding-bottom:9px;border-bottom:1px solid var(--st14)}
+header .ey{font-size:9px;letter-spacing:.34em;text-transform:uppercase;color:var(--warm)}
+header h1{font-weight:100;font-size:20px;letter-spacing:.22em}header h1 b{color:var(--warm);font-weight:300}
+#scores{margin-left:auto;display:flex;gap:22px}
+.sc{text-align:right}.sc .k{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--st45)}
+.sc .v{font-size:15px;font-weight:200;color:var(--ink);font-variant-numeric:tabular-nums}
+.sc .v b{color:var(--hot);font-weight:300}
+main{flex:1;min-height:0;display:grid;grid-template-columns:250px 1fr 300px;gap:14px;padding:11px 0}
+.panel{border:1px solid var(--st14);min-height:0;display:flex;flex-direction:column}
+.panel>.hd{flex:none;padding:8px 11px;border-bottom:1px solid var(--st14);display:flex;align-items:baseline;gap:8px}
+.panel>.bd{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
+/* rung rail */
+#rail .bd{padding:6px}
+.rg{padding:5px 9px;border-left:2px solid var(--st14);margin-bottom:3px;cursor:pointer;transition:.14s}
+.rg:hover{background:var(--st08)}
+.rg .top{display:flex;gap:8px;align-items:baseline}
+.rg .id{font-size:10px;letter-spacing:.14em;color:var(--st70)}
+.rg .ct{margin-left:auto;font-size:9px;color:var(--st45);font-variant-numeric:tabular-nums}
+.rg .nm{font-size:8.5px;color:var(--st28);letter-spacing:.02em;line-height:1.35;margin-top:1px}
+.rg.current{border-left-color:var(--hot);background:rgba(255,176,0,.05)}
+.rg.current .id{color:var(--hot)} .rg.current .ct{color:var(--warm)}
+.rg.current .id:after{content:" · CURRENT";font-size:7.5px;letter-spacing:.18em;color:var(--hot)}
+.rg.sel{background:var(--st14)!important;border-left-color:var(--warm)}
+.rg.empty .id{color:var(--st28)}
+/* board */
+#boardctl{flex:none;display:flex;gap:6px;align-items:center;padding:6px 11px;border-bottom:1px solid var(--st14);flex-wrap:wrap}
+.fbtn{background:none;border:1px solid var(--st28);color:var(--st70);font-family:inherit;font-size:9px;
+ letter-spacing:.1em;padding:3px 9px;cursor:pointer;transition:.14s;text-transform:uppercase}
+.fbtn:hover{border-color:var(--warm);color:var(--hot)}
+.fbtn.on{border-color:var(--warm);color:var(--hot);background:rgba(255,176,0,.06)}
+#board .bd{padding:0 0 12px}
+.pgrp{margin-top:10px}
+.pgrp>.ph{position:sticky;top:0;background:var(--bg0);padding:5px 12px;border-bottom:1px solid var(--st14);
+ display:flex;gap:10px;align-items:baseline}
+.pgrp>.ph .cnt{margin-left:auto;font-size:9px;color:var(--st45);font-variant-numeric:tabular-nums}
+.tk{padding:6px 12px 7px;border-bottom:1px solid var(--st08);border-left:2px solid transparent}
+.tk .l1{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+.tk .tid{font-size:10px;letter-spacing:.1em;color:var(--st70);flex:none}
+.tk .ttl{font-size:11px;color:var(--st70);line-height:1.45}
+.tk .chips{margin-left:auto;display:flex;gap:5px;flex:none}
+.chip{font-size:8px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--st28);
+ color:var(--st45);padding:0 5px;border-radius:2px;white-space:nowrap}
+.chip.rung{color:var(--st70)}
+.chip.gate{border-color:var(--st45);color:var(--st70)}
+.chip.st-done,.chip.st-verified{border-color:var(--warm);color:var(--warm)}
+.chip.st-doing{border-color:var(--hot);color:var(--hot)}
+.tk .l2{font-size:9px;color:var(--st28);margin-top:1px;padding-left:2px}
+.tk .l2 b{color:var(--st45);font-weight:400}
+.tk.done{border-left-color:var(--warm)}
+.tk.done .tid,.tk.done .ttl{color:var(--warm)}
+.tk.doing{border-left-color:var(--hot)}
+.tk.blocked{opacity:.55}
+#next{flex:none;padding:6px 11px;border-bottom:1px solid var(--st14);font-size:10px;color:var(--st70);line-height:1.6}
+#next .nx b{color:var(--hot);font-weight:400}
+/* right stack */
+#right{display:flex;flex-direction:column;gap:14px;min-height:0}
+#journey,#ledger{border:1px solid var(--st14);display:flex;flex-direction:column;min-height:0}
+#journey{flex:0 0 auto;max-height:42%}
+#ledger{flex:1;min-height:0}
+#journey .bd,#ledger .bd{overflow-y:auto;scrollbar-width:thin;padding:9px 12px}
+.kv{display:flex;gap:8px;font-size:10px;padding:2px 0;border-bottom:1px solid var(--st08)}
+.kv .k{color:var(--st45);flex:0 0 84px;text-transform:uppercase;letter-spacing:.08em;font-size:8.5px;padding-top:1px}
+.kv .v{color:var(--st70);flex:1;word-break:break-word}
+.kv .v b{color:var(--warm);font-weight:400}
+.gt{padding:6px 0;border-bottom:1px solid var(--st08);font-size:10px}
+.gt .gid{color:var(--warm);letter-spacing:.1em}
+.gt .gtk{color:var(--st45);font-size:9px;line-height:1.5}
+.lost{color:var(--st45);font-size:10px;border:1px dashed var(--st28);padding:7px 9px;line-height:1.5}
+footer{flex:none;display:flex;gap:14px;align-items:center;padding-top:8px;border-top:1px solid var(--st14);font-size:9px;color:var(--st45)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--hot);display:inline-block;flex:none;animation:bt 2.4s ease-in-out infinite}
+@keyframes bt{0%,100%{opacity:1}50%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+</style></head><body>
+<header>
+ <div class="ey">THE PROBE · the production manual, live</div>
+ <h1>THE <b>TRACKER</b></h1>
+ <div id="scores">
+  <div class="sc"><div class="k">tickets</div><div class="v" id="sc-total">—</div></div>
+  <div class="sc"><div class="k">open</div><div class="v" id="sc-open">—</div></div>
+  <div class="sc"><div class="k">done · verified</div><div class="v" id="sc-done">—</div></div>
+  <div class="sc"><div class="k">gated + held</div><div class="v" id="sc-gated">—</div></div>
+  <div class="sc"><div class="k">current rung</div><div class="v" id="sc-rung">—</div></div>
+  <div class="sc"><div class="k">data updated</div><div class="v" id="sc-upd">—</div></div>
+ </div>
+</header>
+<main>
+ <div class="panel" id="rail">
+  <div class="hd"><span class="lb">the rung rail · P0–P13</span><span class="mut" style="margin-left:auto;font-size:8.5px">click = filter</span></div>
+  <div class="bd" id="rail-bd"></div>
+ </div>
+ <div class="panel" id="board">
+  <div class="hd"><span class="lb">the board · tickets by process</span><span class="mut" id="board-sub" style="margin-left:auto;font-size:8.5px"></span></div>
+  <div id="boardctl">
+   <span class="mut" style="font-size:8.5px;letter-spacing:.12em">STATUS</span>
+   <button class="fbtn on" data-st="all">all</button>
+   <button class="fbtn" data-st="open">open</button>
+   <button class="fbtn" data-st="doing">doing</button>
+   <button class="fbtn" data-st="done">done</button>
+   <button class="fbtn" data-st="verified">verified</button>
+   <span class="mut" style="font-size:8.5px;letter-spacing:.12em;margin-left:10px">RUNG</span>
+   <button class="fbtn on" data-rg="all">all</button>
+   <button class="fbtn" data-rg="none">unplaced</button>
+   <span class="mut" style="margin-left:auto;font-size:8.5px" id="fcount"></span>
+  </div>
+  <div id="next" style="display:none"></div>
+  <div class="bd" id="board-bd"></div>
+ </div>
+ <div id="right">
+  <div class="panel" id="journey">
+   <div class="hd"><span class="lb">journey · act truth</span><span class="mut" style="margin-left:auto;font-size:8.5px">/api/journey</span></div>
+   <div class="bd" id="journey-bd"><span class="mut" style="font-size:10px">reading the save…</span></div>
+  </div>
+  <div class="panel" id="ledger">
+   <div class="hd"><span class="lb">the ledger strip · open gates</span><span class="mut" id="ledger-ct" style="margin-left:auto;font-size:8.5px"></span></div>
+   <div class="bd" id="ledger-bd"></div>
+  </div>
+ </div>
+</main>
+<footer>
+ <span class="dot"></span>
+ <span>READ-ONLY v0 — status changes land by editing tickets.json, in the same commit-equivalent as the session log in 09_PRODUCTION (E3_TRACKING.md governs the ritual).</span>
+ <span style="margin-left:auto;text-align:right">every count computed from tickets.json at load — nothing typed, no bars, no forecasts · current rung = lowest rung with a mapped ticket not yet VERIFIED (bare done does not release a rung)</span>
+</footer>
+
+<script>
+"use strict";
+/* edited 2026-07-20 (nine-critic closure): opens on the current rung; NEXT strip; ready-first
+   ordering with waits-on chips; RUNG_ORDER derived from the data (no third ladder copy);
+   current rung excludes bare done (verify-don't-claim); updated stamp rendered; r.ok checked. */
+const $=s=>document.getElementById(s);
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+let RUNG_ORDER=["P0","P1","P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13"]; // fallback only — boot derives from DATA.rungs
+const PROC_ORDER=["P1 · COMPOSITION / BENCH","P2 · FLIGHT + WORLD","P3 · MISSIONS + ACTS","P4 · MAP + CODEX",
+ "P5 · COMMS + PRESENCE","P6 · BESTIARY + DOCTRINES","P7 · FORGE SESSIONS","P8 · MODULE REGISTRY + EXPORT",
+ "P9 · SAVE + LIVE-OPS","P10 · RENDERING + SIGNATURE","P11 · AUDIO","P12 · ONBOARDING",
+ "P0 SPEC ADDENDUM · SWEEP CLOSURES"];
+const CLOSED=new Set(["done","verified"]);
+let DATA=null, BYID={}, FILT={st:"all", rg:"all"}; // rg: "all" | "none" | a rung id
+
+async function boot(){
+ try{
+  const r=await fetch("/api/tickets"); DATA=await r.json();
+  if(!DATA || DATA.error || !Array.isArray(DATA.tickets)) throw new Error(DATA&&DATA.error||"tickets.json unreadable");
+ }catch(e){
+  $("board-bd").innerHTML=`<div class="lost" style="margin:12px">TICKETS UNREADABLE — ${esc(e.message||e)}. The board renders nothing it cannot read.</div>`;
+  $("rail-bd").innerHTML=""; $("ledger-bd").innerHTML=""; loadJourney(); return;
+ }
+ if(DATA.rungs && Object.keys(DATA.rungs).length) RUNG_ORDER=Object.keys(DATA.rungs); // the ladder has one data copy, not three
+ BYID={}; DATA.tickets.forEach(t=>{BYID[t.id]=t;});
+ const cur=currentRung(); if(cur) FILT.rg=cur; // open ON the current rung — "all" is one click away
+ syncBtns(); renderAll(); loadJourney();
+}
+
+function currentRung(){
+ // bare done does NOT release a rung — verification owed keeps it current (E3 §4, 2026-07-20)
+ for(const r of RUNG_ORDER){
+  const t=DATA.tickets.filter(t=>t.rung===r);
+  if(t.length && t.some(x=>x.status!=="verified")) return r;
+ }
+ return null;
+}
+
+function unmetDeps(t){ // depends not yet closed (unknown ids count as unmet — nothing invented)
+ return (t.depends||[]).filter(d=>{const dep=BYID[d]; return !dep || !CLOSED.has(dep.status);});
+}
+
+function renderAll(){
+ const T=DATA.tickets, cur=currentRung();
+ // scores — computed, never typed
+ const open=T.filter(t=>t.status==="open").length, doing=T.filter(t=>t.status==="doing").length,
+       done=T.filter(t=>t.status==="done").length, ver=T.filter(t=>t.status==="verified").length,
+       gated=T.filter(t=>t.gate && !CLOSED.has(t.status)).length;
+ $("sc-total").innerHTML="<b>"+T.length+"</b>";
+ $("sc-open").innerHTML="<b>"+open+"</b>"+(doing?" +"+doing+" doing":"");
+ $("sc-done").innerHTML="<b>"+done+"</b> · "+ver;
+ $("sc-gated").innerHTML="<b>"+gated+"</b>";
+ $("sc-rung").innerHTML=cur?"<b>"+cur+"</b>":"—";
+ $("sc-upd").textContent=DATA.updated||"—";
+ renderRail(cur); renderNext(cur); renderBoard(); renderLedger();
+}
+
+function renderNext(cur){
+ // one glance = the next ticket: current rung's ready-and-ungated open tickets, in order
+ const el=$("next");
+ if(!cur){el.innerHTML="";el.style.display="none";return;}
+ el.style.display="";
+ const q=DATA.tickets.filter(t=>t.rung===cur && t.status==="open" && !t.gate && !unmetDeps(t).length)
+  .sort((a,b)=>(a.order==null?1e9:a.order)-(b.order==null?1e9:b.order));
+ el.innerHTML=`<span class="lb">next · ${esc(cur)}</span> `+(q.length
+  ? q.map(t=>`<span class="nx"><b>${esc(t.id)}</b> ${esc(String(t.title).split(" — ")[0])}</span>`).join(`<span class="mut"> · then </span>`)
+  : `<span class="mut">no ready ungated open tickets — check the gates in the ledger strip</span>`);
+}
+
+function renderRail(cur){
+ $("rail-bd").innerHTML=RUNG_ORDER.map(r=>{
+  const t=DATA.tickets.filter(t=>t.rung===r);
+  const d=t.filter(x=>CLOSED.has(x.status)).length;
+  const meta=(DATA.rungs||{})[r]||{};
+  const cls=[r===cur?"current":"", FILT.rg===r?"sel":"", t.length?"":"empty"].join(" ");
+  const ct=t.length?d+"/"+t.length:"0/0";
+  return `<div class="rg ${cls}" data-rg="${r}"><div class="top"><span class="id">${r}</span><span class="ct">${ct}</span></div>
+   <div class="nm">${esc((meta.title||"").split(" — ")[0])}${t.length?"":" · no tickets mapped yet"}</div></div>`;
+ }).join("");
+ [...document.querySelectorAll(".rg")].forEach(el=>el.onclick=()=>{
+  FILT.rg = FILT.rg===el.dataset.rg ? "all" : el.dataset.rg;
+  syncBtns(); renderRail(currentRung()); renderBoard();
+ });
+}
+
+function passes(t){
+ if(FILT.st!=="all" && t.status!==FILT.st) return false;
+ if(FILT.rg==="none") return t.rung==null;
+ if(FILT.rg!=="all") return t.rung===FILT.rg;
+ return true;
+}
+
+function renderBoard(){
+ const groups=PROC_ORDER.filter(p=>DATA.tickets.some(t=>t.process===p));
+ // any process in the data but not in the fixed order still renders (honesty: nothing hidden)
+ DATA.tickets.forEach(t=>{ if(!groups.includes(t.process)) groups.push(t.process); });
+ let shown=0;
+ $("board-bd").innerHTML=groups.map(p=>{
+  const all=DATA.tickets.filter(t=>t.process===p), vis=all.filter(passes);
+  if(!vis.length) return "";
+  shown+=vis.length;
+  const d=all.filter(x=>CLOSED.has(x.status)).length;
+  vis.sort((a,b)=>{ // ready first, then in-rung order; stable sort keeps file order for ties
+   const ra=(a.status==="open"&&unmetDeps(a).length)?1:0, rb=(b.status==="open"&&unmetDeps(b).length)?1:0;
+   if(ra!==rb) return ra-rb;
+   return (a.order==null?1e9:a.order)-(b.order==null?1e9:b.order);
+  });
+  const rows=vis.map(t=>{
+   const waits=t.status==="open"?unmetDeps(t):[];
+   const chips=[
+    `<span class="chip">${esc(t.size||"?")}</span>`,
+    `<span class="chip rung">${t.rung?esc(t.rung):"—"}</span>`,
+    waits.length?`<span class="chip">waits on ${waits.map(esc).join(", ")}</span>`:"",
+    t.gate?`<span class="chip gate">gate ${esc(t.gate)}</span>`:"",
+    `<span class="chip st-${esc(t.status)}">${esc(t.status)}</span>`
+   ].join("");
+   const l2=[
+    (t.depends&&t.depends.length)?`<b>depends</b> ${t.depends.map(esc).join(", ")}`:"",
+    t.source?`<b>src</b> ${esc(t.source)}`:"",
+    t.note?`<b>note</b> ${esc(t.note)}`:""
+   ].filter(Boolean).join(" &nbsp;·&nbsp; ");
+   return `<div class="tk ${esc(t.status)}${waits.length?" blocked":""}"><div class="l1"><span class="tid">${esc(t.id)}</span>
+    <span class="ttl">${esc(t.title)}</span><span class="chips">${chips}</span></div>
+    ${l2?`<div class="l2">${l2}</div>`:""}</div>`;
+  }).join("");
+  return `<div class="pgrp"><div class="ph"><span class="lb">${esc(p)}</span>
+   <span class="cnt">${d}/${all.length} closed · showing ${vis.length}</span></div>${rows}</div>`;
+ }).join("");
+ $("fcount").textContent=shown+" shown";
+ $("board-sub").textContent=(FILT.rg==="all"?"all rungs":FILT.rg==="none"?"unplaced only":FILT.rg)+" · "+(FILT.st==="all"?"all statuses":FILT.st);
+}
+
+function renderLedger(){
+ // open [DECISION-LUIS] gates, computed from the data: #N refs grouped, then named holds
+ const byGate={}, holds={};
+ DATA.tickets.filter(t=>t.gate && !CLOSED.has(t.status)).forEach(t=>{
+  const nums=String(t.gate).match(/#\d+/g);
+  if(nums) nums.forEach(n=>{(byGate[n]=byGate[n]||[]).push(t.id);});
+  else (holds[t.gate]=holds[t.gate]||[]).push(t.id);
+ });
+ const gk=Object.keys(byGate).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+ const hk=Object.keys(holds);
+ $("ledger-ct").textContent=gk.length+" ledger refs · "+hk.length+" named holds";
+ $("ledger-bd").innerHTML=
+  gk.map(g=>`<div class="gt"><span class="gid">${esc(g)}</span> <span class="mut" style="font-size:8.5px">[DECISION-LUIS] — BOOK ledger</span>
+   <div class="gtk">gates ${byGate[g].map(esc).join(", ")}</div></div>`).join("")+
+  hk.map(h=>`<div class="gt"><span class="gid" style="color:var(--st70)">${esc(h)}</span>
+   <div class="gtk">holds ${holds[h].map(esc).join(", ")}</div></div>`).join("")+
+  `<div class="mut" style="font-size:8.5px;margin-top:8px;line-height:1.5">a gated ticket may be specced, not built, until its ledger number clears (INDEX §3.0). The BOOK open-decisions ledger owns the calls; this strip only counts them.</div>`;
+}
+
+async function loadJourney(){
+ try{
+  const r=await fetch("/api/journey"); if(!r.ok) throw new Error("HTTP "+r.status); const j=await r.json();
+  const done=Object.entries(j.done||{});
+  $("journey-bd").innerHTML=
+   `<div class="kv"><div class="k">missions done</div><div class="v"><b>${done.length}</b></div></div>`+
+   done.map(([m,ts])=>`<div class="kv"><div class="k">${esc(m)}</div><div class="v">${esc(ts)}</div></div>`).join("")+
+   `<div class="kv"><div class="k">reveals</div><div class="v">${(j.reveals||[]).length?esc((j.reveals||[]).join(", ")):"—"}</div></div>`+
+   `<div class="kv"><div class="k">models met</div><div class="v"><b>${(j.models||[]).length}</b></div></div>`+
+   `<div class="kv"><div class="k">save updated</div><div class="v">${esc(j.updated||"—")}</div></div>`;
+ }catch(e){
+  $("journey-bd").innerHTML=`<div class="lost">CARRIER LOST — /api/journey unreachable. Act and mission truth unavailable; nothing is substituted.</div>`;
+ }
+}
+
+[...document.querySelectorAll("#boardctl .fbtn")].forEach(b=>b.onclick=()=>{
+ if(b.dataset.st){FILT.st=b.dataset.st;}
+ if(b.dataset.rg){FILT.rg = FILT.rg===b.dataset.rg&&b.dataset.rg!=="all" ? "all" : b.dataset.rg;}
+ syncBtns(); if(DATA){renderRail(currentRung()); renderBoard();}
+});
+function syncBtns(){
+ [...document.querySelectorAll("#boardctl .fbtn")].forEach(b=>{
+  if(b.dataset.st) b.classList.toggle("on", FILT.st===b.dataset.st);
+  if(b.dataset.rg) b.classList.toggle("on", FILT.rg===b.dataset.rg);
+ });
+}
+boot();
+</script></body></html>

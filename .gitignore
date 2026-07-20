@@ -1,0 +1,27 @@
+# Never commit secrets or runtime state
+.env
+.nvidia_key
+grid_state.json
+
+# Luis's PRIVATE data - fetched from his Calendar/Gmail, reasoned over LOCAL-only. NEVER commit.
+private_today.json
+brief_output.md
+brief_trace.jsonl
+aea_seed.md
+aea_state.json
+benchmarks.json
+__pycache__/
+*.pyc
+
+# consolidated private memory of Luis (episodic->semantic) - NEVER commit
+luis_memory.json
+focus.json
+model_fitness.json
+identity.json
+trust_ledger.json
+talk_state.json
+self.json
+extensive_census.json
+book_of_luis.md
+events.jsonl
+codex_index.json
