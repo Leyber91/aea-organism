@@ -1,0 +1,217 @@
+/* panels.css — THE INSTRUMENT PANELS: shared anatomy for the IP-01..IP-08 vocabulary.
+   Governance: design/bundle_02/02_VISUAL_LAW.md (two inks; structure rgba(120,155,175,x) at
+   EXACTLY .70/.45/.28/.14/.08; amber #ffb000 hot / #d4a24c warm ONLY where something is alive,
+   working or earned; corner brackets never closed boxes; six glyphs the only icons; flat and
+   matte — no gradients-as-decoration, no shadows) · E4_UX_P0.md (this is the bench's real UI
+   vocabulary) · 04_UI_BIBLE.md §0 (type law: three DOM sizes 10px labels / 13px body /
+   20–28px display numbers; IBM Plex Mono only; no radius, no 4-sided borders) ·
+   A11_SIGNATURE.md §3.1 (any circle sharing a centre CITES the AEA field — every concentric
+   set here is drawn on the map's own r70/r150/r250/r360/r470 ratios, never invented rings) ·
+   §3.3 (the six glyphs are the entire iconography).
+   Reference sheet: design/concepts/C4_instrument_panels_v2.png (primary anatomy — bracket
+   frames, callout leaders, plate windows, amber discipline) · A6_instrument_panels.png (variant).
+
+   OPACITY-STOP COLLISION, recorded not hidden: 04_UI_BIBLE §0 fixes structure at THREE stops
+   (.35/.6/1.0, the shipped probe.css tokens); 02_VISUAL_LAW fixes FIVE (.70/.45/.28/.14/.08).
+   The sheets were drawn under the five. These tokens are scoped to `.ip` so probe.css is not
+   touched by a drive-by; the two docs owe a reconciliation (Luis's call).
+
+   HONESTY LAW in CSS: `.ip-void` is the dash state. It is structure ink, never amber —
+   an absent value has earned nothing, so a placeholder can never wear the live colour. */
+
+.ip {
+  /* the two inks, at the five sanctioned stops and no others */
+  --ip-void: #050a10;
+  --ip-plate: #08111b;
+  --ip-s70: rgba(120, 155, 175, .70);
+  --ip-s45: rgba(120, 155, 175, .45);
+  --ip-s28: rgba(120, 155, 175, .28);
+  --ip-s14: rgba(120, 155, 175, .14);
+  --ip-s08: rgba(120, 155, 175, .08);
+  --ip-hot: #ffb000;
+  --ip-warm: #d4a24c;
+
+  position: relative;
+  display: inline-block;
+  width: 320px;
+  font-family: 'IBM Plex Mono', Consolas, monospace;
+  font-weight: 400;
+  color: var(--ip-s70);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- the cell: corner brackets + four callouts + the body (never a closed box) ---- */
+.ip-cell { position: relative; width: 320px; height: 310px }
+
+.ip-ck { position: absolute; width: 14px; height: 14px; border: 0 solid var(--ip-s45) }
+.ip-ck.tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px }
+.ip-ck.tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px }
+.ip-ck.bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px }
+.ip-ck.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px }
+
+/* callout leaders — thin lines to labelled points (02 §5); bottom leaders carry the
+   small circle terminator the sheet uses, top leaders elbow straight into the plate */
+.ip-leads { position: absolute; left: 0; top: 0; width: 320px; height: 310px; pointer-events: none }
+.ip-leads path, .ip-leads circle { fill: none; stroke: var(--ip-s28); stroke-width: 1 }
+
+.ip-call {
+  position: absolute; width: 88px;
+  font-size: 10px; line-height: 1.35; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ip-s45);
+}
+/* callout lines are AUTHORED, one per line, exactly as the sheet breaks them — never re-wrapped */
+.ip-call div { white-space: nowrap }
+.ip-call.tl { left: 4px; top: 4px }
+.ip-call.tr { right: 4px; top: 4px; text-align: right }
+.ip-call.bl { left: 4px; top: 272px }
+.ip-call.br { right: 4px; top: 272px; text-align: right }
+
+/* ---- the body: a chamfered plate, shell drawn in SVG, content laid over it ---- */
+.ip-body { position: absolute; left: 94px; top: 34px; width: 132px; height: 228px }
+.ip-shell { position: absolute; left: 0; top: 0 }
+.ip-shell .sk { fill: var(--ip-plate); stroke: var(--ip-s45); stroke-width: 1 }
+.ip-shell .sk-in { fill: none; stroke: var(--ip-s14); stroke-width: 1 }
+.ip-shell .sk-notch { fill: none; stroke: var(--ip-s28); stroke-width: 1 }
+.ip-shell .sk-bolt { fill: none; stroke: var(--ip-s28); stroke-width: 1 }
+
+.ip-in {
+  position: absolute; left: 7px; top: 7px; right: 7px; bottom: 7px;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* ---- plate rules + windows (internal plate structure, 02 §5) ---- */
+.ip-win { padding: 5px 7px; border-top: 1px solid var(--ip-s14); flex: none }
+.ip-win:first-child { border-top: 0 }
+.ip-win.mid { text-align: center }
+.ip-face { position: relative; flex: 1 1 auto; border-top: 1px solid var(--ip-s14);
+  display: flex; align-items: center; justify-content: center; overflow: hidden }
+.ip-face:first-child { border-top: 0 }
+
+/* ---- type law: three sizes only (04 §0) ---- */
+.ip-lb { font-size: 10px; line-height: 1.4; letter-spacing: .12em; text-transform: uppercase; color: var(--ip-s45) }
+.ip-v { font-size: 13px; line-height: 1.45; letter-spacing: .04em; color: var(--ip-s70) }
+.ip-v.num { font-size: 20px; line-height: 1.2; letter-spacing: .04em; color: var(--ip-warm) }
+.ip-v.num.big { font-size: 28px }
+.ip-v.num.hot { color: var(--ip-hot) }
+/* TYPE-LAW TIE, decided and recorded (replica-lab 2026-07-21): C4's CARRIER LOST title measures
+   ~16px against this plate width — between the 13px body band and the 20px display band. The
+   display band belongs to NUMBERS (04 §0), and a fourth size is forbidden, so the title takes
+   the body size and buys its presence with tracking instead. At 20px it filled the plate edge
+   to edge, which the sheet never does. */
+.ip-title { font-size: 13px; line-height: 1.45; letter-spacing: .18em; color: var(--ip-s70); text-align: center }
+
+/* THE HONESTY LAW, in one rule: a dash is never amber and never display-weight —
+   an absent value has earned nothing, so it may not wear the colour OR the size the eye has
+   been taught to read as a live measurement. */
+.ip-void, .ip-v.num.ip-void, .ip-v.num.hot.ip-void { color: var(--ip-s45); letter-spacing: .08em }
+.ip-v.num.ip-void, .ip-v.num.big.ip-void { font-size: 13px; line-height: 1.45 }
+
+/* ---- glyphs: the six shapes, the only icons that exist (A11 §3.3) ---- */
+.ip-g { display: block; overflow: visible }
+.ip-g .gs { fill: none; stroke: var(--ip-s70); stroke-width: 1 }
+.ip-g.warm .gs { stroke: var(--ip-warm) }
+.ip-g.hot .gs { stroke: var(--ip-hot) }
+.ip-g.dim .gs { stroke: var(--ip-s28) }
+
+/* ---- concentric work (reticles, seals, dials) — AEA ring ratios, never decoration ---- */
+.ip-rings .r1 { fill: none; stroke: var(--ip-s28); stroke-width: 1 }
+.ip-rings .r2 { fill: none; stroke: var(--ip-s14); stroke-width: 1 }
+.ip-rings .r3 { fill: none; stroke: var(--ip-s08); stroke-width: 1 }
+.ip-rings .cross { stroke: var(--ip-s14); stroke-width: 1 }
+.ip-rings .cross.dash { stroke-dasharray: 3 4 }
+/* fill:none is load-bearing — an SVG shape with no fill is BLACK by default, which turned the
+   dial's read marks into holes in the plate (replica-lab correction 2026-07-21) */
+.ip-rings .tick { fill: none; stroke: var(--ip-s28); stroke-width: 1 }
+.ip-rings .spoke { fill: none; stroke: var(--ip-s28); stroke-width: 1 }
+/* band block: a read mark on the dial's band ring — light, outlined, never a black hole */
+.ip-rings .blk { fill: var(--ip-s14); stroke: var(--ip-s45); stroke-width: 1 }
+.ip-rings .idx { stroke: var(--ip-hot); stroke-width: 3 }
+.ip-rings .idx-cap { fill: var(--ip-hot); stroke: none }
+
+/* ---- marks that sit on a window rather than in its flow (exec mark, seal, origin mark) ---- */
+.ip-win.rel { position: relative }
+.ip-mark { position: absolute; right: 8px; bottom: 8px }
+.ip-mark.top { top: 9px; bottom: auto }
+
+/* ---- IP-03 ZONE DIAL: the dial replaces the plate body entirely ---- */
+.ip-dial { position: absolute; left: 60px; top: 48px; width: 200px; height: 200px }
+/* the dial is the panel's SUBJECT, not a background reticle: its annulus carries the sheet's
+   full line weight, where IP-01/IP-04's seal reticles stay at the recessive stops */
+.ip-dial .ip-rings .r1 { stroke: var(--ip-s45) }
+.ip-dial .ip-rings .r2 { stroke: var(--ip-s28) }
+/* direct child only — the alignment glyph is nested and must stay in its own flow box */
+.ip-dial > svg { position: absolute; left: 0; top: 0 }
+.ip3-read { position: absolute; left: 0; right: 0; top: 62px; text-align: center }
+.ip3-read .ip-lb { color: var(--ip-s45) }
+.ip3-align { position: absolute; left: 0; right: 0; top: 128px; display: flex; justify-content: center }
+
+/* ---- IP-05 CARRIER-LOST CARD: the title and the hexagon share one face ---- */
+.ip5-face { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 16px }
+
+/* ---- IP-02 RECORD BOOK STRIP ---- */
+.ip2-rows { flex: 1 1 auto; display: flex; border-top: 1px solid var(--ip-s14) }
+.ip2-gut { width: 22px; flex: none; display: flex; flex-direction: column; align-items: center;
+  justify-content: space-around; border-right: 1px solid var(--ip-s08) }
+.ip2-list { flex: 1 1 auto; display: flex; flex-direction: column }
+.ip2-row { flex: 1 1 0; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 8px 0 6px; border-top: 1px solid var(--ip-s14) }
+.ip2-row:first-child { border-top: 0 }
+.ip2-row .n { font-size: 13px; letter-spacing: .06em; color: var(--ip-s70) }
+.ip2-row.live .n { color: var(--ip-warm) }
+.ip2-row .dash { font-size: 13px; color: var(--ip-s45) }
+
+/* ---- IP-06 VERDICT REGISTER ---- */
+.ip6-rows { flex: 1 1 auto; display: flex; flex-direction: column; border-top: 1px solid var(--ip-s14) }
+.ip6-row { flex: 1 1 0; display: flex; align-items: center; border-top: 1px solid var(--ip-s14) }
+.ip6-row:first-child { border-top: 0 }
+.ip6-row .n { width: 30px; flex: none; text-align: center; font-size: 13px; color: var(--ip-s70) }
+.ip6-row .g { width: 30px; flex: none; display: flex; justify-content: center;
+  border-left: 1px solid var(--ip-s14); border-right: 1px solid var(--ip-s14) }
+.ip6-row .o { flex: 1 1 auto; text-align: center; font-size: 13px; letter-spacing: .06em; color: var(--ip-s70) }
+/* the sheet's amber discipline, exact: the FAIL row is the only amber in the register.
+   HOLD is suspended, not working — under the two-tier law it stays structure ink. */
+.ip6-row.fail .n, .ip6-row.fail .o { color: var(--ip-hot) }
+.ip6-row.hold .n, .ip6-row.hold .o { color: var(--ip-s70) }
+
+/* ---- IP-07 LINK METER ---- */
+/* AMBER-AREA CORRECTION (replica-lab 2026-07-21): the rail used to take every pixel the scale
+   left it, so a legal number of lit segments still painted a slab of amber roughly four times
+   the area C4 prints. The census is about AREA, not count — the rail is now a narrow column
+   like the sheet's, and the plate keeps a right margin instead of the meter running to the wall. */
+.ip7-face { flex: 1 1 auto; min-height: 0; display: flex; border-top: 1px solid var(--ip-s14);
+  padding: 5px 14px 3px 6px }
+.ip7-scale { width: 38px; flex: none; display: flex; flex-direction: column; justify-content: space-between;
+  align-items: flex-end; padding: 1px 4px 1px 0 }
+.ip7-scale span { font-size: 10px; line-height: 1.15; letter-spacing: .06em; color: var(--ip-s45) }
+.ip7-ladder { width: 40px; flex: none; min-height: 0; border-left: 1px solid var(--ip-s14); padding-left: 6px;
+  display: flex; flex-direction: column-reverse; justify-content: space-between }
+.ip7-seg { flex: none; height: 4px; border: 1px solid var(--ip-s28); background: transparent }
+.ip7-seg.lit { border-color: var(--ip-warm); background: var(--ip-warm) }
+.ip7-seg.lit.hot { border-color: var(--ip-hot); background: var(--ip-hot) }
+/* no measured signal: the rail recedes to the faintest stop so an unlit ladder can never be
+   mistaken for a measured floor (honesty law — absence must not look like a reading of zero) */
+.ip7-ladder.ip-void .ip7-seg { border-color: var(--ip-s08) }
+
+/* ---- IP-08 ROUTE CARD ---- */
+.ip8-map { flex: 1 1 auto; border-top: 1px solid var(--ip-s14); position: relative }
+.ip8-map svg { position: absolute; left: 0; top: 0 }
+.ip8-map .hop { fill: none; stroke: var(--ip-s45); stroke-width: 1; stroke-dasharray: 3 3 }
+.ip8-map .nd { fill: none; stroke: var(--ip-s70); stroke-width: 1 }
+.ip8-data { flex: none; border-top: 1px solid var(--ip-s14); padding: 5px 8px }
+.ip8-line { display: flex; justify-content: space-between; align-items: baseline }
+.ip8-line .ip-v { letter-spacing: .06em }
+
+/* ---- caption: the designation code + name, exactly as the sheet carries it ---- */
+.ip-cap { margin-top: 8px; text-align: center; font-size: 10px; letter-spacing: .12em; text-transform: uppercase }
+.ip-cap .ip-idx { color: var(--ip-s45) }
+.ip-cap .ip-code { color: var(--ip-s70) }
+.ip-cap .ip-slash { color: var(--ip-s28); padding: 0 5px }
+.ip-cap .ip-name { color: var(--ip-s45) }
+/* THE ATLAS CONTEXT ONLY. On the catalogue sheet the designation IS the subject, and the sheet
+   prints it amber. In the game the panels are chrome, and idle amber on eight captions would
+   break the amber census (02 §1) — so the sheet's amber lives behind this opt-in class. */
+.ip-sheet .ip-cap .ip-idx, .ip-sheet .ip-cap .ip-code { color: var(--ip-warm) }
+
+/* ---- flat and matte: the only permitted emission is real amber, and only where it is hot ---- */
+.ip .ip-v.num.hot:not(.ip-void) { text-shadow: 0 0 8px rgba(255, 176, 0, .28) }

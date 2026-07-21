@@ -1,0 +1,151 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>THE BRAIN</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--ink:#f1f0ec;--dim:#76757a;--faint:#38373c;--gold:#d4a24c;--line:rgba(241,240,236,.09);--bad:#c96a5a}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:12px/1.5 'IBM Plex Mono',Consolas,monospace;overflow:hidden;height:100vh;display:flex;flex-direction:column}
+header{padding:14px 22px 10px;display:flex;align-items:baseline;gap:14px}
+h1{font-weight:300;font-size:17px;letter-spacing:.16em}h1 b{color:var(--gold);font-weight:600}
+#sub{color:var(--dim);font-size:10.5px}
+main{flex:1;display:grid;grid-template-columns:1fr 360px;min-height:0}
+#stage{position:relative}
+canvas{display:block;width:100%;height:100%}
+aside{border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+aside h2{font-size:10px;letter-spacing:.3em;color:var(--gold);padding:10px 16px 6px;text-transform:uppercase}
+#feed{flex:1;overflow-y:auto;padding:0 16px 16px;font-size:10.5px}
+.ev{padding:4px 0;border-bottom:1px solid var(--line);color:var(--dim);word-break:break-word}
+.ev b{color:var(--gold);font-weight:600}.ev.bad b{color:var(--bad)}.ev .t{color:var(--faint)}
+#inspect{border-top:1px solid var(--line);max-height:44%;overflow-y:auto;padding:10px 16px 14px;display:none}
+#inspect h3{color:var(--gold);font-size:11px;letter-spacing:.2em;margin-bottom:6px;text-transform:uppercase}
+#inspect pre{white-space:pre-wrap;word-break:break-word;color:var(--dim);font-size:10.5px}
+</style></head><body>
+<header><h1>THE <b>BRAIN</b></h1><div id="sub">every organ, every synapse, live from disk - click an organ to open it</div></header>
+<main>
+  <div id="stage"><canvas id="cv"></canvas></div>
+  <aside>
+    <h2>Synapse feed - naked</h2>
+    <div id="feed"></div>
+    <div id="inspect"><h3 id="ins-title"></h3><pre id="ins-body"></pre></div>
+  </aside>
+</main>
+<script>
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const feedEl = document.getElementById('feed');
+
+// ANATOMY - the real organs, laid out as regions; edges are the real call paths in the code.
+const R = {
+  senses:  {x:.13,y:.36, label:'SENSES',  sub:'github / hn / (eyes pending)'},
+  mind:    {x:.50,y:.18, label:'MIND',    sub:'talk / aea core'},
+  watcher: {x:.84,y:.22, label:'HADES',   sub:'law 3 - the watcher'},
+  memory:  {x:.86,y:.55, label:'MEMORY',  sub:'book of luis + 48 facts'},
+  trust:   {x:.74,y:.84, label:'TRUST',   sub:'earned autonomy'},
+  life:    {x:.50,y:.90, label:'LIFE',    sub:'heartbeat / ticks'},
+  voice:   {x:.24,y:.82, label:'VOICE',   sub:'sapi bedrock (+kokoro)'},
+  energy:  {x:.47,y:.52, label:'ENERGY',  sub:'the continuum'},
+};
+const PLANTS = ['ollama','nvidia','groq','cerebras','zai','pollinations'];
+PLANTS.forEach((p,i)=>{ const a = -Math.PI/2 + i*(2*Math.PI/PLANTS.length);
+  R['p_'+p] = {x:.47+.13*Math.cos(a), y:.52+.20*Math.sin(a), label:p, plant:true}; });
+
+const EDGES = [
+  ['senses','mind'],['mind','energy'],['mind','memory'],['mind','voice'],['mind','trust'],
+  ['watcher','mind'],['life','mind'],['life','memory'],
+  ...PLANTS.map(p=>['energy','p_'+p])
+];
+for (const k in R){ R[k].glow = 0; }
+let pulses = [];   // {from,to,start,dur,bad}
+
+function firePulse(from,to,bad){ if(R[from]&&R[to]) pulses.push({from,to,start:performance.now(),dur:650,bad}); }
+function glow(k,v=1){ if(R[k]) R[k].glow = Math.min(1.6, R[k].glow + v); }
+
+// EVENT -> anatomy mapping (this is where "naked" happens)
+function reflect(e){
+  const d = (e.detail||'').toLowerCase();
+  if (e.organ==='energy'){ glow('energy',.9); const pl = PLANTS.find(p=>d.startsWith(p+'/')||d.includes(p+'/'));
+    if(pl){ firePulse('energy','p_'+pl,!e.ok); glow('p_'+pl,1.2); } firePulse('mind','energy',!e.ok); }
+  else if (e.organ==='mind'){ glow('mind',1);
+    if(e.action==='hears-luis') firePulse('senses','mind');
+    if(e.action==='replies') firePulse('mind','voice',!e.ok); }
+  else if (e.organ==='memory'){ glow('memory',1);
+    firePulse(e.action==='distill'?'life':'mind','memory'); }
+  else if (e.organ==='life'){ glow('life',1);
+    if(d.includes('consolidate')) firePulse('life','memory'); else firePulse('life','mind'); }
+  else if (e.organ==='trust'){ glow('trust',1); firePulse('mind','trust',!e.ok); }
+  else if (e.organ==='voice'){ glow('voice',1.2); }
+  else if (e.organ==='watcher'){ glow('watcher',1); firePulse('watcher','mind',!e.ok); }
+  const div = document.createElement('div');
+  div.className = 'ev' + (e.ok?'':' bad');
+  const ts = new Date(e.t*1000).toTimeString().slice(0,8);
+  div.innerHTML = `<span class="t">${ts}</span> <b>${e.organ}.${e.action}</b> ${e.detail||''}`;
+  feedEl.prepend(div);
+  while (feedEl.children.length > 120) feedEl.lastChild.remove();
+}
+
+let lastT = 0;
+async function poll(){
+  try{
+    const ev = await (await fetch('/events?since='+lastT)).json();
+    for (const e of ev){ reflect(e); lastT = Math.max(lastT, e.t); }
+  }catch(_){}
+  setTimeout(poll, 700);
+}
+
+function draw(){
+  const w = cv.width = cv.clientWidth * devicePixelRatio, h = cv.height = cv.clientHeight * devicePixelRatio;
+  ctx.clearRect(0,0,w,h);
+  const P = k => ({x:R[k].x*w, y:R[k].y*h});
+  // edges
+  ctx.lineWidth = 1;
+  for (const [a,b] of EDGES){ const A=P(a),B=P(b);
+    ctx.strokeStyle = 'rgba(241,240,236,0.08)';
+    ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke(); }
+  // pulses
+  const now = performance.now();
+  pulses = pulses.filter(p => now - p.start < p.dur);
+  for (const p of pulses){ const A=P(p.from),B=P(p.to), f=(now-p.start)/p.dur;
+    const x=A.x+(B.x-A.x)*f, y=A.y+(B.y-A.y)*f;
+    ctx.fillStyle = p.bad ? 'rgba(201,106,90,.95)' : 'rgba(212,162,76,.95)';
+    ctx.beginPath(); ctx.arc(x,y,3.4*devicePixelRatio,0,7); ctx.fill(); }
+  // organs
+  for (const k in R){ const n=R[k], c=P(k);
+    const base = n.plant ? 9 : 21;
+    const r = (base + n.glow*5) * devicePixelRatio;
+    if (n.glow > 0.02){ const g = ctx.createRadialGradient(c.x,c.y,r*.3,c.x,c.y,r*2.6);
+      g.addColorStop(0,`rgba(212,162,76,${Math.min(.5,n.glow*.4)})`); g.addColorStop(1,'rgba(212,162,76,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(c.x,c.y,r*2.6,0,7); ctx.fill(); }
+    ctx.fillStyle = '#101012';
+    ctx.strokeStyle = n.glow>.05 ? `rgba(212,162,76,${.35+Math.min(.65,n.glow)})` : 'rgba(241,240,236,.22)';
+    ctx.lineWidth = 1.2*devicePixelRatio;
+    ctx.beginPath(); ctx.arc(c.x,c.y,r,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = n.glow>.05 ? '#d4a24c' : '#b9b8b3';
+    ctx.font = `${(n.plant?8.5:10.5)*devicePixelRatio}px 'IBM Plex Mono'`;
+    ctx.textAlign='center';
+    ctx.fillText(n.label, c.x, c.y - r - 6*devicePixelRatio);
+    if (n.sub){ ctx.fillStyle='#5c5b60'; ctx.font=`${8*devicePixelRatio}px 'IBM Plex Mono'`;
+      ctx.fillText(n.sub, c.x, c.y + r + 12*devicePixelRatio); }
+    n.glow *= 0.94;
+  }
+  requestAnimationFrame(draw);
+}
+
+// click an organ -> open it (real state)
+cv.addEventListener('click', async ev=>{
+  const rect = cv.getBoundingClientRect();
+  const x = (ev.clientX-rect.left)/rect.width, y = (ev.clientY-rect.top)/rect.height;
+  let hit = null;
+  for (const k in R){ if (Math.hypot(R[k].x-x, R[k].y-y) < 0.045) hit = k; }
+  if (!hit) return;
+  const s = await (await fetch('/state')).json();
+  const key = hit.startsWith('p_') ? 'energy' : hit;
+  const slice = {
+    mind: s.mind, memory: s.memory, energy: s.energy, trust: s.trust, life: s.life,
+    voice: s.identity, watcher: {note:'verdicts ride on each brief/tick; see trust + feed'},
+    senses: {sources:'github + hacker news (real)', eyes:'calendar/inbox PENDING - t4 blocked on Luis'},
+  }[key] || s;
+  document.getElementById('inspect').style.display='block';
+  document.getElementById('ins-title').textContent = (R[hit].label)+' - live state';
+  document.getElementById('ins-body').textContent = JSON.stringify(slice, null, 1).slice(0, 3200);
+});
+
+poll(); draw();
+</script></body></html>

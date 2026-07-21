@@ -1,0 +1,2179 @@
+[
+  {
+    "plant": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "serves": true,
+    "score": 4,
+    "tokens": 30,
+    "lat": [
+      0.2731142044067383,
+      0.2503962516784668,
+      0.23699712753295898,
+      0.28225255012512207
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.2,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 11
+      }
+    },
+    "avg_lat": 0.26,
+    "tok_s": 28.8
+  },
+  {
+    "plant": "groq",
+    "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 28,
+    "lat": [
+      0.21467089653015137,
+      0.2356584072113037,
+      0.38245058059692383,
+      0.2512829303741455
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.2,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.2,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.4,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 9
+      }
+    },
+    "avg_lat": 0.27,
+    "tok_s": 25.8
+  },
+  {
+    "plant": "groq",
+    "model": "openai/gpt-oss-20b",
+    "serves": true,
+    "score": 4,
+    "tokens": 394,
+    "lat": [
+      0.4841482639312744,
+      0.3834116458892822,
+      0.28348636627197266,
+      0.44931983947753906
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 160
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.4,
+        "tok": 55
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 71
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.4,
+        "tok": 108
+      }
+    },
+    "avg_lat": 0.4,
+    "tok_s": 246.2
+  },
+  {
+    "plant": "groq",
+    "model": "openai/gpt-oss-120b",
+    "serves": true,
+    "score": 4,
+    "tokens": 327,
+    "lat": [
+      0.6348764896392822,
+      0.5131511688232422,
+      0.5407443046569824,
+      0.6002209186553955
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 90
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 72
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 94
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 71
+      }
+    },
+    "avg_lat": 0.57,
+    "tok_s": 142.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-content-safety-reasoning-4b",
+    "serves": true,
+    "score": 4,
+    "tokens": 36,
+    "lat": [
+      0.9442918300628662,
+      0.4612081050872803,
+      0.5782499313354492,
+      0.4566655158996582
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 6
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 17
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 10
+      }
+    },
+    "avg_lat": 0.61,
+    "tok_s": 14.8
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-nano-12b-v2-vl",
+    "serves": true,
+    "score": 4,
+    "tokens": 27,
+    "lat": [
+      0.760979175567627,
+      0.537407398223877,
+      0.5339930057525635,
+      0.7460577487945557
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 6
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 4
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 5
+      }
+    },
+    "avg_lat": 0.64,
+    "tok_s": 10.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "qwen/qwen3-next-80b-a3b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 24,
+    "lat": [
+      0.6093621253967285,
+      0.8206150531768799,
+      1.0104901790618896,
+      0.547771692276001
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 5
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 4
+      }
+    },
+    "avg_lat": 0.75,
+    "tok_s": 8.0
+  },
+  {
+    "plant": "nvidia",
+    "model": "stockmark/stockmark-2-100b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 29,
+    "lat": [
+      0.535637378692627,
+      0.486635684967041,
+      1.0828545093536377,
+      1.0185282230377197
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 10
+      }
+    },
+    "avg_lat": 0.78,
+    "tok_s": 9.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/llama-3.3-nemotron-super-49b-v1",
+    "serves": true,
+    "score": 4,
+    "tokens": 27,
+    "lat": [
+      0.5173470973968506,
+      0.6029231548309326,
+      1.2386529445648193,
+      1.0784549713134766
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.2,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 8
+      }
+    },
+    "avg_lat": 0.86,
+    "tok_s": 7.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-3.2-3b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 28,
+    "lat": [
+      0.5163707733154297,
+      1.187291145324707,
+      0.9391937255859375,
+      0.8245019912719727
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.2,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 9
+      }
+    },
+    "avg_lat": 0.87,
+    "tok_s": 8.1
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-mini-4b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 161,
+    "lat": [
+      2.228876829147339,
+      0.323854923248291,
+      0.5741918087005615,
+      0.33437323570251465
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 2.2,
+        "tok": 143
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 1
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 5
+      }
+    },
+    "avg_lat": 0.87,
+    "tok_s": 46.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "mistralai/mistral-medium-3.5-128b",
+    "serves": true,
+    "score": 4,
+    "tokens": 29,
+    "lat": [
+      0.926703929901123,
+      1.1022496223449707,
+      0.8748865127563477,
+      0.6320590972900391
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 5
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 9
+      }
+    },
+    "avg_lat": 0.88,
+    "tok_s": 8.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "mistralai/mistral-small-4-119b-2603",
+    "serves": true,
+    "score": 4,
+    "tokens": 26,
+    "lat": [
+      0.5475585460662842,
+      0.7636620998382568,
+      1.1456241607666016,
+      1.1262538433074951
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 5
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 6
+      }
+    },
+    "avg_lat": 0.9,
+    "tok_s": 7.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "z-ai/glm-5.1",
+    "serves": true,
+    "score": 4,
+    "tokens": 23,
+    "lat": [
+      0.716804027557373,
+      1.207949161529541,
+      0.9596114158630371,
+      0.7097671031951904
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.2,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 4
+      }
+    },
+    "avg_lat": 0.9,
+    "tok_s": 6.4
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-3.1-8b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 23,
+    "lat": [
+      0.8070783615112305,
+      1.0342540740966797,
+      0.9672894477844238,
+      0.9001076221466064
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 4
+      }
+    },
+    "avg_lat": 0.93,
+    "tok_s": 6.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "openai/gpt-oss-120b",
+    "serves": true,
+    "score": 4,
+    "tokens": 260,
+    "lat": [
+      1.005152702331543,
+      0.9775876998901367,
+      0.7798824310302734,
+      0.9924254417419434
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 74
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 63
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 38
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 85
+      }
+    },
+    "avg_lat": 0.94,
+    "tok_s": 69.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "mistralai/mistral-large-3-675b-instruct-2512",
+    "serves": true,
+    "score": 4,
+    "tokens": 33,
+    "lat": [
+      1.609208583831787,
+      0.6385252475738525,
+      0.5914676189422607,
+      1.0474343299865723
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.6,
+        "tok": 5
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.6,
+        "tok": 16
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 9
+      }
+    },
+    "avg_lat": 0.97,
+    "tok_s": 8.5
+  },
+  {
+    "plant": "cerebras",
+    "model": "gpt-oss-120b",
+    "serves": true,
+    "score": 4,
+    "tokens": 345,
+    "lat": [
+      0.653611421585083,
+      1.1736810207366943,
+      1.9104483127593994,
+      0.34906935691833496
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 105
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.2,
+        "tok": 67
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.9,
+        "tok": 89
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 84
+      }
+    },
+    "avg_lat": 1.02,
+    "tok_s": 84.4
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-4-maverick-17b-128e-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 27,
+    "lat": [
+      1.0362415313720703,
+      0.9934194087982178,
+      1.1274638175964355,
+      1.4374244213104248
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.4,
+        "tok": 8
+      }
+    },
+    "avg_lat": 1.15,
+    "tok_s": 5.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "serves": true,
+    "score": 4,
+    "tokens": 274,
+    "lat": [
+      1.5947446823120117,
+      0.7336812019348145,
+      1.0336401462554932,
+      1.268481969833374
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.6,
+        "tok": 120
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 21
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 54
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.3,
+        "tok": 79
+      }
+    },
+    "avg_lat": 1.16,
+    "tok_s": 59.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 30,
+    "lat": [
+      0.7755167484283447,
+      0.8292810916900635,
+      1.7521471977233887,
+      1.5391042232513428
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.8,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.5,
+        "tok": 11
+      }
+    },
+    "avg_lat": 1.22,
+    "tok_s": 6.1
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-nano-30b-a3b",
+    "serves": true,
+    "score": 4,
+    "tokens": 358,
+    "lat": [
+      1.6409118175506592,
+      1.0022830963134766,
+      1.0730562210083008,
+      1.434356689453125
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.6,
+        "tok": 112
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 64
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 97
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.4,
+        "tok": 85
+      }
+    },
+    "avg_lat": 1.29,
+    "tok_s": 69.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "openai/gpt-oss-20b",
+    "serves": true,
+    "score": 4,
+    "tokens": 523,
+    "lat": [
+      1.3899199962615967,
+      0.9200422763824463,
+      1.453608512878418,
+      2.202740430831909
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.4,
+        "tok": 100
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 51
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.5,
+        "tok": 132
+      },
+      "code": {
+        "ok": true,
+        "lat": 2.2,
+        "tok": 240
+      }
+    },
+    "avg_lat": 1.49,
+    "tok_s": 87.7
+  },
+  {
+    "plant": "nvidia",
+    "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 23,
+    "lat": [
+      0.8288004398345947,
+      2.305021286010742,
+      1.3935532569885254,
+      2.3967556953430176
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 2.3,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.4,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 2.4,
+        "tok": 4
+      }
+    },
+    "avg_lat": 1.73,
+    "tok_s": 3.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "upstage/solar-10.7b-instruct",
+    "serves": true,
+    "score": 4,
+    "tokens": 240,
+    "lat": [
+      4.081092357635498,
+      0.9390881061553955,
+      0.8455655574798584,
+      1.9306714534759521
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 4.1,
+        "tok": 138
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 24
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 17
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.9,
+        "tok": 61
+      }
+    },
+    "avg_lat": 1.95,
+    "tok_s": 30.8
+  },
+  {
+    "plant": "nvidia",
+    "model": "deepseek-ai/deepseek-v4-flash",
+    "serves": true,
+    "score": 4,
+    "tokens": 109,
+    "lat": [
+      3.9419281482696533,
+      0.925696611404419,
+      1.902404546737671,
+      1.7296299934387207
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 3.9,
+        "tok": 85
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.9,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.7,
+        "tok": 9
+      }
+    },
+    "avg_lat": 2.12,
+    "tok_s": 12.8
+  },
+  {
+    "plant": "zai",
+    "model": "glm-4.5-flash",
+    "serves": true,
+    "score": 4,
+    "tokens": 562,
+    "lat": [
+      4.414808988571167,
+      1.6257171630859375,
+      1.832014799118042,
+      1.9438579082489014
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 4.4,
+        "tok": 350
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.6,
+        "tok": 73
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.8,
+        "tok": 49
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.9,
+        "tok": 90
+      }
+    },
+    "avg_lat": 2.45,
+    "tok_s": 57.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "minimaxai/minimax-m3",
+    "serves": true,
+    "score": 4,
+    "tokens": 24,
+    "lat": [
+      2.213052749633789,
+      5.4940173625946045,
+      2.6901586055755615,
+      1.0722920894622803
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 2.2,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 5.5,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 2.7,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 5
+      }
+    },
+    "avg_lat": 2.87,
+    "tok_s": 2.1
+  },
+  {
+    "plant": "nvidia",
+    "model": "stepfun-ai/step-3.5-flash",
+    "serves": true,
+    "score": 4,
+    "tokens": 1027,
+    "lat": [
+      2.8421947956085205,
+      5.0682854652404785,
+      2.038167953491211,
+      3.019731283187866
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 2.8,
+        "tok": 350
+      },
+      "instr": {
+        "ok": true,
+        "lat": 5.1,
+        "tok": 136
+      },
+      "json": {
+        "ok": true,
+        "lat": 2.0,
+        "tok": 191
+      },
+      "code": {
+        "ok": true,
+        "lat": 3.0,
+        "tok": 350
+      }
+    },
+    "avg_lat": 3.24,
+    "tok_s": 79.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "stepfun-ai/step-3.7-flash",
+    "serves": true,
+    "score": 4,
+    "tokens": 744,
+    "lat": [
+      5.468228101730347,
+      0.9459640979766846,
+      7.7017271518707275,
+      0.9757685661315918
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 5.5,
+        "tok": 350
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 62
+      },
+      "json": {
+        "ok": true,
+        "lat": 7.7,
+        "tok": 232
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 100
+      }
+    },
+    "avg_lat": 3.77,
+    "tok_s": 49.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "moonshotai/kimi-k2.6",
+    "serves": true,
+    "score": 4,
+    "tokens": 23,
+    "lat": [
+      12.88022255897522,
+      0.6913309097290039,
+      0.9798915386199951,
+      0.7242136001586914
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 12.9,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 4
+      }
+    },
+    "avg_lat": 3.82,
+    "tok_s": 1.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "minimaxai/minimax-m2.7",
+    "serves": true,
+    "score": 4,
+    "tokens": 682,
+    "lat": [
+      3.9030725955963135,
+      1.7975196838378906,
+      6.166764259338379,
+      5.998285531997681
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 3.9,
+        "tok": 169
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.8,
+        "tok": 68
+      },
+      "json": {
+        "ok": true,
+        "lat": 6.2,
+        "tok": 149
+      },
+      "code": {
+        "ok": true,
+        "lat": 6.0,
+        "tok": 296
+      }
+    },
+    "avg_lat": 4.47,
+    "tok_s": 38.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+    "serves": true,
+    "score": 4,
+    "tokens": 23,
+    "lat": [
+      2.5997140407562256,
+      11.610856056213379,
+      4.987616539001465,
+      4.556576490402222
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 2.6,
+        "tok": 3
+      },
+      "instr": {
+        "ok": true,
+        "lat": 11.6,
+        "tok": 2
+      },
+      "json": {
+        "ok": true,
+        "lat": 5.0,
+        "tok": 11
+      },
+      "code": {
+        "ok": true,
+        "lat": 4.6,
+        "tok": 7
+      }
+    },
+    "avg_lat": 5.94,
+    "tok_s": 1.0
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "serves": true,
+    "score": 4,
+    "tokens": 283,
+    "lat": [
+      8.103986024856567,
+      10.500104665756226,
+      4.018240928649902,
+      5.0727949142456055
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 8.1,
+        "tok": 119
+      },
+      "instr": {
+        "ok": true,
+        "lat": 10.5,
+        "tok": 73
+      },
+      "json": {
+        "ok": true,
+        "lat": 4.0,
+        "tok": 61
+      },
+      "code": {
+        "ok": true,
+        "lat": 5.1,
+        "tok": 30
+      }
+    },
+    "avg_lat": 6.92,
+    "tok_s": 10.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "deepseek-ai/deepseek-v4-pro",
+    "serves": true,
+    "score": 4,
+    "tokens": 28,
+    "lat": [
+      5.788015365600586,
+      1.1883509159088135,
+      6.595071077346802,
+      14.203892230987549
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 5.8,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.2,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 6.6,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 14.2,
+        "tok": 9
+      }
+    },
+    "avg_lat": 6.94,
+    "tok_s": 1.0
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+    "serves": true,
+    "score": 4,
+    "tokens": 1171,
+    "lat": [
+      11.111246824264526,
+      8.857791423797607,
+      6.269233703613281,
+      12.176882982254028
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 11.1,
+        "tok": 350
+      },
+      "instr": {
+        "ok": true,
+        "lat": 8.9,
+        "tok": 280
+      },
+      "json": {
+        "ok": true,
+        "lat": 6.3,
+        "tok": 191
+      },
+      "code": {
+        "ok": true,
+        "lat": 12.2,
+        "tok": 350
+      }
+    },
+    "avg_lat": 9.6,
+    "tok_s": 30.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "google/gemma-2-2b-it",
+    "serves": true,
+    "score": 3,
+    "tokens": 29,
+    "lat": [
+      0.5756301879882812,
+      0.7987716197967529,
+      0.8460819721221924,
+      0.6967308521270752
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 6
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 11
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 9
+      }
+    },
+    "avg_lat": 0.73,
+    "tok_s": 9.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-3.2-11b-vision-instruct",
+    "serves": true,
+    "score": 3,
+    "tokens": 23,
+    "lat": [
+      1.0169258117675781,
+      0.6916322708129883,
+      0.8358273506164551,
+      0.9137008190155029
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 1.0,
+        "tok": 4
+      },
+      "instr": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.9,
+        "tok": 4
+      }
+    },
+    "avg_lat": 0.86,
+    "tok_s": 6.7
+  },
+  {
+    "plant": "groq",
+    "model": "qwen/qwen3-32b",
+    "serves": true,
+    "score": 3,
+    "tokens": 1137,
+    "lat": [
+      1.0247313976287842,
+      0.4261958599090576,
+      1.136258602142334,
+      1.054642677307129
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 350
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.4,
+        "tok": 87
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 350
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.1,
+        "tok": 350
+      }
+    },
+    "avg_lat": 0.91,
+    "tok_s": 312.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "google/gemma-3n-e2b-it",
+    "serves": true,
+    "score": 3,
+    "tokens": 33,
+    "lat": [
+      0.79909348487854,
+      0.9720520973205566,
+      1.4007699489593506,
+      0.817861795425415
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 3
+      },
+      "instr": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.4,
+        "tok": 17
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 10
+      }
+    },
+    "avg_lat": 1.0,
+    "tok_s": 8.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "google/diffusiongemma-26b-a4b-it",
+    "serves": true,
+    "score": 3,
+    "tokens": 24,
+    "lat": [
+      0.8374004364013672,
+      0.8110268115997314,
+      2.0151259899139404,
+      1.8721907138824463
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 0.8,
+        "tok": 5
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 2
+      },
+      "json": {
+        "ok": true,
+        "lat": 2.0,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.9,
+        "tok": 5
+      }
+    },
+    "avg_lat": 1.38,
+    "tok_s": 4.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "serves": true,
+    "score": 3,
+    "tokens": 23,
+    "lat": [
+      1.9056973457336426,
+      1.4623560905456543,
+      2.6261520385742188,
+      1.0246164798736572
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.9,
+        "tok": 4
+      },
+      "instr": {
+        "ok": false,
+        "lat": 1.5,
+        "tok": 2
+      },
+      "json": {
+        "ok": true,
+        "lat": 2.6,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.0,
+        "tok": 5
+      }
+    },
+    "avg_lat": 1.75,
+    "tok_s": 3.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/ising-calibration-1-35b-a3b",
+    "serves": true,
+    "score": 3,
+    "tokens": 1209,
+    "lat": [
+      2.9217474460601807,
+      3.1892318725585938,
+      1.6031372547149658,
+      2.8756277561187744
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 2.9,
+        "tok": 350
+      },
+      "instr": {
+        "ok": true,
+        "lat": 3.2,
+        "tok": 337
+      },
+      "json": {
+        "ok": false,
+        "lat": 1.6,
+        "tok": 172
+      },
+      "code": {
+        "ok": true,
+        "lat": 2.9,
+        "tok": 350
+      }
+    },
+    "avg_lat": 2.65,
+    "tok_s": 114.2
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nvidia-nemotron-nano-9b-v2",
+    "serves": true,
+    "score": 3,
+    "tokens": 1178,
+    "lat": [
+      6.101826906204224,
+      2.3395509719848633,
+      13.85480546951294,
+      13.972783327102661
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 6.1,
+        "tok": 350
+      },
+      "instr": {
+        "ok": true,
+        "lat": 2.3,
+        "tok": 128
+      },
+      "json": {
+        "ok": false,
+        "lat": 13.9,
+        "tok": 350
+      },
+      "code": {
+        "ok": true,
+        "lat": 14.0,
+        "tok": 350
+      }
+    },
+    "avg_lat": 9.07,
+    "tok_s": 32.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-3.1-70b-instruct",
+    "serves": true,
+    "score": 3,
+    "tokens": 23,
+    "lat": [
+      36.20593571662903,
+      0.3856625556945801,
+      0.7179560661315918,
+      0.5286529064178467
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 36.2,
+        "tok": 4
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.4,
+        "tok": 2
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 12
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.5,
+        "tok": 5
+      }
+    },
+    "avg_lat": 9.46,
+    "tok_s": 0.6
+  },
+  {
+    "plant": "nvidia",
+    "model": "mistralai/ministral-14b-instruct-2512",
+    "serves": true,
+    "score": 2,
+    "tokens": 32,
+    "lat": [
+      0.8808743953704834,
+      0.7876479625701904,
+      1.1583201885223389,
+      1.8672242164611816
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.9,
+        "tok": 4
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 1.2,
+        "tok": 16
+      },
+      "code": {
+        "ok": true,
+        "lat": 1.9,
+        "tok": 9
+      }
+    },
+    "avg_lat": 1.17,
+    "tok_s": 6.8
+  },
+  {
+    "plant": "nvidia",
+    "model": "mistralai/mixtral-8x7b-instruct-v0.1",
+    "serves": true,
+    "score": 2,
+    "tokens": 618,
+    "lat": [
+      14.384652614593506,
+      3.0964057445526123,
+      8.053130626678467,
+      5.4913952350616455
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 14.4,
+        "tok": 255
+      },
+      "instr": {
+        "ok": false,
+        "lat": 3.1,
+        "tok": 45
+      },
+      "json": {
+        "ok": false,
+        "lat": 8.1,
+        "tok": 166
+      },
+      "code": {
+        "ok": true,
+        "lat": 5.5,
+        "tok": 152
+      }
+    },
+    "avg_lat": 7.76,
+    "tok_s": 19.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-3.2-1b-instruct",
+    "serves": true,
+    "score": 2,
+    "tokens": 33,
+    "lat": [
+      0.2898595333099365,
+      31.71741557121277,
+      70.00942397117615,
+      0.29671621322631836
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.3,
+        "tok": 4
+      },
+      "instr": {
+        "ok": false,
+        "lat": 31.7,
+        "tok": 3
+      },
+      "json": {
+        "ok": true,
+        "lat": 70.0,
+        "tok": 11
+      },
+      "code": {
+        "ok": true,
+        "lat": 0.3,
+        "tok": 15
+      }
+    },
+    "avg_lat": 25.58,
+    "tok_s": 0.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/riva-translate-4b-instruct-v1.1",
+    "serves": true,
+    "score": 1,
+    "tokens": 94,
+    "lat": [
+      0.8124749660491943,
+      0.5297961235046387,
+      0.6643009185791016,
+      0.6337254047393799
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 41
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.5,
+        "tok": 11
+      },
+      "json": {
+        "ok": true,
+        "lat": 0.7,
+        "tok": 20
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 22
+      }
+    },
+    "avg_lat": 0.66,
+    "tok_s": 35.6
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "serves": true,
+    "score": 1,
+    "tokens": 488,
+    "lat": [
+      1.2231814861297607,
+      1.1482117176055908,
+      3.9230051040649414
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 1.2,
+        "tok": 78
+      },
+      "instr": {
+        "err": 0
+      },
+      "json": {
+        "ok": false,
+        "lat": 1.1,
+        "tok": 60
+      },
+      "code": {
+        "ok": false,
+        "lat": 3.9,
+        "tok": 350
+      }
+    },
+    "avg_lat": 2.1,
+    "tok_s": 77.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "sarvamai/sarvam-m",
+    "serves": true,
+    "score": 1,
+    "tokens": 878,
+    "lat": [
+      11.360694885253906,
+      7.587615251541138,
+      9.609192848205566
+    ],
+    "detail": {
+      "math": {
+        "ok": true,
+        "lat": 11.4,
+        "tok": 350
+      },
+      "instr": {
+        "ok": false,
+        "lat": 7.6,
+        "tok": 231
+      },
+      "json": {
+        "ok": false,
+        "lat": 9.6,
+        "tok": 297
+      },
+      "code": {
+        "err": 0
+      }
+    },
+    "avg_lat": 9.52,
+    "tok_s": 30.7
+  },
+  {
+    "plant": "ollama",
+    "model": "qwen3:8b",
+    "serves": true,
+    "score": 1,
+    "tokens": 1181,
+    "lat": [
+      28.451964378356934,
+      4.876147508621216,
+      12.217879295349121,
+      12.492244958877563
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 28.5,
+        "tok": 350
+      },
+      "instr": {
+        "ok": true,
+        "lat": 4.9,
+        "tok": 131
+      },
+      "json": {
+        "ok": false,
+        "lat": 12.2,
+        "tok": 350
+      },
+      "code": {
+        "ok": false,
+        "lat": 12.5,
+        "tok": 350
+      }
+    },
+    "avg_lat": 14.51,
+    "tok_s": 20.3
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/llama-3.1-nemoguard-8b-topic-control",
+    "serves": true,
+    "score": 0,
+    "tokens": 12,
+    "lat": [
+      0.336214542388916,
+      0.6302077770233154,
+      0.6645402908325195,
+      0.4025452136993408
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.3,
+        "tok": 3
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 3
+      },
+      "json": {
+        "ok": false,
+        "lat": 0.7,
+        "tok": 3
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.4,
+        "tok": 3
+      }
+    },
+    "avg_lat": 0.51,
+    "tok_s": 5.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3.5-content-safety",
+    "serves": true,
+    "score": 0,
+    "tokens": 20,
+    "lat": [
+      0.7816267013549805,
+      0.5625998973846436,
+      0.45390915870666504,
+      0.44318675994873047
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 5
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 5
+      },
+      "json": {
+        "ok": false,
+        "lat": 0.5,
+        "tok": 5
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.4,
+        "tok": 5
+      }
+    },
+    "avg_lat": 0.56,
+    "tok_s": 8.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-content-safety",
+    "serves": true,
+    "score": 0,
+    "tokens": 20,
+    "lat": [
+      0.8641858100891113,
+      0.5544872283935547,
+      0.7820243835449219,
+      0.34687137603759766
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.9,
+        "tok": 5
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 5
+      },
+      "json": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 5
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.3,
+        "tok": 5
+      }
+    },
+    "avg_lat": 0.64,
+    "tok_s": 7.9
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/gliner-pii",
+    "serves": true,
+    "score": 0,
+    "tokens": 84,
+    "lat": [
+      0.9415614604949951,
+      0.8159303665161133,
+      0.5056807994842529,
+      0.5583436489105225
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.9,
+        "tok": 33
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 13
+      },
+      "json": {
+        "ok": false,
+        "lat": 0.5,
+        "tok": 16
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 22
+      }
+    },
+    "avg_lat": 0.71,
+    "tok_s": 29.8
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+    "serves": true,
+    "score": 0,
+    "tokens": 36,
+    "lat": [
+      0.5200648307800293,
+      0.5679984092712402,
+      0.9417715072631836,
+      0.810776948928833
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.5,
+        "tok": 9
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 9
+      },
+      "json": {
+        "ok": false,
+        "lat": 0.9,
+        "tok": 9
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.8,
+        "tok": 9
+      }
+    },
+    "avg_lat": 0.71,
+    "tok_s": 12.7
+  },
+  {
+    "plant": "nvidia",
+    "model": "nvidia/llama-3.1-nemoguard-8b-content-safety",
+    "serves": true,
+    "score": 0,
+    "tokens": 17,
+    "lat": [
+      0.8868792057037354,
+      0.6445302963256836,
+      0.6210286617279053,
+      0.9193806648254395
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.9,
+        "tok": 8
+      },
+      "instr": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 0
+      },
+      "json": {
+        "ok": false,
+        "lat": 0.6,
+        "tok": 8
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.9,
+        "tok": 1
+      }
+    },
+    "avg_lat": 0.77,
+    "tok_s": 5.5
+  },
+  {
+    "plant": "nvidia",
+    "model": "meta/llama-guard-4-12b",
+    "serves": true,
+    "score": 0,
+    "tokens": 8,
+    "lat": [
+      0.5369441509246826,
+      1.2870068550109863,
+      0.3954620361328125,
+      0.9131157398223877
+    ],
+    "detail": {
+      "math": {
+        "ok": false,
+        "lat": 0.5,
+        "tok": 2
+      },
+      "instr": {
+        "ok": false,
+        "lat": 1.3,
+        "tok": 2
+      },
+      "json": {
+        "ok": false,
+        "lat": 0.4,
+        "tok": 2
+      },
+      "code": {
+        "ok": false,
+        "lat": 0.9,
+        "tok": 2
+      }
+    },
+    "avg_lat": 0.78,
+    "tok_s": 2.6
+  }
+]

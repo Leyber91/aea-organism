@@ -1,0 +1,597 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEYBER · console</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;200;300;400;600&display=swap" rel="stylesheet">
+<style>
+/* ============ THE ROCINANTE SPEC: two inks, two weights, three type steps ============ */
+:root{
+ --bg0:#050a10;--bg1:#0a1420;
+ --hot:#ffb000;--warm:#d4a24c;              /* amber = live/fired ONLY */
+ --st70:rgba(120,155,175,.70);--st45:rgba(120,155,175,.45);--st28:rgba(120,155,175,.28);
+ --st14:rgba(120,155,175,.14);--st08:rgba(120,155,175,.08); /* structure ink at fixed alphas */
+ --ink:#e6edf3;--bad:#d06a55}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg0);color:var(--ink);
+ font:13px/1.6 'IBM Plex Mono',Consolas,monospace;overflow:hidden;font-variant-numeric:tabular-nums}
+/* labels: step 1 of the type scale */
+.lb{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--st45);font-weight:400}
+.id{font-size:9px;letter-spacing:.08em;color:var(--st28)}
+/* ---------- ground + texture (one pass) + vignette ---------- */
+#ground{position:fixed;inset:0;background:linear-gradient(180deg,var(--bg0) 0%,var(--bg1) 120%)}
+#stars{position:fixed;inset:0;pointer-events:none}
+#tex{position:fixed;inset:0;pointer-events:none;opacity:.5;
+ background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px)}
+#vig{position:fixed;inset:0;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 42%,transparent 52%,rgba(2,5,12,.5) 100%)}
+#grain{position:fixed;inset:0;pointer-events:none;opacity:.05}
+/* ---------- plate frame ---------- */
+#frame{position:fixed;inset:12px;border:1px solid var(--st14);pointer-events:none}
+.tick-x{position:fixed;left:12px;right:12px;height:6px;pointer-events:none;opacity:.6;
+ background:repeating-linear-gradient(90deg,var(--st28) 0 1px,transparent 1px 40px)}
+#tick-top{top:12px}#tick-bot{bottom:12px;transform:scaleY(-1)}
+#app{position:fixed;inset:12px;padding:0 44px}
+/* ---------- masthead ---------- */
+#head{position:absolute;top:30px;left:44px;right:44px;display:flex;align-items:flex-start}
+#head .ey{font-size:10px;letter-spacing:.42em;color:var(--warm);text-transform:uppercase}
+#head h1{font-weight:100;font-size:54px;letter-spacing:.30em;line-height:1;margin-top:10px;color:var(--ink)}
+#head h1 span{color:var(--warm);font-weight:200}
+#alive{margin-top:10px;font-size:10px;color:var(--st45);letter-spacing:.06em}
+#alive b{color:var(--st70);font-weight:400}
+#alive .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--hot);
+ margin-right:9px;vertical-align:2px;animation:bt 2.4s infinite}
+@keyframes bt{0%,100%{opacity:1}50%{opacity:.2}}
+#alive.off .pulse{background:var(--bad);animation:none}
+/* the reticle instrument = PLAY (numbers live BESIDE it) */
+#dock{margin-left:auto;display:flex;gap:22px;align-items:center}
+#ret{width:96px;height:96px;position:relative;cursor:pointer}
+#ret svg{display:block}
+#ret:hover .rring{stroke:var(--hot)}
+#dockdata{font-size:10px;line-height:1.9;color:var(--st45);letter-spacing:.06em;min-width:190px}
+#dockdata b{color:var(--st70);font-weight:400}
+#dockdata .h{color:var(--warm)}
+.ctl{background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:.18em;color:var(--st45);
+ text-transform:uppercase;cursor:pointer;padding:0;transition:.15s;display:block;margin-top:2px}
+.ctl:hover{color:var(--hot)}
+.ctl:before{content:"[ "}.ctl:after{content:" ]"}
+#doout{position:absolute;top:150px;right:44px;max-width:330px;font-size:9.5px;color:var(--st45);text-align:right;white-space:pre-wrap}
+/* ---------- vitals: hero numerals (step 3) ---------- */
+#vitals{position:absolute;top:160px;left:44px;display:flex;align-items:flex-end;gap:56px}
+.vit b{display:block;font-weight:100;font-size:38px;line-height:1;color:var(--ink);letter-spacing:.02em}
+.vit b i{font-style:normal;font-size:15px;color:var(--st45);font-weight:300}
+.vit.hot b{color:var(--hot);text-shadow:0 0 8px rgba(255,176,0,.35)}
+.vit span{display:block;margin-top:8px}
+.vit .s2{font-size:9px;color:var(--st28);letter-spacing:.04em;margin-top:2px;text-transform:none}
+/* ---------- index ---------- */
+#index{position:absolute;top:252px;left:44px;right:44px;display:flex;gap:26px;
+ border-top:1px solid var(--st14);padding:10px 2px 0}
+.tab{background:none;border:none;font-family:inherit;cursor:pointer;font-size:10px;letter-spacing:.2em;
+ color:var(--st45);text-transform:uppercase;padding:1px 0;transition:.15s;display:flex;gap:8px;align-items:center}
+.tab .no{color:var(--st28);letter-spacing:.04em}
+.tab:hover{color:var(--st70)}
+.tab.on{color:var(--hot)}
+.tab.on .no{color:var(--warm)}
+/* ---------- panes ---------- */
+#panes{position:absolute;top:296px;left:44px;right:44px;bottom:60px}
+.pane{position:absolute;inset:0;display:none;overflow-y:auto;padding:20px 4px 8px;scrollbar-width:thin}
+.pane.on{display:block}
+.pane.frame{padding:0;overflow:hidden;border:1px solid var(--st14)}
+iframe{width:100%;height:100%;border:0;background:var(--bg0)}
+/* plates: corner brackets, never boxes */
+.pl{position:relative;padding:16px 18px 14px;
+ background:
+  linear-gradient(var(--st28),var(--st28)) 0 0/12px 1px,
+  linear-gradient(var(--st28),var(--st28)) 0 0/1px 12px,
+  linear-gradient(var(--st28),var(--st28)) 100% 0/12px 1px,
+  linear-gradient(var(--st28),var(--st28)) 100% 0/1px 12px,
+  linear-gradient(var(--st28),var(--st28)) 0 100%/12px 1px,
+  linear-gradient(var(--st28),var(--st28)) 0 100%/1px 12px,
+  linear-gradient(var(--st28),var(--st28)) 100% 100%/12px 1px,
+  linear-gradient(var(--st28),var(--st28)) 100% 100%/1px 12px;
+ background-repeat:no-repeat}
+.pl .strip{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.pl .strip .lb{color:var(--warm);letter-spacing:.3em;font-size:9.5px}
+.now-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:26px;align-items:start}
+@media(max-width:1100px){.now-grid{grid-template-columns:1fr}}
+/* waveform + log */
+#wave{width:100%;height:84px;display:block}
+#cmdlog{margin-top:14px;font-size:10px;line-height:1.85;color:var(--st45);height:200px;overflow:hidden;
+ text-transform:lowercase;letter-spacing:.02em}
+#cmdlog .ln{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cmdlog .ln.act{color:var(--warm)}
+#cmdlog .ln.bad{color:var(--bad)}
+#cur{display:inline-block;width:7px;height:12px;background:var(--st70);vertical-align:-2px;animation:bt 1s steps(1) infinite}
+/* gauges */
+#gset{display:flex;gap:30px;margin-bottom:20px}
+.gg{text-align:center}
+.gg .ring{position:relative;width:110px;height:110px;margin:0 auto}
+.gg svg{display:block}
+.gg .gv{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+ font-weight:100;font-size:24px;color:var(--ink);letter-spacing:.02em}
+.gg .gv i{font-style:normal;font-size:11px;color:var(--st45);margin-left:2px}
+.gg .lb{margin-top:10px;display:block;font-size:9px}
+/* values (step 2) */
+.qrow{padding:4px 0;font-size:12px;color:var(--st70)}
+.qrow i{font-style:normal;color:var(--st45);margin-right:8px;font-size:10px}
+.qrow.you i{color:var(--warm)}
+.qrow .k{color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{color:var(--st28);text-align:left;font-weight:400;letter-spacing:.16em;font-size:9px;text-transform:uppercase;
+ padding:0 14px 7px 0;border-bottom:1px solid var(--st14)}
+td{padding:5.5px 14px 5.5px 0;border-bottom:1px solid var(--st08);color:var(--st70);vertical-align:top}
+td.a{color:var(--warm)}td.r{color:var(--bad)}td.k{color:var(--ink)}td.d{color:var(--st45)}
+.pill{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--st45)}
+.pill.new{color:var(--bg0);background:var(--hot);padding:2px 7px;border-radius:2px;font-weight:600}
+.pill.live{color:var(--warm)}
+.note{font-size:11px;color:var(--st45);line-height:1.7;max-width:640px}
+.note b{color:var(--warm);font-weight:400}
+#ram{min-height:180px}#ramsvg{width:100%;height:240px;display:block}
+.ram-empty{color:var(--st28);font-size:10.5px;letter-spacing:.08em;padding:30px 0}
+/* ---------- native TALK ---------- */
+#talkwrap{display:flex;flex-direction:column;height:100%}
+#tfeed{flex:1;overflow-y:auto;scrollbar-width:thin;padding:4px 2px 14px}
+.msg{margin:0 0 18px;max-width:860px}
+.msg .who{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--st28);margin-bottom:4px}
+.msg.you .who{color:var(--warm)}
+.msg .tx{font-size:13px;line-height:1.7;color:var(--st70)}
+.msg.you .tx{color:var(--ink)}
+.msg .rc{margin-top:5px;font-size:9px;letter-spacing:.08em;color:var(--st28)}
+.msg .rc b{color:var(--warm);font-weight:400}
+.msg.ent{border-left:1px solid var(--st14);padding-left:14px}
+#composer{border-top:1px solid var(--st14);padding-top:14px;display:flex;gap:18px;align-items:center}
+#tin{flex:1;background:none;border:none;border-bottom:1px solid var(--st28);color:var(--ink);
+ font:13px 'IBM Plex Mono',monospace;padding:8px 2px;outline:none;letter-spacing:.02em}
+#tin:focus{border-bottom-color:var(--warm)}
+#tin::placeholder{color:var(--st28)}
+.tbtn{background:none;border:none;font-family:inherit;font-size:10px;letter-spacing:.2em;
+ text-transform:uppercase;cursor:pointer;padding:0;transition:.15s;color:var(--st45)}
+.tbtn:hover{color:var(--hot)}
+.tbtn:before{content:"[ "}.tbtn:after{content:" ]"}
+.tbtn.send{color:var(--warm)}
+.tbtn.rec{color:var(--bad);animation:bt 1s infinite}
+#topts{display:flex;gap:22px;margin-top:9px;font-size:9px;letter-spacing:.14em;color:var(--st28);text-transform:uppercase}
+#topts label{cursor:pointer}
+#topts input{accent-color:#d4a24c;vertical-align:-1px;margin-right:6px}
+#tstate{margin-left:auto;color:var(--st45);text-transform:none;letter-spacing:.04em}
+/* ---------- title block ---------- */
+#tblock{position:fixed;left:12px;right:12px;bottom:12px;height:44px;border-top:1px solid var(--st14);
+ display:flex;background:rgba(5,10,16,.8);backdrop-filter:blur(4px)}
+.tb{padding:6px 18px;border-right:1px solid var(--st14);min-width:110px}
+.tb small{display:block;font-size:7.5px;letter-spacing:.26em;color:var(--st28);text-transform:uppercase}
+.tb span{font-size:10.5px;color:var(--st70);letter-spacing:.05em}
+.tb span b{color:var(--warm);font-weight:400}
+.tb.grow{flex:1;border-right:none;text-align:right}
+/* ---------- reveal choreography ---------- */
+.rv{opacity:0;transition:opacity .32s ease}
+.rv.on{opacity:1}
+#vitals .vit{opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .4s ease}
+#vitals.on .vit{opacity:1;transform:none}
+</style></head><body>
+<div id="ground"></div>
+<canvas id="stars"></canvas>
+<div id="tex"></div>
+<svg id="grain" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#n)" opacity=".55"/></svg>
+<div id="vig"></div>
+<div id="frame"></div><div class="tick-x" id="tick-top"></div><div class="tick-x" id="tick-bot"></div>
+
+<div id="app">
+ <div id="head" class="rv">
+  <div>
+   <div class="ey">Autonomous Entity Architecture · Console</div>
+   <h1>LEY<span>BER</span></h1>
+   <div id="alive" class="off"><span class="pulse"></span><span id="alivetxt">connecting…</span></div>
+  </div>
+  <div id="dock">
+   <div id="dockdata">
+    <div class="lb" style="color:var(--warm);letter-spacing:.3em">X1 · the first loop</div>
+    <div><b>press play</b> — 24 h unattended</div>
+    <div>pass · <b>≥20 ticks</b> · 1 brief · <b>≥6</b> consolidated</div>
+    <button class="ctl" data-cmd="tick">tick once</button>
+    <button class="ctl" data-cmd="brief">brief</button>
+    <button class="ctl" data-cmd="stop">stop</button>
+   </div>
+   <div id="ret" title="PLAY — start the life loop">
+    <svg width="96" height="96" viewBox="0 0 96 96">
+     <circle cx="48" cy="48" r="45" fill="none" stroke="rgba(120,155,175,.45)" stroke-width="1" stroke-dasharray="1 4"/>
+     <circle class="rring" cx="48" cy="48" r="36" fill="none" stroke="rgba(212,162,76,.9)" stroke-width="1"/>
+     <circle id="tickarc" cx="48" cy="48" r="36" fill="none" stroke="#ffb000" stroke-width="2"
+      stroke-dasharray="0 226" transform="rotate(-90 48 48)" style="filter:drop-shadow(0 0 5px rgba(255,176,0,.5))"/>
+     <path d="M48,36 L60,48 L48,60 L36,48 Z" fill="none" stroke="rgba(255,176,0,.7)" stroke-width="1.4"/>
+     <path d="M44,42 L56,48 L44,54 Z" fill="#ffb000" style="filter:drop-shadow(0 0 6px rgba(255,176,0,.6))"/>
+     <path d="M48,3 v8 M48,85 v8 M3,48 h8 M85,48 h8" stroke="rgba(120,155,175,.6)" stroke-width="1"/>
+    </svg>
+   </div>
+  </div>
+ </div>
+ <div id="doout"></div>
+ <div id="vitals"></div>
+ <div id="index" class="rv"></div>
+ <div id="panes" class="rv"></div>
+</div>
+
+<div id="tblock">
+ <div class="tb"><small>plate no.</small><span>LEY-001</span></div>
+ <div class="tb"><small>drawn by</small><span>LB.SYSTEMS · <b>LEYBER</b></span></div>
+ <div class="tb"><small>date</small><span id="tb-date">—</span></div>
+ <div class="tb"><small>substrate</small><span>free grid · local floor</span></div>
+ <div class="tb"><small>governance</small><span>Law 3 · watched autonomy</span></div>
+ <div class="tb grow"><small>sheet</small><span>1 / 1 · <b>live</b></span></div>
+</div>
+
+<script>
+"use strict";
+/* ================= starfield: 3 depth layers, slow drift, sine twinkle ================= */
+{const cv=document.getElementById("stars"),cx=cv.getContext("2d");
+ let W,H,stars=[];let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+ function size(){W=cv.width=innerWidth*devicePixelRatio;H=cv.height=innerHeight*devicePixelRatio;
+  cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";}
+ size();addEventListener("resize",size);
+ for(let i=0;i<110;i++){const d=rnd()<.5?0:rnd()<.7?1:2;
+  stars.push({x:rnd()*1.2,y:rnd()*1.2,d,r:(0.5+d*0.5)*devicePixelRatio,
+   ph:rnd()*6.28,warm:rnd()<.25,a:.05+rnd()*.14});}
+ function frame(t){cx.clearRect(0,0,W,H);
+  for(const s of stars){const sp=(s.d+1)*0.0000036;    /* ~60s+ traverse */
+   const x=((s.x+t*sp)%1.2)*W,y=s.y*H;
+   const tw=.7+.3*Math.sin(t*.001+s.ph);
+   cx.globalAlpha=s.a*tw;
+   cx.fillStyle=s.warm?"#f0c070":"#dfe8f0";
+   cx.beginPath();cx.arc(x,y,s.r,0,7);cx.fill();}
+  cx.globalAlpha=1;requestAnimationFrame(frame);}
+ requestAnimationFrame(frame);}
+
+/* ================= tabs ================= */
+const TABS=[["now","NOW"],["talk","TALK"],["autonomy","AUTONOMY"],["ram","SWARM"],["journal","JOURNAL"],["skills","SKILLS"],["models","MODELS"],
+ ["world","THE PROBE"],["game","THE ASCENT","/game"],["builder","BUILDER","/builder"],["mind","MIND","/mind"],["city","CITY","/city"],["atlas","ATLAS","/plan"],["tree","TREE","/tree"]];
+const idx=document.getElementById("index"),panes=document.getElementById("panes");
+TABS.forEach(([id,label,src],i)=>{
+ const b=document.createElement("button");b.className="tab"+(i?"":" on");b.dataset.id=id;
+ b.innerHTML=`<span class="no">${String(i+1).padStart(2,"0")}</span>${label}`;
+ b.onclick=()=>activate(id);idx.appendChild(b);
+ const p=document.createElement("div");p.className="pane"+(src?" frame":"")+(i?"":" on");p.id="pane-"+id;
+ if(src)p.dataset.src=src;panes.appendChild(p);});
+const qtab=new URLSearchParams(location.search).get("tab");
+if(qtab&&TABS.some(t=>t[0]===qtab))setTimeout(()=>activate(qtab),60);
+function activate(id){
+ if(id==="world"){window.open("/world","leyber_world");return;}  // THE PROBE: own window (WebGL context budget + multiwindow)
+ document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.id===id));
+ document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id==="pane-"+id));
+ const p=document.getElementById("pane-"+id);
+ if(p.dataset.src&&!p.querySelector("iframe")){const f=document.createElement("iframe");f.src=p.dataset.src;p.appendChild(f);}}
+
+/* ================= pane skeletons ================= */
+document.getElementById("pane-now").innerHTML=`
+ <div class="now-grid">
+  <div class="pl"><div class="strip"><span class="lb">signal</span><span class="id">SYS//001 · real events only</span></div>
+   <canvas id="wave"></canvas>
+   <div id="cmdlog"></div>
+   <div style="margin-top:4px"><span class="id">leyber@grid:~$</span> <span id="cur"></span></div></div>
+  <div>
+   <div class="pl" style="margin-bottom:22px"><div class="strip"><span class="lb">meters</span><span class="id">SYS//002</span></div>
+    <div id="gset">
+     <div class="gg"><div class="ring"><svg width="110" height="110" viewBox="0 0 110 110">
+       <circle cx="55" cy="55" r="44" fill="none" stroke="rgba(120,155,175,.28)" stroke-width="1" stroke-dasharray="1 4.4"/>
+       <circle id="g1" cx="55" cy="55" r="44" fill="none" stroke="#ffb000" stroke-width="2"
+        stroke-dasharray="0 277" transform="rotate(-90 55 55)" style="filter:drop-shadow(0 0 6px rgba(255,176,0,.4))"/></svg>
+      <div class="gv" id="g1v">—</div></div><span class="lb">grid load · nvidia rpm</span></div>
+     <div class="gg"><div class="ring"><svg width="110" height="110" viewBox="0 0 110 110">
+       <circle cx="55" cy="55" r="44" fill="none" stroke="rgba(120,155,175,.28)" stroke-width="1" stroke-dasharray="1 4.4"/>
+       <circle id="g2" cx="55" cy="55" r="44" fill="none" stroke="#d4a24c" stroke-width="2"
+        transform="rotate(-90 55 55)" stroke-dasharray="0 277"/></svg>
+      <div class="gv" id="g2v">—</div></div><span class="lb">the book · corpus mined</span></div>
+    </div>
+    <table id="rods"></table></div>
+   <div class="pl"><div class="strip"><span class="lb">mind — last exchange</span><span class="id">SYS//003</span></div>
+    <div id="mind"></div></div>
+  </div>
+ </div>`;
+document.getElementById("pane-talk").innerHTML=`
+ <div id="talkwrap">
+  <div id="tfeed"></div>
+  <div>
+   <div id="composer">
+    <input id="tin" placeholder="speak to leyber — enter to send · /brief /consolidate /status" autocomplete="off">
+    <button class="tbtn" id="tmic">mic</button>
+    <button class="tbtn send" id="tsend">send</button>
+   </div>
+   <div id="topts">
+    <label><input type="checkbox" id="t-voice" checked>voice replies — natural, server-side</label>
+    <label><input type="checkbox" id="t-local">local-only · sensitive — nothing leaves this machine</label>
+    <span id="tstate"></span>
+   </div>
+  </div>
+ </div>`;
+document.getElementById("pane-autonomy").innerHTML=`
+ <div class="pl" style="margin-bottom:22px"><div class="strip"><span class="lb">the live battery — the system tests its OWN autonomy</span>
+  <span class="id">SYS//007 · computed from the entity's real logs · cited literature</span></div>
+  <div id="au-head" style="margin-bottom:14px"></div><div id="au-tests"></div></div>
+ <div class="pl"><div class="strip"><span class="lb">the bifurcation path — every choice, roads taken &amp; not taken</span>
+  <span class="id">SYS//008 · pose → attempt → gate → persist · self-built from decisions.jsonl</span></div>
+  <div id="au-timeline"></div>
+  <div class="note" style="margin-top:10px">Each <b>POSE</b> is a task the entity self-originated in a no-trigger window
+  (Barandiaran interactional asymmetry); the dim branches are candidates it did NOT pick; a deliverable must clear the
+  HADES <b>gate</b> to <b>persist</b> — a birth. Autonomy lives in the structure, not the models.</div></div>`;
+document.getElementById("pane-ram").innerHTML=`
+ <div class="pl" style="margin-bottom:22px"><div class="strip"><span class="lb">live chains — every exchange, accounted + surveilled</span>
+  <span class="id">SYS//006 · goal → links → rods → tokens → verdict · watcher on every output</span></div>
+  <div id="chains"></div></div>
+ <div class="pl"><div class="strip"><span class="lb">ramification — how models coordinate</span>
+  <span class="id">SYS//004 · node = one model on one subtask · from the real trace</span></div>
+  <div id="ram"><svg id="ramsvg" preserveAspectRatio="xMidYMid meet"></svg><div id="ramempty" class="ram-empty"></div></div>
+  <div class="note">models talk through <b>relay capsules</b> (goal + crystallized tools + state — a successor continues a
+  predecessor) and through <b>council</b> (diverse lineages answer · a synthesizer binds · HADES verdicts). fire the brief
+  and this constellation regrows.</div></div>`;
+document.getElementById("pane-journal").innerHTML=`
+ <div class="now-grid">
+  <div><div class="pl" style="margin-bottom:22px"><div class="strip"><span class="lb">life ticks</span><span class="id">heartbeat</span></div><div id="j-ticks"></div></div>
+   <div class="pl"><div class="strip"><span class="lb">task trace</span><span class="id">tracelog</span></div><div id="j-trace"></div></div></div>
+  <div><div class="pl" style="margin-bottom:22px"><div class="strip"><span class="lb">trust — every stamped run</span><span class="id">ledger</span></div><div id="j-trust"></div></div>
+   <div class="pl"><div class="strip"><span class="lb">conversations</span><span class="id">talk_state</span></div><div id="j-talk"></div></div></div>
+ </div>`;
+document.getElementById("pane-skills").innerHTML=`
+ <div class="now-grid">
+  <div><div class="pl" style="margin-bottom:22px"><div class="strip"><span class="lb">crystallized paths — learned skills</span><span class="id">paths.json</span></div><table id="s-paths"></table></div>
+   <div class="pl"><div class="strip"><span class="lb">trust capabilities</span><span class="id">earned autonomy</span></div><table id="s-trust"></table></div></div>
+  <div class="pl"><div class="strip"><span class="lb">organs</span><span class="id">the registry</span></div><table id="s-organs"></table></div>
+ </div>`;
+document.getElementById("pane-models").innerHTML=`
+ <div class="now-grid">
+  <div><div class="pl" style="margin-bottom:22px"><div class="strip"><span class="lb">plants — live meters</span><span class="id">grid_state</span></div><table id="m-plants"></table></div>
+   <div class="pl"><div class="strip"><span class="lb">candidates + exclusions</span><span class="id">probed live</span></div><div id="m-cand"></div></div></div>
+  <div class="pl"><div class="strip"><span class="lb">lived fitness — the ladder</span><span class="id">the catalog lies · this does not</span></div><table id="m-fit"></table></div>
+ </div>`;
+
+/* ================= controls ================= */
+async function doCmd(cmd,btn){const out=document.getElementById("doout");
+ if(btn)btn.style.opacity=.4;out.textContent=cmd+"…";
+ try{const r=await(await fetch("/do",{method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({cmd})})).json();out.textContent=(r.ok?"":"[fail] ")+(r.out||"");}
+ catch(e){out.textContent="failed: "+e;}
+ if(btn)btn.style.opacity=1;}
+document.getElementById("ret").onclick=()=>doCmd("play");
+document.querySelectorAll(".ctl").forEach(b=>b.onclick=()=>doCmd(b.dataset.cmd,b));
+
+/* ================= count-up numerals (event clock) ================= */
+const shown={};
+function countUp(el,target){const t0=performance.now(),from=shown[el.id]??0;const D=900;
+ shown[el.id]=target;
+ function step(t){const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);
+  el.firstChild.nodeValue=Math.round(from+(target-from)*e);
+  if(p<1)requestAnimationFrame(step);}
+ if(typeof target==="number"&&target===+target)requestAnimationFrame(step);else el.firstChild.nodeValue=target;}
+
+/* ================= state ================= */
+async function pollState(){try{const s=await(await fetch("/state")).json();
+ const a=document.getElementById("alive");a.className="";
+ document.getElementById("alivetxt").innerHTML=
+  `alive since <b>${s.life.alive_since||"—"}</b> · wakes ${s.life.wakes} · brief ${s.life.last_brief||"not today"} · read ${s.t}`;
+ document.getElementById("tb-date").textContent=s.t;
+ const tr=Object.values(s.trust||{});
+ const V=[[s.life.ticks,"life ticks",`${s.life.wakes} wakes`,true,"v-ticks"],
+  [s.memory.memories,"memories",`${s.memory.sessions} / 1587 sessions`,false,"v-mem"],
+  [(s.energy.plants||[]).length,"plants live",`${s.energy.census.frontier} frontier rods`,false,"v-pl"],
+  [`${tr.filter(t=>t.level==="TRUSTED"||t.level==="WATCHED").length}/${tr.length}`,"earning trust",`${tr.filter(t=>t.level==="FORBIDDEN").length} forbidden — correct`,false,"v-tr"],
+  [s.life.last_brief?"YES":"NOT YET","brief today","",!!s.life.last_brief,"v-br"]];
+ const vd=document.getElementById("vitals");
+ if(!vd.children.length){vd.innerHTML=V.map(v=>
+   `<div class="vit ${v[3]?'hot':''}"><b id="${v[4]}">0</b><span class="lb">${v[1]}</span><span class="s2">${v[2]}</span></div>`).join("");
+  setTimeout(()=>vd.classList.add("on"),650);}
+ V.forEach(v=>{const el=document.getElementById(v[4]);
+  el.parentElement.className="vit"+(v[3]?" hot":"");
+  el.parentElement.querySelector(".s2").textContent=v[2];
+  countUp(el,v[0]);});
+ document.getElementById("mind").innerHTML=(s.mind.turns||[]).slice(-4).map(t=>
+  `<div class="qrow ${t.who==='luis'?'you':''}"><i>${t.who==="luis"?"LUIS":s.identity.name}</i>${(t.text||"").slice(0,160)}</div>`).join("")||"<div class='qrow'><i>—</i>silence</div>";
+ seedTalk(s.mind.turns,(s.identity.name||"leyber").toLowerCase());
+ document.getElementById("rods").innerHTML="<tr><th>rod</th><th>calls</th><th>ok</th><th>ema</th></tr>"+
+  (s.energy.rods||[]).slice(0,5).map(r=>`<tr><td class="k">${(r.rod||"").split("/").pop().slice(0,24)}</td><td class="d">${r.calls}</td><td class="${r.calls&&r.ok===r.calls?'a':'d'}">${r.calls?Math.round(100*r.ok/r.calls):0}%</td><td class="d">${r.ema_latency??"-"}s</td></tr>`).join("");
+ document.getElementById("m-plants").innerHTML="<tr><th>plant</th><th>zone</th><th>today</th><th>rpm</th><th>cooling</th></tr>"+
+  (s.energy.plants||[]).map(p=>`<tr><td class="a">${p.plant}</td><td class="d">${p.privacy}</td><td>${p.rpd}</td><td class="d">${p.rpm_now}${p.rpm_cap?"/"+p.rpm_cap:""}</td><td class="r">${(p.throttled||[]).join(", ")}</td></tr>`).join("");
+ /* meters: real load + real corpus */
+ const nv=(s.energy.plants||[]).find(p=>p.plant==="nvidia");
+ const load=nv&&nv.rpm_cap?Math.min(1,nv.rpm_now/nv.rpm_cap):0;
+ const C=2*Math.PI*44;
+ document.getElementById("g1").setAttribute("stroke-dasharray",`${load*C} ${C}`);
+ document.getElementById("g1v").innerHTML=`${nv?nv.rpm_now:0}<i>/${nv&&nv.rpm_cap?nv.rpm_cap:40}</i>`;
+ const corp=(s.memory.sessions||0)/1587;
+ document.getElementById("g2").setAttribute("stroke-dasharray",`${corp*C} ${C}`);
+ document.getElementById("g2v").innerHTML=`${s.memory.sessions||0}<i> ses</i>`;
+ /* tick progress ring on the reticle: ticks today toward X1's 20 */
+ document.getElementById("tickarc").setAttribute("stroke-dasharray",`${Math.min(1,(s.life.ticks||0)/20)*226} 226`);
+}catch(e){document.getElementById("alive").className="off";
+ document.getElementById("alivetxt").textContent="entity unreachable — python controlroom.py";}
+ setTimeout(pollState,2500);}
+
+/* ================= waveform: real event arrivals, scrolling ================= */
+const wq=[];      /* pending impulse magnitudes */
+{const cv=document.getElementById("wave");let ctx2,W2,H2,buf=[];
+ function init(){if(!cv.clientWidth){setTimeout(init,200);return;}
+  W2=cv.width=cv.clientWidth*devicePixelRatio;H2=cv.height=84*devicePixelRatio;
+  ctx2=cv.getContext("2d");buf=new Array(Math.floor(W2/(2*devicePixelRatio))).fill(0);
+  let last=performance.now();
+  function fr(t){const dt=t-last;
+   if(dt>66){last=t;                                   /* ~15 steps/s -> ~30px/s scroll */
+    buf.shift();buf.push(wq.length?Math.min(1,wq.splice(0).reduce((a,b)=>a+b,0)):0);}
+   ctx2.clearRect(0,0,W2,H2);
+   const mid=H2*0.72,px=2*devicePixelRatio;
+   ctx2.beginPath();ctx2.moveTo(0,mid);
+   buf.forEach((v,i)=>{const x=i*px,y=mid-v*(H2*0.58);ctx2.lineTo(x,y);ctx2.lineTo(x+px*0.6,mid);});
+   ctx2.strokeStyle="#ffb000";ctx2.lineWidth=2*devicePixelRatio*0.55;
+   ctx2.shadowColor="rgba(255,176,0,.4)";ctx2.shadowBlur=8;ctx2.stroke();ctx2.shadowBlur=0;
+   ctx2.strokeStyle="rgba(120,155,175,.28)";ctx2.lineWidth=1;
+   ctx2.beginPath();ctx2.moveTo(0,mid+1);ctx2.lineTo(W2,mid+1);ctx2.stroke();
+   requestAnimationFrame(fr);}
+  requestAnimationFrame(fr);}
+ init();}
+
+/* ================= command log: real lines, 1 per beat, block cursor ================= */
+const logq=[];const logEl=()=>document.getElementById("cmdlog");
+function pushLog(text,cls){logq.push([text,cls||""]);}
+setInterval(()=>{const el=logEl();if(!el||!logq.length)return;
+ const [t,c]=logq.shift();const d=document.createElement("div");
+ d.className="ln "+c;d.textContent=t;el.appendChild(d);
+ while(el.children.length>10)el.firstChild.remove();},1400);
+
+/* ================= events ================= */
+let lastT=0;const ACT=/replies|speak|tick|verdict|record|distill|draw/;
+async function pollEvents(){try{const ev=await(await fetch("/events?since="+lastT)).json();
+ ev.forEach(e=>{lastT=Math.max(lastT,e.t);
+  wq.push(e.ok===false?1:ACT.test(e.action||"")?0.75:0.35);
+  pushLog(`${new Date(e.t*1000).toTimeString().slice(0,8)}  ${e.organ}.${e.action}  ${(e.detail||"").slice(0,72)}`,
+   e.ok===false?"bad":ACT.test(e.action||"")?"act":"");});
+}catch(_){}} setInterval(pollEvents,1200);pollEvents();
+
+/* ================= journal / skills / roster (unchanged logic, new skin) ============ */
+async function pollJournal(){try{const j=await(await fetch("/journal")).json();
+ document.getElementById("j-ticks").innerHTML=(j.ticks||[]).slice().reverse().map(t=>`<div class="qrow"><i>·</i>${t}</div>`).join("")||"<div class='qrow'><i>·</i>no ticks yet — press play</div>";
+ document.getElementById("j-trust").innerHTML=(j.trust||[]).map(t=>`<div class="qrow"><i>·</i>${t}</div>`).join("");
+ document.getElementById("j-trace").innerHTML=(j.trace||[]).slice(-8).map(t=>`<div class="qrow"><i>·</i>${(""+t).slice(0,150)}</div>`).join("");
+ document.getElementById("j-talk").innerHTML=(j.talk||[]).slice().reverse().map(t=>
+  `<div class="qrow ${t.who==='luis'?'you':''}"><i>${t.t||""} ${t.who}</i>${t.text}</div>`).join("");
+ drawRam(j.trace||[]);
+}catch(_){}} setInterval(pollJournal,6000);pollJournal();
+async function pollSkills(){try{const s=await(await fetch("/skills")).json();
+ const seen=JSON.parse(localStorage.getItem("leyber_seen_paths")||"[]");const keys=Object.keys(s.paths||{});
+ document.getElementById("s-paths").innerHTML="<tr><th>task type</th><th>crystallized rod</th><th>wins</th><th></th></tr>"+
+  (keys.map(k=>{const p=s.paths[k];const isNew=!seen.includes(k);
+   return `<tr><td class="k">${k}</td><td class="d">${p.plant}/${(p.model||"").split("/").pop()}</td><td class="d">${p.wins}</td><td>${isNew?'<span class="pill new">new</span>':""}</td></tr>`;}).join("")||"<tr><td colspan=4 class='d'>none yet — the pathfinder crystallizes on use</td></tr>");
+ localStorage.setItem("leyber_seen_paths",JSON.stringify(keys));
+ document.getElementById("s-trust").innerHTML="<tr><th>capability</th><th>level</th><th>streak</th><th>runs / fails</th></tr>"+
+  Object.entries(s.trust||{}).map(([c,v])=>`<tr><td class="k">${c}</td><td class="${v.level==='FORBIDDEN'?'r':(v.level==='TRUSTED'||v.level==='WATCHED'?'a':'d')}">${v.level}</td><td class="d">${v.streak}</td><td class="d">${v.runs} / ${v.fails}</td></tr>`).join("");
+ document.getElementById("s-organs").innerHTML="<tr><th>organ</th><th>file</th><th>status</th></tr>"+
+  (s.organs||[]).map(o=>`<tr><td class="k">${o.name}</td><td class="d">${o.file}</td><td><span class="pill ${o.status==='live'?'live':''}">${o.status}</span></td></tr>`).join("");
+}catch(_){}} setInterval(pollSkills,10000);pollSkills();
+async function pollRoster(){try{const r=await(await fetch("/roster")).json();
+ document.getElementById("m-fit").innerHTML="<tr><th>rod</th><th>fit</th><th>lat</th><th>tier</th></tr>"+
+  (r.fitness_top||[]).map(f=>`<tr><td class="k">${(f.rod||"").split("/").pop().slice(0,30)}</td><td class="${f.fit&&f.fit[0]===f.fit[2]?'a':'d'}">${f.fit}</td><td class="d">${f.lat??"-"}s</td><td class="d">${f.tier}</td></tr>`).join("")+
+  `<tr><td colspan="4" class="d" style="border:none;padding-top:10px;color:var(--st28)">swept ${r.fitness_generated||"—"} · lived use reorders continuously</td></tr>`;
+ const c=r.candidates||{};let h="";
+ if(c.results){h+=Object.entries(c.results).map(([id,v])=>
+  `<div class="qrow"><i>·</i><span class="k">${id}</span> — ${v.exists?`${v.score||"?"} · ${v.latency_avg??"?"}s · ${(v.note||"").slice(0,66)}`:"NOT FOUND in catalog"}</div>`).join("");}
+ h+=(r.excluded||[]).map(x=>`<div class="qrow"><i style="color:var(--bad)">×</i><span style="color:var(--bad)">${x}</span></div>`).join("");
+ document.getElementById("m-cand").innerHTML=h;
+}catch(_){}} setInterval(pollRoster,12000);pollRoster();
+
+/* ================= the live autonomy battery ================= */
+async function pollAutonomy(){try{const s=await(await fetch("/autonomy")).json();
+ const hd=document.getElementById("au-head");if(!hd)return;
+ if(s.error){hd.innerHTML=`<span class="qrow">battery: ${s.error}</span>`;return;}
+ hd.innerHTML=`<div style="display:flex;align-items:baseline;gap:22px">`+
+  `<b style="font-weight:100;font-size:30px;color:${s.class==='NOT-YET-AUTONOMOUS'?'var(--bad)':'var(--hot)'};letter-spacing:.05em">${s.class}</b>`+
+  `<span class="lb">${s.passing}/${s.total} favourable · ${s.ticks} ticks lived</span></div>`+
+  `<div class="qrow" style="color:var(--st45)">${s.headline}</div>`;
+ const V=v=>{const w=(v||"").split(" ")[0];return ["PASS","OFF-ZERO","HEALTHY","ORGANISMAL-SIDE","GROWING"].includes(w)?"a":(["PARTIAL","WATCH","UNTESTED"].includes(w)?"d":"r");};
+ document.getElementById("au-tests").innerHTML="<table><tr><th>verdict</th><th>test</th><th>evidence</th><th>theory</th></tr>"+
+  (s.tests||[]).map(t=>`<tr><td class="${V(t.verdict)}" style="white-space:nowrap">${t.verdict}</td><td class="k">${t.name}</td><td class="d">${t.evidence}</td><td class="d" style="font-size:9px">${t.cite}</td></tr>`).join("")+"</table>";
+}catch(_){}} setInterval(pollAutonomy,5000);pollAutonomy();
+async function pollDecisions(){try{const d=((await(await fetch("/decisions")).json()).decisions)||[];
+ const el=document.getElementById("au-timeline");if(!el)return;
+ const cycles=[];let cur=null;
+ d.forEach(x=>{if(x.node==="pose"){cur={pose:x,steps:[]};cycles.push(cur);}else if(cur){cur.steps.push(x);}});
+ el.innerHTML=cycles.slice(-8).reverse().map(c=>{
+   const p=c.pose,chosen=(p.chosen||""),nov=chosen==="NO-NOVEL-CANDIDATE";
+   const head=`<span class="id">${new Date(p.t*1000).toTimeString().slice(0,8)}</span> `+
+     (nov?`<span class="d">POSE · no novel candidate (novelty filter held)</span>`
+        :`<span style="color:var(--hot)">&#9670; POSE</span> <span class="k">${chosen.slice(0,74)}</span>`);
+   const alts=(p.alts&&p.alts.length&&!nov)?`<div style="padding-left:22px;color:var(--st28);font-size:10px">not taken: ${p.alts.map(a=>(a||'').slice(0,40)).join("  ·  ")}</div>`:"";
+   const steps=c.steps.map(s=>s.node==="gate"?(s.chosen==="accept"?'<span style="color:var(--hot)">gate accept</span>':'<span style="color:var(--bad)">gate '+s.chosen+'</span>')
+       :s.node==="attempt"?`<span class="d">attempt &middot; ${(s.chosen||'').split('/').pop().slice(0,20)}</span>`
+       :s.node==="persist"?'<span style="color:var(--hot)">&#9733; persisted (birth)</span>':`<span class="d">${s.node}</span>`
+     ).join(' <span class="d">&rarr;</span> ');
+   return `<div style="border-bottom:1px solid var(--st08);padding:8px 0;font-size:11px">${head}${alts}`+
+     `<div style="padding-left:22px;margin-top:4px">${steps||'<span class="d">&hellip;</span>'}</div></div>`;
+ }).join("")||"<div class='qrow'><i>&middot;</i>no reflections yet — the loop self-originates on idle ticks</div>";
+}catch(_){}} setInterval(pollDecisions,5000);pollDecisions();
+
+/* ================= live chains ================= */
+async function pollChains(){try{const r=await(await fetch("/chains")).json();
+ const el=document.getElementById("chains");if(!el)return;
+ const cs=(r.chains||[]).slice().reverse();
+ el.innerHTML=cs.length?cs.map(c=>{
+  const d=(c.links||[]).find(l=>l.step==="draw")||{};
+  const rec=(c.links||[]).find(l=>l.step==="recall")||{};
+  const w=c.watch;
+  const wb=w?(w.verdict==="accept"
+    ?`<span style="color:var(--warm)">◆ accept</span> <span class="id">${(w.why||"").slice(9,80)}</span>`
+    :w.verdict==="redo"?`<span style="color:var(--bad)">◆ redo</span> <span class="id">${(w.why||"").slice(7,80)}</span>`
+    :`<span class="id">◆ ${w.verdict}</span>`)
+   :`<span class="id" style="opacity:.6">◇ watching…</span>`;
+  return `<div class="qrow" style="display:flex;gap:14px;flex-wrap:wrap;align-items:baseline">
+   <span class="id">${new Date(c.t*1000).toTimeString().slice(0,8)}</span>
+   <span class="k" style="flex:1;min-width:220px">${(c.goal||"").slice(0,64)}</span>
+   <span class="d">${rec.n_mem??0} mem</span>
+   <span class="${c.ok?'a':'r'}" style="font-size:11px">${(d.rod||"—").split("/").pop().slice(0,24)}</span>
+   <span class="d">${d.latency!=null?d.latency.toFixed?d.latency.toFixed(1):d.latency:"—"}s</span>
+   <span class="d">${d.tokens!=null?d.tokens+" tok":""}</span>
+   ${wb}</div>`;}).join("")
+  :`<div class="qrow"><i>·</i><span class="d">no chains yet — talk to leyber and every exchange lands here, watched</span></div>`;
+}catch(_){}} setInterval(pollChains,4000);pollChains();
+
+/* ================= ramification ================= */
+function drawRam(traceLines){
+ const svg=document.getElementById("ramsvg"),empty=document.getElementById("ramempty");
+ if(!svg)return;const nodes=[];
+ traceLines.forEach((ln,i)=>{try{const o=JSON.parse(ln);
+  nodes.push({id:o.id??o.node??("n"+i),parent:o.parent??null,
+   model:((o.model||o.rod||"")+"").split("/").pop().slice(0,22),
+   task:((o.task||o.goal||o.step||"")+"").slice(0,26),
+   depth:o.depth??(o.parent?1:0),
+   ok:!/fail|err|redo|halt/i.test((o.outcome||o.status||"ok")+"")});}catch(_){}});
+ if(!nodes.length){svg.style.display="none";empty.textContent="no ramification recorded yet — fire the brief and this constellation grows from the real trace";return;}
+ svg.style.display="block";empty.textContent="";
+ const byDepth={};nodes.forEach(n=>{(byDepth[n.depth]=byDepth[n.depth]||[]).push(n);});
+ const depths=Object.keys(byDepth).map(Number).sort((a,b)=>a-b);
+ const W=1100,H=240;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+ const colW=W/(depths.length+0.4);
+ depths.forEach((d,di)=>{byDepth[d].forEach((n,ri)=>{
+  n.x=40+di*colW;n.y=34+(ri+0.5)*((H-56)/byDepth[d].length);});});
+ const byId={};nodes.forEach(n=>byId[n.id]=n);let out="";
+ nodes.forEach(n=>{const p=byId[n.parent];if(!p)return;
+  out+=`<path d="M${p.x},${p.y} C${(p.x+n.x)/2},${p.y} ${(p.x+n.x)/2},${n.y} ${n.x-9},${n.y}"
+   fill="none" stroke="rgba(212,162,76,.3)" stroke-width="1"/>`;});
+ nodes.forEach(n=>{const c=n.ok?"#d4a24c":"#d06a55";
+  out+=`<circle cx="${n.x}" cy="${n.y}" r="6.5" fill="none" stroke="${c}" stroke-opacity=".7"/>
+   <circle cx="${n.x}" cy="${n.y}" r="2.2" fill="${c}"/>
+   <text x="${n.x+13}" y="${n.y-2}" fill="rgba(120,155,175,.7)" font-size="9.5" font-family="IBM Plex Mono">${n.model||n.task||n.id}</text>
+   <text x="${n.x+13}" y="${n.y+10}" fill="rgba(120,155,175,.4)" font-size="8">${n.model?n.task:""}</text>`;});
+ depths.forEach((d,di)=>{out+=`<text x="${40+di*colW}" y="14" fill="rgba(120,155,175,.28)" font-size="8" letter-spacing="3" text-anchor="middle">DEPTH ${d}</text>`;});
+ svg.innerHTML=out;}
+
+/* ================= native TALK ================= */
+const tfeed=document.getElementById("tfeed"),tin=document.getElementById("tin");
+let talkSeeded=false;
+function addMsg(who,text,receipt,you){const d=document.createElement("div");
+ d.className="msg "+(you?"you":"ent");
+ d.innerHTML=`<div class="who">${who}</div><div class="tx"></div>`+(receipt?`<div class="rc">${receipt}</div>`:"");
+ d.querySelector(".tx").textContent=text;
+ tfeed.appendChild(d);tfeed.scrollTop=tfeed.scrollHeight;}
+function seedTalk(turns,name){if(talkSeeded||!turns||!turns.length)return;talkSeeded=true;
+ turns.slice(-8).forEach(t=>addMsg(t.who==="luis"?"luis":name,t.text||"",null,t.who==="luis"));}
+async function talkSend(){const text=tin.value.trim();if(!text)return;
+ tin.value="";addMsg("luis",text,null,true);
+ const st=document.getElementById("tstate");st.textContent="thinking…";
+ try{const local=document.getElementById("t-local").checked;
+  const r=await(await fetch("/talk",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({text,zone:local?"local":"private",speak:document.getElementById("t-voice").checked})})).json();
+  const rc=r.rod?`receipt — <b>${r.rod}</b> · ${(typeof r.latency==="number"?r.latency.toFixed(2):r.latency)}s · ${r.zone} · ${(r.memories||[]).length} memories recalled`:"no rod answered";
+  addMsg("leyber",r.reply||"(silence)",rc,false);st.textContent="";
+ }catch(e){addMsg("system","talk failed: "+e,null,false);st.textContent="";}}
+document.getElementById("tsend").onclick=talkSend;
+tin.addEventListener("keydown",e=>{if(e.key==="Enter")talkSend();});
+/* mic — browser STT where available */
+{const M=document.getElementById("tmic");
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){M.style.opacity=.35;M.title="speech recognition unavailable in this browser";}
+ else{let rec=null;
+  M.onclick=()=>{if(rec){rec.stop();return;}
+   rec=new SR();rec.lang="en-US";rec.interimResults=false;
+   M.classList.add("rec");
+   rec.onresult=ev=>{tin.value=ev.results[0][0].transcript;talkSend();};
+   rec.onend=()=>{M.classList.remove("rec");rec=null;};
+   rec.onerror=()=>{M.classList.remove("rec");rec=null;};
+   rec.start();};}}
+
+/* ================= reveal: grid -> head -> vitals -> index -> panes ================= */
+setTimeout(()=>document.getElementById("head").classList.add("on"),250);
+setTimeout(()=>document.getElementById("index").classList.add("on"),1050);
+setTimeout(()=>document.getElementById("panes").classList.add("on"),1300);
+pollState();
+</script></body></html>

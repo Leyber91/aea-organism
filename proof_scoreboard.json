@@ -1,0 +1,40 @@
+{
+  "updated": "2026-06-28",
+  "legend": "PROVEN = passed a real grid test with evidence | PARTIAL = partially demonstrated | PLANNED",
+  "evidence": {
+    "grid": "test_capacity.py + test_battery.py (59 nodes, ~2234 req/min, 36x 4/4)",
+    "orch": "orchestrator.py run (plan->fan->synthesize)",
+    "swarm": "swarm.py run (recursive 8-agent tree, 3 levels, dynamic spawn, 12.8s, 0 silent-wrong-work)",
+    "memory": "test_memory.py (blind node hallucinated 10000rpm/12000nodes; grounded gave exact 2234rpm/59nodes)",
+    "relay": "relay.py (5 distinct models built a toolkit via a genetic-memory capsule; reuse transmitted 2/2)",
+    "brief": "brief.py - FIRST REAL connected task: real GitHub+HN data, regime-routed, privacy-boundary-proven, HADES accept/redo, fully traced (brief_output.md + brief_trace.jsonl)",
+    "trace": "tracelog.py - goal-stack lineage per node + append-only JSONL event log + live registry + DAG/merge"
+  },
+  "elements": {
+    "axis.P_path":             {"status": "PROVEN(L4)",  "by": "swarm", "note": "launch-plan agent dynamically decided to spawn 4 sub-agents mid-tree = entity-defines-path"},
+    "axis.M_multiplicity":     {"status": "PROVEN(L3-4)", "by": "swarm", "note": "8 role-differentiated agents coordinated + synthesized"},
+    "axis.A_abstraction":      {"status": "PROVEN(L3)",  "by": "agent_tools", "note": "L2 memory grounding + L3 REAL tools: free NVIDIA Llama-3.3-70b chose json_get, fetched the live GitHub API, reported 174993 stars (verified); calc exact (agent_tools.py)"},
+    "axis.R_prompting":        {"status": "PROVEN(L3)",  "by": "memory", "note": "context-dependent: recalled facts injected into the prompt. self-refine scaffold (L5) = Ph4"},
+    "axis.S_async":            {"status": "PROVEN(L5)",  "by": "relay", "note": "relay.py: 5 DISTINCT models built a toolkit via a genetic-memory capsule = predecessor->successor over the backwards channel; reuse handoffs transmitted 2/2. unattended scheduling (Ph5) still"},
+    "seed.1_substrate":        {"status": "PROVEN",        "by": "grid"},
+    "seed.2_sharp_objective":  {"status": "PROVEN",        "by": "grid", "note": "battery scorers + swarm per-agent eval"},
+    "seed.3_crystallize":      {"status": "PROVEN",      "by": "relay", "note": "each function crystallized as a reusable tool, called by name by later fresh models (relay.py); forge proved the offline image version"},
+    "seed.4_flexibilize":      {"status": "PROVEN",      "by": "resilient", "note": "test_resilient.py: 15 concurrent draws vs the 5-RPM Cerebras bucket -> 15/15 ok, 10 rerouted to free buckets (NVIDIA/Groq), 0 fail = the fallback valve"},
+    "seed.5_self_version":     {"status": "PROVEN",      "by": "relay", "note": "the toolkit GREW across the chain - each step a new versioned capability reused downstream (relay.py)"},
+    "seed.6_self_model":       {"status": "PROVEN",      "by": "hades", "note": "HADES (hades.py) - a Law-3 WATCHER that does no work, judges the swarm's output vs the goal via a heterogeneous Groq-strict-json verdict + accountability log = the entity observes and accounts for its own work"},
+    "seed.7_ceiling_detect":   {"status": "PROVEN",      "by": "pathfinder", "note": "pathfinder.py quality gate detects a failing answer + escalates the path reflex->bulk->deep + re-crystallizes; rate-ceiling half = the meter"},
+    "seed.8_transcendence_toolset": {"status": "PROVEN", "by": "agent_tools", "note": "agent invokes a REAL external tool repertoire (web_fetch/json_get/calc) via OpenAI tool-calling on the free grid + reuses crystallized internal tools (relay)"},
+    "seed.9_boundary":         {"status": "PROVEN",      "by": "brief", "note": "zone=sensitive provably routed the private 'today' section to LOCAL ollama ONLY (asserted live in brief.py); public work went to the hosted no-train grid - the privacy boundary enforced BY USE"},
+    "seed.10_backwards_channel":{"status": "PROVEN",      "by": "memory", "note": "local mxbai vector store; remember/recall grounds the swarm (memory.py, test_memory.py)"},
+    "verb.compose":            {"status": "PROVEN",        "by": "swarm"},
+    "verb.propagate":          {"status": "PROVEN",        "by": "swarm", "note": "trace tree + silent-wrong-work flag = the honesty node"},
+    "verb.observe":            {"status": "PROVEN",        "by": "swarm", "note": "rendered trace + meter telemetry + city render"},
+    "op.design":               {"status": "PARTIAL",       "note": "triage tags action; axis-level tagging Ph1+"},
+    "op.time":                 {"status": "PARTIAL",       "by": "swarm", "note": "wall measured; per-tick timestamps Ph1"},
+    "op.ship":                 {"status": "PROVEN",      "by": "brief", "note": "brief.py produced a REAL external artifact (brief_output.md) from REAL live data (his GitHub repos + Hacker News) on the free grid; HADES-accepted"},
+    "op.learn":                {"status": "PROVEN",      "by": "pathfinder", "note": "crystallizes (task-type -> exact winning model) into paths.json; next same-type task is instant = a run's result improves the next"},
+    "principle.emergence_over_imposition": {"status": "PROVEN", "by": "swarm", "note": "entity defined its own path via the spawn decision"},
+    "principle.restorable_coherence":      {"status": "PROVEN", "by": "resilient", "note": "a 429/at-limit on one bucket never fails the request or blocks others - it reroutes and the system completes coherently (test_resilient.py)"},
+    "principle.operator_observable_time":  {"status": "PROVEN", "by": "trace", "note": "tracelog.py: goal-stack per node + append-only JSONL event log + live registry + DAG tree = the full operator-observable timeline"}
+  }
+}

@@ -1,0 +1,121 @@
+<!doctype html>
+<!-- panels_sample.html — THE ITEM ATLAS harness for the IP-01..IP-08 instrument panels.
+     Governance: design/concepts/C4_instrument_panels_v2.png (the sheet this replicates) ·
+     design/bundle_02/02_VISUAL_LAW.md (two inks, five structure stops, amber census) ·
+     E1_CODE_ARCHITECTURE.md §2.2 (PANELS.init(GAME) / dispose()).
+     HONESTY: row A prints values TRANSCRIBED FROM THE REFERENCE SHEET — catalogue fiction,
+     labelled as such on the page, never presented as telemetry. Row B is make() with NO data
+     at all: it is the dash state the honesty law mandates, and it is the shipping default. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITEM ATLAS — INSTRUMENT PANELS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/game/css/panels.css">
+<style>
+  /* sample-local layout only — every ink token comes from panels.css */
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#050a10}
+  body{font-family:'IBM Plex Mono',Consolas,monospace;color:rgba(120,155,175,.45);
+    font-size:13px;line-height:1.5;padding:28px 24px 40px}
+  .atlas-hd{font-size:20px;letter-spacing:.28em;color:#d4a24c;text-transform:uppercase}
+  .atlas-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:rgba(120,155,175,.45);margin-top:6px}
+  .band{font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:rgba(120,155,175,.45);margin:30px 0 6px;
+    border-top:1px solid rgba(120,155,175,.14);padding-top:10px}
+  .grid{display:flex;flex-wrap:wrap;gap:24px 20px}
+</style>
+</head>
+<body>
+<div class="atlas-hd">THE PROBE — ITEM ATLAS</div>
+<div class="atlas-sub">CATEGORY: INSTRUMENT PANELS &nbsp;·&nbsp; [ SIX GLYPHS. ONE LANGUAGE. ]</div>
+
+<div class="band">A — SHEET VALUES · transcribed from C4_instrument_panels_v2.png · catalogue fiction, not telemetry</div>
+<div class="grid ip-sheet" id="rowA"></div>
+
+<div class="band">B — NO DATA · make() with no source · the honesty law's dash state, and the shipping default</div>
+<div class="grid" id="rowB"></div>
+
+<div class="band">C — STATE PROOF · built empty, then repainted through el.update() · constructed states,
+  not telemetry · hot amber = actually firing · IP-03 on the zone WORD path (grid.ZONES)</div>
+<div class="grid" id="rowC"></div>
+
+<script src="/game/js/panels.js"></script>
+<script>
+(function () {
+  "use strict";
+  PANELS.init({ state: {}, bus: null });
+
+  /* the sheet's own catalogue values, transcribed — labelled fiction, never live numbers */
+  var SHEET = [
+    { id: "A11-CORE", cycles: "001247", cksm: "7A3F" },
+    { channel: "07", rows: [
+      { n: "001", glyph: "circle" }, { n: "002", glyph: "diamond" },
+      { n: "003", glyph: "circle" }, { n: "004", glyph: "triangle" },
+      { n: "005", glyph: "square" }, { n: "006", glyph: "diamond" },
+      { n: "007", glyph: "circle" }, { n: "008", glyph: "pentagon" }
+    ] },
+    { zone: "03", sector: 0, sectors: 12 },
+    { valid_until: "08.17.43", hash: "0D1E-3C7A" },
+    { code: "CL-17", time: "22:14:07" },
+    { rows: [
+      { n: "01", glyph: "circle", verdict: "PASS" }, { n: "02", glyph: "pentagon", verdict: "PASS" },
+      { n: "03", glyph: "diamond", verdict: "FAIL" }, { n: "04", glyph: "triangle", verdict: "PASS" },
+      { n: "05", glyph: "square", verdict: "PASS" },  { n: "06", glyph: "diamond", verdict: "HOLD" },
+      { n: "07", glyph: "circle", verdict: "PASS" },  { n: "08", glyph: "pentagon", verdict: "PASS" }
+    ] },
+    { channel: "07", db: 4, quality: 78 },
+    { hops: "05", cost: "12", eta: "00:47:18", nodes: [
+      { glyph: "circle", x: .12, y: .08, terminal: true },
+      { glyph: "triangle", x: .10, y: .62 },
+      { glyph: "pentagon", x: .78, y: .55 },
+      { glyph: "circle", x: .42, y: .95, terminal: true }
+    ], path: [[0, 2], [2, 1], [1, 3]] }
+  ];
+
+  /* constructed live states — the hot tier and the zone-word path, exercised through update() */
+  var STATE = [
+    { id: "C-01", cycles: "000004", cksm: "B1D0", firing: true },
+    { channel: "01", rows: [
+      { n: "001", glyph: "circle", live: true }, { n: "002", glyph: "pentagon" },
+      { n: "003", glyph: "circle" }, {}, {}, {}, {}, {}
+    ] },
+    { zone: "PRIVATE", sector: 7, sectors: 12 },
+    { valid_until: "—", hash: null },
+    { code: "CL-02", time: null },
+    { rows: [
+      { n: "01", glyph: "circle", verdict: "PASS" }, { n: "02", glyph: "circle", verdict: "HOLD" },
+      { n: "03", glyph: "pentagon", verdict: "PASS" }, {}, {}, {}, {}, {}
+    ] },
+    { channel: "01", db: -18, quality: 41, live: true },
+    { hops: "02", cost: null, eta: null, nodes: [
+      { glyph: "circle", x: .10, y: .10, terminal: true },
+      { glyph: "pentagon", x: .80, y: .48 },
+      { glyph: "circle", x: .30, y: .92, terminal: true }
+    ], path: [[0, 1], [1, 2]] }
+  ];
+
+  var a = document.getElementById("rowA"), b = document.getElementById("rowB"),
+      cc = document.getElementById("rowC");
+  for (var i = 0; i < PANELS.CATALOG.length; i++) {
+    var made = PANELS.CATALOG[i].make(SHEET[i]);
+    made.setIndex(i + 1);
+    a.appendChild(made);
+
+    var empty = PANELS.CATALOG[i].make();   /* no data — dashes by law */
+    empty.setIndex(i + 1);
+    b.appendChild(empty);
+
+    /* born empty, then repainted: the seam a live surface actually uses */
+    var live = PANELS.CATALOG[i].make();
+    live.setIndex(i + 1);
+    live.update(STATE[i]);
+    cc.appendChild(live);
+  }
+})();
+</script>
+</body>
+</html>

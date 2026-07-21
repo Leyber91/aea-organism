@@ -1,0 +1,50 @@
+{
+ "groq/meta-llama/llama-4-scout-17b-16e-instruct": {
+  "calls": 4,
+  "ok": 4,
+  "fail": 0,
+  "consec_fail": 0,
+  "ema_latency": 0.8,
+  "last": "2026-07-11 12:50"
+ },
+ "nvidia/mistralai/mistral-small-4-119b-2603": {
+  "calls": 101,
+  "ok": 101,
+  "fail": 0,
+  "consec_fail": 0,
+  "ema_latency": 2.7,
+  "last": "2026-07-21 17:01"
+ },
+ "nvidia/mistralai/mistral-large-3-675b-instruct-2512": {
+  "calls": 32,
+  "ok": 32,
+  "fail": 0,
+  "consec_fail": 0,
+  "ema_latency": 3.2,
+  "last": "2026-07-12 09:36"
+ },
+ "ollama/llama3.1:8b": {
+  "calls": 6,
+  "ok": 5,
+  "fail": 1,
+  "consec_fail": 1,
+  "ema_latency": 20.9,
+  "last": "2026-07-21 17:07"
+ },
+ "ollama/granite4.1:3b": {
+  "calls": 1,
+  "ok": 0,
+  "fail": 1,
+  "consec_fail": 1,
+  "ema_latency": null,
+  "last": "2026-07-21 17:07"
+ },
+ "ollama/qwen3:1.7b": {
+  "calls": 1,
+  "ok": 0,
+  "fail": 1,
+  "consec_fail": 1,
+  "ema_latency": null,
+  "last": "2026-07-21 17:07"
+ }
+}

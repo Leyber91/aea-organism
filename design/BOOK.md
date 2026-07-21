@@ -69,6 +69,11 @@
 12. [A9_FORGE_PROTOCOL.md](A9_FORGE_PROTOCOL.md) — the pair-build ritual: three roles never
     merged (Luis judge+hand, Claude smith, HADES gate), the five-phase session
     (OPEN/SPEC/BUILD/PROVE/SEAL), the seven-forge queue, failed forges leave scaffolding.
+12b. [E4_UX_P0.md](E4_UX_P0.md) — THE BENCH UX, blank-sheet under the anti-anchor law
+    (three blind designers → SESSION won → nine grafts, fifteen refusals with citations,
+    THE WORLD ANSWERS graft). Anchor-audited: every /world surface ruled by name (the bench
+    never medals; the arrow hides while docked); THE P0-CUT binding (~2 sessions, soul
+    intact, runs.json complete from day one; P1 completes the letter). Closed 2026-07-20.
 13. [A13_PATHS.md](A13_PATHS.md) — every AEA element as a four-station journey (ENCOUNTER →
     UNDERSTAND → USE → OWN), the full 29×4 table, the ASSISTANT LADDER as the master path
     (chat → sources → memory → flows → powers → wild, canon), and the honest census:
@@ -92,8 +97,45 @@
     audit discrepancies.
 
 ### PART VI — THE SUBSTRATE
-18. [08_TECH.md](08_TECH.md) — r128 stack law, server contract, perf budgets, verification
-    recipes, honest boundaries.
+(Chapter CODES are the true identifiers; list ordinals are positional per part.)
+- [08_TECH.md](08_TECH.md) — r128 stack law, server contract, perf budgets, verification
+  recipes, honest boundaries.
+- [E1_CODE_ARCHITECTURE.md](E1_CODE_ARCHITECTURE.md) — the engineering doctrine: honest
+  audit with line-anchored rot vectors, the module plan inside the stack (alias-then-migrate,
+  GAME.onFrame seam), the 8-step r128 dispose checklist + three falsifiable rung-exit leak
+  tests, state rules (stateless-over-file for ALL state incl. run status), the post-MVP
+  tech-stack decision [DECISION-LUIS, gated P7 exit]. Nine-critic closed 2026-07-20.
+- [E2_VISUAL_DIRECTION.md](E2_VISUAL_DIRECTION.md) — the modern-aesthetics research
+  (23 sources; principle per reference, never style) + the 12-move evolution plan with the
+  Taste ranking as review law (Move 5 sRGB+dither FIRST, tune once post-gamma); pays R1's
+  owed rendering pass. Nine-critic closed 2026-07-20.
+- [E6_ART_PIPELINE.md](E6_ART_PIPELINE.md) — BINDING: nothing is imported. 12 shader-and-
+  instancing moves all parameterised from live state (the window field IS the load); Blender
+  and image-to-3D both REJECTED with cause (r128 GLTFLoader has zero emissive-strength support;
+  Blender 4.1+ silently drops vertex colours; "a GLB cannot grow a district"). Draw budget
+  40 calls / 250k tris / 60fps. Amends E5 §3 Tier 2.
+- [E7_VISUAL_COVERAGE.md](E7_VISUAL_COVERAGE.md) — the audit that proved Luis right: only
+  24 of 86 canonical items are drawn (28%). ROOT CAUSE: the 35 sheets were commissioned from
+  the 29-element PROOF taxonomy, which is a projection of the canon — "a faithful image of the
+  wrong list." 11 batches to full coverage; 15 of 30 axis sub-levels DO NOT EXIST in canon
+  (authorship block on Luis, D-E7-1).
+- [E8_FIDELITY_LAW.md](E8_FIDELITY_LAW.md) — the quality essence, MEASURED from the sheets
+  with PIL/numpy rather than asserted: 8 named qualities, 7 numeric gates, the JSONL gate
+  record (an object is DONE only when a record says so), the one-gap-per-pass iteration law,
+  and what fidelity does NOT mean (copying a sheet's numbers is an honesty breach — the sheet
+  specifies the FIELD, live data supplies the VALUE).
+- [E9_ASSET_TICKETS.md](E9_ASSET_TICKETS.md) — 107 asset tickets (A-001..A-107), one per
+  buildable object/effect/UI/hologram/interaction, each carrying style reference, AEA concept
+  served, technique, live-data binding, and its fidelity gate.
+- [E5_3D_TRANSLATION.md](E5_3D_TRANSLATION.md) — how concept art becomes the running game:
+  the four asset classes (UI ships as-is · forms become procedural · ~6-10 hero meshes in
+  Blender · atmosphere is never modelled), why the landscapes are the EASY ones (fog, light
+  and silhouette, not geometry), the three-tier pipeline, and the honest Unity verdict (no —
+  it would cost the game its residence inside the entity). Answers Luis 2026-07-21.
+- [E3_TRACKING.md](E3_TRACKING.md) — the tracking discipline: tickets.json = the registry
+  of record (INDEX §3 frozen as transcript), the ≤2-minute session-close ritual, the /tracker
+  page contract (NEXT strip answers "what do I build next" from data), named exclusions
+  (no burndown, no velocity). LIVE at /tracker. Nine-critic closed 2026-07-20.
 
 ### PART VII — THE FUTURE AND THE FLOOR
 19. [A5_PHASE_B.md](A5_PHASE_B.md) — the game for everyone (GATED): the keyless bootstrap
@@ -123,6 +165,11 @@
 - **The boring test** gates every slice. **One concept per mission; teach by doing.**
 - **The income guard**: THE SEND pinned as Act V boss; forges ARE the real AEA engineering.
 - **The matrix is the audit** (A8): every feature must own a matrix cell; every cell a feature.
+- **THE ANTI-ANCHOR LAW** (Luis, 2026-07-20): the UX derives from the laws and the player,
+  NEVER from the previous build. Prior builds are evidence, not precedent; any element carried
+  forward must carry a written first-principles argument. First application: the sweep's
+  "dock-terminal bench" rider — struck as inheritance-by-inertia; the P0 bench UX is designed
+  blank-sheet in E4_UX_P0.md (three blind designers, judge, anchor audit).
 
 ## EDITORIAL RESOLUTIONS — completeness audit closure, 2026-07-20
 (Chief-editor calls, each with Luis veto; the losing text stays in place marked superseded.)
@@ -182,7 +229,10 @@ tickets.json gate removal, and the 09 line land in the same commit-equivalent
 | 26 | D-C1: seed.hyp (the innovation layer node, 29→30) enters Phase A fogged now? | A15 |
 | 27 | D-C2 axis-level flag data source · D-C3 map bundle (notches+orbital+transitions) | A15 |
 | 28 | D-C4: Paradigm Book cross-check pass (the unread third witness of the canon) | A15 |
-| ~~29~~ | ~~P0 go: bench-minimal (TAP+SCORER construct, live trace, instant failure) starts now~~ CALLED 2026-07-20 — GO: the pre-build gate below closed same day; P0 is the next artifact | P0 |
+| ~~29~~ | ~~P0 go~~ **CALLED BY LUIS 2026-07-20** — his recorded words: "Make sure you build but you check as well visually the construction is sound, step by step… show me samples of the design you are aiming for visually, cannot be anchored on what we have, you need to build a new codebase, with its folder, subfolders, in phases." GO with three binding conditions: per-step visual verification · research-derived design samples shown · NEW CODEBASE (game/ tree, phased). | P0 |
+| ~~21~~ | ~~D-P1 bench opens right after M1.5~~ CONFIRMED with the P0 go (E4 §13 ruling stands) | A13 |
+| ~~25~~ | ~~construct-spec freeze~~ FROZEN as v0.1.0 per the P0 SPEC ADDENDUM contracts, with the GO | A14 |
+| 32 | **NEW-CODEBASE ORDER (Luis, with the GO)**: THE PROBE gets its own tree (game/ + subfolders), built in phases; supersedes E1 §2's alias-in-place plan — E1's module boundaries (engine/os/bench/hud/missions-engine + GAME.state + onFrame) carry INTO the new tree; /world remains the played legacy prototype until the new build reaches parity; Luis's save untouched. | E1/E4 |
 | 30 | A16 lineage statement placement into 00_VISION §1 · "beyond chat" as book-prose | A16 |
 | 31 | Phase B gallery (shareable constructs as the honest viral artifact) | A16 |
 

@@ -1,0 +1,667 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE CITY · HERALD</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--panel:#101012;--ink:#f1f0ec;--soft:#b9b8b3;--dim:#76757a;--faint:#3a393f;
+  --gold:#d4a24c;--amber:#e8b866;--bad:#c96a5a;--line:rgba(241,240,236,.09);--glass:rgba(14,14,17,.86)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font:12px/1.5 'IBM Plex Mono',Consolas,ui-monospace,monospace}
+#scene{position:fixed;inset:0}
+canvas{display:block}
+.hud{position:fixed;z-index:5}
+#title{top:16px;left:20px;pointer-events:none}
+#title .ey{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+#title h1{font-weight:300;font-size:21px;letter-spacing:.12em;margin-top:5px}
+#title h1 b{color:var(--gold);font-weight:600}
+#title .sub{color:var(--soft);font-size:10.5px;margin-top:5px}
+#status{margin-top:6px;font-size:10.5px}
+#status .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle;
+  background:var(--gold);animation:beat 2s infinite}
+#status.off .dot{background:var(--bad);animation:none}
+@keyframes beat{0%,100%{opacity:1}50%{opacity:.28}}
+#rail{top:16px;right:20px;display:flex;gap:8px;flex-direction:column;align-items:flex-end}
+.btn{pointer-events:auto;background:var(--glass);border:1px solid var(--line);color:var(--soft);
+  font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.15em;text-transform:uppercase;
+  padding:8px 12px;cursor:pointer;backdrop-filter:blur(6px);transition:.15s}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn.busy{color:var(--gold);border-color:var(--gold);opacity:.6;pointer-events:none}
+#railout{max-width:280px;font-size:10px;color:var(--dim);text-align:right;white-space:pre-wrap;word-break:break-word;margin-top:2px}
+#legend{bottom:14px;left:20px;pointer-events:none;color:var(--soft);font-size:10.5px;line-height:1.8}
+#legend .k{display:inline-block;width:9px;height:9px;margin-right:7px;vertical-align:middle;border-radius:2px}
+#legend .on{background:var(--gold)}#legend .off{background:#2a2d34}#legend .er{background:var(--bad)}
+#legend .pv{border:1px solid var(--gold)}
+#legend .hint{margin-top:6px;color:var(--dim)}
+/* floating labels projected from 3D */
+.lab{position:fixed;transform:translate(-50%,-50%);pointer-events:none;z-index:4;white-space:nowrap;
+  font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+  text-shadow:0 0 8px rgba(0,0,0,.9),0 1px 2px #000}
+.lab.sm{font-weight:400;font-size:9px;letter-spacing:.05em;text-transform:none;color:var(--soft)}
+/* inspector */
+#insp{top:0;right:0;height:100%;width:384px;max-width:88vw;background:var(--glass);backdrop-filter:blur(10px);
+  border-left:1px solid var(--line);transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;pointer-events:auto}
+#insp.open{transform:none}
+#insp header{padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+#insp .eyebrow{font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+#insp h2{font-weight:300;font-size:19px;letter-spacing:.03em;margin-top:5px}#insp h2 b{color:var(--gold);font-weight:600}
+#insp .role{color:var(--soft);font-size:11px;margin-top:6px;line-height:1.55}
+#insp .body{flex:1;overflow-y:auto;padding:14px 20px 22px}
+#insp .x{position:absolute;top:15px;right:18px;color:var(--dim);cursor:pointer;font-size:16px}#insp .x:hover{color:var(--gold)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-top:1px solid var(--line)}
+.kv:first-child{border-top:none}.kv b{font-weight:400;color:var(--dim)}.kv span{text-align:right;color:var(--soft)}
+.kv span.g{color:var(--gold)}.kv span.r{color:var(--bad)}
+.tag{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;
+  border:1px solid var(--line);border-radius:3px;color:var(--dim);margin:2px 4px 2px 0}
+.tag.live{color:var(--gold);border-color:rgba(212,162,76,.4)}.tag.warn{color:var(--bad);border-color:rgba(201,106,90,.4)}
+.mono{white-space:pre-wrap;word-break:break-word;color:var(--soft);font-size:11px;line-height:1.55}
+.meter{height:5px;background:var(--faint);margin-top:6px;border-radius:3px;overflow:hidden}.meter i{display:block;height:100%;background:var(--gold)}
+.list .row{padding:7px 0;border-top:1px solid var(--line)}.list .row:first-child{border-top:none}
+.list .row b{color:var(--ink);font-weight:400}.list .row .s{color:var(--dim);font-size:10.5px;display:block;margin-top:2px}
+#act{margin-top:14px}
+.act-btn{display:block;width:100%;text-align:left;background:rgba(212,162,76,.06);border:1px solid rgba(212,162,76,.3);
+  color:var(--gold);font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;
+  padding:10px 12px;margin-top:8px;cursor:pointer;transition:.15s}.act-btn:hover{background:rgba(212,162,76,.14)}
+/* talk */
+#talk{bottom:14px;left:50%;transform:translateX(-50%) translateY(150%);width:min(700px,94vw);
+  background:var(--glass);backdrop-filter:blur(11px);border:1px solid var(--line);
+  transition:transform .24s cubic-bezier(.4,0,.2,1);pointer-events:auto}
+#talk.open{transform:translateX(-50%)}
+#talk .head{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--line)}
+#talk .head b{color:var(--gold);letter-spacing:.14em;font-size:10px;text-transform:uppercase}
+#talk .head .x{color:var(--dim);cursor:pointer}#talk .head .x:hover{color:var(--gold)}
+#talk .feed{max-height:34vh;overflow-y:auto;padding:14px 16px 4px}
+#talk .turn{padding:6px 0;font-size:11.5px;line-height:1.5}#talk .turn b{color:var(--gold);font-weight:600}#talk .turn.you b{color:var(--soft)}
+#talk .receipt{color:var(--dim);font-size:9.5px;margin-top:3px}
+#talk .opts{display:flex;gap:12px;align-items:center;padding:6px 16px 9px;font-size:9.5px;color:var(--dim);flex-wrap:wrap}
+#talk .opts label{cursor:pointer}#talk .opts input[type=checkbox]{margin-right:5px;vertical-align:middle}
+#talk select{background:#0c0c0e;color:var(--soft);border:1px solid var(--line);font:9.5px 'IBM Plex Mono',monospace;padding:3px 5px;max-width:190px}
+#talk .compose{display:flex;border-top:1px solid var(--line)}
+#talk input[type=text]{flex:1;background:none;border:none;color:var(--ink);font:12px 'IBM Plex Mono',monospace;padding:13px 15px;outline:none}
+#talk .send{background:none;border:none;border-left:1px solid var(--line);color:var(--gold);font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.16em;padding:0 18px;cursor:pointer}
+#talk .send:hover{background:rgba(212,162,76,.08)}#talk #talk-state{margin-left:auto}
+#tip{position:fixed;pointer-events:none;z-index:6;background:var(--glass);border:1px solid var(--line);padding:6px 9px;
+  font-size:10px;color:var(--soft);backdrop-filter:blur(6px);opacity:0;transition:opacity .12s;max-width:260px;white-space:pre-line}
+#cam{bottom:14px;right:20px;display:flex;gap:6px}
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9;background:var(--bg);
+  color:var(--dim);font-size:11px;letter-spacing:.2em;text-transform:uppercase;transition:opacity .5s}
+</style></head><body>
+<div id="scene"></div>
+<div id="loading">building the city…</div>
+
+<div class="hud" id="title">
+  <div class="ey">Autonomous Entity Architecture</div>
+  <h1>THE <b>CITY</b></h1>
+  <div class="sub">LEYBER, whole — a city of power, mind, memory, signal &amp; trade</div>
+  <div id="status" class="off"><span class="dot"></span><span id="statustxt">connecting to the entity…</span></div>
+</div>
+<div class="hud" id="rail">
+  <button class="btn" data-cmd="brief">fire brief</button>
+  <button class="btn" data-cmd="consolidate">consolidate</button>
+  <button class="btn" data-cmd="status">status</button>
+  <div id="railout"></div>
+</div>
+<div class="hud" id="legend">
+  <div><span class="k on"></span> online / firing</div>
+  <div><span class="k off"></span> latent (awaiting key)</div>
+  <div><span class="k er"></span> throttled / failed</div>
+  <div><span class="k pv"></span> private ward (local-only)</div>
+  <div class="hint">drag orbit · scroll zoom · click a building · click THE SPIRE to talk</div>
+</div>
+<div class="hud" id="cam">
+  <button class="btn" id="cam-rotate">auto-orbit: on</button>
+  <button class="btn" id="cam-reset">reset view</button>
+</div>
+
+<div class="hud" id="insp">
+  <span class="x" id="inspx">✕</span>
+  <header><div class="eyebrow" id="insp-eye">structure</div><h2 id="insp-title"></h2><div class="role" id="insp-role"></div></header>
+  <div class="body" id="insp-body"></div>
+</div>
+
+<div class="hud" id="talk">
+  <div class="head"><b id="talk-name">THE SPIRE · talk to HERALD</b><span class="x" id="talkx">✕</span></div>
+  <div class="feed" id="talk-feed"></div>
+  <div class="opts">
+    <label><input type="checkbox" id="opt-voice" checked> voice</label>
+    <select id="voice-pick" title="voice"></select>
+    <label><input type="checkbox" id="opt-local"> sensitive (local-only)</label>
+    <span id="talk-state"></span>
+  </div>
+  <div class="compose"><input type="text" id="talk-in" placeholder="say something to HERALD…" autocomplete="off"><button class="send" id="talk-send">SEND</button></div>
+</div>
+<div id="tip"></div>
+
+<script src="three.min.js"></script>
+<script src="OrbitControls.js"></script>
+<script src="CopyShader.js"></script>
+<script src="LuminosityHighPassShader.js"></script>
+<script src="EffectComposer.js"></script>
+<script src="ShaderPass.js"></script>
+<script src="RenderPass.js"></script>
+<script src="UnrealBloomPass.js"></script>
+<script>
+"use strict";
+window.onerror=function(m,s,l,c){var e=document.getElementById("statustxt");if(e)e.textContent="JS ERROR: "+m+" @"+l+":"+c;
+  var st=document.getElementById("status");if(st)st.className="off";var ld=document.getElementById("loading");if(ld)ld.style.display="none";};
+const GOLD=0xd4a24c, AMBER=0xe8b866, BAD=0xc96a5a, BG=0x0a0a0b;
+
+/* ===================== 1. THE MODEL (baked truth from grid.py + inventory) ============= */
+const RING={local:{ring:"LOCAL WARD",wall:true,note:"private · never leaves the machine"},
+ "no-train":{ring:"NO-TRAIN BELT",wall:true,note:"hosted, contractually won't train on your data"},
+ trains:{ring:"PUBLIC OUTER",wall:false,note:"free but trains on inputs — public only"},
+ none:{ring:"KEYLESS EDGE",wall:false,note:"no key, no guarantee — public only"}};
+const PLANTS=[
+ {id:"ollama",priv:"local",rpm:null,rpd:null,key:null,models:5,cap:"unlimited · local",head:"the private base — 5 local models, no cap, no network"},
+ {id:"ovh",priv:"no-train",rpm:400,rpd:null,key:"OVH_AI_ENDPOINTS_TOKEN",models:1,cap:"400 rpm",head:"EU no-train · Qwen2.5-VL-72B"},
+ {id:"cloudflare",priv:"no-train",rpm:300,rpd:null,key:"CLOUDFLARE_API_TOKEN",models:2,cap:"300 rpm · 10k neurons/day",head:"edge inference · qwen3-30b + bge-m3"},
+ {id:"cerebras",priv:"no-train",rpm:5,rpd:null,key:"CEREBRAS_API_KEY",models:1,cap:"5 rpm · 1M tok/day",head:"~2000 tok/s · batch/leaf only, serialize hard"},
+ {id:"sambanova",priv:"no-train",rpm:20,rpd:20,key:"SAMBANOVA_API_KEY",models:1,cap:"20 rpm · 20 rpd/model",head:"gpt-oss-120b · ~120 calls/day"},
+ {id:"nvidia",priv:"no-train",rpm:40,rpd:null,key:"NVIDIA_API_KEY",models:121,cap:"121 models · 40 rpm each · 256K",head:"THE GRID — 121 models, each its own 40-rpm bucket. The brutal free capacity."},
+ {id:"groq",priv:"no-train",rpm:30,rpd:1000,key:"GROQ_API_KEY",models:8,cap:"30 rpm · 1000 rpd",head:"the reflex king — 0.3s llama-3.3-70b"},
+ {id:"gemini",priv:"trains",rpm:10,rpd:1500,key:"GEMINI_API_KEY",models:1,cap:"10 rpm · 1500 rpd",head:"public only (trains on inputs)"},
+ {id:"mistral",priv:"trains",rpm:2,rpd:null,key:"MISTRAL_API_KEY",models:1,cap:"2 rpm · 1B tok/mo",head:"EU · opt out before private use"},
+ {id:"openrouter",priv:"trains",rpm:20,rpd:50,key:"OPENROUTER_API_KEY",models:1,cap:"20 rpm · 50 rpd free",head:"22 :free models incl nemotron-550b"},
+ {id:"zai",priv:"trains",rpm:10,rpd:1000,key:"ZAI_API_KEY",models:2,cap:"10 rpm · 1000 rpd",head:"GLM-Flash free reasoning + vision"},
+ {id:"github",priv:"trains",rpm:15,rpd:150,key:"GITHUB_MODELS_TOKEN",models:0,cap:"15 rpm · 150 rpd",head:"RETIRING — closed to new customers"},
+ {id:"cohere",priv:"trains",rpm:10,rpd:null,key:"COHERE_API_KEY",models:0,cap:"1000 calls/month",head:"rerank only · non-commercial"},
+ {id:"pollinations",priv:"none",rpm:4,rpd:null,key:null,models:1,cap:"4 rpm · keyless",head:"the only keyless model now — openai-fast (gpt-oss-20b)"},
+ {id:"hf",priv:"none",rpm:null,rpd:null,key:"HF_TOKEN",models:0,cap:"$0.10/mo",head:"failover / embeddings layer only"},
+];
+const MIND=[
+ {id:"aea",label:"CORE",role:"the seeded always-on mind — one core on a loop (nemotron-550b→gpt-oss-120b), continuity across ticks",status:"live"},
+ {id:"orchestrator",label:"ORCHESTRATOR",role:"splits a task into parallel subtasks across independent model buckets, synthesizes one answer",status:"live"},
+ {id:"swarm",label:"SWARM",role:"recursive swarm — decompose / escalate / answer / depth-cap",status:"live"},
+ {id:"relay",label:"RELAY",role:"genetic memory — predecessor→successor handoff over a compact state capsule",status:"live"},
+ {id:"energy",label:"ENERGY",role:"the continuum mouth — every draw routes here, falls down the rod ladder to local so the heartbeat never stops",status:"live"},
+ {id:"pathfinder",label:"PATHFINDER",role:"task→crystallized path (search once, run cheap forever); self-heals on gate fail",status:"built"},
+];
+const ORGANS={
+ watch:[{id:"hades",label:"HADES",role:"the watcher — every autonomous tick is verdicted; reroutes on drift. Does no other work (Law 3).",status:"live"}],
+ archive:[
+  {id:"consolidate",label:"CONSOLIDATE",role:"sleep-work: ~1,587 sessions → semantic 'Luis…' facts via local llama3.1:8b (private)",status:"live"},
+  {id:"memory",label:"VECTOR STORE",role:"mxbai-embed-large, local/unlimited/private — grounding beats model capacity",status:"live"},
+  {id:"codex",label:"CODEX INDEX",role:"4,303 chunks / 169 files — TRIVERSE + CORE + masters, injected into every answer",status:"live"}],
+ broadcast:[
+  {id:"speak",label:"VOICE",role:"speaks aloud — browser neural voice (natural) with local SAPI fallback for sensitive mode",status:"live"},
+  {id:"browserdrive",label:"BROWSER-DRIVE",role:"OS-level automation of the live browser — hands-free action (coordinate-fragile)",status:"live"},
+  {id:"interface",label:"INTERFACE",role:"the front door — global workspace, visible perception→action arc",status:"live"}],
+ ledger:[
+  {id:"trust",label:"TRUST",role:"autonomy is earned: FORBIDDEN→DRAFT→WATCHED→TRUSTED. Slow up, fast down. send/spend/keys=FORBIDDEN",status:"live"},
+  {id:"tracelog",label:"TRACELOG",role:"every node carries its goal-stack to an append-only ledger — the accountability floor",status:"live"}],
+};
+const SKILLS=[
+ {n:"anonymize-guard",s:"live"},{n:"forge",s:"live"},{n:"headless-verify",s:"live"},{n:"jarvis",s:"live"},{n:"triverse",s:"live"},
+ {n:"deep-research",s:"live"},{n:"verify",s:"live"},{n:"code-review",s:"live"},{n:"simplify",s:"live"},{n:"run",s:"live"},
+ {n:"schedule",s:"live"},{n:"loop",s:"live"},{n:"update-config",s:"live"},{n:"security-review",s:"live"},{n:"claude-api",s:"live"},
+ {n:"init",s:"live"},{n:"artifact-design",s:"live"},{n:"review",s:"live"},{n:"keybindings",s:"live"},{n:"fewer-prompts",s:"live"},
+ {n:"crystallize-lens",s:"parked"},{n:"personal-aea",s:"parked"},{n:"RAG-library",s:"parked"},
+];
+const SERVICES=[
+ {n:"Gmail",dir:"both",auth:"connected",gate:true,s:"read/draft/label — the OUTREACH gate (drafts only; sending is trust-FORBIDDEN)"},
+ {n:"Calendar",dir:"both",auth:"connected",s:"events, availability, suggest-time"},
+ {n:"Drive",dir:"both",auth:"connected",s:"files: create/read/search/copy"},
+ {n:"GitHub",dir:"import",auth:"env-key",s:"live repo activity (Leyber91) — brief.py source"},
+ {n:"HackerNews",dir:"import",auth:"open",s:"live news — brief.py source"},
+ {n:"HuggingFace",dir:"import",auth:"connected",s:"hub, datasets, models, papers"},
+ {n:"Crypto.com",dir:"import",auth:"connected",s:"live market data"},
+ {n:"Slack",dir:"both",auth:"needs-auth",s:"messaging — pending OAuth (latent)"},
+];
+
+/* ===================== 2. THREE.JS SCENE ============================================== */
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(BG);
+scene.fog=new THREE.FogExp2(0x08070a, 0.0072);
+const camera=new THREE.PerspectiveCamera(52, innerWidth/innerHeight, 0.5, 1200);
+const HOME={x:0,y:90,z:178};
+camera.position.set(HOME.x,HOME.y,HOME.z);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.3;
+document.getElementById("scene").appendChild(renderer.domElement);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.target.set(0,10,0); controls.enableDamping=true; controls.dampingFactor=0.075;
+controls.maxPolarAngle=Math.PI/2-0.04; controls.minDistance=40; controls.maxDistance=360;
+controls.autoRotate=true; controls.autoRotateSpeed=0.28;
+
+// lighting — night. the city lights itself (emissive + bloom).
+scene.add(new THREE.AmbientLight(0x2f3038, 0.9));
+const hemi=new THREE.HemisphereLight(0x33353f, 0x070708, 0.72); scene.add(hemi);
+const moon=new THREE.DirectionalLight(0x9fb0d0, 0.28); moon.position.set(-60,120,40); scene.add(moon);
+const fill=new THREE.DirectionalLight(0xd8b070, 0.18); fill.position.set(70,40,-50); scene.add(fill);
+
+// bloom composer
+const composer=new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene,camera));
+const bloom=new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight), 1.05, 0.5, 0.15);
+composer.addPass(bloom);
+
+// ground
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(1400,1400),
+  new THREE.MeshStandardMaterial({color:0x050506,roughness:1,metalness:0}));
+ground.rotation.x=-Math.PI/2; ground.position.y=-0.02; scene.add(ground);
+const grid=new THREE.GridHelper(600,60,0x1d1a12,0x121218);
+grid.material.transparent=true; grid.material.opacity=0.22; scene.add(grid);
+// faint starfield to fill the night sky (the substrate motif)
+{const N=1100,pos=[]; for(let i=0;i<N;i++){const r=520+Math.random()*380,th=Math.random()*Math.PI*2,ph=Math.random()*Math.PI*0.46;
+  pos.push(Math.sin(ph)*Math.cos(th)*r, 60+Math.cos(ph)*r*0.75, Math.sin(ph)*Math.sin(th)*r);}
+ const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+ scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0x9a8a5a,size:1.5,sizeAttenuation:false,transparent:true,opacity:0.55})));}
+
+/* ---- shared materials + window textures ---- */
+function windowTexture(litProb, warm){
+  const c=document.createElement("canvas"); c.width=64; c.height=128; const g=c.getContext("2d");
+  g.fillStyle="#0c0c10"; g.fillRect(0,0,64,128);
+  const cols=4, rows=12, pad=6, wv=(64-pad*2)/cols, wh=(128-pad*2)/rows;
+  for(let r=0;r<rows;r++)for(let col=0;col<cols;col++){
+    const on=Math.random()<litProb;
+    g.fillStyle=on?(warm?"#f0c070":"#d4a24c"):"#141419";
+    g.fillRect(pad+col*wv+1.2, pad+r*wh+1.2, wv-2.4, wh-2.4);
+  }
+  const t=new THREE.CanvasTexture(c); t.needsUpdate=true; return t;
+}
+const WIN=[windowTexture(0.5,false),windowTexture(0.62,true),windowTexture(0.4,false),windowTexture(0.7,true)];
+const bodyMat=(dark)=>new THREE.MeshStandardMaterial({color:dark?0x141319:0x1a1922,roughness:0.85,metalness:0.15});
+
+// registry of interactive nodes
+const NODES={};            // id -> {group, kind, data, worldPos:Vector3, setLevel(fn), lit, meterMeshes...}
+const clickable=[];        // meshes with userData.nodeId
+function register(id,group,kind,data,worldPos){NODES[id]={id,group,kind,data,worldPos,lit:false,level:0};}
+function markClickable(mesh,id){mesh.userData.nodeId=id; clickable.push(mesh);}
+
+/* ---- procedural building: stacked setbacks + lit-window sides + rooftop ---- */
+function makeBuilding(w,d,h,opts={}){
+  const grp=new THREE.Group();
+  const tex=WIN[(Math.random()*WIN.length)|0];
+  const tiers=h>18?3:(h>10?2:1);
+  let cy=0, cw=w, cd=d;
+  const winMats=[];
+  for(let i=0;i<tiers;i++){
+    const th=h/tiers*(i===tiers-1?1.0:1.05);
+    const t=tex.clone(); t.needsUpdate=true; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(Math.max(1,cw/4),Math.max(1,th/4));
+    const wm=new THREE.MeshStandardMaterial({color:0x121118,roughness:0.8,metalness:0.2,
+      emissive:opts.emissive!=null?opts.emissive:0xffffff, emissiveMap:t, emissiveIntensity:0.0});
+    winMats.push(wm);
+    const box=new THREE.Mesh(new THREE.BoxGeometry(cw,th,cd),
+      [wm,wm,bodyMat(true),bodyMat(true),wm,wm]); // sides show windows, top/bottom plain
+    box.position.y=cy+th/2; grp.add(box);
+    cy+=th; cw*=0.74; cd*=0.74;
+  }
+  // rooftop detail
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(cw*0.4,Math.random()*3+1.5,cd*0.4),bodyMat(false));
+  roof.position.y=cy+1; grp.add(roof);
+  grp.userData.winMats=winMats;
+  grp.userData.setLevel=(lvl,err)=>{const col=err?BAD:(opts.color!=null?opts.color:0xffffff);
+    winMats.forEach(m=>{m.emissiveIntensity=lvl; if(err)m.emissive.setHex(BAD); else m.emissive.setHex(opts.emissive!=null?opts.emissive:0xffffff);});};
+  return grp;
+}
+/* ---- power plant: DARK base+cooling-tower whose ACCENTS (windows, rings, stack tip) light up.
+        the glow is on small elements, not the whole body — so it reads as a lit structure, not a blob. */
+function makePlant(scale, priv){
+  const grp=new THREE.Group();
+  const bh=5+scale*3;
+  // base hall with lit windows
+  const tex=WIN[(Math.random()*WIN.length)|0].clone(); tex.needsUpdate=true; tex.wrapS=tex.wrapT=THREE.RepeatWrapping; tex.repeat.set(2,1.2);
+  const baseMat=new THREE.MeshStandardMaterial({color:0x14131a,roughness:0.8,metalness:0.2,emissive:0xffffff,emissiveMap:tex,emissiveIntensity:0});
+  const base=new THREE.Mesh(new THREE.BoxGeometry(8,bh,8),[baseMat,baseMat,bodyMat(true),bodyMat(true),baseMat,baseMat]);
+  base.position.y=bh/2; grp.add(base);
+  // dark closed cooling tower
+  const th=5+scale*6;
+  const tower=new THREE.Mesh(new THREE.CylinderGeometry(2.2,3.2,th,20),
+    new THREE.MeshStandardMaterial({color:0x16151c,roughness:0.6,metalness:0.35})); tower.position.y=bh+th/2; grp.add(tower);
+  const acc=()=>new THREE.MeshStandardMaterial({color:0x0a0a0b,emissive:0xd4a24c,emissiveIntensity:0});
+  const topRing=new THREE.Mesh(new THREE.TorusGeometry(2.3,0.16,8,24),acc()); topRing.rotation.x=Math.PI/2; topRing.position.y=bh+th-0.6; grp.add(topRing);
+  const baseRim=new THREE.Mesh(new THREE.TorusGeometry(4.7,0.14,8,32),acc()); baseRim.rotation.x=Math.PI/2; baseRim.position.y=0.22; grp.add(baseRim);
+  const stackMat=acc(); const sh=7+scale*4;
+  const stack=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.95,sh,10),stackMat); stack.position.set(2.9,bh+sh/2,-2.9); grp.add(stack);
+  const emat=[baseMat,topRing.material,baseRim.material,stackMat];
+  grp.userData.setLevel=(lvl,err)=>{emat.forEach(m=>{m.emissiveIntensity=(m===baseMat?lvl*0.9:lvl);
+    m.emissive.setHex(err?BAD:(m===baseMat?0xffffff:0xd4a24c));});};
+  if(priv==="local"||priv==="no-train"){ // private-ward marker: a thin gold curb around the plot
+    const curb=new THREE.Mesh(new THREE.TorusGeometry(6,0.1,6,4),
+      new THREE.MeshStandardMaterial({color:0x0a0a0b,emissive:0xd4a24c,emissiveIntensity:0.32}));
+    curb.rotation.x=Math.PI/2; curb.position.y=0.15; grp.add(curb);}
+  return grp;
+}
+/* ---- the spire: tall tapered landmark + beacon ---- */
+function makeSpire(){
+  const grp=new THREE.Group();
+  const tex=WIN[1].clone(); tex.wrapS=tex.wrapT=THREE.RepeatWrapping; tex.repeat.set(2,10);
+  const shaftMat=new THREE.MeshStandardMaterial({color:0x14121a,roughness:0.6,metalness:0.35,emissive:0xffffff,emissiveMap:tex,emissiveIntensity:0.9});
+  const shaft=new THREE.Mesh(new THREE.CylinderGeometry(3.2,6.5,46,6),shaftMat); shaft.position.y=23; grp.add(shaft);
+  const crownMat=new THREE.MeshStandardMaterial({color:0x0a0a0b,emissive:0xf0c070,emissiveIntensity:1.4});
+  const crown=new THREE.Mesh(new THREE.ConeGeometry(3.4,7,6),crownMat); crown.position.y=46+3.5; grp.add(crown);
+  const beacon=new THREE.Mesh(new THREE.SphereGeometry(1.5,16,16),
+    new THREE.MeshBasicMaterial({color:0xffe6b0})); beacon.position.y=46+9; grp.add(beacon);
+  const halo=new THREE.Mesh(new THREE.RingGeometry(6,7.4,40),
+    new THREE.MeshBasicMaterial({color:0xd4a24c,transparent:true,opacity:0.5,side:THREE.DoubleSide}));
+  halo.rotation.x=-Math.PI/2; halo.position.y=0.4; grp.add(halo);
+  grp.userData.shaftMat=shaftMat; grp.userData.beacon=beacon; grp.userData.halo=halo;
+  return grp;
+}
+
+/* ---- district plot: raised pad + border ---- */
+function makePlot(cx,cz,w,d,accent){
+  const pad=new THREE.Mesh(new THREE.BoxGeometry(w,0.6,d),
+    new THREE.MeshStandardMaterial({color:0x0c0c0f,roughness:1,metalness:0}));
+  pad.position.set(cx,0.3,cz); scene.add(pad);
+  const edges=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w,0.62,d)),
+    new THREE.LineBasicMaterial({color:accent||0x2a2617,transparent:true,opacity:0.6}));
+  edges.position.set(cx,0.3,cz); scene.add(edges);
+}
+/* ---- road: emissive strip from A to B ---- */
+const roadMat=new THREE.MeshStandardMaterial({color:0x0a0a0b,emissive:0xd4a24c,emissiveIntensity:0.24});
+function makeRoad(ax,az,bx,bz,wdt){
+  const dx=bx-ax,dz=bz-az,len=Math.hypot(dx,dz);
+  const road=new THREE.Mesh(new THREE.PlaneGeometry(wdt||3,len),roadMat);
+  road.rotation.x=-Math.PI/2; road.rotation.z=-Math.atan2(dz,dx)+Math.PI/2;
+  road.position.set((ax+bx)/2,0.05,(az+bz)/2); scene.add(road);
+  return {ax,az,bx,bz,len};
+}
+
+/* ===================== 3. LAY OUT THE CITY =========================================== */
+const DISTRICTS={
+ spire:{cx:0,cz:0,label:"THE SPIRE",sub:"the mind"},
+ foundry:{cx:0,cz:82,w:230,d:46,label:"THE FOUNDRY",sub:"power plants · by privacy ring"},
+ archive:{cx:-92,cz:-14,w:70,d:66,label:"THE ARCHIVE",sub:"the book of Luis"},
+ workshops:{cx:0,cz:-80,w:120,d:52,label:"THE WORKSHOPS",sub:"skills · a growing population"},
+ ports:{cx:92,cz:-14,w:70,d:76,label:"THE PORTS",sub:"imports · exports"},
+ watch:{cx:96,cz:-78,w:44,d:40,label:"THE WATCH",sub:"HADES · law 3"},
+ ledger:{cx:92,cz:56,w:64,d:36,label:"THE LEDGER",sub:"earned autonomy"},
+ broadcast:{cx:-92,cz:56,w:64,d:44,label:"THE BROADCAST MAST",sub:"voice · signal out"},
+};
+const labelEls={};
+function addLabel(id,text,big){const e=document.createElement("div");e.className="lab"+(big?"":" sm");e.textContent=text;
+  document.body.appendChild(e); labelEls[id]={el:e,big};}
+
+// SPIRE
+{const s=makeSpire(); s.position.set(0,0,0); scene.add(s);
+ register("spire",s,"spire",{label:"THE SPIRE"},new THREE.Vector3(0,52,0));
+ s.traverse(m=>{if(m.isMesh)markClickable(m,"spire");});
+ // mind organs ring around spire
+ MIND.forEach((m,i)=>{const a=-Math.PI/2+i*(2*Math.PI/MIND.length), R=20;
+   const x=Math.cos(a)*R, z=Math.sin(a)*R, h=13+(m.status==="live"?7:0)+ (i%2)*3;
+   const b=makeBuilding(5.4,5.4,h,{color:GOLD}); b.position.set(x,0,z); scene.add(b);
+   register("mind_"+m.id,b,"organ",m,new THREE.Vector3(x,h+3,z));
+   b.traverse(me=>{if(me.isMesh)markClickable(me,"mind_"+m.id);});
+   makeRoad(x,z,0,0,2);
+ });
+}
+// generic district builder: plot + label + road to spire
+function buildDistrict(key,accent){const D=DISTRICTS[key];
+  makePlot(D.cx,D.cz,D.w,D.d,accent); addLabel("dist_"+key,D.label,true);
+  makeRoad(D.cx,D.cz,0,0,4);
+  DISTRICTS[key]._anchor=new THREE.Vector3(D.cx,26,D.cz);
+}
+["foundry","archive","workshops","ports","watch","ledger","broadcast"].forEach(k=>buildDistrict(k,0x2a2617));
+
+// FOUNDRY plants in a row grouped by ring
+{const D=DISTRICTS.foundry, n=PLANTS.length, gapX=(D.w-24)/(n-1), x0=D.cx-(D.w-24)/2;
+ PLANTS.forEach((p,i)=>{const x=x0+gapX*i, z=D.cz, scale=Math.min(1,(p.models>20?1:p.models/8)+0.2);
+   const g=makePlant(scale,p.priv); g.position.set(x,0.6,z); scene.add(g);
+   const top=(4+scale*4)+(6+scale*8)+2;
+   register("plant_"+p.id,g,"plant",p,new THREE.Vector3(x,top,z));
+   g.traverse(me=>{if(me.isMesh)markClickable(me,"plant_"+p.id);});
+   addLabel("plant_"+p.id,p.id,false);
+ });
+}
+// helper: lay buildings in rows inside a district plot
+function fillDistrict(key,items,mk){const D=DISTRICTS[key];
+  const n=items.length, cols=Math.ceil(Math.sqrt(n*D.w/D.d)), rows=Math.ceil(n/cols);
+  const mx=D.w*0.16, mz=D.d*0.28, gw=(D.w-mx*2)/cols, gz=(D.d-mz*2)/rows;
+  items.forEach((it,i)=>{const r=(i/cols)|0, c=i%cols;
+    const x=D.cx-(D.w/2)+mx+gw*(c+.5), z=D.cz-(D.d/2)+mz+gz*(r+.5);
+    mk(it,i,x,z,gw,gz);});
+}
+// ARCHIVE
+fillDistrict("archive",ORGANS.archive,(o,i,x,z)=>{const h=11+i*2;
+  const b=makeBuilding(11,8,h,{color:AMBER,emissive:0xe8b866}); b.position.set(x,0,z); scene.add(b);
+  register("archive_"+o.id,b,"organ",o,new THREE.Vector3(x,h+3,z)); b.traverse(m=>{if(m.isMesh)markClickable(m,"archive_"+o.id);});
+  addLabel("archive_"+o.id,o.label,false);});
+// WORKSHOPS (skills)
+fillDistrict("workshops",SKILLS,(s,i,x,z)=>{const h=4+(s.s==="live"?Math.random()*5+2:1.5);
+  const b=makeBuilding(4.6,4.6,h,{color:GOLD}); b.position.set(x,0,z); scene.add(b);
+  register("skill_"+i,b,"skill",s,new THREE.Vector3(x,h+2,z)); b.traverse(m=>{if(m.isMesh)markClickable(m,"skill_"+i);});
+  addLabel("skill_"+i,s.n,false);});
+// PORTS (services)
+fillDistrict("ports",SERVICES,(s,i,x,z)=>{const h=8+(s.gate?5:0);
+  const b=makeBuilding(6.4,4.6,h,{color:s.gate?AMBER:GOLD,emissive:s.gate?0xe8b866:0xffffff}); b.position.set(x,0,z); scene.add(b);
+  register("svc_"+i,b,"svc",s,new THREE.Vector3(x,h+3,z)); b.traverse(m=>{if(m.isMesh)markClickable(m,"svc_"+i);});
+  addLabel("svc_"+i,s.n,false);});
+// WATCH (hades) — a lighthouse
+fillDistrict("watch",ORGANS.watch,(o,i,x,z)=>{const b=makeBuilding(7,7,26,{color:GOLD}); b.position.set(x,0,z); scene.add(b);
+  register("watch_"+o.id,b,"organ",o,new THREE.Vector3(x,30,z)); b.traverse(m=>{if(m.isMesh)markClickable(m,"watch_"+o.id);});
+  addLabel("watch_"+o.id,o.label,false);});
+// LEDGER
+fillDistrict("ledger",ORGANS.ledger,(o,i,x,z)=>{const b=makeBuilding(13,9,10,{color:GOLD}); b.position.set(x,0,z); scene.add(b);
+  register("ledger_"+o.id,b,"organ",o,new THREE.Vector3(x,13,z)); b.traverse(m=>{if(m.isMesh)markClickable(m,"ledger_"+o.id);});
+  addLabel("ledger_"+o.id,o.label,false);});
+// BROADCAST — voice/interface/browserdrive; the mast building gets an antenna beacon
+fillDistrict("broadcast",ORGANS.broadcast,(o,i,x,z)=>{const h=o.id==="speak"?24:10;
+  const b=makeBuilding(6.5,6.5,h,{color:GOLD}); b.position.set(x,0,z); scene.add(b);
+  if(o.id==="speak"){const be=new THREE.Mesh(new THREE.SphereGeometry(1,12,12),new THREE.MeshBasicMaterial({color:0xffe6b0}));
+    be.position.set(x,h+3,z); scene.add(be); NODES._mastBeacon=be;}
+  register("bcast_"+o.id,b,"organ",o,new THREE.Vector3(x,h+3,z)); b.traverse(m=>{if(m.isMesh)markClickable(m,"bcast_"+o.id);});
+  addLabel("bcast_"+o.id,o.label,false);});
+
+document.getElementById("loading").style.opacity=0;
+setTimeout(()=>{const l=document.getElementById("loading");if(l)l.style.display="none";},600);
+
+/* ===================== 4. LIVE WIRING ================================================ */
+const LIVE={name:"HERALD",online:new Set()};
+function setNode(id,lvl,err){const n=NODES[id]; if(!n)return; n.lit=lvl>0.2; n.level=lvl;
+  if(n.group.userData.setLevel)n.group.userData.setLevel(lvl,!!err);}
+async function pollState(){
+  try{const s=await(await fetch("/state")).json();
+    LIVE.name=(s.identity&&s.identity.name)||"HERALD";
+    document.getElementById("status").className="";
+    document.getElementById("statustxt").textContent=
+      `${LIVE.name} · alive since ${(s.life&&s.life.alive_since)||"—"} · ${s.life?s.life.ticks:0} ticks · read live ${s.t}`;
+    document.getElementById("talk-name").textContent=`THE SPIRE · talk to ${LIVE.name}`;
+    LIVE.online=new Set((s.energy&&s.energy.plants||[]).map(p=>p.plant));
+    for(const p of PLANTS){const live=(s.energy&&s.energy.plants||[]).find(x=>x.plant===p.id);
+      const on=!!live||p.key===null; const cap=live&&(live.rpm_cap||p.rpm);
+      const use=live&&cap?Math.min(1,(live.rpm_now||0)/cap):0;
+      setNode("plant_"+p.id, on?(1.05+use*0.8):0.0, live&&live.throttled&&live.throttled.length>0);
+      NODES["plant_"+p.id]._live=live||null;}
+    // book of luis
+    LIVE.memories=s.memory&&s.memory.memories; LIVE.sessions=s.memory&&s.memory.sessions;
+    LIVE.trust=s.trust||{}; LIVE.brief=s.brief||[]; LIVE.mindTurns=(s.mind&&s.mind.turns)||[];
+    // ambient lit for live organs/skills/services
+    for(const id in NODES){const n=NODES[id];
+      if(n.kind==="organ") setNode(id, n.data.status==="live"?1.15:0.32);
+      if(n.kind==="skill") setNode(id, n.data.s==="live"?1.0:0.2);
+      if(n.kind==="svc") setNode(id, n.data.auth!=="needs-auth"?1.0:0.2);}
+  }catch(e){document.getElementById("status").className="off";
+    document.getElementById("statustxt").textContent="entity offline — showing the city (start: python controlroom.py)";
+    for(const p of PLANTS)setNode("plant_"+p.id,p.key===null?0.5:0.0);}
+  setTimeout(pollState,2000);
+}
+// vehicles: a pulse becomes a glowing car driving the road from source district -> spire
+const vehicles=[]; const vGeo=new THREE.BoxGeometry(1.6,0.9,3.2);
+function spawnVehicle(fromPos,bad){
+  const m=new THREE.Mesh(vGeo,new THREE.MeshBasicMaterial({color:bad?0xff7a66:0xffd27a}));
+  scene.add(m); vehicles.push({m,from:fromPos.clone(),to:new THREE.Vector3(0,1,0),t:0,dur:1.15,bad});
+}
+function districtPos(key){const D=DISTRICTS[key];return new THREE.Vector3(D.cx,1.2,D.cz);}
+function reflect(e){const d=(e.detail||"").toLowerCase(),organ=e.organ,bad=e.ok===false;
+  if(organ==="energy"){const pl=PLANTS.find(p=>d.startsWith(p.id+"/")||d.includes(p.id+"/")||d.includes(p.id));
+    if(pl){spawnVehicle(NODES["plant_"+pl.id].worldPos.clone().setY(1.2),bad); flash("plant_"+pl.id,bad);}
+    else spawnVehicle(districtPos("foundry"),bad); pulseSpire();}
+  else if(organ==="mind"){pulseSpire(); if(e.action==="hears-luis")spawnVehicle(districtPos("ports"),false);
+    if(e.action==="replies")spawnVehicle(new THREE.Vector3(0,1.2,0),bad),flash("bcast_speak",false);}
+  else if(organ==="memory"){spawnVehicle(districtPos("archive"),bad); flash("archive_consolidate",bad);}
+  else if(organ==="trust"){spawnVehicle(new THREE.Vector3(0,1.2,0),bad); flash("ledger_trust",bad);}
+  else if(organ==="voice"){flash("bcast_speak",false);}
+  else if(organ==="watcher"){spawnVehicle(districtPos("watch"),bad); flash("watch_hades",bad);}
+  else if(organ==="life"){pulseSpire();}
+}
+function flash(id,bad){const n=NODES[id]; if(n&&n.group.userData.setLevel){n.group.userData.setLevel(Math.min(1.6,(n.level||0.5)+0.8),bad);
+  setTimeout(()=>n.group.userData.setLevel(n.level||0.5,false),700);}}
+let spirePulse=0; function pulseSpire(){spirePulse=1;}
+let lastT=0;
+async function pollEvents(){try{const ev=await(await fetch("/events?since="+lastT)).json();
+  for(const e of ev){reflect(e); lastT=Math.max(lastT,e.t);}}catch(_){}
+  setTimeout(pollEvents,700);}
+
+/* ===================== 5. LABELS + INTERACTION ====================================== */
+const insp=document.getElementById("insp"),tip=document.getElementById("tip");
+const ray=new THREE.Raycaster(), mouse=new THREE.Vector2();
+let hovered=null;
+function toScreen(v){const p=v.clone().project(camera);
+  return {x:(p.x*0.5+0.5)*innerWidth, y:(-p.y*0.5+0.5)*innerHeight, vis:p.z<1};}
+function updateLabels(){
+  // district labels (big) always; building labels only when close / hovered
+  for(const key in DISTRICTS){const L=labelEls["dist_"+key]; if(!L)continue;
+    const D=DISTRICTS[key]; const s=toScreen(new THREE.Vector3(D.cx,key==="spire"?60:20,D.cz));
+    if(s.vis){L.el.style.left=s.x+"px";L.el.style.top=s.y+"px";L.el.style.opacity=0.92;}else L.el.style.opacity=0;}
+  const showSmall=camera.position.distanceTo(controls.target)<170;
+  for(const id in NODES){const L=labelEls[id]; if(!L)continue; const n=NODES[id];
+    const s=toScreen(n.worldPos);
+    const near = showSmall || hovered===id;
+    if(s.vis&&near){L.el.style.left=s.x+"px";L.el.style.top=s.y+"px";
+      L.el.style.opacity=hovered===id?1:(n.lit?0.8:0.4); L.el.style.color=hovered===id?"#f0c070":"";}
+    else L.el.style.opacity=0;}
+}
+renderer.domElement.addEventListener("mousemove",ev=>{
+  mouse.x=(ev.clientX/innerWidth)*2-1; mouse.y=-(ev.clientY/innerHeight)*2+1;
+  ray.setFromCamera(mouse,camera); const hit=ray.intersectObjects(clickable,false)[0];
+  const id=hit?hit.object.userData.nodeId:null; hovered=id;
+  if(id){renderer.domElement.style.cursor="pointer"; const n=NODES[id]; let t=id;
+    if(n.kind==="plant"){const p=n.data,l=n._live;t=`${p.id} · ${RING[p.priv].ring}\n${p.cap}\n${n.lit?(l?`rpm ${l.rpm_now||0}/${l.rpm_cap||p.rpm||"∞"} · ${l.rpd||0} today`:"online"):"awaiting key"}`;}
+    else if(n.kind==="skill")t=`skill · ${n.data.n} (${n.data.s})`;
+    else if(n.kind==="svc")t=`${n.data.n} · ${n.data.dir} · ${n.data.auth}`;
+    else if(n.kind==="organ")t=`${n.data.label} — ${n.data.status}`;
+    else if(n.kind==="spire")t=`${LIVE.name} · click to talk`;
+    tip.textContent=t;tip.style.opacity=1;
+    tip.style.left=Math.min(ev.clientX+14,innerWidth-tip.offsetWidth-10)+"px";tip.style.top=(ev.clientY+14)+"px";
+  }else{renderer.domElement.style.cursor="grab";tip.style.opacity=0;}
+});
+renderer.domElement.addEventListener("click",ev=>{
+  mouse.x=(ev.clientX/innerWidth)*2-1; mouse.y=-(ev.clientY/innerHeight)*2+1;
+  ray.setFromCamera(mouse,camera); const hit=ray.intersectObjects(clickable,false)[0];
+  if(!hit)return; const id=hit.object.userData.nodeId, n=NODES[id]; if(!n)return;
+  if(n.kind==="spire"){openTalk();return;} openInspector(n);
+});
+function inspRows(h){document.getElementById("insp-body").innerHTML=h;}
+function openInspector(n){insp.classList.add("open"); closeTalk();
+  const eye=document.getElementById("insp-eye"),ti=document.getElementById("insp-title"),ro=document.getElementById("insp-role");
+  if(n.kind==="plant"){const p=n.data,l=n._live; eye.textContent="THE FOUNDRY · power plant"; ti.innerHTML=`<b>${p.id}</b>`; ro.textContent=p.head;
+    inspRows(`<div class="kv"><b>privacy ring</b><span class="${RING[p.priv].wall?'g':''}">${RING[p.priv].ring}</span></div>`+
+      `<div class="kv"><b>data policy</b><span>${RING[p.priv].note}</span></div>`+
+      `<div class="kv"><b>capacity</b><span>${p.cap}</span></div>`+
+      `<div class="kv"><b>models wired</b><span>${p.models}</span></div>`+
+      `<div class="kv"><b>state</b><span class="${n.level>0&&NODES['plant_'+p.id]._live&&NODES['plant_'+p.id]._live.throttled&&NODES['plant_'+p.id]._live.throttled.length?'r':(n.lit?'g':'')}">${n.lit?'ONLINE':'awaiting key'}</span></div>`+
+      (l?`<div class="kv"><b>rpm now</b><span class="g">${l.rpm_now||0} / ${l.rpm_cap||p.rpm||'∞'}</span></div>`+
+          `<div class="kv"><b>requests today</b><span>${l.rpd||0}${l.rpd_cap?' / '+l.rpd_cap:''}</span></div>`+
+          `<div class="meter"><i style="width:${Math.round(Math.min(1,(l.rpm_now||0)/(l.rpm_cap||p.rpm||40))*100)}%"></i></div>`
+        :`<div style="margin-top:8px;color:#615f66">no live meter — ${p.key===null?'keyless/local':'not keyed on this machine'}</div>`));}
+  else if(n.kind==="skill"){const s=n.data; eye.textContent="THE WORKSHOPS · skill"; ti.innerHTML=`<b>${s.n}</b>`;
+    ro.textContent="a crystallized capability in the growing population.";
+    inspRows(`<div style="margin-bottom:10px"><span class="tag ${s.s==='live'?'live':''}">${s.s}</span></div><div class="mono">${s.s==='live'?'Available now — invoke by name.':'Parked — captured, awaiting a fresh-morning build session.'}</div>`);}
+  else if(n.kind==="svc"){const s=n.data; eye.textContent="THE PORTS · "+(s.dir==="import"?"import":s.dir==="export"?"export":"import/export"); ti.innerHTML=`<b>${s.n}</b>`; ro.textContent=s.s;
+    let body=`<div style="margin-bottom:10px"><span class="tag ${s.auth==='needs-auth'?'warn':'live'}">${s.auth}</span> <span class="tag">${s.dir}</span></div>`;
+    if(s.gate){body+=`<div class="mono" style="color:var(--gold)">The outreach gate. HERALD can DRAFT here; sending is trust-FORBIDDEN until you approve. The income clock runs through this door.</div>`+
+      `<div id="act"><button class="act-btn" onclick="draftOutreach()">▶ have HERALD draft the outreach email now</button></div>`;}
+    else body+=`<div class="mono">${s.auth==='needs-auth'?'Needs OAuth in an interactive session before use.':'Connected — HERALD can reach this service.'}</div>`;
+    inspRows(body);}
+  else if(n.kind==="organ"){const o=n.data;
+    const dmap={watch:"THE WATCH",archive:"THE ARCHIVE",broadcast:"THE BROADCAST MAST",ledger:"THE LEDGER",spire:"THE SPIRE"};
+    eye.textContent=dmap[n.id.split("_")[0]]||"organ"; ti.innerHTML=`<b>${o.label}</b>`; ro.textContent=o.role;
+    let extra="";
+    if(o.id==="consolidate"&&LIVE.memories!=null)extra=`<div class="kv"><b>semantic memories</b><span class="g">${LIVE.memories}</span></div>`+
+      `<div class="kv"><b>sessions consolidated</b><span>${LIVE.sessions} / ~1587</span></div><div class="meter"><i style="width:${Math.round(100*(LIVE.sessions||0)/1587)}%"></i></div>`;
+    if(o.id==="trust"&&LIVE.trust)extra='<div class="list" style="margin-top:6px">'+Object.entries(LIVE.trust).map(([c,v])=>`<div class="row"><b>${c}</b><span class="s">${v.level} · streak ${v.streak} · ${v.runs}/${v.fails}</span></div>`).join('')+'</div>';
+    inspRows(`<div style="margin-bottom:10px"><span class="tag ${o.status==='live'?'live':''}">${o.status==='live'?'live · firing':'built · not yet wired'}</span></div>`+extra);}
+}
+document.getElementById("inspx").onclick=()=>insp.classList.remove("open");
+
+/* ---- TALK + neural voice ---- */
+const talk=document.getElementById("talk"),feed=document.getElementById("talk-feed"),tin=document.getElementById("talk-in");
+// VOICE — verified pattern: prefer the 2024 conversation-optimized neural voices; require Natural/Online
+// so we never fall back to robotic David/Zira; chunk by sentence (Chromium cuts long utterances); keep-alive.
+let VOICES=[],voiceSel=document.getElementById("voice-pick");
+const PREFERRED=["AndrewMultilingual","Andrew","AvaMultilingual","Ava","EmmaMultilingual","Emma","Brian","Aria","Guy","Jenny"];
+const isNeural=v=>/Natural|Online/i.test(v.name);
+function rankVoice(v){let s=0,n=v.name;
+  for(let i=0;i<PREFERRED.length;i++){if(n.includes(PREFERRED[i])){s+=200-i;break;}}
+  if(isNeural(v))s+=90; if((v.lang||"").toLowerCase().startsWith("en"))s+=20; if(v.localService)s+=3; return s;}
+function loadVoices(){const all=(window.speechSynthesis?speechSynthesis.getVoices():[]).filter(v=>(v.lang||"").toLowerCase().startsWith("en"));
+  if(!all.length)return; VOICES=all.sort((a,b)=>rankVoice(b)-rankVoice(a));
+  voiceSel.innerHTML=VOICES.map((v,i)=>{const l=v.name.replace('Microsoft ','').replace(' Online (Natural)',' ✦').replace(' (Natural)',' ✦');
+    return `<option value="${i}">${l}${v.localService?' ·offline':''}</option>`;}).join("")||'<option>system voice</option>';}
+if(window.speechSynthesis){speechSynthesis.addEventListener("voiceschanged",loadVoices); loadVoices();
+  let tries=0; const iv=setInterval(()=>{if((speechSynthesis.getVoices()||[]).length||++tries>25){clearInterval(iv);loadVoices();}},120);}
+function pickVoice(){if(document.getElementById("opt-local").checked){const o=VOICES.find(v=>v.localService);return o||VOICES[0];}
+  return VOICES[voiceSel.value|0]||VOICES[0];}   // sensitive/local -> an OFFLINE voice (no cloud)
+function speak(text){if(!window.speechSynthesis||!document.getElementById("opt-voice").checked||!text)return;
+  speechSynthesis.cancel(); const v=pickVoice();
+  const chunks=(""+text).slice(0,1000).match(/[^.!?]+[.!?]+|\S[^.!?]*$/g)||[text];
+  chunks.forEach(ch=>{const t=ch.trim(); if(!t)return; const u=new SpeechSynthesisUtterance(t);
+    if(v){u.voice=v;u.lang=v.lang;} u.rate=1.0;u.pitch=1.0; speechSynthesis.speak(u);});
+  clearInterval(window.__ka); window.__ka=setInterval(()=>{if(speechSynthesis.speaking)speechSynthesis.resume();else clearInterval(window.__ka);},9000);
+  flash("bcast_speak",false);}
+function openTalk(){talk.classList.add("open"); insp.classList.remove("open"); pulseSpire(); setTimeout(()=>tin.focus(),180);
+  if(!feed.children.length&&LIVE.mindTurns&&LIVE.mindTurns.length)
+    LIVE.mindTurns.forEach(t=>addTurn(t.who==="luis"?"you":LIVE.name,t.text,null,t.who==="luis"));}
+function closeTalk(){talk.classList.remove("open");}
+document.getElementById("talkx").onclick=closeTalk;
+function addTurn(who,text,receipt,you){const d=document.createElement("div");d.className="turn"+(you?" you":"");
+  d.innerHTML=`<b>${who}</b> ${(""+text).replace(/</g,"&lt;")}`+(receipt?`<div class="receipt">${receipt}</div>`:"");
+  feed.appendChild(d); feed.scrollTop=feed.scrollHeight; return d;}
+async function send(){const text=tin.value.trim(); if(!text)return; tin.value=""; addTurn("you",text,null,true);
+  const st=document.getElementById("talk-state"); st.textContent="thinking…"; pulseSpire();
+  try{const r=await(await fetch("/talk",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text,zone:document.getElementById("opt-local").checked?"local":"private"})})).json();
+    const mem=(r.memories&&r.memories.length)?`recalled ${r.memories.length} memories · `:"";
+    const rod=r.rod?`${r.rod} · ${(typeof r.latency==="number"?r.latency.toFixed(2):r.latency)}s · ${r.zone}`:"no rod answered";
+    addTurn(LIVE.name,r.reply||"(silence)",mem+rod); speak(r.reply||""); st.textContent="";
+  }catch(e){addTurn("system","talk failed: "+e); st.textContent="";}}
+document.getElementById("talk-send").onclick=send;
+tin.addEventListener("keydown",e=>{if(e.key==="Enter")send();});
+window.draftOutreach=function(){openTalk();
+  tin.value="Draft the exact income diagnostic outreach email I should send today — subject line, body, and the one-pager reference — as a copy-paste artifact. Anonymized, no employer names.";
+  send();};
+
+/* DO rail */
+document.querySelectorAll("#rail .btn").forEach(b=>b.onclick=async()=>{const cmd=b.dataset.cmd,out=document.getElementById("railout");
+  b.classList.add("busy"); out.textContent=cmd+"…"; pulseSpire();
+  try{const r=await(await fetch("/do",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cmd})})).json();
+    out.textContent=(r.ok?"":"[fail] ")+(r.out||"(no output)");}catch(e){out.textContent="failed: "+e;}
+  b.classList.remove("busy");});
+// camera controls
+document.getElementById("cam-rotate").onclick=function(){controls.autoRotate=!controls.autoRotate; this.textContent="auto-orbit: "+(controls.autoRotate?"on":"off");};
+document.getElementById("cam-reset").onclick=()=>{camera.position.set(HOME.x,HOME.y,HOME.z); controls.target.set(0,10,0);};
+addEventListener("keydown",e=>{if(e.key==="Escape"){insp.classList.remove("open");closeTalk();}});
+
+/* ===================== 6. ANIMATE ==================================================== */
+let clock=performance.now();
+function animate(){requestAnimationFrame(animate);
+  const now=performance.now(), dt=Math.min(0.05,(now-clock)/1000); clock=now;
+  controls.update();
+  // spire life
+  const sp=NODES.spire; if(sp){spirePulse*=0.94;
+    sp.group.userData.beacon.material.color.setHSL(0.11,0.7,0.55+0.35*spirePulse);
+    sp.group.userData.halo.material.opacity=0.35+0.5*spirePulse;
+    sp.group.rotation.y+=dt*0.05;
+    sp.group.userData.shaftMat.emissiveIntensity=0.9+spirePulse*0.6;}
+  if(NODES._mastBeacon)NODES._mastBeacon.material.color.setHSL(0.1,0.8,0.5+0.3*Math.abs(Math.sin(now*0.004)));
+  // vehicles
+  for(let i=vehicles.length-1;i>=0;i--){const v=vehicles[i]; v.t+=dt/v.dur;
+    if(v.t>=1){scene.remove(v.m);v.m.material.dispose();vehicles.splice(i,1);continue;}
+    const p=v.from.clone().lerp(v.to,v.t); p.y=1.2+Math.sin(v.t*Math.PI)*2; v.m.position.copy(p);
+    v.m.lookAt(v.to.x,1.2,v.to.z); v.m.material.opacity=1;}
+  updateLabels();
+  composer.render();
+}
+animate();
+addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);bloom.setSize(innerWidth,innerHeight);});
+if(location.search.includes("still")){controls.autoRotate=false;
+  camera.position.set(142,92,170); controls.target.set(0,14,4);
+  const cr=document.getElementById("cam-rotate"); if(cr)cr.textContent="auto-orbit: off";}
+pollState(); pollEvents();
+</script></body></html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<!-- HOLOGRAM PROOF — the city as a projection, not as architecture.
+     Reference: S9_the_city_revealed.png · S2_entity_as_place.png · S5_concentric_map.png
+     Thesis (Luis, 2026-07-21): "the cityograms can be holograms rendered beautifully."
+     A hologram is lines + additive light: no surfaces, no shading model, no shadow logic —
+     the exact things that make a stylised look collapse. And it is honest by construction:
+     a projection is openly a REPRESENTATION of a real structure, never a photograph of one.
+     Governed by 02_VISUAL_LAW (two inks) + E5/E6 (pipeline). No build step, r128 global. -->
+<meta charset="utf-8"><title>THE CITY · HOLOGRAM PROOF</title>
+<style>
+  html,body{margin:0;height:100%;background:#050a10;overflow:hidden}
+  canvas{display:block}
+  #cap{position:fixed;left:18px;top:16px;font:10px/1.7 'IBM Plex Mono',Consolas,monospace;
+       letter-spacing:.22em;color:rgba(120,155,175,.45);text-transform:uppercase}
+  #cap b{color:#d4a24c;font-weight:400}
+  #foot{position:fixed;left:18px;bottom:14px;font:9.5px/1.6 'IBM Plex Mono',monospace;
+        letter-spacing:.16em;color:rgba(120,155,175,.28)}
+</style>
+<div id="cap"><b>THE CITY</b> — HOLOGRAPHIC PROJECTION<br>DISTRICTS 09 · CONDUITS LIVE · SPIRE PRESENT</div>
+<div id="foot">A PROJECTION IS A REPRESENTATION. NOTHING HERE PRETENDS TO BE A SURFACE.</div>
+<script src="/game/vendor/three.min.js"></script>
+<script src="/game/vendor/CopyShader.js"></script>
+<script src="/game/vendor/LuminosityHighPassShader.js"></script>
+<script src="/game/vendor/EffectComposer.js"></script>
+<script src="/game/vendor/ShaderPass.js"></script>
+<script src="/game/vendor/RenderPass.js"></script>
+<script src="/game/vendor/UnrealBloomPass.js"></script>
+<script>
+"use strict";
+var HOT = 0xffb000, WARM = 0xd4a24c, STRUCT = 0x789bb0;
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(0x040709);
+/* NO FOG. Additive lines + fog = grey soup (proven, first pass). A hologram needs
+   darkness to sit in, not atmosphere — the void does the separating. */
+var camera = new THREE.PerspectiveCamera(46, innerWidth / innerHeight, 0.5, 3000);
+var renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+
+/* ---- helpers: everything is a LINE. no meshes, no materials that shade. ---- */
+function lineMat(color, opacity) {
+  return new THREE.LineBasicMaterial({
+    color: color, transparent: true, opacity: opacity,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+}
+function edges(geo, color, op) { return new THREE.LineSegments(new THREE.EdgesGeometry(geo), lineMat(color, op)); }
+function ring(r, seg, color, op) {
+  var pts = [], i;
+  for (i = 0; i <= seg; i++) { var a = i / seg * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r)); }
+  return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat(color, op));
+}
+
+/* ---- the ground: concentric field, the sacred motif, drawn as light ---- */
+var groundGrp = new THREE.Group(); scene.add(groundGrp);
+for (var r = 60; r <= 780; r += 120) groundGrp.add(ring(r, 128, STRUCT, r < 200 ? 0.13 : 0.055));
+
+/* ---- districts: plots on the ring, each a cluster of wireframe towers ---- */
+var DISTRICTS = [
+  { a: 0.00, d: 0,   n: 0,  spire: true },              /* the core spire */
+  { a: 0.35, d: 300, n: 14 }, { a: 1.15, d: 340, n: 10 },
+  { a: 1.95, d: 300, n: 16 }, { a: 2.70, d: 380, n: 8 },
+  { a: 3.45, d: 320, n: 12 }, { a: 4.20, d: 360, n: 9 },
+  { a: 5.05, d: 300, n: 13 }, { a: 5.75, d: 390, n: 7 },
+  { a: 2.35, d: 620, n: 0, empty: true },                /* unbuilt plots — the fog, literal */
+  { a: 4.75, d: 640, n: 0, empty: true },
+  { a: 0.75, d: 660, n: 0, empty: true }
+];
+var seed = 20260721;
+function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+
+var towerGeoCache = [];
+function towerGeo(w, h) {
+  var g = new THREE.CylinderGeometry(w * 0.55, w, h, 6, 1);
+  towerGeoCache.push(g); return g;
+}
+
+DISTRICTS.forEach(function (D) {
+  var cx = Math.cos(D.a) * D.d, cz = Math.sin(D.a) * D.d;
+  var plot = new THREE.Group(); plot.position.set(cx, 0, cz); scene.add(plot);
+
+  /* every plot carries its footprint rings — built or not */
+  plot.add(ring(78, 72, STRUCT, D.empty ? 0.20 : 0.30));
+  plot.add(ring(62, 64, STRUCT, D.empty ? 0.12 : 0.20));
+  if (D.empty) { plot.add(ring(30, 48, STRUCT, 0.10)); return; }  /* an empty plot is a promise */
+
+  if (D.spire) {
+    /* THE SPIRE — tapered converging lines, the one true vertical */
+    var pts = [], i;
+    for (i = 0; i < 10; i++) {
+      var a = i / 10 * Math.PI * 2;
+      var g = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(Math.cos(a) * 26, 0, Math.sin(a) * 26),
+        new THREE.Vector3(Math.cos(a) * 3, 190, Math.sin(a) * 3),
+        new THREE.Vector3(0, 300, 0)
+      ]);
+      plot.add(new THREE.Line(g, lineMat(WARM, 0.55)));
+    }
+    for (i = 0; i < 7; i++) plot.add((function (rr, y) { var rg = ring(rr, 56, HOT, 0.30); rg.position.y = y; return rg; })(24 - i * 3, 8 + i * 26));
+    var core = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 6, 0)]),
+      new THREE.PointsMaterial({ color: HOT, size: 26, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }));
+    plot.add(core);
+    return;
+  }
+
+  /* district towers — wireframe only; height and lit-ness would come from live data */
+  for (var t = 0; t < D.n; t++) {
+    var ang = rnd() * Math.PI * 2, rad = 12 + rnd() * 52;
+    var h = 26 + rnd() * 86, w = 5 + rnd() * 7;
+    var lit = rnd() > 0.62;
+    var tw = edges(towerGeo(w, h), lit ? WARM : STRUCT, lit ? 0.72 : 0.13);
+    tw.position.set(Math.cos(ang) * rad, h / 2, Math.sin(ang) * rad);
+    plot.add(tw);
+  }
+  /* a few lit windows as points — in the real build these are live load */
+  var wp = [], k;
+  for (k = 0; k < 26; k++) {
+    var aa = rnd() * Math.PI * 2, rr2 = 12 + rnd() * 52;
+    wp.push(new THREE.Vector3(Math.cos(aa) * rr2, 8 + rnd() * 70, Math.sin(aa) * rr2));
+  }
+  plot.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(wp),
+    new THREE.PointsMaterial({ color: HOT, size: 3.4, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false })));
+});
+
+/* ---- conduits: curves from each district to the core, with travelling packets ---- */
+var packets = [];
+DISTRICTS.forEach(function (D) {
+  if (D.spire || D.empty) return;
+  var cx = Math.cos(D.a) * D.d, cz = Math.sin(D.a) * D.d;
+  var curve = new THREE.QuadraticBezierCurve3(
+    new THREE.Vector3(cx, 4, cz),
+    new THREE.Vector3(cx * 0.5, 46, cz * 0.5),
+    new THREE.Vector3(0, 8, 0));
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(48)), lineMat(WARM, 0.30)));
+  var pg = new THREE.BufferGeometry().setFromPoints([curve.getPoint(0)]);
+  var pt = new THREE.Points(pg, new THREE.PointsMaterial({ color: HOT, size: 9, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false }));
+  scene.add(pt); packets.push({ pt: pt, curve: curve, t: Math.random() });
+});
+
+/* ---- the scan band: a hologram's tell. one sweep, tight, close to the deck. ---- */
+var scan = ring(430, 160, WARM, 0.18); scene.add(scan);
+
+/* ---- post: bloom is what makes light read as projection ---- */
+var composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene, camera));
+/* threshold 0.34: ONLY amber blooms. At 0.02 every faint structure line bloomed and the
+   frame became haze (proven, first pass). Bloom is punctuation, not atmosphere. */
+var bloom = new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.05, 0.55, 0.34);
+composer.addPass(bloom);
+
+/* ---- camera: the S9 vantage — high, angled, the city below ---- */
+var still = location.search.indexOf("still") >= 0;
+var camA = 0.9;
+function frame(t) {
+  if (!still) camA += 0.00035;
+  camera.position.set(Math.cos(camA) * 590, 300, Math.sin(camA) * 590);
+  camera.lookAt(0, 55, 0);
+  scan.position.y = still ? 120 : (Math.sin(t * 0.00018) * 0.5 + 0.5) * 260;
+  packets.forEach(function (p) {
+    p.t += still ? 0 : 0.0022;
+    if (p.t > 1) p.t = 0;
+    var v = p.curve.getPoint(p.t);
+    p.pt.geometry.attributes.position.setXYZ(0, v.x, v.y, v.z);
+    p.pt.geometry.attributes.position.needsUpdate = true;
+  });
+  composer.render();
+  requestAnimationFrame(frame);
+}
+if (still) { camA = 0.9; }
+requestAnimationFrame(frame);
+addEventListener("resize", function () {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
+});
+</script>

@@ -1,0 +1,15 @@
+{
+ "done": {
+  "M0.1": "2026-07-20 13:23",
+  "M1.1": "2026-07-20 14:03"
+ },
+ "reveals": [
+  "plant_pollinations",
+  "foundry_all"
+ ],
+ "updated": "2026-07-20 23:15:06",
+ "models": [
+  "pollinations/openai-fast",
+  "groq/llama-3.3-70b-versatile"
+ ]
+}

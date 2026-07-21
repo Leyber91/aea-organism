@@ -194,8 +194,21 @@ enforces them as gates.
    and its light `[BUILT]` · the beacon `[BUILT]` · warm windows tracking real load
    `[BUILT]` · discovered map nodes `[BUILT]` · the presence chip `[BUILT]` · HUD values
    (warm, flaring hot only on change) `[BUILT]` · the sky's breathing horizon band, the
-   single atmospheric exception, capped 0.10–0.18 `[BUILT]`. Anything else amber in an
-   idle frame is a bug by definition.
+   single atmospheric exception, capped 0.10–0.18 `[BUILT]` · **conduits and roads, bound
+   to ACCUMULATED WORK** `[PLANNED — amended 2026-07-21 by Luis's ruling]`. Anything else
+   amber in an idle frame is a bug by definition.
+
+   **THE ACCUMULATED-WORK AMENDMENT (Luis, 2026-07-21).** E6 found S9_the_city_revealed —
+   the adopted world target — illegal under this list: its signature is a web of amber
+   conduits glowing at rest, and E2 Move 7 had ruled wires stay structure ink until a live
+   trace. Ruling: conduits earn idle amber, and they earn it *by history*. A conduit's
+   resting brightness binds to its CUMULATIVE routed calls (from `events.jsonl`), scaled
+   into a low band — unused routes stay structure ink and dark; a heavily used route holds a
+   dim warm glow forever, because it *has* carried work. A live packet still flares hot on
+   top, so the two readings never collide. This does not weaken the law, it deepens it: the
+   map becomes a record of where the entity has actually lived, and the amber remains earned
+   — only now it is earned over time rather than in the instant. Binding for the world build;
+   the generator ships one uniform apart from the dark-until-traffic alternative.
 2. **The amber census.** Production gate `[PLANNED — 09_PRODUCTION.md]`: on the standard
    `?still` boot frame, hot+warm pixels stay under roughly one-tenth of the frame; on a
    late-game save the share rises — and MUST rise, because the census is the plot (§1).

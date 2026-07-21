@@ -1,0 +1,3548 @@
+{
+ "generated_from": "workflow leyber-schema-map (real code + live payload)",
+ "nodes": [
+  {
+   "id": "hades",
+   "name": "HADES (the watcher)",
+   "file": "<REDACTED-PATH>/dev/aea-city/hades.py",
+   "kind": "governor",
+   "purpose": "Watcher-only governor: judges a worker's output against the ORIGINAL goal (accept|redo|reground|halt), re-grounds or reroutes to a different model, and logs every verdict as the accountability trail. Does no task work.",
+   "functions": [
+    {
+     "name": "watch",
+     "signature": "def watch(goal, attempt, worker, pool, meter)",
+     "returns": "tuple(verdict_dict(on_goal:bool,correct:bool,verdict:str,why:str), who:str) — success ('groq/gpt-oss-120b (strict-json)'), fallback (f\"{n['plant']}/{n['model']}\"), or parse-fail dict(on_goal=False,correct=False,verdict='unverified',why=...)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "grid.key",
+      "meter.record",
+      "swarm.pick_varied",
+      "orchestrator.pick",
+      "orchestrator.call_node"
+     ]
+    },
+    {
+     "name": "watch_local",
+     "signature": "def watch_local(goal, attempt, meter, worker_model=\"granite4.1:3b\")",
+     "returns": "tuple(verdict_dict(on_goal,correct,verdict,why), who:str) where who=f\"ollama/{model} (local watcher)\"; picks model='llama3.1:8b' if worker is granite else 'granite4.1:3b'; fallback verdict='unverified'",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "grid.call_openai",
+      "meter.record"
+     ]
+    },
+    {
+     "name": "oversee",
+     "signature": "def oversee(goal, zone='public', max_interventions=3)",
+     "returns": "tuple(final:str, log:list[dict(attempt,worker,watcher,on_goal,correct,verdict,why)])",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "orchestrator.load_pool",
+      "grid.Meter",
+      "orchestrator.pick",
+      "orchestrator.call_node",
+      "watch"
+     ]
+    }
+   ],
+   "inputs": [
+    "goal",
+    "attempt (worker output)",
+    "worker id",
+    "pool",
+    "meter",
+    "zone"
+   ],
+   "outputs": [
+    "verdict_dict(on_goal,correct,verdict,why)",
+    "who (watcher id str)",
+    "final answer",
+    "oversight log (accountability trail)"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "trust",
+   "name": "TRUST LEDGER",
+   "file": "<REDACTED-PATH>/dev/aea-city/trust.py",
+   "kind": "governor",
+   "purpose": "Per-capability autonomy ledger: each capability sits at a level (0 FORBIDDEN..3 TRUSTED), graduates after promote_after consecutive clean runs (to a ceiling), and demotes one level on any failure. Slow up, fast down; the durable accountability record.",
+   "functions": [
+    {
+     "name": "_load",
+     "signature": "def _load() -> dict",
+     "returns": "dict (ledger state; grid.load_json(LEDGER, {}))",
+     "reads": [
+      "trust_ledger.json"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "_save",
+     "signature": "def _save(state: dict)",
+     "returns": "None (grid.atomic_save_json)",
+     "reads": [],
+     "writes": [
+      "trust_ledger.json"
+     ],
+     "calls": [
+      "grid.atomic_save_json"
+     ]
+    },
+    {
+     "name": "_entry",
+     "signature": "def _entry(state: dict, cap: str) -> dict",
+     "returns": "dict(level,streak,runs,fails,history) — raises KeyError if cap not in CHARTER; seeds from CHARTER default if absent",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "check",
+     "signature": "def check(cap: str) -> dict",
+     "returns": "dict(allowed:bool(lvl>=2), draft_only:bool(lvl==1), level:int, name:str, why:str) — NOTE docstring says {allowed,level,name,why} but real shape includes draft_only",
+     "reads": [
+      "trust_ledger.json"
+     ],
+     "writes": [],
+     "calls": [
+      "_load",
+      "_entry"
+     ]
+    },
+    {
+     "name": "record",
+     "signature": "def record(cap: str, ok: bool, note: str = \"\") -> dict",
+     "returns": "dict — returns check(cap) after a locked read-modify-write; ok -> streak++ (promote at promote_after up to ceiling), not ok -> fails++, streak=0, level-- (never below min(1,ceiling))",
+     "reads": [
+      "trust_ledger.json"
+     ],
+     "writes": [
+      "trust_ledger.json"
+     ],
+     "calls": [
+      "grid.file_lock",
+      "_load",
+      "_entry",
+      "_save",
+      "pulse.emit",
+      "check"
+     ]
+    },
+    {
+     "name": "board",
+     "signature": "def board() -> str",
+     "returns": "str (formatted TRUST LEDGER table; read-only, never writes)",
+     "reads": [
+      "trust_ledger.json"
+     ],
+     "writes": [],
+     "calls": [
+      "_load",
+      "_entry"
+     ]
+    }
+   ],
+   "inputs": [
+    "cap (capability name)",
+    "ok (run outcome)",
+    "note"
+   ],
+   "outputs": [
+    "allowance dict(allowed,draft_only,level,name,why)",
+    "board table str",
+    "trust record pulse signal"
+   ],
+   "state_files": [
+    "trust_ledger.json"
+   ]
+  },
+  {
+   "id": "swarm",
+   "name": "Recursive swarm (decompose/escalate/depth-cap)",
+   "file": "<REDACTED-PATH>/dev/aea-city/swarm.py",
+   "kind": "router",
+   "purpose": "Recursive spawn coordinator: each agent runs a fast triage (answer vs decompose), spawns one sub-agent per independent subtask (parallel, depth-capped at MAX_DEPTH=2, size shrinks deep->reflex), and logs task->node->output->eval into an in-memory TRACE tree with a SILENT-WRONG-WORK honesty flag.",
+   "functions": [
+    {
+     "name": "pick_varied",
+     "signature": "def pick_varied(pool, tier, meter, topk=8)",
+     "returns": "node_dict|None — random pick among top-k fastest score==4 public nodes of a tier with budget left",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "orchestrator.tier_of",
+      "meter.can_spend"
+     ]
+    },
+    {
+     "name": "triage",
+     "signature": "def triage(task, depth, pool, meter)",
+     "returns": "tuple(action:str('answer'|'decompose'), subtasks:list[str]) — forced ('answer',[]) at depth>=MAX_DEPTH",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "pick_varied",
+      "orchestrator.call_node"
+     ]
+    },
+    {
+     "name": "agent",
+     "signature": "def agent(task, depth, pool, meter, parent)",
+     "returns": "rec dict(id,parent,depth,task,action,node,output,eval,children) — eval in {'ok','FLAG','SILENT-WRONG-WORK'}; appends to TRACE under TLOCK",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "triage",
+      "orchestrator.pick",
+      "orchestrator.call_node",
+      "pick_varied",
+      "agent"
+     ]
+    },
+    {
+     "name": "render",
+     "signature": "def render(rid=0, indent=0)",
+     "returns": "None (prints the PROPAGATE trace tree)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "render"
+     ]
+    }
+   ],
+   "inputs": [
+    "task",
+    "depth",
+    "pool",
+    "meter",
+    "parent id",
+    "tier"
+   ],
+   "outputs": [
+    "picked node_dict",
+    "triage decision(action,subtasks)",
+    "agent trace rec / TRACE tree",
+    "synthesized output"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "orchestrator",
+   "name": "AEA orchestrator",
+   "file": "<REDACTED-PATH>/dev/aea-city/orchestrator.py",
+   "kind": "router",
+   "purpose": "Loads the live node pool (measured 4/4 scores, fitness-sweep overrides), picks the best node that 'lets' a job (tier + privacy zone + rate budget), splits a task into parallel subtasks across distinct per-model buckets, and synthesizes one answer.",
+   "functions": [
+    {
+     "name": "is_general",
+     "signature": "def is_general(model)",
+     "returns": "bool — False if SPECIAL_PURPOSE regex (guard/vision/embed/rerank/pii/ocr/...) matches",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "load_pool",
+     "signature": "def load_pool()",
+     "returns": "list[node dict(plant,model,score,tok_s,lat,privacy,zone[,reliability,failure_modes])] — excludes offline plants and fitness-unfit hosted nodes (reliability<1.0, non-ollama)",
+     "reads": [
+      "models_report.json",
+      "model_fitness.json"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json",
+      "grid.key"
+     ]
+    },
+    {
+     "name": "tier_of",
+     "signature": "def tier_of(n)",
+     "returns": "str tier ('reflex'|'deep'|'local'|'bulk') by plant/model heuristics",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "pick",
+     "signature": "def pick(pool, tier=None, zone='public', meter=None, exclude=())",
+     "returns": "node_dict|None — score==4, in-zone, general, matching tier, fastest-first, with budget left; exclude=(plant,model) buckets in use",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "tier_of",
+      "is_general",
+      "meter.can_spend"
+     ]
+    },
+    {
+     "name": "call_node",
+     "signature": "def call_node(n, prompt, meter, max_tokens=400)",
+     "returns": "grid.call_openai dict(ok,text,status,latency,tokens,...) — records meter usage on ok",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "grid.call_openai",
+      "meter.record"
+     ]
+    },
+    {
+     "name": "plan",
+     "signature": "def plan(task, pool, meter)",
+     "returns": "tuple(arr:list[dict(subtask,capability)] (<=5), planner:node_dict) — falls back to single reasoning subtask on parse fail",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "pick",
+      "call_node"
+     ]
+    },
+    {
+     "name": "run",
+     "signature": "def run(task, zone='public')",
+     "returns": "dict(task:str, split:list[str node ids], final:str) — split->parallel execute->synthesize pipeline",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "grid.Meter",
+      "load_pool",
+      "plan",
+      "pick",
+      "call_node"
+     ]
+    }
+   ],
+   "inputs": [
+    "task",
+    "tier",
+    "zone",
+    "meter",
+    "exclude buckets",
+    "node",
+    "prompt",
+    "max_tokens"
+   ],
+   "outputs": [
+    "node pool list",
+    "picked node_dict",
+    "call result dict(ok,text,status,latency,tokens)",
+    "plan(subtasks,planner)",
+    "run result(task,split,final)"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "pathfinder",
+   "name": "Crystallized-path pathfinder",
+   "file": "<REDACTED-PATH>/dev/aea-city/pathfinder.py",
+   "kind": "router",
+   "purpose": "Crystallize doctrine for routing: classify a task into a type; if a crystallized path exists use the exact winning model directly; else escalate reflex->bulk->deep with a quality gate after each (burst x3 on deep), then crystallize the winning tier/model into paths.json. Search once, run cheap forever.",
+   "functions": [
+    {
+     "name": "load",
+     "signature": "def load()",
+     "returns": "dict — paths.json contents or {} if absent",
+     "reads": [
+      "paths.json"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "save",
+     "signature": "def save(p)",
+     "returns": "None — json.dump p to paths.json",
+     "reads": [],
+     "writes": [
+      "paths.json"
+     ],
+     "calls": []
+    },
+    {
+     "name": "classify",
+     "signature": "def classify(task, pool, meter)",
+     "returns": "str — one lowercase alpha word (<=16 chars) task type; 'other' on failure",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "swarm.pick_varied",
+      "orchestrator.call_node"
+     ]
+    },
+    {
+     "name": "gate",
+     "signature": "def gate(task, ans, pool, meter)",
+     "returns": "bool — ceiling-detect quality gate; False if ans<3 chars else reflex-node yes/no verdict",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "swarm.pick_varied",
+      "orchestrator.call_node"
+     ]
+    },
+    {
+     "name": "attempt",
+     "signature": "def attempt(task, tier, pool, meter, n_nodes=1)",
+     "returns": "list[tuple(node_dict, ans:str)] — empty list if no node available (failed tier, not a crash); parallel when n_nodes>1",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "swarm.pick_varied",
+      "orchestrator.call_node"
+     ]
+    },
+    {
+     "name": "solve",
+     "signature": "def solve(task, pool, meter)",
+     "returns": "str answer — uses crystallized path (cp.wins>=1 & cp.model) if it passes gate, else escalates the ladder and crystallizes the first gate-passing node into paths.json",
+     "reads": [
+      "paths.json"
+     ],
+     "writes": [
+      "paths.json"
+     ],
+     "calls": [
+      "load",
+      "classify",
+      "orchestrator.call_node",
+      "gate",
+      "save",
+      "attempt",
+      "_render"
+     ]
+    },
+    {
+     "name": "_render",
+     "signature": "def _render(task, sig, cryst, steps, tier, ans)",
+     "returns": "None (prints the path decision + final answer)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    }
+   ],
+   "inputs": [
+    "task",
+    "pool",
+    "meter",
+    "tier",
+    "ans",
+    "n_nodes"
+   ],
+   "outputs": [
+    "classify signature (type word)",
+    "gate bool",
+    "attempt results list[(node,ans)]",
+    "solve answer str",
+    "crystallized paths.json library"
+   ],
+   "state_files": [
+    "paths.json"
+   ]
+  },
+  {
+   "id": "telegram-bridge",
+   "name": "Telegram Bridge (conversation reach)",
+   "file": "<REDACTED-PATH>/dev/aea-city/telegram_bridge.py",
+   "kind": "reach",
+   "purpose": "Two-way FREE phone reach: long-polls Telegram, binds the FIRST chat (Luis), routes his text through talk.answer (HADES-watched) and pushes the grounded reply back.",
+   "functions": [
+    {
+     "name": "send",
+     "signature": "send(text: str, token: str | None = None, chat=None) -> dict",
+     "returns": "dict {'ok': True} on success | {'ok': False, 'why': str} (no token/chat, or exception[:120])",
+     "reads": [
+      "telegram_state.json (chat via grid.load_json)",
+      ".env TELEGRAM_TOKEN (grid.key)"
+     ],
+     "writes": [
+      "(side-effect) Telegram HTTPS sendMessage, text[:4000]"
+     ],
+     "calls": [
+      "grid.key",
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "run",
+     "signature": "run(poll_secs: int = 50)",
+     "returns": "None (infinite getUpdates long-poll loop; never returns)",
+     "reads": [
+      "telegram_state.json {offset,chat} (grid.load_json)",
+      "identity.json (grid.load_json)",
+      "aea_seed.md (open talk.SEED_PATH)",
+      "talk conversation state (talk.load_state)"
+     ],
+     "writes": [
+      "telegram_state.json {offset,chat} (grid.atomic_save_json)",
+      "talk conversation state, turns capped [-60:] (talk.save_state)"
+     ],
+     "calls": [
+      "grid.key",
+      "grid.load_json",
+      "grid.atomic_save_json",
+      "talk.load_state",
+      "talk.answer",
+      "talk.save_state",
+      "pulse.emit",
+      "telegram_bridge.send"
+     ]
+    }
+   ],
+   "inputs": [
+    "Telegram getUpdates message (Luis text)",
+    "TELEGRAM_TOKEN"
+   ],
+   "outputs": [
+    "Telegram sendMessage reply text",
+    "pulse 'mind'/'telegram' event",
+    "bound-chat greeting on first contact"
+   ],
+   "state_files": [
+    "telegram_state.json"
+   ]
+  },
+  {
+   "id": "notify",
+   "name": "Notify (phone-call reach)",
+   "file": "<REDACTED-PATH>/dev/aea-city/notify.py",
+   "kind": "reach",
+   "purpose": "Owner-only outbound: rings Luis's phone and speaks a message via CallMeBot TTS (self-notify, never third parties).",
+   "functions": [
+    {
+     "name": "call",
+     "signature": "call(text: str) -> dict",
+     "returns": "dict {'ok': bool, 'resp': str[:280]} (ok parsed from response keywords) | {'ok': False, 'why': str} (no key / exception[:160])",
+     "reads": [
+      ".env CALLMEBOT_KEY (grid.key)",
+      "(HTTP GET) api.callmebot.com/call.php"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.key",
+      "pulse.emit"
+     ]
+    },
+    {
+     "name": "notify",
+     "signature": "notify = call",
+     "returns": "module-level alias of call",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    }
+   ],
+   "inputs": [
+    "spoken text (text[:380])",
+    "CALLMEBOT_KEY",
+    "hardcoded PHONE='34632821666'"
+   ],
+   "outputs": [
+    "CallMeBot phone call to owner",
+    "pulse 'voice'/'call-luis' event",
+    "dict(ok,resp)"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "listen",
+   "name": "Listen (ears / offline STT)",
+   "file": "<REDACTED-PATH>/dev/aea-city/listen.py",
+   "kind": "sense",
+   "purpose": "Local Whisper-base speech-to-text via the sherpa-onnx wheel; mic capture + wav transcription, EN/ES, audio never leaves the machine.",
+   "functions": [
+    {
+     "name": "available",
+     "signature": "available() -> bool",
+     "returns": "bool (whisper *encoder*.onnx present under voice/sherpa-onnx-whisper-base)",
+     "reads": [
+      "voice/sherpa-onnx-whisper-base/*encoder*.onnx"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "_engine",
+     "signature": "_engine(lang: str = 'en')",
+     "returns": "sherpa_onnx.OfflineRecognizer.from_whisper (lazy singleton _rec, num_threads=4)",
+     "reads": [
+      "voice/sherpa-onnx-whisper-base/*encoder*/*decoder*/*tokens*"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "read_wav",
+     "signature": "read_wav(path: str)",
+     "returns": "(samples list[float in -1..1], sample_rate int); raises ValueError if not 16-bit",
+     "reads": [
+      "<wav path>"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "transcribe_wav",
+     "signature": "transcribe_wav(path: str, lang: str = 'en') -> str",
+     "returns": "str transcript",
+     "reads": [
+      "<wav path>"
+     ],
+     "writes": [],
+     "calls": [
+      "listen.read_wav",
+      "listen.transcribe_samples"
+     ]
+    },
+    {
+     "name": "transcribe_samples",
+     "signature": "transcribe_samples(samples, sr: int, lang: str = 'en') -> str",
+     "returns": "str transcript (stripped)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "listen._engine"
+     ]
+    },
+    {
+     "name": "record",
+     "signature": "record(seconds: float = 6.0, sr: int = 16000)",
+     "returns": "(samples list[float], sr int, rms float) from default mic",
+     "reads": [
+      "default microphone (sounddevice)"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "hear",
+     "signature": "hear(seconds: float = 6.0, lang: str = 'en') -> str",
+     "returns": "str transcript, or '' when rms<0.0015 (silence)",
+     "reads": [
+      "microphone"
+     ],
+     "writes": [],
+     "calls": [
+      "listen.record",
+      "listen.transcribe_samples"
+     ]
+    },
+    {
+     "name": "selftest",
+     "signature": "selftest() -> bool",
+     "returns": "bool (mouth->ears round trip; word overlap>=0.75 = PASS)",
+     "reads": [
+      "voice/_selftest.wav"
+     ],
+     "writes": [
+      "voice/_selftest.wav"
+     ],
+     "calls": [
+      "speak.kokoro_render",
+      "listen.transcribe_wav"
+     ]
+    }
+   ],
+   "inputs": [
+    "microphone audio / wav path",
+    "lang (en|es)"
+   ],
+   "outputs": [
+    "transcript text",
+    "selftest PASS/FAIL"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "speak",
+   "name": "Speak (voice / TTS)",
+   "file": "<REDACTED-PATH>/dev/aea-city/speak.py",
+   "kind": "reach",
+   "purpose": "Three-engine privacy-zoned voice: EDGE neural (cloud, blocked when cloud_ok=False), KOKORO local, SAPI instant floor; one speak() interface + presentation narration.",
+   "functions": [
+    {
+     "name": "_identity",
+     "signature": "_identity() -> dict",
+     "returns": "identity.json dict | {}",
+     "reads": [
+      "identity.json"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "kokoro_available",
+     "signature": "kokoro_available() -> bool",
+     "returns": "bool (model.onnx present AND sherpa_onnx importable)",
+     "reads": [
+      "voice/kokoro-en-v0_19/model.onnx"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "_engine",
+     "signature": "_engine()",
+     "returns": "sherpa_onnx.OfflineTts (lazy singleton _tts, kokoro cfg, num_threads=4)",
+     "reads": [
+      "voice/kokoro-en-v0_19/{model.onnx,voices.bin,tokens.txt,espeak-ng-data}"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "kokoro_render",
+     "signature": "kokoro_render(text: str, out_wav: str, sid: int = DEFAULT_SID(3), speed: float = 1.0, timeout: int = 600) -> dict",
+     "returns": "dict(ok=True, seconds_audio, seconds_gen, rtf, path) | dict(ok=False, error=str[:160]) | dict(ok=False, error='empty text')",
+     "reads": [
+      "kokoro model (via _engine)"
+     ],
+     "writes": [
+      "<out_wav>"
+     ],
+     "calls": [
+      "speak._engine"
+     ]
+    },
+    {
+     "name": "play_wav",
+     "signature": "play_wav(path: str, timeout: int = 600) -> bool",
+     "returns": "bool (PowerShell SoundPlayer returncode==0)",
+     "reads": [
+      "<wav>"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "edge_available",
+     "signature": "edge_available() -> bool",
+     "returns": "bool (edge_tts importable)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "edge_speak",
+     "signature": "edge_speak(text: str, timeout: int = 300) -> bool",
+     "returns": "bool (edge-tts mp3 rendered + WPF MediaPlayer played). Cloud - never sensitive text",
+     "reads": [],
+     "writes": [
+      "_live_edge.mp3"
+     ],
+     "calls": []
+    },
+    {
+     "name": "sapi_speak",
+     "signature": "sapi_speak(text: str, rate: int = 0, voice: str | None = None, timeout: int = 300) -> bool",
+     "returns": "bool (PowerShell System.Speech returncode==0)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "speak",
+     "signature": "speak(text: str, voice: str | None = None, rate: int = 0, cloud_ok: bool = True) -> bool",
+     "returns": "bool (spoke). voice None->identity.json->'edge'; cloud_ok=False forces kokoro/sapi; falls through edge->sapi, kokoro->sapi so it never goes silent",
+     "reads": [
+      "identity.json (via _identity)"
+     ],
+     "writes": [
+      "voice/_live.wav (kokoro path)"
+     ],
+     "calls": [
+      "pulse.emit",
+      "speak._identity",
+      "speak.edge_available",
+      "speak.edge_speak",
+      "speak.kokoro_available",
+      "speak.kokoro_render",
+      "speak.play_wav",
+      "speak.sapi_speak"
+     ]
+    },
+    {
+     "name": "narrate",
+     "signature": "narrate(script_path: str, out_dir: str, sid: int | None = None) -> list[dict]",
+     "returns": "list[dict] per-part kokoro_render stats (one per blank-line block)",
+     "reads": [
+      "<script_path>"
+     ],
+     "writes": [
+      "<out_dir>/part_NN.wav",
+      "<out_dir>/playlist.m3u"
+     ],
+     "calls": [
+      "speak.kokoro_render"
+     ]
+    },
+    {
+     "name": "list_voices",
+     "signature": "list_voices() -> str",
+     "returns": "str (KOKORO speaker list + SAPI installed voices)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "speak.kokoro_available"
+     ]
+    }
+   ],
+   "inputs": [
+    "text",
+    "voice (identity.json 'voice': engine:speaker)",
+    "cloud_ok zone flag",
+    "rate"
+   ],
+   "outputs": [
+    "audio playback (edge/kokoro/sapi)",
+    "voice/_live.wav, _live_edge.mp3, narration wavs+playlist.m3u",
+    "pulse 'voice'/'speak' event"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "live",
+   "name": "Live (the continuous heartbeat loop)",
+   "file": "<REDACTED-PATH>/dev/aea-city/live.py",
+   "kind": "server",
+   "purpose": "The always-alive nervous system: each tick chooses AWAKE (brief) / ASLEEP (consolidate slice) / REFLECT (self-task), delegates to a subprocess, never dies on a bad tick, persists heartbeat every tick (asleep-still-alive), single-instance locked.",
+   "functions": [
+    {
+     "name": "load_hb",
+     "signature": "load_hb() -> dict",
+     "returns": "heartbeat dict {alive_since, boot_count, total_ticks, last_brief_date, consolidated_sessions, history}",
+     "reads": [
+      "heartbeat.json (grid.load_json)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "save_hb",
+     "signature": "save_hb(hb: dict)",
+     "returns": "None",
+     "reads": [],
+     "writes": [
+      "heartbeat.json (grid.atomic_save_json, indent=2)"
+     ],
+     "calls": [
+      "grid.atomic_save_json"
+     ]
+    },
+    {
+     "name": "log",
+     "signature": "log(msg: str)",
+     "returns": "None (timestamped line to live.log + stdout)",
+     "reads": [],
+     "writes": [
+      "live.log"
+     ],
+     "calls": []
+    },
+    {
+     "name": "run_script",
+     "signature": "run_script(args: list[str], timeout: int) -> tuple[bool, str]",
+     "returns": "(ok bool, last-stdout/stderr-line str | 'timeout>Ns' | exception[:80])",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "corpus_state",
+     "signature": "corpus_state() -> tuple[int, int]",
+     "returns": "(done int=processed, total int=count of PROJECTS_ROOT/*/*.jsonl); (0,0) on any error",
+     "reads": [
+      "consolidate.META (grid.load_json)",
+      "consolidate.PROJECTS_ROOT/*/*.jsonl (glob)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json",
+      "consolidate.load_store"
+     ]
+    },
+    {
+     "name": "choose_action",
+     "signature": "choose_action(hb: dict) -> tuple[str, list[str], int]",
+     "returns": "(action_label, argv, timeout): ('AWAKE:brief',['brief.py'],240) | ('ASLEEP:consolidate',['consolidate.py','--limit','3'],600) | ('REFLECT:self',['reflect.py','--once'],240) | ('IDLE',[],0)",
+     "reads": [
+      "reflect.py (os.path.exists)"
+     ],
+     "writes": [],
+     "calls": [
+      "live.corpus_state"
+     ]
+    },
+    {
+     "name": "tick",
+     "signature": "tick(hb: dict, demo: bool)",
+     "returns": "None (mutates hb: total_ticks++, last_brief_date, consolidated_sessions, history[-30:])",
+     "reads": [],
+     "writes": [
+      "heartbeat fields (in hb, persisted by caller)"
+     ],
+     "calls": [
+      "live.choose_action",
+      "live.run_script",
+      "live.corpus_state",
+      "live.log",
+      "pulse.emit"
+     ]
+    },
+    {
+     "name": "main",
+     "signature": "main()",
+     "returns": "None (--status prints heartbeat+corpus and exits; else msvcrt single-instance lock, WAKE, forever/bounded tick loop, responsive sleep, clean SLEEP)",
+     "reads": [
+      "heartbeat.json",
+      "live.instance (PID lock)"
+     ],
+     "writes": [
+      "heartbeat.json",
+      "live.instance",
+      "live.log"
+     ],
+     "calls": [
+      "live.load_hb",
+      "live.save_hb",
+      "live.tick",
+      "live.corpus_state",
+      "live.log"
+     ]
+    }
+   ],
+   "inputs": [
+    "wall-clock ticks (interval default 1800s)",
+    "CLI flags --interval/--ticks/--demo/--status"
+   ],
+   "outputs": [
+    "subprocess runs brief.py / consolidate.py / reflect.py",
+    "heartbeat.json state",
+    "pulse 'life'/'tick'/'tick-done' events",
+    "live.log"
+   ],
+   "state_files": [
+    "heartbeat.json",
+    "live.log",
+    "live.instance"
+   ]
+  },
+  {
+   "id": "autonomy",
+   "name": "Autonomy Battery (live scorer)",
+   "file": "<REDACTED-PATH>/dev/aea-city/autonomy.py",
+   "kind": "meter",
+   "purpose": "Reads the entity's real logs and computes falsifiable autonomy metrics (self-initiation, A_new births, G-variance, governance-held rate, individuality, skill-growth) into a model-agnostic scorecard.",
+   "functions": [
+    {
+     "name": "_rows",
+     "signature": "_rows(fp) -> list[dict]",
+     "returns": "list of parsed JSON objects from a jsonl file (bad lines skipped; missing file -> [])",
+     "reads": [
+      "<fp> jsonl under HERE"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "score",
+     "signature": "score() -> dict",
+     "returns": "dict(t, class in {PROTO-AUTONOMOUS,STIRRING,NOT-YET-AUTONOMOUS}, headline, passing, total, ticks, counts{self_originated,births,held,reflections,distinct_tasks}, tests[list of dict(name,theory,cite,value,verdict,evidence)], note)",
+     "reads": [
+      "reflections.jsonl",
+      "decisions.jsonl",
+      "heartbeat.json",
+      "self.json"
+     ],
+     "writes": [],
+     "calls": [
+      "autonomy._rows"
+     ]
+    },
+    {
+     "name": "main",
+     "signature": "main()",
+     "returns": "None (prints the scorecard)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "autonomy.score"
+     ]
+    }
+   ],
+   "inputs": [
+    "reflections.jsonl",
+    "decisions.jsonl",
+    "heartbeat.json",
+    "self.json"
+   ],
+   "outputs": [
+    "autonomy scorecard dict (/autonomy endpoint + dashboard)"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "tracelog",
+   "name": "Tracelog (goal-stack DAG substrate)",
+   "file": "<REDACTED-PATH>/dev/aea-city/tracelog.py",
+   "kind": "trace",
+   "purpose": "The trace floor under the swarm: every node carries its root->me goal-stack (vertical anti-drift); an in-memory registry of ACTIVE nodes + an append-only JSONL log of every spawn/step/done; multi-parent merges form an acyclic DAG.",
+   "functions": [
+    {
+     "name": "Node.__init__",
+     "signature": "Node.__init__(self, nid, parents, goal, goal_stack, depth, zone)",
+     "returns": "Node (__slots__: id, parents, goal, goal_stack, depth, zone, status='active', model=None, result=None, children=[])",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "Trace.__init__",
+     "signature": "Trace.__init__(self, root_goal, path=None)",
+     "returns": "Trace (nodes{}, registry{}, lock, root Node); truncates the log fresh per run",
+     "reads": [],
+     "writes": [
+      "brief_trace.jsonl (default path; opened 'w' fresh)"
+     ],
+     "calls": [
+      "tracelog.Trace.spawn"
+     ]
+    },
+    {
+     "name": "Trace._id",
+     "signature": "_id(self) -> str",
+     "returns": "'n{N}' monotonically increasing",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "Trace._log",
+     "signature": "_log(self, event) -> None",
+     "returns": "None (stamps event['t'] and appends a json line under lock)",
+     "reads": [],
+     "writes": [
+      "<self.path> jsonl"
+     ],
+     "calls": []
+    },
+    {
+     "name": "Trace.spawn",
+     "signature": "spawn(self, goal, parent=None, zone=None, depth=None, why='') -> Node",
+     "returns": "Node (parent: Node | list[Node] merge->DAG | None root; inherits goal_stack/depth/zone; logs 'spawn'|'merge')",
+     "reads": [],
+     "writes": [
+      "<self.path> jsonl (spawn|merge event)"
+     ],
+     "calls": [
+      "tracelog.Trace._id",
+      "tracelog.Trace._log"
+     ]
+    },
+    {
+     "name": "Trace.mark",
+     "signature": "mark(self, node, action, detail='') -> None",
+     "returns": "None (logs a 'step' event with rationale, detail[:300])",
+     "reads": [],
+     "writes": [
+      "<self.path> jsonl (step event)"
+     ],
+     "calls": [
+      "tracelog.Trace._log"
+     ]
+    },
+    {
+     "name": "Trace.done",
+     "signature": "done(self, node, result, model=None) -> None",
+     "returns": "None (sets node.status='done'/result/model, pops from registry, logs 'done' result[:500])",
+     "reads": [],
+     "writes": [
+      "<self.path> jsonl (done event)"
+     ],
+     "calls": [
+      "tracelog.Trace._log"
+     ]
+    },
+    {
+     "name": "Trace.lookup",
+     "signature": "lookup(self, node) -> str",
+     "returns": "'goal > goal > ... > me' (vertical goal-stack join)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "Trace.snapshot",
+     "signature": "snapshot(self) -> dict",
+     "returns": "dict copy of registry {id: {goal, depth, zone}} for ACTIVE nodes",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "Trace.tree_str",
+     "signature": "tree_str(self, nid=None, ind=0) -> str",
+     "returns": "str indented tree (id [zone] via model  goal)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "tracelog.Trace.tree_str"
+     ]
+    }
+   ],
+   "inputs": [
+    "root_goal",
+    "spawn/mark/done calls from the swarm"
+   ],
+   "outputs": [
+    "brief_trace.jsonl append-only log",
+    "in-memory registry snapshot (active DAG)"
+   ],
+   "state_files": [
+    "brief_trace.jsonl"
+   ]
+  },
+  {
+   "id": "agent-tools",
+   "name": "Agent Tools (raw tool-calling channel)",
+   "file": "<REDACTED-PATH>/dev/aea-city/agent_tools.py",
+   "kind": "channel",
+   "purpose": "Reaches past the model's weights: its own OpenAI-compatible tool-calling POST to the free grid, with three real tools (live web_fetch, exact calc, deterministic json_get) run in a max-5-turn agent loop.",
+   "functions": [
+    {
+     "name": "web_fetch",
+     "signature": "web_fetch(url) -> str",
+     "returns": "response body text[:8000] | 'ERROR: {e}'",
+     "reads": [
+      "<url> HTTP GET"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "calc",
+     "signature": "calc(expression) -> str",
+     "returns": "str(eval result) | 'ERROR: arithmetic only' | 'ERROR: {e}' (regex-gated arithmetic, no builtins)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "json_get",
+     "signature": "json_get(url, key) -> str",
+     "returns": "str(field at dotted/indexed key path) | 'ERROR: {e}'",
+     "reads": [
+      "<url> HTTP GET (JSON)"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "chat",
+     "signature": "chat(plant, model, messages, max_tokens=500) -> dict",
+     "returns": "OpenAI message dict = choices[0].message (content and/or tool_calls); tools=TOOLS, tool_choice='auto', temperature=0.1",
+     "reads": [
+      "grid.PLANTS[plant] {base,auth}",
+      "provider key via grid.key(cap['auth'])"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.key"
+     ]
+    },
+    {
+     "name": "run_agent",
+     "signature": "run_agent(task, plant='nvidia', model='meta/llama-3.3-70b-instruct', max_turns=5) -> str",
+     "returns": "final assistant content str | 'ERR {e}' | '(hit max turns)'; dispatches tool_calls through IMPL",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "agent_tools.chat",
+      "agent_tools.web_fetch",
+      "agent_tools.calc",
+      "agent_tools.json_get"
+     ]
+    }
+   ],
+   "inputs": [
+    "task",
+    "plant (default 'nvidia')",
+    "model (default meta/llama-3.3-70b-instruct)",
+    "live web/JSON URLs"
+   ],
+   "outputs": [
+    "tool-augmented answer text",
+    "HTTP POST to provider /chat/completions",
+    "live web/JSON fetches"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "relay",
+   "name": "Relay (genetic-memory pipeline)",
+   "file": "<REDACTED-PATH>/dev/aea-city/relay.py",
+   "kind": "organ",
+   "purpose": "Proves predecessor->successor transmission: a DIFFERENT model each step reads ONLY the capsule (goal + crystallized tool sigs + done) and writes the next function, measuring whether later agents REUSE the crystallized tools by exact name.",
+   "functions": [
+    {
+     "name": "extract_def",
+     "signature": "extract_def(text) -> str",
+     "returns": "code from first 'def ' onward, code-fence stripped",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "run",
+     "signature": "run() -> tuple",
+     "returns": "(capsule dict{goal, tools{name:sig}, done[{name,code}]}, log list[{name, node 'plant/model', ok bool, reused list}])",
+     "reads": [
+      "online model pool (orchestrator.load_pool)"
+     ],
+     "writes": [],
+     "calls": [
+      "orchestrator.load_pool",
+      "grid.Meter",
+      "swarm.pick_varied",
+      "orchestrator.pick",
+      "orchestrator.call_node",
+      "relay.extract_def"
+     ]
+    }
+   ],
+   "inputs": [
+    "fixed GOAL + SPEC (5 shopping-cart pricing fns with reuse requirements)"
+   ],
+   "outputs": [
+    "assembled toolkit capsule",
+    "genetic-memory transmission log (printed: passed/total, distinct models)"
+   ],
+   "state_files": []
+  },
+  {
+   "id": "talk",
+   "name": "talk.py — chat organ (the conversational face)",
+   "file": "<REDACTED-PATH>/dev/aea-city/talk.py",
+   "kind": "organ",
+   "purpose": "Per-turn conversational organ: recalls Luis from consolidated memory + codex, injects true self-state, draws energy by DEPTH, speaks aloud, and persists the rolling conversation.",
+   "functions": [
+    {
+     "name": "load_state",
+     "signature": "def load_state() -> dict",
+     "returns": "dict from grid.load_json(STATE, {\"turns\": [], \"started\": <date>}) — {turns:list, started:str}",
+     "reads": [
+      "talk_state.json"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "save_state",
+     "signature": "def save_state(s: dict)",
+     "returns": "None (atomic write)",
+     "reads": [],
+     "writes": [
+      "talk_state.json"
+     ],
+     "calls": [
+      "grid.atomic_save_json"
+     ]
+    },
+    {
+     "name": "self_status",
+     "signature": "def self_status() -> str",
+     "returns": "str: '; '-joined live state ('alive since .. N wakes, N ticks, last brief: ..'; 'memory: N consolidated facts from N sessions') or 'first breath - no history yet'",
+     "reads": [
+      "heartbeat.json",
+      "luis_memory.meta.json (consolidate.META)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "self_digest",
+     "signature": "def self_digest() -> str",
+     "returns": "str: 'MY RECENT HISTORY..' from self.json autobiography[-2:], lessons[:5], open tasks[:5]",
+     "reads": [
+      "self.json"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "build_system",
+     "signature": "def build_system(ident: dict, seed: str, memories: list[str], zone: str) -> str",
+     "returns": "str system prompt (identity+creed+seed+recalled memories+live self_status+self_digest; zone toggles 'LOCAL ONLY' vs 'private no-train rods')",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "talk.self_status",
+      "talk.self_digest"
+     ]
+    },
+    {
+     "name": "answer",
+     "signature": "def answer(user_text: str, state: dict, ident: dict, seed: str, zone: str) -> dict",
+     "returns": "energy.draw dict plus 'memories' key = dict(ok,text,plant,model,latency,tried,memories); tier='local' if zone=='sensitive' else 'frontier'",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "consolidate.recall",
+      "index_codex.recall",
+      "talk.build_system",
+      "energy.draw"
+     ]
+    },
+    {
+     "name": "main",
+     "signature": "def main()",
+     "returns": "None (runs one-shot --ask or the REPL loop; nested exchange(text)->str does one turn)",
+     "reads": [
+      "identity.json",
+      "aea_seed.md",
+      "talk_state.json"
+     ],
+     "writes": [
+      "talk_state.json"
+     ],
+     "calls": [
+      "talk.load_state",
+      "talk.answer",
+      "talk.save_state",
+      "talk.self_status",
+      "pulse.emit",
+      "trust.check",
+      "trust.record",
+      "speak.speak"
+     ]
+    }
+   ],
+   "inputs": [
+    "user_text (stdin 'you >' / --ask)",
+    "zone toggle (/local sensitive, /grid private)",
+    "--mute flag",
+    "identity.json (name, creed)",
+    "aea_seed.md (who Luis is)"
+   ],
+   "outputs": [
+    "printed+spoken reply with source tag (plant/model, latency)",
+    "recall receipt (memories attended to)",
+    "talk_state.json (bounded rolling turns)",
+    "pulse events (mind hears-luis / replies)"
+   ],
+   "state_files": [
+    "talk_state.json"
+   ]
+  },
+  {
+   "id": "reflect",
+   "name": "reflect.py — t6 reflection organ (self-posed micro-tasks)",
+   "file": "<REDACTED-PATH>/dev/aea-city/reflect.py",
+   "kind": "organ",
+   "purpose": "The idle-tick reflection organ that makes the self a loop: read self.json, pose 3 novel micro-tasks, choose one, attempt on the grid, HADES-gate it (one redo), persist ONLY if accepted, log every bifurcation.",
+   "functions": [
+    {
+     "name": "_append",
+     "signature": "def _append(fp: str, rec: dict, cap: int = 400_000)",
+     "returns": "None (append-only JSONL write; rotates to fp+'.1' past cap bytes; never raises)",
+     "reads": [],
+     "writes": [
+      "reflections.jsonl",
+      "decisions.jsonl"
+     ],
+     "calls": []
+    },
+    {
+     "name": "decide",
+     "signature": "def decide(node: str, chosen: str, alts: list, model: str | None, latency, ok: bool, detail: str = \"\")",
+     "returns": "None (appends one bifurcation record {t,lane:'reflect',node,chosen,alts,model,latency,ok,detail} to decisions.jsonl)",
+     "reads": [],
+     "writes": [
+      "decisions.jsonl"
+     ],
+     "calls": [
+      "reflect._append"
+     ]
+    },
+    {
+     "name": "tail_jsonl",
+     "signature": "def tail_jsonl(fp: str, n: int) -> list",
+     "returns": "list[dict]: last n parsed JSONL records (silently drops unparseable lines)",
+     "reads": [
+      "reflections.jsonl"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "_json_block",
+     "signature": "def _json_block(text: str)",
+     "returns": "dict | None (first {...} JSON blob parsed out of model text)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "_novel",
+     "signature": "def _novel(task: str, prior: list[str]) -> bool",
+     "returns": "bool: False if <12 chars or >0.6 word-overlap with any prior task, else True",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "reflect_once",
+     "signature": "def reflect_once() -> int",
+     "returns": "int exit code: 1 = no-novel-candidate or attempt drew nothing; 0 = gate held (not persisted) OR accepted+persisted",
+     "reads": [
+      "self.json",
+      "reflections.jsonl"
+     ],
+     "writes": [
+      "reflections.jsonl",
+      "decisions.jsonl",
+      "self.json"
+     ],
+     "calls": [
+      "grid.load_json",
+      "energy.draw",
+      "orchestrator.load_pool",
+      "hades.watch",
+      "grid.atomic_save_json",
+      "reflect._append",
+      "reflect.decide",
+      "reflect.tail_jsonl",
+      "reflect._json_block",
+      "reflect._novel",
+      "pulse.emit"
+     ]
+    }
+   ],
+   "inputs": [
+    "--once trigger (called by live.py on idle ticks)",
+    "self.json (standing_goals, open_tasks, prior reflection_log)",
+    "reflections.jsonl (prior posed tasks -> novelty set)",
+    "grid.METER (shared meter for the gate)"
+   ],
+   "outputs": [
+    "reflections.jsonl (birth record: task, deliverable[:1400], rod, watcher, verdict, persisted)",
+    "decisions.jsonl (pose/attempt/gate/persist bifurcations)",
+    "self.json (last_reflection + reflection_log[-30:])",
+    "pulse events + int exit code"
+   ],
+   "state_files": [
+    "reflections.jsonl",
+    "decisions.jsonl",
+    "self.json"
+   ]
+  },
+  {
+   "id": "aea-loop",
+   "name": "aea.py — THE AEA seeded loop (one core mind on a tick)",
+   "file": "<REDACTED-PATH>/dev/aea-city/aea.py",
+   "kind": "organ",
+   "purpose": "The seeded, persistent, always-on entity: ONE core frontier mind reasons FROM Luis's life-state each tick, senses the public world, structures the reasoning into 4 fields, remembers across ticks, and is HADES-watched every tick.",
+   "functions": [
+    {
+     "name": "core",
+     "signature": "def core(prompt, max_tokens=800)",
+     "returns": "tuple(text:str, source:str) — (r['text'], 'plant/model') on ok, else ('', 'none (all rods failed: ..)')",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "energy.draw"
+     ]
+    },
+    {
+     "name": "structure",
+     "signature": "def structure(reasoning)",
+     "returns": "dict(matters_now,changed,action,note_to_self) — Groq gpt-oss-120b strict-JSON formatter; on failure a degraded dict with note_to_self='(structuring failed: ..)'",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "grid.key",
+      "grid.Meter.record"
+     ]
+    },
+    {
+     "name": "sense",
+     "signature": "def sense()",
+     "returns": "dict(recent_repos:list[str], ai_news:list[str]) — own (non-fork) GitHub repos + HN AI-agent story titles; per-key '(fetch failed: ..)' on error",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "grid.fetch_json"
+     ]
+    },
+    {
+     "name": "load_state",
+     "signature": "def load_state()",
+     "returns": "dict from json.load(aea_state.json) or {\"tick\":0,\"memory\":[],\"surfaced\":[]} (direct stdlib json, NOT grid)",
+     "reads": [
+      "aea_state.json"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "save_state",
+     "signature": "def save_state(s)",
+     "returns": "None (json.dump to aea_state.json, indent=2 — direct stdlib json, not grid.atomic_save_json)",
+     "reads": [],
+     "writes": [
+      "aea_state.json"
+     ],
+     "calls": []
+    },
+    {
+     "name": "tick",
+     "signature": "def tick(seed, state)",
+     "returns": "tuple(out:dict, who:str, verdict:dict, vwho:str, reasoning:str); appends to state['memory'] and state['surfaced'] in place",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "aea.sense",
+      "aea.core",
+      "aea.structure",
+      "hades.watch"
+     ]
+    },
+    {
+     "name": "main",
+     "signature": "def main()",
+     "returns": "None (runs N ticks from argv[1] default 3; persists state EVERY tick; prints core ladder + per-tick matters/changed/action/remembers/HADES)",
+     "reads": [
+      "aea_seed.md",
+      "aea_state.json"
+     ],
+     "writes": [
+      "aea_state.json"
+     ],
+     "calls": [
+      "energy.ladder",
+      "aea.load_state",
+      "aea.tick",
+      "aea.save_state"
+     ]
+    }
+   ],
+   "inputs": [
+    "N_TICKS (argv[1], default 3)",
+    "aea_seed.md (WHO Luis is)",
+    "aea_state.json (prior tick memory + surfaced)",
+    "world sense (live GitHub Leyber91 repos + HN AI-agent stories)",
+    "module-import: pool=orchestrator.load_pool(), meter=grid.METER"
+   ],
+   "outputs": [
+    "aea_state.json (evolving memory notes + surfaced tick summaries)",
+    "per-tick structured {matters_now,changed,action,note_to_self}",
+    "HADES verdict per tick",
+    "stdout continuity proof"
+   ],
+   "state_files": [
+    "aea_state.json"
+   ]
+  },
+  {
+   "id": "brief",
+   "name": "brief.py — the morning brief organ",
+   "file": "<REDACTED-PATH>/dev/aea-city/brief.py",
+   "kind": "organ",
+   "purpose": "The free swarm's first real connected task: 3 sections (public GitHub status + public HN opportunity via single-model regime rule; private day plan LOCKED to local Ollama), deterministically assembled, HADES-signed locally, every node traced, trust-ledgered.",
+   "functions": [
+    {
+     "name": "grid_public",
+     "signature": "def grid_public(T, parent, goal, prompt, tier=\"bulk\", depth=1, mx=400)",
+     "returns": "tuple(node:Node, txt:str) — traced public reasoning node; txt is the model output or 'ERR: ..' / '(grid busy)'",
+     "reads": [],
+     "writes": [
+      "brief_trace.jsonl"
+     ],
+     "calls": [
+      "tracelog.Trace.spawn",
+      "tracelog.Trace.mark",
+      "tracelog.Trace.done",
+      "orchestrator.pick",
+      "orchestrator.call_node"
+     ]
+    },
+    {
+     "name": "grid_private",
+     "signature": "def grid_private(T, parent, goal, prompt, depth=3, mx=300, cap=\"text\")",
+     "returns": "tuple(node:Node, txt:str, plant:str) — zone='sensitive' LOCAL-ONLY node; returns plant to PROVE the boundary held",
+     "reads": [],
+     "writes": [
+      "brief_trace.jsonl"
+     ],
+     "calls": [
+      "tracelog.Trace.spawn",
+      "tracelog.Trace.mark",
+      "tracelog.Trace.done",
+      "grid.complete"
+     ]
+    },
+    {
+     "name": "main",
+     "signature": "def main() -> int",
+     "returns": "int: 0 if HADES accept AND all sections ERR-free, else 1 (the exit code must not lie to live.py)",
+     "reads": [
+      "private_today.json",
+      "brief_output.md"
+     ],
+     "writes": [
+      "brief_output.md",
+      "brief_trace.jsonl"
+     ],
+     "calls": [
+      "tracelog.Trace",
+      "brief.grid_public",
+      "brief.grid_private",
+      "tracelog.Trace.spawn",
+      "tracelog.Trace.mark",
+      "tracelog.Trace.done",
+      "tracelog.Trace.tree_str",
+      "tracelog.Trace.lookup",
+      "grid.fetch_json",
+      "hades.watch_local",
+      "trust.record"
+     ]
+    }
+   ],
+   "inputs": [
+    "private_today.json (real Calendar+Gmail: date, calendar[], inbox_signal[])",
+    "live GitHub repos (Leyber91, forks excluded)",
+    "live HN AI-agent stories",
+    "module-import: meter=grid.METER, router=grid.Router(meter), pool=orchestrator.load_pool()"
+   ],
+   "outputs": [
+    "brief_output.md (3-section markdown + provenance footer)",
+    "brief_trace.jsonl (goal-tree DAG, zone+model per node)",
+    "privacy boundary proof (private section plant == 'ollama')",
+    "trust ledger stamps (gather_public, reason_private_local, produce_brief)",
+    "exit code 0/1"
+   ],
+   "state_files": [
+    "brief_output.md",
+    "brief_trace.jsonl"
+   ]
+  },
+  {
+   "id": "memory",
+   "name": "memory.py — local-embedding memory store (seed facts)",
+   "file": "<REDACTED-PATH>/dev/aea-city/memory.py",
+   "kind": "memory",
+   "purpose": "The entity's persistent embedding memory: local Ollama mxbai-embed-large vectors + cosine recall over a small store, plus the hand-authored FACTS about the grid the swarm must reason FROM instead of hallucinating. No keys, no cloud.",
+   "functions": [
+    {
+     "name": "embed",
+     "signature": "def embed(text)",
+     "returns": "list[float] — Ollama mxbai-embed-large embedding via raw urllib to localhost:11434/v1/embeddings",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "_load",
+     "signature": "def _load()",
+     "returns": "list from grid.load_json(STORE, []) — [{text,emb}]",
+     "reads": [
+      "memory.json"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "_save",
+     "signature": "def _save(m)",
+     "returns": "None (kill-safe atomic write)",
+     "reads": [],
+     "writes": [
+      "memory.json"
+     ],
+     "calls": [
+      "grid.atomic_save_json"
+     ]
+    },
+    {
+     "name": "remember",
+     "signature": "def remember(text)",
+     "returns": "int (new store length) — appends {text, emb}",
+     "reads": [
+      "memory.json"
+     ],
+     "writes": [
+      "memory.json"
+     ],
+     "calls": [
+      "memory.embed",
+      "memory._load",
+      "memory._save"
+     ]
+    },
+    {
+     "name": "_cos",
+     "signature": "def _cos(a, b)",
+     "returns": "float cosine similarity (0.0 if either norm is 0)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "recall",
+     "signature": "def recall(query, k=3)",
+     "returns": "list[str] — top-k stored texts by cosine to the query embedding ([] if empty store)",
+     "reads": [
+      "memory.json"
+     ],
+     "writes": [],
+     "calls": [
+      "memory.embed",
+      "memory._load",
+      "memory._cos"
+     ]
+    },
+    {
+     "name": "seed",
+     "signature": "def seed()",
+     "returns": "int len(FACTS) — deletes STORE then remembers each of the 10 FACTS",
+     "reads": [],
+     "writes": [
+      "memory.json"
+     ],
+     "calls": [
+      "memory.remember"
+     ]
+    }
+   ],
+   "inputs": [
+    "text to remember",
+    "query string",
+    "FACTS (10 hard-coded grid truths)"
+   ],
+   "outputs": [
+    "memory.json store ([{text,emb}])",
+    "list[str] recalled texts",
+    "embedding vectors"
+   ],
+   "state_files": [
+    "memory.json"
+   ]
+  },
+  {
+   "id": "consolidate",
+   "name": "consolidate.py — memory consolidation + recall (episodic->semantic)",
+   "file": "<REDACTED-PATH>/dev/aea-city/consolidate.py",
+   "kind": "organ",
+   "purpose": "Sleep-consolidation organ: reads raw Claude Code session transcripts (PRIVATE, LOCAL-ONLY llama3.1:8b), distills each into 1-3 durable third-person facts about Luis, embeds+stores them as semantic memory the small models reason FROM. Resumable, crash-safe, local-only.",
+   "functions": [
+    {
+     "name": "embed",
+     "signature": "def embed(text: str)",
+     "returns": "list[float] — Ollama mxbai-embed-large via raw urllib to localhost:11434 (same organ index_codex imports)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "load_store",
+     "signature": "def load_store() -> dict",
+     "returns": "dict {processed:list, memories:list} via grid.load_json (quarantines torn file)",
+     "reads": [
+      "luis_memory.json"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "save_store",
+     "signature": "def save_store(s: dict)",
+     "returns": "None — atomic-writes store + tiny META sidecar {processed:int, memories:int}",
+     "reads": [],
+     "writes": [
+      "luis_memory.json",
+      "luis_memory.meta.json"
+     ],
+     "calls": [
+      "grid.atomic_save_json"
+     ]
+    },
+    {
+     "name": "user_voice",
+     "signature": "def user_voice(path: str) -> str",
+     "returns": "str — Luis's own turns from one transcript (>=MIN_TURN chars, non-tool), newest-first within MAX_CHARS budget, re-ordered chronological",
+     "reads": [
+      "<session>.jsonl (Claude Code transcript)"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "distill",
+     "signature": "def distill(body: str) -> list[str] | None",
+     "returns": "list[str] up to 3 'Luis..' facts; [] = fact-free session; None = MODEL FAILURE (Ollama down) — the two are deliberately NOT conflated",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "grid.call_openai"
+     ]
+    },
+    {
+     "name": "consolidate",
+     "signature": "def consolidate(limit: int)",
+     "returns": "int: 1 if local engine went down mid-run, else 0; early 0 if another run holds the file lock",
+     "reads": [
+      "luis_memory.json",
+      "<project>/*.jsonl (session corpus)"
+     ],
+     "writes": [
+      "luis_memory.json",
+      "luis_memory.meta.json"
+     ],
+     "calls": [
+      "consolidate.load_store",
+      "consolidate.user_voice",
+      "consolidate.distill",
+      "consolidate.embed",
+      "consolidate.save_store",
+      "grid.file_lock",
+      "pulse.emit"
+     ]
+    },
+    {
+     "name": "_cos",
+     "signature": "def _cos(a, b)",
+     "returns": "float cosine similarity (imported by index_codex)",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "recall",
+     "signature": "def recall(query: str, k: int = 5)",
+     "returns": "list[str] — top-k semantic memory texts by cosine to query ([] if empty); used by talk.answer",
+     "reads": [
+      "luis_memory.json"
+     ],
+     "writes": [],
+     "calls": [
+      "consolidate.load_store",
+      "consolidate.embed",
+      "consolidate._cos",
+      "pulse.emit"
+     ]
+    },
+    {
+     "name": "board",
+     "signature": "def board()",
+     "returns": "None (prints consolidation coverage: corpus size, consolidated %, memory count)",
+     "reads": [
+      "luis_memory.json"
+     ],
+     "writes": [],
+     "calls": [
+      "consolidate.load_store"
+     ]
+    }
+   ],
+   "inputs": [
+    "--limit N (sessions to grind, newest first)",
+    "--recall <query>",
+    "--board",
+    "session transcripts (<REDACTED-PATH>/.claude/projects/*/*.jsonl)"
+   ],
+   "outputs": [
+    "luis_memory.json ({processed[], memories[{text,emb,source}]})",
+    "luis_memory.meta.json (counts sidecar, read by talk.self_status/live.py)",
+    "list[str] recalled facts (feeds talk.answer)",
+    "exit code (1 = local engine down)"
+   ],
+   "state_files": [
+    "luis_memory.json",
+    "luis_memory.meta.json"
+   ]
+  },
+  {
+   "id": "index-codex",
+   "name": "index_codex.py — the codex index (Luis's real documents)",
+   "file": "<REDACTED-PATH>/dev/aea-city/index_codex.py",
+   "kind": "memory",
+   "purpose": "Indexes Luis's ACTUAL writing (TRIVERSE CODEX/CORE, PORTFOLIO masters, aea-city docs) chunked + LOCALLY embedded into codex_index.json, so the entity reaches his real documents on recall — reusing consolidate's local embedding organ. Incremental (skips unchanged), gitignored.",
+   "functions": [
+    {
+     "name": "load_index",
+     "signature": "def load_index() -> dict",
+     "returns": "dict {files:{path->mtime}, chunks:[{text,emb,file,name,src}]} via grid.load_json",
+     "reads": [
+      "codex_index.json"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "save_index",
+     "signature": "def save_index(ix: dict)",
+     "returns": "None (atomic write, called every 5 files for crash-safe progress)",
+     "reads": [],
+     "writes": [
+      "codex_index.json"
+     ],
+     "calls": [
+      "grid.atomic_save_json"
+     ]
+    },
+    {
+     "name": "chunk_text",
+     "signature": "def chunk_text(text: str) -> list[str]",
+     "returns": "list[str] — up to MAX_PER_FILE(60) whitespace-normalized ~900-char chunks with 150 overlap, only pieces >120 chars",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "index",
+     "signature": "def index()",
+     "returns": "None — (re)indexes all ROOTS incrementally (skips files whose mtime is unchanged), embeds each chunk locally",
+     "reads": [
+      "codex_index.json",
+      "TRIVERSE CODEX/CORE + PORTFOLIO + aea-city *.md (ROOTS globs)"
+     ],
+     "writes": [
+      "codex_index.json"
+     ],
+     "calls": [
+      "index_codex.load_index",
+      "index_codex.chunk_text",
+      "index_codex.save_index",
+      "consolidate.embed",
+      "pulse.emit"
+     ]
+    },
+    {
+     "name": "recall",
+     "signature": "def recall(query: str, k: int = 3) -> list[str]",
+     "returns": "list[str] — top-k chunks as '[<name>] <text[:500]>' by cosine ([] if empty index); used by talk.answer",
+     "reads": [
+      "codex_index.json"
+     ],
+     "writes": [],
+     "calls": [
+      "index_codex.load_index",
+      "consolidate.embed",
+      "consolidate._cos",
+      "pulse.emit"
+     ]
+    },
+    {
+     "name": "board",
+     "signature": "def board()",
+     "returns": "None (prints chunk counts grouped by source label)",
+     "reads": [
+      "codex_index.json"
+     ],
+     "writes": [],
+     "calls": [
+      "index_codex.load_index"
+     ]
+    }
+   ],
+   "inputs": [
+    "(default) reindex trigger",
+    "--recall <query>",
+    "--board",
+    "doc roots: TRIVERSE/CODEX/**/*.md (120), TRIVERSE/CORE/**/*.md (40), PORTFOLIO/*.md (30), aea-city/*.md (20)"
+   ],
+   "outputs": [
+    "codex_index.json ({files, chunks})",
+    "list[str] recalled document chunks (feeds talk.answer)",
+    "pulse events (codex-indexed / codex-recall)"
+   ],
+   "state_files": [
+    "codex_index.json"
+   ]
+  },
+  {
+   "id": "grid",
+   "name": "grid — power grid (plants + channel + router + meter + durable state)",
+   "file": "<REDACTED-PATH>/dev/aea-city/grid.py",
+   "kind": "channel",
+   "purpose": "Power/fuel core: PLANTS/GENERATORS provider catalogue, the raw OpenAI-compatible channel call_openai, the Router that picks a powered plant by capability+zone+size/depth, the Meter that paces per-bucket rpm/rpd/tpd/429 budgets over one shared locked file, plus shared durable-persistence + env-key + fetch_json helpers. Imports NO internal module (foundation leaf).",
+   "inputs": [
+    ".env + OS env keys",
+    "grid_state.json",
+    "prompt/messages",
+    "capability",
+    "zone",
+    "size",
+    "depth",
+    "max_tokens",
+    "temperature",
+    "timeout",
+    "plant",
+    "model",
+    "est_tokens",
+    "tokens",
+    "neurons",
+    "retry_after"
+   ],
+   "outputs": [
+    "dict(ok,latency,text,tokens,status,error) [call_openai]",
+    "(plant,model,wait_seconds) [Router.pick]",
+    "(ok,wait_seconds,reason) [Meter.can_spend]",
+    "complete: call_openai dict .update(plant,model)",
+    "grid_state.json {daily,monthly,rpm,throttle}",
+    "PLANTS/GENERATORS/ZONES/PLANT_RANK/SIZES constants",
+    "key(name) values",
+    "fetch_json(url) parsed JSON"
+   ],
+   "state_files": [
+    "grid_state.json"
+   ],
+   "functions": [
+    {
+     "name": "atomic_save_json",
+     "signature": "atomic_save_json(path: str, data, indent=None)",
+     "returns": "None (writes path+'.tmp' then os.replace onto path)",
+     "reads": [],
+     "writes": [
+      "<path>",
+      "<path>.tmp"
+     ],
+     "calls": []
+    },
+    {
+     "name": "load_json",
+     "signature": "load_json(path: str, default)",
+     "returns": "parsed JSON | default; corrupt file renamed to <path>.corrupt.<int(time)> then returns default",
+     "reads": [
+      "<path>"
+     ],
+     "writes": [
+      "<path>.corrupt.<ts> (on corruption)"
+     ],
+     "calls": []
+    },
+    {
+     "name": "file_lock",
+     "signature": "@contextmanager file_lock(path: str, timeout: float = 5.0)",
+     "returns": "yields bool (True=held via msvcrt LK_NBLCK; False on timeout -> proceeds unlocked)",
+     "reads": [
+      "<path>.lock"
+     ],
+     "writes": [
+      "<path>.lock"
+     ],
+     "calls": []
+    },
+    {
+     "name": "fetch_json",
+     "signature": "fetch_json(url: str, timeout: int = 20)",
+     "returns": "parsed JSON from HTTP GET (UA 'Mozilla/5.0 aea-grid/1.0')",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "load_env",
+     "signature": "load_env() -> dict",
+     "returns": "dict = os.environ overlaid with non-blank .env values (blank in .env keeps OS env)",
+     "reads": [
+      ".env"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "key",
+     "signature": "key(name: str) -> str | None",
+     "returns": "ENV[name] or None if empty/missing",
+     "reads": [
+      "ENV (module global from load_env)"
+     ],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "size_for_depth",
+     "signature": "size_for_depth(depth: int) -> str",
+     "returns": "DEPTH_TO_SIZE.get(depth,'pico') -> large/normal/micro/nano/pico",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "_today / _month",
+     "signature": "_today() -> str ; _month() -> str",
+     "returns": "UTC 'YYYY-MM-DD' / 'YYYY-MM'",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "Meter.__init__",
+     "signature": "Meter.__init__(self, state_path: str | None = None)",
+     "returns": "None; state_path defaults to HERE/grid_state.json; self.lock = threading.Lock()",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "Meter.status",
+     "signature": "Meter.status(self, plant: str, model: str) -> dict",
+     "returns": "dict(rpm_used,rpm_cap,rpd_used,rpd_cap,tokens_today,tpd_cap,neurons_today,neurons_cap,calls_month,monthly_calls_cap)",
+     "reads": [
+      "grid_state.json"
+     ],
+     "writes": [],
+     "calls": [
+      "load_json",
+      "file_lock",
+      "Meter._fresh",
+      "Meter._roll",
+      "Meter._win"
+     ]
+    },
+    {
+     "name": "Meter.can_spend",
+     "signature": "Meter.can_spend(self, plant: str, model: str, est_tokens: int = 800)",
+     "returns": "(ok: bool, wait_seconds: float|None, reason: str) — reasons: 'throttled (429 cooldown)','rpm','rpd (resets 00:00 UTC)','tokens/day','calls/month','ok'",
+     "reads": [
+      "grid_state.json"
+     ],
+     "writes": [],
+     "calls": [
+      "load_json",
+      "file_lock",
+      "Meter._fresh",
+      "Meter._roll",
+      "Meter._win"
+     ]
+    },
+    {
+     "name": "Meter.record",
+     "signature": "Meter.record(self, plant: str, model: str, tokens: int = 0, neurons: int = 0)",
+     "returns": "None; appends now to 60s rpm window, +1 rpd/calls, +tokens, +neurons; atomic_save_json",
+     "reads": [
+      "grid_state.json"
+     ],
+     "writes": [
+      "grid_state.json"
+     ],
+     "calls": [
+      "load_json",
+      "file_lock",
+      "atomic_save_json",
+      "Meter._fresh",
+      "Meter._roll",
+      "Meter._win"
+     ]
+    },
+    {
+     "name": "Meter.mark_throttled",
+     "signature": "Meter.mark_throttled(self, plant: str, model: str, retry_after: float | None = None)",
+     "returns": "cool: float (retry_after, else min(60, 2**strikes)); sets throttle[mk].until/strikes",
+     "reads": [
+      "grid_state.json"
+     ],
+     "writes": [
+      "grid_state.json"
+     ],
+     "calls": [
+      "load_json",
+      "file_lock",
+      "atomic_save_json",
+      "Meter._fresh"
+     ]
+    },
+    {
+     "name": "Meter.clear_strike",
+     "signature": "Meter.clear_strike(self, plant: str, model: str)",
+     "returns": "None; zeroes throttle[mk].strikes on success",
+     "reads": [
+      "grid_state.json"
+     ],
+     "writes": [
+      "grid_state.json"
+     ],
+     "calls": [
+      "load_json",
+      "file_lock",
+      "atomic_save_json",
+      "Meter._fresh"
+     ]
+    },
+    {
+     "name": "Router.candidates",
+     "signature": "Router.candidates(self, capability: str, zone: str = 'private', size: str | None = None)",
+     "returns": "list[(plant, model, msize)] filtered by modality==capability + zone-privacy + optional size + key-present, sorted by (PLANT_RANK, SIZES.index)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "key"
+     ]
+    },
+    {
+     "name": "Router.pick",
+     "signature": "Router.pick(self, capability: str, zone: str = 'private', size: str | None = None, depth: int | None = None)",
+     "returns": "(plant, model, wait_seconds) for cheapest powered plant, else (None, None, best_wait) — relaxes up SIZES ladder",
+     "reads": [
+      "grid_state.json (via meter)"
+     ],
+     "writes": [],
+     "calls": [
+      "Router.candidates",
+      "Meter.can_spend",
+      "size_for_depth"
+     ]
+    },
+    {
+     "name": "call_openai",
+     "signature": "call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.2, timeout=60)",
+     "returns": "dict(ok, latency, text, tokens, status, error) — text=content or reasoning_content; tokens=usage.completion_tokens; HTTPError->status=e.code; other exc->status=0",
+     "reads": [
+      "ENV (via key for auth)"
+     ],
+     "writes": [],
+     "calls": [
+      "key"
+     ]
+    },
+    {
+     "name": "complete",
+     "signature": "complete(prompt: str, capability='reasoning', zone='private', depth=0, max_tokens=256, router: Router | None = None) -> dict",
+     "returns": "call_openai dict .update(plant,model); on no plant -> dict(ok=False,text='',error='no powered plant...'); 429 -> meter.mark_throttled, else record + clear_strike on ok",
+     "reads": [
+      "grid_state.json (via meter)"
+     ],
+     "writes": [
+      "grid_state.json (via meter)"
+     ],
+     "calls": [
+      "Router.pick",
+      "call_openai",
+      "Meter.mark_throttled",
+      "Meter.record",
+      "Meter.clear_strike"
+     ]
+    },
+    {
+     "name": "dashboard",
+     "signature": "dashboard()",
+     "returns": "None (prints the city power-plant table; __main__ entry)",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "key"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "energy",
+   "name": "energy — THE MOUTH (draw): live-fitness rod selector every organ burns through",
+   "file": "<REDACTED-PATH>/dev/aea-city/energy.py",
+   "kind": "router",
+   "purpose": "The single mouth: no organ names a model; every draw ranks rods from the LIVE censuses (capability_census.json + model_fitness.json + meter rate state), burns the best available via grid.call_openai, falls down the ladder on failure, records fitness-from-use to energy_usage.json (rolling ok-rate/ema-latency + 15-min cooldown), emits pulse, and degrades to the local ollama floor. Bypasses grid.Router/complete — uses grid.call_openai + grid.METER directly.",
+   "inputs": [
+    "prompt",
+    "tier (draw default 'solid'; ladder default 'frontier')",
+    "zone (public/private/sensitive)",
+    "mx=500",
+    "temp=0.2",
+    "timeout=60",
+    "system",
+    "order ('depth'|None)",
+    "capability_census.json",
+    "model_fitness.json",
+    "energy_usage.json",
+    "grid.METER/grid_state.json"
+   ],
+   "outputs": [
+    "dict(ok,text,plant,model,latency,tried) [draw]",
+    "list[(plant,model)] [ladder]",
+    "energy_usage.json {calls,ok,fail,consec_fail,ema_latency,cooled_at,last}",
+    "pulse events 'energy/draw' & 'energy/starved'"
+   ],
+   "state_files": [
+    "energy_usage.json"
+   ],
+   "functions": [
+    {
+     "name": "_load",
+     "signature": "_load(path, default)",
+     "returns": "grid.load_json(path, default) passthrough",
+     "reads": [
+      "<path>"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.load_json"
+     ]
+    },
+    {
+     "name": "_usage / _save_usage",
+     "signature": "_usage() ; _save_usage(u)",
+     "returns": "_usage()->dict of energy_usage.json; _save_usage writes it (file_lock + atomic_save_json indent=1)",
+     "reads": [
+      "energy_usage.json"
+     ],
+     "writes": [
+      "energy_usage.json"
+     ],
+     "calls": [
+      "grid.load_json",
+      "grid.file_lock",
+      "grid.atomic_save_json"
+     ]
+    },
+    {
+     "name": "_record_use",
+     "signature": "_record_use(plant, model, ok, latency)",
+     "returns": "None; updates entry {calls,ok,fail,consec_fail,ema_latency(0.7/0.3 EMA),cooled_at,last}; sets cooled_at when consec_fail>=COOL_AFTER(3)",
+     "reads": [
+      "energy_usage.json"
+     ],
+     "writes": [
+      "energy_usage.json"
+     ],
+     "calls": [
+      "_usage",
+      "_save_usage"
+     ]
+    },
+    {
+     "name": "_cooling",
+     "signature": "_cooling(plant, model)",
+     "returns": "bool — True if consec_fail>=3 AND (now-cooled_at)<COOL_SECONDS(900); else rod gets another chance",
+     "reads": [
+      "energy_usage.json"
+     ],
+     "writes": [],
+     "calls": [
+      "_usage"
+     ]
+    },
+    {
+     "name": "_params_b",
+     "signature": "_params_b(model: str) -> float",
+     "returns": "max parameter-count parsed from model name (e.g. 675b>119b>8b), 0.0 if none",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "ladder",
+     "signature": "ladder(tier: str = 'frontier', zone: str = 'private', order: str | None = None) -> list[tuple[str, str]]",
+     "returns": "ranked [(plant,model)] from capability_census.json (score thresholds vs battery size mx: frontier>=mx-1, solid>=mx-2, reflex>=mx-2 & lat<1.2) filtered by zone-privacy + fitness reliability==1.0 (except ollama); order='depth' sorts by _params_b; LOCAL_FLOOR always appended last",
+     "reads": [
+      "capability_census.json",
+      "model_fitness.json"
+     ],
+     "writes": [],
+     "calls": [
+      "_load",
+      "_params_b"
+     ]
+    },
+    {
+     "name": "draw",
+     "signature": "draw(prompt: str, tier: str = 'solid', zone: str = 'private', mx: int = 500, temp: float = 0.2, timeout: int = 60, system: str | None = None, order: str | None = None) -> dict",
+     "returns": "dict(ok, text, plant, model, latency, tried) — burns first non-cooling/affordable rod via grid.call_openai (timeout 180 for ollama); empty text = failure; 429->mark_throttled else _record_use+meter.record+clear_strike; never raises; starved -> dict(ok=False,text='',plant=None,model=None,latency=0,tried=[...])",
+     "reads": [
+      "capability_census.json",
+      "model_fitness.json",
+      "energy_usage.json",
+      "grid_state.json"
+     ],
+     "writes": [
+      "energy_usage.json",
+      "grid_state.json (via meter)"
+     ],
+     "calls": [
+      "ladder",
+      "_cooling",
+      "grid.METER.can_spend",
+      "grid.call_openai",
+      "grid.METER.mark_throttled",
+      "_record_use",
+      "grid.METER.record",
+      "grid.METER.clear_strike",
+      "pulse.emit"
+     ]
+    },
+    {
+     "name": "board",
+     "signature": "board()",
+     "returns": "None (prints ranked rods per tier + live fitness-from-use table; __main__ entry)",
+     "reads": [
+      "capability_census.json",
+      "model_fitness.json",
+      "energy_usage.json"
+     ],
+     "writes": [],
+     "calls": [
+      "ladder",
+      "_usage"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pulse",
+   "name": "pulse — the nervous signal (events.jsonl)",
+   "file": "<REDACTED-PATH>/dev/aea-city/pulse.py",
+   "kind": "trace",
+   "purpose": "Append-only telemetry stream: every organ emits what it does as it does it to events.jsonl so a brain view can show the mind naked. Bounded (rotates at ~1MB keeping tail 1200). emit() swallows every error so it can never break an organ. Depends only on grid for paths/locks.",
+   "inputs": [
+    "organ",
+    "action",
+    "detail",
+    "ok",
+    "since_t",
+    "limit",
+    "events.jsonl"
+   ],
+   "outputs": [
+    "events.jsonl append {t,organ,action,detail,ok}",
+    "list[dict] [tail]"
+   ],
+   "state_files": [
+    "events.jsonl"
+   ],
+   "functions": [
+    {
+     "name": "emit",
+     "signature": "emit(organ: str, action: str, detail: str = '', ok: bool = True)",
+     "returns": "None; appends JSON line {t:round(time,3),organ,action,detail[:220],ok}; rotates if size>1MB; never raises",
+     "reads": [
+      "events.jsonl"
+     ],
+     "writes": [
+      "events.jsonl"
+     ],
+     "calls": [
+      "_rotate"
+     ]
+    },
+    {
+     "name": "_rotate",
+     "signature": "_rotate()",
+     "returns": "None; keeps last KEEP_TAIL(1200) lines via tmp+os.replace under grid.file_lock(timeout=1.0); no-op if lock not held",
+     "reads": [
+      "events.jsonl"
+     ],
+     "writes": [
+      "events.jsonl",
+      "events.jsonl.tmp"
+     ],
+     "calls": [
+      "grid.file_lock"
+     ]
+    },
+    {
+     "name": "tail",
+     "signature": "tail(since_t: float = 0.0, limit: int = 200) -> list[dict]",
+     "returns": "list[dict] events with t>since_t, oldest first, last `limit` (scans last 1500 lines); [] if file missing",
+     "reads": [
+      "events.jsonl"
+     ],
+     "writes": [],
+     "calls": []
+    }
+   ]
+  },
+  {
+   "id": "capability-census",
+   "name": "capability_census — the capability battery (refine the catalog)",
+   "file": "<REDACTED-PATH>/dev/aea-city/capability_census.py",
+   "kind": "sense",
+   "purpose": "Actively probes every SERVING chat model in parallel with a 6-item deterministic battery (reason,trap,code,json,instruct,synth) to separate frontier-grade from filler; modality-aware (NON_CHAT regex holds specialist organs apart). Writes the scored capability catalogue energy.ladder reads each draw.",
+   "inputs": [
+    "--plants <list> (default nvidia groq cerebras)",
+    "--rank flag",
+    "provider /models lists",
+    "BATTERY probes",
+    "grid keys"
+   ],
+   "outputs": [
+    "capability_census.json {generated,battery:[ids],specialists:{plant:[models]},models:[{plant,model,probes,synth_sample,score(0..6),reliability,avg_latency,failure_modes}]}",
+    "ranked stdout shortlist"
+   ],
+   "state_files": [
+    "capability_census.json"
+   ],
+   "functions": [
+    {
+     "name": "_json_ok",
+     "signature": "_json_ok(t)",
+     "returns": "bool — True if extracted JSON has name=='aea', ok is True, items==[1,2,3]",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "list_serving",
+     "signature": "list_serving(plant: str, base: str, keyname: str) -> list[str]",
+     "returns": "sorted model ids from GET base/models; [] if no key or on error",
+     "reads": [
+      "ENV (via grid.key)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.key"
+     ]
+    },
+    {
+     "name": "probe",
+     "signature": "probe(plant, base, keyname, model, item)",
+     "returns": "dict(id, outcome['ok'|'EMPTY'|'TIMEOUT'|'ERR<status>'], passed:bool, latency, tokens?, sample) via grid.call_openai(max_tokens=item.mx, temperature=item.temp, timeout=40)",
+     "reads": [
+      "ENV (via grid.call_openai auth)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.call_openai"
+     ]
+    },
+    {
+     "name": "battery",
+     "signature": "battery(plant, base, keyname, model)",
+     "returns": "rec dict(plant,model,probes:{id:probe},synth_sample,score=sum passed(0..6),reliability=oks/len,avg_latency,failure_modes) — 0.1s between probes",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "probe"
+     ]
+    },
+    {
+     "name": "run",
+     "signature": "run(plants)",
+     "returns": "None; lists serving, splits chat vs specialists (NON_CHAT), runs battery in ThreadPoolExecutor(16), sorts by (-score,avg_latency), writes report, calls rank",
+     "reads": [
+      "ENV"
+     ],
+     "writes": [
+      "capability_census.json"
+     ],
+     "calls": [
+      "list_serving",
+      "battery",
+      "grid.atomic_save_json",
+      "grid._today",
+      "rank"
+     ]
+    },
+    {
+     "name": "rank",
+     "signature": "rank(report=None)",
+     "returns": "None; prints ranked /6 shortlist (top 22) + FRONTIER(>=5/6) count + specialists; reads OUT if report None",
+     "reads": [
+      "capability_census.json"
+     ],
+     "writes": [],
+     "calls": []
+    }
+   ]
+  },
+  {
+   "id": "model-fitness",
+   "name": "model_fitness — the entity learns its own tools (fitness sweep)",
+   "file": "<REDACTED-PATH>/dev/aea-city/model_fitness.py",
+   "kind": "sense",
+   "purpose": "Measures FITNESS not quality: sweeps every online general node (from orchestrator.load_pool) with a 4-probe battery shaped like the entity's real work (reason_tight,json,synth,instruct), classifying failure modes honestly (ok|EMPTY|TIMEOUT|RATE|ERR). Writes model_fitness.json which energy.ladder reads to refuse known-broken rods.",
+   "inputs": [
+    "--tier <name>",
+    "orchestrator pool nodes",
+    "BATTERY probes",
+    "grid keys"
+   ],
+   "outputs": [
+    "model_fitness.json {generated,timeout_s:45,battery:[tasks],nodes:[{plant,model,tier,zone,probes,reliability,accuracy,avg_latency,best_tok_s,failure_modes}]}",
+    "sweep stdout"
+   ],
+   "state_files": [
+    "model_fitness.json"
+   ],
+   "functions": [
+    {
+     "name": "probe",
+     "signature": "probe(plant, model, task, spec)",
+     "returns": "dict(task,outcome['ok'|'EMPTY'|'TIMEOUT'|'RATE'|'ERR<status>'],correct:bool,latency,tok_s,sample) via grid.call_openai(max_tokens=spec.mx,temperature=0,timeout=45)",
+     "reads": [
+      "ENV (via grid.call_openai auth)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.call_openai"
+     ]
+    },
+    {
+     "name": "sweep_node",
+     "signature": "sweep_node(node)",
+     "returns": "dict(plant,model,tier,zone,probes,reliability=oks/len,accuracy=correct/len,avg_latency,best_tok_s,failure_modes) — 0.15s between probes",
+     "reads": [],
+     "writes": [],
+     "calls": [
+      "probe",
+      "orchestrator.tier_of"
+     ]
+    },
+    {
+     "name": "main",
+     "signature": "main()",
+     "returns": "None; pool=orchestrator.load_pool filtered by is_general (+optional --tier via tier_of), sweeps in ThreadPoolExecutor(12), sorts by (-reliability,-accuracy,avg_latency), writes report; __main__ entry",
+     "reads": [
+      "ENV"
+     ],
+     "writes": [
+      "model_fitness.json"
+     ],
+     "calls": [
+      "orchestrator.load_pool",
+      "orchestrator.is_general",
+      "orchestrator.tier_of",
+      "sweep_node",
+      "grid.atomic_save_json",
+      "grid._today"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "capacity",
+   "name": "capacity — the live capacity gauge (measured, then tamed)",
+   "file": "<REDACTED-PATH>/dev/aea-city/capacity.py",
+   "kind": "sense",
+   "purpose": "Live census of how much FREE power exists right now: probes every NVIDIA catalog model with a 1-token call (serving vs 404/timeout -> serving*40rpm), reads groq/cerebras/zai x-ratelimit-* response headers as ground truth, measures the ollama local floor, writes capacity.json and prints the taming (aggregate capacity vs real daily load). Uses its OWN _call_raw (not grid.call_openai) to capture headers; only census_local goes through grid.call_openai.",
+   "inputs": [
+    "--gauge flag",
+    "provider /models + /chat/completions ratelimit headers",
+    "ollama /api/tags + warm probe",
+    "grid keys"
+   ],
+   "outputs": [
+    "capacity.json {generated,nvidia{catalog,serving,dead,timeout,rpm_per_model,rpm_total,rpd_total_theoretical,serving_models,timeout_models},groq/cerebras/zai{models:{m:{ok,status,ratelimit_headers}}},ollama{up,models,warm_tok_s,rpm,note}}",
+    "gauge stdout"
+   ],
+   "state_files": [
+    "capacity.json"
+   ],
+   "functions": [
+    {
+     "name": "_call_raw",
+     "signature": "_call_raw(base: str, keyname: str | None, model: str, max_tokens: int = 1, timeout: int = 25)",
+     "returns": "dict(ok,status,latency,headers[ratelimit-only lowercased][,error]) — raw POST that RETURNS headers grid.call_openai discards",
+     "reads": [
+      "ENV (via grid.key)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.key"
+     ]
+    },
+    {
+     "name": "_list_models",
+     "signature": "_list_models(base: str, keyname: str | None) -> list[str]",
+     "returns": "sorted model ids from GET base/models; [] if no key/error",
+     "reads": [
+      "ENV (via grid.key)"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.key"
+     ]
+    },
+    {
+     "name": "census_nvidia",
+     "signature": "census_nvidia() -> dict",
+     "returns": "dict(catalog,serving,dead,timeout,rpm_per_model=40,rpm_total=serving*40,rpd_total_theoretical,serving_models,timeout_models) — probes every catalog model, ThreadPoolExecutor(14)",
+     "reads": [
+      "ENV"
+     ],
+     "writes": [],
+     "calls": [
+      "_list_models",
+      "_call_raw"
+     ]
+    },
+    {
+     "name": "census_headers",
+     "signature": "census_headers(plant: str, base: str, keyname: str, models: list[str]) -> dict",
+     "returns": "{'models':{m:{ok,status,ratelimit_headers}}} — 1.2s polite gap between calls",
+     "reads": [
+      "ENV"
+     ],
+     "writes": [],
+     "calls": [
+      "_call_raw"
+     ]
+    },
+    {
+     "name": "census_local",
+     "signature": "census_local() -> dict",
+     "returns": "{up,models,warm_tok_s,rpm:None,note} via grid.call_openai('ollama','llama3.1:8b',max_tokens=80,timeout=180); {'up':False} if ollama down",
+     "reads": [
+      "ollama /api/tags"
+     ],
+     "writes": [],
+     "calls": [
+      "grid.call_openai"
+     ]
+    },
+    {
+     "name": "gauge",
+     "signature": "gauge(report: dict)",
+     "returns": "None; prints power gauge (nvidia rpm/day, header plants req/day+tok/min, ollama floor) + daily-load taming math",
+     "reads": [],
+     "writes": [],
+     "calls": []
+    },
+    {
+     "name": "main",
+     "signature": "main()",
+     "returns": "None; --gauge re-prints capacity.json, else runs full census (nvidia+groq+cerebras+zai+ollama), writes capacity.json, calls gauge; __main__ entry",
+     "reads": [
+      "capacity.json (on --gauge)"
+     ],
+     "writes": [
+      "capacity.json"
+     ],
+     "calls": [
+      "census_nvidia",
+      "census_headers",
+      "census_local",
+      "grid.atomic_save_json",
+      "grid._today",
+      "gauge"
+     ]
+    }
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "from": "hades",
+   "to": "grid",
+   "carries": "GROQ_API_KEY lookup (strict-json watcher enablement)",
+   "pipeline": "governance"
+  },
+  {
+   "from": "hades",
+   "to": "grid",
+   "carries": "grid.call_openai('ollama',...) local private-safe watch request (watch_local)",
+   "pipeline": "governance"
+  },
+  {
+   "from": "hades",
+   "to": "grid",
+   "carries": "grid.Meter() construction in oversee",
+   "pipeline": "meter"
+  },
+  {
+   "from": "hades",
+   "to": "grid",
+   "carries": "meter.record(groq/ollama call) usage tally",
+   "pipeline": "meter"
+  },
+  {
+   "from": "hades",
+   "to": "swarm",
+   "carries": "swarm.pick_varied(pool,'reflex',meter) fallback-watcher node request",
+   "pipeline": "governance"
+  },
+  {
+   "from": "hades",
+   "to": "orchestrator",
+   "carries": "orchestrator.load_pool() online node pool (oversee)",
+   "pipeline": "governance"
+  },
+  {
+   "from": "hades",
+   "to": "orchestrator",
+   "carries": "orchestrator.pick(pool,'bulk','public',meter) worker/fallback-watcher node pick",
+   "pipeline": "governance"
+  },
+  {
+   "from": "hades",
+   "to": "orchestrator",
+   "carries": "orchestrator.call_node(...) watcher judge prompt -> verdict text; worker GOAL prompt -> answer",
+   "pipeline": "governance"
+  },
+  {
+   "from": "trust",
+   "to": "grid",
+   "carries": "grid.load_json(LEDGER,{}) read trust_ledger.json",
+   "pipeline": "governance"
+  },
+  {
+   "from": "trust",
+   "to": "grid",
+   "carries": "grid.atomic_save_json(LEDGER) atomic write trust_ledger.json",
+   "pipeline": "governance"
+  },
+  {
+   "from": "trust",
+   "to": "grid",
+   "carries": "grid.file_lock(LEDGER) locked read-modify-write (never lose a demotion)",
+   "pipeline": "governance"
+  },
+  {
+   "from": "trust",
+   "to": "pulse",
+   "carries": "pulse.emit('trust','record', cap ok/FAIL -> level, streak) nervous signal",
+   "pipeline": "governance"
+  },
+  {
+   "from": "swarm",
+   "to": "orchestrator",
+   "carries": "orchestrator.tier_of(n) node tier classification",
+   "pipeline": "chat"
+  },
+  {
+   "from": "swarm",
+   "to": "orchestrator",
+   "carries": "orchestrator.pick(pool,'deep','public',meter) deep synthesis node pick (decompose merge)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "swarm",
+   "to": "orchestrator",
+   "carries": "orchestrator.call_node(...) triage / subtask / synth prompt -> text",
+   "pipeline": "chat"
+  },
+  {
+   "from": "swarm",
+   "to": "grid",
+   "carries": "meter.can_spend budget check + grid.ZONES['public'] privacy filter",
+   "pipeline": "meter"
+  },
+  {
+   "from": "orchestrator",
+   "to": "grid",
+   "carries": "grid.load_json models_report.json + model_fitness.json (load_pool)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "orchestrator",
+   "to": "grid",
+   "carries": "grid.key(cap['auth']) + grid.PLANTS/ZONES/HERE plant auth+online check",
+   "pipeline": "chat"
+  },
+  {
+   "from": "orchestrator",
+   "to": "grid",
+   "carries": "grid.call_openai(plant,model,messages) chat completion -> dict(ok,text,status,latency,tokens)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "orchestrator",
+   "to": "grid",
+   "carries": "meter.record token usage tally (call_node)",
+   "pipeline": "meter"
+  },
+  {
+   "from": "orchestrator",
+   "to": "grid",
+   "carries": "meter.can_spend rate budget check (pick) + grid.Meter() in run",
+   "pipeline": "meter"
+  },
+  {
+   "from": "pathfinder",
+   "to": "swarm",
+   "carries": "swarm.pick_varied(pool,tier,meter) varied node pick (classify/gate/attempt)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "pathfinder",
+   "to": "orchestrator",
+   "carries": "orchestrator.call_node(...) classify/gate/attempt/crystallized prompt -> text",
+   "pipeline": "chat"
+  },
+  {
+   "from": "pathfinder",
+   "to": "grid",
+   "carries": "grid.HERE base dir for paths.json path",
+   "pipeline": "chat"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "grid",
+   "carries": "grid.key('TELEGRAM_TOKEN') -> bot token from .env",
+   "pipeline": "reach"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "grid",
+   "carries": "grid.load_json(telegram_state.json {offset,chat}) + grid.load_json(identity.json)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "grid",
+   "carries": "grid.atomic_save_json(telegram_state.json {offset,chat})",
+   "pipeline": "chat"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "talk",
+   "carries": "talk.load_state() -> {turns, started}",
+   "pipeline": "chat"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "talk",
+   "carries": "talk.answer(text[:800], state, ident, seed, 'private') -> dict(ok,text,plant,model,latency,tried,memories)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "talk",
+   "carries": "talk.save_state(state) with turns capped [-60:]",
+   "pipeline": "chat"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "pulse",
+   "carries": "pulse.emit('mind','telegram', text[:60])",
+   "pipeline": "chat"
+  },
+  {
+   "from": "telegram-bridge",
+   "to": "telegram-bridge",
+   "carries": "run -> talk.answer -> send(reply, token, cid): reply text pushed to Telegram sendMessage",
+   "pipeline": "reach"
+  },
+  {
+   "from": "notify",
+   "to": "grid",
+   "carries": "grid.key('CALLMEBOT_KEY')",
+   "pipeline": "reach"
+  },
+  {
+   "from": "notify",
+   "to": "pulse",
+   "carries": "pulse.emit('voice','call-luis', text[:60], ok=ok)",
+   "pipeline": "reach"
+  },
+  {
+   "from": "listen",
+   "to": "speak",
+   "carries": "speak.kokoro_render(sentence, _selftest.wav, sid=6) -> dict(ok,...) for the mouth->ears selftest",
+   "pipeline": "reach"
+  },
+  {
+   "from": "speak",
+   "to": "pulse",
+   "carries": "pulse.emit('voice','speak', text[:80])",
+   "pipeline": "reach"
+  },
+  {
+   "from": "live",
+   "to": "grid",
+   "carries": "grid.load_json(heartbeat.json) -> hb",
+   "pipeline": "brief"
+  },
+  {
+   "from": "live",
+   "to": "grid",
+   "carries": "grid.atomic_save_json(heartbeat.json, indent=2)",
+   "pipeline": "brief"
+  },
+  {
+   "from": "live",
+   "to": "pulse",
+   "carries": "pulse.emit('life','tick'|'tick-done', '#{n} {action} ok/FAIL')",
+   "pipeline": "brief"
+  },
+  {
+   "from": "live",
+   "to": "consolidate",
+   "carries": "corpus_state(): consolidate.META (grid.load_json) + consolidate.load_store + glob(PROJECTS_ROOT/*/*.jsonl) -> (processed,total)",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "live",
+   "to": "brief",
+   "carries": "subprocess python brief.py (AWAKE tick, timeout 240) -> produce today's brief",
+   "pipeline": "brief"
+  },
+  {
+   "from": "live",
+   "to": "consolidate",
+   "carries": "subprocess python consolidate.py --limit 3 (ASLEEP tick, timeout 600) -> mine a memory slice",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "live",
+   "to": "reflect",
+   "carries": "subprocess python reflect.py --once (REFLECT tick, timeout 240) -> self-originate one task",
+   "pipeline": "reflect"
+  },
+  {
+   "from": "agent-tools",
+   "to": "grid",
+   "carries": "grid.PLANTS[plant] -> {base, auth} provider catalogue entry",
+   "pipeline": "chat"
+  },
+  {
+   "from": "agent-tools",
+   "to": "grid",
+   "carries": "grid.key(cap['auth']) -> Bearer provider key",
+   "pipeline": "chat"
+  },
+  {
+   "from": "relay",
+   "to": "orchestrator",
+   "carries": "orchestrator.load_pool() -> online node pool",
+   "pipeline": "chat"
+  },
+  {
+   "from": "relay",
+   "to": "grid",
+   "carries": "grid.Meter() -> rate/budget meter instance",
+   "pipeline": "meter"
+  },
+  {
+   "from": "relay",
+   "to": "swarm",
+   "carries": "swarm.pick_varied(pool, 'bulk', meter, topk=8) -> varied node",
+   "pipeline": "chat"
+  },
+  {
+   "from": "relay",
+   "to": "orchestrator",
+   "carries": "orchestrator.pick(pool, 'bulk', 'public', meter) -> fallback node",
+   "pipeline": "chat"
+  },
+  {
+   "from": "relay",
+   "to": "orchestrator",
+   "carries": "orchestrator.call_node(n, prompt(capsule+sig), meter, 300) -> dict(ok,text,tokens,...)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "talk",
+   "to": "consolidate",
+   "carries": "user_text query -> consolidate.recall(user_text, k=4) -> list[str] of <=4 recalled semantic memories of Luis for this turn",
+   "pipeline": "chat"
+  },
+  {
+   "from": "talk",
+   "to": "index-codex",
+   "carries": "user_text query -> index_codex.recall(user_text, k=2) -> list[str] of <=2 real codex document chunks (inline import; whole-book grounding)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "talk",
+   "to": "energy",
+   "carries": "answer(): energy.draw(prompt, tier='frontier'|'local', zone, mx=420, temp=0.4, system, timeout=45, order='depth') -> dict(ok,text,plant,model,latency,tried); conversation draws by DEPTH (counsel duel)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "talk",
+   "to": "grid",
+   "carries": "grid.load_json / grid.atomic_save_json for talk_state.json, heartbeat.json, self.json, identity.json, luis_memory.meta.json (consolidate.META)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "talk",
+   "to": "trust",
+   "carries": "trust.check('speak') -> {allowed,..} gate before voice; trust.record('speak', spoke) records outcome (autonomy earned per capability)",
+   "pipeline": "governance"
+  },
+  {
+   "from": "talk",
+   "to": "speak",
+   "carries": "reply text -> speak.speak(reply) -> bool (spoken aloud through local voice while printing)",
+   "pipeline": "reach"
+  },
+  {
+   "from": "talk",
+   "to": "pulse",
+   "carries": "pulse.emit('mind','hears-luis'|'replies', ..) heartbeat events -> events.jsonl",
+   "pipeline": "chat"
+  },
+  {
+   "from": "reflect",
+   "to": "energy",
+   "carries": "energy.draw(pose_prompt, tier='solid', zone='private', mx=420) for 3 candidates; energy.draw(att_prompt, mx=700) for attempt + redo -> dict(ok,text,plant,model,latency,tried)",
+   "pipeline": "reflect"
+  },
+  {
+   "from": "reflect",
+   "to": "orchestrator",
+   "carries": "orchestrator.load_pool() -> pool list[node dict] supplied to the HADES gate",
+   "pipeline": "governance"
+  },
+  {
+   "from": "reflect",
+   "to": "grid",
+   "carries": "grid.METER passed to hades.watch; grid.load_json(self.json) read; grid.atomic_save_json(self.json, indent=1) persist last_reflection+reflection_log",
+   "pipeline": "reflect"
+  },
+  {
+   "from": "reflect",
+   "to": "hades",
+   "carries": "hades.watch(goal, deliverable, 'reflect'|'reflect-redo', pool, meter) -> (verdict{on_goal,correct,verdict,why}, who); persist ONLY if verdict=='accept'",
+   "pipeline": "governance"
+  },
+  {
+   "from": "reflect",
+   "to": "pulse",
+   "carries": "pulse.emit('reflect','pose'|'verdict'|'persist', ..) births -> events.jsonl",
+   "pipeline": "reflect"
+  },
+  {
+   "from": "aea-loop",
+   "to": "energy",
+   "carries": "core(): energy.draw(prompt, tier='frontier', zone='private', mx=1400, timeout=90) -> dict; main(): energy.ladder('frontier','private') -> list[(plant,model)] for the core-ladder banner",
+   "pipeline": "reflect"
+  },
+  {
+   "from": "aea-loop",
+   "to": "grid",
+   "carries": "sense(): grid.fetch_json GitHub+HN JSON; structure(): grid.key('GROQ_API_KEY') + direct Groq gpt-oss-120b strict-JSON call metered via grid.METER.record('groq','openai/gpt-oss-120b')",
+   "pipeline": "meter"
+  },
+  {
+   "from": "aea-loop",
+   "to": "orchestrator",
+   "carries": "module-import orchestrator.load_pool() -> pool list[node dict] supplied to hades.watch each tick",
+   "pipeline": "governance"
+  },
+  {
+   "from": "aea-loop",
+   "to": "hades",
+   "carries": "tick(): hades.watch(STANDING_GOAL, json.dumps(out), 'aea-core', pool, meter) -> (verdict{on_goal,correct,verdict,why}, who); Law 3 watches every autonomous tick",
+   "pipeline": "governance"
+  },
+  {
+   "from": "brief",
+   "to": "tracelog",
+   "carries": "Trace(ROOT_GOAL) + spawn/mark/done/tree_str/lookup: goal-tree DAG (public+sensitive zones, model per node) -> brief_trace.jsonl",
+   "pipeline": "brief"
+  },
+  {
+   "from": "brief",
+   "to": "orchestrator",
+   "carries": "module-import load_pool() -> pool; grid_public(): orchestrator.pick(pool, tier, 'public', meter) then orchestrator.call_node(n, prompt, meter, mx) -> grid.call_openai dict (regime rule: easy synthesis -> ONE model)",
+   "pipeline": "brief"
+  },
+  {
+   "from": "brief",
+   "to": "grid",
+   "carries": "module-import meter=grid.METER, router=grid.Router(meter); grid.fetch_json GitHub+HN; grid_private(): grid.complete(prompt, capability='text', zone='sensitive', depth=3, max_tokens, router) -> dict(..,plant,model) LOCAL-ONLY",
+   "pipeline": "brief"
+  },
+  {
+   "from": "brief",
+   "to": "hades",
+   "carries": "hades.watch_local(ROOT_GOAL, brief_md, meter, worker_model='granite4.1:3b') -> (verdict{on_goal,correct,verdict,why}, who); LOCAL heterogeneous watcher (private data never leaves machine)",
+   "pipeline": "governance"
+  },
+  {
+   "from": "brief",
+   "to": "trust",
+   "carries": "trust.record('gather_public'|'reason_private_local'|'produce_brief', ok, note) -> ledger {allowed,..}; every run stamps the ledger",
+   "pipeline": "governance"
+  },
+  {
+   "from": "memory",
+   "to": "grid",
+   "carries": "grid.load_json / grid.atomic_save_json over memory.json ([{text,emb}] store)",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "consolidate",
+   "to": "grid",
+   "carries": "grid.load_json/atomic_save_json (luis_memory.json + .meta.json); grid.file_lock(STORE, timeout=2.0) no-double-grind; grid.call_openai('ollama','llama3.1:8b', .., max_tokens=300, temperature=0.2, timeout=180) -> distill dict",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "consolidate",
+   "to": "pulse",
+   "carries": "pulse.emit('memory','distill'|'recall', ..) -> events.jsonl",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "index-codex",
+   "to": "consolidate",
+   "carries": "from consolidate import embed, _cos: consolidate.embed(chunk) -> local vector for each chunk; consolidate._cos for cosine recall (shared local embedding organ)",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "index-codex",
+   "to": "grid",
+   "carries": "grid.load_json / grid.atomic_save_json over codex_index.json ({files, chunks})",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "index-codex",
+   "to": "pulse",
+   "carries": "pulse.emit('memory','codex-indexed'|'codex-recall', ..) -> events.jsonl",
+   "pipeline": "corpus"
+  },
+  {
+   "from": "energy",
+   "to": "grid",
+   "carries": "system+user msgs -> grid.call_openai(plant,model,max_tokens=mx,temperature=temp,timeout=180 ollama/60) ; returns dict(ok,latency,text,tokens,status,error); empty text treated as failure",
+   "pipeline": "chat"
+  },
+  {
+   "from": "energy",
+   "to": "grid",
+   "carries": "grid.METER (shared _meter) .can_spend(plant,model) / .record(tokens) / .mark_throttled / .clear_strike keyed (plant,model) <-> grid_state.json rpm/rpd/tpd/429 buckets",
+   "pipeline": "meter"
+  },
+  {
+   "from": "energy",
+   "to": "grid",
+   "carries": "grid.load_json/atomic_save_json/file_lock persist energy_usage.json (fitness-from-use); grid.ZONES+PLANTS privacy/zone gate; grid.HERE paths",
+   "pipeline": "meter"
+  },
+  {
+   "from": "energy",
+   "to": "pulse",
+   "carries": "pulse.emit('energy','draw'|'starved', 'plant/model tier/zone outcome latency', ok=good) -> events.jsonl",
+   "pipeline": "meter"
+  },
+  {
+   "from": "pulse",
+   "to": "grid",
+   "carries": "grid.HERE (EVENTS path) + grid.file_lock(EVENTS, timeout=1.0) for rotate",
+   "pipeline": "meter"
+  },
+  {
+   "from": "capability-census",
+   "to": "grid",
+   "carries": "grid.call_openai(plant,model,[battery prompt],max_tokens=item.mx,temperature=item.temp,timeout=40) probe -> dict(ok,text,tokens,status,error)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "capability-census",
+   "to": "grid",
+   "carries": "grid.key(keyname) auth for /models listing; grid.atomic_save_json(capability_census.json); grid._today(); grid.HERE",
+   "pipeline": "meter"
+  },
+  {
+   "from": "model-fitness",
+   "to": "grid",
+   "carries": "grid.call_openai(plant,model,[battery prompt],max_tokens=spec.mx,temperature=0,timeout=45) probe -> dict(ok,text,tokens,status,error)",
+   "pipeline": "chat"
+  },
+  {
+   "from": "model-fitness",
+   "to": "grid",
+   "carries": "grid.atomic_save_json(model_fitness.json); grid._today(); grid.HERE",
+   "pipeline": "meter"
+  },
+  {
+   "from": "model-fitness",
+   "to": "orchestrator",
+   "carries": "orchestrator.load_pool()->nodes ; orchestrator.is_general(model)->bool ; orchestrator.tier_of(node)->tier (the sweep's node pool)",
+   "pipeline": "meter"
+  },
+  {
+   "from": "capacity",
+   "to": "grid",
+   "carries": "census_local: grid.call_openai('ollama','llama3.1:8b',[count prompt],max_tokens=80,timeout=180) warm probe -> dict(ok,latency,tokens) for tok/s",
+   "pipeline": "chat"
+  },
+  {
+   "from": "capacity",
+   "to": "grid",
+   "carries": "grid.key(keyname) auth for _call_raw/_list_models; grid.atomic_save_json(capacity.json); grid._today(); grid.HERE",
+   "pipeline": "meter"
+  }
+ ],
+ "routes": [
+  {
+   "path": "/state",
+   "method": "GET",
+   "returns": "json: {t, identity{name,born,voice}, life{alive_since,wakes,ticks,last_brief,recent[],log[]}, memory{sessions,memories}, mind{turns[]}, energy{plants[],rods[],census{frontier,generated}}, trust{cap:{level,streak,runs,fails}}, brief[]}",
+   "calls": [
+    "state()",
+    "grid.load_json (heartbeat.json, consolidate.META, identity.json, talk_state.json, energy_usage.json, grid_state.json, capability_census.json, trust_ledger.json)",
+    "grid.PLANTS",
+    "grid.key",
+    "trust.CHARTER",
+    "trust.LEVEL_NAMES",
+    "tail (live.log, brief_output.md)"
+   ],
+   "purpose": "Live entity state read from disk every 2s: life/mind/memory/energy(plants+rods)/trust/brief. Powers the built-in dashboard poll."
+  },
+  {
+   "path": "/journal",
+   "method": "GET",
+   "returns": "json: {ticks[], trust[<=40], events[], talk[<=12], trace[]}",
+   "calls": [
+    "journal()",
+    "grid.load_json (heartbeat.json, trust_ledger.json, talk_state.json)",
+    "pulse.tail(0, limit=80)",
+    "tail (brief_trace.jsonl)"
+   ],
+   "purpose": "The entity's documented actions merged from stores it already writes: recent ticks, trust-ledger history lines, pulse events, talk turns, brief trace."
+  },
+  {
+   "path": "/skills",
+   "method": "GET",
+   "returns": "json: {paths{}, paths_updated, trust{cap:{level,streak,runs,fails}}, organs[{name,file,status}]}",
+   "calls": [
+    "skills()",
+    "grid.load_json (paths.json, trust_ledger.json)",
+    "os.path.getmtime(paths.json)",
+    "trust.CHARTER",
+    "trust.LEVEL_NAMES",
+    "ORGANS_DOC (module constant)"
+   ],
+   "purpose": "The capability population: crystallized paths.json + trust capabilities + the static organ registry (grid/energy/orchestrator/swarm/... 17 organs)."
+  },
+  {
+   "path": "/roster",
+   "method": "GET",
+   "returns": "json: {fitness_top[<=18]{rod,fit,lat,tier}, fitness_generated, candidates{}, excluded[]}",
+   "calls": [
+    "roster()",
+    "grid.load_json (model_fitness.json, candidates_probe.json)"
+   ],
+   "purpose": "Model truth for the dashboard: lived-fitness ranking (correct/total, avg latency), Luis's candidate probes, and the hard-coded nemotron content-safety exclusion."
+  },
+  {
+   "path": "/autonomy",
+   "method": "GET",
+   "returns": "json: autonomy_mod.score() result, or {error} if module unavailable/raises",
+   "calls": [
+    "autonomy_mod.score() (optional import; None if import failed)"
+   ],
+   "purpose": "The live autonomy battery: the system scores its own autonomy. Guarded by try/except -> {error} string."
+  },
+  {
+   "path": "/decisions",
+   "method": "GET",
+   "returns": "json: {decisions: recs[-60:]}  (path matched via startswith)",
+   "calls": [
+    "tail (decisions.jsonl, 80 lines)",
+    "json.loads per line"
+   ],
+   "purpose": "The bifurcation path: every choice the entity makes, last 60 parsed JSONL records."
+  },
+  {
+   "path": "/chains",
+   "method": "GET",
+   "returns": "json: {chains: chains[-12:]} each with attached .watch verdict",
+   "calls": [
+    "tail (chains.jsonl, 60 lines)",
+    "json.loads per line"
+   ],
+   "purpose": "Reasoning chains joined to their async watcher verdicts (type=chain matched to type=verdict by chain id); last 12."
+  },
+  {
+   "path": "/events",
+   "method": "GET",
+   "returns": "json: pulse.tail(since) event list  (path matched via startswith; parses ?since=<float>)",
+   "calls": [
+    "pulse.tail(since)"
+   ],
+   "purpose": "Pulse event stream tail; optional since= query filters to events after a timestamp (bad value -> since=0)."
+  },
+  {
+   "path": "/brain",
+   "method": "GET",
+   "returns": "html: contents of brain.html (or 'brain.html missing: <err>' text, still HTTP 200)",
+   "calls": [
+    "open(HERE/brain.html)"
+   ],
+   "purpose": "Serves the brain.html view (startswith match)."
+  },
+  {
+   "path": "/city",
+   "method": "GET",
+   "returns": "html: contents of city.html (or missing-file text, HTTP 200)",
+   "calls": [
+    "open(HERE/city.html)"
+   ],
+   "purpose": "THE CITY - the entity whole as a circuit-city 3D view (needs the allowlisted static three.js/bloom assets)."
+  },
+  {
+   "path": "/plan",
+   "method": "GET",
+   "returns": "html: contents of plan.html (or missing-file text, HTTP 200)",
+   "calls": [
+    "open(HERE/plan.html)"
+   ],
+   "purpose": "THE DRAWINGS - engineering views of the master plan (startswith match)."
+  },
+  {
+   "path": "/builder",
+   "method": "GET",
+   "returns": "html: contents of builder.html (or missing-file text, HTTP 200)",
+   "calls": [
+    "open(HERE/builder.html)"
+   ],
+   "purpose": "THE BUILDER - the entity assembled from real code piece by piece (startswith match)."
+  },
+  {
+   "path": "/mind",
+   "method": "GET",
+   "returns": "html: contents of mind3d.html (or missing-file text, HTTP 200)",
+   "calls": [
+    "open(HERE/mind3d.html)"
+   ],
+   "purpose": "THE MIND - the naked brain: 7 measured-correlate indicators, live 3D (startswith match)."
+  },
+  {
+   "path": "/tree",
+   "method": "GET",
+   "returns": "html: contents of tree.html (or missing-file text, HTTP 200)",
+   "calls": [
+    "open(HERE/tree.html)"
+   ],
+   "purpose": "THE TREE - the AEA concept tree grown from the scoreboard (startswith match)."
+  },
+  {
+   "path": "/poster",
+   "method": "GET",
+   "returns": "html: contents of plan_concentric.html (or missing-file text, HTTP 200)",
+   "calls": [
+    "open(HERE/plan_concentric.html)"
+   ],
+   "purpose": "The concentric concept plate, a subordinate view (startswith match). Note: serves plan_concentric.html, NOT plan.html."
+  },
+  {
+   "path": "/room",
+   "method": "GET",
+   "returns": "html: the built-in PAGE constant (self-contained CONTROL ROOM dashboard that polls /state)",
+   "calls": [
+    "PAGE (module string constant)"
+   ],
+   "purpose": "The original single-file control room page (startswith match); no disk file needed."
+  },
+  {
+   "path": "/<flat-basename>.<allowlisted-ext>",
+   "method": "GET",
+   "returns": "binary: raw file bytes with Content-Type from _CTYPES",
+   "calls": [
+    "_static_path(path)",
+    "open(fp, 'rb')"
+   ],
+   "purpose": "Static asset serving for the 3D city (three.js + bloom addons + assets). Allowlisted extensions ONLY: .js .css .png .svg .woff2 .map .ico .wav .mp3; flat basename ONLY (os.path.basename strips any traversal); non-allowlisted or missing -> falls through to dashboard."
+  },
+  {
+   "path": "/workspace",
+   "method": "GET",
+   "returns": "html: contents of interface.html (fallback: PAGE constant), HTTP 200",
+   "calls": [
+    "open(HERE/interface.html)"
+   ],
+   "purpose": "The old conversational workspace kept as a tab (startswith match); falls back to PAGE if interface.html missing."
+  },
+  {
+   "path": "/ (catch-all else)",
+   "method": "GET",
+   "returns": "html: dashboard.html (fallback: interface.html, then PAGE constant), HTTP 200",
+   "calls": [
+    "open(HERE/dashboard.html)",
+    "open(HERE/interface.html)",
+    "PAGE"
+   ],
+   "purpose": "THE DASHBOARD - the one global face served for any unmatched GET path including root /. Triple fallback chain."
+  },
+  {
+   "path": "/talk",
+   "method": "POST",
+   "returns": "json: {reply, ok, rod, latency, zone, memories[], events[]}  (or {error:'empty'})",
+   "calls": [
+    "_talk(req)",
+    "_talk_lock (serializes one exchange)",
+    "pulse.emit",
+    "talk_mod.load_state",
+    "grid.load_json (identity.json)",
+    "talk_mod.SEED_PATH (open seed)",
+    "talk_mod.answer",
+    "talk_mod.save_state",
+    "trust.check('speak')",
+    "speak_mod.speak (daemon thread, if req.speak & trust allows)",
+    "chain_write (chain record)",
+    "watch_reply (daemon thread, if ok)",
+    "pulse.tail"
+   ],
+   "purpose": "One conversation exchange with full receipt. req{text, zone('local'->sensitive else private), speak}. Appends turns, records the reasoning chain to chains.jsonl, and spawns async watcher verdict + optional TTS."
+  },
+  {
+   "path": "/do",
+   "method": "POST",
+   "returns": "json: {ok, out}  (unknown cmd -> {ok:false,out:'unknown command...'})",
+   "calls": [
+    "_do(req)",
+    "subprocess.run/Popen",
+    "state() (for status)",
+    "grid.load_json/atomic_save_json (LIVE_PID_FP=live_pid.json)",
+    "tasklist/taskkill (Windows)"
+   ],
+   "purpose": "Allowlisted command endpoint (motor cortex). req{cmd}. See server_notes for the six commands. Nothing arbitrary executes."
+  },
+  {
+   "path": "/<any other>",
+   "method": "POST",
+   "returns": "json: {error: 'unknown endpoint'}, HTTP 200",
+   "calls": [],
+   "purpose": "POST fallthrough for any path that is not /talk or /do."
+  }
+ ],
+ "server_notes": "HOST/PORT: binds 127.0.0.1 only (local-only, private data never leaves machine). Default port 7799, overridable via `--port <n>` CLI arg. Server class: http.server.ThreadingHTTPServer (thread-per-request) with custom Handler(BaseHTTPRequestHandler). HERE = grid.HERE is the serve/asset root. log_message is overridden to no-op (silent console).\n\nRESPONSES: every handler ends by sending HTTP 200 with Content-Length; there are no non-200 status codes — error conditions (missing file, unknown endpoint, exceptions) are returned as 200 with an error string/JSON body. do_GET builds body+ctype then writes; do_POST reads Content-Length bytes, json.loads the body (empty/garbage -> {}), dispatches /talk or /do.\n\nSTATIC-FILE RULES: _static_path() enforces (1) flat basename only — os.path.basename(path.split('?')[0].lstrip('/')) strips any directory/traversal component, so ../ escapes and subpaths cannot reach parent or private dirs; (2) extension allowlist via _CTYPES = {.js:application/javascript, .css:text/css, .png:image/png, .svg:image/svg+xml, .woff2:font/woff2, .map:application/json, .ico:image/x-icon, .wav:audio/wav, .mp3:audio/mpeg}; anything else returns None and falls through to the dashboard catch-all. This deliberately BLOCKS the private state stores (.json like luis_memory/grid_state/aea_state, plus *.md and *.py) from ever being reachable over the socket. File must exist (os.path.isfile) or None. The static check runs AFTER all the named HTML routes and BEFORE /workspace and the dashboard else-branch. Note the named HTML routes (/brain /city /plan /builder /mind /tree /poster /room /workspace /decisions /events) use startswith matching, while /state /journal /skills /roster /autonomy /chains use exact ==.\n\nTELEGRAM BRIDGE: started in main() only if grid.key('TELEGRAM_TOKEN') is set — imports telegram_bridge and runs telegram_bridge.run() on a daemon thread (two-way phone conversation channel). Import/run failure is caught and printed, non-fatal.\n\nSTARTUP: main() parses --port; unless --no-open is passed, a threading.Timer(0.6s) opens the browser to http://127.0.0.1:<port>; then srv.serve_forever() (KeyboardInterrupt = clean shutdown, 'entity keeps living').\n\n/do COMMAND ENDPOINT (allowlisted 'motor cortex', req JSON {cmd}): \n- brief -> subprocess.run [python, brief.py] cwd=HERE timeout=300, returns last 10 lines.\n- consolidate -> subprocess.run [python, consolidate.py --limit 2] timeout=600, last 6 lines.\n- status -> calls state(), returns a one-line summary (alive-since/wakes/ticks/memories/sessions/brief).\n- play -> checks LIVE_PID_FP (live_pid.json) + Windows `tasklist` for an existing live.py pid; if none, subprocess.Popen [python, live.py] DETACHED_PROCESS|CREATE_NEW_PROCESS_GROUP with stdout/stderr appended to live.log, then grid.atomic_save_json records {pid,started}. Survives the request but not reboot.\n- stop -> reads pid from live_pid.json, Windows `taskkill /PID <pid> /F`, clears the pid file. 'stopping is sleep not death'.\n- tick -> subprocess.run [python, live.py --interval 1 --ticks 1] timeout=420 (blocking, ~1 min), last 8 lines.\n- unknown cmd -> {ok:false, out:'unknown command ... (allowed: brief, consolidate, status, play, stop, tick)'}.\n\n/talk COMMAND ENDPOINT (req JSON {text, zone, speak}): serialized by module-level _talk_lock (one exchange at a time). zone='local' maps to internal 'sensitive' (forces local-only rod), anything else -> 'private'. Flow: pulse.emit hears-luis -> talk_mod.load_state -> load identity.json + read talk_mod.SEED_PATH -> append luis turn -> talk_mod.answer(text,st,ident,seed,zone) -> append entity turn (capped to last 60) -> talk_mod.save_state. If req.speak and trust.check('speak').allowed, spawns speak_mod.speak on a daemon thread (cloud_ok = zone!=sensitive). Records the exchange as a type='chain' record to chains.jsonl (recall+draw links), and if the draw succeeded spawns watch_reply() on a daemon thread — the CONTINUOUS SURVEILLANCE watcher (Law 3) that draws a verdict rod (sensitive->local zone, else reflex), writes a type='verdict' record to chains.jsonl and pulse.emit's watcher/talk-verdict.\n\nModule-level helpers/globals: chain_write() appends to chains.jsonl with 400KB rotation to chains.jsonl.1; tail() reads last-n lines; state()/journal()/skills()/roster() build the JSON payloads; PAGE = the embedded control-room HTML; ORGANS_DOC = static 17-organ registry list; LIVE_PID_FP = HERE/live_pid.json. Imports: grid, consolidate, trust, pulse, talk (as talk_mod), speak (as speak_mod), energy (as energy_mod), and optional autonomy (as autonomy_mod, None if import fails).",
+ "live_samples": [
+  {
+   "plant": "pollinations",
+   "model": "openai-fast (served by gpt-oss-20b)",
+   "endpoint": "https://text.pollinations.ai/openai",
+   "ok": true,
+   "http_status": "200",
+   "raw_payload": "{\"id\": \"pllns_ffa630beece2262f097ea0db408c451a\", \"choices\": [{\"index\": 0, \"message\": {\"role\": \"assistant\", \"content\": \"LEYBER online\", \"reasoning\": \"User says: \\\"Reply with exactly: LEYBER online\\\". They want me to output exactly that phrase. So I must respond exactly: LEYBER online\\n\\nHence I will output: LEYBER online.\", \"tool_calls\": []}, \"finish_reason\": \"stop\"}], \"created\": 1784536487, \"model\": \"gpt-oss-20b\", \"object\": \"chat.completion\", \"usage\": {\"prompt_tokens\": 316, \"completion_tokens\": 56, \"total_tokens\": 372}, \"user_tier\": \"anonymous\"}",
+   "extracted_text": "LEYBER online",
+   "latency_s": "1.678",
+   "note": "SUCCESS. Pure keyless call, no auth header. Requested model 'openai-fast' is transparently served by gpt-oss-20b (real provider field in payload). Note the provider returns an extra non-standard 'reasoning' field alongside content; content is the clean 'LEYBER online'. user_tier=anonymous confirms keyless path."
+  },
+  {
+   "plant": "nvidia",
+   "model": "nvidia/llama-3.1-nemotron-nano-8b-v1",
+   "endpoint": "https://integrate.api.nvidia.com/v1/chat/completions",
+   "ok": false,
+   "http_status": "0 (no HTTP response returned)",
+   "raw_payload": "NO PAYLOAD RETURNED. Attempt 1 (.env key nvapi-...F0JDP5, the value that overrides OS env per grid.py load_env precedence): Python urllib error = 'TimeoutError: The read operation timed out' after 60.178s. Attempt 2 (OS-env key nvapi-...P2tCAT, the one grid.py labels 'validated, 121 models'): read timeout again, request still hanging when the 120s tool wrapper killed it. In both cases the TCP+TLS connection to integrate.api.nvidia.com ESTABLISHED (it is a read timeout, not a connect timeout) but the chat/completions body never returned.",
+   "extracted_text": "",
+   "latency_s": "60.178 (attempt 1); >120 (attempt 2, killed)",
+   "note": "REAL FAILURE, not fabricated. grid.py lists nvidia as ONLINE (key present) but a live call does not return within 60-120s on EITHER key. Read-timeout (connection opened, no body) points to server-side hang / cold model / stalled request rather than a bad key or a blocked host. Two independent keys reproduced it. The .env NVIDIA_API_KEY (non-blank) is what grid.py actually uses since a non-blank .env value overrides the OS env var."
+  },
+  {
+   "plant": "ollama",
+   "model": "qwen3:0.6b",
+   "endpoint": "http://localhost:11434/v1/chat/completions",
+   "ok": true,
+   "http_status": "200",
+   "raw_payload": "{\"id\": \"chatcmpl-467\", \"object\": \"chat.completion\", \"created\": 1784536757, \"model\": \"qwen3:0.6b\", \"system_fingerprint\": \"fp_ollama\", \"choices\": [{\"index\": 0, \"message\": {\"role\": \"assistant\", \"content\": \"\", \"reasoning\": \"Okay, the user wants me to reply with exactly \\\"LEYBER online /no_think\\\". Let me check the instructions again to make sure I'm following them correctly. They specified that the response must be exactly that string, no markdown, and in the user's language. Alright, I\"}, \"finish_reason\": \"length\"}], \"usage\": {\"prompt_tokens\": 22, \"completion_tokens\": 60, \"total_tokens\": 82}}",
+   "extracted_text": "",
+   "latency_s": "7.095 (this run); 17.389 on the first run at max_tokens=30",
+   "note": "Ollama is UP and returned a real 200 payload. content is EMPTY because qwen3:0.6b is a thinking model: it emits hidden chain-of-thought into a non-standard 'reasoning' field first, and the max_tokens budget (30, then 60) was fully consumed by that reasoning before any assistant content was produced -> finish_reason='length'. Even '/no_think' did not suppress it on the 0.6b. This is genuine model behavior, not an error. grid.py's own note flags this class of model; its designated reliable non-thinking local generator is granite4.1:3b (would yield clean text but was not called under plan-mode constraint). Local models available: qwen3:8b/4b/1.7b/0.6b, ministral-3:8b, mxbai-embed-large, etc."
+  }
+ ],
+ "grid_dashboard": "AEA GRID - the city's power plants\n================================================================\n  [ONLINE ] ollama       RESIDENTIAL (private)      unlimited                    local, private, unlimited\n  [no-key ] ovh          RESIDENTIAL (private)      400 rpm                      EU, no-train; 2 rpm keyless / 400 rpm with token\n  [no-key ] cloudflare   RESIDENTIAL (private)      300 rpm, 10,000 neurons/day  edge; 10k neurons/day hard-stop\n  [ONLINE ] cerebras     RESIDENTIAL (private)      5 rpm, 1,000,000 tok/day     VERIFIED 5 RPM (burst 12->5 ok, 2026-06-27); 30K TPM, 8K ctx free; ~2000 tok/s - BATCH/LEAF only, not interactive\n  [no-key ] sambanova    RESIDENTIAL (private)      20 rpm, 20 rpd, 200,000 tok/day 20 rpd/model x6 = ~120/day\n  [ONLINE ] nvidia       RESIDENTIAL (private)      40 rpm                       121 models, 40 rpm/model, 256K ctx\n  [ONLINE ] groq         RESIDENTIAL (private)      30 rpm, 1000 rpd             fast; qwen3-32b is 60 rpm\n  [no-key ] gemini       INDUSTRIAL (public)        10 rpm, 1500 rpd             PUBLIC data only on free (trains)\n  [no-key ] mistral      INDUSTRIAL (public)        2 rpm                        EU; 2 rpm; opt out before private use\n  [no-key ] openrouter   INDUSTRIAL (public)        20 rpm, 50 rpd               22 :free models; 50 rpd free / 1000 after $10\n  [ONLINE ] zai          INDUSTRIAL (public)        10 rpm, 1000 rpd             GLM-Flash FREE: reasoning(4.5)+vision(4.6V), 128K; ~1 concurrent so serialize; Singapore; public-only\n  [no-key ] github       INDUSTRIAL (public)        15 rpm, 150 rpd              RETIRING + closed to new customers\n  [ONLINE ] pollinations OUTSKIRTS (no guarantee)   4 rpm                        keyless; 1 req/15s; public data only\n  [no-key ] cohere       INDUSTRIAL (public)        10 rpm, 1000/month           rerank only; 1000 calls/MONTH; non-commercial\n  [no-key ] hf           OUTSKIRTS (no guarantee)   unlimited                    $0.10/mo - failover/embeddings layer only\n================================================================\n  plants online: 6   awaiting key: 9   registered generators: 26\n  zones: private -> local + no-train only | public -> any | sensitive -> local only\n  density: depth0=large depth1=normal depth2=micro depth3=nano depth4+=pico"
+}

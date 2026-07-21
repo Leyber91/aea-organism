@@ -1,0 +1,148 @@
+<!doctype html>
+<!-- artifacts_sample.html — THE MODEL SHEET, rendered from the real objects.
+     Governance: E5_3D_TRANSLATION.md §1 (procedural forms are verified by rendering them, not
+     by drawing them) · 02_VISUAL_LAW.md (two inks; corner brackets, never closed boxes; the
+     title block carries an ID/revision/scale; every label is IBM Plex Mono) ·
+     E1 §2.1 load-order law (three.min.js, then modules, then the inline boot).
+     Reference: design/concepts/C3_world_artifacts_v3_dimensioned.png + A2_specimen_rods.png.
+     HARNESS NOTE: no composer here — a study sheet must read geometry, not bloom. Without the
+     composer the sRGB encode has no last pass to live in, so the renderer does it
+     (outputEncoding), which is the ONE legal place it may differ from engine.js. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE PROBE — ARTIFACT MODEL SHEET</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:#050a10;overflow:hidden}
+  body{font-family:"IBM Plex Mono",monospace;color:rgba(120,155,175,.70)}
+  canvas{display:block}
+  #ov{position:fixed;inset:0;pointer-events:none}
+  .lab{position:absolute;transform:translate(-50%,0);text-align:center;white-space:nowrap}
+  .lab .c{color:#d4a24c;font-size:11px;letter-spacing:.14em}
+  .lab .n{color:rgba(120,155,175,.70);font-size:10px;letter-spacing:.10em}
+  .lab .d{color:rgba(120,155,175,.45);font-size:9px;letter-spacing:.10em}
+  .lab .p{color:rgba(120,155,175,.28);font-size:8px;letter-spacing:.10em}
+  #hd{position:absolute;left:34px;top:26px}
+  #hd .t{color:#ffb000;font-size:19px;letter-spacing:.22em}
+  #hd .s{color:rgba(120,155,175,.45);font-size:10px;letter-spacing:.20em;margin-top:6px}
+  #tb{position:absolute;right:34px;bottom:26px;font-size:9px;letter-spacing:.12em;
+      color:rgba(120,155,175,.45);text-align:left;line-height:1.7}
+  #tb b{color:rgba(120,155,175,.70);font-weight:400}
+  /* corner brackets, never a closed box (02 §5) */
+  .bk{position:absolute;width:16px;height:16px;border-color:rgba(120,155,175,.28);border-style:solid;border-width:0}
+  #err{position:fixed;left:0;right:0;bottom:0;padding:8px 14px;background:#0a1420;color:#ffb000;
+       font-size:11px;letter-spacing:.1em;display:none}
+</style>
+</head>
+<body>
+<div id="err"></div>
+<div id="ov">
+  <div id="hd"><div class="t">THE PROBE — ARTIFACT MODEL SHEET</div>
+    <div class="s">RENDERED FROM GEOMETRY · UNITS: METRES · TWO INKS</div></div>
+  <div id="tb"></div>
+</div>
+
+<script src="/three.min.js"></script>
+<script src="/game/js/boot.js"></script>
+<script src="/game/js/artifacts.js"></script>
+<script>
+(function () {
+  "use strict";
+  ARTIFACTS.init(window.GAME);
+
+  var W = window.innerWidth, H = window.innerHeight;
+  /* preserveDrawingBuffer + a live rAF: HARNESS LESSON 2026-07-21 — a ONE-SHOT render into a
+     non-preserved buffer screenshots as a pure-black canvas (321 draw calls, 16770 triangles,
+     zero pixels). engine.js never hit this because it runs a continuous loop. A still sheet
+     must still redraw, or the capture is taken from an empty buffer. */
+  var renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(W, H); renderer.setPixelRatio(1);
+  renderer.setClearColor(0x050a10, 1);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  renderer.outputEncoding = THREE.sRGBEncoding;   /* harness-only, see header */
+  document.body.appendChild(renderer.domElement);
+
+  var scene = new THREE.Scene();
+  /* STUDY LIGHT, not scene light: in the world these forms read against fog and a horizon
+     (engine.js buildAtmosphere) — on a void sheet they need the light the fog was giving them,
+     or a 0x11161d body sits at void luminance and the sheet prints an empty frame.
+     Lesson 2026-07-21: the first shot of this sheet came back black for exactly that reason. */
+  scene.add(new THREE.HemisphereLight(0x50697d, 0x0d141c, 3.2));
+  var key = new THREE.DirectionalLight(0x9fb4c4, 2.2);
+  key.position.set(-1.2, 1.8, 1.6); scene.add(key);
+  var rim = new THREE.DirectionalLight(0x6d8899, 1.1);
+  rim.position.set(2.2, 0.9, -1.8); scene.add(rim);
+
+  /* the study frame: orthographic, so the sheet measures instead of flattering */
+  var VW = 5.6, cam = new THREE.OrthographicCamera(-VW / 2, VW / 2, VW * H / W / 2, -VW * H / W / 2, -20, 40);
+  cam.position.set(1.9, 1.55, 3.4);
+  cam.lookAt(0.0, 0.20, 0.35);
+
+  var placed = [];
+  function place(g, x, z, label) {
+    g.position.set(x, 0, z); scene.add(g);
+    placed.push({ x: x, z: z, top: g.userData.height, label: label });
+  }
+
+  ARTIFACTS.IDS.forEach(function (id, i) {
+    var s = ARTIFACTS.SPEC[id];
+    place(ARTIFACTS.make(id, { spin: 0.35 }), -2.17 + i * 0.62, 0,
+      [s.code, s.name, s.height.toFixed(2) + " m", s.provenance]);
+  });
+  ARTIFACTS.STATES.forEach(function (st, i) {
+    place(ARTIFACTS.vessel(st, { spin: 0.25 }), -1.30 + i * 0.52, 1.15,
+      ["SR / " + st.toUpperCase(), "SPECIMEN ROD", "0.44 m", "DECAY STATE"]);
+  });
+
+  /* labels are projected from the real object positions — never hand-placed */
+  var ov = document.getElementById("ov");
+  function labels() {
+    var old = ov.querySelectorAll(".lab"), i;
+    for (i = 0; i < old.length; i++) ov.removeChild(old[i]);
+    for (i = 0; i < placed.length; i++) {
+      var p = placed[i];
+      var v = new THREE.Vector3(p.x, 0, p.z).project(cam);
+      var el = document.createElement("div");
+      el.className = "lab";
+      el.style.left = ((v.x + 1) / 2 * W).toFixed(1) + "px";
+      el.style.top = (((-v.y + 1) / 2 * H) + 14).toFixed(1) + "px";
+      el.innerHTML = '<div class="c">' + p.label[0] + '</div><div class="n">' + p.label[1] +
+        '</div><div class="d">' + p.label[2] + '</div><div class="p">' + p.label[3] + '</div>';
+      ov.appendChild(el);
+    }
+  }
+
+  /* title block: only facts this page can source. The frame counter has no live source in a
+     still, so it prints dashes rather than an invented number (HONESTY LAW). */
+  document.getElementById("tb").innerHTML =
+    "DIAGRAM ID  : <b>TP-ITA-WA-002 / SRD-001</b><br>" +
+    "SOURCE      : <b>game/js/artifacts.js</b><br>" +
+    "FORMS       : <b>" + ARTIFACTS.IDS.length + " ARTIFACTS &middot; " + ARTIFACTS.STATES.length + " DECAY STATES</b><br>" +
+    "PROJECTION  : <b>ORTHOGRAPHIC</b><br>" +
+    "FRAME TIME  : <b>&mdash;.&mdash;&mdash;s</b><br>" +
+    "DRAW CALLS  : <b id=\"dc\">&mdash;</b>";
+
+  window.addEventListener("resize", function () {
+    W = window.innerWidth; H = window.innerHeight;
+    renderer.setSize(W, H);
+    cam.left = -VW / 2; cam.right = VW / 2;
+    cam.top = VW * H / W / 2; cam.bottom = -VW * H / W / 2;
+    cam.updateProjectionMatrix(); labels();
+  });
+
+  labels();
+  (function draw() {
+    requestAnimationFrame(draw);
+    renderer.render(scene, cam);   /* the same still frame, redrawn: nothing animates here */
+    /* the sheet reports its own draw count: an empty frame must accuse itself, never look
+       like an intentionally dark composition (HONESTY LAW applied to the harness) */
+    document.getElementById("dc").textContent =
+      renderer.info.render.calls + " / " + renderer.info.render.triangles + " TRIS";
+  })();
+})();
+</script>
+</body>
+</html>

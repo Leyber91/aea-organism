@@ -1,0 +1,270 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE BUILDER · LEYBER</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;200;300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg0:#050a10;--bg1:#0a1420;--hot:#ffb000;--warm:#d4a24c;
+ --st70:rgba(120,155,175,.70);--st45:rgba(120,155,175,.45);--st28:rgba(120,155,175,.28);
+ --st14:rgba(120,155,175,.14);--st08:rgba(120,155,175,.08);--ink:#e6edf3;--bad:#d06a55;--good:#8fb98f}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:linear-gradient(180deg,var(--bg0),var(--bg1) 130%);color:var(--ink);
+ font:13px/1.55 'IBM Plex Mono',Consolas,monospace;overflow:hidden}
+body{display:flex;flex-direction:column;padding:14px 18px}
+header{display:flex;align-items:baseline;gap:18px;flex:none;padding-bottom:10px;border-bottom:1px solid var(--st14)}
+header .ey{font-size:9px;letter-spacing:.36em;text-transform:uppercase;color:var(--warm)}
+header h1{font-weight:100;font-size:22px;letter-spacing:.2em}header h1 b{color:var(--warm);font-weight:300}
+header .sub{color:var(--st45);font-size:10.5px;margin-left:auto;max-width:520px;text-align:right}
+main{flex:1;min-height:0;display:grid;grid-template-columns:250px 1fr 300px;gap:16px;padding:12px 0}
+.lb{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--warm);font-weight:400}
+/* assembly */
+#assembly{border:1px solid var(--st14);padding:10px;display:flex;flex-direction:column;min-height:0}
+#assembly .cap{color:var(--st45);font-size:9px;letter-spacing:.06em;margin-top:6px}
+#asvg{flex:1;width:100%}
+/* code */
+#codewrap{border:1px solid var(--st14);display:flex;flex-direction:column;min-height:0;background:rgba(0,0,0,.15)}
+#codehead{display:flex;align-items:baseline;gap:12px;padding:9px 12px;border-bottom:1px solid var(--st14)}
+#codehead .t{color:var(--hot);font-weight:600;letter-spacing:.04em}
+#codehead .f{color:var(--st28);font-size:9.5px;margin-left:auto}
+#code{flex:1;overflow-y:auto;padding:12px 14px;font-size:12px;line-height:1.65;white-space:pre;scrollbar-width:thin}
+#code .ln{opacity:0;transition:opacity .12s}
+#code .ln.on{opacity:1}
+.kw{color:var(--hot)} .cm{color:var(--st45);font-style:italic} .st{color:var(--good)} .fn{color:var(--warm)} .dn{color:var(--st70)}
+#cursor{display:inline-block;width:7px;height:13px;background:var(--st70);vertical-align:-2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+#annot{flex:none;border-top:1px solid var(--st14);padding:11px 14px;max-height:34%;overflow-y:auto}
+#annot .what{color:var(--st70);font-size:11.5px;line-height:1.6}
+#annot .verdict{margin-top:8px;font-size:11px;line-height:1.55;padding:7px 10px;border-left:2px solid var(--warm)}
+#annot .verdict.good{border-color:var(--good);color:var(--good)}
+#annot .verdict.mixed{border-color:var(--warm);color:var(--warm)}
+#annot .verdict.smell{border-color:var(--bad);color:var(--bad)}
+#annot .verdict b{letter-spacing:.14em;font-size:9px;text-transform:uppercase;display:block;margin-bottom:2px}
+/* AEA sidebar */
+#aea{border:1px solid var(--st14);padding:11px 13px;overflow-y:auto;scrollbar-width:thin}
+#aea h3{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--warm);margin:12px 0 6px}
+#aea h3:first-child{margin-top:0}
+.el{display:flex;align-items:baseline;gap:9px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--st08)}
+.el .m{flex:none;width:14px;text-align:center}
+.el.done .m{color:var(--good)} .el.done .n{color:var(--st70)}
+.el.pend .m{color:var(--bad)} .el.pend .n{color:var(--st45)}
+.el .n{flex:1} .el .tag{color:var(--st28);font-size:8.5px}
+/* controls + verdict */
+#ctrl{flex:none;display:flex;align-items:center;gap:16px;padding:10px 0 8px;border-top:1px solid var(--st14)}
+.btn{background:none;border:1px solid var(--st28);color:var(--st70);font-family:inherit;font-size:11px;
+ letter-spacing:.1em;padding:7px 14px;cursor:pointer;transition:.14s}
+.btn:hover{border-color:var(--warm);color:var(--hot)}
+.btn.play{border-color:var(--warm);color:var(--hot)}
+#stepname{color:var(--warm);letter-spacing:.06em}
+#prog{color:var(--st45);font-size:10px}
+#track{flex:1;height:2px;background:var(--st14);position:relative}
+#track i{position:absolute;left:0;top:0;bottom:0;background:var(--hot);transition:width .3s}
+#final{margin-left:auto;font-size:10px;color:var(--st45);max-width:520px;text-align:right}
+#final b{color:var(--good)}
+</style></head><body>
+<header>
+ <div class="ey">Autonomous Entity Architecture · assembly</div>
+ <h1>THE <b>BUILDER</b></h1>
+ <div class="sub">The entity assembled piece by piece from its REAL code — fuel → channel → governor → organs → self.
+ Read it. Judge it. Every piece carries an honest structural verdict.</div>
+</header>
+<main>
+ <div id="assembly"><span class="lb">the body, assembling</span><svg id="asvg" viewBox="0 0 200 520" preserveAspectRatio="xMidYMid meet"></svg>
+  <div class="cap" id="acap">bottom-up: fuel first, self last</div></div>
+ <div id="codewrap">
+  <div id="codehead"><span class="t" id="ch-t">—</span><span class="f" id="ch-f"></span></div>
+  <div id="code"></div>
+  <div id="annot"><div class="what" id="an-what"></div><div class="verdict" id="an-verdict"></div></div>
+ </div>
+ <div id="aea"></div>
+</main>
+<div id="ctrl">
+ <button class="btn" id="b-prev">&#9664; prev</button>
+ <button class="btn play" id="b-play">&#9654; play</button>
+ <button class="btn" id="b-next">next &#9654;</button>
+ <span id="stepname">—</span><span id="prog"></span>
+ <div id="track"><i id="track-i"></i></div>
+ <div id="final"></div>
+</div>
+
+<script>
+"use strict";
+/* ============ THE PIECES — real code, real structural verdict ============ */
+const STEPS=[
+{part:"FUEL", title:"THE FUEL — the model catalogue", file:"grid.py · PLANTS",
+ code:
+`PLANTS = {
+  "ollama": dict(privacy="local",  base="http://localhost:11434/v1",
+                 auth=None, openai=True, rpm=None, note="local, private, unlimited"),
+  "nvidia": dict(privacy="no-train", base="https://integrate.api.nvidia.com/v1",
+                 auth="NVIDIA_API_KEY", openai=True, rpm=40, note="121 models, 40 rpm each"),
+  "groq":   dict(privacy="no-train", base="https://api.groq.com/openai/v1",
+                 auth="GROQ_API_KEY", openai=True, rpm=30, note="fast reflex"),
+  # ... 12 more plants, one line each
+}`,
+ what:"The catalogue — every model source in ONE machine-readable registry: base URL, auth, rate limit, privacy zone.",
+ verdict:"Adding a model is one line. Local Ollama and cloud NVIDIA sit in the SAME table — that is what makes the entity model-agnostic. One source of truth for capacity, no magic strings scattered in code.", kind:"good"},
+
+{part:"CHANNEL", title:"THE CHANNEL — one call, any model", file:"grid.py · call_openai",
+ code:
+`def call_openai(plant, model, messages, max_tokens=256, temperature=0.2, timeout=60):
+    cap = PLANTS[plant]
+    url = cap["base"].rstrip("/") + "/chat/completions"
+    headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 aea"}
+    if cap["auth"]:
+        headers["Authorization"] = f"Bearer {key(cap['auth'])}"
+    body = json.dumps({"model": model, "messages": messages,
+                       "max_tokens": max_tokens, "temperature": temperature}).encode()
+    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        payload = json.loads(r.read())
+    m = payload["choices"][0]["message"]
+    return dict(ok=True, text=m.get("content") or m.get("reasoning_content") or "")`,
+ what:"ONE function talks to any model — Ollama, NVIDIA, Groq, any local LLM. This is the channel: same code, different base URL.",
+ verdict:"Model-agnostic by construction — the SAME path calls a local Ollama model and the NVIDIA cloud; only base+auth differ, and those live in the registry. Stdlib urllib, no vendor SDK to rot. Swap models freely; the channel never changes. This is the smart core.", kind:"good"},
+
+{part:"GOVERNOR", title:"THE GOVERNOR — never brown out", file:"grid.py · Meter.can_spend",
+ code:
+`def can_spend(self, plant, model, est_tokens=800):
+    with self.lock, file_lock(self.state_path):        # cross-PROCESS lock
+        st = self._fresh(); d, m = self._roll(st, plant)
+        cap = PLANTS[plant]; now = time.time()
+        win = self._win(st, f"{plant}:{model}", now)    # rolling 60s window
+        if cap["rpm"] and len(win) >= cap["rpm"]:
+            return (False, 60 - (now - win[0]), "rpm")   # would 429 -> wait
+        return (True, 0.0, "ok")`,
+ what:"The grid operator — meters every model so it never trips a rate limit (HTTP 429).",
+ verdict:"Locked read-modify-write on a SHARED file: two processes share one truth of the budget. This was the #1 engine-review fix — the old meter cached state and clobbered itself. Stateless-over-file is the line between a demo and a system.", kind:"good"},
+
+{part:"LADDER", title:"THE LADDER — the mouth", file:"energy.py · draw",
+ code:
+`def draw(prompt, tier="solid", zone="private", mx=500):
+    tried = []
+    for plant, model in ladder(tier, zone):         # fitness-ordered, best rod first
+        if _cooling(plant, model):    continue      # skip 429-cooled rods
+        if not _meter.can_spend(plant, model)[0]: continue
+        r = grid.call_openai(plant, model, msgs, max_tokens=mx)
+        good = bool(r["ok"] and r["text"].strip())  # EMPTY = failure (silent-killer lesson)
+        _record_use(plant, model, good, r["latency"])   # fitness-FROM-USE
+        if good:
+            return r                                 # ... else fall to the next rod
+    # falls all the way to the local Ollama floor - the heartbeat never stops`,
+ what:"The mouth — try the fittest model first; on failure fall down the ladder to the local floor. Never raises.",
+ verdict:"GOOD: fitness-from-use — every call re-ranks the ladder, so it self-heals when a model rots (which they do, hourly). SMELL: this pick/ladder logic ALSO lives in orchestrator, pathfinder and grid.Router — FOUR homes. Consolidating to one router (ticket A2) is the real cleanup owed.", kind:"mixed"},
+
+{part:"WATCHER", title:"THE WATCHER — Law 3", file:"hades.py · watch",
+ code:
+`def watch(goal, attempt, worker, pool, meter):
+    # a DIFFERENT model (Groq strict-JSON) judges the worker's output vs the ORIGINAL goal
+    verdict = strict_json(f"You are HADES. Judge vs GOAL.\\nGOAL: {goal}\\nWORKER: {attempt}")
+    return verdict, "groq/gpt-oss-120b (strict-json)"
+    # verdict: accept | redo | reground | halt  -- every autonomous output is judged`,
+ what:"HADES — the watcher that does no work, only judges every autonomous output against its goal.",
+ verdict:"A heterogeneous rod judges (Law 2: never the same model that worked), in strict-JSON so the verdict always parses. This is WHY autonomy is safe here: nothing auto-persists without an independent judge. The strongest, best-wired organ.", kind:"good"},
+
+{part:"SELF", title:"THE SELF — the wire from goal to act", file:"reflect.py · reflect_once",
+ code:
+`def reflect_once():
+    self_  = grid.load_json(SELF, {})              # 1. READ SELF (goals, tasks, prior)
+    posed  = energy.draw(pose_prompt, ...)          # 2. POSE one task...
+    chosen = pick_novel(posed, prior_reflections)   #    ...under a minimal criterion
+    work   = energy.draw(attempt_prompt, ...)       # 3. ATTEMPT on the grid
+    verdict, who = hades.watch(goal, work)          # 4. GATE (Law 3)
+    if verdict == "accept":                         # 5. PERSIST only if accepted
+        save_birth(work); update_self(self_)        #    -> a birth (A_new > 0)`,
+ what:"The reflection tick — on an idle wake it self-originates one task instead of resting. The organ that made the loop a self.",
+ verdict:"Five clean gated steps. It self-originates (Barandiaran interactional-asymmetry PASS) but persists ONLY what HADES accepts — no rubber-stamping. This is the piece that moved the whole entity from scripted-loop to PROTO-AUTONOMOUS.", kind:"good"},
+
+{part:"REACH", title:"THE REACH — reachable anywhere", file:"telegram_bridge.py · run",
+ code:
+`for u in getUpdates(token, offset):                # long-poll, pure HTTPS
+    text, chat = u["message"]["text"], u["message"]["chat"]["id"]
+    if bound_chat is None: bound_chat = chat        # binds to Luis, ignores all others
+    r = talk.answer(text, state, ident, seed, "private")   # the REAL grounded mind
+    send(r["text"], token, chat)                    # -> the phone, free + unlimited`,
+ what:"The conversation organ — text @LeyberBot, the real grounded mind answers, from its memory of you.",
+ verdict:"Reuses talk.answer — NO duplicate mind. Binds to one chat (private). Pure HTTPS long-poll = EDR-safe. Closes the 'reachable only at the desk' gap without adding a second brain to keep in sync.", kind:"good"},
+];
+
+/* ============ AEA elements: implemented vs pending ============ */
+const AEA_DONE=[
+ ["substrate · the grid","L0"],["the channel · model-agnostic","L0"],["meter · never brown out","L0"],
+ ["energy ladder · fitness","L0"],["HADES watcher · Law 3","L3"],["trust ledger","L3"],["tracelog · pulse","L3"],
+ ["consolidate · the Book","L1"],["reflect tick · t6","L4"],["autonomy battery · live","L4"],["reach · phone + Telegram","L6"]];
+const AEA_PEND=[
+ ["recall() one door","B2 · L1"],["think() one door","D1 · L2"],["senses · the real day","F1 · L5"],
+ ["graph memory · triples","B5 · L1"],["self-tool library · Voyager","L6"],["internet in convo · wire agent_tools","L5"],
+ ["command current · tools+trust","C3 · L2"],["one router · kill the 4 homes","A2 · L0"]];
+
+/* ============ render ============ */
+const $=id=>document.getElementById(id);
+function tint(line){
+ let h=line.replace(/</g,"&lt;");
+ if(/^\s*#/.test(h)) return "<span class='cm'>"+h+"</span>";
+ h=h.replace(/("[^"]*")/g,"<span class='st'>$1</span>");   // strings FIRST, before any markup
+ h=h.replace(/(#.*)$/,"<span class='cm'>$1</span>");
+ h=h.replace(/\b(def|return|for|if|with|in|not|or|and|None|True|False|import)\b/g,"<span class='kw'>$1</span>");
+ return h;
+}
+/* assembly svg: 7 stacked modules, light bottom-up */
+function drawAssembly(built){
+ const n=STEPS.length, H=520, pad=14, gap=8, mh=(H-pad*2-gap*(n-1))/n;
+ let s='<line x1="100" y1="'+pad+'" x2="100" y2="'+(H-pad)+'" stroke="rgba(120,155,175,.18)" stroke-width="1"/>';
+ for(let i=0;i<n;i++){const y=H-pad-mh-(n-1-i)*(mh+gap); // i=0 bottom
+   const on=i<=built, cur=i===built;
+   const col=on?(cur?"#ffb000":"#d4a24c"):"rgba(120,155,175,.25)";
+   const fill=on?"rgba(212,162,76,.08)":"none";
+   s+='<rect x="40" y="'+y+'" width="120" height="'+mh+'" rx="4" fill="'+fill+'" stroke="'+col+'" stroke-width="'+(cur?1.8:1)+'"'+(cur?' style="filter:drop-shadow(0 0 6px rgba(255,176,0,.4))"':'')+'/>';
+   s+='<text x="100" y="'+(y+mh/2+3)+'" fill="'+(on?col:"rgba(120,155,175,.4)")+'" font-size="9" letter-spacing="1.5" text-anchor="middle" font-family="IBM Plex Mono">'+STEPS[i].part+'</text>';
+   if(on&&i>0){s+='<circle cx="100" cy="'+(y+mh+gap/2)+'" r="1.6" fill="#d4a24c"/>';}
+ }
+ $("asvg").innerHTML=s;
+}
+function renderAEA(){
+ $("aea").innerHTML='<h3>implemented</h3>'+AEA_DONE.map(e=>
+   '<div class="el done"><span class="m">&#10003;</span><span class="n">'+e[0]+'</span><span class="tag">'+e[1]+'</span></div>').join('')+
+  '<h3>pending &#183; the AEA still owed</h3>'+AEA_PEND.map(e=>
+   '<div class="el pend"><span class="m">&#9633;</span><span class="n">'+e[0]+'</span><span class="tag">'+e[1]+'</span></div>').join('');
+}
+
+/* ============ the slow write ============ */
+let cur=0, playing=false, timer=null, lineTimer=null;
+function showStep(i,instant){
+ cur=i; const s=STEPS[i];
+ $("ch-t").textContent=s.title; $("ch-f").textContent=s.file;
+ $("stepname").textContent=s.part; $("prog").textContent=(i+1)+" / "+STEPS.length;
+ $("track-i").style.width=((i+1)/STEPS.length*100)+"%";
+ $("an-what").textContent=""; $("an-verdict").innerHTML="";
+ drawAssembly(i-1);              // body up to the previous piece; this one assembling
+ const lines=s.code.split("\n");
+ $("code").innerHTML=lines.map(l=>'<div class="ln">'+tint(l)+'</div>').join('')+'<span id="cursor"></span>';
+ const els=[...$("code").querySelectorAll(".ln")];
+ clearTimeout(lineTimer);
+ let k=0;
+ function reveal(){
+   if(k<els.length){els[k].classList.add("on");$("code").scrollTop=$("code").scrollHeight;k++;
+     lineTimer=setTimeout(reveal, instant?0:170);}
+   else{ done(); }
+ }
+ function done(){
+   drawAssembly(i);              // the piece snaps in
+   $("an-what").textContent=s.what;
+   const kc=s.kind, kl=kc==="good"?"GOOD STRUCTURE":kc==="mixed"?"GOOD, WITH A SMELL":"STRUCTURAL SMELL";
+   $("an-verdict").className="verdict "+(kc==="mixed"?"mixed":kc==="smell"?"smell":"good");
+   $("an-verdict").innerHTML="<b>"+kl+"</b>"+s.verdict;
+   if(playing){clearTimeout(timer);timer=setTimeout(()=>{ if(cur<STEPS.length-1) showStep(cur+1); else stop(); }, 2600);}
+ }
+ instant?els.forEach(e=>e.classList.add("on"))||done():reveal();
+}
+function stop(){playing=false;$("b-play").innerHTML="&#9654; play";$("b-play").classList.add("play");clearTimeout(timer);}
+$("b-play").onclick=()=>{playing=!playing;
+ if(playing){$("b-play").innerHTML="&#10073;&#10073; pause";$("b-play").classList.remove("play");showStep(cur);}
+ else stop();};
+$("b-next").onclick=()=>{stop();showStep(Math.min(STEPS.length-1,cur+1));};
+$("b-prev").onclick=()=>{stop();showStep(Math.max(0,cur-1));};
+
+renderAEA();
+showStep(0);
+/* final verdict */
+$("final").innerHTML='<b>Smart code?</b> Mostly &#8212; model-agnostic channel, durable atomic state, '+
+ 'independent-watcher governance, small single-purpose organs. Real smells named, not hidden: routing in 4 homes (A2), '+
+ 'internet dead-code unwired, no single think() door (D1).';
+</script></body></html>

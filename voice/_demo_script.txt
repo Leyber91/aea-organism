@@ -1,0 +1,5 @@
+Welcome. This is a demonstration of an autonomous entity narrating a presentation, recorded entirely on local hardware, on free infrastructure, with no cloud service involved.
+
+The system consists of a metered power grid across free AI providers, a consolidated memory of its operator, a trust ledger where autonomy is earned run by run, and a voice you are hearing now.
+
+Every slide of this narration was rendered to its own audio file, with a playlist, by a single command. Thank you for listening.

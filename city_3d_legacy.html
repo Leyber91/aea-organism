@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEA CITY · the energy grid</title>
+<style>
+  :root{ --bg:#0a0a0b; --ink:#f1f0ec; --soft:#b9b8b3; --dim:#76757a; --gold:#d4a24c; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);overflow:hidden;
+    font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
+  #app{position:fixed;inset:0}
+  .hud{position:fixed;pointer-events:none;z-index:10}
+  #title{top:22px;left:26px}
+  #title .ey{font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim)}
+  #title h1{font-weight:300;font-size:24px;letter-spacing:.04em;margin-top:4px}
+  #title h1 b{color:var(--gold);font-weight:600}
+  #title .sub{color:var(--soft);font-size:11px;margin-top:4px}
+  #legend{bottom:20px;left:26px;font-size:11px;color:var(--soft);line-height:1.9}
+  #legend .k{display:inline-block;width:10px;height:10px;margin-right:8px;vertical-align:middle}
+  #legend .on{background:var(--gold)}
+  #legend .off{background:#33333a}
+  #counts{top:22px;right:26px;text-align:right;font-size:11px;color:var(--soft)}
+  #counts b{color:var(--gold);font-size:22px;font-weight:600}
+  #hint{bottom:20px;right:26px;font-size:10.5px;color:var(--dim);letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="hud" id="title">
+  <div class="ey">Autonomous Entity Architecture · the energy grid</div>
+  <h1>AEA <b>CITY</b></h1>
+  <div class="sub">power plants by zone · lit = online · height = capacity · v0, on real grid state</div>
+</div>
+<div class="hud" id="counts"></div>
+<div class="hud" id="legend">
+  <div><span class="k on"></span> online (keyed / live)</div>
+  <div><span class="k off"></span> awaiting key</div>
+  <div style="margin-top:8px;color:var(--dim)">districts: RESIDENTIAL = no-train/private &nbsp;·&nbsp; INDUSTRIAL = public/trains &nbsp;·&nbsp; OUTSKIRTS = keyless</div>
+</div>
+<div class="hud" id="hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+
+<script src="three.min.js"></script>
+<script src="OrbitControls.js"></script>
+<script src="city.data.js"></script>
+<script>
+(function(){
+  var GOLD = 0xd4a24c, BG = 0x0a0a0b;
+  var plants = (window.CITY && window.CITY.plants) || [];
+
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(BG);
+  scene.fog = new THREE.Fog(BG, 90, 240);
+
+  var camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+  camera.position.set(8, 52, 92);
+
+  var renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  document.getElementById('app').appendChild(renderer.domElement);
+
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 6, 0);
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.maxPolarAngle = Math.PI/2 - 0.05;
+  controls.autoRotate = true; controls.autoRotateSpeed = 0.35;
+
+  // lighting
+  scene.add(new THREE.AmbientLight(0x404048, 0.9));
+  var key = new THREE.DirectionalLight(0xffffff, 0.35); key.position.set(40, 80, 30); scene.add(key);
+
+  // ground = the power grid
+  var ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(400, 400),
+    new THREE.MeshStandardMaterial({color:0x070708, roughness:1, metalness:0}));
+  ground.rotation.x = -Math.PI/2; ground.position.y = 0; scene.add(ground);
+  var grid = new THREE.GridHelper(220, 44, GOLD, 0x1c1b20);
+  grid.material.opacity = 0.18; grid.material.transparent = true; scene.add(grid);
+
+  // districts: where each zone sits on the map
+  var DISTRICTS = {
+    residential: { cx:-34, cz:0,  label:'RESIDENTIAL · no-train' },
+    industrial:  { cx: 34, cz:0,  label:'INDUSTRIAL · public'    },
+    outskirts:   { cx: 0,  cz:42, label:'OUTSKIRTS · keyless'    }
+  };
+
+  function makeLabel(text, color){
+    var c = document.createElement('canvas'); c.width = 256; c.height = 64;
+    var ctx = c.getContext('2d');
+    ctx.font = '600 30px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = color; ctx.fillText(text, 128, 34);
+    var tex = new THREE.CanvasTexture(c); tex.minFilter = THREE.LinearFilter;
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, depthTest:false}));
+    sp.scale.set(13, 3.25, 1); return sp;
+  }
+
+  // group plants by zone, lay each district out in a grid
+  var byZone = {residential:[], industrial:[], outskirts:[]};
+  plants.forEach(function(p){ (byZone[p.zone] || byZone.outskirts).push(p); });
+
+  function capHeight(p){
+    // height = capacity proxy: more models + rpm = taller. bounded.
+    var h = 5 + p.models * 2.2 + Math.min(p.rpm, 60) * 0.12;
+    return Math.max(5, Math.min(h, 30));
+  }
+
+  Object.keys(byZone).forEach(function(zone){
+    var list = byZone[zone]; if(!list.length) return;
+    var d = DISTRICTS[zone];
+    var cols = Math.ceil(Math.sqrt(list.length)), gap = 11;
+    var w = (cols-1)*gap;
+    // district floor label
+    var dl = makeLabel(d.label, '#76757a'); dl.scale.set(26,6.5,1);
+    dl.position.set(d.cx, 1.2, d.cz - (Math.ceil(list.length/cols))*gap/2 - 9); scene.add(dl);
+
+    list.forEach(function(p, i){
+      var r = Math.floor(i/cols), col = i % cols;
+      var x = d.cx - w/2 + col*gap;
+      var z = d.cz - ((Math.ceil(list.length/cols)-1)*gap)/2 + r*gap;
+      var h = capHeight(p);
+      var on = p.online;
+      var mat = new THREE.MeshStandardMaterial({
+        color: on ? 0x2a2620 : 0x232329,
+        emissive: on ? GOLD : 0x111114,
+        emissiveIntensity: on ? 0.85 : 0.12,
+        roughness: 0.55, metalness: 0.2
+      });
+      var b = new THREE.Mesh(new THREE.BoxGeometry(5.5, h, 5.5), mat);
+      b.position.set(x, h/2, z); scene.add(b);
+
+      // online plants cast a glow + a roof beacon
+      if(on){
+        var pl = new THREE.PointLight(GOLD, 0.7, 38); pl.position.set(x, h+4, z); scene.add(pl);
+        var beacon = new THREE.Mesh(new THREE.BoxGeometry(1.4,1.4,1.4),
+          new THREE.MeshBasicMaterial({color:GOLD}));
+        beacon.position.set(x, h+1.4, z); scene.add(beacon);
+      }
+      var lab = makeLabel(p.id, on ? '#d4a24c' : '#76757a');
+      lab.position.set(x, h + 5, z); scene.add(lab);
+    });
+  });
+
+  // counts HUD
+  var onN = plants.filter(function(p){return p.online;}).length;
+  document.getElementById('counts').innerHTML =
+    '<b>' + onN + '</b> / ' + plants.length + ' plants online<br><span style="color:#76757a">' +
+    'residential ' + byZone.residential.length + ' · industrial ' + byZone.industrial.length +
+    ' · outskirts ' + byZone.outskirts.length + '</span>';
+
+  addEventListener('resize', function(){
+    camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+
+  (function loop(){ requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+})();
+</script>
+</body>
+</html>

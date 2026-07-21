@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- index.html — THE PROBE v2 skeleton + boot only.
+     Governance: E1_CODE_ARCHITECTURE.md §2.1 (load-order law: three.min.js, then the
+     six-file bloom chain, then modules, then the inline boot call — the world.html idiom
+     carried by law) · 08_TECH (r128 global build, no build step, no frameworks). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE PROBE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/game/css/probe.css">
+<link rel="stylesheet" href="/game/css/panels.css">
+</head>
+<body>
+<div id="err"></div>
+<div id="title" class="out">
+  <div class="t-wrap">
+    <div class="t-name rin" style="--i:0">THE PROBE</div>
+    <div class="t-sub rin" style="--i:3">ANY KEY</div>
+  </div>
+</div>
+<div id="hints"></div>
+
+<script src="/three.min.js"></script>
+<script src="/CopyShader.js"></script>
+<script src="/LuminosityHighPassShader.js"></script>
+<script src="/EffectComposer.js"></script>
+<script src="/ShaderPass.js"></script>
+<script src="/RenderPass.js"></script>
+<script src="/UnrealBloomPass.js"></script>
+<script src="/aea_elements.js"></script>
+<script src="/game/js/boot.js"></script>
+<script src="/game/js/engine.js"></script>
+<script src="/game/js/seals.js"></script>
+<script src="/game/js/panels.js"></script>
+<script src="/game/js/bench.js"></script>
+<script>ENGINE.init(window.GAME); SEALS.init(window.GAME); PANELS.init(window.GAME); BENCH.init(window.GAME);</script>
+</body>
+</html>

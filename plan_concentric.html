@@ -1,0 +1,281 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE MAP · LEYBER</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--panel:#101012;--panel2:#131316;--ink:#f1f0ec;--soft:#b9b8b3;--dim:#76757a;
+  --faint:#3a393f;--gold:#d4a24c;--amber:#e8b866;--bad:#c96a5a;--line:rgba(241,240,236,.09)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:12px/1.5 'IBM Plex Mono',Consolas,monospace;padding:26px 30px 60px}
+a{color:var(--gold);text-decoration:none}
+.ey{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+h1{font-weight:300;font-size:24px;letter-spacing:.1em;margin-top:6px}
+h1 b{color:var(--gold);font-weight:600}
+.sub{color:var(--soft);font-size:11px;margin-top:6px;max-width:980px}
+.guard{margin:16px 0 20px;border:1px solid rgba(212,162,76,.45);background:rgba(212,162,76,.05);
+  padding:11px 16px;font-size:11.5px;color:var(--amber);max-width:1460px}
+.guard b{letter-spacing:.18em;font-size:10px;text-transform:uppercase;display:block;margin-bottom:3px;color:var(--gold)}
+h2{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 10px}
+.wrap{display:grid;grid-template-columns:1100px minmax(380px,1fr);gap:22px;max-width:1560px;align-items:start}
+@media(max-width:1460px){.wrap{grid-template-columns:1fr}}
+/* THE CONCENTRIC STAGE */
+#stagebox{position:relative}
+#stage{position:relative;width:1080px;height:1100px;margin:0 auto}
+.ring{position:absolute;border-radius:50%;border:1px solid var(--line)}
+.ring.membrane{border:1.5px dashed rgba(212,162,76,.55)}
+.ring.world{border-color:rgba(241,240,236,.13)}
+.hemidiv{position:absolute;width:1px;background:rgba(241,240,236,.10)}
+#center{position:absolute;border-radius:50%;background:var(--panel2);border:1.5px solid var(--gold);
+  box-shadow:0 0 44px rgba(212,162,76,.18);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:16px}
+#center .nm{font-weight:600;color:var(--gold);letter-spacing:.24em;font-size:17px}
+#center .pu{color:var(--soft);font-size:9.5px;line-height:1.5;margin-top:7px}
+#center .stt{font-size:8.5px;letter-spacing:.16em;color:var(--dim);margin-top:7px;text-transform:uppercase}
+.chip{position:absolute;transform:translate(-50%,-50%);font-size:9.5px;padding:3px 8px;border-radius:3px;
+  border:1px solid var(--line);color:var(--dim);background:rgba(10,10,11,.88);white-space:nowrap;z-index:3}
+.chip.live{color:var(--gold);border-color:rgba(212,162,76,.5)}
+.chip.part{color:var(--soft);border-style:dashed}
+.chip.miss{color:var(--bad);border-color:rgba(201,106,90,.45);border-style:dashed}
+.chip.phase{color:var(--amber);border-color:rgba(212,162,76,.35);background:rgba(212,162,76,.05);font-weight:600;letter-spacing:.08em}
+.chip.actor{font-weight:600;letter-spacing:.16em;color:var(--ink);border-color:rgba(241,240,236,.3);padding:6px 12px;font-size:10.5px}
+.rlab{position:absolute;transform:translate(-50%,-50%);font-size:9px;letter-spacing:.26em;color:var(--gold);
+  text-transform:uppercase;font-weight:600;background:var(--bg);padding:1px 8px;z-index:4}
+.qlab{position:absolute;transform:translate(-50%,-50%);font-size:9.5px;letter-spacing:.3em;color:var(--dim);
+  text-transform:uppercase;font-weight:600;z-index:4}
+.hemilab{position:absolute;transform:translate(-50%,-50%);font-size:8.5px;letter-spacing:.2em;color:var(--dim);
+  text-transform:uppercase;background:var(--bg);padding:1px 6px;z-index:4}
+.law{max-width:1000px;margin:10px auto 0;border:1px solid rgba(212,162,76,.4);background:rgba(212,162,76,.04);
+  padding:10px 14px;font-size:11px;color:var(--amber);text-align:center}
+.law b{color:var(--gold)}
+svg.arrows{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+/* RIGHT COLUMN */
+.card{background:var(--panel);border:1px solid var(--line);padding:12px 15px;margin-bottom:14px}
+table{border-collapse:collapse;width:100%;font-size:10px}
+th{color:var(--dim);text-align:left;font-weight:400;letter-spacing:.08em;padding:3px 8px 5px 0;border-bottom:1px solid var(--line)}
+td{padding:4px 8px 4px 0;border-bottom:1px solid rgba(241,240,236,.05);color:var(--soft);vertical-align:top}
+td.r{color:var(--gold)}td.t{color:var(--amber)}td.no{color:var(--dim)}
+.note{font-size:10.5px;color:var(--dim);line-height:1.6}
+.note b{color:var(--gold);font-weight:600}
+.epic{display:flex;align-items:baseline;gap:10px;padding:7px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.epic:first-of-type{border-top:none}
+.epic .eid{font-weight:600;color:var(--gold);letter-spacing:.1em;min-width:120px;font-size:11px}
+.t2{font-size:9.5px;padding:2px 7px;border:1px solid var(--line);border-radius:3px;color:var(--dim);margin:2px 3px 0 0;display:inline-block}
+.t2.p0{color:#0a0a0b;background:var(--gold);border-color:var(--gold);font-weight:600}
+.t2.luis{color:var(--bad);border-color:rgba(201,106,90,.55)}
+.wk{padding:7px 0;border-top:1px solid var(--line);font-size:11px}
+.wk:first-of-type{border-top:none}
+.wk b{color:var(--gold);font-weight:600;letter-spacing:.12em;font-size:10px}
+.dec{padding:6px 0;border-top:1px solid var(--line);font-size:11px;color:var(--soft)}
+.dec:first-of-type{border-top:none}
+.dec b{color:var(--bad);font-weight:600;font-size:10px;margin-right:8px}
+.legend{margin-top:8px;font-size:10px;color:var(--dim)}
+.legend span{margin-right:10px}
+.foot{margin-top:26px;color:var(--faint);font-size:10px;max-width:1460px}
+</style></head><body>
+
+<div class="ey">Autonomous Entity Architecture · the solution map v2.0 · 2026-07-12 · concentric</div>
+<h1>THE <b>MAP</b> — LEYBER, from the grid to the keeper</h1>
+<div class="sub">Read it inward from the south: the FREE GRID powers the WORLD RING · everything crossing in or out
+passes the GOVERNANCE MEMBRANE · the MIND draws on TWO distinct stores — all-the-information (world memory) is not
+information-about-the-tools (capability registry) · THE LOOP runs the mind on a cycle · at the center, LEYBER.
+Luis and Claude stand OUTSIDE the circle — one commands, one crystallizes. Full text: PLAN.md (codex-indexed).</div>
+
+<div class="guard"><b>THE INCOME GUARD — overrides every ring</b>
+Each week's first shipped artifact is a Luis-SENDABLE one. If a ticket competes with sending, sending wins.
+Purpose state: IN-DIALOGUE (this conversation) — refinement dialogue #1 = L1 THE BOOK.</div>
+
+<div class="wrap">
+<div id="stagebox">
+  <div id="stage"></div>
+  <div class="law"><b>THE LOOP'S LAW (Leyber's own words, held):</b> every audit ends with a named external
+  artifact — one brief sent, one draft shipped, one line that touches the world — or the audit is marked
+  FAILED and revisited next wake. If nothing ships, the loop is lying.</div>
+  <div class="legend">
+    <span style="color:var(--gold)">■ live</span>
+    <span style="color:var(--soft)">▨ partial / shallow</span>
+    <span style="color:var(--bad)">▢ stub / missing</span>
+    <span>status written on every chip — never color-alone</span>
+  </div>
+</div>
+
+<div>
+  <div class="card"><h2>The working set — tagged rods (measured, not catalog)</h2>
+  <table>
+  <tr><th>rod</th><th>plant</th><th>ctx</th><th>limit</th><th>tools</th><th>role</th></tr>
+  <tr><td>mistral-small-4-119b</td><td>nvidia</td><td>256K</td><td>40 rpm</td><td class="t">schema</td><td class="r">core precision (only 12/12)</td></tr>
+  <tr><td>mistral-large-3-675b</td><td>nvidia</td><td>256K</td><td>40 rpm</td><td class="t">tools</td><td class="r">depth / judgment (talk runs here)</td></tr>
+  <tr><td>llama-3.3-70b</td><td>groq</td><td>128K</td><td>30 rpm · 1000 rpd</td><td class="t">tools (top BFCL)</td><td class="r">reflex 0.3s + tool-caller</td></tr>
+  <tr><td>gpt-oss-120b</td><td>groq / cerebras</td><td>128K / 8K</td><td>30 rpm · 5 rpm 1M tok/d</td><td class="t">strict JSON</td><td class="r">structured output / batch leaf</td></tr>
+  <tr><td>nemotron-nano-12b-vl</td><td>nvidia</td><td>128K</td><td>40 rpm</td><td class="no">vision</td><td class="r">VLM gate (multi-image)</td></tr>
+  <tr><td>nemotron-embed-1b-v2</td><td>nvidia</td><td>8K</td><td>40 rpm</td><td class="no">—</td><td class="r">embeddings 2048d</td></tr>
+  <tr><td>qwen3.5:9b · r1:8b · llama3.1:8b</td><td>ollama</td><td>128K</td><td>unlimited · local</td><td class="no">basic</td><td class="r">private floor + consolidation</td></tr>
+  <tr><td>mxbai-embed-large</td><td>ollama</td><td>512 tok</td><td>unlimited</td><td class="no">—</td><td class="r">local embeddings (the Book)</td></tr>
+  <tr><td>openai-fast (oss-20b)</td><td>pollinations</td><td>128K</td><td>4 rpm · keyless</td><td class="no">—</td><td class="r">zero-key survivor (11/12)</td></tr>
+  </table>
+  <div class="note" style="margin-top:8px">Tool-calling needs a rod big enough to RECOGNIZE it — the tools column
+  is measured (agent_tools ran live on llama-3.3-70b; Groq strict mode = gpt-oss only; Cerebras cannot combine
+  tools + response_format). Full catalog: models_report.json (59 nodes) + model_fitness.json (lived truth —
+  the catalog lies hourly; fitness does not).</div>
+  </div>
+
+  <div class="card"><h2>How a tick runs (what happens when it all runs)</h2>
+  <div class="note">WAKE (heartbeat) → SENSE (ports pull the day) → RECALL (both stores: who Luis is + what
+  tools exist) → THINK (one door routes: single · council · swarm · crystallized path) → ACT through the
+  MEMBRANE (trust gate → tool call → tracelog) → VERDICT (HADES: accept / redo / reground / halt) →
+  REFLECT (self-audit rotation: <b>code · skills-redundancy · principles · memory quality · capacity freshness</b>,
+  one per wake, bound by the Loop's Law) → SLEEP (consolidate the Book) → repeat. The loop is the continuity;
+  the membrane is why it can be trusted with hands.</div>
+  </div>
+
+  <div class="card"><h2>Tickets by epic — P0 burns gold</h2><div id="epics"></div></div>
+  <div class="card"><h2>The 30-day arc</h2><div id="weeks"></div></div>
+  <div class="card"><h2>Decisions owed by Luis</h2><div id="decs"></div></div>
+</div>
+</div>
+
+<div class="foot">Authority: PLAN.md v1.1 (LEYBER rename recorded; two-store doctrine; the Loop's Law).
+DONE = acceptance criterion RAN. Served live at /plan by the control room. The stack view was v1.0; the
+concentric map supersedes it as the reading instrument.</div>
+
+<script>
+"use strict";
+const S=document.getElementById("stage"), CX=540, CY=540;
+const R={center:104, loop:170, mind:248, know:330, memb:392, world:462};
+function ring(r,cls){const d=document.createElement("div");d.className="ring "+(cls||"");
+  d.style.cssText=`left:${CX-r}px;top:${CY-r}px;width:${r*2}px;height:${r*2}px`;S.appendChild(d);}
+function at(angleDeg,r){const a=angleDeg*Math.PI/180;return {x:CX+Math.cos(a)*r, y:CY-Math.sin(a)*r};}
+function chip(angle,r,html,cls){const p=at(angle,r);const d=document.createElement("div");
+  d.className="chip "+(cls||"");d.style.left=p.x+"px";d.style.top=p.y+"px";d.innerHTML=html;S.appendChild(d);}
+function lab(angle,r,text,cls){const p=at(angle,r);const d=document.createElement("div");
+  d.className=cls||"rlab";d.style.left=p.x+"px";d.style.top=p.y+"px";d.textContent=text;S.appendChild(d);}
+
+/* rings */
+ring(R.loop);ring(R.mind);ring(R.know);ring(R.memb,"membrane");ring(R.world,"world");
+
+/* center — LEYBER */
+{const d=document.createElement("div");d.id="center";const r=R.center;
+ d.style.cssText+=`left:${CX-r}px;top:${CY-r}px;width:${r*2}px;height:${r*2}px`;
+ d.innerHTML=`<div class="nm">LEYBER</div>
+  <div class="pu">the keeper — holds the plan, the memory and the power map when every conversation dies;
+  translates Luis back to himself; turns free energy into shipped artifacts</div>
+  <div class="stt">purpose: in-dialogue</div>`;S.appendChild(d);}
+
+/* ring titles along the NW meridian */
+lab(135,R.loop,"THE LOOP");
+lab(135,R.mind,"MIND");
+lab(135,R.know,"KNOWLEDGE");
+lab(135,R.memb,"MEMBRANE · command current crosses only here");
+lab(135,R.world,"WORLD RING");
+
+/* Ring 1 — THE LOOP (clockwise from top) */
+const PH=[["WAKE",90],["SENSE",39],["RECALL",-12],["THINK",-63],["ACT · gated",-114],
+          ["VERDICT",-165],["REFLECT · self-audit",167],["SLEEP · consolidate",116]];
+PH.forEach(p=>chip(p[1],R.loop,p[0],"phase"));
+
+/* Ring 2 — MIND */
+chip(62,R.mind,"think() door — MISSING","miss");
+chip(8,R.mind,"regimes: single · council · swarm · path — live","live");
+chip(-45,R.mind,"tool-calling (strict schemas) — live","live");
+chip(-100,R.mind,"relay capsule — live","live");
+chip(-155,R.mind,"escalation ladder → frontier — live","live");
+chip(178,R.mind,"focused-ReAct re-grounding — live","live");
+
+/* Ring 3 — KNOWLEDGE, two hemispheres */
+{const d=document.createElement("div"); d.className="hemidiv";
+ d.style.cssText=`left:${CX}px;top:${CY-R.know}px;height:${(R.know-R.mind-8)}px`;S.appendChild(d);
+ const d2=document.createElement("div"); d2.className="hemidiv";
+ d2.style.cssText=`left:${CX}px;top:${CY+R.mind+8}px;height:${(R.know-R.mind-8)}px`;S.appendChild(d2);}
+lab(112,R.know+16,"WORLD MEMORY · all the information","hemilab");
+lab(68,R.know+16,"CAPABILITY REGISTRY · the tools we have","hemilab");
+chip(155,R.know-24,"the Book · 48 mem / 16 of 1,587 — SHALLOW","part");
+chip(185,R.know-6,"codex · 4,328 chunks — live","live");
+chip(215,R.know-20,"day.json intake — MISSING","miss");
+chip(122,R.know-6,"recall() façade — MISSING","miss");
+chip(25,R.know-24,"fitness ladder — live","live");
+chip(-5,R.know-6,"models_report · 59 nodes — live","live");
+chip(-35,R.know-22,"paths.json crystallized — partial","part");
+chip(58,R.know-6,"skills index · ~20 — live","live");
+chip(-65,R.know-4,"trust state — live","live");
+
+/* Ring 4 — MEMBRANE */
+chip(30,R.memb,"trust gates — live","live");
+chip(-30,R.memb,"HADES verdicts — live","live");
+chip(-150,R.memb,"tracelog — live","live");
+
+/* Ring 5 — WORLD RING quadrants */
+lab(90,R.world+34,"FACE → LUIS","qlab");
+lab(171,R.world+24,"SENSES · in","qlab");
+lab(9,R.world+24,"HANDS · out","qlab");
+lab(-90,R.world+34,"ENERGY · the free grid","qlab");
+/* N face */
+chip(104,R.world-6,"3D city — live","live");
+chip(76,R.world-6,"/plan map — live","live");
+chip(62,R.world-26,"workspace + brain — live","live");
+/* W senses */
+chip(196,R.world-8,"github — live","live");
+chip(172,R.world-10,"hacker news — live","live");
+chip(157,R.world-30,"calendar — MISSING","miss");
+chip(212,R.world-26,"gmail intake — MISSING","miss");
+/* E hands */
+chip(-16,R.world-8,"drafts — live","live");
+chip(16,R.world-10,"voice · Edge neural — live","live");
+chip(31,R.world-30,"Kokoro offline — MISSING","miss");
+chip(-46,R.world-24,"browser-drive — partial","part");
+chip(-32,R.world-4,"income artifacts — MISSING","miss");
+/* S energy — the six online plants, tagged */
+chip(-58,R.world-6,"ollama · local ∞ · private","live");
+chip(-78,R.world+2,"nvidia · 54×40rpm · 256K · tools","live");
+chip(-100,R.world-40,"groq · 30rpm · tools+strict","live");
+chip(-122,R.world-2,"cerebras · 5rpm · 1M tok/d","live");
+chip(-152,R.world-8,"zai · vision","live");
+chip(-138,R.world-30,"pollinations · keyless","live");
+chip(-90,R.world+58,"9 latent plants — awaiting keys","part");
+
+/* outside actors */
+chip(90,R.world+78,"LUIS — commands · decides · SENDS","actor");
+chip(127,R.world+46,"CLAUDE IGNITIONS — crystallize skills inward","actor");
+
+/* arrows: Luis↔face, ignition→inward, grid→up */
+{const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+ svg.setAttribute("class","arrows");svg.setAttribute("viewBox","0 0 1080 1100");
+ function line(a1,r1,a2,r2,dash){const p1=at(a1,r1),p2=at(a2,r2);
+   const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+   l.setAttribute("x1",p1.x);l.setAttribute("y1",p1.y);l.setAttribute("x2",p2.x);l.setAttribute("y2",p2.y);
+   l.setAttribute("stroke","rgba(212,162,76,.45)");l.setAttribute("stroke-width","1.2");
+   if(dash)l.setAttribute("stroke-dasharray","4 4");svg.appendChild(l);}
+ line(90,R.world+62,90,R.world+8);          // Luis <-> face
+ line(127,R.world+34,132,R.memb+20,true);   // ignition -> inward
+ line(-90,R.world+46,-90,R.world-16);       // grid -> energy arc
+ S.appendChild(svg);}
+
+/* ===== right column data ===== */
+const EPICS=[
+ ["A · SPINE",[["A1 adopt plan","p0"],["A2 one router","p0"],["A3 leyber.py entry",""],["A4 tree rule",""]]],
+ ["B · THE BOOK",[["B1 consolidate 300+","p0"],["B2 recall API","p0"],["B3 quality gate",""],["B4 auto-ingest",""]]],
+ ["C · POWER",[["C1 fitness-from-use",""],["C2 pacing profiles",""],["C3 command current",""]]],
+ ["D · COGNITION",[["D1 think() door","p0"],["D2 escalation",""],["D3 gates",""]]],
+ ["E · LIFE",[["E1 reflection tick","p0"],["E2 autostart","luis"],["E3 daily brief",""],["E4 reflection loop — audit rotation","p0"]]],
+ ["F · SENSES",[["F1 intake decision","luis"],["F2 build intake",""]]],
+ ["G · INCOME",[["G1 outreach — THIS WEEK","p0"],["G2 applications","p0"],["G3 Kokoro voice",""],["G4 narration",""]]],
+ ["H · FACE",[["H2 this map","p0"],["H1 city = home",""],["H3 GPU pass","luis"],["H4 city v2",""]]],
+ ["I · IGNITION",[["I1 skills audit — redundancy",""],["I2 crystallize-lens",""]]],
+];
+document.getElementById("epics").innerHTML=EPICS.map(e=>`
+ <div class="epic"><span class="eid">${e[0]}</span><span>${e[1].map(t=>`<span class="t2 ${t[1]}">${t[0]}</span>`).join("")}</span></div>`).join("");
+const WEEKS=[
+ ["WEEK 1","SPINE + BOOK + THE SEND — G1 send, A1, A2, B2, B1 starts, F1 decision, E2 install"],
+ ["WEEK 2","ONE DOOR + ALIVE — D1, E1, E4, C1, C2, G2 applications out"],
+ ["WEEK 3","SENSES — F2 real day intake, B4, C3, E3"],
+ ["WEEK 4","FACE + VOICE — H1, G3, H3, I1, D2"],
+];
+document.getElementById("weeks").innerHTML=WEEKS.map(w=>`<div class="wk"><b>${w[0]}</b> · <span>${w[1]}</span></div>`).join("");
+const DECS=[
+ ["HELD","name = LEYBER (decided 2026-07-12; identity.json updated)"],
+ ["F1","day-intake path — recommended: scheduled Claude session reads Calendar/Gmail via MCP, writes day.json locally"],
+ ["E2","run install_autostart.ps1 once — the entity lives unattended"],
+ ["H3","brightness / bloom call on the real GPU"],
+ ["PURPOSE","confirm the center line (currently IN-DIALOGUE, drafted from Leyber's own answer)"],
+ ["SEND","G1: the outreach email + first applications — the plan's whole point"],
+];
+document.getElementById("decs").innerHTML=DECS.map(d=>`<div class="dec"><b>${d[0]}</b>${d[1]}</div>`).join("");
+</script></body></html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE ATLAS · LEYBER</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--panel:#101012;--panel2:#131316;--ink:#f1f0ec;--soft:#b9b8b3;--dim:#76757a;
+  --faint:#3a393f;--gold:#d4a24c;--amber:#e8b866;--bad:#c96a5a;--line:rgba(241,240,236,.09)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:12px/1.5 'IBM Plex Mono',Consolas,monospace;padding:26px 30px 60px}
+a{color:var(--gold);text-decoration:none}
+.ey{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+h1{font-weight:300;font-size:24px;letter-spacing:.1em;margin-top:6px}
+h1 b{color:var(--gold);font-weight:600}
+.sub{color:var(--soft);font-size:11px;margin-top:6px;max-width:1100px}
+h2{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:34px 0 4px}
+.h2sub{color:var(--dim);font-size:10.5px;margin-bottom:12px;max-width:1100px}
+.guard{margin:14px 0 18px;border:1px solid rgba(212,162,76,.45);background:rgba(212,162,76,.05);
+  padding:10px 15px;font-size:11px;color:var(--amber);max-width:1520px}
+.guard b{color:var(--gold)}
+/* tabs */
+#tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+.tab{background:var(--panel);border:1px solid var(--line);color:var(--dim);cursor:pointer;
+  font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;padding:9px 16px;transition:.14s}
+.tab:hover{color:var(--soft);border-color:rgba(241,240,236,.25)}
+.tab.on{color:#0a0a0b;background:var(--gold);border-color:var(--gold)}
+#layerdesc{color:var(--soft);font-size:11px;margin:2px 0 10px;max-width:1200px}
+#layerdesc b{color:var(--gold)}
+#mapwrap{background:#0b0b0d;border:1px solid var(--line);overflow-x:auto}
+svg text{font-family:'IBM Plex Mono',monospace}
+/* legend list */
+#steps{max-width:1520px;margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:2px 28px}
+@media(max-width:1100px){#steps{grid-template-columns:1fr}}
+.stepline{display:flex;gap:10px;padding:6px 2px;border-bottom:1px solid rgba(241,240,236,.05);font-size:11px;align-items:baseline}
+.stepline .num{min-width:22px;height:22px;border-radius:50%;border:1.4px solid var(--gold);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-weight:600;font-size:10.5px;flex:none;align-self:center}
+.stepline.red .num{border-color:var(--bad);color:var(--bad)}
+.stepline.gate .num{background:rgba(232,184,102,.14);border-color:var(--amber);color:var(--amber);border-radius:4px;transform:rotate(45deg)}
+.stepline.gate .num span{display:block;transform:rotate(-45deg)}
+.stepline b{color:var(--ink);font-weight:600}
+.stepline.red b{color:var(--bad)}
+.stepline .d{color:var(--dim)}
+.maplegend{margin-top:8px;font-size:10px;color:var(--dim)}
+.maplegend span{margin-right:16px}
+/* tables + stages (views 3+4) */
+table{border-collapse:collapse;width:100%;font-size:11px;background:var(--panel);border:1px solid var(--line)}
+th{color:var(--dim);text-align:left;font-weight:400;letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid var(--line);font-size:10px;text-transform:uppercase}
+td{padding:7px 12px;border-bottom:1px solid rgba(241,240,236,.05);color:var(--soft);vertical-align:top}
+td.role{color:var(--gold);font-weight:600;white-space:nowrap}td.rod{color:var(--ink)}td.why{color:var(--dim);font-size:10.5px}
+.stages{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start}
+@media(max-width:1200px){.stages{grid-template-columns:repeat(2,1fr)}}
+.stage{background:var(--panel);border:1px solid var(--line);padding:11px 13px;min-height:120px}
+.stage.now{border-color:rgba(212,162,76,.6);box-shadow:0 0 22px rgba(212,162,76,.08)}
+.stage h3{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:600;margin-bottom:2px;text-transform:uppercase}
+.stage .ssub{color:var(--dim);font-size:9.5px;margin-bottom:9px}
+.bcard{border:1px solid var(--line);padding:7px 9px;margin-bottom:7px;border-radius:3px;font-size:10.5px}
+.bcard b{color:var(--ink);font-weight:600;display:block}
+.bcard .req{color:var(--dim);font-size:9.5px;margin-top:2px}
+.bcard.done{border-color:rgba(212,162,76,.4)}.bcard.done b{color:var(--gold)}
+.bcard.build{border-color:rgba(201,106,90,.5);border-style:dashed}.bcard.build b{color:var(--bad)}
+.bcard.luis b{color:var(--amber)}
+.bcard.zero{background:rgba(212,162,76,.09);border-color:var(--gold)}.bcard.zero b{color:var(--gold)}
+.view{max-width:1520px}
+.foot{margin-top:30px;color:var(--faint);font-size:10px;max-width:1200px}
+</style></head><body>
+
+<div class="ey">Autonomous Entity Architecture · the process atlas v4.0 · 2026-07-12</div>
+<h1>THE <b>ATLAS</b> — one map, layered pages</h1>
+<div class="sub">The component geography never moves. Each PAGE lays one process over it: how a model is called,
+what returns, and which component takes care of it — numbered hop by hop, with the exact rod named. Gates
+(trust · HADES) are diamonds. Red = the step does not exist yet. Poster: <a href="/poster">/poster</a> · Text: PLAN.md.</div>
+<div class="guard"><b>INCOME GUARD:</b> G1 (the outreach send) has ZERO build dependencies — it precedes every
+component on this map. If a ticket competes with sending, sending wins.</div>
+
+<div id="tabs"></div>
+<div id="layerdesc"></div>
+<div id="mapwrap"><svg id="map" width="1500" height="1058" viewBox="0 0 1500 1058"></svg></div>
+<div class="maplegend">
+ <span style="color:var(--gold)">— numbered gold: this page's flow</span>
+ <span style="color:var(--amber)">◆ diamond: governance gate (trust / HADES)</span>
+ <span style="color:var(--bad)">- - red: step missing (to-build)</span>
+ <span style="color:var(--dim)">dimmed boxes: not part of this page</span>
+</div>
+<div id="steps"></div>
+
+<div class="view">
+<h2>Model map — rods bound to roles bound to components</h2>
+<div class="h2sub">A rod earns a role by MEASURED fitness (the exam + lived use), never catalog claims.</div>
+<table>
+<tr><th>role</th><th>rod (plant · ctx · limit)</th><th>drawn by</th><th>why this rod</th></tr>
+<tr><td class="role">DEPTH / judgment</td><td class="rod">mistral-large-3-675b (nvidia · 256K · 40rpm)</td><td>talk · counsel</td><td class="why">won the coordinator duel on judgment; killed the counsel drift</td></tr>
+<tr><td class="role">PRECISION / format</td><td class="rod">mistral-small-4-119b (nvidia · 256K · 40rpm)</td><td>formatter · exact output</td><td class="why">the only 12/12 on the hard exam; 0.6s</td></tr>
+<tr><td class="role">REFLEX / speed</td><td class="rod">llama-3.3-70b (groq · 128K · 30rpm/1000rpd)</td><td>gates · quick checks</td><td class="why">0.3s; burst-tolerant 50/50</td></tr>
+<tr><td class="role">TOOL-CALLER</td><td class="rod">llama-3.3-70b (nvidia/groq) · top BFCL</td><td>agent_tools · think() commands</td><td class="why">proven live: chose json_get, fetched real data, exact calc</td></tr>
+<tr><td class="role">STRICT JSON</td><td class="rod">gpt-oss-120b (groq strict · cerebras batch)</td><td>HADES verdicts · structured out</td><td class="why">guaranteed schema; Cerebras can't combine tools+format</td></tr>
+<tr><td class="role">VISION GATE</td><td class="rod">nemotron-nano-12b-vl (nvidia · 128K)</td><td>VLM judge</td><td class="why">multi-image, commercial-safe</td></tr>
+<tr><td class="role">EMBED hosted / local</td><td class="rod">nemotron-embed-1b-v2 (2048d) · mxbai (512-tok)</td><td>future RAG · the Book vectors</td><td class="why">local = private + unlimited; 512-tok cap shapes chunking</td></tr>
+<tr><td class="role">PRIVATE FLOOR</td><td class="rod">qwen3.5:9b · r1:8b · llama3.1:8b (ollama · unlimited)</td><td>sensitive zone · consolidation</td><td class="why">data never leaves; llama3.1:8b = 9/12 hard probes</td></tr>
+<tr><td class="role">BATCH LEAF</td><td class="rod">gpt-oss-120b (cerebras · 8K · 5rpm · 1M tok/d)</td><td>bulk sleep-work</td><td class="why">~2000 tok/s but serialize-only</td></tr>
+<tr><td class="role">KEYLESS FLOOR</td><td class="rod">openai-fast / gpt-oss-20b (pollinations · 4rpm)</td><td>last ladder rung</td><td class="why">11/12 with ZERO keys — the resilience proof</td></tr>
+</table>
+</div>
+
+<div class="view">
+<h2>Build order — the dependency DAG</h2>
+<div class="h2sub">A component may be built only when everything it REQUIRES exists. Stage 1 is buildable TODAY.</div>
+<div class="stages">
+ <div class="stage"><h3>Stage 0 · exists</h3><div class="ssub">the foundation, firing</div>
+  <div class="bcard done"><b>meter + caller + plants</b><div class="req">grid.py — atomic, cross-process</div></div>
+  <div class="bcard done"><b>fitness (exam + lived)</b><div class="req">115×12 probes → ladder</div></div>
+  <div class="bcard done"><b>membrane organs</b><div class="req">trust · hades · tracelog · pulse</div></div>
+  <div class="bcard done"><b>engines + tools</b><div class="req">orchestrator · swarm · relay · paths · agent_tools</div></div>
+  <div class="bcard done"><b>book machinery</b><div class="req">consolidate · codex · embeds</div></div>
+ </div>
+ <div class="stage now"><h3>Stage 1 · first bricks</h3><div class="ssub">buildable today</div>
+  <div class="bcard zero"><b>G1 THE SEND</b><div class="req">requires: NOTHING — precedes the graph</div></div>
+  <div class="bcard build"><b>A2 capability registry (one)</b><div class="req">requires: fitness ✓ + models_report ✓ — absorbs the 4 pick() homes</div></div>
+  <div class="bcard build"><b>B2 recall() façade</b><div class="req">requires: stores ✓ — one door over Book + codex, cached, honest-on-miss</div></div>
+  <div class="bcard luis"><b>F1 intake decision (Luis)</b><div class="req">a decision, not code</div></div>
+ </div>
+ <div class="stage"><h3>Stage 2 · the door</h3><div class="ssub">unlocked by stage 1</div>
+  <div class="bcard build"><b>D1 think() door</b><div class="req">requires: A2 + B2 + energy ✓</div></div>
+  <div class="bcard build"><b>C3 command current std</b><div class="req">requires: A2 — strict schemas, gated + traced</div></div>
+  <div class="bcard build"><b>B1 consolidation 300+</b><div class="req">requires: B2 — nightly from here on</div></div>
+ </div>
+ <div class="stage"><h3>Stage 3 · alive</h3><div class="ssub">unlocked by stage 2</div>
+  <div class="bcard build"><b>E1+E4 reflection loop</b><div class="req">requires: D1 + self.json ✓ — the Loop's Law</div></div>
+  <div class="bcard build"><b>F2 senses intake</b><div class="req">requires: F1 — the brief stops being theater</div></div>
+  <div class="bcard luis"><b>E2 autostart (Luis)</b><div class="req">one consent run</div></div>
+ </div>
+ <div class="stage"><h3>Parallel · independent</h3><div class="ssub">any time</div>
+  <div class="bcard build"><b>G2 application factory</b><div class="req">requires: CV + fingerprint ✓</div></div>
+  <div class="bcard build"><b>G3 Kokoro offline voice</b><div class="req">requires: Fooocus torch ✓</div></div>
+  <div class="bcard build"><b>H1 one face</b><div class="req">city becomes /</div></div>
+  <div class="bcard luis"><b>H3 GPU brightness (Luis)</b><div class="req">eyes on real hardware</div></div>
+ </div>
+</div>
+</div>
+
+<div class="foot">Authority: PLAN.md v1.3. Edge discipline: a hop appears on a page only if the call exists in
+code (red = named to-build). /plan = the atlas · /poster = concept plate · /city = the living face.</div>
+
+<script>
+"use strict";
+const NS="http://www.w3.org/2000/svg", svg=document.getElementById("map");
+const BAND={y:378,h:30}; // governance membrane band
+const ROWS=[ // y,h — top to bottom; label at left
+ {y:18,h:56,lab:"ACTORS"},{y:134,h:68,lab:"WORLD"},{y:266,h:68,lab:"LIFE"},
+ {y:462,h:68,lab:"COGNITION"},{y:594,h:68,lab:"ACCESS"},{y:726,h:68,lab:"KNOWLEDGE"},
+ {y:858,h:68,lab:"SUBSTRATE"},{y:980,h:52,lab:"STATE"}];
+const GAP=[95,237,0,563,694,826,953]; // mid of gap after row i (GAP[2] special: band zone)
+const G2UP=356,G2DN=436;               // lanes above/below the membrane band
+const N={};
+function def(id,row,x,w,title,sub,file,st){N[id]={id,row,x,w,h:ROWS[row].h,y:ROWS[row].y,title,sub,file,st,
+  cx:x+w/2,top:ROWS[row].y,bot:ROWS[row].y+ROWS[row].h};}
+/* geography — fixed forever */
+def("claude",0,60,300,"CLAUDE IGNITIONS","frontier sessions — encode judgment, then die","","actor");
+def("luis",0,1180,280,"LUIS","commands · decides · SENDS","","actor");
+def("senses",1,60,300,"SENSES — imports","github ✓ · hn ✓ · day.json ✗","L5","part");
+def("hands",1,620,300,"HANDS — exports","drafts ✓ · voice ✓ · income art. ✗","L6","part");
+def("face",1,1180,280,"FACE — server","/city /plan /talk /do · :7799","controlroom.py","live");
+def("consolidate",2,60,240,"CONSOLIDATE","transcripts → Luis-facts","consolidate.py","live");
+def("live",2,330,210,"LIVE daemon","ticks: brief·sleep·reflect","live.py","part");
+def("aea",2,570,180,"AEA core","the seeded mind","aea.py","live");
+def("brief",2,780,190,"BRIEF task","the morning artifact","brief.py","live");
+def("selfr",2,1000,250,"SELF · reflect","self.json → pursue → write back","E1/E4","build");
+def("engines",3,80,340,"ENGINES","orchestrator · swarm · relay · paths","L2","live");
+def("think",3,600,260,"THINK() — one door","route: single·council·swarm·path","D1","build");
+def("tools",3,960,300,"TOOLS","web_fetch · json_get · calc","agent_tools.py","live");
+def("recall",4,250,280,"RECALL() — one door","query → k facts, honest on miss","B2","build");
+def("energy",4,800,300,"ENERGY.draw — router","zone + tier + fitness → ladder","energy.py","live");
+def("worldmem",5,60,310,"WORLD MEMORY","Book 48/1587 · codex 4,328","L1","part");
+def("embed",5,410,210,"LOCAL EMBED","mxbai — private","ollama","live");
+def("registry",5,760,440,"CAPABILITY REGISTRY","models_report 59 · fitness · paths · skills · trust","A2","part");
+def("plants",6,60,280,"PLANTS ×15","6 online: ollama nvidia groq cerebras zai pollin.","grid.PLANTS","live");
+def("caller",6,390,240,"CALLER","OpenAI-compat HTTP","grid.call_openai","live");
+def("meter",6,680,240,"METER","can_spend · record · 429-cool","grid.Meter","live");
+def("fitness",6,970,260,"FITNESS","115×12 exam + lived use","model_fitness.py","live");
+def("state",7,60,1400,"STATE — atomic JSON stores","grid_state · energy_usage · fitness · luis_memory · codex · talk/self/heartbeat · trust · trace","one home","live");
+
+/* ---------- PAGES (layers): hops with numbers, details, gates ---------- */
+/* hop: [n,a,b,label,detail,{red,gate,lat,sx,tx,via,off,lane}] lane: force laneY */
+const PAGES={
+talk:{name:"TALK",desc:"<b>Exists end-to-end (0.5–4.0s measured).</b> How a conversation calls a model, what returns, who takes care of it.",
+ hops:[
+ [1,"luis","face","POST /talk","the exchange enters the front door — serialized, one at a time",{sx:-40}],
+ [2,"face","embed","embed the query","talk embeds the question LOCALLY (mxbai) — private by construction",{via:1285,sx:-30,off:-10}],
+ [3,"embed","worldmem","nearest-k","cosine over the Book + codex + self-digest — the two stores that make it LEYBER",{lat:1}],
+ [4,"worldmem","face","memories return","4 Luis-facts + k=2 codex chunks + own live state ride into the system prompt — the RECEIPT",{via:1330,tx:30,off:8}],
+ [5,"face","energy","draw(private · depth)","the router walks the ranked ladder — frontier first, judgment-ordered",{via:1300,sx:30,off:22}],
+ [6,"energy","meter","can_spend?","rpm/rpd headroom per (plant,model); 429-cooled buckets skipped",{via:740,sx:-120}],
+ [7,"energy","caller","execute rod","winner today: nvidia · mistral-large-3-675b (256K · 40rpm bucket)",{via:650,sx:40,off:14}],
+ [8,"caller","plants","HTTPS chat","OpenAI-compat POST — browser UA, bearer key",{lat:1}],
+ [9,"caller","face","response 0.5–4.0s","text returns → talk stamps rod+latency+memories, bounds talk_state to 60 turns, emits pulse, updates lived fitness",{via:1315,sx:110,off:-8}],
+ [10,"face","luis","reply + receipt · voice","browser speaks (Edge neural); sensitive mode falls to an offline voice",{sx:40,off:12}]]},
+tick:{name:"TICK / BRIEF",desc:"<b>Runs to step 7 today; 8 is to-build.</b> The autonomous cycle — what happens when it runs unattended.",
+ hops:[
+ [1,"live","brief","wake tick","LIVE decides AWAKE → brief (subprocess-isolated; a crash never kills the life)",{off:-14}],
+ [2,"senses","brief","pull the day","github + hn are REAL; day.json (calendar/gmail) is the missing sense — F2",{off:0,tx:-60}],
+ [3,"brief","energy","draw per section","regime rule: easy synthesis → ONE good model (measured, not vibes)",{via:900,off:8}],
+ [4,"energy","caller","execute rod","public sections → hosted no-train; private section → LOCAL ONLY (zone=sensitive)",{via:650,sx:40,off:14}],
+ [5,"caller","plants","nvidia / groq / ollama","each section its own bucket — zero contention",{lat:1}],
+ [6,"plants","brief","sections return","brief assembles brief_output.md; exit code tells the truth (no ok-but-empty lie)",{via:1300,sx:100,off:-6}],
+ [7,"brief","hands","artifact lands","GATE: HADES verdicts the artifact (accept/redo) + trust ledger stamps the run",{off:14,gate:1}],
+ [8,"live","selfr","reflect tick","read self.json → pursue ONE task → write outcome back — E1, the missing reflection loop",{red:1,off:16}]]},
+tool:{name:"TOOL CALL",desc:"<b>Command current — every piece is live except the door (D1).</b> How a token becomes an action, governed.",
+ hops:[
+ [1,"face","think","a task enters","THE ONE DOOR — missing. Today each organ routes itself; D1 unifies entry",{red:1,via:1300,sx:-60,off:-12}],
+ [2,"think","registry","pick tool-capable rod","the CAPABILITY REGISTRY answers: llama-3.3-70b (top BFCL) + strict schema",{via:780,sx:60,off:-8}],
+ [3,"registry","energy","ranked ladder w/ tools","fitness-ordered, zone-filtered — catalog lies, lived fitness doesn't",{sx:0,off:8}],
+ [4,"energy","caller","execute w/ tools param","OpenAI tools loop — bounded iterations",{via:650,sx:40,off:14}],
+ [5,"caller","plants","llama-3.3-70b","the model RECOGNIZES the tool and returns tool_calls (proven live)",{lat:1}],
+ [6,"plants","tools","tool_calls return","model chose json_get over raw fetch — structured beats dumps",{via:1300,sx:100,off:-6}],
+ [7,"tools","caller","GATE: trust.check → run","FORBIDDEN blocks here (send/spend/keys). Allowed → execute → result fed back to the model",{via:1230,sx:-60,gate:1,off:10}],
+ [8,"caller","plants","loop ×N bounded","feed result → model continues — hard caps, no infinite loops",{lat:1,off:-12}],
+ [9,"plants","think","final answer","the composed answer returns to the door",{via:1315,sx:130,off:6}],
+ [10,"think","brief","GATE: verdict + trace","tracelog writes the goal-stack node; HADES verdicts vs the ORIGINAL goal; fail → reroute or escalate deeper",{sx:0,gate:1,off:-10}]]},
+sleep:{name:"SLEEP / BOOK",desc:"<b>Exists; 1% mined (16 of 1,587 sessions).</b> How the Book of Luis is built while it sleeps — private by construction.",
+ hops:[
+ [1,"live","consolidate","asleep tick","no serving to do → consolidate a slice of the backlog",{lat:1}],
+ [2,"state","consolidate","pick unconsolidated","1,571 transcripts remain; sessions <10min old excluded (don't consolidate the episode you're living)",{via:32,sx:-640,off:-10}],
+ [3,"consolidate","plants","LOCAL distill","ollama llama3.1:8b reads the session — hosted rods NEVER see conversations",{via:44,off:0}],
+ [4,"plants","consolidate","'Luis…' facts return","durable semantic facts only; engine-down → break, never mark-done (no corpus burn)",{via:56,sx:60,tx:60,off:10}],
+ [5,"consolidate","embed","embed facts","mxbai vectors — local, unlimited",{via:560,sx:40,off:18}],
+ [6,"embed","worldmem","store atomic","luis_memory.json + 33-byte meta sidecar (temp+replace — a kill can't erase the Book)",{lat:1}],
+ [7,"worldmem","recall","serve it back","B2 — the missing door: today talk recalls directly; recall() unifies + caches + is honest on miss",{red:1,off:-8}]]},
+struct:{name:"STRUCTURE",desc:"<b>The static dependency view.</b> Every edge = a call that exists in code (red dashed = named to-build). No numbers — this is the skeleton the pages animate.",
+ hops:[
+ [0,"state","plants","","",{sx:-560}],[0,"state","meter","","",{sx:60}],[0,"state","fitness","","",{sx:400}],
+ [0,"plants","caller","inference","",{lat:1}],[0,"caller","meter","record · 429","",{lat:1}],
+ [0,"meter","energy","headroom","",{via:740,sx:60,off:-8}],[0,"fitness","registry","measured truth","",{off:8}],
+ [0,"embed","worldmem","vectors","",{lat:1}],[0,"worldmem","recall","k facts","",{red:1,off:-8}],
+ [0,"embed","recall","query embed","",{red:1,off:6,tx:60}],[0,"registry","energy","ladder","",{off:8}],
+ [0,"registry","think","schemas · paths","",{red:1,via:780,sx:-160,off:-6}],
+ [0,"recall","think","grounding","",{red:1,off:-6}],[0,"energy","think","draw()","",{off:6,sx:-60}],
+ [0,"energy","engines","draw()","",{off:16,sx:-130}],[0,"engines","think","regimes","",{lat:1}],
+ [0,"tools","think","actions","",{lat:1}],[0,"think","selfr","pursue task","",{red:1,off:-12,sx:60}],
+ [0,"think","hands","command current","",{gate:1,via:770,off:0}],[0,"brief","hands","artifact","",{off:14}],
+ [0,"senses","brief","real day","",{off:-16,tx:-60}],[0,"live","consolidate","ticks","",{lat:1}],
+ [0,"aea","face","counsel","",{off:-20}],[0,"face","luis","the atlas · the city","",{sx:40}],
+ [0,"hands","luis","drafts to SEND","",{gate:1,off:12,sx:100}],
+ [0,"claude","registry","crystallize (dev-time)","",{dev:1,via:32,sx:-80,off:-16}]]}
+};
+/* ---------- render ---------- */
+function el(t,attrs,parent){const e=document.createElementNS(NS,t);for(const k in attrs)e.setAttribute(k,attrs[k]);(parent||svg).appendChild(e);return e;}
+function gapFor(rA,rB){ /* laneY for the single gap between adjacent-ish rows */
+  const lo=Math.min(rA,rB);
+  if(lo===2&&Math.max(rA,rB)===3) return rA>rB?G2UP:G2DN; // life<->cognition around the band
+  return GAP[lo]===0?(rA>rB?G2UP:G2DN):GAP[lo];
+}
+function edgePath(h){
+  const [n,a,b,label,detail,o={}]=h; const A=N[a],B=N[b];
+  const ax=A.cx+(o.sx||0), bx=B.cx+(o.tx||0), off=o.off||0;
+  let d,badge,gatePos=null,segs=[];
+  if(o.lat){ const y=A.y+A.h/2+(o.off||0);
+    const x1=A.cx<B.cx?A.x+A.w:A.x, x2=A.cx<B.cx?B.x:B.x+B.w;
+    d=`M${x1},${y} L${x2},${y}`; badge=[(x1+x2)/2,y]; segs=[];
+  } else {
+    const down=B.row>A.row;
+    const startY=down?A.bot:A.top, endY=down?B.top:B.bot;
+    if(o.via!=null){
+      const lA=(down?gapFor(A.row,A.row+1):gapFor(A.row-1,A.row))+off;
+      const lB=(down?gapFor(B.row-1,B.row):gapFor(B.row,B.row+1))+off;
+      d=`M${ax},${startY} L${ax},${lA} L${o.via},${lA} L${o.via},${lB} L${bx},${lB} L${bx},${endY}`;
+      badge=Math.abs(o.via-ax)>Math.abs(bx-o.via)?[(ax+o.via)/2,lA]:[(o.via+bx)/2,lB];
+      segs=[[ax,startY,lA],[o.via,lA,lB],[bx,lB,endY]];
+    } else {
+      const lane=(o.lane!=null?o.lane:gapFor(Math.min(A.row,B.row),Math.max(A.row,B.row)))+off;
+      d=`M${ax},${startY} L${ax},${lane} L${bx},${lane} L${bx},${endY}`;
+      badge=[(ax+bx)/2,lane]; segs=[[ax,startY,lane],[bx,lane,endY]];
+    }
+    // gate diamond where a vertical crosses the band
+    for(const s of segs){const y1=Math.min(s[1],s[2]),y2=Math.max(s[1],s[2]);
+      if(y1<BAND.y&&y2>BAND.y+BAND.h){gatePos=[s[0],BAND.y+BAND.h/2];break;}}
+  }
+  return {d,badge,gatePos,n,label,detail,o,a,b};
+}
+let CUR="talk";
+function render(){
+  svg.innerHTML="";
+  const dfs=el("defs",{});
+  [["ag","#d4a24c"],["ar","#c96a5a"],["ad","#76757a"],["aa","#e8b866"]].forEach(m=>{
+    const mk=el("marker",{id:m[0],viewBox:"0 0 10 10",refX:"8.5",refY:"5",markerWidth:"7.5",markerHeight:"7.5",orient:"auto-start-reverse"},dfs);
+    el("path",{d:"M0,0 L10,5 L0,10 z",fill:m[1]},mk);});
+  // row shading + labels
+  ROWS.forEach((r,i)=>{el("rect",{x:14,y:r.y-10,width:1472,height:r.h+20,fill:i%2?"rgba(255,255,255,.006)":"none"});
+    el("text",{x:20,y:r.y-14,fill:"#4a4950","font-size":"8.5","letter-spacing":".3em"}).textContent=r.lab;});
+  // membrane band
+  el("rect",{x:20,y:BAND.y,width:1460,height:BAND.h,fill:"rgba(212,162,76,.05)",stroke:"rgba(212,162,76,.5)","stroke-dasharray":"7 5","stroke-width":1.2});
+  el("text",{x:750,y:BAND.y+19,fill:"#e8b866","font-size":"9.5","letter-spacing":".28em","text-anchor":"middle","font-weight":"600"})
+    .textContent="GOVERNANCE MEMBRANE — trust.check → execute → tracelog → HADES verdict (Law 3)";
+  const page=PAGES[CUR];
+  const active=new Set(); page.hops.forEach(h=>{active.add(h[1]);active.add(h[2]);});
+  // edges under nodes? draw edges first, nodes on top, badges above all
+  const badges=[];
+  page.hops.forEach(h=>{
+    const e=edgePath(h); const o=e.o;
+    const red=o.red, dev=o.dev;
+    const col=red?"#c96a5a":dev?"#76757a":o.gate?"#e8b866":"#d4a24c";
+    const mk=red?"ar":dev?"ad":o.gate?"aa":"ag";
+    el("path",{d:e.d,fill:"none",stroke:col,"stroke-width":o.gate?2.3:1.6,
+      "stroke-dasharray":(red||dev)?"6 5":"none","marker-end":`url(#${mk})`,
+      "stroke-linejoin":"round",opacity:CUR==="struct"?0.8:0.95});
+    if(e.label&&CUR==="struct"){el("text",{x:e.badge[0],y:e.badge[1]-7,fill:"#8a888e","font-size":"8.8","text-anchor":"middle"}).textContent=e.label;}
+    if(o.gate){const g=e.gatePos||[e.badge[0]+(CUR==="struct"?0:26),e.badge[1]];
+      badges.push(()=>{el("rect",{x:g[0]-7,y:g[1]-7,width:14,height:14,fill:"#131316",stroke:"#e8b866","stroke-width":1.6,transform:`rotate(45 ${g[0]} ${g[1]})`});});}
+    if(e.n){badges.push(()=>{
+      el("circle",{cx:e.badge[0],cy:e.badge[1],r:10,fill:"#0a0a0b",stroke:red?"#c96a5a":"#d4a24c","stroke-width":1.6});
+      el("text",{x:e.badge[0],y:e.badge[1]+3.5,fill:red?"#c96a5a":"#d4a24c","font-size":"10","font-weight":"600","text-anchor":"middle"}).textContent=e.n;});}
+  });
+  // nodes
+  for(const id in N){const nd=N[id];
+    const on=active.has(id)||CUR==="struct";
+    const g=el("g",{opacity:on?1:0.20});
+    const stroke=nd.st==="build"?"rgba(201,106,90,.8)":nd.st==="part"?"rgba(185,184,179,.5)":nd.st==="actor"?"rgba(241,240,236,.5)":"rgba(212,162,76,.6)";
+    el("rect",{x:nd.x,y:nd.y,width:nd.w,height:nd.h,rx:4,fill:nd.st==="actor"?"#15151a":"#101012",stroke,
+      "stroke-width":1.3,"stroke-dasharray":(nd.st==="part"||nd.st==="build")?"5 4":"none"},g);
+    el("text",{x:nd.x+10,y:nd.y+20,fill:nd.st==="build"?"#c96a5a":nd.st==="actor"?"#f1f0ec":"#d4a24c","font-size":"11.5","font-weight":"600","letter-spacing":".06em"},g).textContent=nd.title;
+    el("text",{x:nd.x+10,y:nd.y+36,fill:"#8a888e","font-size":"9.3"},g).textContent=nd.sub;
+    el("text",{x:nd.x+10,y:nd.y+51,fill:"#55545b","font-size":"8.5"},g).textContent=nd.file;
+    if(nd.st!=="actor"){const pill=nd.st==="build"?"TO-BUILD":nd.st==="part"?"PARTIAL":"LIVE";
+      el("text",{x:nd.x+nd.w-9,y:nd.y+16,fill:nd.st==="build"?"#c96a5a":nd.st==="part"?"#9b9aa0":"#d4a24c",
+        "font-size":"8","letter-spacing":".14em","text-anchor":"end","font-weight":"600"},g).textContent=pill;}
+  }
+  badges.forEach(f=>f());
+  // tabs + desc + steps
+  document.getElementById("tabs").innerHTML=Object.keys(PAGES).map(k=>
+    `<button class="tab ${k===CUR?'on':''}" onclick="setPage('${k}')">${PAGES[k].name}</button>`).join("");
+  document.getElementById("layerdesc").innerHTML="PAGE — "+page.desc;
+  document.getElementById("steps").innerHTML=CUR==="struct"?"":page.hops.map(h=>{
+    const o=h[5]||{};
+    return `<div class="stepline ${o.red?'red':''} ${o.gate?'gate':''}">
+      <div class="num"><span>${h[0]}</span></div>
+      <div><b>${h[3]}</b> <span class="d">— ${h[4]}</span></div></div>`;}).join("");
+}
+window.setPage=k=>{CUR=k;render();};
+const q=new URLSearchParams(location.search).get("layer");
+if(q&&PAGES[q])CUR=q;
+render();
+</script></body></html>

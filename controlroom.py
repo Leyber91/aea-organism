@@ -15,6 +15,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import grid, consolidate, trust, pulse, talk as talk_mod, speak as speak_mod
 import energy as energy_mod
+import bench_core                     # THE BENCH harness (P0) - construct runs, run-tagged
 try:
     import autonomy as autonomy_mod
 except Exception:
@@ -333,7 +334,7 @@ class Handler(BaseHTTPRequestHandler):
             except Exception as e:
                 body = json.dumps({"error": f"schema.json missing: {e}"}).encode()
             ctype = "application/json"
-        elif self.path.startswith("/game"):          # THE ASCENT - the leveled game to reach AEA (board = the schema)
+        elif self.path.startswith("/game") and not self.path.startswith("/game/"):  # THE ASCENT board (legacy); /game/ tree is the new codebase static
             try:
                 body = open(os.path.join(HERE, "game.html"), encoding="utf-8").read().encode("utf-8")
             except Exception as e:
@@ -343,6 +344,41 @@ class Handler(BaseHTTPRequestHandler):
             body = json.dumps(grid.load_json(os.path.join(HERE, "journey_save.json"),
                                              {"done": {}, "reveals": []}), ensure_ascii=False).encode("utf-8")
             ctype = "application/json"
+        elif self.path.startswith("/api/construct/run"):  # THE BENCH (P0) - persisted run row, polled by run_id
+            qid = ""
+            if "id=" in self.path:
+                qid = self.path.split("id=", 1)[1].split("&")[0]
+            try:                                 # never-500: a poisoned row folds to a receipt,
+                out = bench_core.run_status(qid)  # not a connection abort (the /autonomy idiom)
+            except Exception as e:
+                out = {"ok": False, "error": str(e)[:160]}
+            body = json.dumps(out, ensure_ascii=False).encode("utf-8")
+            ctype = "application/json"
+        elif self.path.startswith("/probe"):         # THE PROBE v2 - the NEW codebase (game/ tree, Luis's order 2026-07-20)
+            try:
+                body = open(os.path.join(HERE, "game", "index.html"), encoding="utf-8").read().encode("utf-8")
+            except Exception as e:
+                body = f"game/index.html missing: {e}".encode()
+            ctype = "text/html; charset=utf-8"
+        elif self.path.startswith("/lab"):           # THE REPLICA LAB - every replica beside its concept-sheet target
+            try:
+                body = open(os.path.join(HERE, "game", "lab.html"), encoding="utf-8").read().encode("utf-8")
+            except Exception as e:
+                body = f"game/lab.html missing: {e}".encode()
+            ctype = "text/html; charset=utf-8"
+        elif self.path.startswith("/game/"):         # scoped static for the game/ tree ONLY (subfolders allowed,
+            rel = os.path.normpath(self.path.split("?")[0][len("/game/"):]).replace("\\", "/")  # traversal-guarded,
+            ext = os.path.splitext(rel)[1].lower()                                              # extension-allowlisted)
+            base = os.path.abspath(os.path.join(HERE, "game"))
+            fp = os.path.abspath(os.path.join(base, rel))
+            allowed = dict(_CTYPES, **{".html": "text/html; charset=utf-8"})
+            if rel and ".." not in rel and ext in allowed and fp.startswith(base + os.sep) and os.path.isfile(fp):
+                with open(fp, "rb") as fh:
+                    body = fh.read()
+                ctype = allowed[ext]
+            else:
+                body = b"not found"
+                ctype = "text/plain"
         elif self.path.startswith("/world"):         # THE PROBE - the game: pilot the living entity
             try:
                 body = open(os.path.join(HERE, "world.html"), encoding="utf-8").read().encode("utf-8")
@@ -433,11 +469,14 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
+        bad_body = None          # the bench route refuses garbage instead of default-firing
         try:
             n = int(self.headers.get("Content-Length", 0))
             req = json.loads(self.rfile.read(n)) if n else {}
-        except Exception:
-            req = {}
+            if not isinstance(req, dict):
+                req, bad_body = {}, "body is not a JSON object"
+        except Exception as e:
+            req, bad_body = {}, f"unparseable body ({str(e)[:60]})"
         if self.path == "/talk":
             out = self._talk(req)
         elif self.path == "/do":
@@ -446,6 +485,15 @@ class Handler(BaseHTTPRequestHandler):
             out = self._run_node(req)
         elif self.path == "/api/journey":
             out = self._journey(req)
+        elif self.path == "/api/construct/run":  # THE BENCH (P0): {run_id} immediately, run in its own thread
+            if bad_body:   # a malformed packet must never spend a metered draw (crash rider 2026-07-20)
+                out = {"ok": False, "refused": f"{bad_body} - a malformed packet never fires; "
+                                               "the bench refuses loudly and spends nothing"}
+            else:
+                try:       # never-500: the refusal contract holds even if the harness raises
+                    out = bench_core.start_run(req)
+                except Exception as e:
+                    out = {"ok": False, "error": str(e)[:160]}
         else:
             out = {"error": "unknown endpoint"}
         body = json.dumps(out, ensure_ascii=False).encode("utf-8")

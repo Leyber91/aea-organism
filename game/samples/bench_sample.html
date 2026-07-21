@@ -1,0 +1,92 @@
+<!doctype html>
+<!-- bench_sample.html — DESIGN SAMPLE of the E4 bench plate at THE P0-CUT scope.
+     Governance: E4_UX_P0.md §5 (plate anatomy), §7 (chip anatomy: 10px name + 8px family
+     glyph, circle = seed), THE P0-CUT (record region = LAST/BEST rider + 4-line run log;
+     TAP + SCORER only) · 04_UI_BIBLE.md §0 (panel recipe, .rin choreography, type law) ·
+     A11_SIGNATURE.md §4 (a virgin plate is ALL structure ink — zero idle amber).
+     Honesty law: this page is a labeled layout target — placeholders are dashes,
+     never invented telemetry. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BENCH — DESIGN SAMPLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/game/css/probe.css">
+<style>
+  /* sample-local layout only — all tokens come from probe.css */
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+  .sample-tag{max-width:640px;text-align:center}
+  .plate{width:640px}
+  .plate .rgn{padding:10px 2px 0}
+  .task .t-line{color:var(--s100)}
+  .task .t-check{color:var(--s60);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+  .spine{display:flex;align-items:center;gap:8px;padding:22px 2px 18px}
+  .spine .end{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);white-space:nowrap}
+  .wire{flex:1;height:1px;background:var(--s60)}
+  .wire.trunk{height:2px;background:var(--s100)}
+  .chip{display:flex;align-items:center;gap:8px;padding:7px 12px;background:rgba(120,155,175,.07)}
+  .chip .glyph{width:8px;height:8px;border:1px solid var(--s100);border-radius:50%}
+  .chip .nm{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s100)}
+  .chip .st{font-size:10px;letter-spacing:.08em;color:var(--s35);text-transform:uppercase}
+  .rider{display:flex;justify-content:space-between;font-size:10px;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--s60);padding:12px 2px 4px;border-top:1px solid var(--rule);margin-top:14px}
+  .runlog{padding:8px 2px 2px}
+  .runlog .ln{color:var(--s35);font-size:13px;white-space:pre}
+  .ctl-line{display:flex;justify-content:space-between;align-items:baseline;
+    border-top:1px solid var(--rule);margin-top:12px;padding:10px 2px 0}
+  .ctl-line .k{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60)}
+  .ctl-line .k b{font-weight:400;color:var(--s100)}
+</style>
+</head>
+<body>
+
+<div class="sample-tag lab s60 rin" style="--i:0">
+  DESIGN SAMPLE — layout target; live numbers arrive with the real bench
+</div>
+
+<div class="pan deep plate">
+  <i class="ck tl"></i><i class="ck tr"></i><i class="ck bl"></i><i class="ck br"></i>
+
+  <div class="hd rin" style="--i:1">
+    <span>THE BENCH · c-01</span>
+    <span class="lab s60">WINDOW —s · QUOTA —</span>
+  </div>
+
+  <div class="rgn task rin" style="--i:2">
+    <div class="t-line">TASK&nbsp;&nbsp;T-01 FIRST DRAW · OPEN TARGET · ZONE PRIVATE</div>
+    <div class="t-check">check: a real answer returns · beat your record, any axis</div>
+  </div>
+
+  <div class="spine rin" style="--i:3">
+    <span class="end">GRID</span>
+    <span class="wire trunk"></span>
+    <span class="chip"><span class="glyph"></span><span class="nm">TAP</span><span class="st">plants —/—</span></span>
+    <span class="wire"></span>
+    <span class="chip"><span class="glyph"></span><span class="nm">SCORER</span><span class="st">4 axes</span></span>
+    <span class="wire trunk"></span>
+    <span class="end">&gt; RECORD</span>
+  </div>
+
+  <div class="rider rin" style="--i:4">
+    <span>LAST —.——s · BEST —.——s</span>
+    <span>ZONE PRIVATE</span>
+  </div>
+
+  <div class="runlog">
+    <div class="ln rin" style="--i:5">&gt; run log — receipts land here as they happen</div>
+    <div class="ln rin" style="--i:6">&gt; HOP — · TAP · — · T+—.——s</div>
+    <div class="ln rin" style="--i:7">&gt; HOP — · SCORER · — · T+—.——s</div>
+    <div class="ln rin" style="--i:8">&gt; r-— · — · —</div>
+  </div>
+
+  <div class="ctl-line rin" style="--i:9">
+    <span class="k">RUN <b>[SPACE]</b> · EST —u</span>
+    <span class="k">CLEAR <b>[HOLD C]</b></span>
+    <span class="k">EXIT <b>[F]</b></span>
+  </div>
+</div>
+
+</body>
+</html>

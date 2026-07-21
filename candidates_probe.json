@@ -1,0 +1,140 @@
+{
+  "probed": "2026-07-19",
+  "catalog_size": 119,
+  "results": {
+    "z-ai/glm-5.2": {
+      "exists": true,
+      "probes": {
+        "instruction": {
+          "ok": true,
+          "pass": true,
+          "latency": 54.74,
+          "snippet": "GRID-OK",
+          "status": 200,
+          "error": null
+        },
+        "reasoning": {
+          "attempt_1_t60_mt200": {
+            "ok": false,
+            "pass": false,
+            "latency": 60.18,
+            "snippet": "",
+            "status": 0,
+            "error": "The read operation timed out"
+          },
+          "attempt_2_t150_mt600": {
+            "ok": true,
+            "pass": true,
+            "latency": 54.3,
+            "snippet": "5",
+            "status": 200,
+            "error": null
+          }
+        },
+        "code": {
+          "attempt_1_t60_mt200": {
+            "ok": false,
+            "pass": false,
+            "latency": 60.12,
+            "snippet": "",
+            "status": 0,
+            "error": "The read operation timed out"
+          },
+          "attempt_2_t150_mt600": {
+            "ok": true,
+            "pass": true,
+            "latency": 55.1,
+            "snippet": "fib = lambda n: (lambda f: f(f, n, 0, 1))(lambda s, n, a, b: a if n == 0 else s(s, n - 1, b, a + b))",
+            "status": 200,
+            "error": null
+          }
+        }
+      },
+      "score": "3/3",
+      "latency_avg": 54.7,
+      "note": "WORKS but SLOW: every successful call ~55s (hidden reasoning burn); times out at 60s/200tok on non-trivial prompts. All 3 probes correct with timeout>=150s + max_tokens>=600. Fit: long-horizon/agentic batch lanes, NOT interactive ticks."
+    },
+    "minimaxai/minimax-m3": {
+      "exists": true,
+      "probes": {
+        "instruction": {
+          "ok": true,
+          "pass": true,
+          "latency": 0.58,
+          "snippet": "GRID-OK",
+          "status": 200,
+          "error": null
+        },
+        "reasoning": {
+          "ok": true,
+          "pass": true,
+          "latency": 2.69,
+          "snippet": "5",
+          "status": 200,
+          "error": null
+        },
+        "code": {
+          "ok": true,
+          "pass": true,
+          "latency": 13.87,
+          "snippet": "```python\nfib = lambda n: (lambda f: [f.__setitem__(0, (b := [0, 1])) or [f.__setitem__(1, (b := [b[1], b[0] + b[1]])) for _ in range(n)] or b[0]])([0, 0])\n```\n",
+          "status": 200,
+          "error": null
+        }
+      },
+      "score": "3/3",
+      "latency_avg": 5.71,
+      "note": "3/3 first pass, fast (0.6-13.9s). Clean instruction-following, correct reasoning, working lambda. Roster-ready."
+    },
+    "nvidia/nemotron-3-ultra-550b-a55b": {
+      "exists": true,
+      "probes": {
+        "instruction": {
+          "ok": true,
+          "pass": true,
+          "latency": 1.11,
+          "snippet": "GRID-OK",
+          "status": 200,
+          "error": null
+        },
+        "reasoning": {
+          "ok": true,
+          "pass": true,
+          "latency": 2.97,
+          "snippet": "5",
+          "status": 200,
+          "error": null
+        },
+        "code": {
+          "ok": true,
+          "pass": true,
+          "latency": 1.5,
+          "snippet": "fib = lambda n: (lambda a, b: [a := b, b := a + b][0] for _ in range(n)).__next__() if n else 0",
+          "status": 200,
+          "error": null
+        }
+      },
+      "score": "3/3",
+      "latency_avg": 1.86,
+      "note": "3/3 first pass, FASTEST (1.1-3.0s). Confirmed served directly by NVIDIA (no openrouter needed). NB: llama-3.1-nemotron-ultra-253b-v1 is also catalog-listed but previously 404d on call - catalog claim only, not re-probed."
+    },
+    "nvidia/nemotron-parse": {
+      "exists": true,
+      "probes": {},
+      "score": "not probed",
+      "latency_avg": null,
+      "catalog_entry": {
+        "id": "nvidia/nemotron-parse",
+        "object": "model",
+        "owned_by": "nvidia"
+      },
+      "note": "Nearest live match to the requested 'nemotron ocr-v2' - document OCR/parse family. Catalog-verified only; image calls NOT attempted (vision needs its own harness; data-URI 500s known). Related vision ids in catalog: nvidia/nemoretriever-parse, nvidia/nemotron-nano-12b-v2-vl (current VLM gate), nvidia/llama-3.1-nemotron-nano-vl-8b-v1."
+    }
+  },
+  "not_found": [
+    "nemotron ocr-v2 - NO id containing 'ocr' anywhere in the 119-model catalog; nearest = nvidia/nemotron-parse (see results)"
+  ],
+  "excluded": [
+    "nemotron content-safety family - Luis's directive: no value"
+  ]
+}

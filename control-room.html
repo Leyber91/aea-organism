@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CONTROL ROOM · AEA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0b; --panel:#0f0f11; --ink:#f1f0ec; --soft:#b9b8b3;
+  --dim:#76757a; --faint:#46454a; --gold:#d4a24c; --gold-dim:#8a6f3a;
+  --line:rgba(241,240,236,0.08); --line2:rgba(241,240,236,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);
+  font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-weight:400;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1380px;margin:0 auto;padding:46px 34px 90px}
+.eyebrow{font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+.gold{color:var(--gold)}
+.tick{color:var(--gold);margin-right:8px}
+h1{font-weight:300;font-size:34px;letter-spacing:.02em;margin:8px 0 4px}
+h1 b{font-weight:600;color:var(--gold)}
+.sub{color:var(--soft);font-weight:300;max-width:760px;font-size:13px}
+.meta-line{margin-top:14px;color:var(--dim);font-size:11px;letter-spacing:.06em}
+.credo{margin-top:18px;display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);padding:11px 0;font-size:11px;color:var(--soft);letter-spacing:.04em}
+.credo span::before{content:"·";color:var(--gold);margin-right:9px}
+
+section{margin-top:46px}
+.s-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line2);
+  padding-bottom:9px;margin-bottom:20px}
+.s-head .n{font-size:11px;color:var(--gold);letter-spacing:.2em}
+.s-head h2{font-weight:500;font-size:15px;letter-spacing:.16em;text-transform:uppercase}
+.s-head .note{margin-left:auto;color:var(--dim);font-size:11px;letter-spacing:.04em}
+
+/* tally */
+.tally{display:grid;grid-template-columns:1fr;gap:18px}
+.bar{display:flex;height:30px;border:1px solid var(--line2);background:var(--panel);overflow:hidden}
+.bar i{display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.08em;
+  color:#0a0a0b;font-weight:600;min-width:0;white-space:nowrap;overflow:hidden}
+.seg-live{background:var(--gold)}
+.seg-unfired{background:#5f5e57;color:var(--ink)}
+.seg-blueprint{background:#33323a;color:var(--soft)}
+.seg-planned{background:#222127;color:var(--dim)}
+.seg-stalled{background:#181820;color:var(--faint)}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:11px;color:var(--soft)}
+.legend b{font-weight:600;color:var(--ink)}
+.dotk{display:inline-block;width:9px;height:9px;margin-right:7px;vertical-align:middle}
+.sow{color:var(--soft);font-weight:300;font-size:13px;line-height:1.65;border-left:2px solid var(--gold);
+  padding:4px 0 4px 18px;max-width:1000px}
+
+/* cockpit */
+.fire-banner{background:linear-gradient(180deg,rgba(212,162,76,0.10),rgba(212,162,76,0.02));
+  border:1px solid var(--gold-dim);padding:18px 20px;margin-bottom:24px}
+.fire-banner .k{color:var(--gold);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.fire-banner p{margin-top:8px;color:var(--ink);font-weight:300;font-size:14px;line-height:1.6;max-width:980px}
+.fire-banner b{color:var(--gold);font-weight:600}
+
+.cock-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.owe,.apply{border:1px solid var(--line2);background:var(--panel);padding:18px 20px}
+.owe h3,.apply h3{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+.owe .cap,.apply .cap{color:var(--dim);font-size:11px;margin-bottom:14px}
+.owe ul,.apply ul{list-style:none}
+.owe li,.apply li{padding:9px 0;border-top:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.owe li:first-child,.apply li:first-child{border-top:none}
+.box{flex:0 0 auto;width:13px;height:13px;border:1px solid var(--gold);margin-top:3px}
+.owe li b,.apply li b{font-weight:500;color:var(--ink)}
+.owe li span,.apply li span{color:var(--dim);display:block;font-size:11.5px;margin-top:2px}
+.apply .tag{color:var(--gold);font-size:10px;letter-spacing:.1em;border:1px solid var(--gold-dim);
+  padding:1px 6px;margin-left:auto;white-space:nowrap}
+
+.actions{margin-top:24px;display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--line2)}
+.act{display:grid;grid-template-columns:34px 1fr 96px;gap:0;border-top:1px solid var(--line);align-items:stretch}
+.act:first-child{border-top:none}
+.act .rank{display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:300;
+  color:var(--gold);background:rgba(212,162,76,0.04);border-right:1px solid var(--line)}
+.act .body{padding:15px 18px}
+.act .body .a{color:var(--ink);font-weight:500;font-size:13.5px;line-height:1.45}
+.act .body .w{color:var(--soft);font-weight:300;font-size:12px;line-height:1.55;margin-top:7px}
+.act .cw{display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line);
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-align:center}
+.cw-income{color:var(--gold)}.cw-job{color:var(--gold)}.cw-both{color:var(--gold)}
+.cw-none{color:var(--dim)}
+
+/* AEA spine */
+.axes{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.axis{border:1px solid var(--line2);background:var(--panel);padding:15px 14px}
+.axis .ax{color:var(--gold);font-size:12px;letter-spacing:.12em;font-weight:600;margin-bottom:9px}
+.axis .df{color:var(--soft);font-weight:300;font-size:11px;line-height:1.55}
+.organs{margin-top:18px;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.organs .col h4{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  margin-bottom:10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.seedrow,.verbrow{display:flex;gap:10px;padding:5px 0;font-size:12px;color:var(--soft);align-items:baseline}
+.seedrow .id{color:var(--gold);width:20px;flex:0 0 auto;text-align:right;font-size:11px}
+.seedrow b,.verbrow b{color:var(--ink);font-weight:500}
+.verbrow .g{color:var(--gold);font-size:10px;letter-spacing:.1em;margin-left:6px}
+details.summary{margin-top:18px;border:1px solid var(--line);background:var(--panel);padding:0 16px}
+details.summary summary{cursor:pointer;padding:13px 0;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);list-style:none}
+details.summary summary::-webkit-details-marker{display:none}
+details.summary summary::before{content:"+ ";color:var(--gold)}
+details.summary[open] summary::before{content:"– "}
+details.summary p{color:var(--soft);font-weight:300;font-size:12px;line-height:1.7;padding:0 0 16px}
+
+/* corpus */
+.group{margin-top:30px}
+.group .gh{display:flex;align-items:baseline;gap:12px;margin-bottom:13px}
+.group .gh .gt{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
+.group .gh .gc{color:var(--dim);font-size:11px}
+.group .gh .gl{flex:1;height:1px;background:var(--line);margin:0 4px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.card{border:1px solid var(--line);background:var(--panel);padding:14px 15px;display:flex;flex-direction:column;gap:7px}
+.card[data-state="live"]{border-left:2px solid var(--gold)}
+.card[data-state="built-unverified"]{border-left:2px solid #5f5e57}
+.card[data-state="prototype"]{border-left:2px solid #44434c}
+.card[data-state="blueprint-only"]{border-left:2px solid #33323a}
+.card[data-state="planned"]{border-left:2px solid #2a2930}
+.card[data-state="stalled"]{border-left:2px solid #201f27;opacity:.72}
+.card .ct{display:flex;align-items:center;gap:9px}
+.card .sd{width:8px;height:8px;flex:0 0 auto;border-radius:50%}
+.sd-live{background:var(--gold)}
+.sd-built-unverified{background:#7d7c74}
+.sd-prototype{background:#5a5963}
+.sd-blueprint-only{background:#454451}
+.sd-planned{background:#3a3946;border:1px dashed #55545f;background:transparent}
+.sd-stalled{background:#2a2932}
+.card .nm{font-weight:500;font-size:12.5px;color:var(--ink);line-height:1.35;flex:1}
+.card .st{font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;white-space:nowrap}
+.card .one{color:var(--soft);font-weight:300;font-size:11.5px;line-height:1.5}
+.card .aea{color:var(--gold-dim);font-size:10.5px;letter-spacing:.04em;line-height:1.45;border-top:1px solid var(--line);padding-top:7px}
+.card .aea b{color:var(--gold);font-weight:500}
+.card .nx{color:var(--dim);font-size:10.5px;line-height:1.45}
+.card .nx b{color:var(--soft);font-weight:500}
+.score{display:flex;align-items:center;gap:7px;margin-top:1px}
+.score .track{flex:1;height:4px;background:#222127;overflow:hidden}
+.score .fill{height:100%;background:var(--gold)}
+.score .pct{font-size:10px;color:var(--gold);width:26px;text-align:right}
+.score .lab{font-size:9px;color:var(--dim);letter-spacing:.1em}
+
+footer{margin-top:60px;border-top:1px solid var(--line2);padding-top:22px;color:var(--dim);font-size:11.5px;line-height:1.7}
+footer b{color:var(--soft)}
+footer .gold{color:var(--gold)}
+.err{color:var(--gold);padding:40px;border:1px solid var(--gold-dim)}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(2,1fr)}.axes{grid-template-columns:repeat(2,1fr)}.cock-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" id="root">
+  <div class="err">CR_DATA not loaded — open via data.js sibling (file:// or local server).</div>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  var D = window.CR_DATA;
+  var root = document.getElementById('root');
+  if(!D){ return; }
+
+  // entity-decode any double-escaped HTML entities in survey strings
+  var _ta = document.createElement('textarea');
+  function dec(s){ if(s==null) return ''; _ta.innerHTML = String(s); return _ta.value; }
+  function esc(s){ return dec(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var SCORES = [
+    ['Black Hole',88],['Exomania',88],['Primordial Seed',85],['DATASPACE',80],
+    ['Heptapod',78],['Token EKG',75],['The Figure',66],['AEA framework',50],
+    ['Ouroboros',45],['Altverse',34],['AGI',18]
+  ];
+  function scoreOf(name){ for(var i=0;i<SCORES.length;i++){ if(name.indexOf(SCORES[i][0])>-1) return SCORES[i][1]; } return null; }
+
+  var STATE_LABEL = {
+    'live':'LIVE · FIRED','built-unverified':'BUILT · UNFIRED','prototype':'PROTOTYPE',
+    'blueprint-only':'BLUEPRINT','planned':'PLANNED','stalled':'STALLED'
+  };
+
+  var projects = D.projects || [];
+  // tally
+  var counts = {};
+  projects.forEach(function(p){ counts[p.realState]=(counts[p.realState]||0)+1; });
+  var total = projects.length;
+  function c(k){ return counts[k]||0; }
+  var liveN=c('live'), unf=c('built-unverified')+c('prototype'), bp=c('blueprint-only'), pl=c('planned'), st=c('stalled');
+
+  function seg(cls,n,label){ if(!n) return ''; var w=(n/total*100).toFixed(2);
+    return '<i class="'+cls+'" style="flex:'+n+' 1 0;">'+ (n/total>0.06? n+' '+label : n) +'</i>'; }
+
+  var html = '';
+
+  // HEADER
+  html += '<div class="eyebrow">Autonomous Entity Architecture · running instance</div>';
+  html += '<h1>CONTROL <b>ROOM</b></h1>';
+  html += '<div class="sub">The AEA operating on Luis\'s own world as live telemetry. Not a description of the framework — the framework, run. v0: a static crystallization of the 2026-06-23 survey. The cheap runtime regenerates <span class="gold">data.js</span>; this view stays.</div>';
+  html += '<div class="meta-line">BUILD v0 · 2026-06-23 · '+total+' entities surveyed · schema P·M·A·R·S / 10 seeds / 3 verbs / 4 ops · gold = degree of fired-reality</div>';
+  html += '<div class="credo"><span>emergence over imposition</span><span>restorable coherence</span><span>operator-observable time</span><span>Law 10: many docs, few artifacts is the failure</span></div>';
+
+  // STATE OF WORLD + TALLY
+  html += '<section><div class="s-head"><span class="n">01</span><h2>State of the world</h2><span class="note">honest tally, by reality</span></div>';
+  html += '<div class="tally">';
+  html += '<div class="bar">'+seg('seg-live',liveN,'LIVE')+seg('seg-unfired',unf,'UNFIRED')+seg('seg-blueprint',bp,'BLUEPRINT')+seg('seg-planned',pl,'PLANNED')+seg('seg-stalled',st,'STALLED')+'</div>';
+  html += '<div class="legend">'+
+    '<span><i class="dotk seg-live"></i><b>'+liveN+'</b> live / fired</span>'+
+    '<span><i class="dotk seg-unfired"></i><b>'+unf+'</b> built · never fired</span>'+
+    '<span><i class="dotk seg-blueprint"></i><b>'+bp+'</b> blueprint-only</span>'+
+    '<span><i class="dotk seg-planned"></i><b>'+pl+'</b> planned</span>'+
+    '<span><i class="dotk seg-stalled"></i><b>'+st+'</b> stalled</span></div>';
+  html += '<div class="sow">'+esc(D.stateOfWorld)+'</div>';
+  html += '</div></section>';
+
+  // COCKPIT
+  html += '<section><div class="s-head"><span class="n">02</span><h2>The cockpit</h2><span class="note">what moves the clock — and only you can fire it</span></div>';
+  html += '<div class="fire-banner"><div class="k">The one finding</div>'+
+    '<p>Everything is built; almost nothing is fired. The single highest-leverage move in your entire corpus is not software I can write — it is <b>you</b> sending 5-10 outreach touches and 4 job applications. Both pipelines are loaded and deployed. This board ranked <b>itself</b> last of five. Fire the loaded weapons first.</p></div>';
+
+  // owed + apply
+  html += '<div class="cock-grid">';
+  html += '<div class="owe"><h3>4 decisions you owe</h3><div class="cap">income pipeline is built · blocked only on these</div><ul>'+
+    '<li><div class="box"></div><div><b>Target region</b><span>which market the diagnostic sells into</span></div></li>'+
+    '<li><div class="box"></div><div><b>3-5 warm names</b><span>the first outreach list from OUTREACH_KIT</span></div></li>'+
+    '<li><div class="box"></div><div><b>Private fee floor</b><span>the minimum engagement you accept</span></div></li>'+
+    '<li><div class="box"></div><div><b>Confirm the CTA</b><span>mailto leyber.91.2@gmail.com vs a booking link</span></div></li>'+
+    '</ul></div>';
+  html += '<div class="apply"><h3>Apply today · no gate</h3><div class="cap">resolve CV [CONFIRM]s first (NDA date range · years-number)</div><ul>'+
+    '<li><div class="box"></div><div><b>OLX</b><span>apply first</span></div><span class="tag">TIER 1</span></li>'+
+    '<li><div class="box"></div><div><b>ShopFully</b></div><span class="tag">TIER 1</span></li>'+
+    '<li><div class="box"></div><div><b>Databricks</b></div><span class="tag">TIER 1</span></li>'+
+    '<li><div class="box"></div><div><b>ElevenLabs</b><span>global / remote</span></div><span class="tag">TIER 1</span></li>'+
+    '<li><div class="box"></div><div><b>Lemon.io</b><span>enter the contract pool</span></div><span class="tag">CONTRACT</span></li>'+
+    '</ul></div>';
+  html += '</div>';
+
+  // ranked actions
+  var acts = D.topActions || [];
+  html += '<div class="actions">';
+  acts.forEach(function(a,i){
+    var cw = (a.clockWeight||'none').toLowerCase();
+    html += '<div class="act"><div class="rank">'+(i+1)+'</div>'+
+      '<div class="body"><div class="a">'+esc(a.action)+'</div><div class="w">'+esc(a.why)+'</div></div>'+
+      '<div class="cw cw-'+cw+'">'+ (cw==='none'?'compounds':cw) +'</div></div>';
+  });
+  html += '</div></section>';
+
+  // AEA SPINE
+  html += '<section><div class="s-head"><span class="n">03</span><h2>The AEA spine</h2><span class="note">the schema this room runs on</span></div>';
+  html += '<div class="axes">';
+  (D.aeaAxes||[]).forEach(function(ax){
+    var nm = dec(ax.name); var df = dec(ax.definition);
+    html += '<div class="axis"><div class="ax">'+esc(nm)+'</div><div class="df">'+esc(df)+'</div></div>';
+  });
+  html += '</div>';
+
+  var SEEDS = [
+    'substrate','sharp objective','crystallize','flexibilize','self-version',
+    'self-model','ceiling-detect','transcendence toolset','boundary preservation','persistent backwards channel'
+  ];
+  var VERBS = [['compose','assemble the parts each tick'],['propagate','traced causal chain — the honesty node',true],['observe','render-and-look; telemetry']];
+  var OPS = [['design','locate on the map'],['time','run on observable time'],['ship','contact with reality — unskippable'],['learn','harvest + feed back']];
+
+  html += '<div class="organs">';
+  html += '<div class="col"><h4>10 seeds · the organs</h4>';
+  SEEDS.forEach(function(s,i){ html += '<div class="seedrow"><span class="id">'+(i+1)+'</span><div><b>'+s+'</b></div></div>'; });
+  html += '</div>';
+  html += '<div class="col"><h4>3 verbs · per-tick rail</h4>';
+  VERBS.forEach(function(v){ html += '<div class="verbrow"><b>'+v[0]+'</b><span style="color:var(--soft)">'+v[1]+'</span>'+(v[2]?'<span class="g">GOLD</span>':'')+'</div>'; });
+  html += '<h4 style="margin-top:18px">4 ops · operator loop</h4>';
+  OPS.forEach(function(o){ html += '<div class="verbrow"><b>'+o[0]+'</b><span style="color:var(--soft)">'+o[1]+'</span></div>'; });
+  html += '</div>';
+  html += '</div>';
+
+  html += '<details class="summary"><summary>the AEA, in one read</summary><p>'+esc(D.aeaSummary)+'</p></details>';
+  html += '</section>';
+
+  // CORPUS
+  html += '<section><div class="s-head"><span class="n">04</span><h2>The corpus</h2><span class="note">every entity, located</span></div>';
+  var TRACKS = [
+    ['income','Income · the clock'],['job','Job · the clock'],['infra','Infra · the substrate'],
+    ['labs','Labs · spectacle'],['site','Site'],['fiction','TRIVERSE'],['meta','AEA · meta']
+  ];
+  TRACKS.forEach(function(t){
+    var key=t[0];
+    var list = projects.filter(function(p){ return p.realState!=='_x' && p.track===key; });
+    if(!list.length) return;
+    // sort: live-ish reality order
+    var order={'live':0,'built-unverified':1,'prototype':2,'blueprint-only':3,'planned':4,'stalled':5};
+    list.sort(function(a,b){ return (order[a.realState]||9)-(order[b.realState]||9); });
+    html += '<div class="group"><div class="gh"><span class="gt">'+t[1]+'</span><span class="gc">'+list.length+'</span><span class="gl"></span></div><div class="cards">';
+    list.forEach(function(p){
+      var sc = scoreOf(dec(p.name));
+      html += '<div class="card" data-state="'+p.realState+'">';
+      html += '<div class="ct"><span class="sd sd-'+p.realState+'"></span><span class="nm">'+esc(p.name)+'</span></div>';
+      html += '<div class="st">'+(STATE_LABEL[p.realState]||p.realState)+'</div>';
+      html += '<div class="one">'+esc(p.oneLine)+'</div>';
+      if(sc!=null){ html += '<div class="score"><span class="lab">REAL</span><span class="track"><span class="fill" style="width:'+sc+'%"></span></span><span class="pct">'+sc+'</span></div>'; }
+      if(p.aeaMapping){ html += '<div class="aea">'+esc(p.aeaMapping)+'</div>'; }
+      if(p.nextStep){ html += '<div class="nx"><b>next:</b> '+esc(p.nextStep)+'</div>'; }
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+  html += '</section>';
+
+  // FOOTER
+  html += '<footer>';
+  html += '<b>What this is.</b> v0 of the entity surface — a single static page that reads <span class="gold">data.js</span> (the crystallized survey) and renders it through the AEA. The next step is not a bigger page: it is the seam — a scheduled cheap-model run (nemotron / NIM, 40 req/min) that regenerates data.js nightly so this room is current when you enter. Ignition (Opus) encodes; the runtime keeps it lit.<br><br>';
+  html += '<b>Reuse already on disk.</b> <span class="gold">jarvis</span> skill index = the capability panel · <span class="gold">headless-verify</span> = the observe gate every visual panel calls before claiming done · <span class="gold">anonymize-guard</span> = the boundary organ on anything outbound · <span class="gold">NVIDIA NIM</span> (one key, env) = the hosted runtime backbone.<br><br>';
+  html += '<b>The honest verdict.</b> This board earns nothing by existing. It is legitimate only because its first screen points at the loaded weapons. Fire those, and it has paid for itself. Build past one page before a touch is sent, and it becomes the avoidance pattern it was meant to break.';
+  html += '</footer>';
+
+  root.innerHTML = html;
+})();
+</script>
+</body>
+</html>

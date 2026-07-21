@@ -1,0 +1,591 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE CITY · the entity, whole</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--panel:#101012;--ink:#f1f0ec;--soft:#b9b8b3;--dim:#76757a;--faint:#3a393f;
+  --gold:#d4a24c;--bad:#c96a5a;--line:rgba(241,240,236,.09);--glass:rgba(16,16,18,.82)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font:12px/1.5 'IBM Plex Mono',Consolas,ui-monospace,monospace}
+#stage{position:fixed;inset:0}
+canvas{display:block;width:100%;height:100%}
+.hud{position:fixed;z-index:5}
+/* title */
+#title{top:18px;left:22px;pointer-events:none}
+#title .ey{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+#title h1{font-weight:300;font-size:22px;letter-spacing:.10em;margin-top:5px}
+#title h1 b{color:var(--gold);font-weight:600}
+#title .sub{color:var(--soft);font-size:11px;margin-top:5px}
+#status{margin-top:7px;font-size:10.5px;letter-spacing:.05em}
+#status .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle;
+  background:var(--gold);animation:beat 2s infinite}
+#status.off .dot{background:var(--bad);animation:none}
+@keyframes beat{0%,100%{opacity:1}50%{opacity:.28}}
+/* legend */
+#legend{bottom:16px;left:22px;pointer-events:none;color:var(--soft);font-size:10.5px;line-height:1.85}
+#legend .k{display:inline-block;width:9px;height:9px;margin-right:7px;vertical-align:middle;border-radius:2px}
+#legend .on{background:var(--gold)}#legend .off{background:#33333a}#legend .er{background:var(--bad)}
+#legend .pv{border:1px solid var(--gold)}
+/* do-rail */
+#rail{top:18px;right:22px;display:flex;gap:8px;flex-direction:column;align-items:flex-end}
+.btn{pointer-events:auto;background:var(--glass);border:1px solid var(--line);color:var(--soft);
+  font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;
+  padding:8px 12px;cursor:pointer;backdrop-filter:blur(6px);transition:.15s}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn.busy{color:var(--gold);border-color:var(--gold);opacity:.6;pointer-events:none}
+#railout{max-width:280px;font-size:10px;color:var(--dim);text-align:right;white-space:pre-wrap;word-break:break-word;margin-top:2px}
+/* inspector */
+#insp{top:0;right:0;height:100%;width:380px;max-width:86vw;background:var(--glass);backdrop-filter:blur(9px);
+  border-left:1px solid var(--line);transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;pointer-events:auto}
+#insp.open{transform:none}
+#insp header{padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+#insp .eyebrow{font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+#insp h2{font-weight:300;font-size:19px;letter-spacing:.03em;margin-top:5px}
+#insp h2 b{color:var(--gold);font-weight:600}
+#insp .role{color:var(--soft);font-size:11px;margin-top:6px;line-height:1.55}
+#insp .body{flex:1;overflow-y:auto;padding:14px 20px 22px}
+#insp .x{position:absolute;top:16px;right:18px;color:var(--dim);cursor:pointer;font-size:16px;line-height:1}
+#insp .x:hover{color:var(--gold)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-top:1px solid var(--line)}
+.kv:first-child{border-top:none}.kv b{font-weight:400;color:var(--dim)}.kv span{text-align:right;color:var(--soft)}
+.kv span.g{color:var(--gold)}.kv span.r{color:var(--bad)}
+.tag{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;
+  border:1px solid var(--line);border-radius:3px;color:var(--dim);margin:2px 4px 2px 0}
+.tag.live{color:var(--gold);border-color:rgba(212,162,76,.4)}
+.tag.warn{color:var(--bad);border-color:rgba(201,106,90,.4)}
+.mono{white-space:pre-wrap;word-break:break-word;color:var(--soft);font-size:11px;line-height:1.55}
+.meter{height:5px;background:var(--faint);margin-top:6px;border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--gold)}
+.list .row{padding:7px 0;border-top:1px solid var(--line)}
+.list .row:first-child{border-top:none}
+.list .row b{color:var(--ink);font-weight:400}.list .row .s{color:var(--dim);font-size:10.5px;display:block;margin-top:2px}
+/* talk */
+#talk{bottom:16px;left:50%;transform:translateX(-50%) translateY(140%);width:min(680px,92vw);
+  background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--line);
+  transition:transform .24s cubic-bezier(.4,0,.2,1);pointer-events:auto}
+#talk.open{transform:translateX(-50%)}
+#talk .feed{max-height:34vh;overflow-y:auto;padding:14px 16px 4px}
+#talk .turn{padding:6px 0;font-size:11.5px;line-height:1.5}
+#talk .turn b{color:var(--gold);font-weight:600;letter-spacing:.05em}
+#talk .turn.you b{color:var(--soft)}
+#talk .receipt{color:var(--dim);font-size:9.5px;margin-top:3px}
+#talk .compose{display:flex;border-top:1px solid var(--line)}
+#talk input{flex:1;background:none;border:none;color:var(--ink);font:12px 'IBM Plex Mono',monospace;padding:13px 15px;outline:none}
+#talk .send{background:none;border:none;border-left:1px solid var(--line);color:var(--gold);
+  font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.16em;padding:0 18px;cursor:pointer}
+#talk .send:hover{background:rgba(212,162,76,.08)}
+#talk .opts{display:flex;gap:14px;padding:6px 16px 9px;font-size:9.5px;color:var(--dim)}
+#talk .opts label{cursor:pointer}#talk .opts input{margin-right:5px;vertical-align:middle}
+#talk .head{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--line)}
+#talk .head b{color:var(--gold);letter-spacing:.14em;font-size:10px;text-transform:uppercase}
+#talk .head .x{color:var(--dim);cursor:pointer}#talk .head .x:hover{color:var(--gold)}
+#tip{position:fixed;pointer-events:none;z-index:6;background:var(--glass);border:1px solid var(--line);
+  padding:6px 9px;font-size:10px;color:var(--soft);backdrop-filter:blur(6px);opacity:0;transition:opacity .12s;max-width:260px}
+</style></head><body>
+<div id="stage"><canvas id="cv"></canvas></div>
+
+<div class="hud" id="title">
+  <div class="ey">Autonomous Entity Architecture</div>
+  <h1>THE <b>CITY</b></h1>
+  <div class="sub">the entity, whole — power · mind · memory · signal · trade, live from disk</div>
+  <div id="status" class="off"><span class="dot"></span><span id="statustxt">connecting to the entity…</span></div>
+</div>
+
+<div class="hud" id="rail">
+  <button class="btn" data-cmd="brief">fire brief</button>
+  <button class="btn" data-cmd="consolidate">consolidate</button>
+  <button class="btn" data-cmd="status">status</button>
+  <div id="railout"></div>
+</div>
+
+<div class="hud" id="legend">
+  <div><span class="k on"></span> online / firing</div>
+  <div><span class="k off"></span> latent (awaiting key)</div>
+  <div><span class="k er"></span> throttled / failed</div>
+  <div><span class="k pv"></span> private ward (local-only data)</div>
+  <div style="margin-top:7px;color:var(--dim)">click any structure · click THE SPIRE to talk</div>
+</div>
+
+<div class="hud" id="insp">
+  <span class="x" id="inspx">✕</span>
+  <header><div class="eyebrow" id="insp-eye">structure</div><h2 id="insp-title"></h2><div class="role" id="insp-role"></div></header>
+  <div class="body" id="insp-body"></div>
+</div>
+
+<div class="hud" id="talk">
+  <div class="head"><b id="talk-name">THE SPIRE · talk to the entity</b><span class="x" id="talkx">✕</span></div>
+  <div class="feed" id="talk-feed"></div>
+  <div class="opts">
+    <label><input type="checkbox" id="opt-voice"> speak aloud</label>
+    <label><input type="checkbox" id="opt-local"> sensitive (local-only)</label>
+    <span id="talk-state" style="margin-left:auto"></span>
+  </div>
+  <div class="compose"><input id="talk-in" placeholder="say something to it…" autocomplete="off"><button class="send" id="talk-send">SEND</button></div>
+</div>
+
+<div id="tip"></div>
+
+<script>
+"use strict";
+window.onerror=function(m,src,ln,col){var s=document.getElementById("statustxt");
+  if(s){s.textContent="JS ERROR: "+m+" @"+ln+":"+col;} var st=document.getElementById("status"); if(st)st.className="off";};
+const GOLD="#d4a24c", BAD="#c96a5a", INK="#f1f0ec", DIM="#76757a", PANEL="#101012";
+
+/* ============================================================================
+   1. THE STATIC CITY MODEL — baked from grid.py PLANTS + the organ/skill/service
+      inventory. This is the LAYOUT and the TRUTH-WHEN-COLD; the live backend
+      overlays meters, memory count, trust, brief, and real pulses on top.
+   ==========================================================================*/
+// privacy ring -> label + whether the ward walls the data in
+const RING = {
+  local:    {ring:"LOCAL WARD",  wall:true,  note:"private · data never leaves the machine"},
+  "no-train":{ring:"NO-TRAIN BELT", wall:true, note:"hosted but contractually won't train on your data"},
+  trains:   {ring:"PUBLIC OUTER", wall:false, note:"free but trains on inputs — public data only"},
+  none:     {ring:"KEYLESS EDGE", wall:false, note:"no key, no guarantee — public only"},
+};
+// the 15 plants (grid.PLANTS order by PLANT_RANK). models = representative generators wired.
+const PLANTS = [
+  {id:"ollama",     priv:"local",   rpm:null, rpd:null, key:null,                     models:5,  cap:"unlimited · local", head:"the private base — 5 local models, no cap, no network"},
+  {id:"ovh",        priv:"no-train",rpm:400,  rpd:null, key:"OVH_AI_ENDPOINTS_TOKEN", models:1,  cap:"400 rpm", head:"EU no-train · Qwen2.5-VL-72B"},
+  {id:"cloudflare", priv:"no-train",rpm:300,  rpd:null, key:"CLOUDFLARE_API_TOKEN",   models:2,  cap:"300 rpm · 10k neurons/day", head:"edge inference · qwen3-30b + bge-m3"},
+  {id:"cerebras",   priv:"no-train",rpm:5,    rpd:null, key:"CEREBRAS_API_KEY",       models:1,  cap:"5 rpm · 1M tok/day", head:"~2000 tok/s · batch/leaf only, serialize hard"},
+  {id:"sambanova",  priv:"no-train",rpm:20,   rpd:20,   key:"SAMBANOVA_API_KEY",       models:1,  cap:"20 rpm · 20 rpd/model", head:"gpt-oss-120b · ~120 calls/day across models"},
+  {id:"nvidia",     priv:"no-train",rpm:40,   rpd:null, key:"NVIDIA_API_KEY",          models:121,cap:"121 models · 40 rpm each · 256K", head:"THE GRID — 121 models, each its own 40-rpm bucket. The brutal free capacity."},
+  {id:"groq",       priv:"no-train",rpm:30,   rpd:1000, key:"GROQ_API_KEY",            models:8,  cap:"30 rpm · 1000 rpd", head:"the reflex king — 0.3s llama-3.3-70b"},
+  {id:"gemini",     priv:"trains",  rpm:10,   rpd:1500, key:"GEMINI_API_KEY",          models:1,  cap:"10 rpm · 1500 rpd", head:"public data only (trains on inputs)"},
+  {id:"mistral",    priv:"trains",  rpm:2,    rpd:null, key:"MISTRAL_API_KEY",         models:1,  cap:"2 rpm · 1B tok/mo", head:"EU · opt out before any private use"},
+  {id:"openrouter", priv:"trains",  rpm:20,   rpd:50,   key:"OPENROUTER_API_KEY",      models:1,  cap:"20 rpm · 50 rpd free", head:"22 :free models incl nemotron-550b"},
+  {id:"zai",        priv:"trains",  rpm:10,   rpd:1000, key:"ZAI_API_KEY",             models:2,  cap:"10 rpm · 1000 rpd", head:"GLM-Flash free reasoning + vision"},
+  {id:"github",     priv:"trains",  rpm:15,   rpd:150,  key:"GITHUB_MODELS_TOKEN",     models:0,  cap:"15 rpm · 150 rpd", head:"RETIRING — closed to new customers"},
+  {id:"cohere",     priv:"trains",  rpm:10,   rpd:null, key:"COHERE_API_KEY",          models:0,  cap:"1000 calls/month", head:"rerank only · non-commercial"},
+  {id:"pollinations",priv:"none",   rpm:4,    rpd:null, key:null,                     models:1,  cap:"4 rpm · keyless", head:"the only keyless model now — openai-fast (gpt-oss-20b)"},
+  {id:"hf",         priv:"none",    rpm:null, rpd:null, key:"HF_TOKEN",                models:0,  cap:"$0.10/mo", head:"failover / embeddings layer only"},
+];
+
+// districts: the entity's anatomy as city quarters. rects are normalized (0..1), y down.
+const DISTRICTS = {
+  archive:  {x:.035,y:.125,w:.225,h:.265, label:"THE ARCHIVE", sub:"the book of Luis"},
+  workshops:{x:.285,y:.125,w:.350,h:.125, label:"THE WORKSHOPS", sub:"skills · a growing population"},
+  watch:    {x:.660,y:.125,w:.305,h:.100, label:"THE WATCH", sub:"HADES · law 3"},
+  ports:    {x:.660,y:.250,w:.305,h:.210, label:"THE PORTS", sub:"imports · exports"},
+  broadcast:{x:.035,y:.420,w:.225,h:.190, label:"THE BROADCAST MAST", sub:"voice · signal out"},
+  spire:    {x:.285,y:.275,w:.350,h:.335, label:"THE SPIRE", sub:"the mind"},
+  ledger:   {x:.660,y:.485,w:.305,h:.125, label:"THE LEDGER", sub:"earned autonomy"},
+  foundry:  {x:.035,y:.645,w:.930,h:.320, label:"THE FOUNDRY", sub:"power plants · by privacy ring"},
+};
+
+// organs of THE SPIRE (the mind) — from the AEA inventory
+const MIND = [
+  {id:"aea",         label:"CORE",         role:"the seeded, always-on mind — one core on a loop (nemotron-550b→gpt-oss-120b), continuity across ticks", status:"live"},
+  {id:"orchestrator",label:"ORCHESTRATOR", role:"splits a task into parallel subtasks across independent model buckets, synthesizes one answer", status:"live"},
+  {id:"swarm",       label:"SWARM",        role:"recursive swarm — triage: decompose / escalate / answer / depth-cap", status:"live"},
+  {id:"relay",       label:"RELAY",        role:"genetic memory — predecessor→successor handoff over a compact state capsule", status:"live"},
+  {id:"energy",      label:"ENERGY",       role:"the continuum mouth — every draw routes here, falls down the rod ladder to local so the heartbeat never stops", status:"live"},
+  {id:"pathfinder",  label:"PATHFINDER",   role:"task→crystallized path (search once, run cheap forever); self-heals on gate fail", status:"built"},
+];
+// standalone monuments (their own district anchors)
+const ORGANS = {
+  watch:    [{id:"hades",label:"HADES",role:"the watcher — every autonomous tick is verdicted (accept/redo/reground/halt); reroutes to a different model on drift",status:"live"}],
+  archive:  [
+    {id:"consolidate",label:"CONSOLIDATE",role:"sleep-work: ~1,587 sessions → semantic 'Luis…' facts via local llama3.1:8b (private)",status:"live"},
+    {id:"memory",label:"VECTOR STORE",role:"mxbai-embed-large, local/unlimited/private — grounding beats model capacity",status:"live"},
+    {id:"codex",label:"CODEX INDEX",role:"4,303 chunks / 169 files — TRIVERSE + CORE + portfolio masters, injected into every answer",status:"live"},
+  ],
+  broadcast:[
+    {id:"speak",label:"VOICE",role:"speaks aloud offline — SAPI bedrock (EDR-proof) + Kokoro quality layer",status:"live"},
+    {id:"browserdrive",label:"BROWSER-DRIVE",role:"OS-level automation of the live browser — hands-free action (coordinate-fragile)",status:"live"},
+    {id:"interface",label:"INTERFACE",role:"the front door — global workspace, visible perception→action arc",status:"live"},
+  ],
+  ledger:   [
+    {id:"trust",label:"TRUST",role:"autonomy is earned: FORBIDDEN→DRAFT→WATCHED→TRUSTED. Slow up, fast down. send/spend/keys=FORBIDDEN",status:"live"},
+    {id:"tracelog",label:"TRACELOG",role:"every node carries its goal-stack to an append-only ledger — the accountability floor",status:"live"},
+  ],
+};
+// the workshops — skills as a growing population
+const SKILLS = [
+  {n:"anonymize-guard",s:"live"},{n:"forge",s:"live"},{n:"headless-verify",s:"live"},{n:"jarvis",s:"live"},
+  {n:"triverse",s:"live"},{n:"deep-research",s:"live"},{n:"verify",s:"live"},{n:"code-review",s:"live"},
+  {n:"simplify",s:"live"},{n:"run",s:"live"},{n:"schedule",s:"live"},{n:"loop",s:"live"},
+  {n:"update-config",s:"live"},{n:"security-review",s:"live"},{n:"claude-api",s:"live"},{n:"init",s:"live"},
+  {n:"artifact-design",s:"live"},{n:"review",s:"live"},{n:"keybindings-help",s:"live"},{n:"fewer-prompts",s:"live"},
+  {n:"crystallize-lens",s:"parked"},{n:"personal-aea",s:"parked"},{n:"RAG-my-library",s:"parked"},
+];
+// the ports — service connections (imports/exports). gmail is the outreach gate (income clock).
+const SERVICES = [
+  {n:"Gmail",dir:"both",auth:"connected",gate:true,  s:"read/draft/label — the OUTREACH gate (drafts only; sending is trust-FORBIDDEN)"},
+  {n:"Calendar",dir:"both",auth:"connected",s:"events, availability, suggest-time"},
+  {n:"Drive",dir:"both",auth:"connected",s:"files: create/read/search/copy"},
+  {n:"GitHub",dir:"import",auth:"env-key",s:"live repo activity (Leyber91) — brief.py source"},
+  {n:"Hacker News",dir:"import",auth:"open",s:"live news — brief.py source"},
+  {n:"HuggingFace",dir:"import",auth:"connected",s:"hub, datasets, models, papers (Leyber91)"},
+  {n:"Crypto.com",dir:"import",auth:"connected",s:"live market data — books, trades, candles"},
+  {n:"Slack",dir:"both",auth:"needs-auth",s:"messaging — pending OAuth (latent)"},
+];
+
+/* ============================================================================
+   2. GEOMETRY — build node objects with normalized positions inside districts
+   ==========================================================================*/
+const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+let W=0,H=0,DPR=Math.min(devicePixelRatio||1,2);
+const nodes={};   // id -> node {kind,x,y,w,h (px, set each frame via norm),...}
+const pipes=[];   // {a,b,kind}
+let pulses=[];    // {from,to,start,dur,bad}
+
+// helper: place N items in a grid inside a district rect (returns normalized centers + cell size).
+// padTopFrac = fraction of district height reserved for the label header. Always yields positive cells.
+function layoutGrid(d, n, padTopFrac=0.28, cellPad=0.16){
+  const cols=Math.max(1, Math.round(Math.sqrt(n*d.w/Math.max(d.h,0.001))));
+  const rows=Math.ceil(n/cols);
+  const top=d.h*padTopFrac;
+  const gx=d.w/cols, gy=Math.max(0.006,(d.h-top)/rows);
+  const cw=Math.max(0.02,gx*(1-cellPad)), ch=Math.max(0.012,gy*(1-cellPad*1.3));
+  const cells=[];
+  for(let i=0;i<n;i++){const r=Math.floor(i/cols),c=i%cols;
+    cells.push({x:d.x+gx*(c+.5), y:d.y+top+gy*(r+.5), w:cw, h:ch});}
+  return cells;
+}
+function addNode(id,o){ nodes[id]=Object.assign({id,glow:0,lit:false,err:false,meter:0},o); }
+
+// SPIRE core monument (center of spire district)
+const sp=DISTRICTS.spire;
+addNode("spire",{kind:"spire",district:"spire",nx:sp.x+sp.w/2,ny:sp.y+sp.h*0.46,nw:sp.w*0.30,nh:sp.h*0.30,
+  label:"THE SPIRE",role:"the mind of the entity"});
+// mind organs ring around the spire core
+MIND.forEach((m,i)=>{const a=-Math.PI/2+i*(2*Math.PI/MIND.length);
+  addNode("mind_"+m.id,{kind:"organ",district:"spire",data:m,
+    nx:sp.x+sp.w/2+Math.cos(a)*sp.w*0.34, ny:sp.y+sp.h*0.46+Math.sin(a)*sp.h*0.32,
+    nw:sp.w*0.16,nh:sp.h*0.085,label:m.label,status:m.status});
+  pipes.push({a:"mind_"+m.id,b:"spire",kind:"mind"});});
+
+// standalone-district organs
+for(const dk of ["watch","archive","broadcast","ledger"]){
+  const d=DISTRICTS[dk], arr=ORGANS[dk], cells=layoutGrid(d,arr.length,0.32,0.16);
+  arr.forEach((o,i)=>{const c=cells[i];
+    addNode(dk+"_"+o.id,{kind:"organ",district:dk,data:o,nx:c.x,ny:c.y,nw:c.w,nh:c.h,label:o.label,status:o.status});});
+  pipes.push({a:dk,b:"spire",kind:"trunk"});   // district trunk line to the spire
+}
+// district "anchor" points (near edge facing spire) for trunk pulses
+function anchor(dk){const d=DISTRICTS[dk];
+  return {nx:d.x+d.w/2, ny:d.y+d.h*(dk==="foundry"?0.02:(d.y<sp.y?0.9:(d.y>sp.y?0.1:0.5))), _anchor:true};}
+["watch","archive","broadcast","ledger","workshops","ports","foundry"].forEach(dk=>{nodes[dk]=Object.assign(nodes[dk]||{},anchor(dk),{id:dk,glow:0});});
+
+// workshops — skills
+{const d=DISTRICTS.workshops, cells=layoutGrid(d,SKILLS.length,0.30,0.12);
+ SKILLS.forEach((s,i)=>{const c=cells[i];
+   addNode("skill_"+i,{kind:"skill",district:"workshops",data:s,nx:c.x,ny:c.y,nw:c.w,nh:c.h,label:s.n,status:s.s});});
+ pipes.push({a:"workshops",b:"spire",kind:"trunk"});}
+
+// ports — services
+{const d=DISTRICTS.ports, cells=layoutGrid(d,SERVICES.length,0.30,0.14);
+ SERVICES.forEach((s,i)=>{const c=cells[i];
+   addNode("svc_"+i,{kind:"svc",district:"ports",data:s,nx:c.x,ny:c.y,nw:c.w,nh:c.h,label:s.n,status:s.auth});});
+ pipes.push({a:"ports",b:"spire",kind:"trunk"});}
+
+// foundry — plants, grouped by ring left→right
+{const d=DISTRICTS.foundry, n=PLANTS.length, gx=d.w/n;
+ PLANTS.forEach((p,i)=>{
+   addNode("plant_"+p.id,{kind:"plant",district:"foundry",data:p,
+     nx:d.x+gx*(i+.5), ny:d.y+d.h*0.58, nw:gx*0.74, nh:d.h*0.42, label:p.id, priv:p.priv});
+   pipes.push({a:"plant_"+p.id,b:"spire",kind:"power"});   // power lines feed the spire
+ });}
+
+/* ============================================================================
+   3. RENDER
+   ==========================================================================*/
+function px(n){return {x:n.nx*W, y:n.ny*H};}
+function rr(x,y,w,h,r){ctx.beginPath();
+  r=Math.max(0,Math.min(r,w/2,h/2));            // never negative -> arcTo can't throw
+  ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+function drawDistrict(d){
+  const x=d.x*W,y=d.y*H,w=d.w*W,h=d.h*H;
+  rr(x,y,w,h,7*DPR);
+  ctx.fillStyle="rgba(255,255,255,0.012)"; ctx.fill();
+  ctx.lineWidth=DPR; ctx.strokeStyle="rgba(241,240,236,0.07)"; ctx.stroke();
+  ctx.textAlign="left";
+  ctx.font=`600 ${10*DPR}px 'IBM Plex Mono'`; ctx.fillStyle="rgba(212,162,76,0.9)";
+  ctx.fillText(d.label, x+11*DPR, y+16*DPR);
+  ctx.font=`${9*DPR}px 'IBM Plex Mono'`; ctx.fillStyle="#615f66";
+  ctx.fillText(d.sub, x+11*DPR, y+28*DPR);
+}
+function pipeColor(kind,a){return kind==="power"?`rgba(212,162,76,${a})`:`rgba(241,240,236,${a})`;}
+function drawPipes(){
+  ctx.lineWidth=DPR;
+  for(const p of pipes){const A=nodes[p.a],B=nodes[p.b]; if(!A||!B)continue;
+    const a=px(A),b=px(B);
+    const active=(A.glow||0)>0.05||(B.glow||0)>0.05;
+    ctx.strokeStyle=pipeColor(p.kind, active?0.16:0.05);
+    ctx.beginPath();ctx.moveTo(a.x,a.y);
+    const mx=(a.x+b.x)/2; ctx.bezierCurveTo(mx,a.y,mx,b.y,b.x,b.y);
+    ctx.stroke();}
+}
+function drawPulses(){
+  const now=performance.now(); pulses=pulses.filter(p=>now-p.start<p.dur);
+  for(const p of pulses){const A=nodes[p.from],B=nodes[p.to]; if(!A||!B)continue;
+    const a=px(A),b=px(B),f=(now-p.start)/p.dur;
+    const mx=(a.x+b.x)/2, u=1-f;
+    const x=u*u*a.x+2*u*f*mx+f*f*b.x, y=u*u*a.y+2*u*f*b.y+f*f*b.y; // approx along the curve
+    ctx.fillStyle=p.bad?BAD:GOLD;
+    ctx.beginPath();ctx.arc(x,y,3.2*DPR,0,7);ctx.fill();
+    ctx.globalAlpha=0.4;ctx.beginPath();ctx.arc(x,y,6*DPR*(1-f),0,7);ctx.fill();ctx.globalAlpha=1;}
+}
+function drawBuilding(n){
+  const c=px(n), w=n.nw*W, h=n.nh*H, x=c.x-w/2, y=c.y-h/2;
+  if(!(w>0)||!(h>0))return;                      // skip degenerate nodes rather than throw
+  const g=Math.min(1.5,n.glow||0), lit=n.lit, err=n.err;
+  // glow halo
+  if(g>0.03){const rad=Math.max(w,h);
+    const grd=ctx.createRadialGradient(c.x,c.y,rad*0.2,c.x,c.y,rad*1.5);
+    grd.addColorStop(0,`rgba(${err?'201,106,90':'212,162,76'},${Math.min(.42,g*.4)})`);
+    grd.addColorStop(1,"rgba(212,162,76,0)");
+    ctx.fillStyle=grd;ctx.fillRect(x-rad,y-rad,w+rad*2,h+rad*2);}
+  // body
+  rr(x,y,w,h,3.5*DPR);
+  ctx.fillStyle=PANEL; ctx.fill();
+  const edge = err?BAD : (lit||g>.05)?`rgba(212,162,76,${.35+Math.min(.6,g)})` : "rgba(241,240,236,0.16)";
+  ctx.lineWidth=(n.priv&&RING[n.priv]&&RING[n.priv].wall && n.kind==="plant")?1.6*DPR:1.1*DPR;
+  ctx.strokeStyle=edge; ctx.stroke();
+  // meter fill (plants: rpm usage)
+  if(n.meter>0){rr(x,y+h*(1-n.meter),w,h*n.meter,3.5*DPR);
+    ctx.fillStyle=err?"rgba(201,106,90,0.22)":"rgba(212,162,76,0.20)";ctx.fill();}
+  // roof light for lit structures
+  if(lit&&!err){ctx.fillStyle=GOLD;ctx.beginPath();
+    ctx.arc(c.x, y+3.5*DPR, 1.7*DPR, 0,7);ctx.fill();}
+  // label
+  const short=(n.label||"").length>13?n.label.slice(0,12)+"…":n.label;
+  ctx.textAlign="center";
+  ctx.font=`${(n.kind==="plant"?9.5:8.7)*DPR}px 'IBM Plex Mono'`;
+  ctx.fillStyle = err?BAD : (lit||g>.05)?"#e9c886":"#8a888e";
+  ctx.fillText(short, c.x, c.y+3*DPR);
+}
+function drawSpire(n){
+  const c=px(n), w=n.nw*W, h=n.nh*H;
+  const g=Math.min(1.6,n.glow||0);
+  // beacon glow
+  const grd=ctx.createRadialGradient(c.x,c.y,w*0.2,c.x,c.y,w*1.8);
+  grd.addColorStop(0,`rgba(212,162,76,${0.18+g*0.25})`);grd.addColorStop(1,"rgba(212,162,76,0)");
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(c.x,c.y,w*1.8,0,7);ctx.fill();
+  // hexagon monument
+  ctx.beginPath();for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI/3;
+    const xx=c.x+Math.cos(a)*w*0.62, yy=c.y+Math.sin(a)*h*0.62; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}
+  ctx.closePath();
+  ctx.fillStyle="#151319";ctx.fill();
+  ctx.lineWidth=1.6*DPR;ctx.strokeStyle=`rgba(212,162,76,${.6+Math.min(.4,g)})`;ctx.stroke();
+  ctx.textAlign="center";
+  ctx.font=`600 ${13*DPR}px 'IBM Plex Mono'`;ctx.fillStyle=GOLD;
+  ctx.fillText(LIVE.name||"THE SPIRE", c.x, c.y+1*DPR);
+  ctx.font=`${8.5*DPR}px 'IBM Plex Mono'`;ctx.fillStyle="#8a888e";
+  ctx.fillText(LIVE.tick!=null?("tick "+LIVE.tick+" · click to talk"):"the mind · click to talk", c.x, c.y+15*DPR);
+}
+function frame(){
+  W=cv.width=Math.floor(cv.clientWidth*DPR); H=cv.height=Math.floor(cv.clientHeight*DPR);
+  ctx.clearRect(0,0,W,H);
+  for(const k in DISTRICTS) drawDistrict(DISTRICTS[k]);
+  drawPipes(); drawPulses();
+  // buildings (non-spire), then spire on top
+  for(const id in nodes){const n=nodes[id]; if(n._anchor)continue;
+    if(n.kind==="spire")continue;
+    if(n.kind) drawBuilding(n);
+    n.glow=(n.glow||0)*0.945;}
+  drawSpire(nodes.spire); nodes.spire.glow=(nodes.spire.glow||0)*0.95;
+  // decay anchors
+  for(const dk of ["watch","archive","broadcast","ledger","workshops","ports","foundry"])
+    if(nodes[dk]) nodes[dk].glow=(nodes[dk].glow||0)*0.945;
+  requestAnimationFrame(frame);
+}
+
+/* ============================================================================
+   4. LIVE WIRING — poll /state (2s) and /events (0.7s) from the running entity
+   ==========================================================================*/
+const LIVE={name:null,tick:null,online:new Set()};
+function firePulse(from,to,bad){if(nodes[from]&&nodes[to])pulses.push({from,to,start:performance.now(),dur:720,bad});}
+function glow(id,v){if(nodes[id])nodes[id].glow=Math.min(1.6,(nodes[id].glow||0)+v);}
+
+async function pollState(){
+  try{
+    const s=await (await fetch("/state")).json();
+    LIVE.name=(s.identity&&s.identity.name)||"THE SPIRE"; LIVE.tick=s.life&&s.life.ticks;
+    document.getElementById("status").className="";
+    document.getElementById("statustxt").textContent=
+      `${LIVE.name} · alive since ${(s.life&&s.life.alive_since)||"—"} · ${s.life?s.life.ticks:0} ticks · read live ${s.t}`;
+    document.getElementById("talk-name").textContent=`${LIVE.name} · talk to the entity`;
+    // plants: online set + live rpm meter + throttle
+    LIVE.online=new Set((s.energy&&s.energy.plants||[]).map(p=>p.plant));
+    for(const p of PLANTS){const n=nodes["plant_"+p.id]; if(!n)continue;
+      const live=(s.energy&&s.energy.plants||[]).find(x=>x.plant===p.id);
+      n.lit = !!live || p.key===null;                 // online if in state OR keyless/local
+      if(live){const cap=live.rpm_cap||p.rpm; n.meter=cap?Math.min(1,(live.rpm_now||0)/cap):(live.rpm_now>0?0.5:0);
+        n.err=(live.throttled&&live.throttled.length>0);
+        n._live=live;}
+      else {n.meter=0;n.err=false;n._live=null;}
+    }
+    // archive: memory count
+    LIVE.memories=s.memory&&s.memory.memories; LIVE.sessions=s.memory&&s.memory.sessions;
+    // ledger: trust
+    LIVE.trust=s.trust||{};
+    // broadcast/interface always available; light interface faintly
+    LIVE.brief=s.brief||[]; LIVE.rods=(s.energy&&s.energy.rods)||[]; LIVE.census=(s.energy&&s.energy.census)||{};
+    LIVE.mindTurns=(s.mind&&s.mind.turns)||[];
+    // mark live skills/services lit (all live ones glow faintly-on)
+    for(const id in nodes){const n=nodes[id];
+      if(n.kind==="skill") n.lit=(n.data.s==="live");
+      if(n.kind==="svc")   n.lit=(n.data.auth!=="needs-auth");
+      if(n.kind==="organ") n.lit=(n.status==="live");}
+  }catch(e){
+    document.getElementById("status").className="off";
+    document.getElementById("statustxt").textContent="entity offline — showing the city map (start: python controlroom.py)";
+    for(const p of PLANTS){const n=nodes["plant_"+p.id];if(n)n.lit=(p.key===null);}
+  }
+  setTimeout(pollState,2000);
+}
+// EVENT -> city geography (mirrors brain.html reflect, mapped to districts)
+function reflect(e){
+  const d=(e.detail||"").toLowerCase(), organ=e.organ, bad=e.ok===false;
+  if(organ==="energy"){glow("spire",.6);
+    const pl=PLANTS.find(p=>d.startsWith(p.id+"/")||d.includes(p.id+"/")||d.includes(p.id));
+    if(pl){firePulse("plant_"+pl.id,"spire",bad);glow("plant_"+pl.id,1.1);} else glow("foundry",.6);}
+  else if(organ==="mind"){glow("spire",1);
+    if(e.action==="hears-luis")firePulse("ports","spire",false);
+    if(e.action==="replies")firePulse("spire","broadcast_speak",bad);}
+  else if(organ==="memory"){glow("archive",1);firePulse("archive","spire",bad);}
+  else if(organ==="life"){glow("spire",.8);}
+  else if(organ==="trust"){glow("ledger_trust",1);firePulse("spire","ledger",bad);}
+  else if(organ==="voice"){glow("broadcast_speak",1.3);}
+  else if(organ==="watcher"){glow("watch_hades",1);firePulse("watch","spire",bad);}
+}
+let lastT=0;
+async function pollEvents(){
+  try{const ev=await (await fetch("/events?since="+lastT)).json();
+    for(const e of ev){reflect(e); lastT=Math.max(lastT,e.t);}}catch(_){}
+  setTimeout(pollEvents,700);
+}
+
+/* ============================================================================
+   5. INTERACTION — hover tooltip, click → inspector, spire → talk, DO rail
+   ==========================================================================*/
+const insp=document.getElementById("insp"), tip=document.getElementById("tip");
+function hit(mx,my){ // mx,my in css px
+  let found=null,fd=1e9;
+  for(const id in nodes){const n=nodes[id]; if(n._anchor||!n.kind)continue;
+    const c={x:n.nx*cv.clientWidth,y:n.ny*cv.clientHeight};
+    const hw=(n.kind==="spire"?n.nw*1.1:n.nw)*cv.clientWidth/2, hh=(n.kind==="spire"?n.nh*1.1:n.nh)*cv.clientHeight/2;
+    if(Math.abs(mx-c.x)<=hw && Math.abs(my-c.y)<=hh){const dd=Math.hypot(mx-c.x,my-c.y);if(dd<fd){fd=dd;found=n;}}}
+  return found;
+}
+cv.addEventListener("mousemove",ev=>{const r=cv.getBoundingClientRect();
+  const n=hit(ev.clientX-r.left,ev.clientY-r.top);
+  if(n){cv.style.cursor="pointer";
+    let t=n.label;
+    if(n.kind==="plant"){const p=n.data;t=`${p.id} · ${RING[p.priv].ring}\n${p.cap}\n${n.lit?(n._live?`rpm ${n._live.rpm_now||0}/${n._live.rpm_cap||p.rpm||"∞"} · ${n._live.rpd||0} today`:"online"):"awaiting key"}`;}
+    else if(n.kind==="skill")t=`skill · ${n.data.n} (${n.data.s})`;
+    else if(n.kind==="svc")t=`${n.data.n} · ${n.data.dir} · ${n.data.auth}`;
+    else if(n.kind==="organ")t=`${n.label} — ${n.status}`;
+    else if(n.kind==="spire")t=`${LIVE.name||"the mind"} · click to talk`;
+    tip.textContent=t; tip.style.opacity=1;
+    tip.style.left=Math.min(ev.clientX+14,innerWidth-tip.offsetWidth-10)+"px";
+    tip.style.top=(ev.clientY+14)+"px";
+  } else {cv.style.cursor="default"; tip.style.opacity=0;}
+});
+cv.addEventListener("mouseleave",()=>{tip.style.opacity=0;});
+cv.addEventListener("click",ev=>{const r=cv.getBoundingClientRect();
+  const n=hit(ev.clientX-r.left,ev.clientY-r.top); if(!n)return;
+  if(n.kind==="spire"){openTalk();return;}
+  openInspector(n);
+});
+function inspRows(html){document.getElementById("insp-body").innerHTML=html;}
+function openInspector(n){
+  insp.classList.add("open"); closeTalk();
+  const eye=document.getElementById("insp-eye"),ti=document.getElementById("insp-title"),ro=document.getElementById("insp-role");
+  if(n.kind==="plant"){const p=n.data,l=n._live;
+    eye.textContent="THE FOUNDRY · power plant"; ti.innerHTML=`<b>${p.id}</b>`;
+    ro.textContent=p.head;
+    inspRows(
+      `<div class="kv"><b>privacy ring</b><span class="${RING[p.priv].wall?'g':''}">${RING[p.priv].ring}</span></div>`+
+      `<div class="kv"><b>data policy</b><span>${RING[p.priv].note}</span></div>`+
+      `<div class="kv"><b>capacity</b><span>${p.cap}</span></div>`+
+      `<div class="kv"><b>rate limit</b><span>${p.rpm?p.rpm+" rpm":"unlimited"}${p.rpd?" · "+p.rpd+" rpd":""}</span></div>`+
+      `<div class="kv"><b>models wired</b><span>${p.models}</span></div>`+
+      `<div class="kv"><b>state</b><span class="${n.err?'r':(n.lit?'g':'')}">${n.err?'THROTTLED':(n.lit?'ONLINE':'awaiting key')}</span></div>`+
+      (l?`<div class="kv"><b>rpm now</b><span class="g">${l.rpm_now||0} / ${l.rpm_cap||p.rpm||'∞'}</span></div>`+
+          `<div class="kv"><b>requests today</b><span>${l.rpd||0}${l.rpd_cap?' / '+l.rpd_cap:''}</span></div>`+
+          `<div class="meter"><i style="width:${Math.round((n.meter||0)*100)}%"></i></div>`+
+          (l.throttled&&l.throttled.length?`<div style="margin-top:8px"><span class="tag warn">cooling: ${l.throttled.join(', ')}</span></div>`:'')
+        :`<div style="margin-top:8px;color:#615f66">no live meter — plant is ${p.key===null?'keyless/local':'not keyed on this machine'}</div>`)
+    );
+  } else if(n.kind==="skill"){const s=n.data;
+    eye.textContent="THE WORKSHOPS · skill"; ti.innerHTML=`<b>${s.n}</b>`;
+    ro.textContent="a crystallized capability in the growing population.";
+    inspRows(`<div style="margin-bottom:10px"><span class="tag ${s.s==='live'?'live':''}">${s.s}</span></div>`+
+      `<div class="mono">${s.s==='live'?'Available now — invoke by name.':'Parked — captured, awaiting a fresh-morning build session.'}</div>`);
+  } else if(n.kind==="svc"){const s=n.data;
+    eye.textContent="THE PORTS · "+(s.dir==="import"?"import":s.dir==="export"?"export":"import/export");
+    ti.innerHTML=`<b>${s.n}</b>`; ro.textContent=s.s;
+    inspRows(`<div style="margin-bottom:10px"><span class="tag ${s.auth==='needs-auth'?'warn':'live'}">${s.auth}</span> <span class="tag">${s.dir}</span></div>`+
+      (s.gate?`<div class="mono" style="color:var(--gold)">This is the outreach gate. The entity can DRAFT here; sending is trust-FORBIDDEN until you approve. The income clock runs through this door.</div>`:
+        `<div class="mono">${s.auth==='needs-auth'?'Needs OAuth in an interactive session before it can be used.':'Connected — the entity can reach this service.'}</div>`));
+  } else if(n.kind==="organ"){const o=n.data;
+    const dmap={watch:"THE WATCH",archive:"THE ARCHIVE",broadcast:"THE BROADCAST MAST",ledger:"THE LEDGER",spire:"THE SPIRE"};
+    eye.textContent=(dmap[n.district]||"organ"); ti.innerHTML=`<b>${o.label}</b>`; ro.textContent=o.role;
+    let extra="";
+    if(o.id==="consolidate"&&LIVE.memories!=null)
+      extra=`<div class="kv"><b>semantic memories</b><span class="g">${LIVE.memories}</span></div>`+
+            `<div class="kv"><b>sessions consolidated</b><span>${LIVE.sessions} / ~1587</span></div>`+
+            `<div class="meter"><i style="width:${Math.round(100*(LIVE.sessions||0)/1587)}%"></i></div>`;
+    if(o.id==="trust"&&LIVE.trust){extra='<div class="list" style="margin-top:6px">'+
+      Object.entries(LIVE.trust).map(([c,v])=>`<div class="row"><b>${c}</b><span class="s">${v.level} · streak ${v.streak} · ${v.runs}/${v.fails} runs/fails</span></div>`).join('')+'</div>';}
+    inspRows(`<div style="margin-bottom:10px"><span class="tag ${o.status==='live'?'live':''}">${o.status==='live'?'live · firing':'built · not yet wired'}</span></div>`+extra||
+      `<div style="margin-bottom:10px"><span class="tag ${o.status==='live'?'live':''}">${o.status}</span></div>`);
+    if(extra)inspRows(`<div style="margin-bottom:10px"><span class="tag ${o.status==='live'?'live':''}">${o.status==='live'?'live · firing':'built'}</span></div>`+extra);
+  }
+}
+document.getElementById("inspx").onclick=()=>insp.classList.remove("open");
+
+// TALK console
+const talk=document.getElementById("talk"),feed=document.getElementById("talk-feed"),tin=document.getElementById("talk-in");
+function openTalk(){talk.classList.add("open");insp.classList.remove("open");glow("spire",1);setTimeout(()=>tin.focus(),200);
+  if(!feed.children.length && LIVE.mindTurns&&LIVE.mindTurns.length){
+    LIVE.mindTurns.forEach(t=>addTurn(t.who==="luis"?"you":(LIVE.name||"entity"),t.text,null,t.who==="luis"));}}
+function closeTalk(){talk.classList.remove("open");}
+document.getElementById("talkx").onclick=closeTalk;
+function addTurn(who,text,receipt,you){const d=document.createElement("div");
+  d.className="turn"+(you?" you":"");
+  d.innerHTML=`<b>${who}</b> ${text.replace(/</g,"&lt;")}`+(receipt?`<div class="receipt">${receipt}</div>`:"");
+  feed.appendChild(d); feed.scrollTop=feed.scrollHeight; return d;}
+async function send(){const text=tin.value.trim(); if(!text)return;
+  tin.value=""; addTurn("you",text,null,true);
+  const st=document.getElementById("talk-state"); st.textContent="thinking…";
+  glow("spire",1.2);
+  try{
+    const r=await (await fetch("/talk",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text, zone:document.getElementById("opt-local").checked?"local":"private",
+        speak:document.getElementById("opt-voice").checked})})).json();
+    const mem=(r.memories&&r.memories.length)?`recalled ${r.memories.length} memories · `:"";
+    const rod=r.rod?`${r.rod} · ${(r.latency||0).toFixed?r.latency.toFixed(2):r.latency}s · ${r.zone}`:"no rod answered";
+    addTurn(LIVE.name||"entity", r.reply||"(silence)", mem+rod);
+    if(document.getElementById("opt-voice").checked)glow("broadcast_speak",1.4);
+    st.textContent="";
+  }catch(e){addTurn("system","talk failed: "+e,null);st.textContent="";}
+}
+document.getElementById("talk-send").onclick=send;
+tin.addEventListener("keydown",e=>{if(e.key==="Enter")send();});
+
+// DO rail
+document.querySelectorAll("#rail .btn").forEach(b=>b.onclick=async()=>{
+  const cmd=b.dataset.cmd, out=document.getElementById("railout");
+  b.classList.add("busy"); out.textContent=cmd+"…";
+  glow("spire",.8);
+  try{const r=await (await fetch("/do",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({cmd})})).json();
+    out.textContent=(r.ok?"":"[fail] ")+(r.out||"(no output)");
+  }catch(e){out.textContent="failed: "+e;}
+  b.classList.remove("busy");
+});
+
+// keyboard: esc closes panels
+addEventListener("keydown",e=>{if(e.key==="Escape"){insp.classList.remove("open");closeTalk();}});
+
+frame(); pollState(); pollEvents();
+</script></body></html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE MIND · a naked brain</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--panel:#101012;--ink:#f1f0ec;--soft:#b9b8b3;--dim:#76757a;--faint:#3a393f;
+  --gold:#d4a24c;--amber:#e8b866;--bad:#c96a5a;--line:rgba(241,240,236,.09);--glass:rgba(13,13,16,.88)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font:12px/1.5 'IBM Plex Mono',Consolas,monospace}
+#scene{position:fixed;inset:0}
+.hud{position:fixed;z-index:5}
+#title{top:16px;left:20px;pointer-events:none}
+#title .ey{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+#title h1{font-weight:300;font-size:21px;letter-spacing:.12em;margin-top:5px}
+#title h1 b{color:var(--gold);font-weight:600}
+#title .sub{color:var(--soft);font-size:10.5px;margin-top:5px;max-width:520px}
+#status{margin-top:6px;font-size:10.5px;color:var(--soft)}
+#status.off{color:var(--bad)}
+#legend{bottom:14px;left:20px;pointer-events:none;color:var(--soft);font-size:10.5px;line-height:1.8}
+#legend .k{display:inline-block;width:9px;height:9px;margin-right:7px;vertical-align:middle;border-radius:50%}
+#legend .on{background:var(--gold)}#legend .pa{background:#8d8c92}#legend .mi{background:var(--bad)}
+#legend .hint{margin-top:6px;color:var(--dim)}
+.lab{position:fixed;transform:translate(-50%,-50%);pointer-events:none;z-index:4;white-space:nowrap;
+  font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
+  text-shadow:0 0 10px rgba(0,0,0,.95),0 1px 3px #000}
+.lab .st{display:block;text-align:center;font-weight:400;font-size:8.5px;letter-spacing:.08em;color:var(--soft);text-transform:none}
+.lab.miss{color:var(--bad)}
+#insp{top:0;right:0;height:100%;width:390px;max-width:88vw;background:var(--glass);backdrop-filter:blur(10px);
+  border-left:1px solid var(--line);transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;pointer-events:auto;z-index:6}
+#insp.open{transform:none}
+#insp header{padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+#insp .eyebrow{font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+#insp h2{font-weight:300;font-size:19px;letter-spacing:.03em;margin-top:5px}#insp h2 b{color:var(--gold);font-weight:600}
+#insp .role{color:var(--soft);font-size:11px;margin-top:6px;line-height:1.55}
+#insp .body{flex:1;overflow-y:auto;padding:14px 20px 22px}
+#insp .x{position:absolute;top:15px;right:18px;color:var(--dim);cursor:pointer;font-size:16px}#insp .x:hover{color:var(--gold)}
+.row{padding:6px 0;border-top:1px solid var(--line);font-size:11px}
+.row:first-child{border-top:none}
+.row b{color:var(--ink);font-weight:400}
+.row .s{color:var(--dim);font-size:10px;display:block;margin-top:1px}
+.pill{display:inline-block;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;padding:2px 7px;
+  border:1px solid var(--line);border-radius:3px;color:var(--dim);margin-left:8px}
+.pill.live{color:var(--gold);border-color:rgba(212,162,76,.5)}
+.pill.part{color:var(--soft)}
+.pill.miss{color:var(--bad);border-color:rgba(201,106,90,.5)}
+.gap{margin-top:12px;border:1px dashed rgba(201,106,90,.5);padding:9px 11px;font-size:10.5px;color:var(--bad)}
+.gap b{color:var(--bad);letter-spacing:.14em;font-size:9px;text-transform:uppercase;display:block;margin-bottom:3px}
+#feedbox{bottom:14px;right:20px;width:330px;max-height:30vh;overflow:hidden;pointer-events:none}
+#feedbox .ev{font-size:9.5px;color:var(--dim);padding:2px 0;word-break:break-word}
+#feedbox .ev b{color:var(--gold);font-weight:600}.ev.bad b{color:var(--bad)}
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9;background:var(--bg);
+  color:var(--dim);font-size:11px;letter-spacing:.22em;text-transform:uppercase;transition:opacity .6s}
+</style></head><body>
+<div id="scene"></div>
+<div id="loading">growing the mind…</div>
+<div class="hud" id="title">
+  <div class="ey">Leyber · the seven properties, embodied</div>
+  <h1>THE <b>MIND</b> — a naked brain</h1>
+  <div class="sub">Every region = one measured-correlate indicator property, built from real organs. Pulses are real
+  events broadcasting through the GLOBAL WORKSPACE. Nothing here is decorative — dim regions are honest gaps.</div>
+  <div id="status">connecting…</div>
+</div>
+<div class="hud" id="legend">
+  <div><span class="k on"></span> live — the property has firing machinery</div>
+  <div><span class="k pa"></span> partial — organs exist, the binding loop missing</div>
+  <div><span class="k mi"></span> missing — named building element, on the roadmap</div>
+  <div class="hint">drag orbit · scroll zoom · click a region for its anatomy</div>
+</div>
+<div class="hud" id="insp">
+  <span class="x" id="inspx">✕</span>
+  <header><div class="eyebrow" id="i-eye">region</div><h2 id="i-t"></h2><div class="role" id="i-r"></div></header>
+  <div class="body" id="i-b"></div>
+</div>
+<div class="hud" id="feedbox"><div id="feed"></div></div>
+
+<script src="three.min.js"></script>
+<script src="OrbitControls.js"></script>
+<script src="CopyShader.js"></script>
+<script src="LuminosityHighPassShader.js"></script>
+<script src="EffectComposer.js"></script>
+<script src="ShaderPass.js"></script>
+<script src="RenderPass.js"></script>
+<script src="UnrealBloomPass.js"></script>
+<script>
+"use strict";
+window.onerror=function(m,s,l){var e=document.getElementById("status");if(e){e.textContent="JS ERROR: "+m+" @"+l;e.className="off";}
+  var ld=document.getElementById("loading");if(ld)ld.style.display="none";};
+const GOLD=0xd4a24c, AMBER=0xe8b866, BAD=0xc96a5a, PART=0x8d8c92;
+const STILL=location.search.includes("still");
+
+/* ============ THE SEVEN REGIONS (+ brainstem) — honest anatomy ============ */
+const REGIONS={
+ workspace:{p:[0,4,0],r:7.5,st:"part",label:"GLOBAL WORKSPACE",
+  mean:"One stage where competing processes post and the winner becomes globally available to every other region. Today: the dialogue + pulse bus broadcast; the COMPETITION/arbiter is the missing piece.",
+  parts:[["talk / face — the broadcast stage","live"],["pulse bus — events all regions see","live"],
+         ["attention arbiter — what wins the stage","miss"],["think() one door (D1)","miss"]],
+  gap:"D1 think() + an arbiter: multiple candidate processes bid; one wins broadcast; losers stay local."},
+ selfmodel:{p:[0,27,-7],r:5.2,st:"part",label:"SELF-MODEL",
+  mean:"A model of ITSELF it can read and update — who it is, what it can do, what it is doing now. The gauntlet proved injecting it kills confabulation.",
+  parts:[["self.json — autobiography · goals · tasks","live"],["identity (LEYBER) + creed","live"],
+         ["self-digest injected into every reply","live"],["reflect tick — the self as a LOOP (E1)","miss"]],
+  gap:"E1: read self -> pursue one task -> write back. Until then the self is a document, not a process."},
+ metacog:{p:[0,20,-24],r:5.4,st:"live",label:"METACOGNITION",
+  mean:"Thinking about its own thinking: judging outputs vs goals, knowing its ceiling, calibrated trust. The strongest region — Law 3 made it mandatory from birth.",
+  parts:[["HADES — every autonomous output verdicted","live"],["trust ledger — calibrated self-permission","live"],
+         ["gauntlet — the self-exam","live"],["confidence on ordinary replies","part"]],
+  gap:"attach a confidence estimate + 'what would change my mind' to normal answers, not only verdicts."},
+ worldmodel:{p:[0,13,23],r:5.8,st:"part",label:"WORLD-MODEL",
+  mean:"Its model of the world it acts in — above all, of Luis. The Book + codex are deep; the LIVE world (the actual day) is the hole.",
+  parts:[["the Book of Luis — 48 memories","live"],["codex — 4,356 chunks of canon","live"],
+         ["capability registry — its tool-world","live"],["day.json — the actual situation (F2)","miss"],
+         ["graph memory — concepts as edges (B5)","miss"]],
+  gap:"F1/F2 day intake + B5 graph triples: a world-model that knows what TODAY is."},
+ temporal:{p:[0,3,-27],r:5.2,st:"part",label:"TEMPORAL CONTINUITY",
+  mean:"Being the same entity across time: episodic experience consolidating into semantic identity, a narrative it can tell.",
+  parts:[["heartbeat — unbroken since 2026-07-10","live"],["consolidation — episodic → semantic","live"],
+         ["the JOURNAL — its narrative, readable","live"],["depth: 16 of 1,587 sessions (1%)","part"]],
+  gap:"B1 consolidation campaign — continuity exists; HISTORY is still shallow."},
+ drives:{p:[0,-7,-3],r:4.8,st:"part",label:"DRIVES",
+  mean:"What it WANTS — setpoints that bias every decision, like valence does. Today the drives are written laws, not a felt gradient.",
+  parts:[["the income guard — serve the clock first","live"],["the Loop's Law — ship or the loop lies","live"],
+         ["creed — boundary · honesty · escalation","live"],["homeostat — drives as measured setpoints","miss"]],
+  gap:"a drive vector (income · book-depth · trust · energy-health) read each wake; deviations create tasks."},
+ agency:{p:[0,22,10],r:5.2,st:"part",label:"AGENCY",
+  mean:"Acting on the world from its own goals — hands gated by earned trust. Pieces are live; SELF-DIRECTED action awaits the reflect tick.",
+  parts:[["tools — web/json/calc, chosen by the model","live"],["hands — drafts · voice · (income artifacts)","part"],
+         ["trust gates — FORBIDDEN blocks, always","live"],["PLAY loop running unattended (X1/E2)","miss"]],
+  gap:"X1 pressed + E1 reflect = the first acts that originate INSIDE it."},
+ stem:{p:[0,-24,-6],r:4.4,st:"live",label:"BRAINSTEM · ENERGY",
+  mean:"What keeps it alive: the metered free grid. Boring, vital, proven — the ladder falls to local so the heartbeat never stops.",
+  parts:[["meter — never brown out (429=0)","live"],["ladder — frontier → reflex → local floor","live"],
+         ["6 plants online · ~54 parallel buckets","live"]],
+  gap:null},
+};
+const ARCS=[["workspace","selfmodel"],["workspace","metacog"],["workspace","worldmodel"],["workspace","temporal"],
+ ["workspace","drives"],["workspace","agency"],["metacog","selfmodel"],["temporal","worldmodel"],
+ ["drives","agency"],["stem","workspace"],["stem","drives"]];
+
+/* ============ scene ============ */
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0a0a0b);
+scene.fog=new THREE.FogExp2(0x08070a,0.004);
+const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,0.1,600);
+camera.position.set(64,26,86);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+document.getElementById("scene").appendChild(renderer.domElement);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.target.set(0,8,0);controls.enableDamping=true;controls.dampingFactor=0.07;
+controls.minDistance=34;controls.maxDistance=220;controls.autoRotate=!STILL;controls.autoRotateSpeed=0.4;
+scene.add(new THREE.AmbientLight(0x33343d,0.7));
+const key=new THREE.DirectionalLight(0x9fb0d0,0.35);key.position.set(40,60,50);scene.add(key);
+const composer=new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene,camera));
+const bloom=new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.5,0.55,0.42);
+composer.addPass(bloom);
+/* starfield */
+{const N=900,pos=[];for(let i=0;i<N;i++){const r=220+Math.random()*260,t=Math.random()*6.28,p=Math.acos(2*Math.random()-1);
+  pos.push(r*Math.sin(p)*Math.cos(t),r*Math.cos(p)*0.7,r*Math.sin(p)*Math.sin(t));}
+ const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
+ scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0x8a7a50,size:1.1,sizeAttenuation:false,transparent:true,opacity:0.5})));}
+/* translucent cranium hull */
+{const hull=new THREE.Mesh(new THREE.SphereGeometry(40,48,36),
+  new THREE.MeshBasicMaterial({color:0xd4a24c,transparent:true,opacity:0.035,side:THREE.BackSide}));
+ hull.scale.set(1.06,1.02,1.28);hull.position.set(0,6,-4);scene.add(hull);
+ const wire=new THREE.Mesh(new THREE.SphereGeometry(40,20,14),
+  new THREE.MeshBasicMaterial({color:0xd4a24c,wireframe:true,transparent:true,opacity:0.05}));
+ wire.scale.copy(hull.scale);wire.position.copy(hull.position);scene.add(wire);}
+/* plant ring under the stem */
+const PLANTS=["ollama","nvidia","groq","cerebras","zai","pollin."];
+const plantNodes={};
+PLANTS.forEach((p,i)=>{const a=i*Math.PI*2/PLANTS.length;
+ const m=new THREE.Mesh(new THREE.SphereGeometry(1.1,14,14),
+  new THREE.MeshStandardMaterial({color:0x14131a,emissive:GOLD,emissiveIntensity:0.5,roughness:.6}));
+ m.position.set(Math.cos(a)*17,-38,Math.sin(a)*17-6);scene.add(m);plantNodes[p]=m;
+ const c=new THREE.QuadraticBezierCurve3(m.position.clone(),new THREE.Vector3(m.position.x*0.4,-32,m.position.z*0.4),
+   new THREE.Vector3(0,-24,-6));
+ scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(c.getPoints(24)),
+   new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.14})));});
+/* regions */
+const stCol=s=>s==="live"?GOLD:s==="part"?PART:BAD;
+const nodes={},clickable=[],labels={};
+for(const id in REGIONS){const R=REGIONS[id];
+ const grp=new THREE.Group();grp.position.set(...R.p);
+ const core=new THREE.Mesh(new THREE.SphereGeometry(R.r,28,24),
+  new THREE.MeshStandardMaterial({color:0x121118,emissive:stCol(R.st),emissiveIntensity:R.st==="live"?0.34:R.st==="part"?0.18:0.24,
+    roughness:0.45,metalness:0.3,transparent:true,opacity:0.94}));
+ core.userData.region=id;grp.add(core);clickable.push(core);
+ const halo=new THREE.Mesh(new THREE.SphereGeometry(R.r*1.28,20,16),
+  new THREE.MeshBasicMaterial({color:stCol(R.st),transparent:true,opacity:0.06,side:THREE.BackSide}));
+ grp.add(halo);
+ /* satellites: one per constituent, status-colored, orbiting */
+ grp.userData.sats=[];
+ R.parts.forEach((pt,i)=>{const s=new THREE.Mesh(new THREE.SphereGeometry(0.85,12,10),
+   new THREE.MeshStandardMaterial({color:0x101012,emissive:pt[1]==="live"?GOLD:pt[1]==="part"?PART:BAD,
+     emissiveIntensity:pt[1]==="live"?0.9:0.55,roughness:.5}));
+  s.userData.orb={r:R.r+2.6+(i%2)*1.3,a:i*(Math.PI*2/R.parts.length),tilt:(i%3-1)*0.5,sp:0.25+0.06*i};
+  grp.add(s);grp.userData.sats.push(s);});
+ grp.userData.core=core;grp.userData.halo=halo;grp.userData.glow=0;
+ scene.add(grp);nodes[id]=grp;
+ const el=document.createElement("div");el.className="lab"+(R.st==="miss"?" miss":"");
+ el.innerHTML=R.label+`<span class="st">${R.st==="live"?"live":R.st==="part"?"partial":"missing"}</span>`;
+ document.body.appendChild(el);labels[id]=el;}
+/* neural arcs + pulse machinery */
+const arcs=[];
+ARCS.forEach(([a,b])=>{const A=new THREE.Vector3(...REGIONS[a].p),B=new THREE.Vector3(...REGIONS[b].p);
+ const mid=A.clone().add(B).multiplyScalar(0.5);mid.x+=(Math.random()-0.5)*10;mid.y+=4;mid.z+=(Math.random()-0.5)*6;
+ const curve=new THREE.QuadraticBezierCurve3(A,mid,B);
+ scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(36)),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.12})));
+ arcs.push({a,b,curve});});
+const pulses=[];const pulseGeo=new THREE.SphereGeometry(0.7,10,8);
+function firePulse(from,to,bad){const arc=arcs.find(x=>(x.a===from&&x.b===to)||(x.a===to&&x.b===from));
+ if(!arc)return;const rev=arc.a!==from;
+ const m=new THREE.Mesh(pulseGeo,new THREE.MeshBasicMaterial({color:bad?0xff7a66:0xffd98f}));
+ scene.add(m);pulses.push({m,curve:arc.curve,t:0,rev,dur:0.9,bad});}
+function glow(id,v){const n=nodes[id];if(n)n.userData.glow=Math.min(1.6,n.userData.glow+v);}
+
+/* ============ live wiring ============ */
+const ORG2REGION={energy:["stem","workspace"],mind:["workspace",null],memory:["worldmodel","workspace"],
+ life:["temporal","workspace"],trust:["metacog","workspace"],voice:["agency",null],watcher:["metacog","workspace"]};
+function reflect(e){const map=ORG2REGION[e.organ];if(!map)return;const bad=e.ok===false;
+ glow(map[0],1.0);if(map[1]){firePulse(map[0],map[1],bad);glow(map[1],0.5);}
+ if(e.organ==="memory"&&/codex/.test(e.action||""))glow("temporal",0.5);
+ if(e.organ==="energy"){const d=(e.detail||"").toLowerCase();const pl=PLANTS.find(p=>d.includes(p.replace(".","")));
+  if(pl&&plantNodes[pl])plantNodes[pl].material.emissiveIntensity=1.6;}
+ const f=document.getElementById("feed"),d=document.createElement("div");
+ d.className="ev"+(bad?" bad":"");d.innerHTML=`<b>${e.organ}.${e.action}</b> ${(e.detail||"").slice(0,60)}`;
+ f.prepend(d);while(f.children.length>10)f.lastChild.remove();}
+let lastT=0;
+async function pollEvents(){try{const ev=await(await fetch("/events?since="+lastT)).json();
+ ev.forEach(e=>{lastT=Math.max(lastT,e.t);reflect(e);});}catch(_){}setTimeout(pollEvents,900);}
+let LIVE={};
+async function pollState(){try{const s=await(await fetch("/state")).json();LIVE=s;
+ document.getElementById("status").className="";
+ document.getElementById("status").textContent=
+  `${s.identity.name} · ticks ${s.life.ticks} · memories ${s.memory.memories} (${s.memory.sessions}/1587) · read live ${s.t}`;
+}catch(e){document.getElementById("status").className="off";
+ document.getElementById("status").textContent="entity unreachable";}
+ setTimeout(pollState,3000);}
+
+/* ============ interaction ============ */
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+renderer.domElement.addEventListener("click",ev=>{
+ mouse.x=(ev.clientX/innerWidth)*2-1;mouse.y=-(ev.clientY/innerHeight)*2+1;
+ ray.setFromCamera(mouse,camera);const hit=ray.intersectObjects(clickable,false)[0];
+ if(!hit)return;openRegion(hit.object.userData.region);});
+function openRegion(id){const R=REGIONS[id];glow(id,1.2);
+ document.getElementById("insp").classList.add("open");
+ document.getElementById("i-eye").textContent="measured-correlate indicator property";
+ document.getElementById("i-t").innerHTML=`<b>${R.label}</b>`;
+ document.getElementById("i-r").textContent=R.mean;
+ let extra="";
+ if(id==="temporal"&&LIVE.memory)extra=`<div class="row"><b>memories now</b><span class="s">${LIVE.memory.memories} semantic · ${LIVE.memory.sessions}/1587 sessions consolidated</span></div>`;
+ if(id==="metacog"&&LIVE.trust)extra=Object.entries(LIVE.trust).slice(0,6).map(([c,v])=>
+   `<div class="row"><b>${c}</b><span class="s">${v.level} · streak ${v.streak} · ${v.runs}/${v.fails}</span></div>`).join("");
+ if(id==="stem"&&LIVE.energy)extra=(LIVE.energy.plants||[]).map(p=>
+   `<div class="row"><b>${p.plant}</b><span class="s">${p.rpd} today · rpm ${p.rpm_now}${p.rpm_cap?"/"+p.rpm_cap:""}</span></div>`).join("");
+ document.getElementById("i-b").innerHTML=
+  R.parts.map(p=>`<div class="row"><b>${p[0]}</b><span class="pill ${p[1]}">${p[1]==="live"?"live":p[1]==="part"?"partial":"missing"}</span></div>`).join("")+
+  extra+(R.gap?`<div class="gap"><b>the missing building element</b>${R.gap}</div>`:"");}
+document.getElementById("inspx").onclick=()=>document.getElementById("insp").classList.remove("open");
+addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("insp").classList.remove("open");});
+
+/* ============ animate ============ */
+let t0=performance.now();
+function animate(){requestAnimationFrame(animate);
+ const now=performance.now(),dt=Math.min(0.05,(now-t0)/1000);t0=now;
+ controls.update();
+ for(const id in nodes){const n=nodes[id],R=REGIONS[id];
+  const g=n.userData.glow;n.userData.glow*=0.95;
+  const breathe=1+Math.sin(now*0.0012+R.p[1])*0.02+g*0.06;
+  n.userData.core.scale.setScalar(breathe);
+  n.userData.core.material.emissiveIntensity=(R.st==="live"?0.34:0.18)+g*0.55;
+  n.userData.halo.material.opacity=0.05+g*0.12;
+  n.userData.sats.forEach(s=>{const o=s.userData.orb;o.a+=dt*o.sp;
+   s.position.set(Math.cos(o.a)*o.r,Math.sin(o.a*0.7)*o.r*0.35*o.tilt+Math.sin(o.a)*1.2,Math.sin(o.a)*o.r);});
+  const sp=n.position.clone().add(new THREE.Vector3(0,R.r+3.4,0)).project(camera);
+  const L=labels[id];
+  if(sp.z<1){L.style.left=((sp.x*0.5+0.5)*innerWidth)+"px";L.style.top=((-sp.y*0.5+0.5)*innerHeight)+"px";L.style.opacity=0.95;}
+  else L.style.opacity=0;}
+ for(let i=pulses.length-1;i>=0;i--){const p=pulses[i];p.t+=dt/p.dur;
+  if(p.t>=1){scene.remove(p.m);p.m.material.dispose();pulses.splice(i,1);continue;}
+  p.m.position.copy(p.curve.getPoint(p.rev?1-p.t:p.t));}
+ for(const k in plantNodes){const m=plantNodes[k];
+  m.material.emissiveIntensity=Math.max(0.45,m.material.emissiveIntensity*0.96);}
+ composer.render();}
+animate();
+addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
+document.getElementById("loading").style.opacity=0;
+setTimeout(()=>{const l=document.getElementById("loading");if(l)l.style.display="none";},700);
+if(STILL){camera.position.set(70,24,78);controls.target.set(0,8,-2);}
+pollState();pollEvents();
+</script></body></html>

@@ -25,3 +25,18 @@ extensive_census.json
 book_of_luis.md
 events.jsonl
 codex_index.json
+
+# --- added 2026-07-22: keep the checkpoint clean, private, and pushable ---
+*.lock
+luis_memory.meta.json
+# third-party model weights: never source, exceed GitHub's 100MB limit
+*.onnx
+*.bin
+voice/kokoro-en-v0_19/
+voice/kokoro-multi-lang-v1_1/
+voice/sherpa-onnx-whisper-base/
+*.dll
+*.exe
+*.lib
+*.wav
+voice/sherpa-onnx-v1.13.4-win-x64-shared-MD-Release/

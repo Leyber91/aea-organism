@@ -1,0 +1,319 @@
+{
+  "generated": "2026-06-23",
+  "purpose": "The AEA entity's fuel registry. Every model it can run for free, classified by the two axes that actually matter for an always-on PERSONAL entity: (1) privacy = does the provider train on your prompts; (2) throughput = the binding free rate limit. Routing rule: private data -> ring0/ring1 (no-train) ONLY. Public data -> ring2 ok. Heartbeat -> ring0 (local). Escalate to ring1 for quality; frontier (Opus) is ignition only.",
+  "privacyTiers": {
+    "local": "Runs on Luis's own hardware. Nothing leaves the machine. Safe for anything.",
+    "no-train": "Hosted, but the provider's official policy says it does NOT train on your inputs/outputs. Safe for private data.",
+    "trains-default": "Hosted and trains on free-tier prompts BY DEFAULT. Opt-out toggle exists. Treat as PUBLIC-DATA-ONLY until opt-out is confirmed in-console.",
+    "no-guarantee": "No clear no-train commitment found. Non-sensitive data only."
+  },
+  "rings": {
+    "ring0_local_base": "Ollama. Unlimited, private, free, offline. Carries the 24/7 heartbeat: embeddings, routing, classification, cheap reasoning. The entity's default brain.",
+    "ring1_private_hosted": "No-train free hosted. Quality/speed bursts on PRIVATE data the local box can't handle. Cloudflare, SambaNova, Cerebras, NVIDIA NIM, OVHcloud.",
+    "ring2_public_hosted": "High-throughput free hosted that trains on data. Public-only: scan news/stocks/markets/research. Gemini, Mistral, OpenRouter, Groq.",
+    "ring3_specialist": "Reserve-for-value or fallback. Cohere rerank (best, tiny quota), Pollinations (keyless fallback), HF router (failover abstraction)."
+  },
+  "providers": [
+    {
+      "id": "ollama",
+      "provider": "Ollama (LOCAL)",
+      "accessTier": "local",
+      "privacy": "local",
+      "ring": "ring0_local_base",
+      "openaiCompatible": true,
+      "baseURL": "http://localhost:11434/v1",
+      "keyInEnv": "n/a (local)",
+      "bindingLimit": "NONE. Bounded only by the machine. 32 models pulled.",
+      "confidence": "high",
+      "models": [
+        { "id": "mxbai-embed-large", "modality": "embed", "note": "Local embeddings = free unlimited memory vectorization, never burns an API quota. The RAG backbone." },
+        { "id": "qwen3.5:9b", "modality": "reasoning", "note": "Strongest local general/reasoning." },
+        { "id": "deepseek-r1:8b", "modality": "reasoning", "note": "Local chain-of-thought reasoning." },
+        { "id": "nemotron-3-nano:4b", "modality": "reasoning", "note": "Tiny nemotron, fast local agentic." },
+        { "id": "qwen2.5-coder:7b", "modality": "code", "note": "Local code generation." },
+        { "id": "granite4.1:3b / qwen3:1.7b / qwen3:0.6b", "modality": "text", "note": "Reflex tier: routing, classification, triage at near-zero latency." },
+        { "id": "gpt-oss:120b-cloud / minimax-m2:cloud", "modality": "reasoning", "note": "Ollama-hosted cloud models for heavier local-API calls." }
+      ],
+      "gotchas": ["Requires the machine on. Heavier models (gpt-oss:20b 13GB) are slow on CPU.", "This is the ONLY 100%-private tier - prefer it for the most sensitive context."]
+    },
+    {
+      "id": "nvidia_nim",
+      "provider": "NVIDIA NIM",
+      "accessTier": "free-key",
+      "privacy": "no-train",
+      "privacyNote": "NIM inference is not used for training per NVIDIA's API terms - VERIFY current terms before trusting the most sensitive data.",
+      "ring": "ring1_private_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://integrate.api.nvidia.com/v1  (+ https://ai.api.nvidia.com for NeMo Retriever rerank/embed)",
+      "keyInEnv": "NVIDIA_API_KEY (present, validated, 121 models reachable)",
+      "bindingLimit": "40 req/min PER MODEL, free. 256K ctx on free Nemotron (not 1M). Use extra_body.chat_template_kwargs.enable_thinking for reasoning.",
+      "confidence": "high",
+      "models": [
+        { "id": "nvidia/llama-3.1-nemotron-ultra-253b-v1 / nemotron-3-ultra-550b", "modality": "reasoning", "note": "Flagship agentic reasoning." },
+        { "id": "deepseek-ai/deepseek-v4-pro / deepseek-v4-flash", "modality": "reasoning", "note": "Non-nemotron strong reasoning on the same key." },
+        { "id": "nvidia/nemotron-nano-12b-v2-vl", "modality": "vision", "note": "VLM (12 vision models total). The L212 semantic-gate model." },
+        { "id": "nvidia/llama-nemotron-embed-1b-v2", "modality": "embed", "note": "26-lang embeddings (10 embed models). AVOID nv-embed-v1 = non-commercial." },
+        { "id": "nvidia/llama-nemotron-rerank-1b-v2", "modality": "rerank", "note": "On the ai.api.nvidia.com NeMo Retriever endpoint." },
+        { "id": "nvidia/gliner-pii + nemoguard family", "modality": "safety", "note": "PII detection + jailbreak/topic/content guards. The entity's boundary/trust gate (seed 9)." },
+        { "id": "nvidia/parakeet + canary", "modality": "audio-asr", "note": "Speech-to-text." },
+        { "id": "nvidia/magpie-tts", "modality": "audio-tts", "note": "Text-to-speech - the entity can talk." }
+      ],
+      "gotchas": ["Near-complete organ set on ONE key: reason/see/hear/speak/embed/rerank/guard/parse/translate.", "rerank + retriever models are on ai.api.nvidia.com, not the integrate chat endpoint."]
+    },
+    {
+      "id": "groq",
+      "provider": "Groq",
+      "accessTier": "free-key",
+      "privacy": "no-train",
+      "privacyNote": "Groq states it does not train on API data; confirm current terms.",
+      "ring": "ring2_public_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://api.groq.com/openai/v1",
+      "keyInEnv": "GROQ_API_KEY (NOT SET in env - must be added to use)",
+      "bindingLimit": "Per Luis's account: qwen3-32b 60 RPM; most others 30 RPM / 1K RPD; value = raw speed.",
+      "confidence": "high",
+      "models": [
+        { "id": "qwen/qwen3-32b", "modality": "reasoning", "note": "60 RPM - your highest free RPM anywhere. Fast." },
+        { "id": "llama-3.3-70b-versatile", "modality": "text", "note": "Strong general, 30 RPM / 1K RPD." },
+        { "id": "openai/gpt-oss-120b / gpt-oss-20b", "modality": "reasoning", "note": "Open-weight reasoning, fast." },
+        { "id": "groq/compound", "modality": "reasoning", "note": "Agentic compound system." },
+        { "id": "whisper-large-v3", "modality": "audio-asr", "note": "Fast ASR, 20 RPM." },
+        { "id": "canopylabs/orpheus-v1-english", "modality": "audio-tts", "note": "TTS, 10 RPM." }
+      ],
+      "gotchas": ["No key in env yet - add GROQ_API_KEY first.", "Speed leader; good for latency-sensitive ticks."]
+    },
+    {
+      "id": "cloudflare",
+      "provider": "Cloudflare Workers AI",
+      "accessTier": "free-allotment",
+      "privacy": "no-train",
+      "privacyNote": "Official: does NOT use your Customer Content to train any Workers AI model. Strong private-data fit.",
+      "ring": "ring1_private_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}  (+ OpenAI-compat endpoint)",
+      "keyInEnv": "needs CF account + API token (no card)",
+      "bindingLimit": "10,000 neurons/DAY hard-stop (no bill, resets 00:00 UTC). Route by per-model neuron cost. 80 models.",
+      "confidence": "high",
+      "models": [
+        { "id": "@cf/qwen/qwen3-30b-a3b-fp8", "modality": "reasoning", "note": "Best capability-per-neuron general, ~580 turns/day." },
+        { "id": "@cf/openai/gpt-oss-120b", "modality": "reasoning", "note": "120B MoE, ~200 turns/day." },
+        { "id": "@cf/meta/llama-3.2-1b-instruct", "modality": "text", "note": "Reflex tier, ~960 turns/day." },
+        { "id": "@cf/baai/bge-m3", "modality": "embed", "note": "~9.3M tokens of embeddings/day. The memory backbone." },
+        { "id": "@cf/baai/bge-reranker-base", "modality": "rerank", "note": "283 neurons/M - extremely cheap two-stage retrieval." },
+        { "id": "@cf/openai/whisper-large-v3-turbo", "modality": "audio-asr", "note": "~3.5 hrs audio/day - voice ingestion." },
+        { "id": "@cf/meta/llama-guard-3-8b", "modality": "safety", "note": "Cheap input safety gate." }
+      ],
+      "gotchas": ["Unit is NEURONS not tokens. AVOID deepseek-r1-distill (443k/M out), kimi-k2.7, glm-5.2 in the loop - one long CoT drains the day.", "Hard-stop, no surprise bill. OpenAI-compat + Worker = host the entity at the edge serverless."]
+    },
+    {
+      "id": "sambanova",
+      "provider": "SambaNova Cloud",
+      "accessTier": "free-allotment",
+      "privacy": "no-train",
+      "privacyNote": "Policy: does not see/collect/train on prompts or API inputs. Good for private context.",
+      "ring": "ring1_private_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://api.sambanova.ai/v1",
+      "keyInEnv": "needs key (no card)",
+      "bindingLimit": "20 RPM / 20 RPD / 200K tokens-per-DAY PER MODEL. 6 models x 20 = ~120 req/day total.",
+      "confidence": "high",
+      "models": [
+        { "id": "gpt-oss-120b", "modality": "reasoning", "note": "Fastest in catalog (~700 t/s)." },
+        { "id": "DeepSeek-V3.1", "modality": "reasoning", "note": "Hybrid thinking on/off." },
+        { "id": "MiniMax-M2.7", "modality": "reasoning", "note": "192K context - longest here." },
+        { "id": "Meta-Llama-3.3-70B-Instruct", "modality": "text", "note": "General workhorse." }
+      ],
+      "gotchas": ["Binding limit is 20 RPD PER MODEL - batch hard, spread across all 6. NO embeddings/vision/audio in current catalog.", "Catalog rotates aggressively; pin the 4 Production models."]
+    },
+    {
+      "id": "cerebras",
+      "provider": "Cerebras Cloud",
+      "accessTier": "free-allotment",
+      "privacy": "no-train",
+      "privacyNote": "Zero-data-retention, no training on inference I/O. US data centers (not EU-resident).",
+      "ring": "ring1_private_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://api.cerebras.ai/v1",
+      "keyInEnv": "needs key (no card)",
+      "bindingLimit": "1,000,000 tokens/DAY, 30 RPM, ~60K TPM. Speed leader (~1000-3000 t/s). Free ctx ~64K.",
+      "confidence": "medium",
+      "models": [
+        { "id": "gpt-oss-120b", "modality": "reasoning", "note": "DURABLE FREE DEFAULT - pin this (catalog churns hard)." },
+        { "id": "qwen-3-235b-a22b-thinking-2507", "modality": "reasoning", "note": "Frontier-class open reasoning." },
+        { "id": "llama-3.3-70b", "modality": "text", "note": "Reliable workhorse, ~2000 t/s." },
+        { "id": "zai-glm-4.7", "modality": "code", "note": "De-facto coding model." }
+      ],
+      "gotchas": ["Catalog churns hard - pin gpt-oss-120b as the only durable dependency. NO embed/rerank/audio.", "Fastest provider; pair with an external embed/RAG source."]
+    },
+    {
+      "id": "ovhcloud",
+      "provider": "OVHcloud AI Endpoints (EU)",
+      "accessTier": "free-allotment",
+      "privacy": "no-train",
+      "privacyNote": "Official: 'Your data will never be used to train or improve OVHcloud AI models.' EU-hosted, GDPR. The cleanest EU private substrate.",
+      "ring": "ring1_private_hosted",
+      "openaiCompatible": true,
+      "baseURL": "OVH AI Endpoints (OpenAI-compatible per model)",
+      "keyInEnv": "keyless anonymous OR free project token",
+      "bindingLimit": "2 RPM/IP/model anonymous (no key) -> 400 RPM/model with a free OVH project token. ~23 models.",
+      "confidence": "high",
+      "models": [
+        { "id": "gpt-oss-120b", "modality": "reasoning", "note": "Harder reasoning, EU no-train." },
+        { "id": "Qwen2.5-VL-72B", "modality": "vision", "note": "Heavy VLM for screenshots." },
+        { "id": "Qwen3-Embedding-8B / bge-m3", "modality": "embed", "note": "EU memory/RAG embeddings." },
+        { "id": "whisper-large-v3-turbo", "modality": "audio-asr", "note": "Voice-in. Riva TTS also present." },
+        { "id": "Qwen3Guard-Gen-8B", "modality": "safety", "note": "Content safety gate." }
+      ],
+      "gotchas": ["The strongest recurring-free EU + no-train claim in the whole landscape. One free project token = 400 RPM.", "Image model is SDXL, not Flux."]
+    },
+    {
+      "id": "gemini",
+      "provider": "Google AI Studio / Gemini",
+      "accessTier": "free-allotment",
+      "privacy": "trains-default",
+      "privacyNote": "Official pricing page marks EVERY free model 'Used to improve our products: Yes' - human reviewers may read prompts+responses. PUBLIC DATA ONLY on free. EU-facing production must use PAID per Google's terms.",
+      "ring": "ring2_public_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://generativelanguage.googleapis.com (+ OpenAI-compat endpoint)",
+      "keyInEnv": "needs key (no card)",
+      "bindingLimit": "~1,500 RPD/model; Flash-Lite ~30 RPM; gemini-2.5-pro NO LONGER free (paid only).",
+      "confidence": "high",
+      "models": [
+        { "id": "gemini-2.5-flash", "modality": "reasoning", "note": "Free workhorse, ~1M ctx, native vision + PDF." },
+        { "id": "gemini-2.5-flash-lite", "modality": "reasoning", "note": "Highest free RPM - the public-scan heartbeat." },
+        { "id": "gemini-embedding-001", "modality": "embed", "note": "Free embeddings (public-data RAG)." },
+        { "id": "gemini-2.5-flash-tts", "modality": "audio-tts", "note": "Free voice channel (in+out)." }
+      ],
+      "gotchas": ["Trains on free-tier data - never route Luis's private day / TRIVERSE canon / employer context here on free.", "EU-user-facing apps must be PAID per terms. Budget against ~1,500 RPD."]
+    },
+    {
+      "id": "mistral",
+      "provider": "Mistral La Plateforme (EU)",
+      "accessTier": "free-allotment",
+      "privacy": "trains-default",
+      "privacyNote": "Free tier trains on inputs/outputs BY DEFAULT. Opt-out in Admin Console -> Privacy. France/EU jurisdiction. Flip opt-out OFF before any private call.",
+      "ring": "ring2_public_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://api.mistral.ai/v1",
+      "keyInEnv": "needs key (phone verify, no card)",
+      "bindingLimit": "~2 RPM (the wall), ~500K TPM, ~1 BILLION tokens/MONTH. Batch/scheduled brain.",
+      "confidence": "medium",
+      "models": [
+        { "id": "mistral-small-latest", "modality": "omni", "note": "Mistral Small 4: 256K ctx, native vision, reasoning, Apache-2.0. Best free workhorse." },
+        { "id": "mistral-embed / codestral-embed", "modality": "embed", "note": "Vector memory." },
+        { "id": "mistral-moderation-latest", "modality": "safety", "note": "Safety gate." },
+        { "id": "voxtral-transcribe / voxtral-tts", "modality": "audio-asr", "note": "Voice in/out (billed per char/page, may not draw free tokens)." }
+      ],
+      "gotchas": ["2 RPM is the wall - batched/scheduled only. 1B tokens/month is huge though.", "MUST opt out of training before private use. Mistral Medium is API-only (not open-weight)."]
+    },
+    {
+      "id": "openrouter",
+      "provider": "OpenRouter (router)",
+      "accessTier": "free-allotment",
+      "privacy": "trains-default",
+      "privacyNote": "To USE :free models you must ENABLE prompt training+logging, else 404. Enabling free = consenting to prompt publication. PUBLIC DATA ONLY.",
+      "ring": "ring2_public_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://openrouter.ai/api/v1",
+      "keyInEnv": "needs key (no card for free floor)",
+      "bindingLimit": "20 RPM hard cap; ~50 RPD free / ~1,000 RPD after a one-time $10. 22 :free models.",
+      "confidence": "medium",
+      "models": [
+        { "id": "nvidia/nemotron-3-ultra-550b-a55b:free", "modality": "reasoning", "note": "Strongest free reasoning, 1M ctx." },
+        { "id": "openai/gpt-oss-120b:free", "modality": "reasoning", "note": "Reliable, widely mirrored." },
+        { "id": "qwen/qwen3-coder:free", "modality": "code", "note": "1M ctx code workhorse." },
+        { "id": "nvidia/nemotron-nano-12b-v2-vl:free", "modality": "vision", "note": "Free VLM." }
+      ],
+      "gotchas": ["One key to 22 SOTA :free models, but 50 RPD (free) is a batch brain. Enabling free = data published.", "Roster churns monthly - build model rotation, don't hardcode one :free id."]
+    },
+    {
+      "id": "githubmodels",
+      "provider": "GitHub Models",
+      "accessTier": "free-allotment",
+      "privacy": "trains-default",
+      "privacyNote": "Trains on Copilot Free/Pro data by default (opt-out in Copilot privacy). CLOSED TO NEW CUSTOMERS (2026-06-16) + officially RETIRING.",
+      "ring": "ring2_public_hosted",
+      "openaiCompatible": true,
+      "baseURL": "https://models.github.ai",
+      "keyInEnv": "GitHub token (only if account already had access)",
+      "bindingLimit": "Low tier 15 RPM / 150 RPD; High 10 RPM / 50 RPD; 8K in / 4K out cap. 37 models.",
+      "confidence": "high",
+      "models": [
+        { "id": "openai/gpt-4.1 / gpt-4.1-mini", "modality": "vision", "note": "Best all-round; mini = 150 RPD." },
+        { "id": "microsoft/phi-4-reasoning", "modality": "reasoning", "note": "Highest-throughput free reasoning (MIT)." },
+        { "id": "openai/text-embedding-3-large", "modality": "embed", "note": "Only embedding family." }
+      ],
+      "gotchas": ["DO NOT build the spine on this - closed to new customers + retiring. Only if access already exists.", "8K input cap kills long-context regardless of native window."]
+    },
+    {
+      "id": "cohere",
+      "provider": "Cohere (trial)",
+      "accessTier": "trial-credit",
+      "privacy": "trains-default",
+      "privacyNote": "May train unless opted out (Data Controls). NON-COMMERCIAL trial + 'not for personal/household' disclaimer - research/proto only.",
+      "ring": "ring3_specialist",
+      "openaiCompatible": false,
+      "baseURL": "https://api.cohere.com/v2",
+      "keyInEnv": "trial key (no card, perpetual)",
+      "bindingLimit": "1,000 calls/MONTH total (~33/day across ALL endpoints). The wall.",
+      "confidence": "high",
+      "models": [
+        { "id": "rerank-v4.0-pro / rerank-v3.5", "modality": "rerank", "note": "STATE-OF-THE-ART reranker - the one reason to use Cohere. 32K/doc. Reserve for high-value retrieval." },
+        { "id": "embed-v4.0", "modality": "embed", "note": "Multimodal embeddings, 128K, 2000 inputs/min." },
+        { "id": "command-a-reasoning-08-2025", "modality": "reasoning", "note": "256K reasoning - use sparingly within the 1K/mo cap." }
+      ],
+      "gotchas": ["1,000 calls/MONTH is the wall - RAG-rerank only, never a continuous brain.", "Non-commercial + non-personal terms: prototyping allowance, not a sanctioned production/personal base."]
+    },
+    {
+      "id": "pollinations",
+      "provider": "Pollinations (keyless)",
+      "accessTier": "keyless",
+      "privacy": "no-guarantee",
+      "privacyNote": "No EU-residency or no-train guarantee. NON-SENSITIVE reasoning only.",
+      "ring": "ring3_specialist",
+      "openaiCompatible": true,
+      "baseURL": "https://text.pollinations.ai/openai",
+      "keyInEnv": "NONE - keyless",
+      "bindingLimit": "1 request / 15s anonymous, ~1 in-flight. Zero setup.",
+      "confidence": "high",
+      "models": [
+        { "id": "openai-fast (GPT-OSS 20B)", "modality": "reasoning", "note": "The only keyless text model. reasoning + tools. The zero-setup fallback already used in the labs." }
+      ],
+      "gotchas": ["Keyless = 1 text model only; the rest needs a key. Back off on 429.", "No privacy guarantee - public-data reasoning only."]
+    },
+    {
+      "id": "huggingface",
+      "provider": "Hugging Face Inference Providers",
+      "accessTier": "free-allotment",
+      "privacy": "no-guarantee",
+      "privacyNote": "Routes to partner clouds; no blanket no-train - per-partner policy applies.",
+      "ring": "ring3_specialist",
+      "openaiCompatible": true,
+      "baseURL": "https://router.huggingface.co/v1",
+      "keyInEnv": "HF_TOKEN (no card for $0.10/mo)",
+      "bindingLimit": "$0.10/month credit (negligible). Routing/failover abstraction, not a workhorse. ~100 chat + ~120 embed models reachable.",
+      "confidence": "high",
+      "models": [
+        { "id": "openai/gpt-oss-120b", "modality": "reasoning", "note": "Live across 7-10 partners via one key - failover abstraction." },
+        { "id": "intfloat/multilingual-e5-large-instruct", "modality": "embed", "note": "Most credit-efficient use: embeddings." }
+      ],
+      "gotchas": ["$0.10/mo = experiments only, exhausts in hours of chat. Use as a one-key failover layer + cheap embeddings, not an engine.", "OpenAI /v1 is chat-only; embeddings/image via InferenceClient."]
+    },
+    {
+      "id": "together_fireworks",
+      "provider": "Together AI + Fireworks (mostly paid)",
+      "accessTier": "trial-credit",
+      "privacy": "no-guarantee",
+      "ring": "ring3_specialist",
+      "openaiCompatible": true,
+      "baseURL": "https://api.together.xyz/v1  |  Fireworks paid",
+      "keyInEnv": "needs key",
+      "bindingLimit": "Together: a rotating/unstable '-Free' suffix lane, dynamic limits, probe live + paid fallback. Fireworks: one-time $1, no recurring free.",
+      "confidence": "low",
+      "models": [
+        { "id": "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free (Together)", "modality": "reasoning", "note": "Headline free endpoint - but inconsistent serverless availability; probe before depending." }
+      ],
+      "gotchas": ["Together '-Free' lane is real but unstable/rotating - not a dependable substrate. Fireworks has NO recurring free tier.", "Skip for always-free; revisit Fireworks as a paid speed fallback once revenue exists."]
+    }
+  ]
+}

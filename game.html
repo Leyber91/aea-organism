@@ -1,0 +1,440 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE ASCENT · LEYBER</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;200;300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg0:#050a10;--bg1:#0a1420;--hot:#ffb000;--warm:#d4a24c;
+ --st70:rgba(120,155,175,.70);--st45:rgba(120,155,175,.45);--st28:rgba(120,155,175,.28);
+ --st14:rgba(120,155,175,.14);--st08:rgba(120,155,175,.08);--ink:#e6edf3;--bad:#d06a55;--good:#8fb98f}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:linear-gradient(180deg,var(--bg0),var(--bg1) 130%);color:var(--ink);
+ font:13px/1.5 'IBM Plex Mono',Consolas,monospace;overflow:hidden}
+body{display:flex;flex-direction:column;padding:12px 16px}
+a{color:inherit}
+.lb{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--warm);font-weight:400}
+.mut{color:var(--st45)}
+/* header + scores */
+header{display:flex;align-items:baseline;gap:16px;flex:none;padding-bottom:9px;border-bottom:1px solid var(--st14)}
+header .ey{font-size:9px;letter-spacing:.34em;text-transform:uppercase;color:var(--warm)}
+header h1{font-weight:100;font-size:20px;letter-spacing:.22em}header h1 b{color:var(--warm);font-weight:300}
+#scores{margin-left:auto;display:flex;gap:22px}
+.sc{text-align:right}.sc .k{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--st45)}
+.sc .v{font-size:15px;font-weight:200;color:var(--ink);font-variant-numeric:tabular-nums}
+.sc .v b{color:var(--hot);font-weight:300}
+/* main 3 cols */
+main{flex:1;min-height:0;display:grid;grid-template-columns:212px 1fr 322px;gap:14px;padding:11px 0}
+.panel{border:1px solid var(--st14);min-height:0;display:flex;flex-direction:column}
+.panel>.hd{flex:none;padding:8px 11px;border-bottom:1px solid var(--st14);display:flex;align-items:baseline;gap:8px}
+.panel>.bd{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
+/* ladder */
+#ladder .bd{padding:6px}
+.lv{padding:7px 9px;border-left:2px solid var(--st14);margin-bottom:4px;cursor:pointer;transition:.14s;position:relative}
+.lv:hover{background:var(--st08)}
+.lv .id{font-size:8.5px;letter-spacing:.14em;color:var(--st45)}
+.lv .nm{font-size:11.5px;color:var(--st70);letter-spacing:.02em}
+.lv .cp{font-size:9px;color:var(--st28);margin-top:1px}
+.lv.won{border-left-color:var(--good)} .lv.won .nm{color:var(--good)} .lv.won .id:after{content:" ✓";color:var(--good)}
+.lv.current{border-left-color:var(--hot);background:rgba(255,176,0,.05)} .lv.current .nm{color:var(--hot)}
+.lv.sel{background:var(--st14)!important}
+.lv.locked .nm{color:var(--st45)} .lv.locked .id:before{content:"▢ "}
+.lv.send{border-left-color:var(--warm)} .lv.send .nm{color:var(--warm)}
+/* board */
+#board .bd{padding:0;position:relative;overflow:hidden}
+#bsvg{width:100%;height:100%;display:block}
+.ntag{font-size:7px;letter-spacing:.1em}
+#boardctl{flex:none;display:flex;gap:12px;align-items:center;padding:6px 11px;border-top:1px solid var(--st14);font-size:9.5px;color:var(--st45)}
+#boardctl label{cursor:pointer;user-select:none}
+.leg{display:inline-flex;align-items:center;gap:4px;margin-right:2px}
+.leg i{width:9px;height:9px;display:inline-block;border-radius:1px}
+/* right stack */
+#right{display:flex;flex-direction:column;gap:14px;min-height:0}
+#boss,#insp{border:1px solid var(--st14);display:flex;flex-direction:column;min-height:0}
+#boss{flex:0 0 auto;max-height:56%}
+#insp{flex:1;min-height:0}
+#boss .bd,#insp .bd{overflow-y:auto;scrollbar-width:thin;padding:10px 12px}
+.beats{list-style:none;font-size:10.5px}
+.beats li{padding:3px 0 3px 20px;position:relative;color:var(--st45);border-bottom:1px solid var(--st08)}
+.beats li:before{content:attr(data-n);position:absolute;left:0;top:3px;font-size:8px;color:var(--st28);letter-spacing:.1em}
+.beats li b{color:var(--st70);font-weight:400}
+.bosbox{margin-top:9px;padding:8px 10px;border-left:2px solid var(--warm);font-size:11px;line-height:1.5}
+.bosbox .th{color:var(--hot)} .bosbox .ci{color:var(--st45);font-size:9px;margin-top:4px}
+.testres{margin-top:9px;font-size:11px;padding:7px 10px;border:1px solid var(--st14)}
+.testres.pass{border-color:var(--good);color:var(--good)} .testres.fail{border-color:var(--bad);color:var(--bad)}
+.btn{background:none;border:1px solid var(--st28);color:var(--st70);font-family:inherit;font-size:10px;
+ letter-spacing:.1em;padding:6px 12px;cursor:pointer;transition:.14s;text-transform:uppercase}
+.btn:hover{border-color:var(--warm);color:var(--hot)}
+.btn.hot{border-color:var(--warm);color:var(--hot)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px;align-items:center}
+/* inspector */
+#insp .sig{font-size:10.5px;color:var(--warm);white-space:pre-wrap;word-break:break-word;line-height:1.5;margin:4px 0}
+#insp .kv{display:flex;gap:8px;font-size:10px;padding:2px 0;border-bottom:1px solid var(--st08)}
+#insp .kv .k{color:var(--st45);flex:0 0 78px;text-transform:uppercase;letter-spacing:.08em;font-size:8.5px;padding-top:1px}
+#insp .kv .v{color:var(--st70);flex:1;word-break:break-word}
+#insp .port{display:inline-block;font-size:9px;color:var(--st45);border:1px solid var(--st14);padding:1px 5px;margin:2px 3px 0 0;border-radius:2px}
+#pure{margin-top:8px;font-size:10px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:var(--good);
+ background:rgba(0,0,0,.22);border:1px solid var(--st14);padding:8px;max-height:210px;overflow:auto}
+.st-live{color:var(--warm)} .st-proven{color:var(--st70)} .st-door{color:var(--st45)}
+/* bottom bar */
+footer{flex:none;display:flex;gap:14px;align-items:center;padding-top:8px;border-top:1px solid var(--st14);font-size:10px}
+#status{color:var(--st45);margin-left:auto;max-width:640px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--hot);display:inline-block;animation:bt 2.4s ease-in-out infinite}
+@keyframes bt{0%,100%{opacity:1}50%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+</style></head><body>
+<header>
+ <div class="ey">Autonomous Entity Architecture · the campaign</div>
+ <h1>THE <b>ASCENT</b></h1>
+ <div id="scores">
+  <div class="sc"><div class="k">class</div><div class="v" id="sc-class">—</div></div>
+  <div class="sc"><div class="k">autonomy tests</div><div class="v" id="sc-tests">—</div></div>
+  <div class="sc"><div class="k">integrated</div><div class="v" id="sc-int"><b>11</b> / 19</div></div>
+  <div class="sc"><div class="k">levels won</div><div class="v" id="sc-lv"><b>0</b> / 10</div></div>
+ </div>
+</header>
+<main>
+ <div class="panel" id="ladder"><div class="hd"><span class="lb">the ladder</span><span class="mut" style="margin-left:auto;font-size:8.5px">pick a level</span></div><div class="bd" id="ladder-bd"></div></div>
+ <div class="panel" id="board"><div class="hd"><span class="lb">the board · the entity as one pipeline</span><span class="mut" id="board-sub" style="margin-left:auto;font-size:8.5px">click a node to inspect</span></div>
+  <div class="bd"><svg id="bsvg" preserveAspectRatio="xMidYMid meet"></svg></div>
+  <div id="boardctl">
+   <span class="leg"><i style="background:var(--warm)"></i>live in the mind</span>
+   <span class="leg"><i style="border:1px solid var(--st70)"></i>proven, not wired</span>
+   <span class="leg"><i style="border:1px dashed var(--st45)"></i>a door a level opens</span>
+   <label style="margin-left:auto"><input type="checkbox" id="showall"> show all 89 wires</label>
+  </div>
+ </div>
+ <div id="right">
+  <div id="boss"><div class="hd"><span class="lb" id="boss-hd">level</span></div><div class="bd" id="boss-bd"><span class="mut" style="font-size:10.5px">select a level from the ladder.</span></div></div>
+  <div id="insp"><div class="hd"><span class="lb" id="insp-hd">node inspector</span><span class="mut st-live" id="insp-status" style="margin-left:auto;font-size:8.5px"></span></div><div class="bd" id="insp-bd"><span class="mut" style="font-size:10.5px">click a node on the board — see its real signature, ports, and the pure API payload.</span></div></div>
+ </div>
+</main>
+<footer>
+ <span class="dot"></span>
+ <button class="btn hot" id="c-play">▶ play life</button>
+ <button class="btn" id="c-tick">tick once</button>
+ <button class="btn" id="c-stop">stop</button>
+ <span class="mut" style="font-size:9px">the loop runs itself; every autonomous output is HADES-judged</span>
+ <span id="status">honest ceiling: measured functional correlate, never "conscious"</span>
+</footer>
+
+<script>
+"use strict";
+const $=s=>document.getElementById(s);
+const SVGNS="http://www.w3.org/2000/svg";
+const api=(p,body)=>fetch(p,body?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}:undefined).then(r=>r.json());
+
+/* ---------- the board columns (real ids from schema + synthetic doors) ---------- */
+const COLS=[
+ {t:"FUEL",   ids:["grid","capability-census","model-fitness","capacity"]},
+ {t:"ROUTE",  ids:["energy","swarm","orchestrator","pathfinder","relay","agent-tools"]},
+ {t:"MEMORY", ids:["consolidate","memory","index-codex"]},
+ {t:"DOORS",  ids:["recall","think","voyager"]},
+ {t:"MIND",   ids:["talk","brief","reflect","aea-loop"]},
+ {t:"GOVERN", ids:["hades","trust"]},
+ {t:"REACH",  ids:["telegram-bridge","notify","speak","listen"]},
+ {t:"SELF·TRACE",ids:["autonomy","pulse","tracelog","live"]},
+];
+/* proven-but-not-wired-into-the-living-mind (research: demoed in a standalone script) */
+const PROVEN=new Set(["swarm","orchestrator","pathfinder","agent-tools","relay"]);
+/* synthetic door nodes a level builds */
+const DOORS={
+ recall:{id:"recall",name:"recall() · one door",kind:"door",level:"L1",
+   purpose:"ONE recall(query,k,zone) over memory + codex + grid-truths, cached in-process."},
+ think:{id:"think",name:"think() · one door",kind:"door",level:"L2",
+   purpose:"route single | council | swarm | path by the measured regime — the cognition spine."},
+ voyager:{id:"voyager",name:"self-tool · Voyager",kind:"door",level:"L6",
+   purpose:"the entity writes a NEW skill for itself, stores it, a later run reuses it."},
+};
+/* the door-edges each level lights (dashed until the level is won) */
+const DOOR_EDGES=[
+ {from:"memory",to:"recall",lvl:"L1"},{from:"index-codex",to:"recall",lvl:"L1"},
+ {from:"recall",to:"talk",lvl:"L1"},{from:"recall",to:"brief",lvl:"L1"},
+ {from:"swarm",to:"think",lvl:"L2"},{from:"orchestrator",to:"think",lvl:"L2"},
+ {from:"pathfinder",to:"think",lvl:"L2"},{from:"think",to:"talk",lvl:"L2"},{from:"think",to:"brief",lvl:"L2"},
+ {from:"agent-tools",to:"talk",lvl:"L3"},{from:"trust",to:"agent-tools",lvl:"L4"},
+ {from:"relay",to:"voyager",lvl:"L6"},{from:"voyager",to:"reflect",lvl:"L6"},
+];
+
+/* ---------- the levels ---------- */
+const LEVELS=[
+ {id:"L0",name:"BASELINE",cap:"prove where we stand",status:"current",lights:["autonomy"],
+  boss:"python autonomy.py → PROTO-AUTONOMOUS, 6/6 favourable, live.",theory:"the live battery (6 cited tests)",
+  cite:"Barandiaran 2009 · Bedau 1998 · Seth 2010 · Krakauer 2020 · Voyager 2023",
+  build:"none — read the current truth",runnable:"autonomy",
+  beats:["run the live scorer","read the class + 6 tests","confirm PROTO-AUTONOMOUS 6/6","light the won test-nodes"]},
+ {id:"L1",name:"RECALL",cap:"the first door (B2)",status:"locked",lights:["recall","memory","index-codex"],
+  boss:"warm recall < 300ms AND a probe answer stays grounded ACROSS a process reset.",theory:"GWT-3 recall integrity / seed.10 backwards-channel",
+  cite:"X8 recall-integrity-across-reset",build:"recall(query,k,zone) one door; wire talk + brief",runnable:null,
+  beats:["build recall() one door + cache","wire talk.py & brief.py through it","probe: ask, reset, ask again","measure warm latency + grounding"]},
+ {id:"L2",name:"THINK",cap:"the spine (D1)",status:"locked",lights:["think","swarm","orchestrator","pathfinder"],
+  boss:"a hard task takes the swarm/council path, a trivial one takes single — logged; op.design + op.time flip PROVEN.",theory:"GWT-2/3/4 workspace bottleneck + broadcast",
+  cite:"X10 bottleneck+broadcast+steer",build:"think(task) façade; wire talk + brief; absorb A2 (one router)",runnable:null,
+  beats:["build think() façade router","wire talk & brief through it","hard vs trivial task → path logged","one router home (A2 absorbed)"]},
+ {id:"L3",name:"REACH THE WORLD",cap:"internet in conversation",status:"locked",lights:["agent-tools"],
+  boss:"a live-web fact it can't know → it tool-calls → HADES confirms the answer is grounded in the fetch.",theory:"seed.8 transcendence toolset (live)",
+  cite:"closes 'internet dead-code unwired'",build:"wire agent_tools (web_fetch/json_get) through think()",runnable:null,
+  beats:["route agent_tools through think()","ask a live-web-only fact","tool-call fires, fetch returns","HADES verifies grounded, not hallucinated"]},
+ {id:"L4",name:"COMMAND CURRENT",cap:"governed tools (C3)",status:"locked",lights:["trust","agent-tools"],
+  boss:"a read tool passes trust.check and fires; an ACTING tool (send/spend) is held at DRAFT — the membrane holds.",theory:"Law-3 governance membrane",
+  cite:"trust ledger FORBIDDEN→DRAFT→WATCHED→TRUSTED",build:"trust-gate + strict-schema every tool call",runnable:null,
+  beats:["strict-schema every tool call","trust-gate on the way out","read tool → fires","acting tool → held at DRAFT"]},
+ {id:"SEND",name:"THE SEND",cap:"real-world boss · the income clock",status:"locked",lights:["telegram-bridge","hades"],special:true,
+  boss:"the entity DRAFTS Luis's real outreach; HADES verifies fit; LUIS sends (send stays human-in-loop).",theory:"layer_7 — the entity and the real goal are one",
+  cite:"send FORBIDDEN to the entity, by design",build:"draft pipeline: recall + think + governed tools → a real message",runnable:null,
+  beats:["gather the real target (recall)","draft under think()","HADES judges fit + honesty","Luis reads and sends — or not"]},
+ {id:"L5",name:"GRAPH MEMORY",cap:"triples (B5)",status:"locked",lights:["consolidate","memory","recall"],
+  boss:"~50% fewer context tokens at equal-or-better answer accuracy on a probe set (measured).",theory:"knowledge as concept graphs",
+  cite:"Luis directive 2026-07-12 · identity in graphs, models are fuel",build:"consolidation extracts (s)-[r]->(o); recall returns graph context",runnable:null,
+  beats:["extract triples on consolidate","recall returns compact graph","probe: tokens vs accuracy","≥50% fewer tokens, same accuracy"]},
+ {id:"L6",name:"SELF-TOOL",cap:"Voyager",status:"locked",lights:["voyager","relay"],
+  boss:"the entity writes a NEW skill, stores it, a later run reuses it — library grows, reuse verified.",theory:"Voyager skill-library growth (live)",
+  cite:"Wang et al. 2023, arXiv:2305.16291",build:"self-authored skill library the entity writes for itself",runnable:null,
+  beats:["entity authors a skill","persist to the library","a later run selects it","reuse verified in the log"]},
+ {id:"L7",name:"STOP",cap:"recursive self-improvement",status:"locked",lights:["reflect","autonomy"],
+  boss:"improved-improver's held-out utility > seed's over ≥3 self-application rounds, gains survive freezing, no human edits.",theory:"Self-Taught Optimizer",
+  cite:"Zelikman et al. 2023, arXiv:2310.02304",build:"reflect.py self-applies its own scaffold ≥3 rounds vs a frozen utility",runnable:null,
+  beats:["freeze a held-out utility","self-apply the scaffold ×3","measure improver > seed","gains survive freezing"]},
+ {id:"L8",name:"ENDURANCE",cap:"Bedau Class 2",status:"locked",lights:["reflect","autonomy","live"],
+  boss:"A_new stays bounded-above-zero over ≥100 ticks vs a neutral-shadow control — real open-endedness.",theory:"Bedau-Packard evolutionary activity",
+  cite:"Bedau, Snyder & Packard 1998",build:"run the loop ≥100 ticks + shadow control + measure A_new",runnable:null,
+  beats:["run ≥100 real ticks","run a neutral-shadow control","measure A_new vs shadow","A_new bounded above zero"]},
+ {id:"L9",name:"DARWIN-GÖDEL",cap:"self-edit archive · end-game",status:"locked",lights:["reflect"],
+  boss:"best-in-archive frozen-benchmark score rises by a pre-registered margin over ≥20 self-edit iterations.",theory:"Darwin-Gödel Machine",
+  cite:"Zhang et al. 2025, arXiv:2505.22954",build:"t6 edits + re-tests its OWN source with a fitness archive",runnable:null,
+  beats:["fitness archive of self-versions","edit + re-test own source ×20","best-in-archive rises","pre-registered margin cleared"]},
+ {id:"F1",name:"SENSES",cap:"the real day · needs your call",status:"locked",lights:["listen"],
+  boss:"day-intake into state/day.json — private zone, never routed to a trains plant.",theory:"the usefulness unlock",
+  cite:"decision: Calendar/Gmail bridge (MCP path available)",build:"a sense that reads the day locally and writes day.json",runnable:null,
+  beats:["decide the intake path (Luis)","read the day locally","write state/day.json","private zone enforced"]},
+];
+
+/* ---------- state ---------- */
+let SCHEMA=null, NODES={}, POS={}, selLevel=null, selNode=null, WON=new Set();
+
+function nodeStatus(id){
+ if(DOORS[id]) return WON.has(DOORS[id].level)?"live":"door";
+ if(PROVEN.has(id)) return "proven";
+ return "live";
+}
+
+/* ---------- load ---------- */
+async function boot(){
+ try{ SCHEMA=await api("/api/schema"); }catch(e){ SCHEMA={nodes:[],edges:[],live_samples:[]}; }
+ (SCHEMA.nodes||[]).forEach(n=>NODES[n.id]=n);
+ Object.values(DOORS).forEach(d=>{ if(!NODES[d.id]) NODES[d.id]=d; });
+ layout(); renderLadder(); renderBoard();
+ selectLevel("L0");
+ await refreshAutonomy();
+ const q=new URLSearchParams(location.search).get("play");
+ if(q){ selectLevel(q); const l=LEVELS.find(x=>x.id===q); if(l&&l.runnable) setTimeout(()=>runBoss(l),500); }
+}
+async function refreshAutonomy(){
+ try{
+  const a=await api("/autonomy");
+  if(a && !a.error){
+   $("sc-class").innerHTML="<b>"+(a.class||"—").replace("PROTO-AUTONOMOUS","PROTO-AUTO")+"</b>";
+   $("sc-tests").innerHTML="<b>"+(a.passing!=null?a.passing:"—")+"</b> / "+(a.total!=null?a.total:"—");
+   window._autonomy=a;
+  }
+ }catch(e){}
+}
+
+/* ---------- layout ---------- */
+function layout(){
+ const COLW=178, PADX=18, PADY=44, ROWH=112;
+ let maxRows=Math.max(...COLS.map(c=>c.ids.length));
+ const W=PADX*2+COLW*COLS.length, H=PADY*2+ROWH*maxRows;
+ $("bsvg").setAttribute("viewBox","0 0 "+W+" "+H);
+ COLS.forEach((c,ci)=>{
+  const x=PADX+ci*COLW+COLW/2;
+  const n=c.ids.length, span=(n-1)*ROWH, top=(H-span)/2;
+  c.ids.forEach((id,ri)=>{ POS[id]={x:x, y:top+ri*ROWH, cx:ci}; });
+  c._x=x;
+ });
+ layout._H=H; layout._W=W;
+}
+
+/* ---------- board render ---------- */
+function edgePath(a,b){
+ if(!POS[a]||!POS[b]) return null;
+ const p=POS[a],q=POS[b], mx=(p.x+q.x)/2;
+ return `M ${p.x+64} ${p.y} C ${mx} ${p.y}, ${mx} ${q.y}, ${q.x-64} ${q.y}`;
+}
+function renderBoard(){
+ const svg=$("bsvg"); svg.innerHTML="";
+ const g=document.createElementNS(SVGNS,"g"); svg.appendChild(g);
+ // column headers
+ COLS.forEach(c=>{
+  const t=document.createElementNS(SVGNS,"text");
+  t.setAttribute("x",c._x); t.setAttribute("y",16); t.setAttribute("text-anchor","middle");
+  t.setAttribute("fill","rgba(120,155,175,.4)"); t.setAttribute("font-size","8"); t.setAttribute("letter-spacing","2");
+  t.setAttribute("font-family","IBM Plex Mono"); t.textContent=c.t; g.appendChild(t);
+ });
+ // all schema wires (faint) if toggled
+ if($("showall").checked){
+  (SCHEMA.edges||[]).forEach(e=>{
+   const d=edgePath(e.from,e.to); if(!d)return;
+   const p=document.createElementNS(SVGNS,"path"); p.setAttribute("d",d);
+   p.setAttribute("fill","none"); p.setAttribute("stroke","rgba(120,155,175,.10)"); p.setAttribute("stroke-width","1");
+   g.appendChild(p);
+  });
+ }
+ // door edges
+ DOOR_EDGES.forEach(e=>{
+  const d=edgePath(e.from,e.to); if(!d)return;
+  const won=WON.has(e.lvl), hot=selLevel&&selLevel.id===e.lvl;
+  const p=document.createElementNS(SVGNS,"path"); p.setAttribute("d",d); p.setAttribute("fill","none");
+  p.setAttribute("stroke",won?"var(--warm)":(hot?"rgba(255,176,0,.55)":"rgba(120,155,175,.30)"));
+  p.setAttribute("stroke-width",hot||won?"1.6":"1"); if(!won)p.setAttribute("stroke-dasharray","3 3");
+  if(hot)p.setAttribute("style","filter:drop-shadow(0 0 3px rgba(255,176,0,.4))");
+  g.appendChild(p);
+ });
+ // nodes
+ Object.keys(POS).forEach(id=>{
+  const n=NODES[id]; if(!n)return; const p=POS[id], st=nodeStatus(id);
+  const target=selLevel&&(selLevel.lights||[]).includes(id);
+  let stroke = st==="live"?"var(--warm)": st==="proven"?"var(--st70)":"var(--st45)";
+  let fill = st==="live"?"rgba(212,162,76,.06)":"none";
+  if(target){stroke="var(--hot)"; fill="rgba(255,176,0,.10)";}
+  const gg=document.createElementNS(SVGNS,"g"); gg.setAttribute("style","cursor:pointer");
+  gg.addEventListener("click",()=>selectNode(id));
+  const w=128,h=34, x=p.x-w/2, y=p.y-h/2;
+  const r=document.createElementNS(SVGNS,"rect");
+  r.setAttribute("x",x); r.setAttribute("y",y); r.setAttribute("width",w); r.setAttribute("height",h);
+  r.setAttribute("rx","3"); r.setAttribute("fill",fill); r.setAttribute("stroke",stroke);
+  r.setAttribute("stroke-width",target?"1.7":"1"); if(st==="door")r.setAttribute("stroke-dasharray","3 3");
+  if(target)r.setAttribute("style","filter:drop-shadow(0 0 5px rgba(255,176,0,.35))");
+  gg.appendChild(r);
+  const lbl=document.createElementNS(SVGNS,"text");
+  lbl.setAttribute("x",p.x); lbl.setAttribute("y",p.y-1); lbl.setAttribute("text-anchor","middle");
+  lbl.setAttribute("fill",st==="live"||target?"var(--ink)":"var(--st70)"); lbl.setAttribute("font-size","9");
+  lbl.setAttribute("font-family","IBM Plex Mono"); lbl.setAttribute("letter-spacing",".5");
+  lbl.textContent=(id.length>15?id.slice(0,14)+"…":id).toUpperCase();
+  gg.appendChild(lbl);
+  const tag=document.createElementNS(SVGNS,"text");
+  tag.setAttribute("x",p.x); tag.setAttribute("y",p.y+9); tag.setAttribute("text-anchor","middle");
+  tag.setAttribute("fill","rgba(120,155,175,.4)"); tag.setAttribute("font-size","6.5"); tag.setAttribute("letter-spacing","1");
+  tag.setAttribute("font-family","IBM Plex Mono");
+  tag.textContent=(n.kind||"").toUpperCase()+(st==="proven"?" · not wired":st==="door"?" · locked":"");
+  gg.appendChild(tag);
+  if(selNode===id){const o=document.createElementNS(SVGNS,"rect");
+   o.setAttribute("x",x-3);o.setAttribute("y",y-3);o.setAttribute("width",w+6);o.setAttribute("height",h+6);
+   o.setAttribute("rx","4");o.setAttribute("fill","none");o.setAttribute("stroke","var(--hot)");o.setAttribute("stroke-width",".7");o.setAttribute("stroke-dasharray","2 2");gg.appendChild(o);}
+  g.appendChild(gg);
+ });
+}
+$("showall").addEventListener("change",renderBoard);
+
+/* ---------- ladder ---------- */
+function renderLadder(){
+ $("ladder-bd").innerHTML=LEVELS.map(l=>{
+  const cls=[l.id==="SEND"?"send":"", WON.has(l.id)?"won":(l.status==="current"?"current":"locked"),
+   selLevel&&selLevel.id===l.id?"sel":""].join(" ");
+  return `<div class="lv ${cls}" data-id="${l.id}"><div class="id">${l.id}</div><div class="nm">${l.name}</div><div class="cp">${l.cap}</div></div>`;
+ }).join("");
+ [...document.querySelectorAll(".lv")].forEach(el=>el.onclick=()=>selectLevel(el.dataset.id));
+}
+
+/* ---------- select a level → boss panel ---------- */
+function selectLevel(id){
+ selLevel=LEVELS.find(l=>l.id===id); renderLadder(); renderBoard();
+ $("boss-hd").textContent=selLevel.id+" · "+selLevel.name;
+ const playable = !!selLevel.runnable;
+ const beats=selLevel.beats.map((b,i)=>`<li data-n="${i+1}."><b>${["BUILD","PLAY","OBSERVE","TEST"][i]||"·"}</b> ${b}</li>`).join("");
+ $("boss-bd").innerHTML=
+  `<div class="mut" style="font-size:9px;letter-spacing:.14em">BUILD</div>
+   <div style="font-size:11px;color:var(--st70);margin:2px 0 8px">${selLevel.build}</div>
+   <div class="lb">the seven-beat loop</div>
+   <ul class="beats" style="margin-top:5px">${beats}</ul>
+   <div class="bosbox"><span class="th">BOSS</span> — ${selLevel.boss}
+     <div class="ci">${selLevel.theory} · ${selLevel.cite}</div></div>
+   <div class="row">
+     <button class="btn ${playable?'hot':''}" id="boss-run" ${playable?"":"disabled"}>${playable?"▶ run the boss test":"build first — locked"}</button>
+   </div>
+   <div id="boss-res"></div>`;
+ if(playable) $("boss-run").onclick=()=>runBoss(selLevel);
+}
+
+/* ---------- run the boss (L0 = live autonomy battery) ---------- */
+async function runBoss(l){
+ const res=$("boss-res"); res.innerHTML=`<div class="testres">running ${l.runnable}…</div>`;
+ if(l.runnable==="autonomy"){
+  const a=await api("/autonomy");
+  if(a.error){res.innerHTML=`<div class="testres fail">scorer error: ${a.error}</div>`;return;}
+  const pass=a.passing===a.total && a.total>0;
+  const rows=(a.tests||[]).map(t=>`<div style="font-size:9.5px;padding:1px 0;color:${/^(PASS|OFF|HEALTHY|ORGAN|GROW)/.test((t.verdict||"").toUpperCase())?'var(--good)':'var(--bad)'}">
+     ${(t.verdict||"?").split(" ")[0]} · ${t.name}</div>`).join("");
+  res.innerHTML=`<div class="testres ${pass?'pass':'fail'}">
+     ${a.class} — ${a.passing}/${a.total} favourable · ${a.ticks} ticks lived</div>
+     <div style="margin-top:6px">${rows}</div>
+     <div class="mut" style="font-size:9px;margin-top:6px">${(a.note||"").slice(0,180)}</div>`;
+  if(pass){ WON.add("L0"); markWon(); }
+  refreshAutonomy();
+ }
+}
+function markWon(){
+ $("sc-lv").innerHTML="<b>"+[...WON].filter(x=>/^L\d/.test(x)).length+"</b> / 10";
+ renderLadder(); renderBoard();   // NOT selectLevel — that would wipe the boss-result the player just earned
+}
+
+/* ---------- select a node → inspector (real signature + pure payload) ---------- */
+function selectNode(id){
+ selNode=id; renderBoard();
+ const n=NODES[id]; if(!n)return;
+ const st=nodeStatus(id);
+ $("insp-hd").textContent=id.toUpperCase();
+ $("insp-status").textContent = st==="live"?"LIVE IN THE MIND": st==="proven"?"PROVEN · NOT WIRED":"LOCKED · A LEVEL OPENS IT";
+ $("insp-status").className="st-"+st;
+ const fn=(n.functions||[])[0];
+ const inp=(n.inputs||[]).slice(0,10).map(p=>`<span class="port">◂ ${p}</span>`).join("");
+ const out=(n.outputs||[]).slice(0,8).map(p=>`<span class="port">${p} ▸</span>`).join("");
+ const runnable = id==="grid"||id==="energy";
+ let html=`<div style="font-size:11px;color:var(--st70);line-height:1.5">${n.purpose||DOORS[id]?.purpose||""}</div>`;
+ if(fn){
+  html+=`<div class="lb" style="margin-top:9px">signature</div><div class="sig">${(fn.signature||fn.name||"").replace(/</g,"&lt;")}</div>`;
+  html+=`<div class="kv"><div class="k">returns</div><div class="v">${(fn.returns||"—").replace(/</g,"&lt;")}</div></div>`;
+  if((fn.reads||[]).length)  html+=`<div class="kv"><div class="k">reads</div><div class="v">${fn.reads.join(", ")}</div></div>`;
+  if((fn.writes||[]).length) html+=`<div class="kv"><div class="k">writes</div><div class="v">${fn.writes.join(", ")}</div></div>`;
+ }
+ if(inp) html+=`<div class="lb" style="margin-top:9px">in</div><div>${inp}</div>`;
+ if(out) html+=`<div class="lb" style="margin-top:7px">out</div><div>${out}</div>`;
+ if((n.state_files||[]).length) html+=`<div class="kv" style="margin-top:7px"><div class="k">state</div><div class="v">${n.state_files.join(", ")}</div></div>`;
+ if(runnable){
+  html+=`<div class="row"><input id="np" placeholder="prompt…" value="Reply with exactly: LEYBER online"
+     style="flex:1;min-width:120px;background:rgba(0,0,0,.25);border:1px solid var(--st14);color:var(--ink);font:inherit;font-size:10px;padding:5px 7px">
+     <button class="btn hot" id="nrun">▶ run · pure payload</button></div><div id="pure" style="display:none"></div>`;
+ } else {
+  // show the banked live sample for context if this is a channel-ish node
+  const s=(SCHEMA.live_samples||[]).find(s=>true);
+  if(id==="grid"&&s){}
+ }
+ $("insp-bd").innerHTML=html;
+ if(runnable){ $("nrun").onclick=()=>runNode(id); }
+}
+
+async function runNode(id){
+ const pe=$("pure"); pe.style.display="block"; pe.textContent="firing "+id+" …";
+ const prompt=$("np").value||"Reply with exactly: LEYBER online";
+ const node = id==="grid"?"channel":"energy";
+ try{
+  const r=await api("/api/node/run",{node,prompt});
+  const pure=r.pure||r;
+  pe.style.color = r.ok?"var(--good)":"var(--bad)";
+  pe.textContent = JSON.stringify(pure,null,1);
+  $("status").textContent = r.ok ? `${node} → ${pure.plant||''}/${(pure.model||'').split('/').pop()||''} · ${pure.latency||r.elapsed||''}s · REAL payload` : `${node} failed: ${r.error||pure.error||'no rod'}`;
+ }catch(e){ pe.style.color="var(--bad)"; pe.textContent=String(e); }
+}
+
+/* ---------- controls ---------- */
+async function doCmd(cmd){
+ $("status").textContent=cmd+" …";
+ try{ const r=await api("/do",{cmd}); $("status").textContent=(r.out||JSON.stringify(r)).slice(0,200);
+  if(cmd==="tick") setTimeout(refreshAutonomy,1500);
+ }catch(e){ $("status").textContent=String(e); }
+}
+$("c-play").onclick=()=>doCmd("play");
+$("c-tick").onclick=()=>doCmd("tick");
+$("c-stop").onclick=()=>doCmd("stop");
+
+boot();
+</script></body></html>

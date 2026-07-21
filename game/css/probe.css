@@ -1,0 +1,153 @@
+/* probe.css — THE PROBE v2 chrome.
+   Governance: 04_UI_BIBLE.md §0 (two-ink law, type law, panel recipe, choreography ms,
+   reduced motion) · A11_SIGNATURE.md (scarcity budget — idle amber closed list) ·
+   E2_VISUAL_DIRECTION.md §6 (title = radial scrim over the live scene, no key wall). */
+
+:root{
+  --void:#050a10;
+  --s35:rgba(120,155,175,.35);
+  --s60:rgba(120,155,175,.6);
+  --s100:rgba(120,155,175,1);
+  --hot:#ffb000;
+  --warm:#d4a24c;
+  --pan:rgba(5,10,16,.55);
+  --pan-deep:rgba(5,10,16,.88);
+  --rule:rgba(120,155,175,.25);
+  --bracket:rgba(120,155,175,.6);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--void)}
+body{font-family:'IBM Plex Mono',Consolas,monospace;color:var(--s100);font-size:13px;line-height:1.5}
+canvas{display:block}
+
+/* ---- error strip (E1 §5 error surfaces: window.onerror paints here) ---- */
+#err{position:fixed;top:0;left:0;right:0;z-index:40;display:none;padding:4px 10px;
+  font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--hot);
+  background:var(--pan-deep);border-bottom:1px solid var(--rule)}
+
+/* ---- title: radial scrim over the live renderer (E2 §6 title fix, Taste B3) ---- */
+#title{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center, rgba(5,10,16,0) 0%, rgba(5,10,16,.55) 55%, rgba(5,10,16,.85) 100%);
+  transition:opacity .2s}
+#title.out{opacity:0;pointer-events:none}
+#title .t-wrap{text-align:center}
+#title .t-name{font-size:28px;letter-spacing:.42em;color:var(--warm);text-indent:.42em}
+#title .t-sub{margin-top:14px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60)}
+
+/* ---- hint line (Discoverability clause 1–2; keys arrive here, never a legend wall) ---- */
+#hints{position:fixed;left:0;right:0;bottom:14px;z-index:20;text-align:center;
+  font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s35)}
+#hints.loud{color:var(--s60)}
+#hints span{padding:0 10px}
+
+/* ---- panel recipe (04 §0: no 4-sided borders, no radius, no shadows, corner brackets) ---- */
+.pan{position:relative;background:var(--pan);padding:18px 20px}
+.pan.deep{background:var(--pan-deep)}
+.pan>.ck{position:absolute;width:12px;height:12px;border:0 solid var(--bracket)}
+.pan>.ck.tl{top:0;left:0;border-top-width:1px;border-left-width:1px}
+.pan>.ck.tr{top:0;right:0;border-top-width:1px;border-right-width:1px}
+.pan>.ck.bl{bottom:0;left:0;border-bottom-width:1px;border-left-width:1px}
+.pan>.ck.br{bottom:0;right:0;border-bottom-width:1px;border-right-width:1px}
+.pan .hd{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s100);
+  padding-bottom:8px;border-bottom:1px solid var(--rule);
+  box-shadow:0 -1px 0 rgba(120,155,175,.12) inset}
+/* ---- row choreography (04 §0: fade + translateY(6px), 160ms, 30ms stagger via --i) ---- */
+.rin{opacity:0;transform:translateY(6px);animation:rin .16s ease-out forwards;
+  animation-delay:calc(var(--i,0)*30ms)}
+@keyframes rin{to{opacity:1;transform:none}}
+
+/* ---- type scale (04 §0: 10px labels / 13px body / display numbers amber) ---- */
+.lab{font-size:10px;text-transform:uppercase;letter-spacing:.12em}
+.s60{color:var(--s60)}
+
+/* ---- THE BENCH (E4_UX_P0 at THE P0-CUT; layout target: samples/bench_sample.html).
+   A virgin plate is ALL structure ink (A11 §4); the packet + T+ counter are the only
+   amber and exist only while a run is live. ---- */
+#bprompt{position:fixed;z-index:18;display:none;transform:translate(-50%,-100%);
+  font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);white-space:nowrap}
+#bench{position:fixed;inset:0;z-index:25;display:none;align-items:center;justify-content:center;
+  pointer-events:none}
+#bench.on{display:flex}
+#bench .plate{width:640px;pointer-events:auto}
+.plate .rgn{padding:10px 2px 0}
+.task .t-line{color:var(--s100)}
+.task .t-check{color:var(--s60);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+.spine{position:relative;display:flex;align-items:center;gap:8px;padding:34px 2px 18px}
+.spine .end{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);white-space:nowrap}
+.wire{flex:1;height:1px;background:var(--s60);min-width:14px}
+.wire.trunk{height:2px;background:var(--s100)}
+.wire.draw{transform-origin:left center;animation:wdraw .18s ease-out}
+@keyframes wdraw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.chip{display:flex;align-items:center;gap:8px;padding:7px 12px;background:rgba(120,155,175,.07);cursor:pointer}
+.chip .glyph{width:8px;height:8px;border:1px solid var(--s100);border-radius:50%;flex:none}
+.chip .glyph.pent{border-radius:0;border:none;background:var(--s100);
+  clip-path:polygon(50% 0,100% 38%,81% 100%,19% 100%,0 38%)}
+.chip .glyph.fire{border-color:var(--hot)}
+.chip .glyph.pent.fire{background:var(--hot)}
+.chip .nm{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s100)}
+.chip .st{font-size:10px;letter-spacing:.08em;color:var(--s35);text-transform:uppercase}
+.chip .st.vflare{animation:vfl .72s ease-out forwards}
+@keyframes vfl{0%{color:var(--hot)}17%{color:var(--hot)}100%{color:var(--warm)}}
+.chip.sel{background:rgba(120,155,175,.16)}
+.chip.ghost{opacity:.6;cursor:default}
+.chip.ritual .nm,.chip.ritual .st{color:var(--hot)}
+.chip.ritual .glyph{border-color:var(--hot)}
+.chip .ftick{width:1px;height:6px;background:var(--s100);margin-left:4px}
+.gap{position:relative;width:52px;height:26px;flex:none;cursor:pointer}
+.gap.cur{background:rgba(120,155,175,.07)}
+.gap.holds{width:auto;height:auto}
+.packet{position:absolute;top:50%;width:16px;height:3px;margin:5px 0 0 -8px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(212,162,76,0),#d4a24c 45%,#ffb000);
+  transition:left .16s cubic-bezier(.3,.7,.3,1)}
+.packet.cool{animation:pcool .9s ease-out forwards}
+@keyframes pcool{0%{background:linear-gradient(90deg,rgba(212,162,76,0),#d4a24c 45%,#ffb000)}
+  50%{background:var(--warm)}100%{background:var(--s60)}}
+.tplus{position:absolute;top:2px;transform:translateX(-50%);font-size:20px;color:var(--hot);
+  pointer-events:none;transition:left .16s cubic-bezier(.3,.7,.3,1)}
+.tplus.cool{color:var(--s60);transition:color .9s ease-out}
+.wmark{position:absolute;top:50%;margin-top:2px;transform:translateX(-50%);font-size:10px;
+  color:var(--s100);pointer-events:none;line-height:1}
+.rr{position:absolute;top:50%;margin-top:9px;width:1px;height:4px;background:var(--s60);pointer-events:none}
+.strip{display:none;padding:8px 2px 0;border-top:1px solid var(--rule);margin-top:2px}
+.strip .ln{color:var(--s60);font-size:13px}
+.strip .zval{color:var(--s100)}
+.railwrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 2px 0}
+.railwrap .railtag{margin-right:4px}
+.rchip .idx{font-size:10px;color:var(--s60)}
+.rchip.onspine{opacity:.35}
+.rchip.picked{background:rgba(120,155,175,.16)}
+.rider{display:flex;justify-content:space-between;font-size:10px;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--s60);padding:12px 2px 4px;border-top:1px solid var(--rule);margin-top:14px}
+.runlog{padding:8px 2px 2px;min-height:84px}
+.runlog .ln{color:var(--s35);font-size:13px;white-space:pre-wrap}
+.runlog .ln.hotln{color:var(--warm)}
+.ctl-line{display:flex;justify-content:space-between;align-items:baseline;
+  border-top:1px solid var(--rule);margin-top:12px;padding:10px 2px 0}
+.ctl-line .k{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);position:relative}
+.ctl-line .k b{font-weight:400;color:var(--s100)}
+.ctl-line .k.live{color:var(--hot)}
+.ctl-line .k.flare{animation:vfl .72s ease-out}
+#b-cring{vertical-align:-2px;margin-left:6px;opacity:0}
+.k.holding #b-cring{opacity:1}
+/* HALT — the composed held frame [GRAFT-A3]: everything 0.35, the failing name holds */
+.plate.halt .hd,.plate.halt .rgn,.plate.halt .railwrap,.plate.halt .rider,
+.plate.halt .ctl-line,.plate.halt .strip,.plate.halt .spine>*{opacity:.35;transition:opacity .2s}
+.plate.halt .spine .chip.fail{opacity:1}
+.plate.halt .spine .packet,.plate.halt .spine .wmark{opacity:1}
+.plate.halt .runlog{opacity:1}
+/* dock choreography (04 §0): brackets 140ms · rows 160ms @30ms stagger · close 200ms */
+.plate.deal .ck{animation:bck .14s ease-out both}
+.plate.deal .hd,.plate.deal .rgn,.plate.deal .spine,.plate.deal .railwrap,
+.plate.deal .rider,.plate.deal .runlog,.plate.deal .ctl-line{
+  animation:rin .16s ease-out both;animation-delay:calc(var(--i,0)*30ms)}
+@keyframes bck{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.plate.closing{animation:pout .2s ease-in both}
+@keyframes pout{to{opacity:0;transform:scale(.98)}}
+
+/* ---- reduced motion (04 §0: everything collapses to 150ms) ---- */
+@media (prefers-reduced-motion: reduce){
+  *,#title{animation-duration:.15s !important;transition-duration:.15s !important}
+}
+html.rm *,html.rm #title{animation-duration:.15s !important;transition-duration:.15s !important}

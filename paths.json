@@ -1,0 +1,14 @@
+{
+  "math": {
+    "plant": "nvidia",
+    "model": "meta/llama-3.2-3b-instruct",
+    "tier": "bulk",
+    "wins": 3
+  },
+  "other": {
+    "plant": "nvidia",
+    "model": "qwen/qwen3-next-80b-a3b-instruct",
+    "tier": "bulk",
+    "wins": 1
+  }
+}
