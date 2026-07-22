@@ -18,7 +18,7 @@ import grid
 try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
-OUT = os.path.join(grid.HERE, "extensive_census.json")
+OUT = os.path.join(grid.STATE, "extensive_census.json")
 TIMEOUT = 45
 
 NON_CHAT = re.compile(r"(ocr|image|vision|-vl\b|diffusion|edit|embed|rerank|guard|safety|nemoguard|gliner|pii|"
@@ -222,7 +222,7 @@ def promote():
     rep = grid.load_json(OUT, None)
     if not rep:
         print("no exam yet"); return
-    grid.atomic_save_json(os.path.join(grid.HERE, "capability_census.json"),
+    grid.atomic_save_json(os.path.join(grid.STATE, "capability_census.json"),
                           {"generated": rep["generated"], "battery": rep["battery"],
                            "models": rep["models"]}, indent=1)
     print(f"promoted {len(rep['models'])} exam results into capability_census.json (the live ladder)")

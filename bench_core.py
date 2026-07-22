@@ -39,8 +39,8 @@ from time import perf_counter
 import grid, energy, pulse, trust
 
 HERE = grid.HERE
-MANIFEST_FP = os.path.join(HERE, "modules.json")
-RUNS_FP = os.path.join(HERE, "bench_runs.json")
+MANIFEST_FP = os.path.join(grid.STATE, "modules.json")
+RUNS_FP = os.path.join(grid.STATE, "bench_runs.json")
 
 SPEC_VERSION = "0.1.0"
 FIREABLE = ("tap", "scaffold", "governor", "ladder", "scorer")  # the P0 opening pool (A13 s3)

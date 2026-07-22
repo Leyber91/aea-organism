@@ -26,9 +26,9 @@ try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
 HERE = grid.HERE
-USAGE = os.path.join(HERE, "energy_usage.json")
-CAPABILITY = os.path.join(HERE, "capability_census.json")
-FITNESS = os.path.join(HERE, "model_fitness.json")
+USAGE = os.path.join(grid.STATE, "energy_usage.json")
+CAPABILITY = os.path.join(grid.STATE, "capability_census.json")
+FITNESS = os.path.join(grid.STATE, "model_fitness.json")
 COOL_AFTER = 3          # consecutive live failures -> rod cools ...
 COOL_SECONDS = 900      # ... for 15 minutes, then it may retry (review 2026-07-10: cooling was a
                         # PERMANENT tombstone - nothing could ever reset consec_fail because a

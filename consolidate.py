@@ -20,7 +20,7 @@ import json, os, sys, glob, urllib.request
 import grid, pulse
 
 LOCAL_MODEL = "llama3.1:8b"          # local, non-thinking, reliable (the fitness lesson: qwen3 empty-traps)
-STORE = os.path.join(grid.HERE, "luis_memory.json")
+STORE = os.path.join(grid.STATE, "luis_memory.json")
 # 2026-07-19: the corpus WIDENED to every project's top-level sessions (the old single-project
 # corpus was silently pruned by Claude Code's 30-day transcript cleanup - 1,570 unmined sessions
 # lost; cleanupPeriodDays now 3650 in settings so it never happens again). Top-level only:

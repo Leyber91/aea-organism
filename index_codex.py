@@ -17,7 +17,7 @@ from consolidate import embed, _cos     # the same local embedding organ
 try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
-INDEX = os.path.join(grid.HERE, "codex_index.json")
+INDEX = os.path.join(grid.STATE, "codex_index.json")
 CHUNK, OVERLAP, MAX_PER_FILE = 900, 150, 60
 
 ROOTS = [

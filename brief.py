@@ -16,7 +16,7 @@ GH_USER = "Leyber91"
 ROOT_GOAL = "Produce Luis's morning brief: what he's actively moving on, one AI opportunity, and today's first focus."
 # Luis's REAL day, fetched from his Calendar+Gmail into a LOCAL gitignored file. Reasoned over LOCAL-only.
 try:
-    PRIV = json.load(open("private_today.json", encoding="utf-8"))
+    PRIV = grid.load_json("private_today.json", {})
     PRIVATE_BLOCK = ("DATE: " + PRIV.get("date", "today") + "\nCALENDAR:\n- " + "\n- ".join(PRIV.get("calendar", []))
                      + "\nINBOX SIGNAL:\n- " + "\n- ".join(PRIV.get("inbox_signal", [])))
 except Exception as e:

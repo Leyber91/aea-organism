@@ -13,7 +13,7 @@ import sys, json, time, os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import grid
 
-OUT = os.path.join(grid.HERE, "benchmarks.json")
+OUT = os.path.join(grid.STATE, "benchmarks.json")
 
 # A battery of prompt TYPES - we learn each model's real behaviour, not one happy path.
 BATTERY = {

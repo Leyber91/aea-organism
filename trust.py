@@ -25,7 +25,7 @@ from datetime import datetime, timezone
 import grid, pulse              # durable persistence + the nervous signal
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-LEDGER = os.path.join(HERE, "trust_ledger.json")
+LEDGER = os.path.join(grid.STATE, "trust_ledger.json")
 
 # The charter: every capability the entity has or will grow, with its starting level and ceiling.
 # ceiling = the max autonomy Luis has authorized for that capability, regardless of clean streak.

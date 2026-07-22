@@ -27,7 +27,7 @@ CHAINS_FP = None  # set after HERE
 def chain_write(rec: dict):
     """Append one chain/verdict record to chains.jsonl (bounded ~400KB, rotate)."""
     try:
-        fp = os.path.join(HERE, "chains.jsonl")
+        fp = os.path.join(grid.STATE, "chains.jsonl")
         if os.path.exists(fp) and os.path.getsize(fp) > 400_000:
             os.replace(fp, fp + ".1")
         with open(fp, "a", encoding="utf-8") as f:
@@ -76,14 +76,14 @@ def tail(path: str, n: int) -> list[str]:
 
 def state() -> dict:
     now = time.time()
-    hb = grid.load_json(os.path.join(HERE, "heartbeat.json"), {})
+    hb = grid.load_json(os.path.join(grid.STATE, "heartbeat.json"), {})
     meta = grid.load_json(consolidate.META, {})
-    ident = grid.load_json(os.path.join(HERE, "identity.json"), {})
-    talk = grid.load_json(os.path.join(HERE, "talk_state.json"), {})
-    usage = grid.load_json(os.path.join(HERE, "energy_usage.json"), {})
-    gs = grid.load_json(os.path.join(HERE, "grid_state.json"), {})
-    cap = grid.load_json(os.path.join(HERE, "capability_census.json"), {})
-    ledger = grid.load_json(os.path.join(HERE, "trust_ledger.json"), {})
+    ident = grid.load_json(os.path.join(grid.STATE, "identity.json"), {})
+    talk = grid.load_json(os.path.join(grid.STATE, "talk_state.json"), {})
+    usage = grid.load_json(os.path.join(grid.STATE, "energy_usage.json"), {})
+    gs = grid.load_json(os.path.join(grid.STATE, "grid_state.json"), {})
+    cap = grid.load_json(os.path.join(grid.STATE, "capability_census.json"), {})
+    ledger = grid.load_json(os.path.join(grid.STATE, "trust_ledger.json"), {})
 
     # meter view: per ONLINE plant - rpd today + live rpm in-window + cooling buckets
     plants = []
@@ -202,9 +202,9 @@ poll();
 
 def journal() -> dict:
     """The entity's actions, documented — merged from the stores it already writes (nothing invented)."""
-    hb = grid.load_json(os.path.join(HERE, "heartbeat.json"), {})
-    ledger = grid.load_json(os.path.join(HERE, "trust_ledger.json"), {})
-    talk = grid.load_json(os.path.join(HERE, "talk_state.json"), {})
+    hb = grid.load_json(os.path.join(grid.STATE, "heartbeat.json"), {})
+    ledger = grid.load_json(os.path.join(grid.STATE, "trust_ledger.json"), {})
+    talk = grid.load_json(os.path.join(grid.STATE, "talk_state.json"), {})
     ticks = [str(e) for e in hb.get("history", [])[-30:]]
     trust_lines = []
     for cap, e in ledger.items():
@@ -214,7 +214,7 @@ def journal() -> dict:
     events = [e for e in pulse.tail(0, limit=80)]
     turns = [{"who": t.get("who"), "t": t.get("t"), "text": (t.get("text") or "")[:160]}
              for t in talk.get("turns", [])[-12:]]
-    trace = tail(os.path.join(HERE, "brief_trace.jsonl"), 12)
+    trace = tail(os.path.join(grid.STATE, "brief_trace.jsonl"), 12)
     return {"ticks": ticks, "trust": trust_lines[:40], "events": events, "talk": turns, "trace": trace}
 
 
@@ -233,10 +233,10 @@ ORGANS_DOC = [  # the organ registry the dashboard documents (name, file, status
 
 def skills() -> dict:
     """The growing capability population: crystallized paths + trust capabilities + organs."""
-    paths_fp = os.path.join(HERE, "paths.json")
+    paths_fp = os.path.join(grid.STATE, "paths.json")
     paths = grid.load_json(paths_fp, {})
     mtime = time.strftime("%Y-%m-%d %H:%M", time.localtime(os.path.getmtime(paths_fp))) if os.path.exists(paths_fp) else None
-    ledger = grid.load_json(os.path.join(HERE, "trust_ledger.json"), {})
+    ledger = grid.load_json(os.path.join(grid.STATE, "trust_ledger.json"), {})
     caps = {}
     for c_name, cdef in trust.CHARTER.items():
         e = ledger.get(c_name, {})
@@ -248,7 +248,7 @@ def skills() -> dict:
 
 def roster() -> dict:
     """Model truth for the dashboard: lived fitness top + Luis's candidates + exclusions."""
-    fit = grid.load_json(os.path.join(HERE, "model_fitness.json"), {})
+    fit = grid.load_json(os.path.join(grid.STATE, "model_fitness.json"), {})
     rows = []
     for n in fit.get("nodes", []):
         probes = n.get("probes", {}) or {}
@@ -261,13 +261,13 @@ def roster() -> dict:
     rows.sort(key=lambda r: (-r["_k"], r["lat"] if r["lat"] is not None else 99))
     for r in rows:
         r.pop("_k", None)
-    cand = grid.load_json(os.path.join(HERE, "candidates_probe.json"), {})
+    cand = grid.load_json(os.path.join(grid.STATE, "candidates_probe.json"), {})
     return {"fitness_top": rows[:18], "fitness_generated": fit.get("generated"),
             "candidates": cand,
             "excluded": ["nemotron content-safety family — Luis's directive 2026-07-12: provides no value here"]}
 
 
-LIVE_PID_FP = os.path.join(HERE, "live_pid.json")
+LIVE_PID_FP = os.path.join(grid.STATE, "live_pid.json")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -300,7 +300,7 @@ class Handler(BaseHTTPRequestHandler):
             body = json.dumps(out, ensure_ascii=False).encode("utf-8"); ctype = "application/json"
         elif self.path.startswith("/decisions"):   # the bifurcation path: every choice the entity makes
             recs = []
-            for ln in tail(os.path.join(HERE, "decisions.jsonl"), 80):
+            for ln in tail(os.path.join(grid.STATE, "decisions.jsonl"), 80):
                 try:
                     recs.append(json.loads(ln))
                 except Exception:
@@ -308,7 +308,7 @@ class Handler(BaseHTTPRequestHandler):
             body = json.dumps({"decisions": recs[-60:]}, ensure_ascii=False).encode("utf-8"); ctype = "application/json"
         elif self.path == "/chains":
             chains, verdicts = [], {}
-            for ln in tail(os.path.join(HERE, "chains.jsonl"), 60):
+            for ln in tail(os.path.join(grid.STATE, "chains.jsonl"), 60):
                 try:
                     o = json.loads(ln)
                     if o.get("type") == "chain":
@@ -330,7 +330,7 @@ class Handler(BaseHTTPRequestHandler):
             ctype = "application/json"
         elif self.path.startswith("/api/schema"):    # THE ASCENT board: the master pipeline schema (code contracts, no secrets)
             try:
-                body = open(os.path.join(HERE, "schema.json"), "rb").read()
+                body = open(os.path.join(grid.STATE, "schema.json"), "rb").read()
             except Exception as e:
                 body = json.dumps({"error": f"schema.json missing: {e}"}).encode()
             ctype = "application/json"
@@ -341,7 +341,7 @@ class Handler(BaseHTTPRequestHandler):
                 body = f"game.html missing: {e}".encode()
             ctype = "text/html; charset=utf-8"
         elif self.path.startswith("/api/journey"):   # THE PROBE - the game's server-side save
-            body = json.dumps(grid.load_json(os.path.join(HERE, "journey_save.json"),
+            body = json.dumps(grid.load_json(os.path.join(grid.STATE, "journey_save.json"),
                                              {"done": {}, "reveals": []}), ensure_ascii=False).encode("utf-8")
             ctype = "application/json"
         elif self.path.startswith("/api/construct/run"):  # THE BENCH (P0) - persisted run row, polled by run_id
@@ -387,7 +387,7 @@ class Handler(BaseHTTPRequestHandler):
             ctype = "text/html; charset=utf-8"
         elif self.path.startswith("/api/tickets"):  # THE PROBE - production registry data (tickets.json verbatim)
             try:
-                body = open(os.path.join(HERE, "tickets.json"), "rb").read()
+                body = open(os.path.join(grid.STATE, "tickets.json"), "rb").read()
             except Exception as e:
                 body = json.dumps({"error": f"tickets.json missing: {e}"}).encode()
             ctype = "application/json"
@@ -548,7 +548,7 @@ class Handler(BaseHTTPRequestHandler):
     def _journey(self, req: dict) -> dict:
         """THE PROBE save: merge a mission/beat completion into journey_save.json (atomic).
         {reset:true} starts the journey over. Server-side so progress survives any browser."""
-        fp = os.path.join(HERE, "journey_save.json")
+        fp = os.path.join(grid.STATE, "journey_save.json")
         try:
             with grid.file_lock(fp):
                 if req.get("reset"):
@@ -580,7 +580,7 @@ class Handler(BaseHTTPRequestHandler):
             t0 = time.time()
             pulse.emit("mind", "hears-luis", text[:90])
             st = talk_mod.load_state()
-            ident = grid.load_json(os.path.join(HERE, "identity.json"), {})
+            ident = grid.load_json(os.path.join(grid.STATE, "identity.json"), {})
             seed = ""
             try:
                 seed = open(talk_mod.SEED_PATH, encoding="utf-8").read()

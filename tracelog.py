@@ -10,6 +10,7 @@ the crystallizer, and HADES-as-tree-overseer.
 """
 import json, os, time, threading
 
+import grid
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -24,7 +25,7 @@ class Node:
 
 class Trace:
     def __init__(self, root_goal, path=None):
-        self.path = path or os.path.join(HERE, "brief_trace.jsonl")
+        self.path = path or os.path.join(grid.STATE, "brief_trace.jsonl")
         self.lock = threading.Lock(); self._n = 0
         self.nodes = {}; self.registry = {}      # id->Node ; id->{goal,depth,zone} for ACTIVE nodes only
         open(self.path, "w", encoding="utf-8").close()   # fresh log per run

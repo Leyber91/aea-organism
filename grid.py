@@ -30,6 +30,30 @@ except ImportError:                    # pragma: no cover
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+def _find_root(start):
+    """Walk up from HERE to the repo root (the dir that holds design/ or .git), so state
+    resolves to the SAME place whether this module sits at root or in a runtime/ subfolder."""
+    d = start
+    for _ in range(6):
+        if os.path.isdir(os.path.join(d, "design")) or os.path.isdir(os.path.join(d, ".git")):
+            return d
+        p = os.path.dirname(d)
+        if p == d:
+            break
+        d = p
+    return start
+
+
+ROOT = _find_root(HERE)
+STATE = os.path.join(ROOT, "state")          # the one home for runtime state on disk
+os.makedirs(STATE, exist_ok=True)
+
+
+def _state(path: str) -> str:
+    """A bare filename -> under STATE/. An already-qualified path -> unchanged."""
+    return os.path.join(STATE, path) if os.path.dirname(path) == "" else path
+
+
 # --------------------------------------------------------------------------------------
 # 0a. DURABLE PERSISTENCE - the one home for state on disk (engine review 2026-07-10:
 #     every store was truncate-written and every loader silently reset to empty on a torn
@@ -38,6 +62,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # --------------------------------------------------------------------------------------
 def atomic_save_json(path: str, data, indent=None):
     """Write-to-temp then os.replace: a kill mid-write can never leave a truncated store."""
+    path = _state(path)
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=indent)
@@ -47,6 +72,7 @@ def atomic_save_json(path: str, data, indent=None):
 def load_json(path: str, default):
     """Missing file -> default. CORRUPT file -> quarantine it loudly (never let the next
     save silently cement the loss) and return default."""
+    path = _state(path)
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f)
@@ -67,6 +93,7 @@ def load_json(path: str, default):
 def file_lock(path: str, timeout: float = 5.0):
     """Cross-process advisory lock on <path>.lock (msvcrt). Yields True if held. On timeout
     yields False and proceeds unlocked - the entity must degrade, never deadlock."""
+    path = _state(path)
     if msvcrt is None:
         yield True; return
     f = open(path + ".lock", "a+b")
@@ -230,7 +257,7 @@ class Meter:
     Any number of Meter instances anywhere now share one truth; construction is free."""
 
     def __init__(self, state_path: str | None = None):
-        self.state_path = state_path or os.path.join(HERE, "grid_state.json")
+        self.state_path = state_path or os.path.join(STATE, "grid_state.json")
         self.lock = threading.Lock()          # in-process threads; file_lock covers processes
 
     # -- state plumbing -----------------------------------------------------------------

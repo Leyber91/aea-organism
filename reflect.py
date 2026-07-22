@@ -22,9 +22,9 @@ import json, os, sys, time, re
 import grid, energy, pulse, hades, orchestrator
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SELF = os.path.join(HERE, "self.json")
-REFL = os.path.join(HERE, "reflections.jsonl")
-DEC = os.path.join(HERE, "decisions.jsonl")
+SELF = os.path.join(grid.STATE, "self.json")
+REFL = os.path.join(grid.STATE, "reflections.jsonl")
+DEC = os.path.join(grid.STATE, "decisions.jsonl")
 
 
 def _append(fp: str, rec: dict, cap: int = 400_000):

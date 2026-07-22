@@ -21,7 +21,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
-OUT = os.path.join(grid.HERE, "model_fitness.json")
+OUT = os.path.join(grid.STATE, "model_fitness.json")
 
 # The battery is shaped like the entity's ACTUAL jobs, and each probe targets a known failure mode.
 BATTERY = {

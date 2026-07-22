@@ -23,8 +23,9 @@ Stdlib only: subprocess to the sherpa exe / PowerShell. Voice choice lives in id
 from __future__ import annotations
 import subprocess, sys, os, json, time, re
 
+import grid
 HERE = os.path.dirname(os.path.abspath(__file__))
-IDENTITY = os.path.join(HERE, "identity.json")
+IDENTITY = os.path.join(grid.STATE, "identity.json")
 VDIR = os.path.join(HERE, "voice")
 KOKORO = os.path.join(VDIR, "kokoro-en-v0_19")
 SPEAKERS = ["af", "af_bella", "af_nicole", "af_sarah", "af_sky",

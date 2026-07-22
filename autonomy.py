@@ -12,13 +12,14 @@ will replicate the behaviour").
 from __future__ import annotations
 import json, os, time
 
+import grid
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def _rows(fp):
     out = []
     try:
-        for ln in open(os.path.join(HERE, fp), encoding="utf-8", errors="ignore"):
+        for ln in open(os.path.join(grid.STATE, fp), encoding="utf-8", errors="ignore"):
             try:
                 out.append(json.loads(ln))
             except Exception:
@@ -33,12 +34,12 @@ def score() -> dict:
     dec = _rows("decisions.jsonl")
     hb = {}
     try:
-        hb = json.load(open(os.path.join(HERE, "heartbeat.json"), encoding="utf-8"))
+        hb = json.load(open(os.path.join(grid.STATE, "heartbeat.json"), encoding="utf-8"))
     except Exception:
         pass
     self_ = {}
     try:
-        self_ = json.load(open(os.path.join(HERE, "self.json"), encoding="utf-8"))
+        self_ = json.load(open(os.path.join(grid.STATE, "self.json"), encoding="utf-8"))
     except Exception:
         pass
 

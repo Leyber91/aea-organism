@@ -12,7 +12,7 @@ from __future__ import annotations
 import json, os, time
 import grid
 
-EVENTS = os.path.join(grid.HERE, "events.jsonl")
+EVENTS = os.path.join(grid.STATE, "events.jsonl")
 MAX_BYTES = 1_000_000
 KEEP_TAIL = 1200
 

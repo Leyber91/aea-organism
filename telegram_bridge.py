@@ -15,7 +15,7 @@ import os, json, time, urllib.request, urllib.parse
 import grid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-STATE = os.path.join(HERE, "telegram_state.json")
+STATE = os.path.join(grid.STATE, "telegram_state.json")
 API = "https://api.telegram.org/bot"
 
 
@@ -65,7 +65,7 @@ def run(poll_secs: int = 50):
                 continue                                    # private to Luis only
             try:
                 state = talk_mod.load_state()
-                ident = grid.load_json(os.path.join(HERE, "identity.json"), {})
+                ident = grid.load_json(os.path.join(grid.STATE, "identity.json"), {})
                 seed = ""
                 try:
                     seed = open(talk_mod.SEED_PATH, encoding="utf-8").read()

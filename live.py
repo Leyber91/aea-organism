@@ -25,7 +25,7 @@ from datetime import datetime, timezone
 import grid, pulse             # durable persistence + the nervous signal (the brain view watches)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-HEARTBEAT = os.path.join(HERE, "heartbeat.json")
+HEARTBEAT = os.path.join(grid.STATE, "heartbeat.json")
 LOG = os.path.join(HERE, "live.log")
 PIDLOCK = os.path.join(HERE, "live.instance")
 PY = sys.executable

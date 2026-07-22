@@ -27,9 +27,9 @@ try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
 HERE = grid.HERE
-STATE = os.path.join(HERE, "talk_state.json")
+STATE = os.path.join(grid.STATE, "talk_state.json")
 SEED_PATH = os.path.join(HERE, "aea_seed.md")
-IDENTITY = os.path.join(HERE, "identity.json")
+IDENTITY = os.path.join(grid.STATE, "identity.json")
 KEEP_TURNS = 14           # rolling window of exchanges carried into context
 
 
@@ -42,7 +42,7 @@ def save_state(s: dict):
 
 def self_status() -> str:
     """The entity's TRUE live state - so it never has to invent what it has been doing."""
-    hb = grid.load_json(os.path.join(HERE, "heartbeat.json"), {})
+    hb = grid.load_json(os.path.join(grid.STATE, "heartbeat.json"), {})
     meta = grid.load_json(consolidate.META, {})
     parts = []
     if hb:
@@ -56,7 +56,7 @@ def self_status() -> str:
 def self_digest() -> str:
     """The SELF, compacted for the mind (gauntlet 2026-07-11: without this it CONFABULATED its
     own history - invented a rate-limit story for the EDR voice revocation)."""
-    s = grid.load_json(os.path.join(HERE, "self.json"), {})
+    s = grid.load_json(os.path.join(grid.STATE, "self.json"), {})
     auto = s.get("autobiography", [])[-2:]
     lessons = s.get("lessons", [])[:5]
     tasks = [f"{t['id']}({t['status']}): {t['text'][:70]}" for t in s.get("tasks", [])

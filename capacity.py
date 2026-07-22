@@ -24,7 +24,7 @@ import grid
 try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
-OUT = os.path.join(grid.HERE, "capacity.json")
+OUT = os.path.join(grid.STATE, "capacity.json")
 TIMEOUT_PROBE = 25   # a model that can't emit 1 token in 25s is not interactive capacity
 
 

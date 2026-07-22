@@ -20,7 +20,7 @@ import grid
 try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
-OUT = os.path.join(grid.HERE, "capability_census.json")
+OUT = os.path.join(grid.STATE, "capability_census.json")
 TIMEOUT = 40
 
 NON_CHAT = re.compile(r"(ocr|image|vision|-vl\b|diffusion|edit|embed|rerank|guard|safety|nemoguard|"
