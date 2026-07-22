@@ -16,7 +16,7 @@ from concurrent.futures import ThreadPoolExecutor
 try: sys.stdout.reconfigure(encoding='utf-8')
 except Exception: pass
 
-PATHS = os.path.join(grid.HERE, 'paths.json')
+PATHS = os.path.join(grid.STATE, 'paths.json')
 LADDER = ['reflex', 'bulk', 'deep']
 
 def load(): return json.load(open(PATHS, encoding='utf-8')) if os.path.exists(PATHS) else {}

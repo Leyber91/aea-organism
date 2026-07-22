@@ -36,9 +36,9 @@ def load_pool():
     (Local ollama nodes are kept regardless: they are the privacy floor; their quirks are handled
     at the call site.) Proof this matters: qwen3-next-80b scored 4/4 in the static battery, then
     timed out in production and shipped a hole in the brief; the fitness sweep caught it at 0.00."""
-    rows = grid.load_json(os.path.join(grid.HERE, 'models_report.json'), [])
+    rows = grid.load_json(os.path.join(grid.STATE, 'models_report.json'), [])
     fit = {}
-    for r in grid.load_json(os.path.join(grid.HERE, 'model_fitness.json'), {}).get('nodes', []):
+    for r in grid.load_json(os.path.join(grid.STATE, 'model_fitness.json'), {}).get('nodes', []):
         fit[(r['plant'], r['model'])] = r
     pool = []
     for r in rows:

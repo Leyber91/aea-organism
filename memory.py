@@ -3,7 +3,7 @@ Local embeddings (Ollama mxbai-embed-large: free, unlimited, private) + cosine r
 Grounds the swarm so it reasons over TRUTH instead of hallucinating. No API keys, no cloud."""
 import json, os, math, urllib.request, grid
 
-STORE = os.path.join(grid.HERE, 'memory.json')
+STORE = os.path.join(grid.STATE, 'memory.json')
 
 def embed(text):
     body = json.dumps({'model': 'mxbai-embed-large', 'input': text}).encode()
