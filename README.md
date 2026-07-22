@@ -9,11 +9,16 @@ API calls. You compose real AI parts into small machines and **run them for real
 
 ---
 
-## START HERE
+## START HERE — this repo is built to be handed off
 
-1. **`SESSION_LOG.md`** — current state + the exact next task. Each work session appends one entry.
-2. **`GAME_PLAN.md`** — the canonical game plan.
-3. This README — the map (below).
+Any conversation can take over development from the repo itself. Read in this order (cheap → deep):
+
+1. **`graph.json`** — the deterministic knowledge-graph (modules, imports, endpoints, design,
+   state, web). Query the node you need + its edges instead of re-scanning the tree. Refresh:
+   `python aea/build_graph.py`.
+2. **`diary/SESSION_LOG.md`** — the latest entry: current state, what's locked, the exact next
+   task. Full handoff protocol in `diary/README.md`.
+3. **`GAME_PLAN.md`** + `design/` — the design, read on demand.
 
 ## RUN IT
 
@@ -26,9 +31,12 @@ python controlroom.py          # serves the game + the entity's live endpoints o
 
 ```
 controlroom.py         run shim -> aea/controlroom.py
+graph.json             deterministic repo knowledge-graph (read this first; refresh via aea/build_graph.py)
+README.md / GAME_PLAN.md
 install_autostart.ps1  optional autostart setup
-README / SESSION_LOG / GAME_PLAN / REORG_PLAN . md
 
+diary/   the dev journal + handoff protocol (SESSION_LOG, REORG_PLAN). How a new conversation takes over.
+references/ external reference material a takeover agent needs (AEA + portfolio sources; privacy-guarded).
 aea/     ALL the runtime Python — the server + the living entity (one package, flat imports):
            controlroom.py (server), grid.py (metered model grid = the game's energy),
            bench_core.py (THE BENCH: compose real models into a machine and run it),

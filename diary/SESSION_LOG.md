@@ -5,6 +5,29 @@ from the `NEXT` block — it does not re-decide what is under `LOCKED`.
 
 ---
 
+## 2026-07-22 (late) — repo backed up, root reorganized, handoff system built
+
+**DID:**
+- Backed up to **private `github.com/Leyber91/AEA_GAME`** (branch `aeagame_main` → `main`);
+  career data (`data.js`, `index_codex.py`) excluded by design.
+- **Full root reorg, 126 loose files → 6.** State → `state/`, web → `web/`, all 33 Python →
+  `aea/` (one package, flat imports), runtime files → `state/`, specs → `docs/`. Anchored via
+  `grid.ROOT`/`STATE`/`WEB` (walk up to repo root); root `controlroom.py` shim keeps the run
+  command. **Verified end-to-end after every stage:** `.env` keys load (NVIDIA/GROQ/CEREBRAS),
+  all endpoints 200, save (`M0.1`/`M1.1`) intact, every write lands in `state/`, no leak, no
+  boot errors. Full record: `diary/REORG_PLAN.md`.
+- **Handoff system built** (so any conversation takes over from the repo): `graph.json`
+  (deterministic knowledge-graph, 152 nodes / 81 edges, via `aea/build_graph.py`), this `diary/`
+  (journal + protocol in `diary/README.md`), and `references/` (external sources, privacy-guarded).
+
+**OPEN (owed by Luis):** which portfolio references go in `references/` — name them and they get
+privacy-scanned + brought in (see `references/README.md`).
+
+**NEXT is unchanged:** the MERGE (below). Reorg + handoff were infrastructure; the game still needs
+its two halves united.
+
+---
+
 ## 2026-07-22 — vision locked, repo backed up
 
 **DID:** strategic audit (five research passes) → measured verdict: *not a game yet*, but the one

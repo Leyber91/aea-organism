@@ -1,0 +1,1229 @@
+{
+ "_meta": {
+  "what": "Deterministic knowledge-graph of the THE PROBE / aea-city repo, for agent handoff.",
+  "how_to_use": "Query a node's directly-connected edges instead of re-reading the tree. Regenerate after structural changes: python aea/build_graph.py",
+  "run_the_game": "python controlroom.py   (root shim -> aea/controlroom.py, serves :7799)",
+  "path_model": "grid.py defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Code lives in aea/.",
+  "counts": {
+   "module": 34,
+   "endpoint": 30,
+   "design_doc": 41,
+   "state_file": 36,
+   "doc": 11,
+   "design_concept_sheets": 46,
+   "web_files": 89
+  },
+  "node_types": [
+   "design_concept_sheets",
+   "design_doc",
+   "doc",
+   "endpoint",
+   "module",
+   "state_file",
+   "web_files"
+  ]
+ },
+ "nodes": [
+  {
+   "id": "aea",
+   "type": "module",
+   "path": "aea/aea.py",
+   "purpose": "aea.py - THE AEA: a seeded, persistent, always-on entity. NOT a swarm - ONE core mind on a loop,"
+  },
+  {
+   "id": "agent_tools",
+   "type": "module",
+   "path": "aea/agent_tools.py",
+   "purpose": "agent_tools.py - Phase 3: the agent reaches PAST its own weights."
+  },
+  {
+   "id": "autonomy",
+   "type": "module",
+   "path": "aea/autonomy.py",
+   "purpose": "autonomy.py - THE LIVE BATTERY: the system tests its OWN autonomy against the principles."
+  },
+  {
+   "id": "bench_core",
+   "type": "module",
+   "path": "aea/bench_core.py",
+   "purpose": "bench_core.py - THE BENCH HARNESS (P0): compose a construct, run it for real, measure it."
+  },
+  {
+   "id": "brief",
+   "type": "module",
+   "path": "aea/brief.py",
+   "purpose": "brief.py - THE MORNING BRIEF: the first REAL task the free swarm does for Luis."
+  },
+  {
+   "id": "build_graph",
+   "type": "module",
+   "path": "aea/build_graph.py",
+   "purpose": "build_graph.py - deterministic repo knowledge-graph for agent handoff."
+  },
+  {
+   "id": "capability_census",
+   "type": "module",
+   "path": "aea/capability_census.py",
+   "purpose": "capability_census.py - REFINE THE CATALOG: not \"does it serve\" but \"how CAPABLE is it\"."
+  },
+  {
+   "id": "capacity",
+   "type": "module",
+   "path": "aea/capacity.py",
+   "purpose": "capacity.py - THE LIVE CAPACITY GAUGE: how much free power do we ACTUALLY have, right now?"
+  },
+  {
+   "id": "consolidate",
+   "type": "module",
+   "path": "aea/consolidate.py",
+   "purpose": "consolidate.py - MEMORY CONSOLIDATION: episodic transcripts -> semantic memory of Luis."
+  },
+  {
+   "id": "controlroom",
+   "type": "module",
+   "path": "aea/controlroom.py",
+   "purpose": "controlroom.py - THE CONTROL ROOM: at any moment, see what the entity is doing."
+  },
+  {
+   "id": "energy",
+   "type": "module",
+   "path": "aea/energy.py",
+   "purpose": "energy.py - ONE CONTINUUM: the brain draws models as ENERGY through a single mouth."
+  },
+  {
+   "id": "export_city",
+   "type": "module",
+   "path": "aea/export_city.py",
+   "purpose": "export_city.py - dump the REAL grid state into city.data.js for the 3D city."
+  },
+  {
+   "id": "extensive_census",
+   "type": "module",
+   "path": "aea/extensive_census.py",
+   "purpose": "extensive_census.py - THE FULL EXAM: every free capability we hold, tested for real."
+  },
+  {
+   "id": "gauntlet",
+   "type": "module",
+   "path": "aea/gauntlet.py",
+   "purpose": "gauntlet.py - THE GAUNTLET: the integrated entity examined through its own front door."
+  },
+  {
+   "id": "grid",
+   "type": "module",
+   "path": "aea/grid.py",
+   "purpose": "grid.py - the AEA entity's power grid (the city's electricity layer)."
+  },
+  {
+   "id": "hades",
+   "type": "module",
+   "path": "aea/hades.py",
+   "purpose": "hades.py - HADES: the WATCHER over the SEDAH swarm."
+  },
+  {
+   "id": "index_codex",
+   "type": "module",
+   "path": "aea/index_codex.py",
+   "purpose": "index_codex.py - THE WHOLE BOOK OF LUIS, indexed: his real documents (the TRIVERSE CODEX,"
+  },
+  {
+   "id": "listen",
+   "type": "module",
+   "path": "aea/listen.py",
+   "purpose": "listen.py - the entity's EARS. Offline speech-to-text: Whisper-base (multilingual - English"
+  },
+  {
+   "id": "live",
+   "type": "module",
+   "path": "aea/live.py",
+   "purpose": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps."
+  },
+  {
+   "id": "memory",
+   "type": "module",
+   "path": "aea/memory.py",
+   "purpose": "memory.py - the entity's persistent memory = the backwards channel (seed 10) + A-axis L2."
+  },
+  {
+   "id": "model_fitness",
+   "type": "module",
+   "path": "aea/model_fitness.py",
+   "purpose": "model_fitness.py - THE ENTITY LEARNS ITS OWN TOOLS."
+  },
+  {
+   "id": "notify",
+   "type": "module",
+   "path": "aea/notify.py",
+   "purpose": "notify.py - the REACH organ: LEYBER reaches Luis by PHONE (CallMeBot text-to-speech call)."
+  },
+  {
+   "id": "orchestrator",
+   "type": "module",
+   "path": "aea/orchestrator.py",
+   "purpose": "orchestrator.py - the AEA orchestrator."
+  },
+  {
+   "id": "pathfinder",
+   "type": "module",
+   "path": "aea/pathfinder.py",
+   "purpose": "pathfinder.py - the increase-by-step CRYSTALLIZED PATH algorithm."
+  },
+  {
+   "id": "probe",
+   "type": "module",
+   "path": "aea/probe.py",
+   "purpose": "probe.py - the grid inspector. Measures the REAL capacity of each plant:"
+  },
+  {
+   "id": "pulse",
+   "type": "module",
+   "path": "aea/pulse.py",
+   "purpose": "pulse.py - the entity's NERVOUS SIGNAL. Every organ emits what it does, as it does it,"
+  },
+  {
+   "id": "reflect",
+   "type": "module",
+   "path": "aea/reflect.py",
+   "purpose": "reflect.py - t6, THE REFLECTION TICK: the organ that makes the self a loop, not a document."
+  },
+  {
+   "id": "relay",
+   "type": "module",
+   "path": "aea/relay.py",
+   "purpose": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads"
+  },
+  {
+   "id": "speak",
+   "type": "module",
+   "path": "aea/speak.py",
+   "purpose": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):"
+  },
+  {
+   "id": "swarm",
+   "type": "module",
+   "path": "aea/swarm.py",
+   "purpose": "swarm.py - the recursive, self-monitoring swarm. Answers: WHEN does a role spawn a sub-agent?"
+  },
+  {
+   "id": "talk",
+   "type": "module",
+   "path": "aea/talk.py",
+   "purpose": "talk.py - TALK TO IT. The conversational face of the entity: the first interface where"
+  },
+  {
+   "id": "telegram_bridge",
+   "type": "module",
+   "path": "aea/telegram_bridge.py",
+   "purpose": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,"
+  },
+  {
+   "id": "tracelog",
+   "type": "module",
+   "path": "aea/tracelog.py",
+   "purpose": "tracelog.py - the trace substrate the whole swarm stands on."
+  },
+  {
+   "id": "trust",
+   "type": "module",
+   "path": "aea/trust.py",
+   "purpose": "trust.py - THE TRUST LEDGER: autonomy is EARNED per capability, never assumed."
+  },
+  {
+   "id": "/api/construct/run",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/api/journey",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/api/node/run",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/api/schema",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/api/tickets",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/autonomy",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/brain",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/builder",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/chains",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/city",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/decisions",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/do",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/events",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/game",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/game/",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/journal",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/lab",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/mind",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/plan",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/poster",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/probe",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/room",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/roster",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/skills",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/state",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/talk",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/tracker",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/tree",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/workspace",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "/world",
+   "type": "endpoint",
+   "served_by": "aea/controlroom.py"
+  },
+  {
+   "id": "design/00_VISION.md",
+   "type": "design_doc",
+   "path": "design/00_VISION.md"
+  },
+  {
+   "id": "design/01_WORLD.md",
+   "type": "design_doc",
+   "path": "design/01_WORLD.md"
+  },
+  {
+   "id": "design/02_SYSTEMS.md",
+   "type": "design_doc",
+   "path": "design/02_SYSTEMS.md"
+  },
+  {
+   "id": "design/03_PROGRESSION.md",
+   "type": "design_doc",
+   "path": "design/03_PROGRESSION.md"
+  },
+  {
+   "id": "design/04_UI_BIBLE.md",
+   "type": "design_doc",
+   "path": "design/04_UI_BIBLE.md"
+  },
+  {
+   "id": "design/05B_CONTENT_ACT3_4.md",
+   "type": "design_doc",
+   "path": "design/05B_CONTENT_ACT3_4.md"
+  },
+  {
+   "id": "design/05C_CONTENT_ACT5_6.md",
+   "type": "design_doc",
+   "path": "design/05C_CONTENT_ACT5_6.md"
+  },
+  {
+   "id": "design/05_CONTENT_MISSIONS.md",
+   "type": "design_doc",
+   "path": "design/05_CONTENT_MISSIONS.md"
+  },
+  {
+   "id": "design/06_MODELS_BESTIARY.md",
+   "type": "design_doc",
+   "path": "design/06_MODELS_BESTIARY.md"
+  },
+  {
+   "id": "design/07_AUDIO.md",
+   "type": "design_doc",
+   "path": "design/07_AUDIO.md"
+  },
+  {
+   "id": "design/08_TECH.md",
+   "type": "design_doc",
+   "path": "design/08_TECH.md"
+  },
+  {
+   "id": "design/09_PRODUCTION.md",
+   "type": "design_doc",
+   "path": "design/09_PRODUCTION.md"
+  },
+  {
+   "id": "design/A10_LIVING_GAME.md",
+   "type": "design_doc",
+   "path": "design/A10_LIVING_GAME.md"
+  },
+  {
+   "id": "design/A11_SIGNATURE.md",
+   "type": "design_doc",
+   "path": "design/A11_SIGNATURE.md"
+  },
+  {
+   "id": "design/A12_STORY.md",
+   "type": "design_doc",
+   "path": "design/A12_STORY.md"
+  },
+  {
+   "id": "design/A13_PATHS.md",
+   "type": "design_doc",
+   "path": "design/A13_PATHS.md"
+  },
+  {
+   "id": "design/A14_MODULE_REGISTRY.md",
+   "type": "design_doc",
+   "path": "design/A14_MODULE_REGISTRY.md"
+  },
+  {
+   "id": "design/A15_FULL_COVERAGE.md",
+   "type": "design_doc",
+   "path": "design/A15_FULL_COVERAGE.md"
+  },
+  {
+   "id": "design/A16_WIRTHFORGE.md",
+   "type": "design_doc",
+   "path": "design/A16_WIRTHFORGE.md"
+  },
+  {
+   "id": "design/A1_PLAYER_EXPERIENCE.md",
+   "type": "design_doc",
+   "path": "design/A1_PLAYER_EXPERIENCE.md"
+  },
+  {
+   "id": "design/A2_TEACHING.md",
+   "type": "design_doc",
+   "path": "design/A2_TEACHING.md"
+  },
+  {
+   "id": "design/A3_NARRATIVE.md",
+   "type": "design_doc",
+   "path": "design/A3_NARRATIVE.md"
+  },
+  {
+   "id": "design/A4_GAMEFEEL.md",
+   "type": "design_doc",
+   "path": "design/A4_GAMEFEEL.md"
+  },
+  {
+   "id": "design/A5_PHASE_B.md",
+   "type": "design_doc",
+   "path": "design/A5_PHASE_B.md"
+  },
+  {
+   "id": "design/A6_GLOSSARY.md",
+   "type": "design_doc",
+   "path": "design/A6_GLOSSARY.md"
+  },
+  {
+   "id": "design/A7_BUILD_LAYER.md",
+   "type": "design_doc",
+   "path": "design/A7_BUILD_LAYER.md"
+  },
+  {
+   "id": "design/A8_AEA_ALIGNMENT.md",
+   "type": "design_doc",
+   "path": "design/A8_AEA_ALIGNMENT.md"
+  },
+  {
+   "id": "design/A9_FORGE_PROTOCOL.md",
+   "type": "design_doc",
+   "path": "design/A9_FORGE_PROTOCOL.md"
+  },
+  {
+   "id": "design/BOOK.md",
+   "type": "design_doc",
+   "path": "design/BOOK.md"
+  },
+  {
+   "id": "design/E1_CODE_ARCHITECTURE.md",
+   "type": "design_doc",
+   "path": "design/E1_CODE_ARCHITECTURE.md"
+  },
+  {
+   "id": "design/E2_VISUAL_DIRECTION.md",
+   "type": "design_doc",
+   "path": "design/E2_VISUAL_DIRECTION.md"
+  },
+  {
+   "id": "design/E3_TRACKING.md",
+   "type": "design_doc",
+   "path": "design/E3_TRACKING.md"
+  },
+  {
+   "id": "design/E4_UX_P0.md",
+   "type": "design_doc",
+   "path": "design/E4_UX_P0.md"
+  },
+  {
+   "id": "design/E5_3D_TRANSLATION.md",
+   "type": "design_doc",
+   "path": "design/E5_3D_TRANSLATION.md"
+  },
+  {
+   "id": "design/E6_ART_PIPELINE.md",
+   "type": "design_doc",
+   "path": "design/E6_ART_PIPELINE.md"
+  },
+  {
+   "id": "design/E7_VISUAL_COVERAGE.md",
+   "type": "design_doc",
+   "path": "design/E7_VISUAL_COVERAGE.md"
+  },
+  {
+   "id": "design/E8_FIDELITY_LAW.md",
+   "type": "design_doc",
+   "path": "design/E8_FIDELITY_LAW.md"
+  },
+  {
+   "id": "design/E9_ASSET_TICKETS.md",
+   "type": "design_doc",
+   "path": "design/E9_ASSET_TICKETS.md"
+  },
+  {
+   "id": "design/INDEX.md",
+   "type": "design_doc",
+   "path": "design/INDEX.md"
+  },
+  {
+   "id": "design/P0_PROTOTYPES.md",
+   "type": "design_doc",
+   "path": "design/P0_PROTOTYPES.md"
+  },
+  {
+   "id": "design/R1_EVIDENCE.md",
+   "type": "design_doc",
+   "path": "design/R1_EVIDENCE.md"
+  },
+  {
+   "id": "state/aea_state.json",
+   "type": "state_file",
+   "path": "state/aea_state.json"
+  },
+  {
+   "id": "state/bench_runs.json",
+   "type": "state_file",
+   "path": "state/bench_runs.json"
+  },
+  {
+   "id": "state/benchmarks.json",
+   "type": "state_file",
+   "path": "state/benchmarks.json"
+  },
+  {
+   "id": "state/brief_trace.jsonl",
+   "type": "state_file",
+   "path": "state/brief_trace.jsonl"
+  },
+  {
+   "id": "state/candidates_probe.json",
+   "type": "state_file",
+   "path": "state/candidates_probe.json"
+  },
+  {
+   "id": "state/capability_census.json",
+   "type": "state_file",
+   "path": "state/capability_census.json"
+  },
+  {
+   "id": "state/capacity.json",
+   "type": "state_file",
+   "path": "state/capacity.json"
+  },
+  {
+   "id": "state/chains.jsonl",
+   "type": "state_file",
+   "path": "state/chains.jsonl"
+  },
+  {
+   "id": "state/codex_index.json",
+   "type": "state_file",
+   "path": "state/codex_index.json"
+  },
+  {
+   "id": "state/decisions.jsonl",
+   "type": "state_file",
+   "path": "state/decisions.jsonl"
+  },
+  {
+   "id": "state/energy.json",
+   "type": "state_file",
+   "path": "state/energy.json"
+  },
+  {
+   "id": "state/energy_usage.json",
+   "type": "state_file",
+   "path": "state/energy_usage.json"
+  },
+  {
+   "id": "state/events.jsonl",
+   "type": "state_file",
+   "path": "state/events.jsonl"
+  },
+  {
+   "id": "state/extensive_census.json",
+   "type": "state_file",
+   "path": "state/extensive_census.json"
+  },
+  {
+   "id": "state/focus.json",
+   "type": "state_file",
+   "path": "state/focus.json"
+  },
+  {
+   "id": "state/grid_state.json",
+   "type": "state_file",
+   "path": "state/grid_state.json"
+  },
+  {
+   "id": "state/heartbeat.json",
+   "type": "state_file",
+   "path": "state/heartbeat.json"
+  },
+  {
+   "id": "state/identity.json",
+   "type": "state_file",
+   "path": "state/identity.json"
+  },
+  {
+   "id": "state/journey_save.json",
+   "type": "state_file",
+   "path": "state/journey_save.json"
+  },
+  {
+   "id": "state/live_pid.json",
+   "type": "state_file",
+   "path": "state/live_pid.json"
+  },
+  {
+   "id": "state/luis_memory.json",
+   "type": "state_file",
+   "path": "state/luis_memory.json"
+  },
+  {
+   "id": "state/luis_memory.meta.json",
+   "type": "state_file",
+   "path": "state/luis_memory.meta.json"
+  },
+  {
+   "id": "state/memory.json",
+   "type": "state_file",
+   "path": "state/memory.json"
+  },
+  {
+   "id": "state/model_fitness.json",
+   "type": "state_file",
+   "path": "state/model_fitness.json"
+  },
+  {
+   "id": "state/models_report.json",
+   "type": "state_file",
+   "path": "state/models_report.json"
+  },
+  {
+   "id": "state/modules.json",
+   "type": "state_file",
+   "path": "state/modules.json"
+  },
+  {
+   "id": "state/paths.json",
+   "type": "state_file",
+   "path": "state/paths.json"
+  },
+  {
+   "id": "state/private_today.json",
+   "type": "state_file",
+   "path": "state/private_today.json"
+  },
+  {
+   "id": "state/proof_scoreboard.json",
+   "type": "state_file",
+   "path": "state/proof_scoreboard.json"
+  },
+  {
+   "id": "state/reflections.jsonl",
+   "type": "state_file",
+   "path": "state/reflections.jsonl"
+  },
+  {
+   "id": "state/schema.json",
+   "type": "state_file",
+   "path": "state/schema.json"
+  },
+  {
+   "id": "state/self.json",
+   "type": "state_file",
+   "path": "state/self.json"
+  },
+  {
+   "id": "state/talk_state.json",
+   "type": "state_file",
+   "path": "state/talk_state.json"
+  },
+  {
+   "id": "state/telegram_state.json",
+   "type": "state_file",
+   "path": "state/telegram_state.json"
+  },
+  {
+   "id": "state/tickets.json",
+   "type": "state_file",
+   "path": "state/tickets.json"
+  },
+  {
+   "id": "state/trust_ledger.json",
+   "type": "state_file",
+   "path": "state/trust_ledger.json"
+  },
+  {
+   "id": "docs/AEA_PROOF_PLAN.md",
+   "type": "doc",
+   "path": "docs/AEA_PROOF_PLAN.md"
+  },
+  {
+   "id": "docs/AGENTIC_RESEARCH_FINDINGS.md",
+   "type": "doc",
+   "path": "docs/AGENTIC_RESEARCH_FINDINGS.md"
+  },
+  {
+   "id": "docs/AUTONOMY_BATTERY.md",
+   "type": "doc",
+   "path": "docs/AUTONOMY_BATTERY.md"
+  },
+  {
+   "id": "docs/AUTONOMY_PLAN.md",
+   "type": "doc",
+   "path": "docs/AUTONOMY_PLAN.md"
+  },
+  {
+   "id": "docs/ENERGY_CATALOGUE.md",
+   "type": "doc",
+   "path": "docs/ENERGY_CATALOGUE.md"
+  },
+  {
+   "id": "docs/INDICATOR_ROADMAP.md",
+   "type": "doc",
+   "path": "docs/INDICATOR_ROADMAP.md"
+  },
+  {
+   "id": "docs/PLAN.md",
+   "type": "doc",
+   "path": "docs/PLAN.md"
+  },
+  {
+   "id": "docs/READINESS.md",
+   "type": "doc",
+   "path": "docs/READINESS.md"
+  },
+  {
+   "id": "docs/RESEARCH_PROMPT.md",
+   "type": "doc",
+   "path": "docs/RESEARCH_PROMPT.md"
+  },
+  {
+   "id": "docs/SWARM_SPEC.md",
+   "type": "doc",
+   "path": "docs/SWARM_SPEC.md"
+  },
+  {
+   "id": "docs/VOICE_LANDSCAPE_2026.md",
+   "type": "doc",
+   "path": "docs/VOICE_LANDSCAPE_2026.md"
+  }
+ ],
+ "edges": [
+  {
+   "src": "aea",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "aea",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "aea",
+   "dst": "hades",
+   "rel": "imports"
+  },
+  {
+   "src": "aea",
+   "dst": "energy",
+   "rel": "imports"
+  },
+  {
+   "src": "agent_tools",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "autonomy",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "bench_core",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "bench_core",
+   "dst": "energy",
+   "rel": "imports"
+  },
+  {
+   "src": "bench_core",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "bench_core",
+   "dst": "trust",
+   "rel": "imports"
+  },
+  {
+   "src": "brief",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "brief",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "brief",
+   "dst": "hades",
+   "rel": "imports"
+  },
+  {
+   "src": "brief",
+   "dst": "trust",
+   "rel": "imports"
+  },
+  {
+   "src": "brief",
+   "dst": "tracelog",
+   "rel": "imports"
+  },
+  {
+   "src": "capability_census",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "capacity",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "consolidate",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "consolidate",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "consolidate",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "trust",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "talk",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "speak",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "energy",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "bench_core",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "autonomy",
+   "rel": "imports"
+  },
+  {
+   "src": "controlroom",
+   "dst": "telegram_bridge",
+   "rel": "imports"
+  },
+  {
+   "src": "energy",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "energy",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "export_city",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "extensive_census",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "gauntlet",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "hades",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "hades",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "hades",
+   "dst": "swarm",
+   "rel": "imports"
+  },
+  {
+   "src": "index_codex",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "index_codex",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "index_codex",
+   "dst": "consolidate",
+   "rel": "imports"
+  },
+  {
+   "src": "listen",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "listen",
+   "dst": "speak",
+   "rel": "imports"
+  },
+  {
+   "src": "live",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "live",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "live",
+   "dst": "consolidate",
+   "rel": "imports"
+  },
+  {
+   "src": "memory",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "model_fitness",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "model_fitness",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "notify",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "notify",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "orchestrator",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "pathfinder",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "pathfinder",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "pathfinder",
+   "dst": "swarm",
+   "rel": "imports"
+  },
+  {
+   "src": "probe",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "pulse",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "reflect",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "reflect",
+   "dst": "energy",
+   "rel": "imports"
+  },
+  {
+   "src": "reflect",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "reflect",
+   "dst": "hades",
+   "rel": "imports"
+  },
+  {
+   "src": "reflect",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "relay",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "relay",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "relay",
+   "dst": "swarm",
+   "rel": "imports"
+  },
+  {
+   "src": "speak",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "speak",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "swarm",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "swarm",
+   "dst": "orchestrator",
+   "rel": "imports"
+  },
+  {
+   "src": "talk",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "talk",
+   "dst": "energy",
+   "rel": "imports"
+  },
+  {
+   "src": "talk",
+   "dst": "speak",
+   "rel": "imports"
+  },
+  {
+   "src": "talk",
+   "dst": "consolidate",
+   "rel": "imports"
+  },
+  {
+   "src": "talk",
+   "dst": "trust",
+   "rel": "imports"
+  },
+  {
+   "src": "talk",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "talk",
+   "dst": "index_codex",
+   "rel": "imports"
+  },
+  {
+   "src": "telegram_bridge",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "telegram_bridge",
+   "dst": "talk",
+   "rel": "imports"
+  },
+  {
+   "src": "telegram_bridge",
+   "dst": "pulse",
+   "rel": "imports"
+  },
+  {
+   "src": "tracelog",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "trust",
+   "dst": "grid",
+   "rel": "imports"
+  },
+  {
+   "src": "trust",
+   "dst": "pulse",
+   "rel": "imports"
+  }
+ ]
+}
