@@ -7,8 +7,8 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 64,
-    "source": "aea/loop/aea.py"
+    "count": 69,
+    "source": "aea/gameapi/act.py"
    },
    "plan": {
     "count": 54,
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 64
+    "count": 69
    },
    {
     "src": "THE_PROBE",
@@ -66,6 +66,12 @@
  "subgraphs": {
   "code": {
    "nodes": [
+    {
+     "id": "act",
+     "type": "module",
+     "path": "aea/gameapi/act.py",
+     "purpose": "aea.gameapi.act - the /game/* POST handlers: allowlisted acts, each a receipt."
+    },
     {
      "id": "aea",
      "type": "module",
@@ -163,6 +169,12 @@
      "purpose": "hades.py - HADES: the WATCHER over the SEDAH swarm."
     },
     {
+     "id": "honesty",
+     "type": "module",
+     "path": "aea/gameapi/honesty.py",
+     "purpose": "aea.gameapi.honesty - THE FIREWALL. The single boundary where the honesty law is enforced."
+    },
+    {
      "id": "index_codex",
      "type": "module",
      "path": "aea/memory/index_codex.py",
@@ -223,6 +235,12 @@
      "purpose": "pulse.py - the entity's NERVOUS SIGNAL. Every organ emits what it does, as it does it,"
     },
     {
+     "id": "read",
+     "type": "module",
+     "path": "aea/gameapi/read.py",
+     "purpose": "aea.gameapi.read - the /game/* GET handlers: pure reads, re-homed to the REAL organ functions."
+    },
+    {
      "id": "reflect",
      "type": "module",
      "path": "aea/organs/reflect.py",
@@ -233,6 +251,12 @@
      "type": "module",
      "path": "aea/mind/relay.py",
      "purpose": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads"
+    },
+    {
+     "id": "schema",
+     "type": "module",
+     "path": "aea/gameapi/schema.py",
+     "purpose": "aea.gameapi.schema - THE BEING AS A STRUCTURE (the world's fog map)."
     },
     {
      "id": "speak",
@@ -346,6 +370,11 @@
      "served_by": "aea/server/controlroom.py"
     },
     {
+     "id": "/game/ignite",
+     "type": "endpoint",
+     "served_by": "aea/server/controlroom.py"
+    },
+    {
      "id": "/journal",
      "type": "endpoint",
      "served_by": "aea/server/controlroom.py"
@@ -422,6 +451,11 @@
     }
    ],
    "edges": [
+    {
+     "src": "act",
+     "dst": "bench_core",
+     "rel": "imports"
+    },
     {
      "src": "aea",
      "dst": "grid",
@@ -703,6 +737,16 @@
      "rel": "imports"
     },
     {
+     "src": "read",
+     "dst": "controlroom",
+     "rel": "imports"
+    },
+    {
+     "src": "read",
+     "dst": "bench_core",
+     "rel": "imports"
+    },
+    {
      "src": "reflect",
      "dst": "grid",
      "rel": "imports"
@@ -740,6 +784,11 @@
     {
      "src": "relay",
      "dst": "swarm",
+     "rel": "imports"
+    },
+    {
+     "src": "schema",
+     "dst": "grid",
      "rel": "imports"
     },
     {

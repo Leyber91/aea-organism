@@ -286,7 +286,7 @@ class Handler(BaseHTTPRequestHandler):
         return fp if os.path.isfile(fp) else None
 
     def do_GET(self):
-        if self.path.split("?")[0] in ("/game/state", "/game/run"):  # THE SEAM: honest /game/* reads
+        if self.path.split("?")[0] in ("/game/state", "/game/run", "/game/schema", "/game/events"):  # THE SEAM: honest /game/* reads
             out = route_get(self.path)
             body = json.dumps(out if out is not None else {"ok": False, "error": "unknown game endpoint"},
                               ensure_ascii=False).encode("utf-8")
@@ -338,12 +338,6 @@ class Handler(BaseHTTPRequestHandler):
                 try: since = float(self.path.split("since=")[1].split("&")[0])
                 except ValueError: pass
             body = json.dumps(pulse.tail(since), ensure_ascii=False).encode("utf-8")
-            ctype = "application/json"
-        elif self.path.startswith("/api/schema"):    # THE ASCENT board: the master pipeline schema (code contracts, no secrets)
-            try:
-                body = open(os.path.join(grid.STATE, "schema.json"), "rb").read()
-            except Exception as e:
-                body = json.dumps({"error": f"schema.json missing: {e}"}).encode()
             ctype = "application/json"
         elif self.path.startswith("/game") and not self.path.startswith("/game/"):  # THE ASCENT board (legacy); /game/ tree is the new codebase static
             try:

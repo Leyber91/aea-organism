@@ -5,6 +5,34 @@ from the `NEXT` block — it does not re-decide what is under `LOCKED`.
 
 ---
 
+## 2026-07-22 (later·9) — FIRST LIGHT green, then R37/R39: the city ripped out, the world is the INSTRUMENT
+
+**DID — first light (committed `35c0afd`):** the honest seam `aea/gameapi/` (firewall + read/act) over the
+REAL organs: `/game/state`=controlroom.state, `/game/ignite`=bench_core.start_run, `/game/run`=run_status,
+mounted into the :7799 control room (same origin, no new port). Client: `core/api.js` (the only server-talker)
++ `bench.js`'s three fetches repointed to `/game/*`. Verified GREEN in-client: compose BRAIN+SCORER -> ignite
+-> PASS on ollama/qwen2.5:7b, driven with real keystrokes via CDP. Bugs the verb surfaced + fixed: modules.json
+file-paths went stale in the subpackage reorg (the forge-gate refused every part -> `bench_core` now resolves
+against the aea/ package dir, 25 paths remapped); the client sent `T-01`!=`t-01`; `normalizeRun` read a
+`verdict` the seam never emits (mapped to run_status's real shape: link.state from ok, verdict from pass);
+LOCAL_FLOOR `granite4.1:3b` (not installed) -> `qwen2.5:7b` (the one local model that reliably returns
+PROBE ONLINE — CPU-only here, the rest hallucinate or return empty).
+
+**DID — R39/R37 world (uncommitted):** ripped the CITY out of `engine.js` (`buildWorld`: foundry buildings,
+socket tower, slab, roads — deleted with its helpers). Built THE INSTRUMENT: an amber core, concentric
+PRIVACY-ZONE rings (radius=zone, from grid.ZONES: sensitive->private->public), the AEA organ-nodes on their
+ring at dependency-depth altitude — LIT amber where really wired (BRAIN/GOVERNOR/MEMORY/LOOP, from live state
+signals), cold-blue FOG-wireframe where not (SENSES/HANDS) — and conduits along the real couplings.
+Data-driven from a new seam endpoint `/game/schema` (the fog can't lie: `wired` is a live check that flips as
+organs get built). Composer relabeled tap->BRAIN, energy->POWER (R39 vocabulary). Verified on a swiftshader
+shot: reads as the FIELD_GUIDE cover (the being as a concentric place), not a city.
+
+**NEXT — finish the world slice:** conduit particles (one per real /events draw, count-true, zero decorative);
+the fly-to-BRAIN -> dock -> ignite loop (v2 never wired flight-proximity `S.near`); capacity-fill + node labels.
+Owed: D13 (the reorg-registry lesson); the `POWER` word disambiguation (header reserve vs brain sources).
+
+---
+
 ## 2026-07-22 (later·8) — aea/ SUBFOLDERED: flat 34-file package -> 10 domain subpackages (DONE, verified)
 
 **DID:** dissolved the flat `aea/` package (34 `.py` at one level, bare `import grid` co-location — the

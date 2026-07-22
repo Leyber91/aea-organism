@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from . import read, act
+from . import read, act, schema
 
 __all__ = ["route_get", "route_post"]
 
@@ -25,11 +25,21 @@ def route_get(path: str) -> Optional[dict]:
     p = path.split("?", 1)[0]
     if p == "/game/state":
         return read.state()
+    if p == "/game/schema":
+        return schema.schema()
     if p == "/game/run":
         qid = ""
         if "id=" in path:
             qid = path.split("id=", 1)[1].split("&", 1)[0]
         return read.run(qid)
+    if p == "/game/events":
+        since = 0.0
+        if "since=" in path:
+            try:
+                since = float(path.split("since=", 1)[1].split("&", 1)[0])
+            except ValueError:
+                since = 0.0
+        return read.events(since)
     return None
 
 

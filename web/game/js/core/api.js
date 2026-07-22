@@ -28,6 +28,10 @@
     /* poll the live trace by run_id */
     run: function (rid) { return call("GET", "/game/run?id=" + encodeURIComponent(rid)); },
     /* the folded live snapshot - the real meter (dashes when unknown, never invented) */
-    state: function () { return call("GET", "/game/state"); }
+    state: function () { return call("GET", "/game/state"); },
+    /* the being's structure - organs, zones, edges; a node is lit only when really wired */
+    schema: function () { return call("GET", "/game/schema"); },
+    /* the live event stream (pulse) since a timestamp - one real event per conduit particle */
+    events: function (since) { return call("GET", "/game/events?since=" + (since || 0)); }
   };
 })();

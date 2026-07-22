@@ -30,7 +30,6 @@ window.BENCH = (function () {
   var SLAB = { x: 0, y: 1.1, z: 26 };     /* engine.js NEXUS — the proven anchor (E4 §4) */
   var RANGE = 12;                          /* the ~12 m prompt law (E4 §4) */
   var ZONES = ["private", "sensitive", "public"];  /* grid.ZONES vocabulary — real words only */
-  var PLANT_TOTAL = 15;                    /* grid.PLANTS census — the foundry row's 15 sites */
   var POLL_MS = 300, API_TIMEOUT_MS = 6000;
   /* dock camera: fixed high oblique over the slab, foundry row in the middle distance
      behind the plate (E4 §4 + §8.3 [GRAFT-B1] — the siting IS the graft) */
@@ -43,7 +42,7 @@ window.BENCH = (function () {
   /* chip rows mirror modules.json v0 — each names the REAL entry point it wraps
      (registry law, P0 addendum). glyph: circle = seed family, pent = axis (A11 §3.3). */
   var PARTS = {
-    tap:      { nm: "TAP",      slot: "head", glyph: "circ", entry: "energy.draw" },
+    tap:      { nm: "BRAIN",    slot: "head", glyph: "circ", entry: "energy.draw" },
     scaffold: { nm: "SCAFFOLD", slot: "mid",  glyph: "pent", entry: "prompt scaffold" },
     governor: { nm: "GOVERNOR", slot: "mid",  glyph: "circ", entry: "grid.METER.can_spend" },
     ladder:   { nm: "LADDER",   slot: "mid",  glyph: "circ", entry: "energy.ladder" },
@@ -157,7 +156,7 @@ window.BENCH = (function () {
     D.plate = el("div", "pan deep plate");
     D.plate.innerHTML =
       '<i class="ck tl"></i><i class="ck tr"></i><i class="ck bl"></i><i class="ck br"></i>' +
-      '<div class="hd" style="--i:1"><span>THE BENCH · c-01</span><span class="lab s60" id="b-meter">WINDOW —s · QUOTA —</span></div>' +
+      '<div class="hd" style="--i:1"><span>THE BENCH · c-01</span><span class="lab s60" id="b-meter">POWER —</span></div>' +
       '<div class="rgn task" style="--i:2"><div class="t-line" id="b-task"></div><div class="t-check">' + esc(TASK.check) + "</div></div>" +
       '<div class="spine" id="b-spine" style="--i:3"></div>' +
       '<div class="strip" id="b-strip"></div>' +
@@ -199,11 +198,11 @@ window.BENCH = (function () {
 
   function renderHeader() {
     if (S.grid === false) { D.meter.textContent = "CARRIER LOST"; return; }
-    if (!S.grid) { D.meter.textContent = "WINDOW —s · QUOTA —"; return; }
+    if (!S.grid) { D.meter.textContent = "POWER —"; return; }
     /* /state exposes the live rpm fraction, not window seconds — the fraction is the
        REAL number so it is what prints (honesty law over the letter; seconds need a
        /state field that does not exist yet) */
-    D.meter.textContent = "WINDOW " + S.grid.win + " · QUOTA " + S.grid.quota + " LIVE";
+    D.meter.textContent = "POWER " + S.grid.quota + " LIVE";
   }
 
   function renderTask() {
@@ -225,7 +224,7 @@ window.BENCH = (function () {
   }
   function chipStat(id) {
     var g = S.grid;
-    if (id === "tap") return "PLANTS " + (g ? g.online + "/" + PLANT_TOTAL : "—/—");
+    if (id === "tap") return "POWER " + (g ? g.online : "—");
     if (id === "scaffold") return "—";                       /* no live template source at P0 */
     if (id === "governor") return g && g.rpm ? g.rpm + "RPM" : "—/—RPM";
     if (id === "ladder") return "RODS " + (g ? g.rods : "—");
@@ -317,7 +316,7 @@ window.BENCH = (function () {
     if (S.state === "RUN") { D.runchip.innerHTML = 'PLATE LOCKED — RUN LIVE'; D.runchip.classList.add("live"); return; }
     D.runchip.classList.remove("live");
     if (S.state === "HALT") { D.runchip.innerHTML = "RUN — HALTED"; return; }  /* true state, amber withdrawn */
-    if (S.head !== "tap") D.runchip.innerHTML = "RUN — NO TAP, NO DRAW";
+    if (S.head !== "tap") D.runchip.innerHTML = "RUN — NO BRAIN, NO DRAW";
     else if (S.tail !== "scorer") D.runchip.innerHTML = "RUN — UNSCORED · NO RECORD WITHOUT SCORER";
     else D.runchip.innerHTML = "RUN <b>[SPACE]</b> · EST 1u";  /* one draw part in the pool: TAP */
   }
@@ -327,7 +326,7 @@ window.BENCH = (function () {
     /* THE P0-CUT item 3: the strip ships for TAP only — the one writable (the zone law) */
     D.strip.style.display = "block";
     D.strip.innerHTML =
-      '<div class="ln">TAP — POWER INLET · WRAPS energy.draw</div>' +
+      '<div class="ln">BRAIN — DRAWS POWER · WRAPS energy.draw</div>' +
       '<div class="ln">&gt; zone: <span class="zval">' + zoneWord() + '</span> · <span class="lab s60">[ / ] CYCLES · PUBLIC IS EXPLICIT</span></div>' +
       '<div class="ln">&gt; tier: pinned by task tier_floor · local/keyless</div>' +
       '<div class="ln">&gt; prompt_source: task ' + TASK.id + "</div>";
@@ -367,11 +366,11 @@ window.BENCH = (function () {
     if (S.state !== "COMPOSE") { lockRefuse(); return; }
     if (!S.ghost) return;
     var id = S.ghost, slot = PARTS[id].slot;
-    if (g.t === "head" && slot !== "head") { receipt("the head holds the TAP — power enters first"); return; }
+    if (g.t === "head" && slot !== "head") { receipt("the head holds the BRAIN — the being thinks first"); return; }
     if (g.t === "tail" && slot !== "tail") { receipt("the tail holds the SCORER — the measure closes the wire"); return; }
-    if (g.t === "mid" && slot === "head") { receipt("a TAP holds the head — it is the power inlet"); return; }
+    if (g.t === "mid" && slot === "head") { receipt("a BRAIN holds the head — it draws the power"); return; }
     if (g.t === "mid" && slot === "tail") { receipt("a SCORER holds the tail — every task ends measured"); return; }
-    if (g.t === "head") { S.head = id; receipt("seated TAP at the head"); }
+    if (g.t === "head") { S.head = id; receipt("seated BRAIN at the head"); }
     else if (g.t === "tail") { S.tail = id; receipt("seated SCORER at the tail"); }
     else { S.mid.splice(g.i, 0, id); receipt("seated " + PARTS[id].nm + " on the spine"); }
     S.ghost = null; S.cursor = 0;
@@ -429,7 +428,7 @@ window.BENCH = (function () {
 
   function fire() {
     if (S.state !== "COMPOSE") { lockRefuse(); return; }
-    if (S.head !== "tap") { receipt("no power inlet — a construct draws through a TAP"); return; }
+    if (S.head !== "tap") { receipt("no brain — a being draws through a BRAIN (the head)"); return; }
     S.strip = false; S.sel = null; S.failTick = null;
     renderStrip(); renderSpine();
 
@@ -577,9 +576,12 @@ window.BENCH = (function () {
       }
     }
 
-    if (run.state === "FAIL" && !r.halted) {
-      /* terminal fail with no located link row: the harness named the cause, not a wire */
-      haltAt(Math.max(0, r.done), { part: r.parts[Math.max(0, r.done)], receipt: run.error || "REFUSED" }, run, true);
+    if ((run.state === "FAIL" || run.state === "HALTED" || run.state === "LOST") && !r.halted) {
+      /* terminal non-pass with no located wire row: a halt/lost the harness named without a link
+         (CARRIER LOST on the model-picky hearth). Locate it, print it, and STOP the poller so the
+         plate can never lock forever on the likeliest local outcome. */
+      var rcpt = run.error || (run.state === "LOST" ? "CARRIER LOST — no row landed" : "HALTED");
+      haltAt(Math.max(0, r.done), { part: (r.parts[Math.max(0, r.done)] || "carrier"), receipt: rcpt }, run, true);
       return;
     }
     if (run.state === "PASS" || run.state === "DONE") {
@@ -620,7 +622,7 @@ window.BENCH = (function () {
     }
     if (run.verdict) {
       logLine("r-" + pad2(r.n) + " · PASS · SPEED " + (totalMs !== null ? (totalMs / 1000).toFixed(2) + "s" : "—") +
-        " · COST " + (cost !== null ? cost + "u" : "—") + " · ZONE " + zoneWord(), true);
+        " · COST " + (cost === 0 ? "FREE" : cost !== null ? cost + "u" : "—") + " · ZONE " + zoneWord(), true);
       if (totalMs !== null) {
         S.last = totalMs;
         if (S.best === null || totalMs < S.best) S.best = totalMs;
@@ -964,6 +966,8 @@ window.BENCH = (function () {
         if (eng) { eng.camera.position.copy(CAM.pos); eng.camera.lookAt(CAM.look); }
         D.wrap.classList.add("on");
         D.plate.classList.add("deal");
+        var t0 = document.getElementById("title"); if (t0) t0.style.display = "none";   /* boot straight to the plate */
+        var h0 = document.getElementById("hints"); if (h0) h0.style.display = "none";
         renderAll();
         if (!S.still) refreshGrid();   /* live: pull the real meter into the header */
       }

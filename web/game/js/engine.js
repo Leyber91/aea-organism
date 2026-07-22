@@ -109,8 +109,6 @@ window.ENGINE = (function () {
      Guardian's ruling: ring motion is event-only), fading by distance; plus the
      world-space value-noise term (Taste B1, ±3% luminance, xz-stable so it cannot swim). ---- */
   var NEXUS = { x: 0, z: 26 };            /* world anchors — the proven coordinates */
-  var FOUNDRY = { x0: -113, x1: 113, z: 70, sites: 15 };
-  var SOCKET = { x: 106, z: 78 };
 
   function buildGround() {
     var gmat = mat(new THREE.MeshStandardMaterial({
@@ -147,108 +145,107 @@ window.ENGINE = (function () {
     scene.add(new THREE.HemisphereLight(0x24394a, 0x050a10, 0.7));
   }
 
-  /* ---- THE WORLD (minimal per E4 §13: the nexus gains the slab — P0's only world
-     addition; everything else is the proven coordinate frame rendered under E2 law).
-     Move 2: vertical vertex-color gradients — base into the ground shadow, barely
-     lighter at silhouette top. Even spacing broken by deterministic jitter (tell §2.4).
-     Windows: sparse, warm, few — idle amber belongs to the SOCKET only (A11 §4.1:
-     amber is earned; the socket earned it at FIRST LIGHT). Slab: dark, waiting
-     (E4 §4 — an unrun bench has earned none). Roads: Move 7 structure-ink idle,
-     per-strip CanvasTexture falloff ramp — never uniform neon, never amber. ---- */
+  /* ---- THE INSTRUMENT (R37/R39): the being as a structural place, NOT a city. An amber core (the
+     mind's heart) inside concentric PRIVACY-ZONE rings whose count/order come from the REAL
+     grid.ZONES (via /game/schema); radius = openness (innermost = most restrictive). The AEA organs
+     sit on their zone ring at dependency depth: LIT amber ONLY when really wired, cold-blue FOG when
+     not. The core burns amber ONLY when the being's heartbeat is actually alive (schema.alive) - never
+     as unconditional decoration (claim ceiling + amber census). Amber lives ON the core/nodes; lights
+     are clamped so it never washes the floor - the 2D two-ink law, held in 3D. ---- */
 
-  function hash01(n) { var s = Math.sin(n * 127.31) * 43758.5453; return s - Math.floor(s); }
+  var coreRef = null;                                   /* {mesh,light,beam} - amber only when alive */
+  function zoneRadius(i) { return 26 + i * 27; }        /* ring radius from the zone's index in the real order */
 
-  /* one unit mass, vertex-color gradient authored once, scaled per site (Move 2) */
-  function unitMassGeometry() {
-    var g = geo(new THREE.BoxGeometry(1, 1, 1, 1, 4, 1));
-    var pos = g.attributes.position, col = [];
-    for (var i = 0; i < pos.count; i++) {
-      var t = pos.getY(i) + 0.5;                       /* 0 base .. 1 top */
-      var k = 0.35 + 0.6 * Math.pow(t, 1.5);           /* darker into the ground shadow */
-      if (t > 0.94) k *= 1.22;                          /* the barely-lighter top band */
-      col.push(k, k, k);
-    }
-    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
-    return g;
+  function buildCore() {
+    /* structure-ink by default: DARK until the entity proves it is alive (no unconditional amber). */
+    var mesh = new THREE.Mesh(geo(new THREE.IcosahedronGeometry(1.7, 0)),
+      mat(new THREE.MeshStandardMaterial({
+        color: lin(0x0c131c), emissive: INK.structure, emissiveIntensity: 0.16,
+        roughness: 0.5, metalness: 0, flatShading: true
+      })));
+    mesh.position.set(NEXUS.x, 4.8, NEXUS.z); mesh.name = "core"; scene.add(mesh);
+    var light = new THREE.PointLight(INK.hot.getHex(), 0.0, 34);      /* dark until alive */
+    light.position.set(NEXUS.x, 5.8, NEXUS.z); scene.add(light);
+    var beam = new THREE.Mesh(geo(new THREE.CylinderGeometry(0.05, 0.16, 58, 6, 1, true)),
+      mat(new THREE.MeshBasicMaterial({ color: INK.hot, transparent: true, opacity: 0.0, depthWrite: false })));
+    beam.position.set(NEXUS.x, 29, NEXUS.z); scene.add(beam);
+    coreRef = { mesh: mesh, light: light, beam: beam };
   }
 
-  function rampTexture(stops) {
-    /* 1D alpha ramp for road strips (Move 7: UV falloff baked per strip) */
-    var c = document.createElement("canvas"); c.width = 1; c.height = 64;
-    var x = c.getContext("2d"), gr = x.createLinearGradient(0, 0, 0, 64);
-    stops.forEach(function (s) { gr.addColorStop(s[0], "rgba(255,255,255," + s[1] + ")"); });
-    x.fillStyle = gr; x.fillRect(0, 0, 1, 64);
-    return tex(new THREE.CanvasTexture(c));
+  function igniteCore() {
+    /* the heartbeat has ticked: the core EARNS its amber (proven alive, not asserted). */
+    if (!coreRef) return;
+    var m = coreRef.mesh.material;
+    m.color = lin(0x1a1206); m.emissive = INK.hot; m.emissiveIntensity = EMISSIVE.fired; m.needsUpdate = true;
+    coreRef.light.intensity = 1.5;                                    /* range 34: amber ON the core */
+    coreRef.beam.material.opacity = 0.13;
   }
 
-  function buildWorld() {
-    var massGeo = unitMassGeometry();
-    var massMat = mat(new THREE.MeshStandardMaterial({
-      color: lin(0x17242f), roughness: 0.92, metalness: 0.0, vertexColors: true
-    }));
-
-    /* the foundry row — 15 sites on the proven line, spacing broken deterministically */
-    var span = FOUNDRY.x1 - FOUNDRY.x0;
-    for (var i = 0; i < FOUNDRY.sites; i++) {
-      var bx = FOUNDRY.x0 + (span * i) / (FOUNDRY.sites - 1) + (hash01(i + 1) - 0.5) * 7;
-      var bz = FOUNDRY.z + (hash01(i + 31) - 0.5) * 9;
-      var masses = 1 + Math.floor(hash01(i + 61) * 3);   /* 1..3 stacked masses per site */
-      for (var m2 = 0; m2 < masses; m2++) {
-        var h = 9 + hash01(i * 7 + m2 * 13 + 2) * 26 * (m2 === 0 ? 1 : 0.55);
-        var w = 5 + hash01(i * 11 + m2 * 17 + 3) * 9;
-        var d = 5 + hash01(i * 13 + m2 * 19 + 4) * 4;
-        var mesh = new THREE.Mesh(massGeo, massMat);
-        mesh.scale.set(w, h, d);
-        mesh.position.set(bx + (m2 ? (hash01(i + m2 * 43) - 0.5) * (w + 6) : 0), h / 2, bz + (m2 ? (hash01(i + m2 * 53) - 0.5) * 5 : 0));
-        scene.add(mesh);
-      }
-    }
-
-    /* THE SOCKET (+106, 78) — the keyless plant that answered first; its sparse warm
-       windows are the frame's only idle amber (earned at FIRST LIGHT, A11 §5) */
-    var sock = new THREE.Mesh(massGeo, massMat);
-    sock.scale.set(8, 13, 6); sock.position.set(SOCKET.x, 6.5, SOCKET.z);
-    scene.add(sock);
-    var winGeo = geo(new THREE.PlaneGeometry(0.8, 1.15));
-    var winMat = mat(new THREE.MeshStandardMaterial({
-      color: lin(0x0a0806), emissive: INK.warm, emissiveIntensity: EMISSIVE.idle
-    }));
-    [[-2.2, 8.6], [1.4, 7.1], [-0.6, 5.2], [2.4, 4.0], [-2.0, 2.6]].forEach(function (wpos) {
-      var wq = new THREE.Mesh(winGeo, winMat);
-      wq.position.set(SOCKET.x + wpos[0], wpos[1], SOCKET.z + 3.02);
-      scene.add(wq);
+  function buildZoneRings(zones) {
+    /* concentric privacy-zone rings from the REAL grid.ZONES order; thick enough to READ as a
+       boundary (not a hairline). cold-blue structure ink; radius = zone openness. */
+    (zones || []).forEach(function (z, i) {
+      var ring = new THREE.Mesh(geo(new THREE.TorusGeometry(zoneRadius(i), 0.35, 8, 220)),
+        mat(new THREE.MeshBasicMaterial({ color: INK.structure, transparent: true, opacity: 0.6 })));
+      ring.rotation.x = -Math.PI / 2; ring.position.set(NEXUS.x, 0.1, NEXUS.z);
+      ring.name = "zone-" + z; scene.add(ring);
     });
+  }
 
-    /* the nexus slab (0, 26) — dark, waiting; spine = one structure-ink hairline */
-    var slab = new THREE.Mesh(geo(new THREE.BoxGeometry(12, 1.1, 7)),
-      mat(new THREE.MeshStandardMaterial({ color: lin(0x060b12), roughness: 0.9 })));
-    slab.position.set(NEXUS.x, 0.55, NEXUS.z);
-    scene.add(slab);
-    var spineMat = mat(new THREE.MeshBasicMaterial({ color: lin(0x2a3b47) }));
-    var spine = new THREE.Mesh(geo(new THREE.PlaneGeometry(11.2, 0.12)), spineMat);
-    spine.rotation.x = -Math.PI / 2;
-    spine.position.set(NEXUS.x, 1.115, NEXUS.z);
-    scene.add(spine);
+  function organAngles(nodes, zones) {
+    var idx = {}; (zones || []).forEach(function (z, i) { idx[z] = i; });
+    var byZone = {}; nodes.forEach(function (n) { (byZone[n.zone] = byZone[n.zone] || []).push(n); });
+    var pos = {};
+    Object.keys(byZone).forEach(function (z) {
+      var list = byZone[z], zi = idx[z] || 0, r = zoneRadius(zi), base = zi * 1.3 + 0.4;
+      list.forEach(function (n, i) {
+        var a = base + (i * 2 * Math.PI) / Math.max(list.length, 1);
+        pos[n.id] = new THREE.Vector3(NEXUS.x + Math.cos(a) * r, 5 + n.depth * 7, NEXUS.z + Math.sin(a) * r);
+      });
+    });
+    return pos;
+  }
 
-    /* roads as wires — structure ink at idle, falloff per strip (Move 7); the trunk
-       visibly wires the slab into the grid (E4 GRAFT-B2) */
-    function strip(wdt, len, cx, cz, alongX, ramp) {
-      var mtl = mat(new THREE.MeshBasicMaterial({
-        color: lin(0x3a4f5e), transparent: true, opacity: 0.55,
-        alphaMap: ramp, depthWrite: false
-      }));
-      var p = new THREE.Mesh(geo(new THREE.PlaneGeometry(wdt, len)), mtl);
-      p.rotation.x = -Math.PI / 2;
-      if (alongX) p.rotation.z = Math.PI / 2;
-      p.position.set(cx, 0.06, cz);
-      scene.add(p);
+  function buildOrgans(sch) {
+    if (!scene || !sch || !sch.nodes) return;
+    var pos = organAngles(sch.nodes, sch.zones);
+    (sch.edges || []).forEach(function (e) {
+      var a = pos[e[0]], b = pos[e[1]]; if (!a || !b) return;
+      var line = new THREE.Line(geo(new THREE.BufferGeometry().setFromPoints([a, b])),
+        mat(new THREE.LineBasicMaterial({ color: INK.structure, transparent: true, opacity: 0.28 })));
+      line.name = "conduit"; scene.add(line);
+    });
+    sch.nodes.forEach(function (n) {
+      var p = pos[n.id]; if (!p) return;
+      var g = geo(new THREE.OctahedronGeometry(1.25, 0)), node;
+      if (n.wired) {
+        node = new THREE.Mesh(g, mat(new THREE.MeshStandardMaterial({
+          color: lin(0x1a1206), emissive: INK.hot, emissiveIntensity: 0.7,   /* below fire: clean bloom, no maroon box */
+          roughness: 0.45, metalness: 0, flatShading: true
+        })));
+        var nl = new THREE.PointLight(INK.warm.getHex(), 0.5, 9);             /* clamped: amber ON the node, not the floor */
+        nl.position.copy(p); scene.add(nl);
+      } else {
+        node = new THREE.Mesh(g, mat(new THREE.MeshBasicMaterial({
+          color: INK.cold, wireframe: true, transparent: true, opacity: 0.72
+        })));
+      }
+      node.position.copy(p); node.name = "organ-" + n.id; scene.add(node);
+    });
+  }
+
+  function buildInstrument() {
+    buildCore();   /* dark structure-ink until the schema proves the being alive */
+    if (!GAME.state.flags.still && window.GameAPI && window.GameAPI.schema) {
+      window.GameAPI.schema().then(function (sch) {
+        if (!scene) return;
+        buildZoneRings(sch.zones);
+        buildOrgans(sch);
+        if (sch.alive) igniteCore();                 /* amber ONLY when the heartbeat is really ticking */
+      }, function () {});
+    } else {
+      buildZoneRings(["sensitive", "private", "public"]);   /* ?still: neutral field, no live amber */
     }
-    strip(1.2, 40, NEXUS.x, (NEXUS.z + 4 + FOUNDRY.z - 2) / 2, false,
-      rampTexture([[0, 0.95], [0.55, 0.5], [1, 0.22]]));                 /* nexus -> row */
-    strip(1.0, span + 14, 0, FOUNDRY.z + 6, true,
-      rampTexture([[0, 0.15], [0.5, 0.7], [1, 0.15]]));                  /* the row trunk */
-    strip(1.0, 10, SOCKET.x, FOUNDRY.z + 6 + 5, false,
-      rampTexture([[0, 0.2], [1, 0.75]]));                               /* spur to the socket */
   }
 
   /* ---- THE PROBE + FLIGHT (A11 §2: never the biggest thing in frame, always the
@@ -347,10 +344,11 @@ window.ENGINE = (function () {
   /* ---- boot composition (the one image, A11 §2: probe lower third, horizon high,
      the dark field owns the frame; still camera = the official portrait pose) ---- */
   var STILL = {
-    /* aimed a touch right so the socket's earned windows sit in the frame's right
-       third (A11 §2: one or two warm windows on the dark row, middle distance) */
-    camPos: new THREE.Vector3(0, 12.5, 172),
-    lookAt: new THREE.Vector3(22, 7, 40)
+    /* the arrival: an elevated oblique onto the being-as-place, so the concentric zone rings and
+       the amber core read as a structure (R37/R39), not an edge-on horizon. The probe stays
+       dwarfed in the lower third; the dark field still owns the frame (A11 §2). */
+    camPos: new THREE.Vector3(0, 40, 118),
+    lookAt: new THREE.Vector3(0, 1, 34)
   };
   var bootEase = false;
 
@@ -459,7 +457,7 @@ window.ENGINE = (function () {
 
     buildAtmosphere();
     buildGround();
-    buildWorld();
+    buildInstrument();
     buildProbe();
 
     /* harness poses (04 §7): ?still = the portrait · &pose=flight = mid-flight frame ·

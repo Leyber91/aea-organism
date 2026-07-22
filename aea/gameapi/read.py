@@ -27,4 +27,34 @@ def run(run_id: str) -> dict:
     receipt naming the requirement, never a crash.
     """
     from aea.bench import bench_core
-    return receipt(bench_core.run_status, run_id)
+    from aea.kernel import grid
+
+    def _run():
+        out = bench_core.run_status(run_id)
+        if isinstance(out, dict) and out.get("links"):
+            # cost_u = REAL metered requests this run spent. A keyless-unlimited plant (the local
+            # hearth) is genuinely free -> 0; a rate-capped plant costs 1 against a real budget.
+            # Never a fabricated stake on a free draw (the honesty law over the game's want).
+            cost = 0
+            for link in out["links"]:
+                rc = link.get("receipt")
+                plant = rc.get("plant") if isinstance(rc, dict) else None
+                p = grid.PLANTS.get(plant or "", {})
+                if plant and (p.get("rpm") is not None or p.get("rpd") is not None):
+                    cost += 1
+            out["cost_u"] = cost
+        return out
+    return receipt(_run)
+
+
+def events(since: float = 0.0) -> dict:
+    """/game/events?since= - the live nervous signal (pulse), one real row per emitted event.
+
+    Wraps pulse.tail(): the real event stream the entity writes as it acts. One conduit particle
+    per real row - never a decorative one. Returns {ok, events:[...]}.
+    """
+    from aea.kernel import pulse
+
+    def _tail():
+        return {"ok": True, "events": pulse.tail(since)}
+    return receipt(_tail)
