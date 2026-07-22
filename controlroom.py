@@ -276,7 +276,7 @@ class Handler(BaseHTTPRequestHandler):
         rel = os.path.basename(path.split("?")[0].lstrip("/"))
         if not rel or os.path.splitext(rel)[1].lower() not in _CTYPES:
             return None
-        fp = os.path.join(HERE, rel)
+        fp = os.path.join(grid.WEB, rel)
         return fp if os.path.isfile(fp) else None
 
     def do_GET(self):
@@ -336,7 +336,7 @@ class Handler(BaseHTTPRequestHandler):
             ctype = "application/json"
         elif self.path.startswith("/game") and not self.path.startswith("/game/"):  # THE ASCENT board (legacy); /game/ tree is the new codebase static
             try:
-                body = open(os.path.join(HERE, "game.html"), encoding="utf-8").read().encode("utf-8")
+                body = open(os.path.join(grid.WEB, "game.html"), encoding="utf-8").read().encode("utf-8")
             except Exception as e:
                 body = f"game.html missing: {e}".encode()
             ctype = "text/html; charset=utf-8"
@@ -356,20 +356,20 @@ class Handler(BaseHTTPRequestHandler):
             ctype = "application/json"
         elif self.path.startswith("/probe"):         # THE PROBE v2 - the NEW codebase (game/ tree, Luis's order 2026-07-20)
             try:
-                body = open(os.path.join(HERE, "game", "index.html"), encoding="utf-8").read().encode("utf-8")
+                body = open(os.path.join(grid.WEB, "game", "index.html"), encoding="utf-8").read().encode("utf-8")
             except Exception as e:
                 body = f"game/index.html missing: {e}".encode()
             ctype = "text/html; charset=utf-8"
         elif self.path.startswith("/lab"):           # THE REPLICA LAB - every replica beside its concept-sheet target
             try:
-                body = open(os.path.join(HERE, "game", "lab.html"), encoding="utf-8").read().encode("utf-8")
+                body = open(os.path.join(grid.WEB, "game", "lab.html"), encoding="utf-8").read().encode("utf-8")
             except Exception as e:
                 body = f"game/lab.html missing: {e}".encode()
             ctype = "text/html; charset=utf-8"
         elif self.path.startswith("/game/"):         # scoped static for the game/ tree ONLY (subfolders allowed,
             rel = os.path.normpath(self.path.split("?")[0][len("/game/"):]).replace("\\", "/")  # traversal-guarded,
             ext = os.path.splitext(rel)[1].lower()                                              # extension-allowlisted)
-            base = os.path.abspath(os.path.join(HERE, "game"))
+            base = os.path.abspath(os.path.join(grid.WEB, "game"))
             fp = os.path.abspath(os.path.join(base, rel))
             allowed = dict(_CTYPES, **{".html": "text/html; charset=utf-8"})
             if rel and ".." not in rel and ext in allowed and fp.startswith(base + os.sep) and os.path.isfile(fp):
@@ -381,7 +381,7 @@ class Handler(BaseHTTPRequestHandler):
                 ctype = "text/plain"
         elif self.path.startswith("/world"):         # THE PROBE - the game: pilot the living entity
             try:
-                body = open(os.path.join(HERE, "world.html"), encoding="utf-8").read().encode("utf-8")
+                body = open(os.path.join(grid.WEB, "world.html"), encoding="utf-8").read().encode("utf-8")
             except Exception as e:
                 body = f"world.html missing: {e}".encode()
             ctype = "text/html; charset=utf-8"
@@ -393,7 +393,7 @@ class Handler(BaseHTTPRequestHandler):
             ctype = "application/json"
         elif self.path.startswith("/tracker"):       # THE PROBE - the production tracker (read-only over tickets.json + journey)
             try:
-                body = open(os.path.join(HERE, "tracker.html"), encoding="utf-8").read().encode("utf-8")
+                body = open(os.path.join(grid.WEB, "tracker.html"), encoding="utf-8").read().encode("utf-8")
             except Exception as e:
                 body = f"tracker.html missing: {e}".encode()
             ctype = "text/html; charset=utf-8"

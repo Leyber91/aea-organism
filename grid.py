@@ -47,6 +47,7 @@ def _find_root(start):
 ROOT = _find_root(HERE)
 STATE = os.path.join(ROOT, "state")          # the one home for runtime state on disk
 os.makedirs(STATE, exist_ok=True)
+WEB = os.path.join(ROOT, "web")              # the front-end: html + js + game/ served from here
 
 
 def _state(path: str) -> str:
