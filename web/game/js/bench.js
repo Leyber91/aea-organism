@@ -38,7 +38,7 @@ window.BENCH = (function () {
 
   /* the ONE curated task (P0 addendum: bench-task v0; tier_floor pinned local/keyless
      server-side — the client never picks a tier, the TAP strip prints that truth) */
-  var TASK = { id: "T-01", line: "T-01 FIRST DRAW · OPEN TARGET", check: "check: a real answer returns · beat your record, any axis" };
+  var TASK = { id: "t-01", line: "T-01 FIRST DRAW · OPEN TARGET", check: "check: a real answer returns · beat your record, any axis" };
 
   /* chip rows mirror modules.json v0 — each names the REAL entry point it wraps
      (registry law, P0 addendum). glyph: circle = seed family, pent = axis (A11 §3.3). */
@@ -441,11 +441,11 @@ window.BENCH = (function () {
     logLine("RUN r-" + pad2(n) + " · T+0.00s");
     buildPacket();
 
-    api("POST", "/api/construct/run", { spec: specNow(), task: TASK.id }).then(function (j) {
+    GameAPI.ignite(specNow(), TASK.id).then(function (j) {
       if (!S.run || S.run.n !== n) return;
       if (!j || j.ok === false || !(j.run_id || (j.run && j.run.run_id))) {
-        /* the carrier ANSWERED with a refusal — the zone/trust law working, printed verbatim */
-        receipt((j && j.error) ? j.error : "run refused — no run_id returned");
+        /* the carrier ANSWERED with a refusal — the honesty seam, printed verbatim (j.refused) */
+        receipt((j && (j.refused || j.error)) ? (j.refused || j.error) : "run refused — no run_id returned");
         endToCompose();
         return;
       }
@@ -455,9 +455,9 @@ window.BENCH = (function () {
       if (!S.run || S.run.n !== n) return;
       if (err && err.status) {
         /* the carrier answered wrong — no run exists; the plate unlocks, the receipt stands */
-        receipt("/api/construct/run · HTTP " + err.status + " — NO RUN");
+        receipt("/game/ignite · HTTP " + err.status + " — NO RUN");
         endToCompose();
-      } else carrierLost("POST /api/construct/run unreachable");
+      } else carrierLost("POST /game/ignite unreachable");
     });
   }
 
@@ -466,25 +466,39 @@ window.BENCH = (function () {
   function schedulePoll() {
     if (!S.run || !S.run.rid) return;
     var rid = S.run.rid, n = S.run.n;
-    api("GET", "/api/construct/run?id=" + encodeURIComponent(rid)).then(function (j) {
+    GameAPI.run(rid).then(function (j) {
       if (!S.run || S.run.n !== n) return;
       applyStatus(normalizeRun(j));
       if (S.run && S.run.n === n && !S.run.halted && S.state === "RUN")
         timer(setTimeout(schedulePoll, POLL_MS));
     }, function () {
       if (!S.run || S.run.n !== n) return;
-      carrierLost("GET /api/construct/run unreachable — RUN r-" + pad2(n) + " STATE UNKNOWN");
+      carrierLost("GET /game/run unreachable — RUN r-" + pad2(n) + " STATE UNKNOWN");
     });
   }
 
   function normalizeRun(j) {
     var r = (j && j.run) ? j.run : (j || {});
+    /* the seam returns bench_core.run_status verbatim; this adapter maps its REAL fields onto the
+       plate's render contract — link.state from the measured ok, verdict from the scorer's pass.
+       Nothing is invented: a receipt DICT is folded to its measured one-liner (model · chars / PASS). */
+    var links = (r.links || r.trace || []).map(function (L) {
+      var rc = L.receipt;
+      if (rc && typeof rc === "object") {
+        if ("pass" in rc) rc = rc.pass ? "PASS" : "EXPECT MISSED";
+        else if (rc.model) rc = (rc.plant ? rc.plant + "/" : "") + rc.model + (rc.chars != null ? " · " + rc.chars + " chars" : "");
+        else rc = "DONE";
+      }
+      return { seq: L.seq, part: L.part, ms: L.ms, ok: L.ok, tried: L.tried, receipt: rc,
+               state: L.state || (L.ok ? "DONE" : "FAIL") };
+    });
+    var verdict = r.verdict || ((r.pass !== undefined && r.pass !== null) ? { pass: !!r.pass } : null);
     return {
       state: String(r.state || r.status || "RUNNING").toUpperCase(),
-      links: r.links || r.trace || [],
+      links: links,
       total_ms: (r.total_ms !== undefined) ? r.total_ms : null,
       cost_u: (r.cost_u !== undefined) ? r.cost_u : null,
-      verdict: r.verdict || null,
+      verdict: verdict,
       error: r.error || null
     };
   }
@@ -721,7 +735,7 @@ window.BENCH = (function () {
 
   function refreshGrid() {
     if (S.still) return;   /* the harness still is deterministic: no network, dashes stand */
-    api("GET", "/state").then(function (j) {
+    GameAPI.state().then(function (j) {
       var plants = (j && j.energy && j.energy.plants) || [];
       var quota = 0, hasCap = false;
       plants.forEach(function (p) { if (p.rpd_cap) { hasCap = true; quota += Math.max(0, p.rpd_cap - (p.rpd || 0)); } });
@@ -941,14 +955,17 @@ window.BENCH = (function () {
 
       GAME.onFrame(frame);
 
-      /* ?still&bench=1 — the docked virgin plate, deterministic, for the harness (E4 §13) */
-      if (S.still && S.benchBoot) {
+      /* ?still&bench=1 — the docked virgin plate, deterministic (no network), for the harness (E4 §13).
+         ?bench=1 (live, no ?still) — the same docked plate WITH the network up, so a headless verify can
+         seat + IGNITE a real run without first flying to a beacon. The ignition itself is 100% real. */
+      if (S.benchBoot) {
         S.docked = true;
         var eng = GAME.state.engine;
         if (eng) { eng.camera.position.copy(CAM.pos); eng.camera.lookAt(CAM.look); }
         D.wrap.classList.add("on");
         D.plate.classList.add("deal");
         renderAll();
+        if (!S.still) refreshGrid();   /* live: pull the real meter into the header */
       }
     } catch (err) {
       /* module init failures reach #err, never vanish in a promise (E1 §5) */

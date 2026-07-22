@@ -34,7 +34,7 @@ COOL_AFTER = 3          # consecutive live failures -> rod cools ...
 COOL_SECONDS = 900      # ... for 15 minutes, then it may retry (review 2026-07-10: cooling was a
                         # PERMANENT tombstone - nothing could ever reset consec_fail because a
                         # cooling rod was never drawn again; tiers decayed monotonically to the floor)
-LOCAL_FLOOR = [("ollama", "llama3.1:8b"), ("ollama", "granite4.1:3b"), ("ollama", "qwen3:1.7b")]
+LOCAL_FLOOR = [("ollama", "qwen2.5:7b"), ("ollama", "granite4.1:8b"), ("ollama", "llama3.1:8b")]
 
 _meter = grid.METER      # the shared meter - one truth across every organ and process
 

@@ -42,6 +42,10 @@ from aea.kernel import pulse
 from aea.kernel import trust
 
 HERE = grid.HERE
+# the aea/ package dir - the base the forge_gate resolves a part's source file against. After the
+# 2026-07-22 subpackage reorg the parts live under aea/<domain>/ and modules.json carries the
+# domain-relative path (energy/energy.py); grid.HERE now points at aea/kernel/, not aea/.
+_PKG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST_FP = os.path.join(grid.STATE, "modules.json")
 RUNS_FP = os.path.join(grid.STATE, "bench_runs.json")
 
@@ -151,7 +155,7 @@ def validate_spec(spec) -> dict:
                           "(A9's fog list)")
         if status != "BUILT":
             return refuse(f"part '{p}' status '{status}' - only BUILT parts fire")
-        fp = os.path.join(HERE, row.get("file") or "")
+        fp = os.path.join(_PKG_DIR, row.get("file") or "")
         if not (row.get("file") and os.path.isfile(fp) and os.path.getsize(fp) > 0):
             return refuse(f"part '{p}': {row.get('file')} missing or empty on disk - "
                           "LOST SIGNAL (the forge_gate check)")

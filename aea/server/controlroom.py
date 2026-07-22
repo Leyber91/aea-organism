@@ -21,6 +21,7 @@ from aea.organs import talk as talk_mod
 from aea.io import speak as speak_mod
 from aea.energy import energy as energy_mod
 from aea.bench import bench_core  # THE BENCH harness (P0) - construct runs, run-tagged
+from aea.gameapi import route_get, route_post  # THE HONEST SEAM - the /game/* facade (first light)
 try:
     from aea.organs import autonomy as autonomy_mod
 except Exception:
@@ -285,7 +286,12 @@ class Handler(BaseHTTPRequestHandler):
         return fp if os.path.isfile(fp) else None
 
     def do_GET(self):
-        if self.path == "/state":
+        if self.path.split("?")[0] in ("/game/state", "/game/run"):  # THE SEAM: honest /game/* reads
+            out = route_get(self.path)
+            body = json.dumps(out if out is not None else {"ok": False, "error": "unknown game endpoint"},
+                              ensure_ascii=False).encode("utf-8")
+            ctype = "application/json"
+        elif self.path == "/state":
             body = json.dumps(state(), ensure_ascii=False).encode("utf-8")
             ctype = "application/json"
         elif self.path == "/journal":
@@ -482,7 +488,9 @@ class Handler(BaseHTTPRequestHandler):
                 req, bad_body = {}, "body is not a JSON object"
         except Exception as e:
             req, bad_body = {}, f"unparseable body ({str(e)[:60]})"
-        if self.path == "/talk":
+        if self.path == "/game/ignite":              # THE SEAM: compose -> ignite (the real bench)
+            out = route_post(self.path, req, bad_body)
+        elif self.path == "/talk":
             out = self._talk(req)
         elif self.path == "/do":
             out = self._do(req)
