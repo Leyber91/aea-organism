@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-"""Root shim -> runs aea/controlroom.py (the server lives in the aea/ package now).
-Keeps `python controlroom.py [args]` working after the 2026-07-22 reorg."""
+"""Root shim -> runs `python -m aea.server.controlroom` (the server lives in aea/server/ after the
+2026-07-22 subpackage reorg). Keeps `python controlroom.py [args]` working."""
 import os, sys, subprocess
-_aea = os.path.join(os.path.dirname(os.path.abspath(__file__)), "aea")
-sys.exit(subprocess.call([sys.executable, os.path.join(_aea, "controlroom.py")] + sys.argv[1:]))
+_root = os.path.dirname(os.path.abspath(__file__))
+sys.exit(subprocess.call([sys.executable, "-m", "aea.server.controlroom"] + sys.argv[1:], cwd=_root))

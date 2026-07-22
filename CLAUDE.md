@@ -47,12 +47,15 @@ README.md / GAME_PLAN.md
 
 diary/     the handoff system. SESSION_LOG (state) · REFLECTIONS (Luis's raw sparks, mess-first) · DISCOVERIES (distilled reasoning) · README (protocol) · REORG_PLAN
 references/ pointer map to authoritative sources (AEA framework, site voice, visual spec) — pointers, privacy-guarded
-aea/       ALL runtime Python, one package, flat imports:
-             controlroom.py (server) · grid.py (metered model grid = the game's energy)
-             bench_core.py (THE BENCH: compose real models into a machine, run it)
-             aea.py (the entity's heartbeat/tick) · agent_tools.py (its hands = real tool-calling)
-             brief/hades/autonomy/energy/talk/speak/trust/pulse/... (the organs)
-             build_graph.py (regenerates graph.json — deterministic, no LLM tokens)
+aea/       ALL runtime Python — 10 domain subpackages, inward-only deps (imports are `from aea.<pkg> import <mod>`):
+             kernel/  grid (metered model grid + Meter + ROOT/STATE/WEB paths) · pulse · trust · tracelog
+             mind/    orchestrator · swarm · hades · pathfinder · relay
+             energy/  energy (the draw/ladder) · capacity · capability_census · extensive_census · model_fitness · probe · gauntlet
+             memory/  consolidate · index_codex · memory      bench/  bench_core (THE BENCH: compose+run real models)
+             io/      speak · listen · agent_tools (HANDS) · notify
+             organs/  autonomy · brief · talk · telegram_bridge · reflect
+             loop/    aea (heartbeat/tick) · live        server/  controlroom (the server)
+             tooling/ build_graph (regenerates graph.json, deterministic) · export_city
 state/     ALL runtime state (grid_state, journey_save = the sacred save, self, heartbeat, memory...).
              Resolved by grid.STATE. Private stores are gitignored, never committed.
 web/       front-end: world.html (mission loop), game/ (the bench UI), tracker/game.html, three.js libs. Served via grid.WEB
@@ -62,9 +65,10 @@ archive/   dead prototypes / scratch / orphaned data — kept, not deleted
 voice/     local TTS/STT tooling (weights gitignored — downloaded, not source)
 ```
 
-**The path model (why it holds together):** `aea/grid.py` finds `ROOT` by walking up to `design/`/`.git`,
-then sets `STATE = ROOT/state`, `WEB = ROOT/web`, and loads `.env` (keys) from `ROOT`. Code runs from
-`aea/` while state, web, and keys resolve to the repo root. **Never hardcode a state path — always go
+**The path model (why it holds together):** `aea/kernel/grid.py` finds `ROOT` by walking up to
+`design/`/`.git`, then sets `STATE = ROOT/state`, `WEB = ROOT/web`, and loads `.env` (keys) from `ROOT`.
+Code runs from the `aea/` subpackages while state, web, and keys resolve to the repo root; the entity's
+own subprocess spawns run as `python -m aea.<pkg>.<mod>` at cwd=repo-root. **Never hardcode a state path — always go
 through `grid.STATE` / `grid.load_json` / `grid.atomic_save_json`.** A missed write-site silently
 splits or resets state (that is discovery D8, learned the hard way).
 

@@ -14,7 +14,7 @@ $py   = (Get-Command python).Source
 $pyw  = $py -replace 'python\.exe$', 'pythonw.exe'      # windowless
 if (-not (Test-Path $pyw)) { $pyw = $py }               # fall back to python.exe if no pythonw
 
-$action   = New-ScheduledTaskAction -Execute $pyw -Argument 'live.py' -WorkingDirectory $here
+$action   = New-ScheduledTaskAction -Execute $pyw -Argument '-m aea.loop.live' -WorkingDirectory $here
 $trigger  = New-ScheduledTaskTrigger -AtLogOn
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries `
               -DontStopIfGoingOnBatteries -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1) `
@@ -26,4 +26,4 @@ Register-ScheduledTask -TaskName 'HERALD-Live' -Action $action -Trigger $trigger
 Write-Host ''
 Write-Host 'HERALD-Live registered. It will start on your next login (and now, if you run:)'
 Write-Host "  Start-ScheduledTask -TaskName 'HERALD-Live'"
-Write-Host 'Watch it:  python live.py --status     Stop the running one:  Stop-ScheduledTask -TaskName ''HERALD-Live'''
+Write-Host 'Watch it:  python -m aea.loop.live --status     Stop the running one:  Stop-ScheduledTask -TaskName ''HERALD-Live'''

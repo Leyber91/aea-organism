@@ -5,6 +5,31 @@ from the `NEXT` block — it does not re-decide what is under `LOCKED`.
 
 ---
 
+## 2026-07-22 (later·8) — aea/ SUBFOLDERED: flat 34-file package -> 10 domain subpackages (DONE, verified)
+
+**DID:** dissolved the flat `aea/` package (34 `.py` at one level, bare `import grid` co-location — the
+thing Luis hated) into **10 domain subpackages**: `kernel`(grid,pulse,trust,tracelog) · `mind`(orchestrator,
+swarm,hades,pathfinder,relay) · `energy`(energy,capacity,+censuses,model_fitness,probe,gauntlet) ·
+`memory`(consolidate,index_codex,memory) · `bench`(bench_core) · `io`(speak,listen,agent_tools,notify) ·
+`organs`(autonomy,brief,talk,telegram_bridge,reflect) · `loop`(aea,live) · `server`(controlroom) ·
+`tooling`(export_city,build_graph). Strict inward-only DAG, no cycles.
+
+**HOW (safe surgery, not a hand-move):** a 5-agent sweep mapped all 45 internal imports + every
+move-breaking pattern (zero dynamic imports; traps = mixed stdlib+internal lines, a docstring
+`from energy import draw`, bare-filename subprocess spawns). An **AST-guided migration script** then moved
+files + rewrote all 45 imports (`import grid` -> `from aea.kernel import grid`) — splitting mixed lines,
+leaving docstrings untouched. Non-import fixes: root shim + `controlroom._do` + `live.py` spawns now use
+`python -m aea.<pkg>.<mod>` at cwd=repo-root; `build_graph.py` recurses + reads dotted-import edges;
+`install_autostart.ps1` -> `-m aea.loop.live`. Pre-reorg checkpoint committed first (`d1c20cd`).
+
+**VERIFIED end-to-end:** 33/34 import clean (0 fail); `.env` resolves (6 plants online); graph rebuilds
+identically (code 64 nodes / 81 edges); server boots via the shim; **all endpoints 200** (/state /probe
+/world /roster /api/journey); **the SACRED save intact** (M0.1 + M1.1 preserved). Entity behavior unchanged.
+
+**NEXT:** unchanged — FIRST LIGHT (the compose->ignite verb) now builds on the clean package.
+
+---
+
 ## 2026-07-22 (later·7) — SESSION CLOSE / HANDOFF TO A FRESH CONVERSATION  ← START HERE
 
 Luis is opening a NEW conversation to **design the codebase to the scale of the ambition, then build**.

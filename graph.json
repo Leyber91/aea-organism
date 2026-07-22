@@ -2,20 +2,20 @@
  "_meta": {
   "what": "Master orchestrator graph over subgraphs of the THE PROBE / aea-city repo, for handoff.",
   "entry_point": "CLAUDE.md - the stable introduction (auto-loaded in Claude Code): HOW to work here + WHERE everything is. It sends you here (the graph) and to diary/SESSION_LOG (the state). Method+map live in CLAUDE.md; state lives in the diary.",
-  "how_to_use": "Enter at master.root (THE_PROBE); follow a 'contains' edge into one subgraph; query the node you need + its edges. Never re-scan the tree. Regenerate: python aea/build_graph.py",
-  "run_the_game": "python controlroom.py  (root shim -> aea/controlroom.py, serves :7799)",
-  "path_model": "grid.py defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/.",
+  "how_to_use": "Enter at master.root (THE_PROBE); follow a 'contains' edge into one subgraph; query the node you need + its edges. Never re-scan the tree. Regenerate: python aea/tooling/build_graph.py",
+  "run_the_game": "python controlroom.py  (root shim -> `python -m aea.server.controlroom`, serves :7799)",
+  "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
     "count": 64,
-    "source": "aea/aea.py"
+    "source": "aea/loop/aea.py"
    },
    "plan": {
     "count": 54,
     "source": "design/00_VISION.md"
    },
    "reflections": {
-    "count": 38,
+    "count": 39,
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
@@ -47,7 +47,7 @@
     "src": "THE_PROBE",
     "dst": "reflections",
     "rel": "contains",
-    "count": 38
+    "count": 39
    },
    {
     "src": "THE_PROBE",
@@ -69,356 +69,356 @@
     {
      "id": "aea",
      "type": "module",
-     "path": "aea/aea.py",
+     "path": "aea/loop/aea.py",
      "purpose": "aea.py - THE AEA: a seeded, persistent, always-on entity. NOT a swarm - ONE core mind on a loop,"
     },
     {
      "id": "agent_tools",
      "type": "module",
-     "path": "aea/agent_tools.py",
+     "path": "aea/io/agent_tools.py",
      "purpose": "agent_tools.py - Phase 3: the agent reaches PAST its own weights."
     },
     {
      "id": "autonomy",
      "type": "module",
-     "path": "aea/autonomy.py",
+     "path": "aea/organs/autonomy.py",
      "purpose": "autonomy.py - THE LIVE BATTERY: the system tests its OWN autonomy against the principles."
     },
     {
      "id": "bench_core",
      "type": "module",
-     "path": "aea/bench_core.py",
+     "path": "aea/bench/bench_core.py",
      "purpose": "bench_core.py - THE BENCH HARNESS (P0): compose a construct, run it for real, measure it."
     },
     {
      "id": "brief",
      "type": "module",
-     "path": "aea/brief.py",
+     "path": "aea/organs/brief.py",
      "purpose": "brief.py - THE MORNING BRIEF: the first REAL task the free swarm does for Luis."
     },
     {
      "id": "build_graph",
      "type": "module",
-     "path": "aea/build_graph.py",
+     "path": "aea/tooling/build_graph.py",
      "purpose": "build_graph.py - the master orchestrator graph over subgraphs, for agent handoff."
     },
     {
      "id": "capability_census",
      "type": "module",
-     "path": "aea/capability_census.py",
+     "path": "aea/energy/capability_census.py",
      "purpose": "capability_census.py - REFINE THE CATALOG: not \"does it serve\" but \"how CAPABLE is it\"."
     },
     {
      "id": "capacity",
      "type": "module",
-     "path": "aea/capacity.py",
+     "path": "aea/energy/capacity.py",
      "purpose": "capacity.py - THE LIVE CAPACITY GAUGE: how much free power do we ACTUALLY have, right now?"
     },
     {
      "id": "consolidate",
      "type": "module",
-     "path": "aea/consolidate.py",
+     "path": "aea/memory/consolidate.py",
      "purpose": "consolidate.py - MEMORY CONSOLIDATION: episodic transcripts -> semantic memory of Luis."
     },
     {
      "id": "controlroom",
      "type": "module",
-     "path": "aea/controlroom.py",
+     "path": "aea/server/controlroom.py",
      "purpose": "controlroom.py - THE CONTROL ROOM: at any moment, see what the entity is doing."
     },
     {
      "id": "energy",
      "type": "module",
-     "path": "aea/energy.py",
+     "path": "aea/energy/energy.py",
      "purpose": "energy.py - ONE CONTINUUM: the brain draws models as ENERGY through a single mouth."
     },
     {
      "id": "export_city",
      "type": "module",
-     "path": "aea/export_city.py",
+     "path": "aea/tooling/export_city.py",
      "purpose": "export_city.py - dump the REAL grid state into city.data.js for the 3D city."
     },
     {
      "id": "extensive_census",
      "type": "module",
-     "path": "aea/extensive_census.py",
+     "path": "aea/energy/extensive_census.py",
      "purpose": "extensive_census.py - THE FULL EXAM: every free capability we hold, tested for real."
     },
     {
      "id": "gauntlet",
      "type": "module",
-     "path": "aea/gauntlet.py",
+     "path": "aea/energy/gauntlet.py",
      "purpose": "gauntlet.py - THE GAUNTLET: the integrated entity examined through its own front door."
     },
     {
      "id": "grid",
      "type": "module",
-     "path": "aea/grid.py",
+     "path": "aea/kernel/grid.py",
      "purpose": "grid.py - the AEA entity's power grid (the city's electricity layer)."
     },
     {
      "id": "hades",
      "type": "module",
-     "path": "aea/hades.py",
+     "path": "aea/mind/hades.py",
      "purpose": "hades.py - HADES: the WATCHER over the SEDAH swarm."
     },
     {
      "id": "index_codex",
      "type": "module",
-     "path": "aea/index_codex.py",
+     "path": "aea/memory/index_codex.py",
      "purpose": "index_codex.py - THE WHOLE BOOK OF LUIS, indexed: his real documents (the TRIVERSE CODEX,"
     },
     {
      "id": "listen",
      "type": "module",
-     "path": "aea/listen.py",
+     "path": "aea/io/listen.py",
      "purpose": "listen.py - the entity's EARS. Offline speech-to-text: Whisper-base (multilingual - English"
     },
     {
      "id": "live",
      "type": "module",
-     "path": "aea/live.py",
+     "path": "aea/loop/live.py",
      "purpose": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps."
     },
     {
      "id": "memory",
      "type": "module",
-     "path": "aea/memory.py",
+     "path": "aea/memory/memory.py",
      "purpose": "memory.py - the entity's persistent memory = the backwards channel (seed 10) + A-axis L2."
     },
     {
      "id": "model_fitness",
      "type": "module",
-     "path": "aea/model_fitness.py",
+     "path": "aea/energy/model_fitness.py",
      "purpose": "model_fitness.py - THE ENTITY LEARNS ITS OWN TOOLS."
     },
     {
      "id": "notify",
      "type": "module",
-     "path": "aea/notify.py",
+     "path": "aea/io/notify.py",
      "purpose": "notify.py - the REACH organ: LEYBER reaches Luis by PHONE (CallMeBot text-to-speech call)."
     },
     {
      "id": "orchestrator",
      "type": "module",
-     "path": "aea/orchestrator.py",
+     "path": "aea/mind/orchestrator.py",
      "purpose": "orchestrator.py - the AEA orchestrator."
     },
     {
      "id": "pathfinder",
      "type": "module",
-     "path": "aea/pathfinder.py",
+     "path": "aea/mind/pathfinder.py",
      "purpose": "pathfinder.py - the increase-by-step CRYSTALLIZED PATH algorithm."
     },
     {
      "id": "probe",
      "type": "module",
-     "path": "aea/probe.py",
+     "path": "aea/energy/probe.py",
      "purpose": "probe.py - the grid inspector. Measures the REAL capacity of each plant:"
     },
     {
      "id": "pulse",
      "type": "module",
-     "path": "aea/pulse.py",
+     "path": "aea/kernel/pulse.py",
      "purpose": "pulse.py - the entity's NERVOUS SIGNAL. Every organ emits what it does, as it does it,"
     },
     {
      "id": "reflect",
      "type": "module",
-     "path": "aea/reflect.py",
+     "path": "aea/organs/reflect.py",
      "purpose": "reflect.py - t6, THE REFLECTION TICK: the organ that makes the self a loop, not a document."
     },
     {
      "id": "relay",
      "type": "module",
-     "path": "aea/relay.py",
+     "path": "aea/mind/relay.py",
      "purpose": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads"
     },
     {
      "id": "speak",
      "type": "module",
-     "path": "aea/speak.py",
+     "path": "aea/io/speak.py",
      "purpose": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):"
     },
     {
      "id": "swarm",
      "type": "module",
-     "path": "aea/swarm.py",
+     "path": "aea/mind/swarm.py",
      "purpose": "swarm.py - the recursive, self-monitoring swarm. Answers: WHEN does a role spawn a sub-agent?"
     },
     {
      "id": "talk",
      "type": "module",
-     "path": "aea/talk.py",
+     "path": "aea/organs/talk.py",
      "purpose": "talk.py - TALK TO IT. The conversational face of the entity: the first interface where"
     },
     {
      "id": "telegram_bridge",
      "type": "module",
-     "path": "aea/telegram_bridge.py",
+     "path": "aea/organs/telegram_bridge.py",
      "purpose": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,"
     },
     {
      "id": "tracelog",
      "type": "module",
-     "path": "aea/tracelog.py",
+     "path": "aea/kernel/tracelog.py",
      "purpose": "tracelog.py - the trace substrate the whole swarm stands on."
     },
     {
      "id": "trust",
      "type": "module",
-     "path": "aea/trust.py",
+     "path": "aea/kernel/trust.py",
      "purpose": "trust.py - THE TRUST LEDGER: autonomy is EARNED per capability, never assumed."
     },
     {
      "id": "/api/construct/run",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/api/journey",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/api/node/run",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/api/schema",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/api/tickets",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/autonomy",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/brain",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/builder",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/chains",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/city",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/decisions",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/do",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/events",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/game",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/game/",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/journal",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/lab",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/mind",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/plan",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/poster",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/probe",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/room",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/roster",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/skills",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/state",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/talk",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/tracker",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/tree",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/workspace",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     },
     {
      "id": "/world",
      "type": "endpoint",
-     "served_by": "aea/controlroom.py"
+     "served_by": "aea/server/controlroom.py"
     }
    ],
    "edges": [
@@ -524,7 +524,7 @@
     },
     {
      "src": "controlroom",
-     "dst": "consolidate",
+     "dst": "memory",
      "rel": "imports"
     },
     {
@@ -644,7 +644,7 @@
     },
     {
      "src": "live",
-     "dst": "consolidate",
+     "dst": "memory",
      "rel": "imports"
     },
     {
@@ -779,7 +779,7 @@
     },
     {
      "src": "talk",
-     "dst": "consolidate",
+     "dst": "memory",
      "rel": "imports"
     },
     {
@@ -794,7 +794,7 @@
     },
     {
      "src": "talk",
-     "dst": "index_codex",
+     "dst": "memory",
      "rel": "imports"
     },
     {
@@ -1332,6 +1332,12 @@
      "id": "R38",
      "type": "reflection",
      "title": "R38 · Crystallization makes creatures do MORE — but it is a bridge, not the destination",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R39",
+     "type": "reflection",
+     "title": "R39 · The world is a STRUCTURAL MAP of the being, not a city",
      "path": "diary/REFLECTIONS.md"
     }
    ],
