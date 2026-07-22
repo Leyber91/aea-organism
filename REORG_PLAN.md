@@ -1,7 +1,11 @@
-# ROOT REORG — status + the one remaining stage
+# ROOT REORG — COMPLETE (2026-07-22)
 
-Root went from **126 loose files to ~41**. State and web are relocated, code rewired, and the
-server tested end-to-end after each stage. Only the Python remains at root.
+**Done. Root went from 126 loose files to 6.** State → `state/`, web → `web/`, all Python →
+`aea/`, runtime files → `state/`, spec → `docs/`. Code rewired via `grid.ROOT`/`STATE`/`WEB`
+anchors; a root `controlroom.py` shim keeps `python controlroom.py` working. Verified end-to-end
+after every stage: server boots, `.env` keys load (NVIDIA/GROQ/CEREBRAS), all endpoints 200, the
+save (`M0.1`/`M1.1`) is intact, every write lands in `state/`, nothing leaks to root. The record
+of exactly what moved and why is below.
 
 ## DONE (committed + tested)
 
