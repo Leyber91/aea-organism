@@ -42,3 +42,6 @@ voice/sherpa-onnx-whisper-base/
 voice/sherpa-onnx-v1.13.4-win-x64-shared-MD-Release/
 
 *.mp3
+*.wav
+*.log
+live.instance
