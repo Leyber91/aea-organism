@@ -1,3 +1,7 @@
+# Claude Code local session/settings (machine-specific, may hold local context) - never commit.
+# CLAUDE.md itself IS committed on purpose: it is the handoff introduction, it must travel with the repo.
+.claude/
+
 # Never commit secrets or runtime state
 .env
 .nvidia_key

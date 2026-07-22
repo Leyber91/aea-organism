@@ -1,6 +1,7 @@
 {
  "_meta": {
   "what": "Master orchestrator graph over subgraphs of the THE PROBE / aea-city repo, for handoff.",
+  "entry_point": "CLAUDE.md - the stable introduction (auto-loaded in Claude Code): HOW to work here + WHERE everything is. It sends you here (the graph) and to diary/SESSION_LOG (the state). Method+map live in CLAUDE.md; state lives in the diary.",
   "how_to_use": "Enter at master.root (THE_PROBE); follow a 'contains' edge into one subgraph; query the node you need + its edges. Never re-scan the tree. Regenerate: python aea/build_graph.py",
   "run_the_game": "python controlroom.py  (root shim -> aea/controlroom.py, serves :7799)",
   "path_model": "grid.py defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/.",
@@ -10,11 +11,15 @@
     "source": "aea/aea.py"
    },
    "plan": {
-    "count": 52,
+    "count": 54,
     "source": "design/00_VISION.md"
    },
+   "reflections": {
+    "count": 38,
+    "source": "diary/REFLECTIONS.md"
+   },
    "discoveries": {
-    "count": 9,
+    "count": 13,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -36,13 +41,19 @@
     "src": "THE_PROBE",
     "dst": "plan",
     "rel": "contains",
-    "count": 52
+    "count": 54
+   },
+   {
+    "src": "THE_PROBE",
+    "dst": "reflections",
+    "rel": "contains",
+    "count": 38
    },
    {
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 9
+    "count": 13
    },
    {
     "src": "THE_PROBE",
@@ -966,6 +977,11 @@
      "path": "design/BOOK.md"
     },
     {
+     "id": "design/CLEAN_ARCHITECTURE.md",
+     "type": "design_doc",
+     "path": "design/CLEAN_ARCHITECTURE.md"
+    },
+    {
      "id": "design/E1_CODE_ARCHITECTURE.md",
      "type": "design_doc",
      "path": "design/E1_CODE_ARCHITECTURE.md"
@@ -1009,6 +1025,11 @@
      "id": "design/E9_ASSET_TICKETS.md",
      "type": "design_doc",
      "path": "design/E9_ASSET_TICKETS.md"
+    },
+    {
+     "id": "design/FIRST_LIGHT_INTEGRATION.md",
+     "type": "design_doc",
+     "path": "design/FIRST_LIGHT_INTEGRATION.md"
     },
     {
      "id": "design/INDEX.md",
@@ -1083,6 +1104,239 @@
    ],
    "edges": []
   },
+  "reflections": {
+   "nodes": [
+    {
+     "id": "R1",
+     "type": "reflection",
+     "title": "R1 · A playable 3D city, and a voice that sounds alive",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R2",
+     "type": "reflection",
+     "title": "R2 · Call it Leyber; tokens are energy; run a conscious self-improving loop",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R3",
+     "type": "reflection",
+     "title": "R3 · Build ON the AEA, not from scratch",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R4",
+     "type": "reflection",
+     "title": "R4 · Autonomy = press play; a scheduled loop that checks its own systems",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R5",
+     "type": "reflection",
+     "title": "R5 · Tokens are energy, models are accelerators — crystallize",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R6",
+     "type": "reflection",
+     "title": "R6 · Show the mind as one navigable 3D brain",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R7",
+     "type": "reflection",
+     "title": "R7 · A Claude-level entity fused with my thinking — and a knowledge graph so it doesn't burn context",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R8",
+     "type": "reflection",
+     "title": "R8 · A real battery of tests to prove autonomy",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R9",
+     "type": "reflection",
+     "title": "R9 · A self-building timeline of every bifurcation and tool call",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R10",
+     "type": "reflection",
+     "title": "R10 · A building tab — watch it assembled like a puzzle",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R11",
+     "type": "reflection",
+     "title": "R11 · Reframe the whole thing as a GAME",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R12",
+     "type": "reflection",
+     "title": "R12 · A guided level journey with an inventory — token limits are resources you grow",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R13",
+     "type": "reflection",
+     "title": "R13 · A discovery map of the AEA as a concentric field",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R14",
+     "type": "reflection",
+     "title": "R14 · A game is not one markdown",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R15",
+     "type": "reflection",
+     "title": "R15 · The core loop: assemble AEA combinations that act on the world",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R16",
+     "type": "reflection",
+     "title": "R16 · Every AEA part becomes a journey — and the assistant can run in the wild",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R17",
+     "type": "reflection",
+     "title": "R17 · Magic out of the real — a pop-culture game that demystifies AI",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R18",
+     "type": "reflection",
+     "title": "R18 · This is the WirthForge we needed, finally realized",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R19",
+     "type": "reflection",
+     "title": "R19 · Define the world through concept art",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R20",
+     "type": "reflection",
+     "title": "R20 · Spread on quality, not marketing",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R21",
+     "type": "reflection",
+     "title": "R21 · Premium low-resource 3D — and the render doctrine (solid = what it IS, hologram = what it SHOWS)",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R22",
+     "type": "reflection",
+     "title": "R22 · Ignite independent organisms that run on tokens",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R23",
+     "type": "reflection",
+     "title": "R23 · Assemble brains from Lego pieces — readable or they quit at step one",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R24",
+     "type": "reflection",
+     "title": "R24 · Minimal Viable Organism — aliveness = how often it queries on its own",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R25",
+     "type": "reflection",
+     "title": "R25 · Entities are proofs of AEA combinations; the masters ARE the AEA",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R26",
+     "type": "reflection",
+     "title": "R26 · Missions -> an open world where your entity acts on the real internet",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R27",
+     "type": "reflection",
+     "title": "R27 · Continuity lives in files — any conversation can take over from the repo",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R28",
+     "type": "reflection",
+     "title": "R28 · The game's dynamics come from the ENTITIES, not from authored content",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R29",
+     "type": "reflection",
+     "title": "R29 · Entities are typed by which AEA parts they embody -> a combinatorial tier-space",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R30",
+     "type": "reflection",
+     "title": "R30 · The game GENERATES AEA-combination entities — and non-viability is the point",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R31",
+     "type": "reflection",
+     "title": "R31 · A real carrying capacity — creatures bounded by loops, frequency, and connected sources",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R32",
+     "type": "reflection",
+     "title": "R32 · Rebuild the game CLIENT clean, backward from success, at the concept-art bar",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R33",
+     "type": "reflection",
+     "title": "R33 · The missing work is GAME-DNA, not more AEA",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R34",
+     "type": "reflection",
+     "title": "R34 · The catalogue is a POKEDEX of shadows; tiers of combinations = levels of autonomy",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R35",
+     "type": "reflection",
+     "title": "R35 · Design it backward as a 90s–2000s strategy guide (Zelda-style)",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R36",
+     "type": "reflection",
+     "title": "R36 · Three modes = three APERTURES on one engine (defied: don't fragment; add a stakes axis)",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R37",
+     "type": "reflection",
+     "title": "R37 · The world: a living concentric INSTRUMENT with EARNED (metroidvania) openness",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R38",
+     "type": "reflection",
+     "title": "R38 · Crystallization makes creatures do MORE — but it is a bridge, not the destination",
+     "path": "diary/REFLECTIONS.md"
+    }
+   ],
+   "edges": []
+  },
   "discoveries": {
    "nodes": [
     {
@@ -1131,6 +1385,30 @@
      "id": "D8",
      "type": "discovery",
      "title": "D8 · Reorg lesson — continuity lives in the files",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D9",
+     "type": "discovery",
+     "title": "D9 · Missions are scaffolding, not spine; viability is empirical and IS the teaching (DECIDED 2026-07-22)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D10",
+     "type": "discovery",
+     "title": "D10 · Cold-read audit — legible in the parts, ambiguous in the CANON (measured 2026-07-22)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D11",
+     "type": "discovery",
+     "title": "D11 · The vision crystallized — backward-designed, genre-welded, clean-architected (2026-07-22)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D12",
+     "type": "discovery",
+     "title": "D12 · Expert panel — GREENLIT masterpiece seed; three execution flaws; SHIP THE VERB (2026-07-22)",
      "path": "diary/DISCOVERIES.md"
     },
     {

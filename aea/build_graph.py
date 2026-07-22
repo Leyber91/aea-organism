@@ -74,6 +74,15 @@ def sub_discoveries():
     return nodes, []
 
 
+def sub_reflections():
+    # each '## ...' in diary/REFLECTIONS.md is a RAW reflection node (the mess-first spark layer,
+    # upstream of discoveries). Deterministic parse of the doc.
+    heads = _headings(os.path.join(ROOT, "diary", "REFLECTIONS.md"), r"^##\s+(.+)")
+    nodes = [{"id": h.split("·")[0].strip() if "·" in h else h[:40], "type": "reflection",
+              "title": h, "path": "diary/REFLECTIONS.md"} for h in heads]
+    return nodes, []
+
+
 def sub_references():
     heads = _headings(os.path.join(ROOT, "references", "README.md"), r"^##\s+(.+)")
     nodes = [{"id": h.split("—")[0].strip() if "—" in h else h[:40], "type": "reference",
@@ -81,7 +90,8 @@ def sub_references():
     return nodes, []
 
 
-SUBS = {"code": sub_code, "plan": sub_plan, "discoveries": sub_discoveries, "references": sub_references}
+SUBS = {"code": sub_code, "plan": sub_plan, "reflections": sub_reflections,
+        "discoveries": sub_discoveries, "references": sub_references}
 subgraphs, master_edges = {}, []
 for name, fn in SUBS.items():
     n, e = fn()
@@ -95,6 +105,9 @@ assert not missing, f"ACCESS NOT GUARANTEED - empty subgraph(s): {missing}"
 graph = {
     "_meta": {
         "what": "Master orchestrator graph over subgraphs of the THE PROBE / aea-city repo, for handoff.",
+        "entry_point": "CLAUDE.md - the stable introduction (auto-loaded in Claude Code): HOW to work "
+                       "here + WHERE everything is. It sends you here (the graph) and to diary/SESSION_LOG "
+                       "(the state). Method+map live in CLAUDE.md; state lives in the diary.",
         "how_to_use": "Enter at master.root (THE_PROBE); follow a 'contains' edge into one subgraph; "
                       "query the node you need + its edges. Never re-scan the tree. "
                       "Regenerate: python aea/build_graph.py",

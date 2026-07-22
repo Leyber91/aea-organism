@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>THE PROBE — Codebase Design (from first principles)</title>
+<!--
+  THE PROBE - CODEBASE DESIGN, from first principles (supersedes the earlier "extend the layout" render).
+  Functionality is PORTED/KEPT; the STRUCTURE is redesigned clean. Verified against the real repo
+  (5-reader ground-truth pass, 2026-07-22). A REVIEW artifact - not code, not new vision corpus.
+  Honesty law on our own docs: KEEP = amber (lives, untouched) · PORT = warm (lives, moves clean) ·
+  NEW = blue (not yet real) · CUT = dim. Two inks + one energy. Mono. No emoji. Runs from file://.
+-->
+<style>
+  :root{
+    --void:#06090e; --void-2:#090e15; --void-3:#0c131c;
+    --ink:#c4cfd9; --ink-soft:#8f9dab; --dim:#586675;
+    --line:rgba(122,152,178,0.16); --line-2:rgba(122,152,178,0.30);
+    --amber:#ffb000; --amber-soft:#d4a24c; --amber-glow:rgba(255,176,0,0.14);
+    --blue:#5bb0d6; --blue-soft:rgba(91,176,214,0.5);
+    --mono:ui-monospace,"Cascadia Code","SF Mono","Segoe UI Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--void);color:var(--ink);
+    font-family:var(--mono);font-size:14px;line-height:1.65;
+    font-variant-numeric:tabular-nums;letter-spacing:0.01em;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 70% at 50% -10%,rgba(91,176,214,0.05),transparent 60%);
+  }
+  ::selection{background:rgba(255,176,0,0.22);color:#fff}
+  a{color:var(--amber-soft);text-decoration:none;border-bottom:1px solid transparent}
+  a:hover{border-bottom-color:var(--amber-soft)}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 26px}
+  .amber{color:var(--amber)} .blue{color:var(--blue)} .dim{color:var(--dim)} .warm{color:var(--amber-soft)}
+  .eyebrow{font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--dim)}
+  code{color:var(--ink);background:var(--void-3);padding:1px 5px;border:1px solid var(--line);font-size:12px;white-space:nowrap}
+  p{margin:0 0 0.9rem;max-width:86ch}
+
+  header.cover{border-bottom:1px solid var(--line);padding:46px 0 30px;position:relative;overflow:hidden;
+    background-image:radial-gradient(70% 120% at 50% 130%,var(--amber-glow),transparent 60%)}
+  header .tag{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--amber-soft)}
+  header h1{font-size:clamp(26px,4.6vw,46px);font-weight:600;letter-spacing:0.08em;margin:12px 0 6px;color:var(--ink)}
+  header .sub{font-size:13px;letter-spacing:0.05em;color:var(--ink-soft);max-width:88ch}
+  .statusbar{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim)}
+  .statusbar b{color:var(--amber-soft);font-weight:600}
+  .banner{border:1px solid var(--line);background:var(--void-2);padding:12px 16px;font-size:12px;color:var(--ink-soft);margin:22px 0 0}
+  .banner b{color:var(--blue)}
+
+  section{padding:42px 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+  .sec-num{font-size:12px;letter-spacing:0.2em;color:var(--amber-soft)}
+  .sec-head h2{font-size:clamp(18px,2.9vw,25px);font-weight:600;letter-spacing:0.05em;margin:0;text-transform:uppercase}
+  .sec-head .note{margin-left:auto;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);padding:4px 9px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 18px}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:0.06em;border:1px solid var(--line);padding:4px 10px;color:var(--ink-soft)}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .dot.keep{background:var(--amber);box-shadow:0 0 6px var(--amber-glow)} .dot.port{background:var(--amber-soft)} .dot.new{background:var(--blue)} .dot.cut{background:var(--dim)}
+
+  .tag2{font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;padding:1px 6px;border:1px solid var(--line);white-space:nowrap;vertical-align:middle}
+  .tKEEP{color:var(--amber);border-color:rgba(255,176,0,0.4)} .tPORT{color:var(--amber-soft);border-color:rgba(212,162,76,0.4)}
+  .tNEW{color:var(--blue);border-color:var(--blue-soft)} .tCUT{color:var(--dim)} .tI{color:var(--blue);border-color:var(--blue-soft);background:rgba(91,176,214,0.05)}
+
+  .scroll{overflow-x:auto;border:1px solid var(--line);background:var(--void-2)}
+  table{border-collapse:collapse;width:100%;font-size:12px;min-width:660px}
+  th,td{text-align:left;padding:7px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);font-weight:500;position:sticky;top:0;background:var(--void-3)}
+  tr:last-child td{border-bottom:none}
+  td.f{color:var(--ink);white-space:nowrap} td.f code{white-space:nowrap}
+  td .r{color:var(--ink-soft)}
+  tbody tr:hover{background:rgba(122,152,178,0.04)}
+  .grp td{background:var(--void-3);color:var(--amber-soft);font-size:10px;letter-spacing:0.18em;text-transform:uppercase}
+
+  pre.tree{border:1px solid var(--line);background:var(--void-2);padding:18px 16px;overflow-x:auto;font-size:12.5px;line-height:1.58;color:var(--ink-soft);margin:0}
+  pre.tree b{color:var(--ink);font-weight:600}
+  pre.tree .cm{color:var(--dim)}
+  pre.tree .kK{color:var(--amber)} pre.tree .kP{color:var(--amber-soft)} pre.tree .kN{color:var(--blue)} pre.tree .kC{color:var(--dim)}
+
+  .rings{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin:8px 0}
+  @media(min-width:900px){.rings.c3{grid-template-columns:1fr 1fr 1fr}}
+  .ring{background:var(--void-2);padding:16px 15px}
+  .ring .rn{font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);font-weight:600}
+  .ring .rt{font-size:11px;color:var(--dim);margin:2px 0 9px;letter-spacing:0.05em}
+  .ring .rd{font-size:12px;color:var(--ink-soft)}
+  .ring.seam .rn{color:var(--blue)}
+  .flowline{text-align:center;color:var(--dim);font-size:11px;letter-spacing:0.26em;padding:8px 0}
+
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:6px 0}
+  .kv>div{background:var(--void-2);padding:12px 14px}
+  .kv .k{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim)}
+  .kv .v{font-size:14px;color:var(--ink);margin-top:5px} .kv .v.on{color:var(--amber)} .kv .v.pl{color:var(--blue)} .kv .v.wm{color:var(--amber-soft)}
+
+  ul.clean{margin:0 0 1rem;padding-left:20px} ul.clean li{margin:5px 0;color:var(--ink-soft)}
+  ul.clean li b{color:var(--ink);font-weight:600}
+  .callout{border-left:2px solid var(--blue-soft);background:rgba(91,176,214,0.05);padding:12px 15px;color:var(--blue);font-size:12.5px;margin:14px 0}
+  .callout .who{display:block;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+  .good{border-left-color:var(--amber-soft);background:rgba(255,176,0,0.045);color:var(--amber-soft)}
+  h3{font-size:13px;letter-spacing:0.05em;color:var(--ink);text-transform:uppercase;margin:22px 0 8px;font-weight:600}
+  .rec{border:1px solid rgba(255,176,0,0.32);background:linear-gradient(180deg,rgba(255,176,0,0.05),var(--void-2));padding:14px 16px;margin:10px 0}
+  .rec .rl{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);font-weight:600}
+  .rec .rv{font-size:13px;color:var(--ink);margin-top:4px}
+  .rec .rw{font-size:12px;color:var(--ink-soft);margin-top:5px}
+  footer{border-top:1px solid var(--line);padding:40px 0 70px}
+  footer .mark{font-size:10px;letter-spacing:0.4em;text-transform:uppercase;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap">
+    <div class="tag">// CODEBASE DESIGN · from first principles · THE PROBE (aea-city) · 2026-07-22</div>
+    <h1>THE PROBE — Codebase Design</h1>
+    <div class="sub">The ideal structure, designed from the game's laws and the player — not from the shape of the old build. <b>Functionality is PORTED/KEPT; structure is rebuilt clean.</b> Verified against the real repo; measured to your engineering standard (root+subfolders, &le;300 loc, modular OOP, deps inward, one honesty firewall, config-as-data, ES modules, honest test lane).</div>
+    <div class="statusbar">
+      <span>substrate <b>KEEP-AND-WRAP</b> (34 py, stdlib-only)</span>
+      <span>seam <b>NEW</b> · one firewall</span>
+      <span>client <b>REBUILT</b> · ES modules</span>
+      <span>size cap <b>&le;300 / 500</b></span>
+      <span>exit: <b>FIRST LIGHT</b></span>
+    </div>
+    <div class="banner">
+      <b>STATUS —</b> A design PRESENTATION for review; not code, not new vision corpus. Supersedes the earlier "extend the layout" render. This is the <b>second</b> design pass this session — held deliberately narrow (D7/D12: the recorded failure is designing instead of shipping; the substrate is already clean, so "from scratch" is scoped to the seam + client + config we rebuild anyway). <b>No code until you approve. The next exit is FIRST LIGHT.</b>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== 0 · THE FILTER + THE TWO TRADES ===================== -->
+<section id="filter">
+  <div class="sec-head"><span class="sec-num">00</span><h2>The filter &amp; the two hard trades</h2><span class="note">decided, not asked</span></div>
+  <div class="legend">
+    <span class="chip"><span class="dot keep"></span> KEEP — working piece, untouched, designed around</span>
+    <span class="chip"><span class="dot port"></span> PORT — real logic carried into a clean module</span>
+    <span class="chip"><span class="dot new"></span> NEW — designed + written fresh</span>
+    <span class="chip"><span class="dot cut"></span> CUT — retired to dev/ or deleted</span>
+  </div>
+  <p>The engineering standard is right, and the current code <em>is</em> flat/monolithic/forked in two places. But the verification pass proved the substrate is <b>not</b> the mess: <code>aea/</code> is stdlib-only, cleanly layered (grid = root, zero cycles), single-responsibility, and every module is under your 500-line ceiling <b>except two</b> — <code>controlroom.py</code> (689) and <code>world.html</code> (78KB). Those two are the seam-host and the client, which we rebuild regardless. So "from scratch" earns its keep on the <b>seam + client + config-as-data</b>; the live entity is careful surgery, PORT/KEEP.</p>
+
+  <div class="rec">
+    <div class="rl">Trade 1 · the entity — RECOMMENDATION</div>
+    <div class="rv">KEEP-AND-WRAP the substrate. Do NOT reorganize the live entity into new OOP classes.</div>
+    <div class="rw">Why: (a) its state is live — a missed write-site silently splits/resets state (D8), and 34 modules to rewrite multiplies that for zero player-visible gain; (b) it's already well-factored (the import graph is clean and layered, single-responsibility, under the size cap); (c) the moat is the REAL behavior — wrapping it preserves the moat with minimal risk. The one substrate monolith, <code>controlroom.py</code>, is <b>dissolved by the rebuild</b> (its game logic PORTs into the seam package). <code>grid.py</code> (479 loc, 5 responsibilities) earns a later careful split into a <code>grid/</code> package, but that is off the first-light path and touches every import site — deferred, not now.</div>
+  </div>
+
+  <div class="rec">
+    <div class="rl">Trade 2 · the client module system — RECOMMENDATION</div>
+    <div class="rv">Native ES modules (import/export), no build step. Retire the <code>window.GAME</code> global + IIFE pattern.</div>
+    <div class="rw">Why: real encapsulation and explicit dependency edges beat a shared global with implicit ordering. No build cost — browsers load ESM over http natively. <code>THREE</code> r128 (UMD) stays a classic global <code>&lt;script&gt;</code> loaded first; the bloom chain attaches to it; the game code is proper modules behind one <code>&lt;script type="module" src="core/main.js"&gt;</code>. Consequence: the 5 clean IIFE modules (engine/bench/panels/seals/artifacts) become <b>PORT</b> (convert to ESM classes), not KEEP — but that is the client rebuild we already committed to. The single global is replaced by explicit <code>import</code>s + one injected <code>Game</code> context object passed to each module's constructor.</div>
+  </div>
+</section>
+
+<!-- ===================== 1 · THE LAYERS ===================== -->
+<section id="layers">
+  <div class="sec-head"><span class="sec-num">01</span><h2>The architecture — three layers, one firewall</h2><span class="note">dependencies point inward only</span></div>
+  <p>Strict inward dependency: <b>client &rarr; seam &rarr; substrate</b>. The substrate imports nothing outward. The seam is the only thing that knows about both sides. The honesty law + claim ceiling live in exactly ONE place — the firewall class in the seam. Nothing crosses the wire except through it.</p>
+  <div class="rings c3">
+    <div class="ring">
+      <div class="rn">SUBSTRATE — aea/</div><div class="rt">KEEP-AND-WRAP · the moat · imports nothing outward</div>
+      <div class="rd">The real always-on entity: the only place a token burns or a number is measured. 34 stdlib modules, layered (grid root &rarr; energy/trust/pulse &rarr; bench_core/hades/talk). Reorganized only by careful surgery; otherwise untouched.</div>
+    </div>
+    <div class="ring seam">
+      <div class="rn">SEAM — aea/gameapi/</div><div class="rt">NEW · the only two-sided module · the firewall</div>
+      <div class="rd">A small package (not a 689-line file): a thin HTTP router + the <b>honesty firewall class</b> + read/act handlers that call the preserved organs + the shared <code>/game/*</code> contract. Dissolves <code>controlroom.py</code>. Every reply is HTTP 200 + JSON.</div>
+    </div>
+    <div class="ring">
+      <div class="rn">CLIENT — web/ (ES modules)</div><div class="rt">REBUILT · presentation + play only · owns zero truth</div>
+      <div class="rd">Native ES modules grouped by domain (core/world/compose/catalogue/hud/missions/audio). One <code>api.js</code> talks to the seam; one client <code>EventBus</code> makes the run legible; modules receive an injected <code>Game</code> context, never a global.</div>
+    </div>
+  </div>
+  <div class="flowline">web/ &nbsp;&mdash;import&rarr;&nbsp; api.js &nbsp;&mdash;fetch /game/*&rarr;&nbsp; gameapi/honesty.py &nbsp;&mdash;calls&rarr;&nbsp; aea/ organs &nbsp;·&nbsp; truth returns outward, curated, or as a dash</div>
+</section>
+
+<!-- ===================== 2 · IDEAL FILE TREE ===================== -->
+<section id="tree">
+  <div class="sec-head"><span class="sec-num">02</span><h2>The ideal file tree</h2><span class="note">root = entry + config + map · then domains</span></div>
+  <p>Designed from first principles: no loose code at root, every module in a named domain folder, each file one responsibility and a size target. Tags: <span class="kK">KEEP</span> · <span class="kP">PORT</span> · <span class="kN">NEW</span> · <span class="kC">CUT</span>.</p>
+<pre class="tree">
+<span class="cm"># ---- ROOT: entry points + config + the map. No loose code. ----</span>
+<b>run.py</b>                 <span class="kK">KEEP</span>  the one run command -&gt; boots aea/gameapi (thin shim; renamed from controlroom.py shim)
+<b>README.md</b>              <span class="kN">NEW</span>   the map: how to run, the three layers, where each domain lives
+<b>.env</b>                   <span class="kK">KEEP</span>  13 provider keys (gitignored, never committed)
+<b>graph.json</b>             <span class="kK">KEEP</span>  the knowledge-graph (regen via aea/build_graph.py)
+
+<b>config/</b>  <span class="cm"># ---- content & curation AS DATA (not buried in a handler) ----</span>
+  models.json           <span class="kP">PORT</span>  the curated model allowlist + tiers  <span class="cm">(from the CURATED dict inside controlroom)</span>
+  parts.json            <span class="kK">KEEP</span>  = state/modules.json, the bench-PART registry (already data — validate_spec reads it)
+  entities.json         <span class="kN">NEW</span>   entity types + combinatorial tiers (R29/R30 tier-space)
+  doctrines.json        <span class="kP">PORT</span>  the measured combination laws  <span class="cm">(from aea_elements.js)</span>
+  zones.json            <span class="kP">PORT</span>  privacy zones + rod routing  <span class="cm">(from grid.ZONES)</span>
+
+<b>aea/</b>  <span class="cm"># ---- SUBSTRATE: KEEP-AND-WRAP. 34 modules unchanged; the seam is the one addition ----</span>
+  grid.py               <span class="kK">KEEP</span>  power grid: plants + Meter + Router + client + atomic persistence + paths  <span class="cm">(later: split to grid/*)</span>
+  energy.py trust.py pulse.py tracelog.py            <span class="kK">KEEP</span>  the truth floor (draw mouth · ledger · event log · trace)
+  bench_core.py orchestrator.py                      <span class="kK">KEEP</span>  the ONE execution engine · the multi-agent machinery
+  aea.py hades.py consolidate.py talk.py speak.py    <span class="kK">KEEP</span>  the organs (tick · watcher · memory · voice · face)
+  autonomy.py model_fitness.py agent_tools.py        <span class="kK">KEEP</span>  battery · rot-clock · HANDS
+  brief.py reflect.py live.py index_codex.py swarm.py pathfinder.py notify.py telegram_bridge.py listen.py  <span class="kK">KEEP</span>  organs
+  capability_census.py extensive_census.py capacity.py probe.py gauntlet.py export_city.py build_graph.py   <span class="kK">KEEP</span>  tooling
+  memory.py relay.py    <span class="kC">CUT</span>   dead/orphan (superseded / demo) -&gt; archive/
+  <b>gameapi/</b>  <span class="cm"># ---- SEAM: the new package that dissolves controlroom.py's 689-line ladder ----</span>
+    __init__.py         <span class="kN">NEW</span>   the ThreadingHTTP server (127.0.0.1 only) + a thin path router  <span class="cm">(&lt;150)</span>
+    honesty.py          <span class="kN">NEW</span>   THE FIREWALL class: absent-&gt;null-&gt;dash · refusal-&gt;{ok:false,refused} · receipts, never exceptions  <span class="cm">(&lt;120)</span>
+    read.py             <span class="kP">PORT</span>  GET handlers  <span class="cm">(from controlroom.state/roster/journal/skills + pulse.tail)  (&lt;220)</span>
+    act.py              <span class="kP">PORT</span>  POST handlers  <span class="cm">(from bench_core wiring + /api/node/run + _journey + talk)  (&lt;240)</span>
+    contract.py         <span class="kN">NEW</span>   the /game/* shape schemas — shared by the client + the contract test  <span class="cm">(&lt;120)</span>
+    static.py           <span class="kP">PORT</span>  the traversal-guarded scoped static server  <span class="cm">(from controlroom /game/ handler)  (&lt;90)</span>
+  admin.py              <span class="kP">PORT</span>  the NON-game motor cortex (/do subprocess, telegram autostart) — kept OFF the game seam  <span class="cm">(&lt;120)</span>
+
+<b>web/</b>  <span class="cm"># ---- CLIENT: rebuilt as native ES modules, grouped by domain ----</span>
+  probe.html            <span class="kN">NEW</span>   THE entry: THREE global scripts + &lt;script type="module" src="game/core/main.js"&gt;
+  <b>vendor/</b>            <span class="kK">KEEP</span>  three.min.js r128 + the 6-file bloom chain — ONE copy (the byte-identical dup is deleted)
+  <b>game/</b>
+    <b>core/</b>
+      main.js           <span class="kN">NEW</span>   composition root: constructs modules, owns the frame loop, wires the bus  <span class="cm">(&lt;150)</span>
+      api.js            <span class="kN">NEW</span>   the ONLY server-talker: typed /game/* client, receipt-aware (refused/dash)  <span class="cm">(&lt;180)</span>
+      bus.js            <span class="kN">NEW</span>   the client EventBus — one observable stream so the run is legible  <span class="cm">(&lt;80)</span>
+      state.js          <span class="kN">NEW</span>   the Game context/store: holds state, notifies the bus  <span class="cm">(&lt;140)</span>
+    <b>world/</b>
+      engine.js         <span class="kP">PORT</span>  scene + flight + chase-cam + bloom composer  <span class="cm">(from js/engine.js, -&gt; ESM class)  (~300)</span>
+      map.js            <span class="kP">PORT</span>  the concentric instrument map (fog = real integration, R37)  <span class="cm">(from world.html)</span>
+      seals.js          <span class="kP">PORT</span>  deterministic SVG seal press (29 elements + glyphs)  <span class="cm">(from js/seals.js)</span>
+      artifacts.js      <span class="kP">PORT</span>  world-artifact + rod geometry  <span class="cm">(from js/artifacts.js — currently orphaned)</span>
+    <b>compose/</b>
+      bench.js          <span class="kP">PORT</span>  the composer plate — first light repoints its 3 fetches  <span class="cm">(from js/bench.js; split if &gt;300)</span>
+      parts.js          <span class="kN">NEW</span>   the part palette, reads config/parts.json  <span class="cm">(&lt;140)</span>
+    <b>catalogue/</b>
+      pokedex.js        <span class="kN">NEW</span>   the bestiary: shadows + real stats over /game/catalogue  <span class="cm">(&lt;220)</span>
+    <b>hud/</b>
+      hud.js            <span class="kP">PORT</span>  the corner HUD tiers  <span class="cm">(from world.html)  (&lt;220)</span>
+      os.js             <span class="kP">PORT</span>  the PROBE OS window chrome  <span class="cm">(from world.html)  (&lt;260)</span>
+      panels.js         <span class="kP">PORT</span>  IP instrument panels + the DASH honesty gate  <span class="cm">(from js/panels.js)</span>
+      comms.js          <span class="kP">PORT</span>  the /talk comms dock (ASK LEYBER)  <span class="cm">(from world.html)</span>
+      sheet.js          <span class="kN">NEW</span>   the character sheet over /game/state autonomy  <span class="cm">(&lt;140)</span>
+    <b>missions/</b>
+      runner.js         <span class="kP">PORT</span>  the beat interpreter (brief|learn|do|observe|prove)  <span class="cm">(from world.html engine)  (&lt;260)</span>
+    <b>audio/</b>
+      audio.js          <span class="kP">PORT</span>  WebAudio cues on REAL events only  <span class="cm">(from world.html)</span>
+    <b>styles/</b>
+      probe.css panels.css   <span class="kP">PORT</span>  reconciled to ONE opacity ladder (fixes the 5-stop/3-stop conflict)
+    <b>data/</b>
+      missions.json     <span class="kP">PORT</span>  the mission data  <span class="cm">(from web/missions.js — script -&gt; data)</span>
+      codex.json        <span class="kP">PORT</span>  the AEA codex data (29 elements)  <span class="cm">(from web/aea_elements.js)</span>
+
+<b>state/</b>  <span class="cm"># ---- RUNTIME TRUTH: KEEP. atomic + file-locked idiom; the sacred save ----</span>
+  journey_save.json     <span class="kK">KEEP · SACRED</span>  never reset; survives every refactor
+  modules.json schema.json bench_runs.json energy*.json ... (20 tracked)   <span class="kK">KEEP</span>  <span class="cm">(schema.json: scrub username paths first, §Issues)</span>
+  grid_state.json luis_memory.json self.json identity.json ... (private)   <span class="kK">KEEP · gitignored</span>
+
+<b>tests/</b>  <span class="cm"># ---- THE HONEST TEST LANE (new) ----</span>
+  contract_test.py      <span class="kN">NEW</span>   asserts the live /game/* shapes vs gameapi/contract.py (client + seam both check it)
+  hearth_smoke.py       <span class="kN">NEW</span>   a REAL ignite on the local hearth (ollama, unlimited) — never a mock
+  fixtures/replayed/     <span class="kN">NEW</span>   recorded REAL bench traces (a measured record, replayed — not faked outputs)
+
+<b>dev/</b>   <span class="kN">NEW</span>   parking for retired prototypes: world.html (after harvest) · game.html · holo · lab · samples · tracker
+<b>design/ docs/ diary/ references/</b>   <span class="kK">KEEP</span>   the book · specs · handoff system · source pointers
+<b>archive/ voice/</b>   <span class="kK">KEEP</span>   museum · local TTS-STT tooling (weights gitignored)
+</pre>
+</section>
+
+<!-- ===================== 3 · NEW/PORT/KEEP + MIGRATION ===================== -->
+<section id="migration">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Class summary &amp; migration plan</h2><span class="note">every PORT/KEEP · source &rarr; target</span></div>
+  <div class="kv">
+    <div><div class="k">KEEP (substrate)</div><div class="v on">32 modules + state</div></div>
+    <div><div class="k">PORT (into clean modules)</div><div class="v wm">~18 units</div></div>
+    <div><div class="k">NEW (write fresh)</div><div class="v pl">~14 files</div></div>
+    <div><div class="k">CUT (retire to dev/archive)</div><div class="v">~9 (routes + forks + dups)</div></div>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>class</th><th>target</th><th>from (legacy source)</th><th>what changes</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">SEAM — dissolve the 689-line dispatch ladder into responsibility-split modules</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>gameapi/read.py</code></td><td class="r">controlroom.py: state(), roster(), journal(), skills(); pulse.tail</td><td class="r">same functions, moved behind the firewall; renamed to /game/* ; dead routes dropped</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>gameapi/act.py</code></td><td class="r">controlroom.py: _run_node, _journey, _talk + bench_core.start_run wiring</td><td class="r">allowlisted + metered + trust-gated; every reply a receipt; /do stays out (moves to admin.py)</td></tr>
+      <tr><td><span class="tag2 tNEW">NEW</span></td><td class="f"><code>gameapi/honesty.py</code></td><td class="r">— (the rules are today implicit + scattered)</td><td class="r">makes the honesty law a single explicit class: absent&rarr;dash, refusal&rarr;receipt, 200-only</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>config/models.json</code></td><td class="r">the CURATED dict buried in controlroom's handler</td><td class="r">the named anti-pattern &rarr; data; the seam reads it, never hardcodes a model string</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>aea/admin.py</code></td><td class="r">controlroom.py: /do subprocess motor + telegram autostart</td><td class="r">the non-game, side-effecting bits kept OFF the game seam</td></tr>
+      <tr class="grp"><td colspan="4">CLIENT — convert IIFE + window.GAME to ES module classes with an injected Game context</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>compose/bench.js</code></td><td class="r">web/game/js/bench.js (the only live-wired v2 module)</td><td class="r">ESM class; 3 fetches repoint to /game/* (FIRST LIGHT); split if &gt;300</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>world/engine.js</code>, <code>seals.js</code>, <code>artifacts.js</code></td><td class="r">web/game/js/{engine,seals,artifacts}.js</td><td class="r"><code>init(GAME)/dispose()</code> IIFE &rarr; <code>class{constructor(game)}</code>; artifacts.js gets wired (was orphaned)</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>hud/*</code>, <code>missions/runner.js</code>, <code>audio/audio.js</code>, <code>world/map.js</code>, <code>comms.js</code></td><td class="r">harvested from world.html (1143 loc, the live-wired v1)</td><td class="r">extracted into modules reading /game/* + the bus; then world.html retires to dev/</td></tr>
+      <tr><td><span class="tag2 tPORT">PORT</span></td><td class="f"><code>data/missions.json</code>, <code>data/codex.json</code></td><td class="r">web/missions.js, web/aea_elements.js</td><td class="r">script globals &rarr; JSON; the runner + pokedex read data, not code</td></tr>
+      <tr><td><span class="tag2 tNEW">NEW</span></td><td class="f"><code>core/{main,api,bus,state}.js</code></td><td class="r">— (boot.js's window.GAME is replaced)</td><td class="r">the composition root + the one fetch + the one bus + the store</td></tr>
+      <tr class="grp"><td colspan="4">CUT</td></tr>
+      <tr><td><span class="tag2 tCUT">CUT</span></td><td class="f">~9 dead routes + 3 forks + the vendor dup</td><td class="r">/brain /city /plan /builder /mind /tree /poster /workspace ; game.html ; web/game/vendor/</td><td class="r">retire to dev/ or delete; root <code>/</code> re-points at the game entry; docs name the cut-list (D10)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================== 4 · DEPENDENCIES ===================== -->
+<section id="deps">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Dependencies — inward only, no cycles</h2><span class="note">verified from source</span></div>
+  <h3>Runtime</h3>
+  <ul class="clean">
+    <li><b>Python: stdlib-only</b> (confirmed — no <code>requirements.txt</code>/<code>pyproject</code>; HTTP via <code>http.server</code>/<code>urllib</code>). The only third-party imports in <code>aea/</code> are 4 <em>guarded</em> voice deps (<code>sherpa_onnx</code>, <code>edge_tts</code>, <code>sounddevice</code>) — none on the game path. The seam adds none.</li>
+    <li><b>Client: three.js r128 (UMD) + the 6-file bloom chain, no build step.</b> <code>THREE</code> loads as a classic global script; the game is native ES modules over http. No npm, no transpile.</li>
+    <li><b>.env: 13 provider keys</b> (all gitignored). First light needs none — it is guarded on the keyless local hearth (ollama).</li>
+  </ul>
+  <h3>The import direction</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>layer</th><th>modules</th><th>may import</th><th>never imports</th></tr></thead>
+    <tbody>
+      <tr><td class="f amber">substrate L0..L4</td><td class="r">grid &rarr; pulse/energy/trust &rarr; bench_core/hades/talk &rarr; (host)</td><td class="r">inward substrate only (grid is the root, imports nothing)</td><td class="r">the seam, the client, config/</td></tr>
+      <tr><td class="f blue">seam</td><td class="r">gameapi/* , admin.py</td><td class="r">the substrate organs + config/ + contract.py</td><td class="r">the client</td></tr>
+      <tr><td class="f">client core</td><td class="r">core/api.js, bus.js, state.js, main.js</td><td class="r">nothing app-level (leaves); api.js knows only the wire</td><td class="r">world/hud/compose directly</td></tr>
+      <tr><td class="f">client features</td><td class="r">world/ compose/ catalogue/ hud/ missions/ audio/</td><td class="r">core/ (the injected Game context + bus)</td><td class="r">each other laterally (they meet only on the bus)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout good"><span class="who">no cycles — the check</span>
+    Substrate: verified acyclic today (grid is a sink; every edge points at it or at a lower layer). Seam: imports downward only. Client: features depend on core, never on siblings; cross-feature communication is events on the bus, not imports. The contract test + a simple import-lint keep it that way.
+  </div>
+</section>
+
+<!-- ===================== 5 · CONTRACT + FIREWALL ===================== -->
+<section id="contract">
+  <div class="sec-head"><span class="sec-num">05</span><h2>The client&harr;server contract &amp; the firewall</h2><span class="note">one boundary, one class</span></div>
+  <p>The <code>/game/*</code> shapes are declared once in <code>gameapi/contract.py</code> and checked from both sides. Every reply is <b>HTTP 200 + JSON</b>; errors and refusals ride in the body. The firewall is the sole enforcement point.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>/game/*</th><th>kind</th><th>calls the REAL organ</th><th>firewall rule</th></tr></thead>
+    <tbody>
+      <tr><td class="f amber">/game/state</td><td class="r">GET read</td><td class="r">controlroom.state (PORT)</td><td class="r">absent field &rarr; null &rarr; dash; <code>tokens</code> None at P0 &rarr; dash, never 0</td></tr>
+      <tr><td class="f amber">/game/catalogue</td><td class="r">GET read</td><td class="r">roster (PORT)</td><td class="r">un-met model &rarr; shadow, not a fake stat</td></tr>
+      <tr><td class="f amber">/game/events?since=</td><td class="r">GET read</td><td class="r">pulse.tail</td><td class="r">empty &rarr; quiet, never invented</td></tr>
+      <tr><td class="f amber">/game/schema</td><td class="r">GET read</td><td class="r">a real fog source <span class="tag2 tNEW">NEW</span></td><td class="r">today's schema.json is a stale code graph — needs a game fog map (Issues)</td></tr>
+      <tr><td class="f amber">/game/ignite {spec}</td><td class="r">POST act</td><td class="r">bench_core.start_run</td><td class="r">2nd-while-live &rarr; refused; bad spec &rarr; refused:'&lt;clause&gt;'; one run at a time</td></tr>
+      <tr><td class="f amber">/game/run?id=</td><td class="r">GET read</td><td class="r">bench_core.run_status</td><td class="r"><code>halted</code> = visible blue fail; pass through as-is</td></tr>
+      <tr><td class="f amber">/game/fire {node}</td><td class="r">POST act</td><td class="r">energy.draw (the only token burn)</td><td class="r">empty text from a live rod = failure (dash), never fabricate</td></tr>
+      <tr><td class="f amber">/game/talk · /game/save</td><td class="r">POST act</td><td class="r">talk.answer · _journey writer</td><td class="r">zone-routed; save merged under grid.file_lock, SACRED</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><span class="who">gameapi/honesty.py — the firewall class (NEW)</span>
+    One class wraps every handler: it catches organ exceptions and returns a <b>receipt</b> (never a 5xx), maps <code>None</code>/missing to a dash sentinel the client renders as an em-dash, formats refusals as <code>{ok:false, refused:'&lt;clause&gt;'}</code>, and enforces the claim ceiling on any generated copy. It is the only code allowed to shape a <code>/game/*</code> body. The contract test asserts no handler bypasses it.
+  </div>
+</section>
+
+<!-- ===================== 6 · FUNCTIONALITY MAP ===================== -->
+<section id="systems">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Functionality map &amp; build order</h2><span class="note">system &rarr; files &rarr; when</span></div>
+  <div class="scroll"><table>
+    <thead><tr><th>system</th><th>substrate (KEEP)</th><th>seam</th><th>client</th><th>build phase</th></tr></thead>
+    <tbody>
+      <tr><td class="f amber">compose &rarr; ignite &rarr; receipt</td><td class="r">bench_core, energy.draw</td><td class="r">act.py /game/ignite, read.py /game/run</td><td class="r">compose/bench.js, core/api.js, hud/panels.js</td><td class="r">1 · FIRST LIGHT</td></tr>
+      <tr><td class="f amber">energy / carrying capacity</td><td class="r">grid.Meter, energy.ladder</td><td class="r">read.py /game/state</td><td class="r">hud/panels.js (bars, dash gate)</td><td class="r">1-2</td></tr>
+      <tr><td class="f amber">the acts / walkthrough</td><td class="r">real endpoints per beat</td><td class="r">act.py /game/fire, /game/act, /game/save</td><td class="r">missions/runner.js + data/missions.json</td><td class="r">2-3</td></tr>
+      <tr><td class="f amber">the pokedex / bestiary</td><td class="r">model_fitness, roster</td><td class="r">read.py /game/catalogue</td><td class="r">catalogue/pokedex.js, world/seals.js</td><td class="r">3</td></tr>
+      <tr><td class="f amber">the world / map (R37)</td><td class="r">a real fog source</td><td class="r">read.py /game/schema</td><td class="r">world/engine.js + world/map.js</td><td class="r">3-4 (needs fog source)</td></tr>
+      <tr><td class="f amber">character sheet · ASK LEYBER</td><td class="r">autonomy.score · talk.answer</td><td class="r">read.py /game/state · act.py /game/talk</td><td class="r">hud/sheet.js · hud/comms.js</td><td class="r">2-3</td></tr>
+      <tr><td class="f amber">the three modes (R36)</td><td class="r">one engine; zone dial</td><td class="r">the allowlist + trust-gate</td><td class="r">client presets over one engine (GUIDED/BUILDER/ARCHITECT + SANDBOX&harr;LIVE)</td><td class="r">4</td></tr>
+      <tr><td class="f amber">Phase B — THE SEND</td><td class="r">agent_tools (HANDS), trust, hades</td><td class="r">a gated LIVE act (never auto)</td><td class="r">the mast district; player presses send</td><td class="r">5 · endgame</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================== 7 · STANDARD COMPLIANCE ===================== -->
+<section id="standard">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Engineering standard — compliance</h2><span class="note">your 10, answered</span></div>
+  <div class="scroll"><table>
+    <thead><tr><th>#</th><th>standard</th><th>how this design meets it (or deviates, with reason)</th></tr></thead>
+    <tbody>
+      <tr><td class="f">1</td><td class="r">root = entry + config + README only</td><td class="r"><span class="amber">met</span> — root holds run.py, README.md, .env, graph.json + config/; all code in domain folders</td></tr>
+      <tr><td class="f">2</td><td class="r">size cap &le;300 / hard 500</td><td class="r"><span class="amber">met for new/rebuilt</span> — every seam + client module targets &lt;300; the two monoliths dissolve. <span class="blue">Deviation:</span> grid.py (479) stays under the 500 ceiling as KEEP; split deferred (live-state surgery, off-path)</td></tr>
+      <tr><td class="f">3</td><td class="r">modular OOP, single responsibility, group by domain</td><td class="r"><span class="amber">met</span> — seam = handler classes; client = one class per module; grouped by domain, no "utils"; the 30-branch dispatch is gone</td></tr>
+      <tr><td class="f">4</td><td class="r">dependencies inward, no cycles</td><td class="r"><span class="amber">met</span> — client &rarr; seam &rarr; substrate; substrate acyclic (verified); features meet only on the bus</td></tr>
+      <tr><td class="f">5</td><td class="r">one honesty firewall</td><td class="r"><span class="amber">met</span> — gameapi/honesty.py is the sole boundary; contract test asserts nothing bypasses it</td></tr>
+      <tr><td class="f">6</td><td class="r">config &amp; content as data</td><td class="r"><span class="amber">met</span> — config/ (models, parts, entities, doctrines, zones) + data/ (missions, codex); the CURATED dict is extracted</td></tr>
+      <tr><td class="f">7</td><td class="r">typed + self-documenting</td><td class="r"><span class="amber">met</span> — Python type hints on seam + config loaders; JS JSDoc (TS needs a build, so JSDoc keeps the no-build path); every file opens with a one-line responsibility + its class</td></tr>
+      <tr><td class="f">8</td><td class="r">client = native ES modules</td><td class="r"><span class="amber">met, recommended</span> — import/export, no build; THREE stays a global script; window.GAME retired (Trade 2)</td></tr>
+      <tr><td class="f">9</td><td class="r">honest test lane</td><td class="r"><span class="amber">met</span> — tests/: contract test on /game/* shapes + a real ollama smoke ignite + replayed REAL traces (no mocks)</td></tr>
+      <tr><td class="f">10</td><td class="r">atomic locked state + one event bus</td><td class="r"><span class="amber">met</span> — state stays on grid.atomic_save_json/file_lock (KEEP); server bus = pulse; client bus = core/bus.js</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================== 8 · GATE ===================== -->
+<section id="gate">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Build order &amp; the review gate</h2><span class="note">stop · your call</span></div>
+  <p>The restructuring is <b>incremental, first-light-first</b> — not a big-bang migration. The clean tree is the destination; we walk to it starting with the one verb.</p>
+  <ul class="clean">
+    <li><b>1 · FIRST LIGHT</b> — stand up <code>gameapi/</code> (honesty.py + read.py + act.py + the server) and <code>core/{api,bus,state,main}.js</code>; PORT <code>compose/bench.js</code> and repoint its 3 fetches; runner replays M0.1. Ignite on the local hearth &rarr; the dot wakes and draws a real token, or fails visibly in blue. Verified on a screenshot.</li>
+    <li><b>2 · HARVEST</b> — extract HUD/OS/comms/audio/missions from world.html into modules; then retire world.html to dev/. Add the contract test.</li>
+    <li><b>3 · CANON CUT</b> — cut the dead routes + forks + the vendor dup; scrub schema.json; build the real fog source.</li>
+    <li><b>4 · MODES + WORLD + POKEDEX</b> — the apertures, the map, the bestiary.</li>
+    <li><b>5 · PHASE B</b> — THE SEND, gated. Deferred until Phase A is played.</li>
+  </ul>
+  <div class="callout good"><span class="who">what I need from you (no code until you answer)</span>
+    1 · Trade 1 (KEEP-AND-WRAP the entity) and Trade 2 (ES modules) — approve, or push back? &nbsp;
+    2 · The tree + domain grouping — right, or reshape? &nbsp;
+    3 · <code>controlroom.py</code> dissolving into <code>gameapi/</code> + <code>admin.py</code> — good, or keep a legacy admin server whole? &nbsp;
+    4 · Go for FIRST LIGHT on this structure, or adjust the first slice?
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="dim" style="font-size:12px">Rendered locally (no external publish), two-ink law, self-contained. Verified against the real repo 2026-07-22. The canonical <code>design/CLEAN_ARCHITECTURE.md</code> is left untouched until you approve folding this in — one source of truth during review.</p>
+    <div class="mark">Structure rebuilt · behavior preserved · the moat intact</div>
+  </div>
+</footer>
+
+</body>
+</html>

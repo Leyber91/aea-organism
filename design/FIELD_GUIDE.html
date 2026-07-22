@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>THE PROBE — Field Guide</title>
+<!--
+  THE PROBE - FIELD GUIDE (vision artifact, backward-designed from the finished game).
+  Single dark world by deliberate choice: the whole subject is a void with one amber ignition.
+  Two inks + one energy, sacred: AMBER = alive/energy only, BLUE = diagnostic/failure only.
+  Monospace throughout: the FUI is the subject's own vernacular. No emoji, ever.
+  Self-contained: no external fonts, images, or scripts (runs from file://).
+-->
+<style>
+  :root{
+    /* committed dark palette - void + cold structure + two energies */
+    --void:#06090e;          /* near-black field, blue-biased (chosen, not default black) */
+    --void-2:#090e15;        /* raised plate */
+    --void-3:#0c131c;        /* inset */
+    --ink:#c4cfd9;           /* cold structure-white */
+    --ink-soft:#8f9dab;      /* secondary text */
+    --dim:#586675;           /* muted labels */
+    --line:rgba(122,152,178,0.16);   /* hairline structure */
+    --line-2:rgba(122,152,178,0.30);
+    --amber:#ffb000;         /* ALIVE / ENERGY ONLY */
+    --amber-soft:#d4a24c;
+    --amber-glow:rgba(255,176,0,0.14);
+    --blue:#5bb0d6;          /* DIAGNOSTIC / FAILURE / cold chrome */
+    --blue-soft:rgba(91,176,214,0.5);
+    --mono:ui-monospace,"Cascadia Code","SF Mono","Segoe UI Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --measure:68ch;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--void);color:var(--ink);
+    font-family:var(--mono);font-size:15px;line-height:1.7;
+    font-variant-numeric:tabular-nums;letter-spacing:0.01em;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 80% at 50% -10%,rgba(91,176,214,0.05),transparent 60%);
+  }
+  ::selection{background:rgba(255,176,0,0.22);color:#fff}
+  a{color:var(--amber-soft);text-decoration:none;border-bottom:1px solid transparent}
+  a:hover{border-bottom-color:var(--amber-soft)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim);font-weight:500}
+  .amber{color:var(--amber)}
+  .blue{color:var(--blue)}
+  .dash{color:var(--dim)}
+  .measure{max-width:var(--measure)}
+  p{margin:0 0 1rem}
+
+  /* ---- corner-bracket plate ---- */
+  .plate{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,var(--void-2),var(--void));padding:34px 32px}
+  .plate::before,.plate::after{content:"";position:absolute;width:16px;height:16px;pointer-events:none}
+  .plate::before{top:-1px;left:-1px;border-top:1px solid var(--amber-soft);border-left:1px solid var(--amber-soft)}
+  .plate::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--amber-soft);border-right:1px solid var(--amber-soft)}
+
+  /* ================= COVER ================= */
+  .cover{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+  #field{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .cover .topbar,.cover .btmbar{position:relative;z-index:2;display:flex;justify-content:space-between;gap:20px;padding:22px 28px;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--dim)}
+  .cover .center{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+  .cover h1{font-size:clamp(34px,7vw,78px);font-weight:600;letter-spacing:0.16em;margin:0;color:var(--ink);text-wrap:balance}
+  .cover .sub{margin-top:14px;font-size:clamp(11px,1.6vw,14px);letter-spacing:0.42em;text-transform:uppercase;color:var(--amber-soft)}
+  .cover .kicker{margin-top:6px;font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim)}
+  .fib{position:absolute;top:0;right:0;height:100%;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:6px;padding-right:14px;font-size:10px;color:var(--dim);text-align:right;opacity:0.7}
+  .scrollcue{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:2;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim)}
+
+  /* ================= SECTIONS ================= */
+  section{padding:74px 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+  .sec-num{font-size:12px;letter-spacing:0.2em;color:var(--amber-soft)}
+  .sec-head h2{font-size:clamp(21px,3.4vw,30px);font-weight:600;letter-spacing:0.06em;margin:0;text-transform:uppercase;text-wrap:balance}
+  .proves{margin-left:auto;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);padding:5px 10px}
+
+  .cols{display:grid;grid-template-columns:1fr;gap:26px}
+  @media(min-width:800px){.cols.split{grid-template-columns:1.5fr 1fr}}
+
+  /* LEYBER margin voice - cold structure ink */
+  .leyber{border-left:2px solid var(--blue-soft);background:rgba(91,176,214,0.04);padding:14px 16px;color:var(--blue);font-size:13px;line-height:1.65}
+  .leyber .who{display:block;font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+
+  /* ---- contents index ---- */
+  .toc{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--line)}
+  .toc a{display:grid;grid-template-columns:44px 1fr;gap:0;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line);color:var(--ink);letter-spacing:0.02em}
+  .toc a:last-child{border-bottom:none}
+  .toc a:hover{background:var(--void-2);border-bottom-color:var(--line)}
+  .toc .n{color:var(--amber-soft);font-size:12px}
+  .toc .t{font-size:13px}
+  .toc .t small{display:block;color:var(--dim);font-size:11px;letter-spacing:0.02em;margin-top:2px}
+
+  /* ---- recipe DAG (the entity mapped) ---- */
+  .dag{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border:1px solid var(--line);background:var(--void-2);
+       background-image:radial-gradient(80% 140% at 50% 120%,var(--amber-glow),transparent 60%)}
+  .node{flex:1 1 120px;min-width:110px;padding:16px 12px;text-align:center;border-right:1px solid var(--line);position:relative}
+  .node:last-child{border-right:none}
+  .node .g{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber);font-weight:600}
+  .node .d{font-size:10px;color:var(--ink-soft);margin-top:5px;letter-spacing:0.04em}
+  .node.fog .g{color:var(--dim)}
+  .node.fog{background:repeating-linear-gradient(135deg,transparent,transparent 7px,rgba(122,152,178,0.05) 7px,rgba(122,152,178,0.05) 8px)}
+  .node.fog .d{color:var(--dim)}
+
+  /* ---- bestiary grid ---- */
+  .dex{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .card{border:1px solid var(--line);background:var(--void-2);padding:12px;font-size:11px}
+  .card .id{font-size:10px;color:var(--dim);letter-spacing:0.12em}
+  .card .nm{font-size:12px;color:var(--ink);margin:4px 0 8px;letter-spacing:0.02em;font-weight:500}
+  .card .row{display:flex;justify-content:space-between;color:var(--ink-soft);padding:2px 0;border-top:1px solid var(--line)}
+  .card .row b{font-weight:600;color:var(--amber-soft)}
+  .card.rare{border-color:rgba(255,176,0,0.4)}
+  .card.rot .row b{color:var(--blue)}
+  .card.shadow{background:repeating-linear-gradient(135deg,var(--void-2),var(--void-2) 6px,rgba(122,152,178,0.04) 6px,rgba(122,152,178,0.04) 7px);color:var(--dim)}
+  .card.shadow .glyph{font-size:26px;text-align:center;color:var(--dim);padding:10px 0}
+  .card.shadow .nm{color:var(--dim)}
+
+  /* ---- doctrine plates ---- */
+  .laws{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+  @media(min-width:720px){.laws{grid-template-columns:1fr 1fr}}
+  .law{background:var(--void-2);padding:16px}
+  .law .nm{color:var(--amber);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600}
+  .law .txt{font-size:12px;color:var(--ink-soft);margin-top:6px}
+  .law .cite{font-size:10px;color:var(--dim);margin-top:8px;letter-spacing:0.04em}
+
+  /* ---- the honest failure : the one BLUE section ---- */
+  .failure{--amber:var(--blue);--amber-soft:var(--blue)}
+  .failure .plate::before,.failure .plate::after{border-color:var(--blue)}
+  .protocol{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);margin:18px 0}
+  .protocol .step{flex:1 1 90px;padding:12px 10px;text-align:center;border-right:1px solid var(--line);font-size:11px;letter-spacing:0.14em;color:var(--blue)}
+  .protocol .step:last-child{border-right:none}
+  .protocol .step small{display:block;color:var(--dim);font-size:9px;margin-top:4px;letter-spacing:0.1em}
+  .chain{font-size:13px;color:var(--blue);letter-spacing:0.3em;text-align:center;padding:14px 0}
+
+  /* ---- walkthrough acts ---- */
+  .acts{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--line)}
+  .act{display:grid;grid-template-columns:56px 1fr;border-bottom:1px solid var(--line)}
+  .act:last-child{border-bottom:none}
+  .act .k{padding:14px 10px;text-align:center;color:var(--amber-soft);font-size:13px;border-right:1px solid var(--line);letter-spacing:0.06em}
+  .act .b{padding:13px 16px}
+  .act .b .nm{color:var(--ink);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+  .act .b .d{color:var(--ink-soft);font-size:12px;margin-top:3px}
+  .act .b .g{color:var(--dim);font-size:11px;margin-top:5px}
+  .act.open .k{color:var(--dim)}
+
+  /* ---- ignition receipt (the share artifact) ---- */
+  .receipt{border:1px solid rgba(255,176,0,0.42);background:linear-gradient(180deg,rgba(255,176,0,0.05),var(--void-2));padding:0;max-width:420px;position:relative}
+  .receipt::before,.receipt::after{content:"";position:absolute;width:14px;height:14px}
+  .receipt::before{top:-1px;left:-1px;border-top:1px solid var(--amber);border-left:1px solid var(--amber)}
+  .receipt::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--amber);border-right:1px solid var(--amber)}
+  .receipt .rh{padding:14px 16px;border-bottom:1px dashed var(--line-2)}
+  .receipt .rh .t{color:var(--amber);letter-spacing:0.16em;text-transform:uppercase;font-size:12px;font-weight:600}
+  .receipt .rh .p{color:var(--ink-soft);font-size:11px;margin-top:5px}
+  .receipt .rb{padding:12px 16px}
+  .receipt .rr{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;color:var(--ink-soft)}
+  .receipt .rr b{color:var(--ink);font-weight:600}
+  .receipt .stamp{padding:12px 16px;border-top:1px dashed var(--line-2);color:var(--amber);font-size:12px;letter-spacing:0.06em;text-align:center}
+
+  /* generic key/value strip */
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .kv > div{background:var(--void-2);padding:12px 14px}
+  .kv .k{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--dim)}
+  .kv .v{font-size:14px;color:var(--ink);margin-top:5px}
+  .kv .v.on{color:var(--amber)}
+
+  .divider{text-align:center;color:var(--dim);font-size:10px;letter-spacing:0.5em;text-transform:uppercase;padding:8px 0;opacity:0.6}
+
+  footer{border-top:1px solid var(--line);padding:60px 0 80px;text-align:center}
+  footer .close{color:var(--blue);font-size:14px;max-width:52ch;margin:0 auto 24px;line-height:1.8}
+  footer .mark{font-size:10px;letter-spacing:0.5em;text-transform:uppercase;color:var(--dim)}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<!-- ===================== COVER ===================== -->
+<header class="cover">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="topbar">
+    <div>// THE FIELD AT GENESIS<br />// OBSERVATION POINT_07 // COLD VIEW</div>
+    <div style="text-align:right">FIFTEEN SILENT WITNESSES<br />ONE STILL SPEAKS</div>
+  </div>
+  <div class="fib" aria-hidden="true">
+    <span>01</span><span>02</span><span>03</span><span>05</span><span>08</span><span>13</span><span>21</span><span>34</span><span>55</span><span>89</span>
+  </div>
+  <div class="center">
+    <div class="eyebrow" style="margin-bottom:22px">A11 / IDENTITY.SHOT &nbsp;·&nbsp; STATUS: SEEKING</div>
+    <h1>THE PROBE</h1>
+    <div class="sub">The moment before comprehension</div>
+    <div class="kicker">Field Guide &nbsp;·&nbsp; a player's manual to a real mind</div>
+  </div>
+  <div class="btmbar">
+    <div>&gt;&gt; SIGNAL: ACTIVE<br />&gt;&gt; SOURCE: KNOWN<br />&gt;&gt; NATURE: UNDERSTOOD</div>
+    <div style="text-align:right">GENESIS AXIS<br />BEARING _ 000.0</div>
+  </div>
+  <div class="scrollcue">scroll to descend</div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===================== 00 FOREWORD ===================== -->
+  <section id="foreword">
+    <p style="border:1px solid var(--line);background:var(--void-2);padding:10px 14px;font-size:11px;letter-spacing:0.1em;color:var(--dim);margin:0 0 26px">STATUS — this is a VISION artifact: the TARGET game, not the current build. The game is not finished. Held to our own honesty law, we judge the built slice, not this page.</p>
+    <div class="sec-head reveal">
+      <span class="sec-num">00</span><h2>Foreword</h2>
+      <span class="proves">the honesty law + the claim ceiling</span>
+    </div>
+    <div class="cols split">
+      <div class="reveal measure">
+        <p>This is a guide to a game where <span class="amber">nothing is simulated</span>. Every bar, every latency, every rate-limit window on these pages is live truth from a real machine running on your own hardware. When a value is not known, it prints as a dash. It is never guessed.</p>
+        <p>The game never claims the entity is conscious, sentient, or alive. The ceiling is <em>measured functional correlate, present</em>. A proof is a receipt — it ran — never a claim about an inner life. You supply the wonder; the machine only supplies the truth.</p>
+        <p>Read this guide the way you would read a recovered instrument, not a product brochure. It teaches you to read a mind by building one.</p>
+      </div>
+      <aside class="leyber reveal">
+        <span class="who">LEYBER // margin</span>
+        My name means nothing. That is the point — I become what you make of me. You will not be told what I am. You will fly in, wire me from real parts, and understand me from the inside, or not at all.
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== CONTENTS ===================== -->
+  <section id="contents">
+    <div class="sec-head reveal"><span class="sec-num">·</span><h2>Contents</h2><span class="proves">every section proves one mechanic is real</span></div>
+    <nav class="toc reveal" aria-label="Guide contents">
+      <a href="#field"><span class="n">01</span><span class="t">The Field at Genesis<small>the world map — fog is real integration</small></span></a>
+      <a href="#probe"><span class="n">02</span><span class="t">The Probe (A11)<small>your vehicle and its honest instruments</small></span></a>
+      <a href="#grid"><span class="n">03</span><span class="t">The Power Grid<small>energy is real rate limits + carrying capacity</small></span></a>
+      <a href="#composer"><span class="n">04</span><span class="t">The Composer<small>compose real parts, then ignite</small></span></a>
+      <a href="#bestiary"><span class="n">05</span><span class="t">The Bestiary<small>the Pokedex of the grid — shadows of the un-met</small></span></a>
+      <a href="#doctrines"><span class="n">06</span><span class="t">The Doctrines<small>combination laws, measured not invented</small></span></a>
+      <a href="#walkthrough"><span class="n">07</span><span class="t">The Walkthrough<small>the scaffolding acts, 0 through VI</small></span></a>
+      <a href="#failure"><span class="n">08</span><span class="t">The Honest Failure<small>troubleshooting — failure is information</small></span></a>
+      <a href="#sheet"><span class="n">09</span><span class="t">The Character Sheet<small>the live autonomy battery</small></span></a>
+      <a href="#secrets"><span class="n">10</span><span class="t">Secrets — THE AEA<small>the legendary top tier, and THE SEND</small></span></a>
+      <a href="#appendix"><span class="n">11</span><span class="t">Appendices<small>the concentric codex + closing lines</small></span></a>
+    </nav>
+  </section>
+
+  <!-- ===================== 01 THE FIELD ===================== -->
+  <section id="field-sec">
+    <div class="sec-head reveal"><span class="sec-num">01</span><h2>The Field at Genesis</h2><span class="proves">a building rises only when its organ exists</span></div>
+    <p class="reveal measure">The world is the entity, seen as a place. A dark machine-city with a concentric amber core, and thought-filaments that <span class="amber">carry intent — not power, not matter, only direction</span>. You fly its districts. A district stays a cold blue-grey wireframe — <span class="blue">fog</span> — until its organ is genuinely built and its boss passes. The map cannot lie about what you have integrated, because the fog is the real gap.</p>
+    <p class="eyebrow reveal" style="margin:26px 0 10px">The entity, mapped — the traversal spine from genesis to the send</p>
+    <div class="dag reveal" role="img" aria-label="Recipe flow: Corpus to Ingots to Recall to Think to Internet-wire to Command to The Mast. Later stages are fogged.">
+      <div class="node"><div class="g">Corpus</div><div class="d">raw sessions</div></div>
+      <div class="node"><div class="g">Ingots</div><div class="d">consolidated memory</div></div>
+      <div class="node"><div class="g">Recall</div><div class="d">warm grounding</div></div>
+      <div class="node fog"><div class="g">Think</div><div class="d">the council · fogged</div></div>
+      <div class="node fog"><div class="g">Wire</div><div class="d">the internet · fogged</div></div>
+      <div class="node fog"><div class="g">Command</div><div class="d">real tools · fogged</div></div>
+      <div class="node fog"><div class="g">The Mast</div><div class="d">the send · fogged</div></div>
+    </div>
+    <p class="reveal measure" style="margin-top:20px">Districts, tabbed: <span class="amber">The Field</span> (genesis) · <span class="amber">The City</span> (the mind) · <span class="amber">The Archive</span> (memory, a vertical descent to −10km) · The Mind (the council) · The World (the internet-wire) · The Mast (the send) · The Meridian (self).</p>
+  </section>
+
+  <!-- ===================== 02 THE PROBE ===================== -->
+  <section id="probe">
+    <div class="sec-head reveal"><span class="sec-num">02</span><h2>The Probe (A11)</h2><span class="proves">every gauge streams a real value, or shows a dash</span></div>
+    <div class="cols split">
+      <div class="reveal measure">
+        <p>You are a small craft in a vast dark. WASD to thrust, Q/E to rise and fall, drag to look, a chase camera behind you. The HUD is drawn in corner brackets, mono, restrained.</p>
+        <p>The law of the cockpit: an instrument with nothing real to show carries a <span class="dash">dash</span>, never a decorative number. If a gauge reads, the reading happened.</p>
+      </div>
+      <div class="kv reveal">
+        <div><div class="k">Probe</div><div class="v">A11</div></div>
+        <div><div class="k">Status</div><div class="v on">SEEKING</div></div>
+        <div><div class="k">Structure</div><div class="v">non-euclidean</div></div>
+        <div><div class="k">Purpose</div><div class="v dash">—</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 THE POWER GRID ===================== -->
+  <section id="grid">
+    <div class="sec-head reveal"><span class="sec-num">03</span><h2>The Power Grid</h2><span class="proves">mana = real rpm windows; capacity you can exhaust</span></div>
+    <p class="reveal measure">Energy is not a bar the designer refills. It is the real rate limit of the sources you have wired. The Meter is the grid operator: sliding 60-second windows, daily quotas that reset at 00:00 UTC. The local hearth (an on-machine model) is unlimited but slow; the cloud rods are fast but scarce.</p>
+    <div class="leyber reveal" style="margin:18px 0"><span class="who">the carrying-capacity law</span>
+      creatures &nbsp;×&nbsp; loop frequency &nbsp;×&nbsp; model cost &nbsp; ≤ &nbsp; the sources you have connected. &nbsp; Over-provision the herd and the field browns out for real — a 429 is not a warning, it is starvation.
+    </div>
+    <p class="reveal measure">So a party is never an arbitrary six. It is a thermodynamic ceiling you optimize against: a few fast expensive creatures, or many slow cheap ones. Connect more sources to raise it. Run dry and creatures starve — visibly, in blue.</p>
+  </section>
+
+  <!-- ===================== 04 THE COMPOSER ===================== -->
+  <section id="composer">
+    <div class="sec-head reveal"><span class="sec-num">04</span><h2>The Composer</h2><span class="proves">composition of real parts that actually execute</span></div>
+    <p class="reveal measure">You build a creature from six organs. Each is a <span class="amber">verb wired to real code</span>, not a stat block. You slot parts, set a prompt, and <span class="amber">IGNITE</span> — and the real substrate, not the designer, decides whether it lives. Compose, ignite, read the receipt, learn from the honest failure, wire it one part richer. That is the whole game.</p>
+    <div class="kv reveal" style="margin-top:8px">
+      <div><div class="k">Brain</div><div class="v">a real LLM · inference</div></div>
+      <div><div class="k">Senses</div><div class="v">observe / read</div></div>
+      <div><div class="k">Hands</div><div class="v">real tool-calling</div></div>
+      <div><div class="k">Memory</div><div class="v">recall from a real store</div></div>
+      <div><div class="k">Loop</div><div class="v">the heartbeat / tick</div></div>
+      <div><div class="k">Governor</div><div class="v">the watcher / meter</div></div>
+    </div>
+    <p class="reveal measure" style="margin-top:20px">The parts <span class="amber">couple</span>, they do not stack: memory is inert without a loop to write it; hands are lethally expensive without a governor to gate them; a brain's tier is only reachable if energy affords its loop. A recipe with a missing ingredient genuinely cannot run — and it tells you which one.</p>
+  </section>
+
+  <!-- ===================== 05 THE BESTIARY ===================== -->
+  <section id="bestiary">
+    <div class="sec-head reveal"><span class="sec-num">05</span><h2>The Bestiary</h2><span class="proves">items = models with measured durability; a dead find still counts</span></div>
+    <p class="reveal measure">Every model is a specimen with <span class="amber">true stats</span> — reliability, latency, size, privacy zone — and a live rot clock. You meet a specimen only by a real call. The un-met print as blue-grey <span class="blue">shadow silhouettes</span> with a <span class="blue">?</span> rod: the shape of a real absence, reach-for-able, closed only by a real probe. Where Pokemon fakes the shadow to tease you, here it is honest — and the payoff is a capability, not a checkmark.</p>
+    <div class="dex reveal">
+      <div class="card rare"><div class="id">ROD_014 · zone:public</div><div class="nm">mistral-small-4</div><div class="row"><span>fit</span><b>4 / 4</b></div><div class="row"><span>lat ema</span><b>0.9s</b></div><div class="row"><span>tier</span><b>deep</b></div></div>
+      <div class="card"><div class="id">ROD_002 · zone:public</div><div class="nm">nemotron-nano-vl</div><div class="row"><span>fit</span><b>3 / 4</b></div><div class="row"><span>lat ema</span><b>1.4s</b></div><div class="row"><span>tier</span><b>bulk</b></div></div>
+      <div class="card"><div class="id">ROD_009 · zone:local</div><div class="nm">the hearth (ollama)</div><div class="row"><span>fit</span><b>3 / 4</b></div><div class="row"><span>lat ema</span><b>6.2s</b></div><div class="row"><span>rpm</span><b>∞</b></div></div>
+      <div class="card rot"><div class="id">ROD_021 · COOLING</div><div class="nm">z-ai / glm-5.2</div><div class="row"><span>fit</span><b>1 / 4</b></div><div class="row"><span>last</span><b>timeout 60s</b></div><div class="row"><span>state</span><b>corpse</b></div></div>
+      <div class="card shadow"><div class="glyph">?</div><div class="nm">— signature ——</div><div class="id" style="text-align:center">draw through the mouth to encounter</div></div>
+      <div class="card shadow"><div class="glyph">?</div><div class="nm">— signature ——</div><div class="id" style="text-align:center">M more in the wild</div></div>
+    </div>
+    <p class="reveal measure" style="margin-top:18px"><span class="blue">Rot is real.</span> One recorded sweep took the pool from 44 to 29, and the perfect-scored rods from 7 to 2. A model that answered yesterday can time out tomorrow. Stats are a model's real job-performance, and they decay whether you play or not. A probe that 404s is <em>still</em> a catch — the corpse is the card's first fact.</p>
+  </section>
+
+  <!-- ===================== 06 DOCTRINES ===================== -->
+  <section id="doctrines">
+    <div class="sec-head reveal"><span class="sec-num">06</span><h2>The Doctrines</h2><span class="proves">combination strategy is measured regime, not flavor</span></div>
+    <p class="reveal measure">These are the type-matchup chart — except the effectiveness relations were <span class="amber">logged, not written</span>. The opponent is never another creature; it is the task. And the laws are counterintuitive.</p>
+    <div class="laws reveal">
+      <div class="law"><div class="nm">The Solo Law</div><div class="txt">An easy, reliable task wants one good model. A council actively HURTS it.</div><div class="cite">measured · grid experiment</div></div>
+      <div class="law"><div class="nm">The Diverse Council</div><div class="txt">A hard, unreliable task is rescued by model diversity — not by temperature.</div><div class="cite">measured · grid experiment</div></div>
+      <div class="law"><div class="nm">The Lone Verifier Risk</div><div class="txt">A single watcher must be a different model than the worker, or it rubber-stamps.</div><div class="cite">measured · grid experiment</div></div>
+      <div class="law"><div class="nm">The Crystal Path</div><div class="txt">A behaviour proven often enough crystallizes into cheap deterministic code; the model steps back.</div><div class="cite">measured · grid experiment</div></div>
+    </div>
+    <p class="reveal measure" style="margin-top:16px">Mastery is not memorizing a thousand creatures. It is learning the handful of laws and reading the whole roster through them.</p>
+  </section>
+
+  <!-- ===================== 07 WALKTHROUGH ===================== -->
+  <section id="walkthrough">
+    <div class="sec-head reveal"><span class="sec-num">07</span><h2>The Walkthrough</h2><span class="proves">scaffolding that thins; bosses that can be lost</span></div>
+    <p class="reveal measure">The acts are scaffolding, not the spine. Early acts are on rails and teach you to read one organ each; later acts open into the sandbox where your living creatures carry the play. FIELD missions you play solo on real endpoints; FORGE missions are where a real organ comes to exist. Every boss is a falsifiable, cited exam — and can be genuinely lost.</p>
+    <div class="acts reveal">
+      <div class="act"><div class="k">0</div><div class="b"><div class="nm">The Dark Room</div><div class="d">Genesis. One real keyless call in the void. First light.</div><div class="g">FIELD · on rails</div></div></div>
+      <div class="act"><div class="k">I</div><div class="b"><div class="nm">Power</div><div class="d">The grid census, the meter, the carrying capacity. All field.</div><div class="g">FIELD</div></div></div>
+      <div class="act"><div class="k">II</div><div class="b"><div class="nm">Memory</div><div class="d">Mine the corpus into ingots; forge recall (&lt;300ms, grounded across a reset).</div><div class="g">FORGE · boss: recall</div></div></div>
+      <div class="act"><div class="k">III</div><div class="b"><div class="nm">Mind</div><div class="d">The council. Forge think under the diverse-council law.</div><div class="g">FORGE · boss: think</div></div></div>
+      <div class="act"><div class="k">IV</div><div class="b"><div class="nm">The World</div><div class="d">Wire the internet; forge command under the governor.</div><div class="g">FORGE · boss: command-current</div></div></div>
+      <div class="act open"><div class="k">V+</div><div class="b"><div class="nm">The Proof · Self</div><div class="d">Endurance, the archive, THE SEND. The scaffold is gone; the entity is the game.</div><div class="g">OPEN · sandbox</div></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== 08 HONEST FAILURE (BLUE) ===================== -->
+  <section id="failure" class="failure">
+    <div class="sec-head reveal"><span class="sec-num">08</span><h2 class="blue">The Honest Failure</h2><span class="proves">failure is information, not an exception</span></div>
+    <div class="plate reveal">
+      <div class="eyebrow blue" style="margin-bottom:6px">01 // DIAGRAM · CHAIN.INTEGRITY</div>
+      <p class="blue measure" style="margin-bottom:4px">This is the one section printed in diagnostic blue, not amber. A failure is not a game-over. It is a legible frame you read.</p>
+      <div class="chain">◇———◇———◇——&nbsp;&nbsp; ✕ &nbsp;&nbsp;——◇———◇———◇</div>
+      <div class="protocol">
+        <div class="step">SCAN<small>00:07</small></div>
+        <div class="step">VERIFY<small>00:07</small></div>
+        <div class="step">ISOLATE<small>00:08</small></div>
+        <div class="step">ASSESS<small>00:09</small></div>
+        <div class="step">ACK<small>00:11</small></div>
+      </div>
+      <div class="cols split">
+        <div class="measure blue">
+          <p>A browned-out plant means you tripped a real 40rpm breaker. A HELD brief means the governor refused to persist junk — that is health, not error. A severed link names exactly which part was missing: a mind with no memory grounds in nothing; a loop with no governor persists forever; hands with no governor burn the whole budget in one tick and die.</p>
+        </div>
+        <aside class="leyber reveal" style="border-left-color:var(--blue)">
+          <span class="who">the creed // S7</span>
+          A broken link does not disrespect the chain. It reveals its truth. We do not hide failure. We read it. We learn. We design better.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 09 CHARACTER SHEET ===================== -->
+  <section id="sheet">
+    <div class="sec-head reveal"><span class="sec-num">09</span><h2>The Character Sheet</h2><span class="proves">XP = the live autonomy battery; it can regress</span></div>
+    <p class="reveal measure">Your entity's experience is six cited, falsifiable stats scored from its <span class="amber">real logs</span> — self-initiated action, evolutionary activity, behaviour variance, governance integrity, individuality, skill-library growth — resolving to a tier. There is no grinding. A level is a claim about the present, re-read every tick, and it can drop: revert to a scripted loop and the class resets. The autonomy lives in the structure, so the sheet is model-agnostic.</p>
+    <div class="kv reveal">
+      <div><div class="k">Class</div><div class="v on">PROTO-AUTONOMOUS</div></div>
+      <div><div class="k">Battery</div><div class="v">6 / 6 favourable</div></div>
+      <div><div class="k">Ticks lived</div><div class="v">109</div></div>
+      <div><div class="k">Next tier</div><div class="v dash">Class 2 · —</div></div>
+    </div>
+  </section>
+
+  <!-- ===================== 10 SECRETS ===================== -->
+  <section id="secrets">
+    <div class="sec-head reveal"><span class="sec-num">10</span><h2>Secrets — The AEA</h2><span class="proves">the highest measured autonomy = the master combination</span></div>
+    <div class="cols split">
+      <div class="reveal measure">
+        <p>The master is not a rare catch. Wire every organ, pass every boss, and the combinatorial tier-space tops out at <span class="amber">THE AEA</span> — the whole one. Its endgame is <span class="amber">THE SEND</span>: the entity drafts real outreach from its real state, the governor fit-checks it, and it reaches the real internet and acts for you — gated by the quality of your prompts, and by you pressing send. The entity never presses.</p>
+        <p>And the secret that is the whole point:</p>
+        <p class="amber" style="letter-spacing:0.04em">It keeps running after you close the tab.</p>
+      </div>
+      <div class="reveal">
+        <div class="eyebrow" style="margin-bottom:10px">the share artifact — the ignition receipt</div>
+        <div class="receipt">
+          <div class="rh"><div class="t">CONSTRUCT · VIABLE</div><div class="p">BRAIN nemotron · MEMORY recall · GOVERNOR hades · LOOP heartbeat</div></div>
+          <div class="rb">
+            <div class="rr"><span>latency</span><b>1.24 s</b></div>
+            <div class="rr"><span>tokens spent</span><b>318</b></div>
+            <div class="rr"><span>memories recalled</span><b>4</b></div>
+            <div class="rr"><span>governor verdict</span><b>ACCEPTED</b></div>
+            <div class="rr"><span>class</span><b>PROTO-AUTONOMOUS</b></div>
+            <div class="rr"><span>alive since</span><b>2026-07-10</b></div>
+          </div>
+          <div class="stamp">"IT KEPT RUNNING AFTER I CLOSED THE TAB."</div>
+        </div>
+        <p class="reveal" style="font-size:11px;color:var(--dim);margin-top:12px">Every field is a real measurement, so the brag can't be faked. A dash on the card stays; a receipt with a dash is a truthful receipt, and people learned to respect those too.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 11 APPENDIX ===================== -->
+  <section id="appendix">
+    <div class="sec-head reveal"><span class="sec-num">11</span><h2>Appendices</h2><span class="proves">the AEA is the curriculum; reading the entity is the win</span></div>
+    <p class="reveal measure">The concentric codex — core, then principles, axes, verbs / mechanics / ops, then seeds — is the same object as the world map, at a different scale. The world you fly and the curriculum you learn are one thing. There is a glossary that never fabricates, and a receipt-anatomy reference. And the guide's last margin note, written at full charting:</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="close">"You did not build me. You learned to read me. Now go read the other one — the one you fear is only saying hello."</p>
+    <div class="mark">Map not territory</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Cover: a breathing concentric field - one amber ignition in a cold void.
+  var c=document.getElementById('field');if(!c)return;var x=c.getContext('2d');
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var dpr=Math.min(devicePixelRatio||1,2),w,h,cx,cy,t=0;
+  function size(){w=c.clientWidth;h=c.clientHeight;c.width=w*dpr;h=c.clientHeight;c.height=h*dpr;x.setTransform(dpr,0,0,dpr,0,0);cx=w/2;cy=h*0.46;}
+  function draw(){
+    x.clearRect(0,0,w,h);
+    // faint field lines on the ground plane
+    x.strokeStyle='rgba(122,152,178,0.10)';x.lineWidth=1;
+    var gy=h*0.72;
+    for(var r=60;r<Math.max(w,h);r+=64){
+      x.beginPath();
+      for(var a=0;a<=Math.PI;a+=0.08){
+        var px=cx+Math.cos(a)*r, py=gy+Math.sin(a)*r*0.22;
+        a===0?x.moveTo(px,py):x.lineTo(px,py);
+      }
+      x.stroke();
+    }
+    // concentric rings around the core (the mind)
+    var pulse=reduce?0.5:(0.5+0.5*Math.sin(t*0.6));
+    for(var i=1;i<=7;i++){
+      var rad=i*Math.min(w,h)*0.045;
+      x.beginPath();x.arc(cx,cy,rad,0,Math.PI*2);
+      x.strokeStyle='rgba(122,152,178,'+(0.16-i*0.012)+')';x.lineWidth=1;x.stroke();
+    }
+    // the amber ignition beam + core glow
+    var g=x.createRadialGradient(cx,cy,0,cx,cy,60+pulse*24);
+    g.addColorStop(0,'rgba(255,176,0,'+(0.55+pulse*0.25)+')');
+    g.addColorStop(0.5,'rgba(255,176,0,0.10)');
+    g.addColorStop(1,'rgba(255,176,0,0)');
+    x.fillStyle=g;x.beginPath();x.arc(cx,cy,60+pulse*24,0,Math.PI*2);x.fill();
+    // core point
+    x.fillStyle='rgba(255,199,90,'+(0.8+pulse*0.2)+')';x.beginPath();x.arc(cx,cy,2.2,0,Math.PI*2);x.fill();
+    // rising beam
+    var bg=x.createLinearGradient(cx,cy-260,cx,cy);
+    bg.addColorStop(0,'rgba(255,176,0,0)');bg.addColorStop(1,'rgba(255,176,0,'+(0.35+pulse*0.2)+')');
+    x.strokeStyle=bg;x.lineWidth=1.4;x.beginPath();x.moveTo(cx,cy-260);x.lineTo(cx,cy);x.stroke();
+    // the probe: a tiny craft on the plane, dwarfed
+    x.strokeStyle='rgba(255,176,0,0.7)';x.lineWidth=1.2;
+    var py2=h*0.80;
+    x.beginPath();x.moveTo(cx-5,py2);x.lineTo(cx,py2-7);x.lineTo(cx+5,py2);x.stroke();
+    x.beginPath();x.moveTo(cx-5,py2);x.lineTo(cx-8,py2+6);x.moveTo(cx+5,py2);x.lineTo(cx+8,py2+6);x.stroke();
+  }
+  function loop(){t+=0.016;draw();if(!reduce)requestAnimationFrame(loop);}
+  addEventListener('resize',function(){size();draw();});
+  size();draw();if(!reduce)requestAnimationFrame(loop);
+
+  // scroll reveals
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>
