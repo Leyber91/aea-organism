@@ -26,8 +26,8 @@ import grid, pulse             # durable persistence + the nervous signal (the b
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 HEARTBEAT = os.path.join(grid.STATE, "heartbeat.json")
-LOG = os.path.join(HERE, "live.log")
-PIDLOCK = os.path.join(HERE, "live.instance")
+LOG = os.path.join(grid.STATE, "live.log")
+PIDLOCK = os.path.join(grid.STATE, "live.instance")
 PY = sys.executable
 CONSOLIDATE_SLICE = 3          # sessions learned per idle (sleep) tick
 

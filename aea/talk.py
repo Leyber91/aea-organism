@@ -28,7 +28,7 @@ except Exception: pass
 
 HERE = grid.HERE
 STATE = os.path.join(grid.STATE, "talk_state.json")
-SEED_PATH = os.path.join(HERE, "aea_seed.md")
+SEED_PATH = os.path.join(grid.STATE, "aea_seed.md")
 IDENTITY = os.path.join(grid.STATE, "identity.json")
 KEEP_TURNS = 14           # rolling window of exchanges carried into context
 

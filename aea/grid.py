@@ -129,7 +129,7 @@ def fetch_json(url: str, timeout: int = 20):
 # --------------------------------------------------------------------------------------
 def load_env() -> dict:
     env = dict(os.environ)
-    path = os.path.join(HERE, ".env")
+    path = os.path.join(ROOT, ".env")
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             for line in f:

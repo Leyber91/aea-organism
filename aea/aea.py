@@ -13,7 +13,7 @@ try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SEED_PATH = os.path.join(HERE, "aea_seed.md")
+SEED_PATH = os.path.join(grid.STATE, "aea_seed.md")
 STATE_PATH = os.path.join(grid.STATE, "aea_state.json")
 STANDING_GOAL = ("Serve Luis's real, current priorities honestly given his projects and the income clock; "
                  "surface only what truly matters right now; never invent; weigh against shipping + income.")

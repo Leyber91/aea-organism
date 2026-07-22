@@ -26,7 +26,7 @@ import subprocess, sys, os, json, time, re
 import grid
 HERE = os.path.dirname(os.path.abspath(__file__))
 IDENTITY = os.path.join(grid.STATE, "identity.json")
-VDIR = os.path.join(HERE, "voice")
+VDIR = os.path.join(grid.ROOT, "voice")
 KOKORO = os.path.join(VDIR, "kokoro-en-v0_19")
 SPEAKERS = ["af", "af_bella", "af_nicole", "af_sarah", "af_sky",
             "am_adam", "am_michael", "bf_emma", "bf_isabella", "bm_george", "bm_lewis"]
@@ -117,7 +117,7 @@ def edge_available() -> bool:
 
 def edge_speak(text: str, timeout: int = 300) -> bool:
     """Generate with edge-tts (mp3) then play via WPF MediaPlayer. Cloud - never for sensitive text."""
-    mp3 = os.path.join(HERE, "_live_edge.mp3")
+    mp3 = os.path.join(grid.STATE, "_live_edge.mp3")
     try:
         r = subprocess.run([sys.executable, "-m", "edge_tts", "--voice", EDGE_VOICE,
                             "--text", text[:1200], "--write-media", mp3],
@@ -233,7 +233,7 @@ def main():
     words = [x for x in a if not x.startswith("--") and (sid is None or x != str(sid))]
     text = " ".join(words) or "I am online, running locally, on free power."
     if "--brief" in a:
-        path = os.path.join(HERE, "brief_output.md")
+        path = os.path.join(grid.STATE, "brief_output.md")
         try:
             text = open(path, encoding="utf-8").read().replace("#", "").replace("*", "").replace("_", " ")
         except Exception as e:

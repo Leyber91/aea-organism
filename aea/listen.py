@@ -19,7 +19,7 @@ try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
 HERE = grid.HERE
-WHISPER = os.path.join(HERE, "voice", "sherpa-onnx-whisper-base")
+WHISPER = os.path.join(grid.ROOT, "voice", "sherpa-onnx-whisper-base")
 _rec = None                     # lazy singleton (model load ~1-3s, once per process)
 
 
@@ -89,7 +89,7 @@ def selftest() -> bool:
     """No-microphone proof: the mouth speaks, the ears must understand it."""
     import speak, re
     sentence = "The vault code is seven three nine one, and the entity keeps it private."
-    wav = os.path.join(HERE, "voice", "_selftest.wav")
+    wav = os.path.join(grid.ROOT, "voice", "_selftest.wav")
     print("MOUTH->EARS ROUND TRIP")
     r = speak.kokoro_render(sentence, wav, sid=6)
     if not r["ok"]:
