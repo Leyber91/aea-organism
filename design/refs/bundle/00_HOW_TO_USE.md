@@ -54,6 +54,14 @@ protocol replaces v2. Folders stay in generation order 01 → 12; REF-01 (the ac
    plate, void, ring — with a camera, perspective, depth of field, and material texture; the
    information rides ON the matter (debossed labels, light in milled grooves, mounted modules).
    The set's premium feel IS material physics; "diagram-class" frames were a category error.
+9. **Reference-reuse (the no-re-attach rule).** WITHIN one continuous conversation the model
+   keeps every image it already rendered in context — so stop re-attaching. Only attach a
+   reference the FIRST time it is needed in a conversation (REF-01 at frame 01; REF-07 at frame
+   07 for the bench material). After that, reference by MEMORY IN WORDS: "match the exact
+   style/material/palette of the images you generated earlier in this conversation — the world
+   plate and the bench plate." Re-attach ONLY when (a) starting a fresh conversation, or (b)
+   drift appears (then re-attach the one that drifted and say "match this"). Fewer attachments,
+   same anchor — the words carry the canon the model already holds.
 
 ## THE CANON BLOCK — paste with EVERY generation from 02 onward
 
