@@ -414,3 +414,23 @@ a still core) -> node brightness = real rolling per-organ activity (exp-decay of
 below fire) -> the BENCH RAIL (the "too poor" interface: flat spine -> lit rail with parts mounted, chips as
 reticle/glyph instruments, rationed --edge accent). Deferred: fwidth ring AA (verify derivatives), fresnel
 normalize, powerPreference (until nvidia-smi confirms the entity uses the discrete GPU).
+
+---
+## 2026-07-23 (later·3) — THE REFERENCE PASS begins (R42): the bundle + the forge batch
+
+**DID:** captured R42 (generate the target images FIRST; references are specs; the prose laws were not
+converging us). Authored **design/refs/bundle/** — 15 files that make ChatGPT "go full on the scenes":
+00_HOW_TO_USE (the per-generation ritual: style law + world brief + ONE scene, 3 variants, quote the
+violated law line to correct drift) · 01_STYLE_LAW (the visual constitution: two inks + amber-as-emitted-
+event, type law, register lineage, composition laws, FORBIDDEN list, the honesty tell) · 02_WORLD_BRIEF
+(the radial instrument + the bench + the real vocabulary + the stakes) · SCENES/ W1-W6 world (rest /
+ignition / fog-frontier / flight / whole-one / stake), G1-G3 beats (seat / fall-through / earned-title),
+I1-I3 interfaces (bench plate / run trace / flight HUD - ChatGPT-only, need legible text). Wrote
+design/refs/probe_refs_jobs.json (6 world shots x 3 seeds, phrased per the forge PROMPT_TIPS: amber =
+bright emitted structure with extent, never a surface tint) and launched the local forge batch on the
+owned Fooocus pipeline (runner waits for model load, resumable, candidates NOT committed).
+
+**NEXT:** when the batch lands -> l212_curate (4 palette gates) + l212_contact grid -> present; Luis runs
+the ChatGPT track from the bundle; joint curation -> WINNERS committed as design/refs/REF-*.png + REFS.md
+(each ref mapped to the surface it governs + extracted vocabulary). Then BUILD-TO-MATCH: a visual slice is
+done only when the render matches its locked ref side-by-side (world vs W1/W2 first, bench vs I1).

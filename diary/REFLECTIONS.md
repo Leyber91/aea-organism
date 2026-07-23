@@ -482,3 +482,27 @@ functional correlate"). -> graduates to a DISCOVERY once the vocabulary is locke
 ---
 *Next reflection: append as `## R42 · ...` with today's date and the same shape (Spark / Realized / where
 it goes / open thread). Then, in a rested pass, decide what graduates into `DISCOVERIES.md`.*
+
+## R42 · Generate the reference images FIRST - the ones we have aren't helping
+
+**Spark (2026-07-23, his words):** *"I think we really need to generate as images what we want the game to
+be, as a prompt in chatgpt believe me, it will make us good and then take it as a reference so you dont stop
+until is actually done. Lets take our time to do each gameplay reference, each interface, everything.
+Apparently the ones we have arent helping."*
+
+**Realized:** four visual rounds ("too basic" -> "too poor" -> "lack vision for shapes" -> this) prove the
+loop is broken: building from verbal laws + reacting to renders converges too slowly because there is no
+shared TARGET IMAGE. His own field lesson already says it: references are specs - study at full resolution,
+extract the vocabulary as a system, implement the system. THE PROBE has no reference images, only prose laws.
+So: generate the reference set (image-gen), curate the picks, lock them as THE visual spec, then build until
+the render MATCHES the reference - not until it feels close. Claude's earlier pushback on the image round
+was wrong on this axis and is withdrawn.
+
+**Where it goes:** a full SHOT LIST (each gameplay beat, each interface, the world, the endgame), one crafted
+prompt per shot (usable in ChatGPT and in the local forge pipeline - the owned near-black/amber Fooocus
+recipe), a curation pass, then the locked refs live in the repo as the standing spec. Build-to-match becomes
+the definition of done for every visual slice.
+
+**The filter:** the references must be generated INSIDE the laws (two-ink, amber-earned, austere instrument,
+no toy sci-fi) or they will spec us into gilding. And a reference is a TARGET, not proof - the honesty law
+still governs what the real render may claim.

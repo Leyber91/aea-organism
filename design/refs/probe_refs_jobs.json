@@ -1,0 +1,14 @@
+[
+  {"id": "W1-instrument-at-rest", "preset": "backdrop", "seeds": [7, 313, 977],
+   "subject": "a vast dark orrery instrument viewed from a high shallow angle, three thin concentric cold cyan-blue rings around a small faceted core, faint cold-blue wireframe octahedral nodes resting on the rings, one concentrated bright amber core jewel burning at the exact centre as the brightest element, thin faint radial spokes converging on the core, the instrument precise and austere, immense black void around it"},
+  {"id": "W2-the-ignition", "preset": "backdrop", "seeds": [7, 313, 977],
+   "subject": "a bright amber core flaring at the centre of a dark radial instrument, one bold amber pulse of light travelling along a thin radial spoke toward the core leaving a glowing amber wake as the brightest element, thin cold cyan-blue concentric rings and faint radial spokes, sharp high contrast, vast black void, precise scientific render"},
+  {"id": "W3-the-fog-frontier", "preset": "wide_hero", "seeds": [7, 313, 977],
+   "subject": "two geometric octahedral nodes resting on one thin cold cyan-blue ring in darkness, the left node burning bright amber from within as the single brightest element, the right node a faint cold-blue wireframe ghost barely visible, a thin structural ring line connecting them, everything else deep black, vast negative space, austere and precise"},
+  {"id": "W4-the-flight", "preset": "backdrop", "seeds": [7, 313, 977],
+   "subject": "a tiny angular dark probe craft with one warm amber aperture, flying high above a vast dark concentric ring instrument far below, thin cold cyan-blue rings beneath it, one bright amber core burning at the instrument's centre as the brightest element, the probe small in an immense black void, scale and silence, cinematic scientific render"},
+  {"id": "W5-the-whole-one", "preset": "backdrop", "seeds": [7, 313, 977],
+   "subject": "a dark radial orrery instrument fully ignited, six bright amber octahedral nodes burning on thin cold cyan-blue concentric rings, glowing amber radial spokes converging on a blazing amber core jewel as the brightest element, the amber structure concentrated and bright, extreme high contrast, vast black void around the burning instrument"},
+  {"id": "W6-the-stake", "preset": "portrait", "seeds": [7, 313, 977],
+   "subject": "a thin vertical ladder of cold cyan-blue horizontal rod segments rising through pure darkness, a climbing amber filament of light reaching the topmost rod and igniting it bright amber as the single brightest element, the lower rods dim and dark, one faint warm ember at the ladder's foot, vast black void, precise and austere"}
+]
