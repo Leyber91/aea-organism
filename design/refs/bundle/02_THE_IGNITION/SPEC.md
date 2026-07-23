@@ -1,51 +1,59 @@
-# 02 · THE IGNITION — one frame of the finished game (photo mode)
+# 02 · THE IGNITION — one frame of the finished game (photo mode) · GPT-Image-2 spec v2
 
-One frame of the finished game THE PROBE, screenshotted at the exact instant a REAL model call
-completes. Speculative details are intentional. Self-contained.
+The game's one sanctioned spectacle: the instant a REAL model call completes and the core flares.
+The biggest light in the game exists because something true just happened. Photo mode — zero text.
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Field: near-black blue-void `#06090e`–`#0c131c`; the frame stays MOSTLY dark even at the flare.
-- Structure ink: thin steel grey-blue `rgb(120,155,175)` hairlines — calm, unchanged by the event.
-- Cold accent `#24394a`–`#5bb0d6`: fog/ghost elements only.
-- AMBER (`#ffb000` hot, `#d4a24c` warm): the fired state. Concentrated, EMITTED, the single
-  brightest element — a strike of light, not a wash.
-- Materials: matte near-black, faceted geometry, machined hairlines.
-- FORBIDDEN: multicolour/neon, streaking lens flares, screen-wide explosions, gloss, bright skies,
-  people, ANY text (photo mode), watermarks.
+1. Attach the locked REF-01 image (the accepted `01_THE_INSTRUMENT_AT_REST` plate).
+2. Paste the CANON BLOCK from `00_HOW_TO_USE.md`, then THE PROMPT below, as one message.
+3. ONE image comes back. Fix flaws with single-change messages (ready-made lines at the bottom).
+4. Accept, save as `02_THE_IGNITION_<take>.png`, declare it REF-02.
 
-## THE GAME (context)
+## THE PROMPT (paste after the canon block)
 
-The player composes real AI parts on a bench inside a living machine-mind; pressing RUN executes a
-REAL model call. When the answer lands, the core of the world — THE MOUTH, the hub every call
-routes through — flares. The game's one spectacle exists because something true just happened.
+SCENE
+The same dark world as the reference image, seconds later: the vast radial instrument in its
+near-black void, the three engraved rings (sealed-double inner, solid middle, finely-dashed
+outer) calm and quiet, the faint cold horizon far away. Construct c-07 just completed a REAL
+model call — the answer landed THIS instant.
 
-## THE MOMENT
+SUBJECT
+The core — the faceted amber icosahedron inside its two thin tilted tori — FLARING at the moment
+of arrival: concentrated warm-to-hot amber erupting from within the jewel, the two tori catching
+hot rim-light, the hair-thin vertical beam burning brighter than at rest. One bold amber pulse
+with a short glowing wake arrives along its spoke and touches the core at this exact moment.
 
-Construct `c-07` just fired. The draw fell to the free local hearth, the answer returned in 2.08
-seconds, and the receipt landed — THIS frame is the arrival instant. The pulse that carried the
-event reaches the core exactly now.
+KEY DETAILS
+- One single thin ring of warm light, just born, expanding outward from the core across the dark
+  plane — razor-thin, precise, one only.
+- The flare is INTENSE but CONCENTRATED: a strike of light, not an explosion; it does NOT light
+  the rest of the world.
+- The five organ cages stay exactly as in the reference: LOOP, GOVERNOR and MEMORY with their
+  calm amber embers, SENSES and HANDS completely empty wireframe cages — unmoved, un-brightened.
+- Matte near-black plane, engraved hairlines, vast negative space above and around.
+- Camera closer than the reference: a low raking angle across the plane, the core dominating the
+  lower-centre third; at least two thirds of the frame stay near-black.
 
-## EVERYTHING IN FRAME (complete inventory)
+CONSTRAINTS (hard)
+1. Landscape 1536×1024.
+2. The flaring core is the single brightest element; second is the arriving pulse; the world
+   stays dim.
+3. Exactly one expanding ring of light; exactly one pulse.
+4. Fog cages COMPLETELY empty — nothing inside.
+5. NO text anywhere in the frame. No people, no watermark, no lens-flare streaks, no new
+   elements, no redesign of anything from the reference.
 
-1. **THE CORE, FLARING, lower-centre third:** the faceted amber jewel erupting in concentrated
-   warm-to-hot amber through its translucent rim-lit shell; the two thin orbiting tori catch hot
-   edge-light; the vertical amber beam burns brighter than at rest.
-2. **THE ARRIVING PULSE:** one bold amber point of light with a glowing trailing wake, at the end
-   of its spoke, touching the core at this exact instant.
-3. **ONE EXPANDING RING OF LIGHT:** a single thin circular shock-hairline of warm light expanding
-   from the core across the dark plane — thin, precise, just born.
-4. **THE QUIET WORLD:** the three engraved structure-grey rings and the other organ nodes (two
-   amber, calm; two cold-blue fog ghosts) remain dim and unmoved — the flare does NOT light them.
-5. Black void everywhere else. No text, no probe in frame.
+## Ready-made refinement lines (one per message, as needed)
 
-## COMPOSITION & CAMERA
+- "Change only the flare: tighter and more concentrated at the jewel. Keep everything else the same."
+- "Change only the expanding ring: thinner and closer to the core. Keep everything else the same."
+- "Change only the pulse: brighter, with a slightly longer fading wake. Keep everything else the same."
+- "Change only the camera: a touch lower and closer. Keep composition and all elements the same."
+- "Violation — fog cages must be completely empty. Remove the light inside them. Change nothing else."
 
-Wide 16:9, closer than the resting shot — the core dominates the lower-centre third, seen from a
-low raking angle across the plane. Extreme contrast: the flare is intense but CONCENTRATED; at
-least two thirds of the frame stay near-black. Held-breath stillness broken by one strike.
+## What this frame must make a stranger feel
 
-## GENERATE
-
-Render the frame. 3 variants: (1) the instant of contact, (2) a beat later — the expanding ring
-grown, the pulse gone, (3) your best synthesis. STYLE LAW is a hard constraint.
+Held breath, then a strike: *something real just arrived at the heart of this machine.* If it
+reads as a fireworks show, it fails; if it reads as decoration, it fails; if it reads as an
+EVENT, it passes.

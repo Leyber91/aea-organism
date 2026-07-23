@@ -1,65 +1,66 @@
-# 00 · HOW TO USE — one conversation, top to bottom (the anchor method)
+# 00 · HOW TO USE — the GPT-Image-2 protocol (v3, refined after REF-01)
 
-The folders are numbered in GENERATION ORDER. Work 01 → 12 in ONE ChatGPT conversation: the image
-model anchors on the first accepted images, so everything generated later inherits the look.
-01 establishes the world's whole identity; 02–06 extend it; 07–09 bring it close; 10–12 (the
-interfaces) inherit the full material and type language last. Do not skip ahead — the order IS
-the coherence.
+ChatGPT Images 2.0 (gpt-image-2, Apr 2026) runs a REASONING PASS over the prompt before drawing:
+it plans composition, counts objects, and checks constraints. That changes how we drive it. This
+protocol replaces v2. Folders stay in generation order 01 → 12; REF-01 (the accepted
+`01_THE_INSTRUMENT_AT_REST` image) is now the canon anchor for everything.
 
-Each folder holds ONE self-contained `SPEC.md` written as if the game were already fully built
-(exact save-state, everything in frame, exact engraved text). Speculative detail is deliberate:
-the reference leads, the build follows; being wrong here is cheap and useful.
+## What changed and why (the investigation, distilled)
 
-## The step by step
+1. **Paste, don't rely on attachments.** The documented path is the PROMPT itself. Each SPEC now
+   contains a paste-ready structured prompt (scene → subject → key details → constraints — the
+   model's preferred order). Attach nothing except reference IMAGES.
+2. **Anchor with the reference image, not chat memory.** Style consistency is strongest when you
+   ATTACH the locked REF-01 image to each new generation and say what it is by index:
+   "Image 1 is the canon style reference — do not redesign the world." Chat-memory canon drifts;
+   re-specify the critical invariants every turn (the CANON BLOCK below).
+3. **One image per message.** Batch "3 variants" produces near-duplicates (we measured it:
+   Image_1 vs Image_4 were the same frame). Generate ONE, then refine with SMALL SINGLE-CHANGE
+   follow-ups ("brighten only the pulse; keep everything else the same"). If you want a true
+   alternative, name the axis: "second take — vary ONLY the camera height."
+4. **Constraint budget is real (~7–8 hard constraints).** The SPEC prompts now carry a SHORT
+   hard-constraint list; everything else rides as scene description, which the reasoning pass
+   handles well.
+5. **Text rules:** every literal string in "quotes", typography stated as a constraint, "render
+   each string once, verbatim, no extra characters"; spell risky words letter-by-letter if they
+   misrender. Dense-text frames (10–12) want quality high.
+6. **Size explicitly:** "landscape 1536×1024" (or 2K 2560×1440) for wide frames; "portrait
+   1024×1536" for 05_THE_STAKE.
 
-1. Open ChatGPT — ONE new conversation for the whole run (image generation on).
-2. Attach `01_THE_INSTRUMENT_AT_REST/SPEC.md` and paste:
+## THE CANON BLOCK — paste with EVERY generation from 02 onward
 
-   > Read the attached SPEC. It describes one frame of a finished video game. Render that frame
-   > exactly. Hard constraints: the STYLE LAW section is absolute (palette, type, composition,
-   > FORBIDDEN list); EVERYTHING IN FRAME is the complete inventory — include everything it
-   > lists, add nothing it doesn't; any visible text must be EXACTLY the words the SPEC gives,
-   > legible, monospace, engraved; use the aspect ratio in COMPOSITION & CAMERA. Give me 3
-   > variants: (1) calm/wide, (2) tighter and more dramatic, (3) your best synthesis.
+> Image 1 attached is the canon style reference (REF-01). Apply its exact style: near-black
+> void, thin engraved steel grey-blue hairlines, amber only as light emitted from within, vast
+> negative space, matte materials. Do not redesign the world: the core is a faceted amber
+> icosahedron wrapped in exactly two thin tilted tori with a hair-thin vertical beam; organs are
+> identical thin wireframe octahedral cages — an earned organ has a bright amber ember inside,
+> a fog organ is COMPLETELY empty; the three rings are drawn sealed-double (inner), solid
+> (middle), finely-dashed (outer). No people, no watermark, no extra text, no new elements.
 
-3. Pick the best variant. Correct drift by quoting the violated SPEC line, one fix per message:
-   > Violation — STYLE LAW: "FORBIDDEN: rounded consumer UI". Variant 2 has rounded cards.
-   > Regenerate with squared corners and engraved hairlines.
-4. When one variant is RIGHT, say so explicitly before moving on — this is the anchor:
-   > Variant 3 is canon. Keep this exact style, palette, and material language for every
-   > following image in this conversation.
-5. Attach the NEXT folder's SPEC.md in the SAME conversation and paste:
-   > Same game, same canon style as the accepted image above. Now render the frame in this new
-   > SPEC under the same hard constraints. 3 variants.
-6. Repeat 3–5 down the list to 12.
-7. If the conversation gets long and quality degrades: start a fresh one, attach the LAST
-   ACCEPTED image (as a picture) + the next SPEC, and say "match this canon style exactly."
-8. Save every keeper as `<folder-name>_<variant>.png` (e.g. `10_THE_BENCH_PLATE_3.png`) and
-   bring them all back for curation.
+## The per-frame ritual
 
-## The generation order (and why)
+1. Same conversation as REF-01 (or a fresh one — the attached reference makes either safe).
+2. Attach the REF-01 image. Paste: the CANON BLOCK + the SPEC's PROMPT section. Send.
+3. Judge against the SPEC's inventory. Fix with one single-change message per flaw:
+   "Change only X. Keep everything else the same." Repeat the preservation list each time.
+4. When right, save as `<folder>_<take>.png`, declare "this is REF-<nn>, canon for this frame",
+   and move to the next folder.
+5. If a frame needs a true alternative: "second take — vary only <axis>".
 
-| # | frame | role in the anchor chain |
-|---|---|---|
-| 01 | THE INSTRUMENT AT REST | THE master anchor: world, palette, shapes |
-| 02 | THE IGNITION | the amber event language |
-| 03 | THE FLIGHT | scale + the probe + first engraved HUD type |
-| 04 | THE FOG FRONTIER | close world detail: earned vs fog, first labels |
-| 05 | THE STAKE | the diagram language (ladder, labels) |
-| 06 | THE WHOLE ONE | the world block's climax — endgame poster |
-| 07 | THE SEAT | bench material language, macro |
-| 08 | THE FALL THROUGH | gameplay diagram (inherits 05's language) |
-| 09 | THE EARNED TITLE | the ceremony (type as monument) |
-| 10 | THE BENCH PLATE | the main interface — inherits everything |
-| 11 | THE RUN TRACE | the receipt column |
-| 12 | THE FLIGHT HUD | the cockpit glass finale |
+## Generation order (unchanged)
 
-## The shared save-state (all 12 specs agree — the set is ONE game)
+01 world anchor → 02 ignition → 03 flight → 04 fog frontier → 05 stake (portrait) →
+06 whole one → 07 seat → 08 fall-through → 09 earned title → 10 bench plate → 11 run trace →
+12 flight HUD. Interfaces last so they inherit the full material + type language.
 
-Mid-game, rung 2. `c-01` the first bare draw; `c-04` = THE DRAW · THE LADDER · THE MEASURE,
-earned **RESTORABLE COHERENCE**; `c-07` = THE DRAW · RECALL · THE MEASURE, earned **BACKWARDS
-CHANNEL**. Organs lit: MOUTH, GOVERNOR, MEMORY, LOOP. Fog: SENSES, HANDS. Meters: `POWER 1998
-LIVE` · `RODS 7` · `MEM 48` · `LAST 1.44S · BEST 0.98S` · zone `PRIVATE`.
+## The shared save-state (all specs agree — the set is ONE game)
 
-Masters `01_STYLE_LAW.md` / `02_WORLD_BRIEF.md` at the bundle root stay the source of truth for
-the law text; every SPEC inlines what it needs and stands alone.
+Mid-game, rung 2. `c-04` = THE DRAW · THE LADDER · THE MEASURE earned RESTORABLE COHERENCE;
+`c-07` = THE DRAW · RECALL · THE MEASURE earned BACKWARDS CHANNEL. Organs lit: MOUTH, GOVERNOR,
+MEMORY, LOOP. Fog: SENSES, HANDS. `POWER 1998 LIVE` · `RODS 7` · `MEM 48` · `LAST 1.44S ·
+BEST 0.98S` · zone `PRIVATE`.
+
+Masters `01_STYLE_LAW.md` / `02_WORLD_BRIEF.md` stay the law's source of truth. REF-01 additions
+now canon: ember-in-cage organs · two-tori core · per-zone ring treatments (sealed/solid/dashed)
+· engraved labels-on-approach · the caption line "EVERY LIGHT IS SOMETHING THAT REALLY HAPPENED"
+as the game's standing tagline surface.
