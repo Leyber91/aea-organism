@@ -14,6 +14,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-07 | REF-07_THE_SEAT.png | the compose verb + THE CHIP + THE RAIL + the bench lighting model (light lives at the connection) | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 | REF-08 | REF-08_THE_FALL_THROUGH.png | the resilience receipt as matter: the light-groove route, dead-X modules, the hearth junction bloom | 2026-07-23 | ChatGPT Images 2.0, v3 spec after the flat-diagram v2 failed the material bar (field lesson 8) |
 | REF-09 | REF-09_THE_EARNED_TITLE.png | the naming ceremony: earned title as branded metal (the ONE lawful amber text), linked part-signature chain, the receipt->title proof | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
+| REF-10 | REF-10_THE_BENCH_PLATE.png | THE MAIN INTERFACE (the answer to 'too poor'): the six-chip rail mid-run, live packet, trace, records, footer - the build's primary target | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls, ZERO attachments (reference-reuse proven) |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -111,3 +112,13 @@ title to receipt; the part-signature is THREE chips physically LINKED by machine
 being; the receipt reads what-it-did in quiet grey, the title reads what-that-makes-it. All
 strings verbatim first try incl. the long receipt line. Governs the earned-title UI + the
 identity/naming surface.
+
+## REF-10 — what it locks (THE primary build target)
+
+The bench interface as a machined instrument, mid-run: header (id + POWER live) / task line /
+THE RAIL of six octagonal chips (name + glyph + one stat + seat-glow) with a live amber packet
+travelling between two chips / three trace lines (recency-graded, only the state word FELL
+THROUGH in amber) / records line / footer keys. Strict engineer's grid, tabular numerals, amber
+only on the packet + state word + seat-glows. This governs the real web/game bench rebuild - the
+frame that ends the "reads as a dashboard" failure. Proof: generated with ZERO attachments in a
+continuing conversation (field lesson 9), every string verbatim first try.
