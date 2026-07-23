@@ -27,6 +27,29 @@ protocol replaces v2. Folders stay in generation order 01 → 12; REF-01 (the ac
 6. **Size explicitly:** "landscape 1536×1024" (or 2K 2560×1440) for wide frames; "portrait
    1024×1536" for 05_THE_STAKE.
 
+
+## FIELD LESSONS (measured across REF-01..03 — these override the general guidance above)
+
+1. **Fresh generations beat surgical edits.** Text and small elements come out CLEAN on a fresh
+   roll (REF-03: five HUD strings + empty fog cages, zero errors, first try) and get WORSE under
+   edit chains (REF-02: MEMORY->NEMORY->fixed->HANDS·POG; fog dots survived two dedicated fixes).
+   When a take has more than ~2 flaws, fold ALL corrections into one REGENERATE-with-changes
+   instead of chaining micro-edits.
+2. **Cap repair rolls at 2 per flaw.** If it persists and the engine corrects it by code anyway
+   (fog vertex dots, missing ring labels), rule it non-binding in REFS.md, lock, move on.
+3. **Scale constraints under-obey on the first pass.** "4% of frame width" produced 12%. Fix with
+   RELATIVE language — "three times smaller" — and always add "keep its exact design" so the
+   shrink doesn't redesign the subject.
+4. **Preempt known model tics in the BASE prompt.** Fog cages: say "hollow and dark inside, no
+   bright vertex points" up front — asking later bounces off.
+5. **Avoid edit rolls on text-heavy frames.** Every edit roll can wobble untouched text. Get the
+   base right; if text breaks, fix THAT string by quoting it, nothing else.
+6. **The anchor chain works.** REF-01 attached + the CANON BLOCK held style perfectly across
+   three frames. Never generate without both.
+7. **Adopt-back rule.** When the model invents something better than the spec, it becomes canon
+   and flows back into the SPECs: ember-in-cage organs (01), the ember-dust shockwave ring (02),
+   the curved horizon limb at altitude + the probe's craft design (03).
+
 ## THE CANON BLOCK — paste with EVERY generation from 02 onward
 
 > Image 1 attached is the canon style reference (REF-01). Apply its exact style: near-black
