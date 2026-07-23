@@ -506,3 +506,31 @@ the definition of done for every visual slice.
 **The filter:** the references must be generated INSIDE the laws (two-ink, amber-earned, austere instrument,
 no toy sci-fi) or they will spec us into gilding. And a reference is a TARGET, not proof - the honesty law
 still governs what the real render may claim.
+
+## R43 · The refs are all ONE moment - the game's PROGRESSION and META are unreferenced
+
+**Spark (2026-07-23, his words):** *"what we got is not gameplay representations of any kind... i got a
+probe going through a circular world, but i dont know how the different levels look, it needs to be
+different enough, i just see the driving and i see no substantial change or evolution, i dont see how the
+menu map of evolution looks, i dont know how the menu of the pokedex can look like. Its supposed to have
+so many levels with the whole aea elements, we dont have it."*
+
+**Realized:** the 12 locked references are all views of ONE level at ONE stage (rung 2) - the instrument +
+the bench. They nail the feel/material but show no PROGRESSION and no META. Three missing pillars: (1) the
+EVOLUTION MAP (how you navigate the 8-rung journey), (2) the CODEX/pokedex (the browsable catalog of all
+AEA elements - the "so many elements" made visible), (3) the STAGES looking radically DIFFERENT (SPARK vs
+THE TRIBE vs HANDS-ON-WORLD vs THE WHOLE ONE = actual visible evolution). The design trap named: our world
+is ONE body, so levels are the same instrument at different completeness - which risks "every level looks
+the same, just more dots." The fix: make the progression VISIBLY TRANSFORMATIVE (lonely spark -> governed
+cell -> mind that MULTIPLIES into a council -> instrument that REACHES PAST its boundary -> full whole),
+plus the two meta surfaces. The rung looks are derivable from the apologia ladder (what each rung adds).
+
+**Where it goes -> the second reference wave (13-17):** 13 THE JOURNEY MAP (climb of growing
+mini-instruments), 14 THE CODEX (specimen-wall pokedex, discovered vs fog), 15 STAGE SPARK (rung 0, almost
+nothing), 16 STAGE THE TRIBE (rung 4, the mind multiplied), 17 STAGE HANDS ON THE WORLD (rung 5, reaches
+past its boundary). Together with REF-01 (rung 2) + REF-06 (rung 7) the evolution becomes visible across
+5+ distinct states, and the meta navigation finally exists as pictures.
+
+**The filter:** NOT scope inflation - this is the missing HALF of the game's identity (the moment-to-moment
+was the first 12; the progression/meta is what makes it read as a big game with evolution). Same honesty
+law: a ref specs FORM; the real render/menus may only show what the system truly earned.
