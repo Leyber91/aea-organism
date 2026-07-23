@@ -1,61 +1,75 @@
-# 08 · THE FALL-THROUGH — one frame of the finished game (the route diagram) · GPT-Image-2 spec v2
+# 08 · THE FALL-THROUGH — one frame of the finished game (the survived circuit) · GPT-Image-2 spec v3
 
-The resilience doctrine as one picture: a live draw tries two dead rods, breaks downward through
-both, lands on the free hearth — and still answers. Failure rerouted in the open, worn like a
-scar. This is the run that earns the title RESTORABLE COHERENCE.
+The resilience doctrine as a PHYSICAL object: the run's route milled into the bench plate as a
+light-carrying groove that breaks downward through two dead modules and lands on the hearth —
+a circuit that survived. v3 replaces the flat-diagram v2 (field lesson 8: spec matter, not
+information). This is the run that earned RESTORABLE COHERENCE.
 
 ## Workflow for this frame
 
-1. Attach TWO references: Image 1 = REF-01 (style canon) · Image 2 = REF-05 THE STAKE (the
-   rod-state vocabulary this frame must reuse).
-2. Paste the CANON BLOCK (bench/diagram variant) + THE PROMPT below as one message.
+1. Attach TWO references: Image 1 = REF-07 THE SEAT (the bench material + plate canon this frame
+   lives on) · Image 2 = REF-05 THE STAKE (the rod-state vocabulary: dead-X, hearth ember).
+2. Paste THE PROMPT below as one message (it carries its own canon paragraph).
 3. ONE image back → single-change fixes → accept as `08_THE_FALL_THROUGH_<take>.png` → REF-08.
 
-## THE PROMPT (paste after the canon block)
+## THE PROMPT (paste as one message with both images attached)
+
+Image 1 attached is the material canon (REF-07): the matte near-black machined bench plate,
+milled channels carrying light, debossed monospace engraving, micro-chamfers, macro-photography
+depth of field. Image 2 attached is REF-05: the rod-state vocabulary — reuse its dead-rod (dark
+slat, faint cold-blue X) and hearth (soft warm ember slat) language as MOUNTED MODULES. No
+people, no watermark, no extra text, no new elements, no world elements (no rings, organs, core).
 
 SCENE
-A diagram surface of the same game, in the exact rod-language of Image 2: machined horizontal
-rod-slats floating in pure darkness on the matte near-black field, engraved hairline structure,
-vast black margins. No rings, organs, core, or bench chips — only the route and its rods.
+The bench plate of Image 1, photographed from a low three-quarter angle with shallow depth of
+field: matte near-black machined metal, faint engraved hairline rules, micro-texture catching
+edge light. Across the plate, a MILLED GROOVE carries warm amber light — a physical light-channel
+cut into the metal, like Image 1's rail but narrower: the route of one real run.
 
 SUBJECT
-The receipt of one real run, drawn as a route:
-- A thin warm amber ROUTE-LINE enters from the left edge at upper height, travelling right.
-- ROD 1 (upper right of entry): a dead machined slat in Image 2's dead-rod language — dark with
-  a faint cold-blue X hairline across it. The amber line reaches it and BREAKS sharply downward
-  at a clean right-angle notch. Beside this rod, one tiny engraved label: "FELL THROUGH"
-- ROD 2 (lower, further right): an identical dead slat with its X. The line steps down again —
-  two clean stair-steps of rerouting.
-- ROD 3 (lower right): THE HEARTH in Image 2's hearth language — a machined slat glowing a soft
-  steady warm ember along its length. The route-line lands on it and ends in a small
-  concentrated amber completion bloom — the single brightest element. Beneath this rod, one
-  tiny engraved label: "THE HEARTH · FREE"
-- To the right of the bloom, one small engraved line: "PASS · 1.44s"
+The route, as machined wiring:
+- The glowing groove enters from the left edge at upper height and runs right, carrying thin
+  warm amber light along its floor.
+- It reaches MODULE 1: a dead machined slat MOUNTED on the plate in Image 2's dead-rod language —
+  dark, with a faint cold-blue X debossed across its face. At the module's edge the groove turns
+  90 degrees and STEPS DOWN the plate — a clean milled notch — the light following the turn.
+  Beside this module, debossed into the plate: "FELL THROUGH"
+- The groove runs right again to MODULE 2: an identical dead slat with its X. The groove steps
+  down a second time — two clean machined stair-steps of rerouting.
+- It lands on MODULE 3: THE HEARTH — a mounted slat glowing a soft steady warm ember along its
+  length (Image 2's hearth language). Where the groove's light meets the hearth module's edge,
+  a small concentrated amber completion bloom burns — the single brightest element in frame.
+  Debossed into the plate beneath this module: "THE HEARTH · FREE"
+- To the right of the bloom, debossed into the plate: "PASS · 1.44s"
 
 KEY DETAILS
-- EXACTLY THREE rods: two dead with X hairlines, one hearth ember. Exactly TWO stair-step
-  breaks in the route.
-- The eye must read left→break→break→land→bloom→verdict — a subway-map of survival.
-- A few faint structure-grey tick hairlines along the route's path (an unlabeled time axis).
-- Severe, clean, precise — a certificate of a fall that ended well.
+- EXACTLY THREE mounted modules (two dead-X, one hearth ember) and TWO stair-step turns in the
+  groove — counted.
+- Fine engraved graduation ticks along the groove's path (an unlabeled time axis in the metal).
+- The light lives IN the groove and blooms only at the hearth junction — light at the
+  connection, exactly as Image 1's seat-glow law.
+- Watchmaking macro feel: the eye reads the falling staircase of light through real metal.
 
 CONSTRAINTS (hard)
-1. Landscape 1536×1024, the diagram in the central band, vast black margins.
-2. Exactly THREE rods (two dead-X, one hearth) and TWO breaks — counted.
-3. Brightness order: the completion bloom first, the route-line second, the hearth ember third;
-   the dead rods stay dark, their X marks faint and cold.
+1. Landscape 1536×1024, low three-quarter camera, shallow depth of field centred on the second
+   step and the hearth junction.
+2. Exactly THREE modules and TWO steps — counted top-left to bottom-right.
+3. Brightness order: the completion bloom first, the groove's light second, the hearth ember
+   third; dead modules stay dark, their X marks faint and cold.
 4. Text: exactly "FELL THROUGH", "THE HEARTH · FREE", "PASS · 1.44s" — once each, verbatim,
-   engraved monospace capitals.
-5. No people, no watermark, no arrows with heads, no world or bench elements, no new elements.
+   debossed monospace capitals in the plate.
+5. No people, no watermark, no arrows, no flat schematic look — everything is machined,
+   dimensional, photographed.
 
 ## Ready-made refinement lines
 
-- "Change only the breaks: sharper right-angle notches at the dead rods. Keep everything else the same."
-- "Change only the bloom: smaller and more concentrated where the line meets the hearth. Keep everything else the same."
-- "Count violation — exactly THREE rods and TWO breaks. Regenerate with the correct count, everything else the same."
+- "Change only the camera: lower and closer, more depth of field falloff. Keep everything else the same."
+- "Change only the groove light: thinner and dimmer before the steps, so the bloom dominates. Keep everything else the same."
+- "Count violation — exactly THREE modules and TWO steps. Regenerate with the correct count, everything else the same."
 - "Violation — text must read exactly 'PASS · 1.44s'. Correct that string only, change nothing else."
 
 ## What this frame must make a stranger feel
 
-Respect for a survivor: *it was refused twice, fell, landed home, and still answered.* If it
-reads as a flowchart, it fails; if the scar reads as the proof, it passes.
+Respect for a survivor, held in metal: *refused twice, fell twice, landed home, still answered —
+and the plate keeps the scar.* If it reads as a flowchart, it fails; if it reads as wiring that
+lived through something, it passes.
