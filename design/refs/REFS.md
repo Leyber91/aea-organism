@@ -11,6 +11,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-04 | REF-04_THE_FOG_FRONTIER.png | the organ-state vocabulary up close: earned ember vs completely hollow fog; labels-on-approach at intimacy | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (tic preempted in base prompt) |
 | REF-05 | REF-05_THE_STAKE.png | the ladder/economy view: rod states (ignited-paid / dead-X / cooling / hearth), the reach filament, EST-before-fire | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (count stated twice held) |
 | REF-06 | REF-06_THE_WHOLE_ONE.png | the endgame poster / win condition: all organs burning, bare names (FOG gone), full-metabolism traffic, the caption at maximum load | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
+| REF-07 | REF-07_THE_SEAT.png | the compose verb + THE CHIP + THE RAIL + the bench lighting model (light lives at the connection) | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -77,3 +78,15 @@ exists), warm under-glow permitted on rings/spokes only at endgame. Non-binding 
 the frame edge get eaten); the engine renders ring labels by code. Poster/box-art candidate and
 the build's final target: when the real engine renders this frame from live state, the game is
 done.
+
+## REF-07 — what it locks (the bench material canon; frames 08-12 inherit)
+
+THE CHIP: octagonal corner-cut matte-black machined badge; DEBOSSED (relief-engraved) monospace
+capitals; glyph = debossed outline ring above the name; one stat line beneath; seats via a
+center mount-stud into a milled rail socket. THE RAIL: milled channel, cool light-line floor,
+double-hairline machined edges, sockets as milled slots. THE BENCH LIGHTING MODEL (the honesty
+law as material physics): LIGHT LIVES AT THE CONNECTION - a live seated chip glows warm from
+UNDER ITS SEAT (the joint, never the face); the seating instant is a small amber arc across the
+stud-socket gap; unpowered parts sit dark; the plate itself never glows. Build mapping for the
+bench UI: octagonal chips (clip-path), debossed text (inset shadow), the groove (double hairline
++ inner light-line), seat under-glow on live parts, the arc fired on real seat events.
