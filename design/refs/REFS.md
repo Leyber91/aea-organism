@@ -13,6 +13,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-06 | REF-06_THE_WHOLE_ONE.png | the endgame poster / win condition: all organs burning, bare names (FOG gone), full-metabolism traffic, the caption at maximum load | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 | REF-07 | REF-07_THE_SEAT.png | the compose verb + THE CHIP + THE RAIL + the bench lighting model (light lives at the connection) | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 | REF-08 | REF-08_THE_FALL_THROUGH.png | the resilience receipt as matter: the light-groove route, dead-X modules, the hearth junction bloom | 2026-07-23 | ChatGPT Images 2.0, v3 spec after the flat-diagram v2 failed the material bar (field lesson 8) |
+| REF-09 | REF-09_THE_EARNED_TITLE.png | the naming ceremony: earned title as branded metal (the ONE lawful amber text), linked part-signature chain, the receipt->title proof | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -101,3 +102,12 @@ connection, again. Receipt typography: debossed labels with a thin divider bar b
 verdict ("THE HEARTH - FREE | PASS - 1.44s"). Born from the v2 failure: the flat-diagram take
 proved field lesson 8 (spec matter, not information) - same truth, staged as photographed metal,
 went from "too basic" to sitting beside REF-07 as an equal.
+
+## REF-09 — what it locks
+
+The ceremony grammar: the earned TITLE is branded-metal amber (the single lawful use of amber
+TEXT in the whole game - a title is an earned state); a proof-underline light-channel drops from
+title to receipt; the part-signature is THREE chips physically LINKED by machined bars = one
+being; the receipt reads what-it-did in quiet grey, the title reads what-that-makes-it. All
+strings verbatim first try incl. the long receipt line. Governs the earned-title UI + the
+identity/naming surface.
