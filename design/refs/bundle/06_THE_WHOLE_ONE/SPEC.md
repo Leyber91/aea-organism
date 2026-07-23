@@ -1,52 +1,62 @@
-# 06 · THE WHOLE ONE — one frame of the finished game (photo mode, the endgame poster)
+# 06 · THE WHOLE ONE — one frame of the finished game (the endgame poster) · GPT-Image-2 spec v2
 
-The destination frame of the finished game THE PROBE: every organ earned, the instrument fully
-alive. The fog is gone. Brighter than any other frame — and still lawful: amber-on-black
-restraint, a lit cathedral, never a casino. Speculative details intentional. Self-contained.
+The destination frame: every organ earned, the instrument fully alive, the fog gone. The labels
+that read `· FOG` for the whole game now stand as bare names — that is the payoff. Brighter than
+any other frame and still lawful: a lit cathedral, never a casino. This frame carries the
+caption because here the claim is at maximum.
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Field near-black `#06090e`–`#0c131c`; even fully lit, the void owns the outer third.
-- Structure ink `rgb(120,155,175)`: the engraved rings stay quiet grey except a soft warm
-  under-glow near lit nodes.
-- AMBER (`#ffb000` hot, `#d4a24c` warm): every earned element — and everything is earned now.
-  Concentrated, emitted, radial. The core is the brightest element of all.
-- No cold-blue fog remains anywhere (nothing is unearned in this frame).
-- Materials: matte near-black, faceted geometry, machined hairlines.
-- FORBIDDEN: multicolour/neon, fireworks, lens flares, bloom fog washing the frame, gloss,
-  people, ANY text (photo mode), watermarks.
+1. Attach the locked REF-01 image. Paste the CANON BLOCK + THE PROMPT below as one message.
+2. ONE image back → single-change fixes if needed → accept as `06_THE_WHOLE_ONE_<take>.png` →
+   declare REF-06. (Field lessons: ~10 strings = the text-budget edge; if any string breaks,
+   fix THAT string by quoting it, nothing else.)
 
-## THE GAME (context)
+## THE PROMPT (paste after the canon block)
 
-The whole game climbs toward this: composing every organ of a living machine-mind from real
-working parts until the entire being burns. This frame is the promise kept.
+SCENE
+The same dark world as the reference, seen from a raised three-quarter angle like a burning
+mandala — but at the game's end: EVERY organ has been earned. The three engraved rings
+(sealed-double inner, solid middle, finely-dashed outer) carry a soft warm under-glow near
+their lit nodes and stay faint steel-blue elsewhere. The faint cold horizon is almost
+imperceptible. Vast black void owns the outer third of the frame — even fully lit, the world
+is an island of precise amber fire in darkness.
 
-## THE MOMENT
+SUBJECT
+The fully awakened instrument:
+- THE CORE at the exact centre, blazing at its brightest sustained state: the faceted amber
+  icosahedron inside its two thin tilted tori, both hot-edged, the vertical amber beam strong
+  and tall. Beneath it the tiny engraved label: "THE MOUTH · THE HUB"
+- FIVE ORGAN CAGES on the rings, ALL with bright amber embers burning inside — no hollow cage
+  anywhere, the fog is gone. Each with its tiny engraved label beneath, bare names now:
+  inner ring: "LOOP" and "SENSES" · middle ring: "GOVERNOR" and "MEMORY" · outer ring: "HANDS"
+- FIVE SPOKES glowing faintly warm along their whole length — live wires — with FOUR bright
+  amber pulses mid-transit on different spokes, each trailing a short fading wake.
 
-Endgame. All organs earned: LOOP, SENSES, GOVERNOR, MEMORY, HANDS — and the core (THE MOUTH) at
-its brightest sustained state. Live traffic runs on every spoke. Photo mode.
+KEY DETAILS
+- Ring names engraved along their arcs, same as the reference: "SENSITIVE · LOCAL ONLY",
+  "PRIVATE · NO TRAINING", "PUBLIC · OPEN"
+- Bottom centre, the only sentence in the frame, small engraved capitals:
+  "EVERY LIGHT IS SOMETHING THAT REALLY HAPPENED"
+- Radial symmetry emphasized; triumphant but reverent — a cathedral finally lit.
 
-## EVERYTHING IN FRAME (complete inventory)
+CONSTRAINTS (hard)
+1. Landscape 1536×1024 (crop-safe toward 21:9).
+2. The core is the brightest element of all; embers second; pulses third; the rings' warm
+   under-glow stays subtle.
+3. NO hollow cages, no "FOG" text anywhere — every cage has an ember, every label is a bare name.
+4. Text: exactly the ten strings quoted above, once each, verbatim, engraved structure-grey.
+5. No people, no watermark, no fireworks, no lens flares, no new elements, no redesign of the
+   world from the reference.
 
-1. **THE CORE, exact centre, blazing:** the faceted amber jewel at full sustained intensity
-   inside its rim-lit shell; both thin tori hot-edged; the vertical amber beam strong and tall.
-2. **THREE ENGRAVED RINGS:** structure-grey circles, each carrying a soft warm under-glow only
-   near its lit nodes.
-3. **FIVE ORGAN NODES, ALL BURNING AMBER:** LOOP and SENSES on the inner ring; GOVERNOR and
-   MEMORY on the middle ring; HANDS on the outer ring — five solid faceted octahedra lit from
-   within. No wireframes, no fog, nowhere.
-4. **FIVE SPOKES, WARM:** the radial hairlines glow faintly warm along their length — live wires.
-5. **PULSES:** four or five bright amber points mid-transit on different spokes, each with a
-   short fading wake — traffic everywhere.
-6. Black void around the whole instrument; the faint cold horizon almost imperceptible. No text.
+## Ready-made refinement lines
 
-## COMPOSITION & CAMERA
+- "Change only the core: brighter sustained blaze, still concentrated. Keep everything else the same."
+- "Change only the pulses: exactly four, on four different spokes. Keep everything else the same."
+- "Change only the ring under-glow: subtler, only near the lit nodes. Keep everything else the same."
+- "Violation — text must read exactly 'SENSES' with no FOG suffix. Correct that label only, change nothing else."
 
-Wide 16:9 (safe to crop 21:9), raised three-quarter angle, the full instrument centred like a
-burning mandala. Radial symmetry emphasized. An island of precise amber fire in darkness —
-triumphant and reverent.
+## What this frame must make a stranger feel
 
-## GENERATE
-
-Render the frame. 3 variants: (1) the full mandala as specified, (2) lower and closer — the rings
-stacking in perspective toward the blazing core, (3) your best synthesis. STYLE LAW is hard.
+Arrival: *everything that was hollow is burning now — and every light was earned.* If it reads
+as a light show, it fails; if it reads as a promise kept, it passes.
