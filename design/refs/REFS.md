@@ -7,6 +7,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 |---|---|---|---|---|
 | REF-01 | REF-01_THE_INSTRUMENT_AT_REST.png | the world render (engine.js: core, rings, organs, spokes, pulse) + the game's tagline surface | 2026-07-23 | ChatGPT Images 2.0, self-explaining plate prompt, take Image_2_V2 |
 | REF-02 | REF-02_THE_IGNITION.png | the ignition moment (igniteCore + the fire beat: flare-as-strike, ember-dust shockwave, arriving pulse with wake) | 2026-07-23 | ChatGPT Images 2.0, take fix3 (two surgical fixes applied; rolls capped at the drift wall) |
+| REF-03 | REF-03_THE_FLIGHT.png | flight scale + the in-game HUD (all five strings are the real HUD spec) + the probe's canon craft design | 2026-07-23 | ChatGPT Images 2.0, take 2 (one scale-fix roll) |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -38,3 +39,11 @@ KNOWN COSMETIC FLAWS in the locked image, ruled non-binding (the engine corrects
 (b) the PUBLIC - OPEN outer-ring label is absent - the build labels all three rings. Two
 dedicated repair rolls failed at the model's edit-drift wall (fix4 added a HANDS-POG typo);
 rolls capped per the income clock.
+
+## REF-03 — what it locks
+
+The scale law (the probe is a SPECK: ~3% of frame width, dwarfed always), the CURVED horizon
+limb for altitude frames (adopted drift - sells height better than the flat band), the etched-
+glass HUD as the real in-game HUD spec (five strings, corner-anchored, one amber sliver in the
+power bar, center brackets on the core), and THE PROBE'S CANON CRAFT DESIGN: angular faceted
+matte-black hull, one warm amber aperture at the bow, no exhaust, no trail.
