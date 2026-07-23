@@ -16,6 +16,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-09 | REF-09_THE_EARNED_TITLE.png | the naming ceremony: earned title as branded metal (the ONE lawful amber text), linked part-signature chain, the receipt->title proof | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 | REF-10 | REF-10_THE_BENCH_PLATE.png | THE MAIN INTERFACE (the answer to 'too poor'): the six-chip rail mid-run, live packet, trace, records, footer - the build's primary target | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls, ZERO attachments (reference-reuse proven) |
 | REF-11 | REF-11_THE_RUN_TRACE.png | the run-log/receipt surface: seven-line trace, recency gradient, state words in amber, the RECORD close + T+ time ruler | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
+| REF-12 | REF-12_THE_FLIGHT_HUD.png | the cockpit glass finale: world defocused BEHIND the glass + etched HUD ON it (the two languages married); governs the in-flight overlay | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -131,3 +132,33 @@ gradient), amber ONLY on state words (FELL THROUGH warm, PASS hot = the strike);
 closing rule; the RECORD stamp with a filled amber square; a vertical T+ time-ruler down the
 right margin with graduation ticks. Honesty telemetry as UI - every line a real event. Governs
 the game's run-log / trace panel.
+
+## REF-12 — what it locks (SET COMPLETE)
+
+The flight overlay: a full etched-glass frame border + four corner instruments + a centre reticle
+on the core, all flat 1px structure-grey with NO glow; the living world rendered DEFOCUSED behind
+the glass (depth separation = the cockpit read); amber only on the distant core + the one power-
+bar sliver. Known soft spot (non-binding): the core reads as a soft bloom rather than the crisp
+two-tori jewel - acceptable as behind-glass defocus; the engine renders the crisp core by code.
+
+---
+
+## THE SET IS COMPLETE — 12/12 locked (2026-07-23)
+
+All twelve frames of THE PROBE now exist as locked references. This file is the BUILD CONTRACT:
+a visual slice is done only when the real render matches its reference side-by-side.
+
+Build-target map (reference -> engine surface):
+- REF-01/02 -> the world render (engine.js): ring treatments, ember-cage organs, two-tori core,
+  labels-on-approach, the ignition strike + dust-ring, the pulse-with-wake.
+- REF-03 -> flight scale law + the probe craft + the HUD frame.
+- REF-04/06 -> organ states (earned ember / empty fog) + the endgame all-lit state.
+- REF-05/08 -> the ladder/economy + the route-as-milled-groove.
+- REF-07/09/10/11 -> THE BENCH: octagonal chips, milled rail, light-at-the-connection, the
+  six-chip mid-run plate (REF-10 = the primary target), the earned-title ceremony, the receipt
+  column. These answer the original "the interface is too poor".
+- REF-12 -> the in-flight HUD overlay.
+
+Method that worked (for the next set): anchor image + canon block; spec MATTER not information;
+counts stated twice; preempt tics in the base prompt; fresh gen over edit chains; reference-reuse
+within a conversation. 9 of 12 landed at zero fix rolls.
