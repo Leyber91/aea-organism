@@ -12,6 +12,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-05 | REF-05_THE_STAKE.png | the ladder/economy view: rod states (ignited-paid / dead-X / cooling / hearth), the reach filament, EST-before-fire | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (count stated twice held) |
 | REF-06 | REF-06_THE_WHOLE_ONE.png | the endgame poster / win condition: all organs burning, bare names (FOG gone), full-metabolism traffic, the caption at maximum load | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 | REF-07 | REF-07_THE_SEAT.png | the compose verb + THE CHIP + THE RAIL + the bench lighting model (light lives at the connection) | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
+| REF-08 | REF-08_THE_FALL_THROUGH.png | the resilience receipt as matter: the light-groove route, dead-X modules, the hearth junction bloom | 2026-07-23 | ChatGPT Images 2.0, v3 spec after the flat-diagram v2 failed the material bar (field lesson 8) |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -90,3 +91,13 @@ UNDER ITS SEAT (the joint, never the face); the seating instant is a small amber
 stud-socket gap; unpowered parts sit dark; the plate itself never glows. Build mapping for the
 bench UI: octagonal chips (clip-path), debossed text (inset shadow), the groove (double hairline
 + inner light-line), seat under-glow on live parts, the arc fired on real seat events.
+
+## REF-08 — what it locks
+
+The route-as-matter language: a run's route is a MILLED GROOVE carrying amber light through the
+plate; refusals are 90-degree machined step-downs at dead modules (dark chamfered slats, debossed
+cold X); the landing is a junction bloom where the groove meets the hearth module - light at the
+connection, again. Receipt typography: debossed labels with a thin divider bar between fact and
+verdict ("THE HEARTH - FREE | PASS - 1.44s"). Born from the v2 failure: the flat-diagram take
+proved field lesson 8 (spec matter, not information) - same truth, staged as photographed metal,
+went from "too basic" to sitting beside REF-07 as an equal.
