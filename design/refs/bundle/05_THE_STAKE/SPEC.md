@@ -1,55 +1,65 @@
-# 05 · THE STAKE — one frame of the finished game (the ladder view, labels on)
+# 05 · THE STAKE — one frame of the finished game (the ladder view, labels on) · GPT-Image-2 spec v2
 
-One frame of the finished game THE PROBE: the LADDER inspection view — the real energy grid as a
-vertical ladder of rods, at the moment a paid reach ignites the top rod. The economy made
-visible: warmth below is safe and free; fire above costs real budget. Speculative details
-intentional. Self-contained.
+The economy made visible: the LADDER inspection view at the moment a paid reach ignites the top
+rod. Warmth below is safe and free; fire above costs real budget and can starve. Every builder
+who has watched a token meter tighten must feel this frame.
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Field near-black `#06090e`–`#0c131c`; generous black margins around a single vertical subject.
-- Structure ink `rgb(120,155,175)`: rod edges, the ladder spine, tick hairlines, engraved type.
-- Cold accent: dead/cooling rods only. AMBER: the hearth ember (soft, steady, warm) and the
-  ignited top rod + climbing filament (hot, the brightest element).
-- Type: IBM-Plex-Mono engraved capitals, tiny, tabular; EXACTLY the labels specified below,
-  legible; nothing else written.
-- Materials: matte machined slats, hairline edges — a precision diagram made physical.
-- FORBIDDEN: multicolour/neon, lens flares, gloss, ornament, people, extra text, watermarks.
+1. Attach the locked REF-01 image. Paste the CANON BLOCK + THE PROMPT below as one message.
+2. ONE image back → single-change fixes if needed → accept as `05_THE_STAKE_<take>.png` →
+   declare REF-05. (Field lessons: >2 flaws = one regenerate-with-changes; count errors are the
+   likely flaw here — fix with "exactly seven rods" relative language.)
 
-## THE GAME (context)
+## THE PROMPT (paste after the canon block)
 
-Every model call falls down THE LADDER — a ranked stack of real compute rods. The bottom rod is
-THE HEARTH: local, slow, always alive, FREE. Reaching UP to a cloud rod is faster and stronger
-but burns real budget units — and can starve. Choosing the reach is the game's economy.
+SCENE
+Pure darkness — the ladder inspection view of the same game as the reference. No rings, no
+organs, no core in this frame: one vertical instrument alone in the void, on the same matte
+near-black field with the same engraved hairline language.
 
-## THE MOMENT
+SUBJECT
+A vertical ladder of EXACTLY SEVEN thin horizontal machined rod-slats, evenly stacked, each
+edged in faint steel grey-blue hairline, joined by one thin central spine line. From top to
+bottom:
+1. THE TOP ROD — IGNITED: burning hot amber along its whole length, the single brightest
+   element. To its right one tiny engraved label: "DEEP · EST 1u"
+2-3. TWO DEAD RODS: dark slats, each crossed by a faint cold-blue X hairline; beside the upper
+   dead rod one tiny engraved label: "FELL THROUGH"
+4-6. THREE COOLING RODS: dim structure-grey slats, unlabeled, quiet.
+7. THE BOTTOM ROD — THE HEARTH: glowing a soft steady warm ember along its length, gentler than
+   the top rod's fire. Beneath it one tiny engraved label: "THE HEARTH · FREE"
 
-The player inspects the ladder before firing construct `c-07` with a deliberate reach. Seven rods
-on the grid today. The estimate holds one unit at stake. The reach filament has just ignited the
-top rod.
+A thin bright amber filament of light climbs the central spine from the hearth upward, passing
+the cooling and dead rods without lighting them, and ignites the top rod — brightest where it
+meets the ignition.
 
-## EVERYTHING IN FRAME (complete inventory)
+KEY DETAILS
+- Vertical tension is the composition: soft warmth at the foot, hot fire at the crown, dead cold
+  between. A precision instrument plate, not an infographic.
+- Labels: tiny engraved monospace capitals, structure-grey, rendered once each, verbatim.
+- Vast black margins around the ladder; the ladder centred, straight-on, the faintest
+  perspective.
 
-1. **THE LADDER, centred, vertical:** seven thin horizontal machined rod-slats, evenly stacked,
-   each edged in faint structure-grey hairline, joined by one thin central spine line.
-2. **THE TOP ROD — IGNITED:** burning hot amber along its length, the brightest element. To its
-   right, one tiny engraved label: `DEEP · EST 1u`.
-3. **THE CLIMBING FILAMENT:** a thin bright amber line rising along the spine from the bottom rod
-   to the top rod, brightest where it meets the ignition.
-4. **TWO DEAD RODS (mid-ladder):** dark slats with a faint cold-blue cross-hairline each; beside
-   the upper one, a tiny engraved label: `FELL THROUGH`.
-5. **TWO COOLING RODS:** dim structure-grey slats, unlabeled.
-6. **THE BOTTOM ROD — THE HEARTH:** glowing a soft steady warm ember along its length; beneath
-   it, one tiny engraved label: `THE HEARTH · FREE`.
-7. Vast black void around the ladder; nothing else.
+CONSTRAINTS (hard)
+1. Portrait 1024×1536.
+2. Exactly seven rods, counted top to bottom: one ignited, two dead with X hairlines, three dim
+   cooling, one hearth ember.
+3. The ignited top rod is the brightest element; the climbing filament second; the hearth ember
+   third. The dead and cooling rods stay unlit — the filament does not light what it passes.
+4. Text: exactly "DEEP · EST 1u", "FELL THROUGH", "THE HEARTH · FREE" — once each, verbatim.
+5. No people, no watermark, no rings or organs or core in frame, no new elements.
 
-## COMPOSITION & CAMERA
+## Ready-made refinement lines
 
-Portrait 2:3, the ladder centred with generous margins, straight-on with the faintest perspective.
-Vertical tension: soft warmth at the foot, hot fire at the crown, dead cold between. Severe,
-minimal, diagrammatic — a precision instrument plate, not an infographic.
+- "Count violation — exactly SEVEN rods top to bottom: 1 ignited, 2 dead with X marks, 3 dim, 1
+  hearth. Regenerate with the correct count, everything else the same."
+- "Change only the filament: thinner, and brightest where it meets the top rod. Keep everything else the same."
+- "Change only the dead rods: darker, their X hairlines fainter and colder. Keep everything else the same."
+- "Violation — text must read exactly 'DEEP · EST 1u'. Correct that string only, change nothing else."
 
-## GENERATE
+## What this frame must make a stranger feel
 
-Render the frame. 3 variants: (1) as specified, (2) tighter on the top three rods at the ignition
-instant, (3) your best synthesis. STYLE LAW and the exact labels are hard constraints.
+The price of reaching: *the fire at the top costs something real; the warmth at the bottom is
+home.* If the ladder reads as decoration, it fails; if the stranger feels the pull between free
+warmth and paid fire, it passes.
