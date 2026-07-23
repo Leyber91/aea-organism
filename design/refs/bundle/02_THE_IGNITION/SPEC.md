@@ -1,4 +1,4 @@
-# W2 · THE IGNITION — one frame of the finished game (photo mode)
+# 02 · THE IGNITION — one frame of the finished game (photo mode)
 
 One frame of the finished game THE PROBE, screenshotted at the exact instant a REAL model call
 completes. Speculative details are intentional. Self-contained.

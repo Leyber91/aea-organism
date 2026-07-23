@@ -1,4 +1,4 @@
-# G3 · THE EARNED TITLE — one frame of the finished game (the naming ceremony)
+# 09 · THE EARNED TITLE — one frame of the finished game (the naming ceremony)
 
 One frame of the finished game THE PROBE: the moment a composed being earns its NAME. Titles are
 never chosen — a construct runs, proves a behavior with a receipt, and the doctrine it

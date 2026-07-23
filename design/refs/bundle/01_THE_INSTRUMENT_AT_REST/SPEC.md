@@ -1,4 +1,4 @@
-# W1 · THE INSTRUMENT AT REST — one frame of the finished game (photo mode)
+# 01 · THE INSTRUMENT AT REST — one frame of the finished game (photo mode)
 
 This SPEC describes ONE FRAME of a finished game called THE PROBE, as if screenshotted today.
 Render exactly this frame. Speculative details are intentional. Self-contained — no other file needed.

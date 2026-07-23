@@ -1,4 +1,4 @@
-# G1 · THE SEAT — one frame of the finished game (gameplay close-up)
+# 07 · THE SEAT — one frame of the finished game (gameplay close-up)
 
 One frame of the finished game THE PROBE: the compose verb itself — the part RECALL descending
 onto the bench rail, one breath before it seats. Precision hardware assembly, watchmaking

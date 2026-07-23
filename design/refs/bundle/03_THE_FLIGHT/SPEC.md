@@ -1,4 +1,4 @@
-# W4 · THE FLIGHT — one frame of the finished game (gameplay, minimal HUD on)
+# 03 · THE FLIGHT — one frame of the finished game (gameplay, minimal HUD on)
 
 One gameplay frame of the finished game THE PROBE: the player's tiny craft crossing above the
 outer ring, the whole living instrument below, the minimal cockpit HUD engraved at the corners.

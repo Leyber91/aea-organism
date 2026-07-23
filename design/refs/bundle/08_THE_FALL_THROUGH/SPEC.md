@@ -1,4 +1,4 @@
-# G2 · THE FALL-THROUGH — one frame of the finished game (the route diagram, labels on)
+# 08 · THE FALL-THROUGH — one frame of the finished game (the route diagram, labels on)
 
 One frame of the finished game THE PROBE: the resilience doctrine as a picture — a live draw
 tries two dead rods, falls through both, lands on the free hearth, and still answers. Failure

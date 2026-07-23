@@ -1,4 +1,4 @@
-# W6 · THE STAKE — one frame of the finished game (the ladder view, labels on)
+# 05 · THE STAKE — one frame of the finished game (the ladder view, labels on)
 
 One frame of the finished game THE PROBE: the LADDER inspection view — the real energy grid as a
 vertical ladder of rods, at the moment a paid reach ignites the top rod. The economy made

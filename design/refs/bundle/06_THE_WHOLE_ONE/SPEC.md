@@ -1,4 +1,4 @@
-# W5 · THE WHOLE ONE — one frame of the finished game (photo mode, the endgame poster)
+# 06 · THE WHOLE ONE — one frame of the finished game (photo mode, the endgame poster)
 
 The destination frame of the finished game THE PROBE: every organ earned, the instrument fully
 alive. The fog is gone. Brighter than any other frame — and still lawful: amber-on-black

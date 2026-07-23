@@ -1,48 +1,65 @@
-# 00 · HOW TO USE — one subbundle per image
+# 00 · HOW TO USE — one conversation, top to bottom (the anchor method)
 
-Each image has its own folder with ONE self-contained `SPEC.md`. The spec is written **as if the
-game were already fully built**: the exact save-state, every element in frame, every readout and
-number. Some of that detail is speculative — deliberately. We are designing backward from the
-finished game; being wrong in a reference is cheap and useful. The reference leads, the build
-follows.
+The folders are numbered in GENERATION ORDER. Work 01 → 12 in ONE ChatGPT conversation: the image
+model anchors on the first accepted images, so everything generated later inherits the look.
+01 establishes the world's whole identity; 02–06 extend it; 07–09 bring it close; 10–12 (the
+interfaces) inherit the full material and type language last. Do not skip ahead — the order IS
+the coherence.
 
-## Per image
+Each folder holds ONE self-contained `SPEC.md` written as if the game were already fully built
+(exact save-state, everything in frame, exact engraved text). Speculative detail is deliberate:
+the reference leads, the build follows; being wrong here is cheap and useful.
 
-1. Fresh ChatGPT conversation, image generation on.
-2. Attach exactly ONE file: `<scene>/SPEC.md`.
-3. Paste:
+## The step by step
 
-   > Read the attached SPEC. It describes one frame of a finished game. Render that frame
-   > exactly: the STYLE LAW section is a hard constraint (palette, type, composition, FORBIDDEN
-   > list), and EVERYTHING IN FRAME is the complete inventory — include what it lists, nothing it
-   > doesn't. Give me 3 variants: calm/wide, tighter/more dramatic, and your best synthesis.
+1. Open ChatGPT — ONE new conversation for the whole run (image generation on).
+2. Attach `01_THE_INSTRUMENT_AT_REST/SPEC.md` and paste:
 
-4. Correct drift by quoting the exact violated SPEC line. Save keepers as `<scene-id>_<n>.png`.
+   > Read the attached SPEC. It describes one frame of a finished video game. Render that frame
+   > exactly. Hard constraints: the STYLE LAW section is absolute (palette, type, composition,
+   > FORBIDDEN list); EVERYTHING IN FRAME is the complete inventory — include everything it
+   > lists, add nothing it doesn't; any visible text must be EXACTLY the words the SPEC gives,
+   > legible, monospace, engraved; use the aspect ratio in COMPOSITION & CAMERA. Give me 3
+   > variants: (1) calm/wide, (2) tighter and more dramatic, (3) your best synthesis.
 
-## The shared save-state (all 12 specs agree on this — the set is ONE game)
+3. Pick the best variant. Correct drift by quoting the violated SPEC line, one fix per message:
+   > Violation — STYLE LAW: "FORBIDDEN: rounded consumer UI". Variant 2 has rounded cards.
+   > Regenerate with squared corners and engraved hairlines.
+4. When one variant is RIGHT, say so explicitly before moving on — this is the anchor:
+   > Variant 3 is canon. Keep this exact style, palette, and material language for every
+   > following image in this conversation.
+5. Attach the NEXT folder's SPEC.md in the SAME conversation and paste:
+   > Same game, same canon style as the accepted image above. Now render the frame in this new
+   > SPEC under the same hard constraints. 3 variants.
+6. Repeat 3–5 down the list to 12.
+7. If the conversation gets long and quality degrades: start a fresh one, attach the LAST
+   ACCEPTED image (as a picture) + the next SPEC, and say "match this canon style exactly."
+8. Save every keeper as `<folder-name>_<variant>.png` (e.g. `10_THE_BENCH_PLATE_3.png`) and
+   bring them all back for curation.
 
-Mid-game, rung 2. Constructs built so far: `c-01` (the first bare draw), `c-04` = THE DRAW · THE
-LADDER · THE MEASURE — earned the title **RESTORABLE COHERENCE**; `c-07` = THE DRAW · RECALL ·
-THE MEASURE — earned **BACKWARDS CHANNEL**. Organs lit: MOUTH, GOVERNOR, MEMORY, LOOP. Still fog:
-SENSES, HANDS. Meters: `POWER 1998 LIVE` · `RODS 7` · `MEM 48` · records `LAST 1.44S · BEST
-0.98S` · zone default `PRIVATE`.
+## The generation order (and why)
 
-## The subbundles
-
-| folder | frame | kind |
+| # | frame | role in the anchor chain |
 |---|---|---|
-| W1_INSTRUMENT_AT_REST/ | the world idling, alive | world (photo mode, HUD hidden) |
-| W2_THE_IGNITION/ | the core flaring on a landed draw | world (photo mode) |
-| W3_THE_FOG_FRONTIER/ | lit MEMORY vs fog SENSES on one ring | world (photo mode) |
-| W4_THE_FLIGHT/ | the probe crossing the outer ring | world + minimal HUD |
-| W5_THE_WHOLE_ONE/ | endgame: every organ burning | world (photo mode) |
-| W6_THE_STAKE/ | the ladder reaching a paid rod | world/diagram |
-| G1_THE_SEAT/ | RECALL seating onto the rail | gameplay close-up |
-| G2_THE_FALL_THROUGH/ | the reroute landing on the hearth | gameplay diagram |
-| G3_THE_EARNED_TITLE/ | c-07 earning BACKWARDS CHANNEL | gameplay ceremony |
-| I1_THE_BENCH_PLATE/ | the full bench mid-run | interface |
-| I2_THE_RUN_TRACE/ | the trace closing into a RECORD | interface |
-| I3_THE_FLIGHT_HUD/ | the cockpit glass over the world | interface |
+| 01 | THE INSTRUMENT AT REST | THE master anchor: world, palette, shapes |
+| 02 | THE IGNITION | the amber event language |
+| 03 | THE FLIGHT | scale + the probe + first engraved HUD type |
+| 04 | THE FOG FRONTIER | close world detail: earned vs fog, first labels |
+| 05 | THE STAKE | the diagram language (ladder, labels) |
+| 06 | THE WHOLE ONE | the world block's climax — endgame poster |
+| 07 | THE SEAT | bench material language, macro |
+| 08 | THE FALL THROUGH | gameplay diagram (inherits 05's language) |
+| 09 | THE EARNED TITLE | the ceremony (type as monument) |
+| 10 | THE BENCH PLATE | the main interface — inherits everything |
+| 11 | THE RUN TRACE | the receipt column |
+| 12 | THE FLIGHT HUD | the cockpit glass finale |
 
-Masters `01_STYLE_LAW.md` and `02_WORLD_BRIEF.md` remain the source of truth for the law text —
-each SPEC inlines what it needs and stands alone.
+## The shared save-state (all 12 specs agree — the set is ONE game)
+
+Mid-game, rung 2. `c-01` the first bare draw; `c-04` = THE DRAW · THE LADDER · THE MEASURE,
+earned **RESTORABLE COHERENCE**; `c-07` = THE DRAW · RECALL · THE MEASURE, earned **BACKWARDS
+CHANNEL**. Organs lit: MOUTH, GOVERNOR, MEMORY, LOOP. Fog: SENSES, HANDS. Meters: `POWER 1998
+LIVE` · `RODS 7` · `MEM 48` · `LAST 1.44S · BEST 0.98S` · zone `PRIVATE`.
+
+Masters `01_STYLE_LAW.md` / `02_WORLD_BRIEF.md` at the bundle root stay the source of truth for
+the law text; every SPEC inlines what it needs and stands alone.

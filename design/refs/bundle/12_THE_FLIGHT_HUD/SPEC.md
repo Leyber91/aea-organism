@@ -1,4 +1,4 @@
-# I3 · THE FLIGHT HUD — one frame of the finished game (the cockpit glass)
+# 12 · THE FLIGHT HUD — one frame of the finished game (the cockpit glass)
 
 One frame of the finished game THE PROBE: looking through the probe's instrument glass while
 approaching the core. The HUD is the thinnest possible layer — engraved at the corners, never a

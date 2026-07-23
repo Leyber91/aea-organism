@@ -1,4 +1,4 @@
-# I1 · THE BENCH PLATE — one frame of the finished game (the main interface, mid-run)
+# 10 · THE BENCH PLATE — one frame of the finished game (the main interface, mid-run)
 
 One frame of the finished game THE PROBE: the bench — the game's primary interface — captured
 mid-run, rendered as a diegetic milled instrument. This is the single most important interface

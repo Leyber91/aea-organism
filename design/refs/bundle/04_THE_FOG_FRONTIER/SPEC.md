@@ -1,4 +1,4 @@
-# W3 · THE FOG FRONTIER — one frame of the finished game (photo mode, labels on)
+# 04 · THE FOG FRONTIER — one frame of the finished game (photo mode, labels on)
 
 One frame of the finished game THE PROBE: two organs on the same ring — one earned and burning,
 one still fog. The game's deepest rule taught in a single image: **amber is earned.** Speculative

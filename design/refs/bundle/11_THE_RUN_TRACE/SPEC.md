@@ -1,4 +1,4 @@
-# I2 · THE RUN TRACE — one frame of the finished game (the receipt column closing)
+# 11 · THE RUN TRACE — one frame of the finished game (the receipt column closing)
 
 One frame of the finished game THE PROBE: the lower bench in close-up at the moment the measure
 closes the wire — the full receipt column of a real run, ending in PASS and a standing RECORD.
