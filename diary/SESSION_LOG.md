@@ -473,3 +473,26 @@ to "the interface is too poor": octagonal chips on a milled rail, seat-glow, the
 A slice is done ONLY when the render matches its ref side-by-side (existing harness: shot_world.mjs +
 Read the PNG; Luis go/no-go). The honesty law still governs: a ref specs FORM; the render may only glow
 where the system truly fired.
+
+---
+## 2026-07-24 — COMPOSED 0 -> 1: the loop FIRES through the merged player surface
+
+**DID (the milestone the last 12 entries circled):** verified THE MERGE is BUILT (this session's web/game/,
+not the old world.html the panels read) and fired the FIRST construct end-to-end through the player surface.
+Real-play chain, driven headless: wake flight -> fly the probe into dock range of the core (NEXUS, RANGE 12)
+-> S.near true (the #bprompt "F - THE BENCH" shows) -> F -> dock() (bench plate + dock camera) -> seat THE
+DRAW (head) + THE MEASURE (tail) -> SPACE ignite -> a REAL metered call: `HOP 1 · THE DRAW · ollama/qwen2.5:7b
+· 12 chars` (54s cold, 0.88s warm) -> `HOP 2 · THE MEASURE · PASS` -> `r-01 · PASS · SPEED 0.88s · COST FREE ·
+ZONE PRIVATE` -> record `LAST 0.88S · BEST 0.88S`. COMPOSED 0 -> 1. The composer, the seam, the honesty
+(FREE = the hearth, a real ollama draw) all work. The game exists.
+
+**GAP TO THE BAR (REF-10):** the working plate is a flat translucent text form with the amber core washing up
+through it from below (the dock camera sits low over the core) - the "reads as a dashboard" failure REF-10
+exists to kill. Refine target: rebuild the bench plate to REF-10/07 (machined matte plate, squared corners +
+milled rim, octagonal debossed chips on a milled rail, light-at-the-connection seat-glow, the live amber
+packet on RUN) + calm the dock composition so the plate reads against a near-black field, not a giant amber blob.
+
+**NEXT (refine, in order):** (1) the bench plate -> REF-10 (the primary "too poor" fix), side-by-side vs the
+locked ref. (2) the dock-camera composition (core wash). (3) the honesty fixes the critic flagged: tokens 0
+-> a dash (energy.py:152), the len>0 MEMORY over-claim (schema.py), the `alive` field in the claim-ceiling
+lint. (4) then the receipt/economy surfaces (REF-11/05) + the first title once RECALL forges.
