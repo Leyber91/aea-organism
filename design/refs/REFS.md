@@ -10,6 +10,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-03 | REF-03_THE_FLIGHT.png | flight scale + the in-game HUD (all five strings are the real HUD spec) + the probe's canon craft design | 2026-07-23 | ChatGPT Images 2.0, take 2 (one scale-fix roll) |
 | REF-04 | REF-04_THE_FOG_FRONTIER.png | the organ-state vocabulary up close: earned ember vs completely hollow fog; labels-on-approach at intimacy | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (tic preempted in base prompt) |
 | REF-05 | REF-05_THE_STAKE.png | the ladder/economy view: rod states (ignited-paid / dead-X / cooling / hearth), the reach filament, EST-before-fire | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (count stated twice held) |
+| REF-06 | REF-06_THE_WHOLE_ONE.png | the endgame poster / win condition: all organs burning, bare names (FOG gone), full-metabolism traffic, the caption at maximum load | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -66,3 +67,13 @@ dark = fell through, dim slats = cooling windows, warm ember = the hearth floor)
 filament climbing hearth-to-crown, lighting nothing it passes, brightest at ignition; the stake
 labeled BEFORE the fire (DEEP - EST 1u). Governs the LADDER inspection view + every EST/FREE
 surface. Zero fix rolls - the exact-count-stated-twice pattern held.
+
+## REF-06 — what it locks
+
+The destination image: five embers + the blazing hub, labels as BARE NAMES (the FOG suffix's
+disappearance IS the game's payoff), four pulses on four spokes (the whole one RUNS, not just
+exists), warm under-glow permitted on rings/spokes only at endgame. Non-binding miss: the
+"PUBLIC - OPEN" outer-ring label dropped - now a CONFIRMED model tic (3rd offense: labels near
+the frame edge get eaten); the engine renders ring labels by code. Poster/box-art candidate and
+the build's final target: when the real engine renders this frame from live state, the game is
+done.
