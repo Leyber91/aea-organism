@@ -1,56 +1,61 @@
-# 08 · THE FALL-THROUGH — one frame of the finished game (the route diagram, labels on)
+# 08 · THE FALL-THROUGH — one frame of the finished game (the route diagram) · GPT-Image-2 spec v2
 
-One frame of the finished game THE PROBE: the resilience doctrine as a picture — a live draw
-tries two dead rods, falls through both, lands on the free hearth, and still answers. Failure
-rerouted in the open, never hidden. Speculative details intentional. Self-contained.
+The resilience doctrine as one picture: a live draw tries two dead rods, breaks downward through
+both, lands on the free hearth — and still answers. Failure rerouted in the open, worn like a
+scar. This is the run that earns the title RESTORABLE COHERENCE.
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Field near-black `#06090e`–`#0c131c`; vast margins around one clean diagram.
-- Structure ink `rgb(120,155,175)`: rod outlines, hairline ticks, engraved type.
-- Cold accent: the dead rods' cross-hairlines. AMBER: the route-line (warm) and the completion
-  bloom on the hearth (hot, the brightest element).
-- Type: IBM-Plex-Mono engraved capitals, tiny, tabular; EXACTLY the labels specified below,
-  legible; nothing else written.
-- Register: a subway-map of survival — severe, clean, honest. A precision plate, not an
-  infographic.
-- FORBIDDEN: multicolour/neon, arrows with fat heads, gloss, ornament, people, extra text.
+1. Attach TWO references: Image 1 = REF-01 (style canon) · Image 2 = REF-05 THE STAKE (the
+   rod-state vocabulary this frame must reuse).
+2. Paste the CANON BLOCK (bench/diagram variant) + THE PROMPT below as one message.
+3. ONE image back → single-change fixes → accept as `08_THE_FALL_THROUGH_<take>.png` → REF-08.
 
-## THE GAME (context)
+## THE PROMPT (paste after the canon block)
 
-Every draw falls down a ladder of real compute rods. A dead rod refuses; the route breaks
-downward and tries the next; the free local hearth always answers eventually. The receipt keeps
-every step — the reroute is worn like a scar, proudly.
+SCENE
+A diagram surface of the same game, in the exact rod-language of Image 2: machined horizontal
+rod-slats floating in pure darkness on the matte near-black field, engraved hairline structure,
+vast black margins. No rings, organs, core, or bench chips — only the route and its rods.
 
-## THE MOMENT
+SUBJECT
+The receipt of one real run, drawn as a route:
+- A thin warm amber ROUTE-LINE enters from the left edge at upper height, travelling right.
+- ROD 1 (upper right of entry): a dead machined slat in Image 2's dead-rod language — dark with
+  a faint cold-blue X hairline across it. The amber line reaches it and BREAKS sharply downward
+  at a clean right-angle notch. Beside this rod, one tiny engraved label: "FELL THROUGH"
+- ROD 2 (lower, further right): an identical dead slat with its X. The line steps down again —
+  two clean stair-steps of rerouting.
+- ROD 3 (lower right): THE HEARTH in Image 2's hearth language — a machined slat glowing a soft
+  steady warm ember along its length. The route-line lands on it and ends in a small
+  concentrated amber completion bloom — the single brightest element. Beneath this rod, one
+  tiny engraved label: "THE HEARTH · FREE"
+- To the right of the bloom, one small engraved line: "PASS · 1.44s"
 
-Construct `c-04`'s famous run — the one that earned the title RESTORABLE COHERENCE. The route
-entered hot, lost two rods, landed on the hearth, and passed in 1.44 seconds for free. This frame
-is that receipt drawn as a diagram.
+KEY DETAILS
+- EXACTLY THREE rods: two dead with X hairlines, one hearth ember. Exactly TWO stair-step
+  breaks in the route.
+- The eye must read left→break→break→land→bloom→verdict — a subway-map of survival.
+- A few faint structure-grey tick hairlines along the route's path (an unlabeled time axis).
+- Severe, clean, precise — a certificate of a fall that ended well.
 
-## EVERYTHING IN FRAME (complete inventory)
+CONSTRAINTS (hard)
+1. Landscape 1536×1024, the diagram in the central band, vast black margins.
+2. Exactly THREE rods (two dead-X, one hearth) and TWO breaks — counted.
+3. Brightness order: the completion bloom first, the route-line second, the hearth ember third;
+   the dead rods stay dark, their X marks faint and cold.
+4. Text: exactly "FELL THROUGH", "THE HEARTH · FREE", "PASS · 1.44s" — once each, verbatim,
+   engraved monospace capitals.
+5. No people, no watermark, no arrows with heads, no world or bench elements, no new elements.
 
-1. **THE ROUTE-LINE:** a thin warm amber line entering from the left edge at upper height,
-   travelling right.
-2. **ROD 1 (upper):** a small machined slat, dark, with a faint cold-blue cross-hairline; the
-   amber line reaches it and BREAKS sharply downward at a clean right-angle notch. Beside the
-   rod, tiny engraved: `FELL THROUGH`.
-3. **ROD 2 (middle, further right):** identical dead slat and cross; the line steps down again —
-   two clean stair-steps. No label on this one.
-4. **THE HEARTH (lower right):** a machined slat glowing soft steady warm ember along its length;
-   the route-line lands on it and ends in a small concentrated amber completion bloom — the
-   brightest element. Beneath the rod, tiny engraved: `THE HEARTH · FREE`.
-5. **THE VERDICT:** to the right of the bloom, one small engraved line: `PASS · 1.44s`.
-6. Vast black void around the diagram; a few faint structure-grey tick hairlines along the
-   route's path (the time axis, unlabeled). Nothing else.
+## Ready-made refinement lines
 
-## COMPOSITION & CAMERA
+- "Change only the breaks: sharper right-angle notches at the dead rods. Keep everything else the same."
+- "Change only the bloom: smaller and more concentrated where the line meets the hearth. Keep everything else the same."
+- "Count violation — exactly THREE rods and TWO breaks. Regenerate with the correct count, everything else the same."
+- "Violation — text must read exactly 'PASS · 1.44s'. Correct that string only, change nothing else."
 
-16:9, the diagram occupying the central band with generous black margins, straight-on. The eye
-reads left→right→down→right: attempt, break, break, land, bloom, verdict. Severe and clean; the
-two stair-steps are the drama.
+## What this frame must make a stranger feel
 
-## GENERATE
-
-Render the frame. 3 variants: (1) as specified, (2) tighter on the second break and the landing,
-(3) your best synthesis. STYLE LAW and the exact labels are hard constraints.
+Respect for a survivor: *it was refused twice, fell, landed home, and still answered.* If it
+reads as a flowchart, it fails; if the scar reads as the proof, it passes.
