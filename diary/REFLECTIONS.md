@@ -419,6 +419,66 @@ fixated. The concentric / instrument idea (D6) survives; the literal *city* is w
 - **A voice that sounds alive.** The entity is something you *talk to*; a robotic TTS is unacceptable
   (*"not natural in any sense"*). Recurs from R1 onward — treat voice as a first-class experience, not polish.
 
+## R40 · The PROGRESSION should feel like SPORE — compose a being, it lives, each more complete until the whole
+
+**Spark (2026-07-23, his words):** *"It needs to feel probably like Spore, in the progression. Take it as a
+concept, I think it's the right tune."* Said after judging the current build too basic / unsellable, and
+after I pushed back on a ChatGPT-image round (the fix is game-depth, not pictures).
+
+**Realized:** Spore is the crisp articulation of the thesis we already hold (D3/D9/R25/R30): compose a being
+from real parts -> it LIVES and acts -> each combination more complete than the last -> until you hold the
+whole one (THE AEA). Spore's soul is editor-to-lived-creature + escalating COMPLETENESS (cell -> creature ->
+tribe -> civ -> space). Our stages are AEA-completeness: the spark/BRAIN (first light) -> the Minimal Viable
+Organism (BRAIN+SENSES+HANDS+LOOP: it wakes and acts) -> a governed, remembering mind (+MEMORY +GOVERNOR) ->
+the whole AEA that reaches the internet (THE SEND / Phase B = the "space stage", the open sandbox). The
+completeness axis = the SIX ORGANS; you fill them in; viability is empirical (it runs or it visibly doesn't -
+Spore's "a legless creature can't move" IS our R30). CONVERGES with the review board's #1 structural fix:
+unify the compose vocabulary to the organs so "each more complete than the last" becomes representable.
+
+**Where it goes -> the spine.** Progression = composing increasingly complete organisms from ONE growing
+organ part-set (BRAIN/SENSES/HANDS/MEMORY/LOOP/GOVERNOR); wiring an organ in-game lights it in the world
+(verb->world, R37 metroidvania). The bench's engine primitives (tap/scaffold/ladder/scorer) fold under the
+organ vocabulary. First rung: wire a 2nd real organ (SENSES) as a composable part beyond BRAIN.
+
+**The filter (two collisions NAMED — do not overwrite the lock):** (1) SPORE-the-STRUCTURE, not
+SPORE-the-SPECTACLE — the two-ink austerity + AI-curious-builder audience stay LOCKED (D12 HOLD-THE-LINE);
+take the progression DNA, never the whimsy/color. (2) AVOID Spore's real failure — it was WIDE but SHALLOW
+(5 thin minigames); THE PROBE must be ONE deep compose-loop that SCALES in completeness, not 5 thin stages.
+-> graduates to a DISCOVERY once the first completeness rung ships.
+
 ---
-*Next reflection: append as `## R40 · ...` with today's date and the same shape (Spark / Realized / where
+## R41 · The combinations must be NAMED (marketable, on-theme), and we build the vocabulary ground-up
+
+**Spark (2026-07-23, his words):** *"we need to make sure all the combinations are reflected, like types of
+combinations the player is assembling. and they have to be named they have to have a good name, marketable,
+engaging and relatable to the topic."* Then, after I roasted the idea of pre-authoring a named type-catalog
+(it collides with the earned-not-pre-authored lock, R30/N12/No-Man's-Sky): *"you roasted my ideas and I loved
+it, our own vocabulary is important, we need to construct in order, not from the roof to the ground."* Also
+asked, before rung 2: *"beware we still have 29 codex elements, 38 real modules, the seeds, 8 wire types,
+doctrines - a lot needs narrative. do we have it?"*
+
+**Realized:** two truths held at once. (1) The assembled beings need real, marketable, on-theme IDENTITY -
+"c-01" is not sellable; the player is composing *creatures* and they deserve names. (2) But a type is real
+only when it RUNS differently (R30/N12) - so the type-catalog is EARNED per composition, not pre-authored
+(that would be the fake-depth trap). Reconciliation: build the NAMING SYSTEM (the convention + the atom
+vocabulary), never the catalog. The narrative for the *elements* is already over-supplied (A3/A12/A6/A11/
+bestiary + codex proof strings, ~110:1 - D7); the gap is that it is UN-WIRED, and a few part names read like
+plumbing (tap/scaffold/ladder). CONSTRUCT IN ORDER: name the ATOMS (parts -> organs) first = the ground
+floor; the beings inherit the vocabulary as they emerge; THE WHOLE ONE is the roof, reached last.
+
+**Where it goes -> the vocabulary lock is the ground floor of naming, before rung 2.** Fold the composable
+parts under the marketable organ vocabulary (BRAIN/SENSES/HANDS/MEMORY/LOOP/GOVERNOR + the reach/judge
+mechanics), reconcile with the tier-names that already exist (SPARK -> METABOLISM -> THE TRIBE -> HANDS ON
+THE WORLD -> THE SEND -> THE WHOLE ONE) and the glossary/signature, and lock ONE coherent, ours, honest,
+marketable system + the convention by which an assembled being earns its name from its organ-signature +
+proven behavior. THEN build rung 2 (RECALL composable) on the locked vocabulary, and the first being it
+produces earns the first real name.
+
+**The filter (NAMED, do not overwrite the lock):** the vocabulary must be GROUNDED in what already exists
+(the glossary, the organs, the tiers) - reconciled + polished, not invented fresh. Honesty law over
+marketing: no name may over-claim (conscious/sentient/alive stay forbidden; the ceiling is "measured
+functional correlate"). -> graduates to a DISCOVERY once the vocabulary is locked and rung 2 ships on it.
+
+---
+*Next reflection: append as `## R42 · ...` with today's date and the same shape (Spark / Realized / where
 it goes / open thread). Then, in a rested pass, decide what graduates into `DISCOVERIES.md`.*

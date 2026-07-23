@@ -31,6 +31,10 @@ _ORGANS = [
 _EDGES = [["LOOP", "BRAIN"], ["MEMORY", "BRAIN"], ["GOVERNOR", "BRAIN"],
           ["BRAIN", "SENSES"], ["BRAIN", "HANDS"], ["GOVERNOR", "HANDS"]]
 
+# player-facing organ label (A17): the depth-0 organ renders as THE MOUTH; BRAIN stays the internal id
+# (edges, wired map). A mouth draws/speaks and never claims cognition - the claim ceiling holds.
+_LABEL = {"BRAIN": "MOUTH"}
+
 
 def _zones() -> list:
     """The real privacy rings from grid.ZONES, innermost (most restrictive) first."""
@@ -68,8 +72,8 @@ def _live() -> dict:
 def _build() -> dict:
     live = _live()
     w = live["wired"]
-    nodes = [{"id": o["id"], "zone": o["zone"], "depth": o["depth"],
-              "entry": o["entry"], "wired": bool(w.get(o["id"]))} for o in _ORGANS]
+    nodes = [{"id": o["id"], "label": _LABEL.get(o["id"], o["id"]), "zone": o["zone"],
+              "depth": o["depth"], "entry": o["entry"], "wired": bool(w.get(o["id"]))} for o in _ORGANS]
     return {"ok": True, "core": "MIND", "alive": live["alive"],
             "zones": _zones(), "nodes": nodes, "edges": _EDGES}
 

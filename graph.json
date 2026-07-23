@@ -7,15 +7,15 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 69,
+    "count": 68,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
-    "count": 54,
+    "count": 55,
     "source": "design/00_VISION.md"
    },
    "reflections": {
-    "count": 39,
+    "count": 41,
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
@@ -35,19 +35,19 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 69
+    "count": 68
    },
    {
     "src": "THE_PROBE",
     "dst": "plan",
     "rel": "contains",
-    "count": 54
+    "count": 55
    },
    {
     "src": "THE_PROBE",
     "dst": "reflections",
     "rel": "contains",
-    "count": 39
+    "count": 41
    },
    {
     "src": "THE_PROBE",
@@ -306,11 +306,6 @@
     },
     {
      "id": "/api/node/run",
-     "type": "endpoint",
-     "served_by": "aea/server/controlroom.py"
-    },
-    {
-     "id": "/api/schema",
      "type": "endpoint",
      "served_by": "aea/server/controlroom.py"
     },
@@ -747,6 +742,16 @@
      "rel": "imports"
     },
     {
+     "src": "read",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "read",
+     "dst": "pulse",
+     "rel": "imports"
+    },
+    {
      "src": "reflect",
      "dst": "grid",
      "rel": "imports"
@@ -784,6 +789,11 @@
     {
      "src": "relay",
      "dst": "swarm",
+     "rel": "imports"
+    },
+    {
+     "src": "schema",
+     "dst": "grid",
      "rel": "imports"
     },
     {
@@ -974,6 +984,11 @@
      "id": "design/A16_WIRTHFORGE.md",
      "type": "design_doc",
      "path": "design/A16_WIRTHFORGE.md"
+    },
+    {
+     "id": "design/A17_VOCABULARY.md",
+     "type": "design_doc",
+     "path": "design/A17_VOCABULARY.md"
     },
     {
      "id": "design/A1_PLAYER_EXPERIENCE.md",
@@ -1387,6 +1402,18 @@
      "id": "R39",
      "type": "reflection",
      "title": "R39 · The world is a STRUCTURAL MAP of the being, not a city",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R40",
+     "type": "reflection",
+     "title": "R40 · The PROGRESSION should feel like SPORE — compose a being, it lives, each more complete until the whole",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R41",
+     "type": "reflection",
+     "title": "R41 · The combinations must be NAMED (marketable, on-theme), and we build the vocabulary ground-up",
      "path": "diary/REFLECTIONS.md"
     }
    ],

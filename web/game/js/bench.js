@@ -42,11 +42,11 @@ window.BENCH = (function () {
   /* chip rows mirror modules.json v0 — each names the REAL entry point it wraps
      (registry law, P0 addendum). glyph: circle = seed family, pent = axis (A11 §3.3). */
   var PARTS = {
-    tap:      { nm: "BRAIN",    slot: "head", glyph: "circ", entry: "energy.draw" },
-    scaffold: { nm: "SCAFFOLD", slot: "mid",  glyph: "pent", entry: "prompt scaffold" },
-    governor: { nm: "GOVERNOR", slot: "mid",  glyph: "circ", entry: "grid.METER.can_spend" },
-    ladder:   { nm: "LADDER",   slot: "mid",  glyph: "circ", entry: "energy.ladder" },
-    scorer:   { nm: "SCORER",   slot: "tail", glyph: "circ", entry: "receipt scorer" }
+    tap:      { nm: "THE DRAW",    slot: "head", glyph: "circ", entry: "energy.draw" },
+    scaffold: { nm: "THE FRAME",   slot: "mid",  glyph: "pent", entry: "prompt scaffold" },
+    governor: { nm: "THE METER",   slot: "mid",  glyph: "circ", entry: "grid.METER.can_spend" },
+    ladder:   { nm: "THE LADDER",  slot: "mid",  glyph: "circ", entry: "energy.ladder" },
+    scorer:   { nm: "THE MEASURE", slot: "tail", glyph: "circ", entry: "receipt scorer" }
   };
   var RAIL = ["tap", "scaffold", "governor", "ladder", "scorer"];
 
@@ -316,9 +316,14 @@ window.BENCH = (function () {
     if (S.state === "RUN") { D.runchip.innerHTML = 'PLATE LOCKED — RUN LIVE'; D.runchip.classList.add("live"); return; }
     D.runchip.classList.remove("live");
     if (S.state === "HALT") { D.runchip.innerHTML = "RUN — HALTED"; return; }  /* true state, amber withdrawn */
-    if (S.head !== "tap") D.runchip.innerHTML = "RUN — NO BRAIN, NO DRAW";
-    else if (S.tail !== "scorer") D.runchip.innerHTML = "RUN — UNSCORED · NO RECORD WITHOUT SCORER";
-    else D.runchip.innerHTML = "RUN <b>[SPACE]</b> · EST 1u";  /* one draw part in the pool: TAP */
+    if (S.head !== "tap") D.runchip.innerHTML = "RUN — NO DRAW AT THE HEAD";
+    else if (S.tail !== "scorer") D.runchip.innerHTML = "RUN — UNSCORED · NO RECORD WITHOUT THE MEASURE";
+    else {
+      /* THE STAKE, estimated before you fire: THE LADDER reaches a cloud rod (1u of real budget), but the
+         sensitive-zone privacy law forces local (free) no matter what. A bare draw = THE HEARTH (free). */
+      var reach = S.mid.indexOf("ladder") >= 0 && S.zone !== "sensitive";
+      D.runchip.innerHTML = "RUN <b>[SPACE]</b> · EST " + (reach ? "1u" : "FREE");
+    }
   }
 
   function renderStrip() {
@@ -326,7 +331,7 @@ window.BENCH = (function () {
     /* THE P0-CUT item 3: the strip ships for TAP only — the one writable (the zone law) */
     D.strip.style.display = "block";
     D.strip.innerHTML =
-      '<div class="ln">BRAIN — DRAWS POWER · WRAPS energy.draw</div>' +
+      '<div class="ln">THE DRAW — DRAWS POWER · WRAPS energy.draw · LIGHTS THE MOUTH</div>' +
       '<div class="ln">&gt; zone: <span class="zval">' + zoneWord() + '</span> · <span class="lab s60">[ / ] CYCLES · PUBLIC IS EXPLICIT</span></div>' +
       '<div class="ln">&gt; tier: pinned by task tier_floor · local/keyless</div>' +
       '<div class="ln">&gt; prompt_source: task ' + TASK.id + "</div>";
@@ -366,12 +371,12 @@ window.BENCH = (function () {
     if (S.state !== "COMPOSE") { lockRefuse(); return; }
     if (!S.ghost) return;
     var id = S.ghost, slot = PARTS[id].slot;
-    if (g.t === "head" && slot !== "head") { receipt("the head holds the BRAIN — the being thinks first"); return; }
-    if (g.t === "tail" && slot !== "tail") { receipt("the tail holds the SCORER — the measure closes the wire"); return; }
-    if (g.t === "mid" && slot === "head") { receipt("a BRAIN holds the head — it draws the power"); return; }
-    if (g.t === "mid" && slot === "tail") { receipt("a SCORER holds the tail — every task ends measured"); return; }
-    if (g.t === "head") { S.head = id; receipt("seated BRAIN at the head"); }
-    else if (g.t === "tail") { S.tail = id; receipt("seated SCORER at the tail"); }
+    if (g.t === "head" && slot !== "head") { receipt("the head holds THE DRAW — a being draws first"); return; }
+    if (g.t === "tail" && slot !== "tail") { receipt("the tail holds THE MEASURE — it closes the wire"); return; }
+    if (g.t === "mid" && slot === "head") { receipt("THE DRAW holds the head — it draws the power"); return; }
+    if (g.t === "mid" && slot === "tail") { receipt("THE MEASURE holds the tail — every task ends measured"); return; }
+    if (g.t === "head") { S.head = id; receipt("seated THE DRAW at the head"); }
+    else if (g.t === "tail") { S.tail = id; receipt("seated THE MEASURE at the tail"); }
     else { S.mid.splice(g.i, 0, id); receipt("seated " + PARTS[id].nm + " on the spine"); }
     S.ghost = null; S.cursor = 0;
     blip(520, 40);
@@ -428,7 +433,7 @@ window.BENCH = (function () {
 
   function fire() {
     if (S.state !== "COMPOSE") { lockRefuse(); return; }
-    if (S.head !== "tap") { receipt("no brain — a being draws through a BRAIN (the head)"); return; }
+    if (S.head !== "tap") { receipt("no draw — a being draws through THE DRAW (the head)"); return; }
     S.strip = false; S.sel = null; S.failTick = null;
     renderStrip(); renderSpine();
 

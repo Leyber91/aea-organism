@@ -161,9 +161,9 @@ def validate_spec(spec) -> dict:
                           "LOST SIGNAL (the forge_gate check)")
         if p not in FIREABLE:
             return refuse(f"part '{p}' has no P0 fire path - the opening pool is "
-                          "tap, scaffold, governor, ladder, scorer (A13 s3)")
+                          "THE DRAW, THE FRAME, THE METER, THE LADDER, THE MEASURE (A13 s3)")
     if parts[0] != "tap":
-        return refuse("no power inlet - a construct draws through a TAP; TAP holds the head "
+        return refuse("no draw at the head - a construct draws through THE DRAW; it holds the head "
                       "(rail law)")
     if "scorer" in parts and parts[-1] != "scorer":
         return refuse("SCORER holds the tail - after the measure there is nothing left to "
@@ -195,7 +195,7 @@ def validate_spec(spec) -> dict:
 # --------------------------------------------------------------------------------------
 def tap(prompt: str, tier: str = "local", zone: str = "private",
         prompt_source: str = "task") -> dict:
-    """TAP - THE POWER INLET: a thin wrapper over energy.draw, no new organ.
+    """TAP (player-facing: THE DRAW): a thin wrapper over energy.draw; lights the MOUTH organ.
     latency_ms is the harness's own perf_counter around the draw - never draw()'s
     rounded seconds. tokens stays None: energy.draw does not surface a token count,
     and an absent measurement renders absent, never invented (honesty law).
@@ -447,9 +447,15 @@ def _execute(run_id: str, spec: dict, task: dict) -> None:
     reads the file - the file is the truth (E1 checklist 7.6). A failing link lands its
     row THE MOMENT it fails, so the trace pane sees the failure mid-run (R1 finding 6)."""
     mods = _manifest().get("modules", {})
-    tier = (task.get("tier_floor")                          # the task pins the tier at P0
-            or ((spec.get("rods") or {}).get("default") or {}).get("tier")
-            or "reflex")
+    # THE REACH / THE STAKE: seating LADDER reaches UP the tier ladder to a cloud rod (a real metered
+    # request that spends real budget and can starve on a bad grid day). Bare BRAIN+SCORER stays on the
+    # free local hearth (the awe-beat guard). The zone's privacy law still bounds the reach - a
+    # sensitive-zone draw stays on-machine no matter what (energy.ladder filters rods by zone).
+    reach = "ladder" in (spec.get("parts") or [])
+    tier = ("reflex" if reach
+            else (task.get("tier_floor")                    # else the task pins local (the free hearth)
+                  or ((spec.get("rods") or {}).get("default") or {}).get("tier")
+                  or "reflex"))
     ctx = {"prompt": task["prompt"], "zone": spec["zone"], "tier": tier,
            "payload": None, "score": None}
     t_run = perf_counter()

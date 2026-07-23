@@ -70,7 +70,7 @@ canvas{display:block}
 #bench{position:fixed;inset:0;z-index:25;display:none;align-items:center;justify-content:center;
   pointer-events:none}
 #bench.on{display:flex}
-#bench .plate{width:640px;pointer-events:auto}
+#bench .plate{width:640px;pointer-events:auto;font-variant-numeric:tabular-nums}
 .plate .rgn{padding:10px 2px 0}
 .task .t-line{color:var(--s100)}
 .task .t-check{color:var(--s60);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:2px}

@@ -312,3 +312,81 @@ empty `data/`. Not merged. Played ~20 min, once (`M0.1`, `M1.1` in `journey_save
 
 **STOP:** no new design chapters, no new acts, no more concept sheets until an act ships. The
 corpus is 12× the game by volume; that ratio is the recorded failure mode, not thoroughness.
+
+---
+## 2026-07-23 — the AEA apologia + THE VOCABULARY locked (ground floor)
+
+**DID:**
+- **The apologia** (`design/AEA_APOLOGIA.html`): every AEA element enumerated + honesty-marked, and the
+  completeness ladder proven to be ONE axis (Spore's stages = the acts = the autonomy classes). Headline
+  reality-split: the running ENTITY is real (PROTO-AUTONOMOUS 6/6, 109 ticks) but the composer is at rung 1
+  (5/17 parts, 0 constructs). The whole one is specified + reachable, not assembled.
+- **THE VOCABULARY** (`design/A17_VOCABULARY.md`): locked the naming SYSTEM ground-up (atoms first, not a
+  pre-authored catalog of beings — that stays earned, R30/N12). Built from the real inventory, pressure-tested
+  by a 5-lens board (marketable/honest/thematic/consistent/further, wf wwsoyn204) that caught real code-verified
+  defects. Luis ratified two forks: **MOUTH over BRAIN** (canon, ceiling-safe; BRAIN stays internal schema id)
+  and **concrete machine-body register** (killed the -er agent-nouns).
+- **Applied to code + verified live** (not just a doc): `bench.js` 5 part labels -> THE DRAW / THE FRAME /
+  THE METER / THE LADDER / THE MEASURE; scrubbed the live claim-ceiling breach ("the being thinks");
+  `bench_core.py` receipts; `schema.py` emits `label:MOUTH` on the depth-0 node (id BRAIN internal). Server
+  restarted clean (one listener), `/game/schema` returns MOUTH wired=True, bench screenshot confirms all five
+  names render with live meter truth (POWER 1998 LIVE, RODS 7, 0/4RPM).
+
+**LOCKED (A17):** four namespaces never cross — RUNGS (journey, 8) / ORGANS (earned by lighting) / PARTS
+(seatable chips) / EARNED TITLES (doctrines a run proves). Identity = the **part-signature** (not the
+organ-signature — schema reads global state, so organ-lighting is the *derived* honesty view, per-run, pending
+rung 2). Two-axis signature = anatomy + a **reach-mark** (hearth/reached/starved). A title is earned by a
+receipt, never authored; a construct can earn the name of its own worse outcome (THE SOLO LAW). THE HEARTH
+(free floor) + THE STAKE (1u real reach) promoted to atoms — the money layer made diegetic. "Tier" reserved
+for the energy band only.
+
+**NEXT — build rung 2 on the locked vocabulary (construct in order, ground-up):** make **RECALL** a composable
+bench part (entity-side `consolidate.recall()` is already live; forge the seatable part). Compose THE DRAW +
+RECALL -> the draw is grounded on real memory across a reset instead of hallucinating = a measurably more
+complete being, and the first construct to earn a real title (BACKWARDS CHANNEL). Raise the MEMORY organ's
+lighting bar from `len>0` to a recall that actually fired (the honesty board's fix). Wire per-run organ
+attribution + the reach-mark onto the bench run-row so the derived organ-view becomes true.
+
+---
+## 2026-07-23 (later) — visual elevation: core to spec + expert panel + resource-negative slice
+
+**DID:**
+- **Core to spec** (engine.js buildCore): the flat detail-0 pebble became the A6 jewel - icosahedron +
+  additive fresnel shell + two counter-rotating tori (the orrery), lit amber ONLY when schema.alive,
+  turning ONLY when alive (motion bound to a true signal). From dashboard+blob to a living instrument.
+- **Expert panel** (wf w59a68svi, 5 lenses + synth + adversarial verify): how to elevate WITHOUT draining
+  resources, best libraries for no-build r128, responsive shaders. Verdict: KEEP the color pipeline (ACES
+  per-material + inlined aces(), HalfFloat target, FinalShader sRGB+dither, LOCKED amber-only bloom) - it is
+  better-managed than most shipped WebGL. The real gaps are NO anti-aliasing + light-COUNT fillrate (not
+  object count); most wins are resource-NEGATIVE. Verify pass killed 3 factual errors (phantom bloom-resize
+  bug: composer.setSize already resizes bloom; FXAA served from web/ ROOT not vendor/; powerPreference GPU
+  assumption unverified) + 2 honesty gaps (ORGAN_MAP unverified vs real emit strings; heartbeat signal source).
+- **Built + verified the resource-negative slice** (client-side, no server restart): (1) tabular-nums on
+  #bench .plate - closes a LIVE no-jitter law violation; (2) half-res UnrealBloomPass + re-apply after
+  composer.setSize - ~half the composer's most expensive stage, visually identical; (3) deleted per-node
+  PointLights (emissive 0.82 + bloom sells the lit node) - per-fragment light loop ~6 -> 2 across the full
+  ground plane; (4) HONESTY FIX: removed the fabricated Math.sin core "heartbeat" (the panel flagged it as a
+  rhythm dressed as a real signal - a claim-ceiling brush I introduced) -> steady EARNED glow + alive-bound
+  rotation. Screenshot-verified: renders clean, organs lit, floor cleaner, zero quality loss.
+
+**LIBRARIES VERDICT (locked):** vanilla/inline for almost everything; the ONE new vendor file worth adding =
+FXAAShader.js (official r128 example, global script, served from web/ ROOT). SKIP all bundler-deps
+(pmndrs/postprocessing, drei+R3F, troika-three-text, three-mesh-bvh, SMAA) and MeshLine + lygia's
+include-resolver (lift the MIT GLSL inline instead). Full plan: tasks/w59a68svi.output.
+
+**NEXT — the VISIBLE elevation + the honesty headline (vetted order):**
+1. **FXAA** tail pass (new web/FXAAShader.js; RenderPass -> half bloom -> FinalShader renderToScreen=false ->
+   FXAA renderToScreen=true; run on the ENCODED/gamma buffer). Kills the "chunky/2003-menu" aliasing - the #1
+   visible gap. Screenshot-verify not-black under swiftshader.
+2. **Living conduits** (honesty headline): wire the real GameAPI.events stream into the world - ONE additive
+   THREE.Points, one point per real /game/events row travelling node->core, ok:false dim-grey. FIRST 3D
+   element bound to the live entity. MUST unwrap {ok,events} + verify ORGAN_MAP against real emit() strings.
+3. **Core breath from the REAL heartbeat** (replaces the removed sin): event-driven envelope from a VERIFIED
+   pulse/heartbeat signal (else a stalled entity correctly shows a still core).
+4. **Node brightness = real rolling activity** (exp-decay per organ from the same poll, clamped below fire).
+5. **Bench rail** (answers "too poor"): the flat spine -> a lit rail with parts mounted on it + segmented-wake
+   packet; chips as reticle/glyph instruments (export panels.js primitives); rationed --edge accent on state
+   transition only. All CSS/DOM/SVG, near-zero watts.
+Deferred: FXAA-on-rings via fwidth (verify derivatives pragma), fresnel normalize (nicety), powerPreference
+(until nvidia-smi confirms the entity uses the discrete GPU), fat-ribbon conduits + InstancedMesh (only past
+~50 organs).

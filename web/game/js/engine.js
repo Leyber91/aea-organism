@@ -157,19 +157,50 @@ window.ENGINE = (function () {
   function zoneRadius(i) { return 26 + i * 27; }        /* ring radius from the zone's index in the real order */
 
   function buildCore() {
-    /* structure-ink by default: DARK until the entity proves it is alive (no unconditional amber). */
-    var mesh = new THREE.Mesh(geo(new THREE.IcosahedronGeometry(1.7, 0)),
+    /* structure-ink by default: DARK until the entity proves it is alive (no unconditional amber).
+       A6 spec: icosahedron core + fresnel shell + counter-rotating tori. The heart, not a pebble. */
+    var grp = new THREE.Group(); grp.position.set(NEXUS.x, 4.8, NEXUS.z); grp.name = "core"; scene.add(grp);
+
+    var mesh = new THREE.Mesh(geo(new THREE.IcosahedronGeometry(2.1, 1)),
       mat(new THREE.MeshStandardMaterial({
         color: lin(0x0c131c), emissive: INK.structure, emissiveIntensity: 0.16,
-        roughness: 0.5, metalness: 0, flatShading: true
+        roughness: 0.42, metalness: 0.1, flatShading: true
       })));
-    mesh.position.set(NEXUS.x, 4.8, NEXUS.z); mesh.name = "core"; scene.add(mesh);
-    var light = new THREE.PointLight(INK.hot.getHex(), 0.0, 34);      /* dark until alive */
+    grp.add(mesh);
+
+    /* the fresnel shell: a rim-lit volumetric skin (reads as a jewel). Additive, depthWrite off;
+       structure-ink at rest, amber only when the heartbeat is real. Only amber crosses the bloom. */
+    var shellMat = mat(new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.FrontSide,
+      uniforms: { uColor: { value: INK.structure.clone() }, uPow: { value: 2.6 }, uGain: { value: 0.32 } },
+      vertexShader:
+        "varying vec3 vN; varying vec3 vV;\n" +
+        "void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0);\n" +
+        "  vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz);\n" +
+        "  gl_Position = projectionMatrix * mv; }",
+      fragmentShader:
+        "varying vec3 vN; varying vec3 vV; uniform vec3 uColor; uniform float uPow; uniform float uGain;\n" +
+        "void main(){ float f = pow(1.0 - max(dot(vN, vV), 0.0), uPow);\n" +
+        "  gl_FragColor = vec4(uColor * f * uGain * 3.0, f * uGain); }"
+    }));
+    var shell = new THREE.Mesh(geo(new THREE.IcosahedronGeometry(3.15, 2)), shellMat);
+    grp.add(shell);
+
+    /* two counter-rotating tori — the mind's orrery. Motion ONLY when alive (a turning heart is a
+       ticking heartbeat: the motion itself is a true signal, never idle decoration). */
+    function torus(r, tube, tilt) {
+      var t = new THREE.Mesh(geo(new THREE.TorusGeometry(r, tube, 10, 150)),
+        mat(new THREE.MeshBasicMaterial({ color: INK.structure, transparent: true, opacity: 0.5 })));
+      t.rotation.x = tilt; grp.add(t); return t;
+    }
+    var tori = [torus(4.4, 0.055, Math.PI * 0.5), torus(5.3, 0.045, Math.PI * 0.32)];
+
+    var light = new THREE.PointLight(INK.hot.getHex(), 0.0, 40);      /* dark until alive */
     light.position.set(NEXUS.x, 5.8, NEXUS.z); scene.add(light);
     var beam = new THREE.Mesh(geo(new THREE.CylinderGeometry(0.05, 0.16, 58, 6, 1, true)),
       mat(new THREE.MeshBasicMaterial({ color: INK.hot, transparent: true, opacity: 0.0, depthWrite: false })));
     beam.position.set(NEXUS.x, 29, NEXUS.z); scene.add(beam);
-    coreRef = { mesh: mesh, light: light, beam: beam };
+    coreRef = { grp: grp, mesh: mesh, shell: shell, tori: tori, light: light, beam: beam, alive: false };
   }
 
   function igniteCore() {
@@ -177,8 +208,22 @@ window.ENGINE = (function () {
     if (!coreRef) return;
     var m = coreRef.mesh.material;
     m.color = lin(0x1a1206); m.emissive = INK.hot; m.emissiveIntensity = EMISSIVE.fired; m.needsUpdate = true;
-    coreRef.light.intensity = 1.5;                                    /* range 34: amber ON the core */
+    coreRef.shell.material.uniforms.uColor.value = INK.hot.clone();
+    coreRef.shell.material.uniforms.uGain.value = 0.55;
+    coreRef.tori.forEach(function (t) { t.material.color = INK.warm; t.material.opacity = 0.85; });
+    coreRef.light.intensity = 1.5;                                    /* range 40: amber ON the core */
     coreRef.beam.material.opacity = 0.13;
+    coreRef.alive = true;
+  }
+
+  function coreUpdate(dt) {
+    /* the living heart TURNS because the entity is alive - motion bound to schema.alive, a TRUE
+       signal, not a fabricated rhythm. The steady amber is EARNED at igniteCore; the real
+       event-driven heartbeat envelope lands with the /game/events wiring (panel step 13). */
+    if (!coreRef || !coreRef.alive) return;
+    coreRef.tori[0].rotation.z += dt * 0.22;
+    coreRef.tori[1].rotation.z -= dt * 0.16;
+    coreRef.grp.rotation.y += dt * 0.05;
   }
 
   function buildZoneRings(zones) {
@@ -220,11 +265,9 @@ window.ENGINE = (function () {
       var g = geo(new THREE.OctahedronGeometry(1.25, 0)), node;
       if (n.wired) {
         node = new THREE.Mesh(g, mat(new THREE.MeshStandardMaterial({
-          color: lin(0x1a1206), emissive: INK.hot, emissiveIntensity: 0.7,   /* below fire: clean bloom, no maroon box */
+          color: lin(0x1a1206), emissive: INK.hot, emissiveIntensity: 0.82,  /* bloom sells the lit read; NO per-node light (fillrate: ~6 lights -> 2) */
           roughness: 0.45, metalness: 0, flatShading: true
         })));
-        var nl = new THREE.PointLight(INK.warm.getHex(), 0.5, 9);             /* clamped: amber ON the node, not the floor */
-        nl.position.copy(p); scene.add(nl);
       } else {
         node = new THREE.Mesh(g, mat(new THREE.MeshBasicMaterial({
           color: INK.cold, wireframe: true, transparent: true, opacity: 0.72
@@ -402,6 +445,7 @@ window.ENGINE = (function () {
     var w = window.innerWidth, h = window.innerHeight;
     camera.aspect = w / h; camera.updateProjectionMatrix();
     renderer.setSize(w, h); composer.setSize(w, h);
+    bloomPass.setSize(Math.round(w * 0.5), Math.round(h * 0.5));   /* composer.setSize clobbers bloom to full - re-apply half */
   }
 
   function loop() {
@@ -411,6 +455,7 @@ window.ENGINE = (function () {
     if (GAME.state.flags.still) { dt = 0; } else { elapsed += dt; }
     skyUpdate(elapsed);
     flightUpdate(dt);
+    coreUpdate(dt);
     if (!GAME.state.flags.still) {
       if (controlsLive) {
         chaseCam(dt, false);
@@ -448,8 +493,8 @@ window.ENGINE = (function () {
       window.innerWidth, window.innerHeight,
       { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, type: THREE.HalfFloatType }));
     composer.addPass(new THREE.RenderPass(scene, camera));
-    bloomPass = new THREE.UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight), 0.65, 0.4, 0.5); /* LOCKED (A4 §8) */
+    bloomPass = new THREE.UnrealBloomPass(                              /* half-res: bloom is low-freq; amber ~1% of frame */
+      new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5), 0.65, 0.4, 0.5); /* params LOCKED (A4 §8) */
     composer.addPass(bloomPass);
     finalPass = new THREE.ShaderPass(FinalShader);
     finalPass.renderToScreen = true;

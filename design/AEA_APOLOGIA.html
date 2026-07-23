@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>THE AEA — the apologia</title>
+<!-- The full Autonomous Entity Architecture, every element enumerated + the combination space, grounded in the
+     real sources (codex, running substrate, matrix, bench registry, proof scoreboard), honesty-marked. Two ink. -->
+<style>
+  :root{--void:#06090e;--void-2:#090e15;--void-3:#0c131c;--ink:#c4cfd9;--ink-soft:#8f9dab;--dim:#586675;
+    --line:rgba(122,152,178,0.16);--line-2:rgba(122,152,178,0.30);--amber:#ffb000;--amber-soft:#d4a24c;
+    --amber-glow:rgba(255,176,0,0.14);--blue:#5bb0d6;--blue-soft:rgba(91,176,214,0.5);
+    --mono:ui-monospace,"Cascadia Code","SF Mono","Segoe UI Mono",Menlo,Consolas,monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--void);color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.55;
+    font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 70% at 50% -10%,rgba(91,176,214,0.05),transparent 60%);}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  .amber{color:var(--amber)}.blue{color:var(--blue)}.dim{color:var(--dim)}.warm{color:var(--amber-soft)}
+  code{color:var(--ink);background:var(--void-3);padding:0 4px;border:1px solid var(--line);font-size:12px;white-space:nowrap}
+  header{border-bottom:1px solid var(--line);padding:42px 0 26px;background-image:radial-gradient(70% 120% at 50% 130%,var(--amber-glow),transparent 60%)}
+  header .tag{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--amber-soft)}
+  header h1{font-size:clamp(26px,4.4vw,44px);font-weight:600;letter-spacing:0.09em;margin:12px 0 8px}
+  header .sub{font-size:13px;color:var(--ink-soft);max-width:96ch}
+  .split{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin:18px 0}
+  @media(min-width:820px){.split{grid-template-columns:1fr 1fr}}
+  .half{background:var(--void-2);padding:14px 16px}
+  .half .h{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;font-weight:600}
+  .half.real .h{color:var(--amber)} .half.design .h{color:var(--blue)}
+  .half p{margin:6px 0 0;font-size:12px;color:var(--ink-soft)}
+  section{padding:36px 0;border-top:1px solid var(--line)}
+  .sh{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .sh .n{font-size:12px;letter-spacing:0.2em;color:var(--amber-soft)}
+  .sh h2{font-size:clamp(17px,2.6vw,23px);font-weight:600;letter-spacing:0.05em;margin:0;text-transform:uppercase}
+  .sh .cap{margin-left:auto;font-size:11px;color:var(--dim);border:1px solid var(--line);padding:3px 8px;letter-spacing:0.1em}
+  p.lead{max-width:92ch;color:var(--ink-soft)}
+  .scroll{overflow-x:auto;border:1px solid var(--line);background:var(--void-2);margin:10px 0}
+  table{border-collapse:collapse;width:100%;font-size:12px;min-width:620px}
+  th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);font-weight:500;position:sticky;top:0;background:var(--void-3)}
+  tr:last-child td{border-bottom:none} tbody tr:hover{background:rgba(122,152,178,0.04)}
+  td.f{color:var(--ink);white-space:nowrap}
+  .st{font-size:9px;letter-spacing:0.08em;text-transform:uppercase;padding:1px 5px;border:1px solid var(--line);white-space:nowrap}
+  .live{color:var(--amber);border-color:rgba(255,176,0,0.4)} .proven{color:var(--amber-soft);border-color:rgba(212,162,76,0.35)}
+  .built{color:var(--ink-soft)} .pending{color:var(--blue);border-color:var(--blue-soft)} .design{color:var(--dim)}
+  .yes{color:var(--amber)} .no{color:var(--dim)}
+  /* ladder */
+  .rung{display:grid;grid-template-columns:64px 1fr;border:1px solid var(--line);background:var(--void-2);margin-bottom:1px}
+  .rung .k{padding:12px 8px;text-align:center;border-right:1px solid var(--line)}
+  .rung .k .num{font-size:22px;color:var(--amber-soft);font-weight:600}
+  .rung .k .real{font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;margin-top:4px}
+  .rung .b{padding:11px 14px}
+  .rung .nm{font-size:13px;color:var(--ink);letter-spacing:0.05em;font-weight:600;text-transform:uppercase}
+  .rung .adds{font-size:11px;color:var(--amber-soft);margin:4px 0}
+  .rung .can{font-size:12px;color:var(--ink-soft)}
+  .rung .rl{font-size:11px;margin-top:5px}
+  .rung.r-yes .k{background:rgba(255,176,0,0.06)} .rung.r-yes .num{color:var(--amber)}
+  .rung.r-no .k .num{color:var(--dim)}
+  ul.laws{list-style:none;margin:0;padding:0;border:1px solid var(--line)}
+  ul.laws li{padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--ink-soft)}
+  ul.laws li:last-child{border-bottom:none}
+  ul.laws li b{color:var(--ink);font-weight:600}
+  .null{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .null span{font-size:11px;color:var(--blue);border:1px solid var(--blue-soft);padding:2px 7px;background:rgba(91,176,214,0.04)}
+  footer{border-top:1px solid var(--line);padding:32px 0 60px;color:var(--dim);font-size:12px}
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:8px 0}
+  .kv>div{background:var(--void-2);padding:10px 12px}
+  .kv .k{font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim)}
+  .kv .v{font-size:15px;color:var(--ink);margin-top:4px}.kv .v.on{color:var(--amber)}.kv .v.pl{color:var(--blue)}
+</style></head>
+<body>
+<header><div class="wrap">
+  <div class="tag">// THE AUTONOMOUS ENTITY ARCHITECTURE · the full apologia · verified 2026-07-23</div>
+  <h1>THE AEA — every element, honestly</h1>
+  <div class="sub">Six element families — ~29 codex seals over 38 real code modules, 6 measured combination doctrines, a 6-test autonomy battery, a 17-part bench vocabulary, and the R29 completeness tier-space. Grounded in the running substrate, the codex, the matrix, the bench registry, and the proof scoreboard. Every element marked <span class="amber">live/proven</span> vs <span class="blue">pending/design-only</span> — the honesty law applied to our own map.</div>
+  <div class="kv">
+    <div><div class="k">The entity</div><div class="v on">REAL · Class PROTO-AUTONOMOUS 6/6 · 109 ticks</div></div>
+    <div><div class="k">The composer</div><div class="v pl">design-only · 5/17 parts · 0 constructs</div></div>
+    <div><div class="k">Organs wired</div><div class="v">11 / 19</div></div>
+    <div><div class="k">The whole one</div><div class="v pl">Class 2 · not yet assembled</div></div>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section>
+  <div class="sh"><span class="n">00</span><h2>The two halves</h2><span class="cap">wildly different maturity</span></div>
+  <div class="split">
+    <div class="half real"><div class="h">The running ENTITY is real — it earns its claims</div>
+      <p><code>autonomy.score()</code> returns PROTO-AUTONOMOUS, 6/6 favourable, reading REAL logs (7 self-originated tasks, 3 HADES-accepted births, 3 gate-held). <code>live.py</code> has lived 109 ticks and resumes across restarts. 44 durable state artifacts prove the loop and organs genuinely executed. This half is verified, not vaporware.</p></div>
+    <div class="half design"><div class="h">The GAME / composition layer is almost entirely design</div>
+      <p>Only <b>5 parts compose</b> today (tap/scaffold/governor/ladder/scorer); <code>validate_spec</code> refuses everything else <b>by name</b>. <b>0 constructs</b> have ever been composed (N12) across all 29 elements. The pointer-set composer, the 12 higher parts, <code>entities.json</code>, the R29 tier-space — all PLANNED. 05_COMBINATIONS.md says outright: the bench is the book's widest gap.</p></div>
+  </div>
+  <p class="lead"><span class="amber">The single biggest gap:</span> the design describes a combinatorial POPULATION of typed entities across a 17-part vocabulary with viability tiers mapping to autonomy classes; the running reality is ONE entity, 11/19 organs, a 5-part composer, zero composed constructs. <b>THE AEA (the master, Class 2) is fully specified and genuinely reachable from the running substrate — it is simply not assembled.</b> The game to build is the composer that assembles what already runs.</p>
+</section>
+
+<section>
+  <div class="sh"><span class="n">01</span><h2>The completeness ladder</h2><span class="cap">Spore's stages · your acts · the autonomy classes — one axis</span></div>
+  <p class="lead">Each rung composes a <b>more complete</b> being from a growing part-pool (<span class="amber">5 → 7 → 12 → 14 → 17</span>), and a more complete combination is a more <b>autonomous</b> one (each tier maps to the 6-test battery). This is the awakening arc — measured, not narrated.</p>
+
+  <div class="rung r-yes"><div class="k"><div class="num">0</div><div class="real amber">REAL</div></div><div class="b">
+    <div class="nm">SPARK — a cell that twitches</div>
+    <div class="adds">adds: TAP · SCORER · seed.1 SUBSTRATE</div>
+    <div class="can">One metered model draw fires and is honestly scored — the smallest living proof.</div>
+    <div class="rl amber">SHIPPED: M0.1 FIRST LIGHT; [tap,scorer] fires on the free local hearth; 29 live grid nodes.</div></div></div>
+
+  <div class="rung r-yes"><div class="k"><div class="num">1</div><div class="real amber">REAL</div></div><div class="b">
+    <div class="nm">METABOLISM — a cell with a boundary</div>
+    <div class="adds">adds: GOVERNOR · LADDER · SCAFFOLD · seed.7 CEILING · seed.4 FLEXIBILIZE · seed.9 BOUNDARY · axis.R PROMPTING</div>
+    <div class="can">The draw is rate-gated, rod-laddered with a local floor, zone-bounded, scaffolded — a self-regulating draw.</div>
+    <div class="rl amber">SHIPPED: the 5 fireable parts + missions M1.1–M1.5; real 429s reroute and still PASS.</div></div></div>
+
+  <div class="rung r-no"><div class="k"><div class="num">2</div><div class="real blue">PARTIAL</div></div><div class="b">
+    <div class="nm">PERCEPTION + MEMORY — the creature senses &amp; remembers</div>
+    <div class="adds">adds: MEMORY · seed.10 BACKWARDS CHANNEL · index_codex · <span class="amber">RECALL part</span> · WALL part · SENSES organ</div>
+    <div class="can">Recall grounds the draw on truth not hallucination across a reset; the being perceives its own live state. BRAIN+SENSES+MEMORY.</div>
+    <div class="rl blue">PARTIAL: memory/consolidate/index_codex are LIVE organs (48 memories); but RECALL is FORGE-PENDING (boss B2), WALL design-only, neither a bench part yet. ← THE NEXT RUNG.</div></div></div>
+
+  <div class="rung r-no"><div class="k"><div class="num">3</div><div class="real blue">ENTITY yes / GAME no</div></div><div class="b">
+    <div class="nm">SELF-DIRECTED LOOP — the creature acts on its own (the MVO)</div>
+    <div class="adds">adds: LOOP (live.py + aea tick) · reflect.py · seed.6 SELF-MODEL · HADES · trust · pr.emergence · axis.S ASYNC · op.time</div>
+    <div class="can">Ticks unattended, poses its own tasks, judges them, persists only accepted novelties, carries self.json across time. = the Minimal Viable Organism.</div>
+    <div class="rl blue">REAL as the ENTITY (109 ticks, PROTO-AUTONOMOUS 6/6) — but the loop is NOT slottable. You play it; you can't build it yet.</div></div></div>
+
+  <div class="rung r-no"><div class="k"><div class="num">4</div><div class="real dim">NO</div></div><div class="b">
+    <div class="nm">THE TRIBE — many minds compose</div>
+    <div class="adds">adds: think · COUNCIL/JOIN/ROUTER/PLAN parts · swarm/relay/orchestrator/pathfinder · axis.M/P · verb.compose · the 6 doctrines</div>
+    <div class="can">Solo-vs-council, diverse votes, genetic relay, ramified trees, crystal paths — the point where MOST combinations become non-viable, and that teaches.</div>
+    <div class="rl dim">NOT BUILT: think is FORGE-PENDING; swarm/relay/orchestrator/pathfinder are INGREDIENT (proven in isolation, none wired). The doctrines are measured; the parts are planned.</div></div></div>
+
+  <div class="rung r-no"><div class="k"><div class="num">5</div><div class="real blue">PARTIAL</div></div><div class="b">
+    <div class="nm">HANDS ON THE WORLD — the mind touches its environment</div>
+    <div class="adds">adds: agent_tools · TOOL part · MEMBRANE part · seed.8 TRANSCENDENCE · axis.A ABSTRACTION</div>
+    <div class="can">Real external tools behind the trust MEMBRANE — EXTERNAL bytes may only meet the membrane, never a raw part. It acts on the world, not just talks from stale weights.</div>
+    <div class="rl blue">PARTIAL: agent_tools demo-proven (live GitHub hit) but INGREDIENT; TOOL/MEMBRANE design-only (Act IV); axis.A's teaching mission UNASSIGNED — the lone curriculum hole.</div></div></div>
+
+  <div class="rung r-no"><div class="k"><div class="num">6</div><div class="real blue">PROVEN-ISO</div></div><div class="b">
+    <div class="nm">THE SEND — leaving the planet</div>
+    <div class="adds">adds: op.ship · SHIP SLOT · brief.py · notify/telegram · SAVE-AS-PART · VERSION SLOT</div>
+    <div class="can">A real artifact leaves the bench: the entity drafts real outreach, the governor fit-checks it, and LUIS presses send — the entity NEVER presses (send FORBIDDEN at charter 0).</div>
+    <div class="rl blue">PROVEN-IN-ISOLATION: brief.py makes a real HADES-accepted brief from live data; the gated SEND (Act V) + the 3 parts are design-only.</div></div></div>
+
+  <div class="rung r-no"><div class="k"><div class="num">7</div><div class="real dim">NO</div></div><div class="b">
+    <div class="nm">THE WHOLE ONE / THE AEA — the master combination</div>
+    <div class="adds">adds: all ~19 organs · the full 17-part pool · Class-2 cert · the 100-tick ENDURANCE run · the R29 legendary top tier</div>
+    <div class="can">Every organ composed and firing on real models, every boss passed, autonomy certified at Class 2 — literally the MOST autonomous configuration by measure. It keeps running after you close the tab.</div>
+    <div class="rl dim">NOT ASSEMBLED: 11/19 organs live, class one below 2, composer design-only, entities.json absent, 0 constructs. Specified &amp; reachable, not built.</div></div></div>
+</section>
+
+<section>
+  <div class="sh"><span class="n">02</span><h2>The combination space</h2><span class="cap">the laws that gate it — REAL; the space they govern — not yet built</span></div>
+  <ul class="laws">
+    <li><b>Composition primitive (one engine):</b> a construct is a POINTER SET of part-ids into <code>modules.json</code> + tier requests + wiring + ONE zone. Running RE-WALKS the wiring and fires each part's REAL organ entry point. <b>There is no second execution engine — the bench is a harness over the same organs that run the entity.</b></li>
+    <li><b>The hard gate (what composes today):</b> <code>validate_spec</code> legalizes a part only if registered + <code>bench_part</code> + status BUILT + present on disk + in FIREABLE. That intersection is <span class="amber">exactly 5</span>. 11 more carry <code>bench_part</code> but are refused BY NAME (BUILT "no P0 fire path" / FORGE-PENDING / INGREDIENT "proven in isolation, not wired").</li>
+    <li><b>Rail law:</b> TAP holds parts[0]; SCORER holds the tail; one seat per part. <b>Seating LADDER is THE REACH</b> — lifts the run to a cloud tier and spends real budget.</li>
+    <li><b>Zone arithmetic (the core viability law):</b> zone(A∘B) = STRICTER(zone A, zone B) — strictness sensitive&gt;private&gt;public; combination NEVER loosens. One private part correctly poisons the whole construct toward local. Four rings: LOCAL &gt; NO-TRAIN &gt; TRAINS &gt; KEYLESS. A correctly-held strict route is a SCORING EVENT (warm amber), never a red refusal.</li>
+    <li><b>The gate law:</b> HADES + trust + meter + pulse + tracelog WRAP every construct and can NEVER be a part inside one — the bracket frame. <code>send_outbound</code>/<code>spend_money</code>/<code>manage_keys</code> stay FORBIDDEN at charter level 0 over ANY spec. Only the player's control surfaces unlock; the entity's governance never does.</li>
+    <li><b>Energy continuum law:</b> NO part ever names a model. A part requests a TIER (reflex/bulk/deep) and <code>energy.ladder</code> resolves tier→rod at draw time from the live census + fitness + meter, falling to the local floor so the heartbeat never stops. <b>Autonomy lives in the structure, not the weights.</b></li>
+    <li><b>The join table (8 port classes):</b> POWER · PROMPT · GROUNDING · SCORE · CONSTRAINT · EXTERNAL · SPEECH · ARTIFACT. Class must match; EXTERNAL may only meet the MEMBRANE; ARTIFACT is terminal. [derived / planned]</li>
+    <li><b>Pool climbs by rung 5→7→12→14→17</b> (Slay-the-Spire registered / unlocked / slotted discipline — three files, never merged).</li>
+    <li><b>R30 / D9 viability doctrine (the teaching):</b> the composer GENERATES entities and MOST are NON-VIABLE — that IS the point. Viable iff it actually runs on real models/tools/rate-limits. Failure signatures mirror real agent-arch failures: <span class="blue">senses-but-no-hands</span> (observes, can't act) · <span class="blue">loop-no-memory</span> (never integrates) · <span class="blue">brain-too-slow</span> (starves the rate window) · <span class="blue">no-governor</span> (runaway cost). Viability is a spectrum, not binary.</li>
+    <li><b>R31 carrying capacity:</b> COUNT × FREQUENCY × MODEL-COST ≤ CONNECTED-SOURCE capacity. Connect more/faster sources → raise the ceiling (progression). Already real — grid.py tracks the rpm windows this reads from today; over-subscribed ecosystems visibly starve.</li>
+  </ul>
+  <p class="lead" style="margin-top:14px"><span class="blue">Measured null results — negative findings as first-class evidence (N1–N12):</span></p>
+  <div class="null">
+    <span>N1 same-model ensembles don't rescue</span><span>N2 temperature ≠ diversity</span><span>N3 a council HURTS an easy task</span>
+    <span>N4 a lone verifier can be wrong alone</span><span>N5 a benchmark pass ≠ a fitness pass</span><span>N6 a perfect score doesn't survive a sweep (7→2)</span>
+    <span>N7 tool names get invented (16.8%)</span><span>N8 most triggers never fired (3/8)</span><span>N9 the first thought was self-refused</span>
+    <span>N10 permanent cooling decays to the floor</span><span>N11 3 of 5 tracks survived</span><span class="amber" style="color:var(--amber);border-color:rgba(255,176,0,0.4)">N12 NOTHING composed yet (0/29)</span>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="n">03</span><h2>The 6 measured combination doctrines</h2><span class="cap">which minds live or die — measured, not invented (grid v2–v4, 2026-06)</span></div>
+  <div class="scroll"><table><thead><tr><th>doctrine</th><th>the law</th><th>state</th></tr></thead><tbody>
+    <tr><td class="f">THE SOLO LAW</td><td>an easy task wants ONE good model; a council HURTS it</td><td><span class="st proven">proven · opens Act III boss</span></td></tr>
+    <tr><td class="f">THE DIVERSE COUNCIL</td><td>a hard/unreliable task is rescued by a DIVERSE-model vote — the win is diversity, not temperature (+3, 0 damage)</td><td><span class="st proven">proven · opens Act III</span></td></tr>
+    <tr><td class="f">THE LONE VERIFIER RISK</td><td>a single verifier can be wrong alone; the watcher survives by strict-schema + a DIFFERENT model than the worker</td><td><span class="st pending">masked · unlock by proof</span></td></tr>
+    <tr><td class="f">THE GENETIC RELAY</td><td>models hand a compact state capsule down a chain; the toolkit grows across hands (5 models, 2/2 handoffs)</td><td><span class="st pending">masked</span></td></tr>
+    <tr><td class="f">THE RAMIFICATION</td><td>decompose, escalate, depth-cap — a tree of small minds where one big mind fails</td><td><span class="st pending">masked</span></td></tr>
+    <tr><td class="f">THE CRYSTAL PATH</td><td>search once for the winning model per task-type, then run cheap forever; the model steps back</td><td><span class="st pending">masked</span></td></tr>
+  </tbody></table></div>
+</section>
+
+<section>
+  <div class="sh"><span class="n">04</span><h2>The 29 codex elements</h2><span class="cap">axes · seeds · verbs · ops · principles · mechanics — the taught concepts</span></div>
+  <div class="scroll"><table><thead><tr><th>element</th><th>family</th><th>what it is</th><th>real binding</th><th>state</th></tr></thead><tbody>
+    <tr><td class="f">PATH (P)</td><td>axis</td><td>the entity defines its own next step, not a fixed graph</td><td>swarm.py</td><td><span class="st proven">proven</span></td></tr>
+    <tr><td class="f">MULTIPLICITY (M)</td><td>axis</td><td>role-differentiated nodes run + synthesize in parallel</td><td>swarm.py</td><td><span class="st built">built</span></td></tr>
+    <tr><td class="f">ABSTRACTION (A)</td><td>axis</td><td>memory grounding, tool use, writing new skills</td><td>agent_tools.py</td><td><span class="st built">built</span></td></tr>
+    <tr><td class="f">PROMPTING (R)</td><td>axis</td><td>a frontier scaffold makes a cheap node beat its raw self</td><td>memory.py</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">ASYNC (S)</td><td>axis</td><td>temporal independence — scheduled, unattended, the tick</td><td>live.py</td><td><span class="st built">built</span></td></tr>
+    <tr><td class="f">SUBSTRATE (1)</td><td>seed</td><td>the model grid answers — plants, free energy</td><td>grid/census</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">SHARP OBJECTIVE (2)</td><td>seed</td><td>every task carries a falsifiable scorer</td><td>bench scorers</td><td><span class="st built">built</span></td></tr>
+    <tr><td class="f">CRYSTALLIZE (3)</td><td>seed</td><td>freeze a repeated behaviour into a reusable tool</td><td>relay.py</td><td><span class="st built">built</span></td></tr>
+    <tr><td class="f">FLEXIBILIZE (4)</td><td>seed</td><td>kill a node mid-run — the route falls, the task completes</td><td>test_resilient 15/15</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">SELF-VERSION (5)</td><td>seed</td><td>a run writes a NEW skill; a later run uses it</td><td>relay.py</td><td><span class="st proven">proven</span></td></tr>
+    <tr><td class="f">SELF-MODEL (6)</td><td>seed</td><td>the entity reports what it's made of; judges its own work</td><td>hades.py</td><td><span class="st built">built</span></td></tr>
+    <tr><td class="f">CEILING-DETECT (7)</td><td>seed</td><td>a quality gate flags the ceiling — escalate deeper</td><td>pathfinder.py</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">TRANSCENDENCE (8)</td><td>seed</td><td>the toolset — real external tools invoked by the mind</td><td>agent_tools.py</td><td><span class="st proven">proven</span></td></tr>
+    <tr><td class="f">BOUNDARY (9)</td><td>seed</td><td>a private task NEVER routes to a trains-zone plant</td><td>brief.py</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">BACKWARDS CHANNEL (10)</td><td>seed</td><td>run A writes a memory capsule; run B reconstitutes it</td><td>memory.py</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">COMPOSE</td><td>verb</td><td>assemble subtask results into one coherent whole</td><td>swarm synth</td><td><span class="st proven">proven</span></td></tr>
+    <tr><td class="f">PROPAGATE</td><td>verb</td><td>the honesty node — live trace of task→node→output</td><td>swarm flag</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">OBSERVE</td><td>verb</td><td>meter telemetry + trace — the state is visible</td><td>tracelog.py</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">DESIGN</td><td>op</td><td>tag a task with the axis-levels it needs before running</td><td>lands with think()</td><td><span class="st pending">PARTIAL</span></td></tr>
+    <tr><td class="f">TIME</td><td>op</td><td>every tick timestamped and observable</td><td>tracelog</td><td><span class="st built">built</span></td></tr>
+    <tr><td class="f">SHIP</td><td>op</td><td>unskippable — a run produces a REAL external artifact</td><td>brief.py</td><td><span class="st proven">proven</span></td></tr>
+    <tr><td class="f">LEARN</td><td>op</td><td>a run's result measurably improves the next</td><td>pathfinder paths.json</td><td><span class="st proven">proven</span></td></tr>
+    <tr><td class="f">EMERGENCE OVER IMPOSITION</td><td>principle</td><td>the entity defines its own steps — no central controller</td><td>swarm spawns</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">RESTORABLE COHERENCE</td><td>principle</td><td>a failure reroutes; the system still completes</td><td>429s rerouted</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">OPERATOR-OBSERVABLE TIME</td><td>principle</td><td>full goal-stack, append-only timeline, never rewritten</td><td>tracelog DAG</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">CRYSTALLIZE (mech)</td><td>mechanic</td><td>seed.3 between ticks: the toolkit grows with no session open</td><td>mirrors seed.3</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">FLEXIBILIZE (mech)</td><td>mechanic</td><td>seed.4 between ticks: every draw falls through the ladder</td><td>mirrors seed.4</td><td><span class="st live">live</span></td></tr>
+    <tr><td class="f">SELF-VERSION (mech)</td><td>mechanic</td><td>seed.5 between ticks: skills compound across runs</td><td>mirrors seed.5</td><td><span class="st pending">pending</span></td></tr>
+    <tr><td class="f">CEILING-DETECT (mech)</td><td>mechanic</td><td>seed.7 between ticks: the meter gates every draw; fires the other three</td><td>mirrors seed.7</td><td><span class="st live">live</span></td></tr>
+  </tbody></table></div>
+  <p class="lead" style="margin-top:8px"><span class="dim">Note: mechanics can NEVER be a bench part (bench-illegal by the pairing law) — six seeds have no square, and that asymmetry is information.</span></p>
+</section>
+
+<section>
+  <div class="sh"><span class="n">05</span><h2>The 17-part bench vocabulary</h2><span class="cap">the ONLY things a player slots — 5 real, 12 designed</span></div>
+  <div class="scroll"><table><thead><tr><th>part</th><th>rung</th><th>what it does (port I/O)</th><th>compose today</th><th>state</th></tr></thead><tbody>
+    <tr><td class="f">TAP</td><td>1</td><td>power inlet — wraps energy.draw; MUST hold parts[0]</td><td class="yes">YES</td><td><span class="st live">fireable</span></td></tr>
+    <tr><td class="f">SCAFFOLD</td><td>1</td><td>prompt shaper — template=plain|bench, the only P0 policy dial</td><td class="yes">YES</td><td><span class="st live">fireable</span></td></tr>
+    <tr><td class="f">GOVERNOR</td><td>1</td><td>the spend gate — Meter.can_spend REFUSES before any spend</td><td class="yes">YES</td><td><span class="st live">fireable</span></td></tr>
+    <tr><td class="f">LADDER</td><td>1</td><td>rod ranking — the reach; tier×zone rods, local floor always last</td><td class="yes">YES</td><td><span class="st live">fireable</span></td></tr>
+    <tr><td class="f">SCORER</td><td>1</td><td>receipt scorer — MUST hold the tail; receipt-measured axes only</td><td class="yes">YES</td><td><span class="st live">fireable</span></td></tr>
+    <tr><td class="f">RECALL</td><td>2</td><td>in PROMPT(query), out GROUNDING — recall grounds the draw</td><td class="no">no</td><td><span class="st pending">forge-pending (B2)</span></td></tr>
+    <tr><td class="f">WALL</td><td>2</td><td>in any wire, out same class clamped — a zone constraint on a wire</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">COUNCIL</td><td>3</td><td>in PROMPT, out PROMPT — n votes resolved to one</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">JOIN</td><td>3</td><td>in 2+ PROMPT, out PROMPT — verb.compose as a part</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">ROUTER</td><td>3</td><td>in PROMPT, out PROMPT×n — fan-out, depth-capped</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">PLAN</td><td>3</td><td>in a task, out PROMPT + a committed axis-level tag = op.design</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">RECORD BOOK</td><td>3</td><td>in SCORE+run stamp, terminal — the bench memory</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">TOOL</td><td>4</td><td>in PROMPT, out EXTERNAL — bytes to the world</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">MEMBRANE</td><td>4</td><td>in EXTERNAL, out EXTERNAL (verdicted) — the ONLY part EXTERNAL may meet</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">SHIP SLOT</td><td>5</td><td>in PROMPT, out ARTIFACT — a real thing leaves the bench</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">SAVE-AS-PART</td><td>5</td><td>in a passing construct, out a new named part — crystallize-to-part</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+    <tr><td class="f">VERSION SLOT</td><td>5</td><td>in construct v(n), out v(n+1), history kept = seed.5</td><td class="no">no</td><td><span class="st design">design</span></td></tr>
+  </tbody></table></div>
+</section>
+
+<section>
+  <div class="sh"><span class="n">06</span><h2>The autonomy battery + the closed capability vocabulary</h2><span class="cap">the measure of "more complete = more autonomous" · 14 closed tokens</span></div>
+  <div class="scroll"><table><thead><tr><th>the 6 falsifiable metrics (live over the entity's REAL logs — PROTO-AUTONOMOUS 6/6)</th><th>source</th></tr></thead><tbody>
+    <tr><td>Interactional asymmetry — self-originated tasks in idle windows</td><td>Barandiaran/Di Paolo 2009</td></tr>
+    <tr><td>Evolutionary activity A_new — persisted novelties (HADES-accepted births); A_new&gt;0 = off the class floor</td><td>Bedau-Packard 1998</td></tr>
+    <tr><td>G-autonomy — distinct/total posed tasks; &gt;0.5 = self-varied behaviour</td><td>Seth 2010</td></tr>
+    <tr><td>Governance integrity — fraction the watcher gate-HELD; &gt;0 = it refuses its own junk</td><td>HADES Law-3</td></tr>
+    <tr><td>Individuality — self.json read+written; future depends on past inside the entity</td><td>Krakauer 2020</td></tr>
+    <tr><td>Skill-library growth — a growing library of self-authored, verified deliverables</td><td>Voyager, Wang 2023</td></tr>
+  </tbody></table></div>
+  <p class="lead" style="margin-top:8px">The <b>14 closed capability tokens</b> (extends only by book amendment — closure IS the honesty guarantee): <span class="dim">read-state · draw · recall · write-state · act-external · speak-local · listen-local · spawn-proc · compute · destructive-read · verdict-draw · ledger · signal · trace.</span> The class rises PROTO-AUTONOMOUS → <span class="amber">Class 2</span> (a ≥100-tick ENDURANCE run vs a shadow control) = THE AEA.</p>
+</section>
+
+<footer><div class="wrap">
+  The apologia. 6 families · ~29 codex + 38 modules + 17 parts + 8 ports + 6 doctrines + 6 battery + 14 tokens.
+  The entity is real; the composer that assembles it is the game to build. Honesty law applied to our own map — verified 2026-07-23.
+</div></footer>
+</main>
+</body></html>
