@@ -1,53 +1,53 @@
-# 04 · THE FOG FRONTIER — one frame of the finished game (photo mode, labels on)
+# 04 · THE FOG FRONTIER — one frame of the finished game (close-up, labels on) · GPT-Image-2 spec v2
 
-One frame of the finished game THE PROBE: two organs on the same ring — one earned and burning,
-one still fog. The game's deepest rule taught in a single image: **amber is earned.** Speculative
-details intentional. Self-contained.
+The game's deepest rule taught in one image: **amber is earned.** A burning organ and a hollow one
+on the same ring — what you have proven vs what still waits. Intimate, quiet, a little longing.
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Field near-black `#06090e`–`#0c131c`; vast negative space.
-- Structure ink: thin steel grey-blue `rgb(120,155,175)` hairlines and tiny engraved type.
-- Cold accent `#24394a`–`#5bb0d6`: the fog/unearned state ONLY.
-- AMBER (`#ffb000`/`#d4a24c`): the earned state ONLY — emitted from within, the brightest element.
-- Type: IBM-Plex-Mono-style engraved capitals, tiny, letter-spaced; ONLY the two labels specified
-  below; perfectly legible; nothing else written anywhere.
-- Materials: matte near-black faceted geometry, machined hairline ring.
-- FORBIDDEN: multicolour/neon, lens flares, gloss, ornament, people, extra text, watermarks.
+1. Attach the locked REF-01 image. Paste the CANON BLOCK + THE PROMPT below as one message.
+2. ONE image back → single-change fixes if needed → accept as `04_THE_FOG_FRONTIER_<take>.png`
+   → declare REF-04. (Field lessons apply: >2 flaws = one regenerate-with-changes, not a chain.)
 
-## THE GAME (context)
+## THE PROMPT (paste after the canon block)
 
-Organs of a living machine-mind sit on engraved privacy rings. An organ the player has truly
-composed and run burns amber from within. An organ not yet earned renders as cold-blue wireframe
-FOG — visibly present, hollow, waiting. The fog is the frontier.
+SCENE
+Low and close along the inner ring of the same dark world as the reference: one thin engraved
+sealed-double hairline ring arc sweeping through the frame and off both edges, on the matte
+near-black plane. Far behind and out of focus, the small amber core with its two tilted tori and
+hair-thin vertical beam — tiny, soft, unmistakable. Black void everywhere else.
 
-## THE MOMENT
+SUBJECT
+Two identical thin wireframe octahedral cages resting on the ring arc, seen at eye level with
+shallow depth of field:
+- LEFT, sharp: the EARNED organ — a bright warm amber ember burning inside its cage, its glow
+  kissing the ring hairline beneath it. Beneath it one tiny engraved label: "LOOP"
+- RIGHT, further along the arc: the FOG organ — the same cage completely hollow and dark inside,
+  no ember, no bright vertex points, nothing but the thin cage lines, slightly fainter than the
+  lit one. Beneath it one tiny engraved label: "SENSES · FOG"
 
-Photo mode on the inner (SENSITIVE) ring. LOOP was earned long ago — it burns. SENSES has never
-been composed — it is fog. The probe's pilot has drifted low along the ring to look at the
-frontier directly.
+KEY DETAILS
+- The contrast IS the picture: solid presence of fire versus hollow waiting structure.
+- Labels: tiny engraved IBM-Plex-Mono-style capitals, structure-grey, letter-spaced, rendered
+  once each, verbatim, perfectly legible. No other text anywhere.
+- Matte materials, hairline engraving, vast negative space above the ring.
 
-## EVERYTHING IN FRAME (complete inventory)
+CONSTRAINTS (hard)
+1. Landscape 1536×1024, shallow depth of field (the two cages sharp, the core soft).
+2. The lit ember is the single brightest element; the distant core second.
+3. The fog cage is COMPLETELY empty and dark inside — no ember, no vertex highlights, no points
+   of light within its wireframe.
+4. Exactly two cages, one ring arc, the distant core — no other nodes, spokes, pulses.
+5. Text: exactly "LOOP" and "SENSES · FOG", once each. No people, no watermark, no new elements.
 
-1. **THE RING:** one thin engraved structure-grey hairline arc sweeping through the frame low and
-   close, running off both edges.
-2. **LOOP (left third):** a small dark faceted octahedron resting on the ring, burning warm amber
-   from within; a faint warm glow kisses the ring hairline beneath it. Beneath it, one tiny
-   engraved label: `LOOP`.
-3. **SENSES (right third, further along the arc):** the identical octahedral form as a faint
-   cold-blue wireframe ghost — hollow, transparent, no glow on the ring beneath. Beneath it, one
-   tiny engraved label: `SENSES · FOG`.
-4. **THE DISTANT CORE:** far behind and out of focus, the small amber core jewel of the world
-   with its hair-thin vertical beam — tiny, soft, unmistakable.
-5. Black void everywhere else. No other nodes, spokes, pulses, or text.
+## Ready-made refinement lines
 
-## COMPOSITION & CAMERA
+- "Change only the depth of field: the distant core softer and smaller. Keep everything else the same."
+- "Change only the fog cage: remove every point of light inside it — hollow and dark. Change nothing else."
+- "Change only the ember: slightly warmer and more concentrated at the cage's heart. Keep everything else the same."
+- "Violation — text must read exactly 'SENSES · FOG'. Correct that string only, change nothing else."
 
-4:3, low intimate shot along the ring's arc, shallow depth of field (the two nodes sharp, the
-core soft). The lit LOOP is the brightest element; the fog SENSES barely there — the contrast IS
-the picture. Quiet, a little longing.
+## What this frame must make a stranger feel
 
-## GENERATE
-
-Render the frame. 3 variants: (1) as specified, (2) closer on the fog node with LOOP soft in the
-foreground, (3) your best synthesis. STYLE LAW is a hard constraint.
+Longing at a boundary: *the lit one was earned; the hollow one is waiting for me.* If both cages
+feel equal, it fails; if the empty one feels like a promise, it passes.
