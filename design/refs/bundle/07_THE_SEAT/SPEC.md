@@ -1,58 +1,65 @@
-# 07 · THE SEAT — one frame of the finished game (gameplay close-up)
+# 07 · THE SEAT — one frame of the finished game (gameplay close-up) · GPT-Image-2 spec v2
 
-One frame of the finished game THE PROBE: the compose verb itself — the part RECALL descending
-onto the bench rail, one breath before it seats. Precision hardware assembly, watchmaking
-intimacy. Speculative details intentional. Self-contained.
+The compose verb itself: the part RECALL descending onto the bench rail, one breath before it
+seats. Precision hardware assembly, watchmaking intimacy. FIRST bench-material frame — whatever
+chip/rail language it locks, frames 08–12 inherit.
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Field: the matte near-black machined surface of the bench plate fills the frame; hairline
-  engravings; shallow depth of field.
-- Structure ink `rgb(120,155,175)`: the rail light-line, chip engravings, stud/socket hairlines.
-- AMBER (`#ffb000`/`#d4a24c`): ONLY the small contact-arc just forming at the seat point — the
-  single brightest element — plus the faintest warm standby glow inside the already-seated chips.
-- Type: IBM-Plex-Mono engraved capitals, tiny; EXACTLY the chip names and stats specified below,
-  legible; nothing else written.
-- Materials: matte dark metal, machined groove, micro-chamfers catching hairline light.
-- FORBIDDEN: multicolour/neon, gloss, plastic toy look, hands or people, floating holograms,
-  extra text, watermarks.
+1. Attach the locked REF-01 image (style anchor — this frame is a different surface of the same
+   game: the bench, not the world).
+2. Paste the CANON BLOCK + THE PROMPT below as one message.
+3. ONE image back → single-change fixes → accept as `07_THE_SEAT_<take>.png` → declare REF-07.
 
-## THE GAME (context)
+## THE PROMPT (paste after the canon block)
 
-Parts are real working AI components. Composing means physically seating them onto THE RAIL — a
-milled channel across the bench. When a part's mount-stud meets its socket, a small amber arc
-confirms the seat. The player is composing construct `c-07`, the first being that remembers.
+SCENE
+A different surface of the same game: THE BENCH — a matte near-black machined instrument plate,
+seen in extreme close-up at eye level with the rail, shallow depth of field. Across the frame
+runs THE RAIL: a milled horizontal channel carrying a thin steel grey-blue light-line along its
+floor, its edges double-hairline shadowed like a machined groove. Faint engraved hairline rules
+run parallel to the rail across the plate. No world elements — no rings, organs, core, or void
+horizon; only the bench.
 
-## THE MOMENT
+SUBJECT
+EXACTLY THREE instrument chips, left to right:
+1. LEFT, seated, slightly out of focus: a small dark hexagonal-edged machined chip engraved
+   "THE DRAW" in tiny monospace capitals, a small filled circular glyph above the name, the stat
+   "POWER 6" beneath, a faint warm amber standby glow inside.
+2. CENTRE, THE FRAME'S SUBJECT, sharp: the same chip form engraved "RECALL", a small circular
+   glyph, the stat "MEM 48" beneath — hovering a few millimetres ABOVE the rail, descending; a
+   thin mount-stud under it aligned with an open socket in the rail. At the stud-socket gap a
+   small concentrated amber contact-arc of light just begins to form — the single brightest
+   element in the frame.
+3. RIGHT, seated, more out of focus: the same chip form engraved "THE MEASURE", stat "4 AXES",
+   quiet grey, no glow.
 
-Rung 2. THE DRAW is already seated at the head; THE MEASURE waits at the tail. The player lowers
-**RECALL** — the memory part, carrying 48 real memories — toward the mid-rail socket. One
-millimetre above contact, the amber arc just begins.
+KEY DETAILS
+- Watchmaking macro-photography feel: micro-chamfers catching hairline light, matte dark metal,
+  engraved not printed.
+- The contact-arc is small and precise — a spark of connection, not a lightning bolt.
+- No stray points of light anywhere on the plate or chips; the only lights are the arc, THE
+  DRAW's faint standby glow, and the rail's thin light-line.
 
-## EVERYTHING IN FRAME (complete inventory)
+CONSTRAINTS (hard)
+1. Landscape 1536×1024, shallow depth of field centred on RECALL and the arc.
+2. Exactly THREE chips: THE DRAW seated left, RECALL descending centre, THE MEASURE seated right.
+3. Brightness order: the contact-arc first, THE DRAW's standby glow second, the rail light-line
+   third. Nothing else glows.
+4. Text: exactly "THE DRAW", "POWER 6", "RECALL", "MEM 48", "THE MEASURE", "4 AXES" — once each,
+   verbatim, engraved monospace capitals.
+5. No hands, no people, no watermark, no floating holograms, no world elements, no new elements.
 
-1. **THE RAIL, horizontal through the frame:** a milled channel in the plate carrying a thin
-   structure-grey light-line along its floor; double-hairline shadowed edges — a machined groove.
-2. **RECALL — the subject, centre, hovering:** a small dark hexagonal-edged instrument chip,
-   engraved `RECALL` in tiny capitals with a small circular glyph above the name and the stat
-   `MEM 48` beneath; a thin mount-stud under it, aligned with an open socket in the rail.
-3. **THE CONTACT-ARC:** a small concentrated amber arc of light just forming between stud and
-   socket — the brightest element in frame.
-4. **THE DRAW — left, seated, slightly out of focus:** same chip form, engraved `THE DRAW`, a
-   filled circular glyph, stat `POWER 6`, faint warm standby glow inside.
-5. **THE MEASURE — right, seated, more out of focus:** engraved `THE MEASURE`, stat `4 AXES`,
-   quiet grey.
-6. Around them: the plate's matte near-black surface with faint engraved hairline rules running
-   parallel to the rail. Nothing else.
+## Ready-made refinement lines
 
-## COMPOSITION & CAMERA
+- "Change only RECALL's height: a few millimetres lower, the arc slightly stronger. Keep everything else the same."
+- "Change only the depth of field: THE DRAW and THE MEASURE softer. Keep RECALL and the arc sharp."
+- "Change only the arc: smaller and more concentrated at the stud-socket gap. Keep everything else the same."
+- "Violation — text must read exactly 'MEM 48'. Correct that string only, change nothing else."
+- "Count violation — exactly THREE chips. Regenerate with three, everything else the same."
 
-16:9 macro close-up, eye level with the rail, shallow depth of field centred on RECALL and the
-arc. The frame is intimate — three chips and the groove, nothing more. Watchmaking precision;
-the click one breath away.
+## What this frame must make a stranger feel
 
-## GENERATE
-
-Render the frame. 3 variants: (1) one breath before contact as specified, (2) the instant OF
-contact — the arc complete, the chip flush, (3) your best synthesis. STYLE LAW and the exact
-engraved text are hard constraints.
+The click one breath away: *I am assembling a mind with my hands, and this part is about to
+become part of it.* If it reads as drag-and-drop UI, it fails; if it reads as watchmaking, it
+passes.
