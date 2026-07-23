@@ -42,9 +42,10 @@ KEY DETAILS
 
 CONSTRAINTS (hard)
 1. Landscape 1536×1024 (crop-safe toward 21:9).
-2. The core is the brightest element of all; embers second; pulses third; the rings' warm
-   under-glow stays subtle.
-3. NO hollow cages, no "FOG" text anywhere — every cage has an ember, every label is a bare name.
+2. The core is the brightest element of all; the FIVE embers second; the FOUR pulses third; the
+   rings' warm under-glow stays subtle.
+3. Exactly FIVE cages, every one with an ember — no hollow cage, no "FOG" text anywhere; exactly
+   FOUR pulses, on four different spokes.
 4. Text: exactly the ten strings quoted above, once each, verbatim, engraved structure-grey.
 5. No people, no watermark, no fireworks, no lens flares, no new elements, no redesign of the
    world from the reference.
