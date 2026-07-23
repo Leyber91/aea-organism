@@ -452,3 +452,24 @@ generation instruction. All 12 share ONE canonical save-state so the set reads a
 c-07 = THE DRAW·RECALL·THE MEASURE earned BACKWARDS CHANNEL, c-04 earned RESTORABLE COHERENCE,
 MOUTH/GOVERNOR/MEMORY/LOOP lit, SENSES/HANDS fog, POWER 1998 LIVE, RODS 7, MEM 48, LAST 1.44S/BEST
 0.98S. Workflow: attach ONE SPEC.md per ChatGPT generation. Old flat SCENES/ removed (superseded).
+
+---
+## 2026-07-23 (later·4) — THE REFERENCE SET IS COMPLETE (12/12) - the build contract exists
+
+**DID:** generated + locked all twelve reference frames (design/refs/REF-01..12 + REFS.md as the
+build contract). Backward design worked: images of a finished game, specced as-if-built, now lead the
+render. Journey: 4 rounds of "not it" -> R42 (references-are-specs) -> the GPT-Image-2 protocol
+investigation -> one anchored ChatGPT conversation, 01->12, anchor image + canon block, spec MATTER not
+information, counts stated twice, reference-reuse (no re-attach). 9/12 landed at ZERO fix rolls; the two
+that fought (02 fog-dots, 08 flat-diagram) taught field lessons now written into 00_HOW_TO_USE.
+CANON that emerged and is now locked: ember-in-cage organs, two-tori core, sealed/solid/dashed privacy
+rings, labels-on-approach, the caption tagline, the probe craft design, the octagonal chip + milled rail
++ light-at-the-connection bench material, branded-metal earned titles.
+
+**NEXT — BUILD-TO-MATCH (the code turn resumes):** REFS.md maps every reference to its engine surface.
+Primary targets: (1) the WORLD render (engine.js) vs REF-01/02 - ring treatments, ember-cage organs,
+two-tori core, labels, ignition strike+dust-ring; (2) THE BENCH (web/game bench) vs REF-10 - the answer
+to "the interface is too poor": octagonal chips on a milled rail, seat-glow, the live packet, the trace.
+A slice is done ONLY when the render matches its ref side-by-side (existing harness: shot_world.mjs +
+Read the PNG; Luis go/no-go). The honesty law still governs: a ref specs FORM; the render may only glow
+where the system truly fired.
