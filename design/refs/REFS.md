@@ -9,6 +9,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-02 | REF-02_THE_IGNITION.png | the ignition moment (igniteCore + the fire beat: flare-as-strike, ember-dust shockwave, arriving pulse with wake) | 2026-07-23 | ChatGPT Images 2.0, take fix3 (two surgical fixes applied; rolls capped at the drift wall) |
 | REF-03 | REF-03_THE_FLIGHT.png | flight scale + the in-game HUD (all five strings are the real HUD spec) + the probe's canon craft design | 2026-07-23 | ChatGPT Images 2.0, take 2 (one scale-fix roll) |
 | REF-04 | REF-04_THE_FOG_FRONTIER.png | the organ-state vocabulary up close: earned ember vs completely hollow fog; labels-on-approach at intimacy | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (tic preempted in base prompt) |
+| REF-05 | REF-05_THE_STAKE.png | the ladder/economy view: rod states (ignited-paid / dead-X / cooling / hearth), the reach filament, EST-before-fire | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (count stated twice held) |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -57,3 +58,11 @@ step fainter; labels sit small beneath their organ. Proof-of-protocol: the fog-v
 BEATEN by base-prompt preemption (field lesson 4) - zero repair rolls. Non-binding miss: the
 inner ring drew as a single hairline (canon is sealed-double); the engine renders ring
 treatments by code.
+
+## REF-05 — what it locks
+
+The economy plate: seven real rods; rod-state vocabulary (ignited hot = the paid crown, X-crossed
+dark = fell through, dim slats = cooling windows, warm ember = the hearth floor); the reach
+filament climbing hearth-to-crown, lighting nothing it passes, brightest at ignition; the stake
+labeled BEFORE the fire (DEEP - EST 1u). Governs the LADDER inspection view + every EST/FREE
+surface. Zero fix rolls - the exact-count-stated-twice pattern held.
