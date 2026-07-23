@@ -1,56 +1,68 @@
-# 12 · THE FLIGHT HUD — one frame of the finished game (the cockpit glass)
+# 12 · THE FLIGHT HUD — one frame of the finished game (the cockpit glass) · GPT-Image-2 spec v2
 
-One frame of the finished game THE PROBE: looking through the probe's instrument glass while
-approaching the core. The HUD is the thinnest possible layer — engraved at the corners, never a
-hologram collage. The world stays the star. Speculative details intentional. Self-contained.
+The last frame: looking through the probe's instrument glass while inbound to the core. The HUD
+is the thinnest possible layer — etched at the corners, never a hologram collage. The world (from
+REF-01/03) stays the star. Closes the set by marrying the two languages: the living world behind,
+the engraved instrument glass in front.
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Background: the world slightly defocused — near-black void, thin steel grey-blue concentric
-  rings, the small bright amber core with its hair-thin vertical beam.
-- HUD strokes and type: thin structure-grey `rgb(120,155,175)`, 1px hairlines, squared corners,
-  generous margins from the frame edge. NO glow on grey elements — etched glass, not neon.
-- AMBER in the HUD: ONLY the one thin sliver in the power bar. (The distant core in the world is
-  the frame's brightest element.)
-- Type: IBM-Plex-Mono engraved capitals, tabular numerals, small; EXACTLY the HUD text specified
-  below, legible; nothing else written.
-- FORBIDDEN: floating panels, minimaps, compasses, curved sci-fi arcs, multicolour, lens flares,
-  glow soup, rounded UI, people, extra text.
+1. Same conversation → attach NOTHING (reference-reuse: the model holds both the world plate and
+   the HUD language from REF-03). Fresh conversation → attach REF-03 THE FLIGHT once.
+2. Paste THE PROMPT below as one message. High quality (text).
+3. ONE image back → fix one quoted string per message → accept as `12_THE_FLIGHT_HUD_<take>.png`
+   → REF-12. Set complete.
 
-## THE GAME (context)
+## THE PROMPT (paste as one message, no attachment needed if in the same conversation)
 
-The probe's HUD shows only what the pilot needs: identity/zone, power truth, velocity, range to
-the core, and the two keys that matter. Four quiet corners of truth over a living world.
+Match the EXACT world and HUD style you generated earlier in this conversation — the near-black
+void with the dark radial instrument (concentric steel-blue rings, small bright amber core with
+its two tilted tori and vertical beam), and the thin engraved steel-grey monospace HUD with 1px
+hairline geometry, etched glass never glowing holograms. No people, no watermark, no new elements.
 
-## THE MOMENT
+SCENE
+First-person through the probe's cockpit glass, inbound over the middle ring: the world sits in
+the frame slightly DEFOCUSED (it is behind the glass) — the amber core centred in the middle
+distance with its vertical beam, two engraved rings sweeping the lower frame in perspective, one
+lit amber organ-cage and one empty cold-blue fog cage far apart on the rings, hair-thin spokes,
+the curved cold horizon limb beyond. The HUD is the sharp subject, on the glass.
 
-Inbound over the middle (PRIVATE) ring, 240 metres from the core, speed 32. Power healthy at
-1998 units, today's spend one thin sliver. No run active; the bench key waits.
+SUBJECT — the HUD, engraved thin structure-grey, corner-anchored with generous margins from the
+frame edge, all 1px hairlines, squared corners, tabular numerals:
+- TOP-LEFT, small squared bracket: "THE PROBE" over "ZONE PRIVATE"
+- TOP-RIGHT: "POWER 1998 LIVE" above a thin horizontal capacity bar — mostly pale structure-grey
+  with ONE thin amber sliver near its right end
+- BOTTOM-LEFT: a compact attitude cross (two hairlines), a tiny craft glyph, and "V 32"
+- BOTTOM-RIGHT: "MOUTH 240M" above "[F] BENCH · [TAB] MAP"
+- FRAME CENTRE: two thin squared brackets and a single 1px dot, aligned exactly on the distant
+  amber core
 
-## EVERYTHING IN FRAME (complete inventory)
+KEY DETAILS
+- The HUD is ETCHED GLASS: no glow on any grey element; the only warmth is the distant core and
+  the one amber sliver in the power bar.
+- The world is soft (behind glass); the HUD is crisp (on glass) — the depth separation sells the
+  cockpit.
+- No panels, no minimap, no compass rose, no curved sci-fi arcs — four quiet corners and a
+  centre reticle only.
 
-1. **THE WORLD (background, slightly defocused):** the amber core centred in the middle distance
-   with its vertical beam; two engraved rings sweeping the lower frame in perspective; one lit
-   amber node and one cold-blue fog node far apart on the rings; hair-thin spokes.
-2. **TOP-LEFT (engraved):** a small squared reticle bracket; inside it `THE PROBE`, beneath it
-   `ZONE PRIVATE`.
-3. **TOP-RIGHT:** `POWER 1998 LIVE` above a thin horizontal capacity bar — mostly pale
-   structure-grey with ONE thin amber sliver near the right end.
-4. **BOTTOM-LEFT:** a compact attitude cross (two 1px hairlines) with a tiny craft glyph at
-   centre and `V 32` beside it.
-5. **BOTTOM-RIGHT:** `MOUTH 240M` above `[F] BENCH · [TAB] MAP`.
-6. **FRAME CENTRE:** two thin squared brackets and a single 1px centre dot, aligned exactly on
-   the distant amber core.
-7. Nothing else on the glass.
+CONSTRAINTS (hard)
+1. Landscape 1536×1024, first-person, the world defocused, the HUD sharp.
+2. The distant amber core is the single brightest element; the power-bar sliver the only other
+   amber; every HUD stroke and glyph is flat structure-grey with no glow.
+3. The ONLY text is the six HUD strings quoted above, once each, verbatim; no ring labels, no
+   captions.
+4. Fog cage completely empty; the probe's own body not visible (we are inside it).
+5. No people, no watermark, no floating panels, no hologram glow, no new elements.
 
-## COMPOSITION & CAMERA
+## Ready-made refinement lines
 
-16:9 first-person. The HUD hugs the corners with generous margins; the centre of the frame
-belongs to the world. The amber core is the brightest element; the power sliver the only other
-warmth. Silence with four quiet corners of truth.
+- "Change only the world focus: softer/more defocused behind the glass. Keep the HUD crisp and identical."
+- "Change only the centre reticle: brackets tighter on the core, the dot exactly on it. Keep everything else the same."
+- "Violation — bottom-right must read exactly 'MOUTH 240M' over '[F] BENCH · [TAB] MAP'. Correct those strings only, change nothing else."
+- "Change only the HUD glow: remove all glow from the grey strokes — flat etched glass. Keep everything else the same."
 
-## GENERATE
+## What this frame must make a stranger feel
 
-Render the frame. 3 variants: (1) as specified, (2) closer to the core — the reticle brackets
-beginning to tighten, (3) your best synthesis. STYLE LAW and the exact HUD text are hard
-constraints.
+Inside the instrument, inbound: *I am flying a real machine toward the heart of a living mind, and
+my glass tells me only the truth I need.* If the HUD reads like a fighter jet or a hologram, it
+fails; if it reads like a deep-space probe's etched instrument glass, the set is complete.
