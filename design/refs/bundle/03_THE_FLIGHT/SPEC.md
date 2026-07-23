@@ -1,56 +1,60 @@
-# 03 · THE FLIGHT — one frame of the finished game (gameplay, minimal HUD on)
+# 03 · THE FLIGHT — one frame of the finished game (gameplay, minimal HUD) · GPT-Image-2 spec v2
 
-One gameplay frame of the finished game THE PROBE: the player's tiny craft crossing above the
-outer ring, the whole living instrument below, the minimal cockpit HUD engraved at the corners.
-Speculative details intentional. Self-contained.
+The player-feeling frame: a tiny craft, an immense living instrument below, four quiet corners of
+engraved truth. Scale, silence, awe. This is the frame that teaches "you are SMALL and it is ALIVE."
 
-## STYLE LAW (hard constraints)
+## Workflow for this frame
 
-- Field near-black `#06090e`–`#0c131c`; the void dominates; vast scale.
-- Structure ink `rgb(120,155,175)`: thin hairlines, wireframes, and ALL HUD strokes/type — the
-  HUD is quiet engraved glass, never glowing holograms.
-- Cold accent: fog elements only. AMBER (`#ffb000`/`#d4a24c`): the alive core, the lit nodes, the
-  probe's single aperture, and ONE thin sliver in the power bar — nothing else warm.
-- Type: IBM-Plex-Mono engraved capitals, tabular numerals, small; EXACTLY the HUD text specified
-  below, legible; no other text.
-- FORBIDDEN: multicolour/neon, lens flares, motion blur, hologram panels floating in space, gloss,
-  rounded UI, people, extra text.
+1. Attach the locked REF-01 image (the world plate).
+2. Paste the CANON BLOCK from `00_HOW_TO_USE.md`, then THE PROMPT below, as one message.
+3. ONE image back → single-change fixes (ready lines below) → accept as `03_THE_FLIGHT_<take>.png`
+   → declare REF-03.
 
-## THE GAME (context)
+## THE PROMPT (paste after the canon block)
 
-You fly a probe inside a living machine-mind rendered as a vast radial instrument. The HUD is the
-probe's own instrument glass: corner-anchored, engraved, minimal — the world stays the star.
+SCENE
+The same dark world as the reference, seen from high above its outer ring: the three engraved
+rings sweeping across the lower frame in perspective (sealed-double inner, solid middle,
+finely-dashed outer), the small bright amber core with its two thin tilted tori and hair-thin
+vertical beam at their distant centre, three calm amber embers and two completely empty fog
+cages on the rings, hair-thin spokes, one tiny amber pulse mid-spoke far away. A faint cold
+horizon band beyond the outer ring; pure black above.
 
-## THE MOMENT
+SUBJECT
+The probe: a tiny angular matte-dark craft with ONE warm amber aperture glowing at its bow,
+flying alone in the upper-left third — no more than 4% of the frame's width. No exhaust, no
+trail, no motion blur. The vast instrument below dwarfs it completely.
 
-Cruise at speed 41 over the outer (PUBLIC) ring, bow aimed at the distant core (THE MOUTH), 310
-metres out. Power budget healthy: 1998 units live, today's spend a thin sliver. No run active.
+KEY DETAILS
+The cockpit HUD, engraved on the glass in thin structure-grey monospace capitals with 1-pixel
+hairline geometry, corner-anchored with generous margins — etched glass, never glowing holograms:
+- top-left, a small squared bracket: "THE PROBE" over "ZONE PUBLIC"
+- top-right: "POWER 1998 LIVE" above a thin capacity bar, mostly pale grey with ONE thin amber
+  sliver near its right end
+- bottom-left: a compact attitude cross of two hairlines, a tiny craft glyph, and "V 41"
+- bottom-right: "MOUTH 310M" over "[F] BENCH · [TAB] MAP"
+- frame centre: two thin squared brackets and a single 1px dot aligned on the distant amber core
 
-## EVERYTHING IN FRAME (complete inventory)
+CONSTRAINTS (hard)
+1. Landscape 1536×1024.
+2. The distant amber core is the brightest element; the probe's aperture second; the HUD's amber
+   sliver third. Nothing else warm.
+3. The ONLY text in frame is the five HUD strings quoted above — rendered once each, verbatim;
+   no ring labels at this distance, no captions.
+4. Fog cages completely empty. The probe stays tiny (≤4% frame width).
+5. No people, no watermark, no lens flares, no floating panels or minimaps, no new elements, no
+   redesign of the world from the reference.
 
-1. **THE PROBE, upper-left third, small (~4% of frame width):** a tiny angular matte-dark craft,
-   one warm amber aperture glowing at its bow, no exhaust, no trail.
-2. **THE WORLD BELOW:** the three engraved concentric rings sweeping across the lower frame in
-   perspective; the small bright amber core at their distant centre with its hair-thin vertical
-   beam; three amber node-points and two faint cold-blue fog node-points on the rings; hair-thin
-   spokes; one amber pulse mid-spoke far away.
-3. **THE HORIZON:** a faint cold band beyond the outer ring. Above it: pure black.
-4. **THE HUD (engraved thin grey, corner-anchored, generous margins):**
-   - top-left, small squared bracket: `THE PROBE` and beneath it `ZONE PUBLIC`
-   - top-right: `POWER 1998 LIVE` above a thin horizontal capacity bar, mostly pale structure-grey
-     with ONE thin amber sliver near its end
-   - bottom-left: a compact attitude cross with a tiny craft glyph and `V 41`
-   - bottom-right: `MOUTH 310M` above `[F] BENCH · [TAB] MAP`
-   - frame centre: two thin squared brackets and a single 1px dot, aligned on the distant core.
-5. Nothing else. No panels, no minimap, no compass rose.
+## Ready-made refinement lines
 
-## COMPOSITION & CAMERA
+- "Change only the probe: smaller and higher — more vertigo. Keep everything else the same."
+- "Change only the HUD: strokes thinner and dimmer, margins larger. Keep the text identical."
+- "Change only the world below: rings fainter with distance haze. Keep the HUD and probe the same."
+- "Violation — text must read exactly 'MOUTH 310M'. Correct that string only, change nothing else."
+- "Violation — fog cages must be completely empty inside. Change nothing else."
 
-Wide 16:9, slight downward pitch — the probe just crested the outer ring and the whole instrument
-opened below. The core is the brightest element, the probe's aperture second, the HUD sliver
-third. Silence, loneliness, awe.
+## What this frame must make a stranger feel
 
-## GENERATE
-
-Render the frame. 3 variants: (1) as specified, (2) probe smaller and higher — more vertigo,
-(3) your best synthesis. STYLE LAW and the exact HUD text are hard constraints.
+Loneliness and awe: *I am a speck inside something immense that is quietly alive.* If the probe
+reads heroic or the HUD reads like a fighter jet, it fails; if it reads like a deep-sea probe's
+instrument glass over a burning cathedral, it passes.
