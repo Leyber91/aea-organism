@@ -15,6 +15,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-08 | REF-08_THE_FALL_THROUGH.png | the resilience receipt as matter: the light-groove route, dead-X modules, the hearth junction bloom | 2026-07-23 | ChatGPT Images 2.0, v3 spec after the flat-diagram v2 failed the material bar (field lesson 8) |
 | REF-09 | REF-09_THE_EARNED_TITLE.png | the naming ceremony: earned title as branded metal (the ONE lawful amber text), linked part-signature chain, the receipt->title proof | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 | REF-10 | REF-10_THE_BENCH_PLATE.png | THE MAIN INTERFACE (the answer to 'too poor'): the six-chip rail mid-run, live packet, trace, records, footer - the build's primary target | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls, ZERO attachments (reference-reuse proven) |
+| REF-11 | REF-11_THE_RUN_TRACE.png | the run-log/receipt surface: seven-line trace, recency gradient, state words in amber, the RECORD close + T+ time ruler | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -122,3 +123,11 @@ THROUGH in amber) / records line / footer keys. Strict engineer's grid, tabular 
 only on the packet + state word + seat-glows. This governs the real web/game bench rebuild - the
 frame that ends the "reads as a dashboard" failure. Proof: generated with ZERO attachments in a
 continuing conversation (field lesson 9), every string verbatim first try.
+
+## REF-11 — what it locks
+
+The receipt/run-log surface: a debossed column, older lines DIM to newer BRIGHT (recency
+gradient), amber ONLY on state words (FELL THROUGH warm, PASS hot = the strike); a milled amber
+closing rule; the RECORD stamp with a filled amber square; a vertical T+ time-ruler down the
+right margin with graduation ticks. Honesty telemetry as UI - every line a real event. Governs
+the game's run-log / trace panel.
