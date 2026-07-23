@@ -8,6 +8,7 @@ References lead; the build follows. Winners only — candidates stay out of the 
 | REF-01 | REF-01_THE_INSTRUMENT_AT_REST.png | the world render (engine.js: core, rings, organs, spokes, pulse) + the game's tagline surface | 2026-07-23 | ChatGPT Images 2.0, self-explaining plate prompt, take Image_2_V2 |
 | REF-02 | REF-02_THE_IGNITION.png | the ignition moment (igniteCore + the fire beat: flare-as-strike, ember-dust shockwave, arriving pulse with wake) | 2026-07-23 | ChatGPT Images 2.0, take fix3 (two surgical fixes applied; rolls capped at the drift wall) |
 | REF-03 | REF-03_THE_FLIGHT.png | flight scale + the in-game HUD (all five strings are the real HUD spec) + the probe's canon craft design | 2026-07-23 | ChatGPT Images 2.0, take 2 (one scale-fix roll) |
+| REF-04 | REF-04_THE_FOG_FRONTIER.png | the organ-state vocabulary up close: earned ember vs completely hollow fog; labels-on-approach at intimacy | 2026-07-23 | ChatGPT Images 2.0, take 1, zero fix rolls (tic preempted in base prompt) |
 
 ## What REF-01 locks as canon (adopted into the SPECs + the build)
 
@@ -47,3 +48,12 @@ limb for altitude frames (adopted drift - sells height better than the flat band
 glass HUD as the real in-game HUD spec (five strings, corner-anchored, one amber sliver in the
 power bar, center brackets on the core), and THE PROBE'S CANON CRAFT DESIGN: angular faceted
 matte-black hull, one warm amber aperture at the bow, no exhaust, no trail.
+
+## REF-04 — what it locks
+
+The close-up organ-state vocabulary: the earned ember is a concentrated four-point flare at the
+cage's heart whose glow kisses the ring hairline beneath; the fog cage is utterly hollow and a
+step fainter; labels sit small beneath their organ. Proof-of-protocol: the fog-vertex tic was
+BEATEN by base-prompt preemption (field lesson 4) - zero repair rolls. Non-binding miss: the
+inner ring drew as a single hairline (canon is sealed-double); the engine renders ring
+treatments by code.
