@@ -434,3 +434,21 @@ owned Fooocus pipeline (runner waits for model load, resumable, candidates NOT c
 the ChatGPT track from the bundle; joint curation -> WINNERS committed as design/refs/REF-*.png + REFS.md
 (each ref mapped to the surface it governs + extracted vocabulary). Then BUILD-TO-MATCH: a visual slice is
 done only when the render matches its locked ref side-by-side (world vs W1/W2 first, bench vs I1).
+
+**BLOCKER (forge track):** the local Fooocus batch cannot run - the NVIDIA driver is NOT LOADED on this
+machine (nvidia-smi present but "Driver Not Loaded"; NVDisplay.ContainerLocalSystem service STOPPED and
+needs admin to start; likely broken since ~June when the recipe last ran at 22s/img). Fix = elevated
+service start or a reboot (Luis's call - a reboot kills the entity server + the session). The batch is
+fully parked + resumable: rerun `Fooocus python_embeded\python.exe -s <scratchpad>\probe_refs_run.py
+design/refs/probe_refs_jobs.json <candidates dir>` once the driver is back (skips existing images).
+Until then the ChatGPT bundle track is the primary reference-generation path.
+
+**(later·3 addendum) — SUBBUNDLES:** restructured per Luis's direction ("one subbundle per image...
+create images like we had the game fully built with all the specification, we might be wrong and
+that's ok" = backward design authorized). design/refs/bundle/ is now 12 folders, one per image, each
+with ONE self-contained SPEC.md: style law inlined + world context + THE MOMENT (as-built save-state)
++ EVERYTHING IN FRAME (exhaustive inventory, exact engraved text) + composition + the 3-variant
+generation instruction. All 12 share ONE canonical save-state so the set reads as a single real game:
+c-07 = THE DRAW·RECALL·THE MEASURE earned BACKWARDS CHANNEL, c-04 earned RESTORABLE COHERENCE,
+MOUTH/GOVERNOR/MEMORY/LOOP lit, SENSES/HANDS fog, POWER 1998 LIVE, RODS 7, MEM 48, LAST 1.44S/BEST
+0.98S. Workflow: attach ONE SPEC.md per ChatGPT generation. Old flat SCENES/ removed (superseded).

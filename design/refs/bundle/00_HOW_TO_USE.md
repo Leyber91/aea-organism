@@ -1,43 +1,48 @@
-# 00 · HOW TO USE THIS BUNDLE (ChatGPT image generation)
+# 00 · HOW TO USE — one subbundle per image
 
-The bundle exists so the generator "goes full on the scenes" — it gets the whole world, the whole
-style, and one precise scene per image. One-line prompts produce generic sci-fi; this does not.
+Each image has its own folder with ONE self-contained `SPEC.md`. The spec is written **as if the
+game were already fully built**: the exact save-state, every element in frame, every readout and
+number. Some of that detail is speculative — deliberately. We are designing backward from the
+finished game; being wrong in a reference is cheap and useful. The reference leads, the build
+follows.
 
-## Per generation (repeat for each scene)
+## Per image
 
-1. Start a fresh ChatGPT conversation (image generation on).
-2. **Attach three files:** `01_STYLE_LAW.md` + `02_WORLD_BRIEF.md` + ONE file from `SCENES/`.
-3. Paste this instruction:
+1. Fresh ChatGPT conversation, image generation on.
+2. Attach exactly ONE file: `<scene>/SPEC.md`.
+3. Paste:
 
-   > Read the three attached files. Generate the image described in the SCENE file, obeying
-   > 01_STYLE_LAW absolutely — palette, composition laws, and the FORBIDDEN list are hard
-   > constraints. The image is a production art-direction reference for this game, not a poster.
-   > Give me 3 distinct variants: one wide/calm, one tighter/more dramatic, one your best synthesis.
+   > Read the attached SPEC. It describes one frame of a finished game. Render that frame
+   > exactly: the STYLE LAW section is a hard constraint (palette, type, composition, FORBIDDEN
+   > list), and EVERYTHING IN FRAME is the complete inventory — include what it lists, nothing it
+   > doesn't. Give me 3 variants: calm/wide, tighter/more dramatic, and your best synthesis.
 
-4. If a variant drifts off-brand, reply quoting the exact violated line from 01_STYLE_LAW
-   (e.g. "FORBIDDEN: lens-flare soup") and ask for a correction — the law file is the referee.
-5. Save keepers as `<scene-id>_<n>.png` (e.g. `I1-bench-plate_2.png`).
+4. Correct drift by quoting the exact violated SPEC line. Save keepers as `<scene-id>_<n>.png`.
 
-## What comes back to the repo
+## The shared save-state (all 12 specs agree on this — the set is ONE game)
 
-Drop all keepers in one folder and hand them over. They get curated together with the local forge
-batch; the WINNERS are committed to `design/refs/` as the locked visual spec (`REFS.md` maps each
-ref to the game surface it governs). From then on a visual slice is DONE only when the real render
-matches its reference side-by-side.
+Mid-game, rung 2. Constructs built so far: `c-01` (the first bare draw), `c-04` = THE DRAW · THE
+LADDER · THE MEASURE — earned the title **RESTORABLE COHERENCE**; `c-07` = THE DRAW · RECALL ·
+THE MEASURE — earned **BACKWARDS CHANNEL**. Organs lit: MOUTH, GOVERNOR, MEMORY, LOOP. Still fog:
+SENSES, HANDS. Meters: `POWER 1998 LIVE` · `RODS 7` · `MEM 48` · records `LAST 1.44S · BEST
+0.98S` · zone default `PRIVATE`.
 
-## Scene index
+## The subbundles
 
-| file | scene | what it specs |
+| folder | frame | kind |
 |---|---|---|
-| SCENES/W1_INSTRUMENT_AT_REST.md | the world at rest | the world render (engine.js) |
-| SCENES/W2_THE_IGNITION.md | the core flaring on a real draw | the fire/wow moment |
-| SCENES/W3_THE_FOG_FRONTIER.md | earned amber vs cold fog organ | organ states |
-| SCENES/W4_THE_FLIGHT.md | the probe tiny over the instrument | flight scale + atmosphere |
-| SCENES/W5_THE_WHOLE_ONE.md | every organ lit — the endgame poster | the destination image |
-| SCENES/W6_THE_STAKE.md | the ladder reaching a paid cloud rod | the metered-reach beat |
-| SCENES/G1_THE_SEAT.md | seating a part on the rail | the compose verb |
-| SCENES/G2_THE_FALL_THROUGH.md | rerouting down dead rods to the hearth | resilience made visible |
-| SCENES/G3_THE_EARNED_TITLE.md | a being earning its first real name | the naming payoff |
-| SCENES/I1_THE_BENCH_PLATE.md | the bench as a milled instrument | the bench UI (probe.css/bench.js) |
-| SCENES/I2_THE_RUN_TRACE.md | the live trace + receipts | the run-log surface |
-| SCENES/I3_THE_FLIGHT_HUD.md | the minimal diegetic HUD | the in-flight overlay |
+| W1_INSTRUMENT_AT_REST/ | the world idling, alive | world (photo mode, HUD hidden) |
+| W2_THE_IGNITION/ | the core flaring on a landed draw | world (photo mode) |
+| W3_THE_FOG_FRONTIER/ | lit MEMORY vs fog SENSES on one ring | world (photo mode) |
+| W4_THE_FLIGHT/ | the probe crossing the outer ring | world + minimal HUD |
+| W5_THE_WHOLE_ONE/ | endgame: every organ burning | world (photo mode) |
+| W6_THE_STAKE/ | the ladder reaching a paid rod | world/diagram |
+| G1_THE_SEAT/ | RECALL seating onto the rail | gameplay close-up |
+| G2_THE_FALL_THROUGH/ | the reroute landing on the hearth | gameplay diagram |
+| G3_THE_EARNED_TITLE/ | c-07 earning BACKWARDS CHANNEL | gameplay ceremony |
+| I1_THE_BENCH_PLATE/ | the full bench mid-run | interface |
+| I2_THE_RUN_TRACE/ | the trace closing into a RECORD | interface |
+| I3_THE_FLIGHT_HUD/ | the cockpit glass over the world | interface |
+
+Masters `01_STYLE_LAW.md` and `02_WORLD_BRIEF.md` remain the source of truth for the law text —
+each SPEC inlines what it needs and stands alone.
