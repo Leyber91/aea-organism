@@ -534,3 +534,31 @@ past its boundary). Together with REF-01 (rung 2) + REF-06 (rung 7) the evolutio
 **The filter:** NOT scope inflation - this is the missing HALF of the game's identity (the moment-to-moment
 was the first 12; the progression/meta is what makes it read as a big game with evolution). Same honesty
 law: a ref specs FORM; the real render/menus may only show what the system truly earned.
+
+## R44 · The entity economy is Cities-Skylines-class: many interlocking variables to stay viable
+
+**Spark (2026-07-24, his words):** *"Think on the energy resource control of cities skylines, so many
+variables to make your city profitable, the same for entities."*
+
+**Realized:** the entity's viability should be a MANAGEMENT SIM with CS-class depth - not one number but a web
+of interlocking REAL variables you balance to keep the mind running sustainably. CS balances power/water/
+money/traffic/pollution/demand; THE PROBE balances token-budget + per-plant rate-limits (ollama free/slow,
+nvidia 40rpm, groq...) + model ROT (fitness sweeps shrink the pool, 44->29) + zone-strictness + per-construct
+draw cost + reach-vs-hearth + the loop's own appetite. This is ALREADY in the design as R31 CARRYING CAPACITY:
+COUNT x FREQUENCY x MODEL-COST <= CONNECTED-SOURCE capacity - literally the CS balance equation. Connect more/
+faster sources -> raise the ceiling (progression = zoning up your grid). Over-subscribe (too many constructs,
+or ONE runaway) -> STARVATION: the city goes dark, honestly (real token starvation, not a fake meter). This is
+the economy spine that (a) gives the game CS-depth, (b) makes the R43-antagonist matter (a runaway construct =
+an exploding power plant), and (c) stays fully honest - every variable is a real system fact (real rpm windows
+in grid.py, real fitness/rot, real budget). The GOVERNOR/METER organs are the city planner's dashboard with
+teeth.
+
+**Where it goes -> the ECONOMY is the core management loop, not a side stat.** Fold into the book-guide
+(scenario workflow wrzza8i7u, already running with an economy + antagonist lens): the entity as a
+resource-management sim; carrying-capacity as the balance you tune; the runaway as over-subscription; sources
+as infrastructure you grow. Guided teaches ONE variable at a time (the CS tutorial ramp); intermediate exposes
+the full web; custom lets you re-plumb the grid.
+
+**The filter:** CS-depth must stay HONEST - every variable a real endpoint reading, never a simulated
+economy. And it must not become another design-forever hole: guided needs only the FIRST variable (free
+hearth vs paid reach) firing on the real merge, not the whole grid sim.
