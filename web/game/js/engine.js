@@ -11,7 +11,7 @@
 window.ENGINE = (function () {
   "use strict";
 
-  var GAME, renderer, scene, camera, composer, bloomPass, finalPass, clock, raf = null;
+  var GAME, renderer, scene, camera, composer, bloomPass, finalPass, fxaaPass, clock, raf = null;
   var skyMat, running = false, elapsed = 0;
 
   /* ---- resource registry (E1 §3.1: every geometry/material/texture/listener/timer owned) ---- */
@@ -254,6 +254,7 @@ window.ENGINE = (function () {
   function buildOrgans(sch) {
     if (!scene || !sch || !sch.nodes) return;
     var pos = organAngles(sch.nodes, sch.zones);
+    organPos = pos;                                    /* stash node world positions for the living conduits */
     (sch.edges || []).forEach(function (e) {
       var a = pos[e[0]], b = pos[e[1]]; if (!a || !b) return;
       var line = new THREE.Line(geo(new THREE.BufferGeometry().setFromPoints([a, b])),
@@ -277,6 +278,82 @@ window.ENGINE = (function () {
     });
   }
 
+  /* ---- LIVING CONDUITS (panel step 11): ONE additive point per REAL /game/events row, travelling
+     from its organ node to the core. ok:true = warm->hot afterglow (fading proof of arrival); ok:false
+     = dim structure-grey below the bloom threshold. The poll shares the frame accumulator (never
+     setInterval) and pauses when hidden. The FIRST 3D element bound to the live entity - honesty, not
+     decoration. ORGAN_MAP is verified against the real emit() strings; unmapped -> the core. ---- */
+  var conduit = null, organPos = {}, pollAcc = 0;
+  var CONDUIT_CAP = 256, TRANSIT = 0.9;
+  var ORGAN_MAP = { energy: "BRAIN", bench: "BRAIN", trust: "GOVERNOR", life: "LOOP", memory: "MEMORY" };
+
+  function buildConduitTraffic() {
+    var g = geo(new THREE.BufferGeometry());
+    var posArr = new Float32Array(CONDUIT_CAP * 3), lifeArr = new Float32Array(CONDUIT_CAP), hotArr = new Float32Array(CONDUIT_CAP);
+    g.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+    g.setAttribute("life", new THREE.BufferAttribute(lifeArr, 1));
+    g.setAttribute("hot", new THREE.BufferAttribute(hotArr, 1));
+    var m = mat(new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: { uWarm: { value: INK.warm.clone() }, uHot: { value: INK.hot.clone() },
+                  uCold: { value: INK.structure.clone() }, uSize: { value: 10.0 } },
+      vertexShader:
+        "attribute float life; attribute float hot; varying float vLife; varying float vHot; uniform float uSize;\n" +
+        "void main(){ vLife = life; vHot = hot; vec4 mv = modelViewMatrix * vec4(position, 1.0);\n" +
+        "  gl_PointSize = uSize * (0.4 + life) * (220.0 / max(-mv.z, 1.0));\n" +
+        "  gl_Position = projectionMatrix * mv; }",
+      fragmentShader:
+        "varying float vLife; varying float vHot; uniform vec3 uWarm; uniform vec3 uHot; uniform vec3 uCold;\n" +
+        "void main(){ if (vLife <= 0.0) discard; float r = length(gl_PointCoord - vec2(0.5));\n" +
+        "  float a = smoothstep(0.5, 0.0, r) * vLife;\n" +
+        "  vec3 c = vHot > 0.5 ? mix(uWarm, uHot, vLife) : uCold * 0.6;\n" +
+        "  gl_FragColor = vec4(c * a * 1.35, a); }"
+    }));
+    var points = new THREE.Points(g, m);
+    points.frustumCulled = false; points.name = "conduit-traffic"; scene.add(points);
+    conduit = { geo: g, pos: posArr, life: lifeArr, hot: hotArr,
+                from: new Array(CONDUIT_CAP), born: new Float32Array(CONDUIT_CAP), w: 0, since: 0 };
+  }
+
+  function spawnParticle(ev, delay) {
+    if (!conduit) return;
+    var id = ORGAN_MAP[ev.organ];
+    var from = (id && organPos[id]) || new THREE.Vector3(NEXUS.x, 4.8, NEXUS.z);   /* unmapped -> core, never an invented node */
+    var i = conduit.w; conduit.w = (conduit.w + 1) % CONDUIT_CAP;
+    conduit.from[i] = from; conduit.born[i] = elapsed + (delay || 0);
+    conduit.hot[i] = ev.ok ? 1.0 : 0.0; conduit.life[i] = 0.0;
+    conduit.pos[i * 3] = from.x; conduit.pos[i * 3 + 1] = from.y; conduit.pos[i * 3 + 2] = from.z;
+  }
+
+  function pollEvents() {
+    if (!conduit || !window.GameAPI) return;
+    window.GameAPI.events(conduit.since).then(function (r) {
+      if (!r || !r.ok || !r.events || !r.events.length) return;   /* unwrap {ok, events} */
+      var evs = r.events, first = conduit.since === 0, maxT = conduit.since, k = 0, i, j;
+      for (i = 0; i < evs.length; i++) { if (evs[i].t > maxT) maxT = evs[i].t; }
+      var start = first ? Math.max(0, evs.length - 14) : 0;        /* first poll: recent trace, not the whole-history burst */
+      for (j = start; j < evs.length; j++) { spawnParticle(evs[j], first ? k * 0.42 : k * 0.06); k++; }
+      conduit.since = maxT; conduit.geo.attributes.hot.needsUpdate = true;
+    }, function () {});
+  }
+
+  function updateConduit(t) {
+    if (!conduit) return;
+    var P = conduit.pos, L = conduit.life, F = conduit.from, B = conduit.born, any = false, i;
+    for (i = 0; i < CONDUIT_CAP; i++) {
+      if (L[i] <= 0 && B[i] === 0) continue;
+      var age = t - B[i]; if (age < 0) continue;                    /* staggered: not born yet */
+      var u = age / TRANSIT;
+      if (u >= 1) { if (B[i] !== 0) { L[i] = 0; B[i] = 0; any = true; } continue; }
+      var e = u * u * (3.0 - 2.0 * u), f = F[i];
+      P[i * 3] = f.x + (NEXUS.x - f.x) * e;
+      P[i * 3 + 1] = f.y + (4.8 - f.y) * e;
+      P[i * 3 + 2] = f.z + (NEXUS.z - f.z) * e;
+      L[i] = 1.0 - u; any = true;
+    }
+    if (any) { conduit.geo.attributes.position.needsUpdate = true; conduit.geo.attributes.life.needsUpdate = true; }
+  }
+
   function buildInstrument() {
     buildCore();   /* dark structure-ink until the schema proves the being alive */
     if (!GAME.state.flags.still && window.GameAPI && window.GameAPI.schema) {
@@ -285,6 +362,7 @@ window.ENGINE = (function () {
         buildZoneRings(sch.zones);
         buildOrgans(sch);
         if (sch.alive) igniteCore();                 /* amber ONLY when the heartbeat is really ticking */
+        buildConduitTraffic(); pollEvents();         /* wire the real /game/events stream into the world */
       }, function () {});
     } else {
       buildZoneRings(["sensitive", "private", "public"]);   /* ?still: neutral field, no live amber */
@@ -446,6 +524,7 @@ window.ENGINE = (function () {
     camera.aspect = w / h; camera.updateProjectionMatrix();
     renderer.setSize(w, h); composer.setSize(w, h);
     bloomPass.setSize(Math.round(w * 0.5), Math.round(h * 0.5));   /* composer.setSize clobbers bloom to full - re-apply half */
+    fxaaPass.material.uniforms.resolution.value.set(1 / w, 1 / h);
   }
 
   function loop() {
@@ -456,6 +535,9 @@ window.ENGINE = (function () {
     skyUpdate(elapsed);
     flightUpdate(dt);
     coreUpdate(dt);
+    pollAcc += dt;
+    if (pollAcc >= 1.5 && !document.hidden) { pollAcc = 0; pollEvents(); }   /* share the frame accumulator, pause when hidden */
+    updateConduit(elapsed);
     if (!GAME.state.flags.still) {
       if (controlsLive) {
         chaseCam(dt, false);
@@ -497,8 +579,12 @@ window.ENGINE = (function () {
       new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5), 0.65, 0.4, 0.5); /* params LOCKED (A4 §8) */
     composer.addPass(bloomPass);
     finalPass = new THREE.ShaderPass(FinalShader);
-    finalPass.renderToScreen = true;
+    finalPass.renderToScreen = false;                    /* FXAA presents last, on the encoded/gamma buffer */
     composer.addPass(finalPass);
+    fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);    /* the AA the dead MSAA left uncovered (chunky-edge fix) */
+    fxaaPass.material.uniforms.resolution.value.set(1 / window.innerWidth, 1 / window.innerHeight);
+    fxaaPass.renderToScreen = true;
+    composer.addPass(fxaaPass);
 
     buildAtmosphere();
     buildGround();
@@ -581,7 +667,8 @@ window.ENGINE = (function () {
     renderer.dispose();
     if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
     GAME.state.engine = null;
-    scene = camera = composer = bloomPass = finalPass = skyMat = renderer = null;
+    scene = camera = composer = bloomPass = finalPass = fxaaPass = skyMat = renderer = null;
+    conduit = null; organPos = {};
   }
 
   return { init: init, dispose: dispose };

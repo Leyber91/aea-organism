@@ -390,3 +390,27 @@ include-resolver (lift the MIT GLSL inline instead). Full plan: tasks/w59a68svi.
 Deferred: FXAA-on-rings via fwidth (verify derivatives pragma), fresnel normalize (nicety), powerPreference
 (until nvidia-smi confirms the entity uses the discrete GPU), fat-ribbon conduits + InstancedMesh (only past
 ~50 organs).
+
+---
+## 2026-07-23 (later·2) — FXAA + LIVING CONDUITS (the honesty headline landed)
+
+**DID:**
+- **FXAA** (new web/FXAAShader.js, self-contained MIT glsl-fxaa, global script served from web/ root):
+  reordered the tail RenderPass -> half bloom -> FinalShader(renderToScreen=false) -> FXAA(present) so AA
+  runs on the ENCODED/gamma buffer. Killed the "chunky/2003-menu" aliasing on every ring/edge/octahedron.
+  Verified: rings render as smooth curves, no black, console clean under swiftshader.
+- **LIVING CONDUITS** (engine.js buildConduitTraffic/pollEvents/updateConduit): ONE additive THREE.Points
+  particle per REAL /game/events row, travelling organ-node -> core; ok:true warm->hot fading on arrival,
+  ok:false dim grey. ORGAN_MAP verified against the real emit strings (energy/bench->BRAIN(MOUTH),
+  trust->GOVERNOR, life->LOOP, memory->MEMORY; unmapped->core). Unwraps {ok,events}, polls ~1.5s off the
+  frame accumulator (not setInterval), paused when hidden, pre-alloc 256-cap ring buffer, 1 draw call.
+  First 3D element bound to the live entity. Verified: real particles flow to the core, console clean.
+  NOTE: the entity's loop is quiet right now (latest event ~39h old) so the conduit shows the recent real
+  trace on load + will light live when traffic resumes. MEMORY/SENSES/HANDS correctly stay dark (no traffic).
+
+**NEXT (remaining vetted order):** core breath from a VERIFIED real heartbeat signal (the removed sin is
+now steady glow; wire the envelope off real LOOP/life ticks via the same poll, else a stalled entity shows
+a still core) -> node brightness = real rolling per-organ activity (exp-decay off the same poll, clamped
+below fire) -> the BENCH RAIL (the "too poor" interface: flat spine -> lit rail with parts mounted, chips as
+reticle/glyph instruments, rationed --edge accent). Deferred: fwidth ring AA (verify derivatives), fresnel
+normalize, powerPreference (until nvidia-smi confirms the entity uses the discrete GPU).
