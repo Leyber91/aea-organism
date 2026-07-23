@@ -49,6 +49,11 @@ protocol replaces v2. Folders stay in generation order 01 → 12; REF-01 (the ac
 7. **Adopt-back rule.** When the model invents something better than the spec, it becomes canon
    and flows back into the SPECs: ember-in-cage organs (01), the ember-dust shockwave ring (02),
    the curved horizon limb at altitude + the probe's craft design (03).
+8. **Spec MATTER, not information (the 08 lesson).** A spec that describes a diagram gets a
+   flat diagram. Every frame must be staged as a PHOTOGRAPH of physical matter in a place —
+   plate, void, ring — with a camera, perspective, depth of field, and material texture; the
+   information rides ON the matter (debossed labels, light in milled grooves, mounted modules).
+   The set's premium feel IS material physics; "diagram-class" frames were a category error.
 
 ## THE CANON BLOCK — paste with EVERY generation from 02 onward
 
