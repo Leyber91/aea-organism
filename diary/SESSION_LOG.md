@@ -503,3 +503,13 @@ the bar, build-to-match), where we are (COMPOSED 0->1, both plants, bench pass 1
 guided-frame; deferred=fog behind the sequencing gate), the full scope contemplated (a table so nothing is
 lost), the standing lessons, and the doc index. NEXT = the lowest unchecked item in ROADMAP §2: Phase A step 2
 = the bench plate to REF-10 (milled rail + bigger octagonal chips + the live RUN packet).
+
+**PRODUCTION_PLAN.md** — the professional game-dev pipeline applied to THE PROBE (answer to "how do game
+developers do it / follow a plan top to bottom"). The one idea: DATA-DRIVEN — build a few SYSTEMS, author
+content (maps/missions/characters) as DATA, prove with a vertical slice, then production = authoring data not
+code. THE PROBE's layers: DESIGN (done, scattered) -> CONTENT-AS-DATA (the pipeline) -> SYSTEMS (composer/
+gameapi/world/save = DONE; the MISSION ENGINE = the ONE missing system). Ordered plan: Step 0 bench->REF-10
+(in progress) -> Step 1 build the MISSION ENGINE + a mission data schema -> Step 2 author MISSION 01 (the
+guided cold-open->first-fire as JSON) = vertical slice complete, the first time it's a GUIDED GAME -> Step 3
+production (author the curriculum as mission data; menus = views over schema/save). This is the spine that
+stops the oscillation: build systems + author data, never one-off screens.

@@ -99,7 +99,7 @@ to threaten, or a catalog for 0 constructs, is corpus around the empty center �
 
 ## 5 · DOC INDEX (where everything lives)
 
-`design/ROADMAP.md` (this map — the ordered strategy) · `GAME_INVENTORY.md` (the element BOM + guided
+`design/ROADMAP.md` (this map — the ordered strategy) · `PRODUCTION_PLAN.md` (HOW it's built: the data-driven pipeline + the systems) · `GAME_INVENTORY.md` (the element BOM + guided
 checklist + critic verdict) · `THE_FIELD_GUIDE.md` (the scenario / book guide) · `A17_VOCABULARY.md` (the
 names) · `AEA_APOLOGIA.html` (the AEA theory) · `refs/REFS.md` (the 12 locked references = the bar) ·
 `refs/vision/WHOLE_GAME.md` (the whole-game vision posters) · `refs/bundle/` (per-image specs + the image
