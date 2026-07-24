@@ -496,3 +496,10 @@ packet on RUN) + calm the dock composition so the plate reads against a near-bla
 locked ref. (2) the dock-camera composition (core wash). (3) the honesty fixes the critic flagged: tokens 0
 -> a dash (energy.py:152), the len>0 MEMORY over-claim (schema.py), the `alive` field in the claim-ceiling
 lint. (4) then the receipt/economy surfaces (REF-11/05) + the first title once RECALL forges.
+
+**MASTER MAP:** design/ROADMAP.md is now the single ordered source of truth — the north star (the 12 refs =
+the bar, build-to-match), where we are (COMPOSED 0->1, both plants, bench pass 1), the ordered build path
+(Phase A make-the-first-loop-beautiful -> B close-the-guided-arc-rung-2 -> C the-meta-visible -> D
+guided-frame; deferred=fog behind the sequencing gate), the full scope contemplated (a table so nothing is
+lost), the standing lessons, and the doc index. NEXT = the lowest unchecked item in ROADMAP §2: Phase A step 2
+= the bench plate to REF-10 (milled rail + bigger octagonal chips + the live RUN packet).

@@ -11,11 +11,11 @@
     "source": "aea/gameapi/act.py"
    },
    "plan": {
-    "count": 55,
+    "count": 58,
     "source": "design/00_VISION.md"
    },
    "reflections": {
-    "count": 41,
+    "count": 44,
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
@@ -41,13 +41,13 @@
     "src": "THE_PROBE",
     "dst": "plan",
     "rel": "contains",
-    "count": 55
+    "count": 58
    },
    {
     "src": "THE_PROBE",
     "dst": "reflections",
     "rel": "contains",
-    "count": 41
+    "count": 44
    },
    {
     "src": "THE_PROBE",
@@ -1096,6 +1096,11 @@
      "path": "design/FIRST_LIGHT_INTEGRATION.md"
     },
     {
+     "id": "design/GAME_INVENTORY.md",
+     "type": "design_doc",
+     "path": "design/GAME_INVENTORY.md"
+    },
+    {
      "id": "design/INDEX.md",
      "type": "design_doc",
      "path": "design/INDEX.md"
@@ -1109,6 +1114,16 @@
      "id": "design/R1_EVIDENCE.md",
      "type": "design_doc",
      "path": "design/R1_EVIDENCE.md"
+    },
+    {
+     "id": "design/ROADMAP.md",
+     "type": "design_doc",
+     "path": "design/ROADMAP.md"
+    },
+    {
+     "id": "design/THE_FIELD_GUIDE.md",
+     "type": "design_doc",
+     "path": "design/THE_FIELD_GUIDE.md"
     },
     {
      "id": "docs/AEA_PROOF_PLAN.md",
@@ -1414,6 +1429,24 @@
      "id": "R41",
      "type": "reflection",
      "title": "R41 · The combinations must be NAMED (marketable, on-theme), and we build the vocabulary ground-up",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R42",
+     "type": "reflection",
+     "title": "R42 · Generate the reference images FIRST - the ones we have aren't helping",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R43",
+     "type": "reflection",
+     "title": "R43 · The refs are all ONE moment - the game's PROGRESSION and META are unreferenced",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R44",
+     "type": "reflection",
+     "title": "R44 · The entity economy is Cities-Skylines-class: many interlocking variables to stay viable",
      "path": "diary/REFLECTIONS.md"
     }
    ],
