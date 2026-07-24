@@ -78,24 +78,31 @@ canvas{display:block}
              inset 0 0 26px rgba(0,0,0,.55),
              0 30px 74px -22px rgba(0,0,0,.75);
   clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+#bench .plate>.ck{display:none}   /* REF-10 uses a milled rim, not corner brackets */
+#bench .plate::before{content:"";position:absolute;inset:7px;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(120,155,175,.06)}   /* the inner double-hairline rim */
 .plate .rgn{padding:10px 2px 0}
 .task .t-line{color:var(--s100)}
 .task .t-check{color:var(--s60);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
-.spine{position:relative;display:flex;align-items:center;gap:8px;padding:34px 2px 18px}
-.spine .end{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);white-space:nowrap}
-.wire{flex:1;height:1px;background:var(--s60);min-width:14px}
-.wire.trunk{height:2px;background:var(--s100)}
+.spine{position:relative;display:flex;align-items:center;gap:0;padding:46px 2px 30px}
+.spine .end{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);white-space:nowrap;padding:0 8px}
+/* the continuous MILLED RAIL: recessed groove segments the chips mount onto (align-items:center runs it through the chip middle) */
+.wire{flex:1;min-width:12px;height:7px;background:linear-gradient(#060b11,#0b141d 50%,#060b11);
+  box-shadow:inset 0 1px 1px rgba(0,0,0,.6),inset 0 -1px 0 rgba(120,155,175,.09)}
+.wire.trunk{flex:0 0 12px;min-width:12px}
 .wire.draw{transform-origin:left center;animation:wdraw .18s ease-out}
 @keyframes wdraw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-/* REF-07 chip: octagonal machined badge, debossed, chamfered edges */
-.chip{display:flex;align-items:center;gap:8px;padding:8px 13px;cursor:pointer;
-  background:linear-gradient(160deg,#111c26,#0a121a);
-  clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px);
-  box-shadow:inset 0 1px 0 rgba(120,155,175,.10),inset 0 -1px 0 rgba(0,0,0,.55)}
-/* seated on the spine = alive: the warm glow lives UNDER the seat (light-at-the-connection) */
-.spine .chip{box-shadow:inset 0 1px 0 rgba(120,155,175,.12),inset 0 -1px 0 rgba(0,0,0,.55),
-  0 4px 13px -3px rgba(212,162,76,.42)}
-.chip .glyph{width:8px;height:8px;border:1px solid var(--s100);border-radius:50%;flex:none}
+/* REF-07/10 chip: full-octagon machined badge, debossed, chamfered edges */
+.chip{position:relative;z-index:1;display:flex;align-items:center;gap:7px;padding:8px 12px;cursor:pointer;
+  background:linear-gradient(158deg,#131e28,#0b131b 72%,#080f16);
+  clip-path:polygon(7px 0,calc(100% - 7px) 0,100% 7px,100% calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,0 calc(100% - 7px),0 7px);
+  box-shadow:inset 0 1px 0 rgba(120,155,175,.13),inset 0 -2px 3px rgba(0,0,0,.5),inset 2px 0 3px rgba(0,0,0,.3),inset -2px 0 3px rgba(0,0,0,.3)}
+/* the MOUNTED rail chip (REF-10): big, glyph/name/stat stacked, warm seat-glow rising from under the seat */
+.spine .chip{flex-direction:column;justify-content:center;gap:5px;min-width:90px;padding:13px 12px 12px;
+  box-shadow:inset 0 1px 0 rgba(120,155,175,.15),inset 0 -15px 17px -8px rgba(212,162,76,.5),
+             inset 2px 0 3px rgba(0,0,0,.3),inset -2px 0 3px rgba(0,0,0,.3)}
+.spine .chip .nm{font-size:11px;color:var(--s100)}
+.chip .glyph{width:11px;height:11px;border:1.5px solid var(--s100);border-radius:50%;flex:none}
 .chip .glyph.pent{border-radius:0;border:none;background:var(--s100);
   clip-path:polygon(50% 0,100% 38%,81% 100%,19% 100%,0 38%)}
 .chip .glyph.fire{border-color:var(--hot)}
