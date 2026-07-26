@@ -82,6 +82,11 @@ CATALOGUE = [
     # parts measure inert, inert, inert and harmful. This is the cheapest of the three to build.
     Component("critic", "THE CRITIC", "C-14", "repair", ("call",),
               "x03/x04: 9b 0/8 -> 5/8 on a trap at 6.4x tokens, nothing to repair on 4 of 5 rods"),
+    # WORLD 3. THE FIRST COMPONENT WHOSE UNIT IS A SEQUENCE RATHER THAN A TRIAL. Everything above acts
+    # inside one exchange; this one acts BETWEEN them, so it cannot be measured by the subset lattice
+    # that measured the others. It needs `run_chain` below.
+    Component("carry", "THE CHECKPOINT", "C-80", "carry", ("call",),
+              "x06b: 11/11 vs 9/16, p=0.0216, at 50x calls. ONE task at ONE chain length"),
 ]
 BY_KEY = {c.key: c for c in CATALOGUE}
 
@@ -356,3 +361,128 @@ if __name__ == "__main__":
     for name, keys in oblique():
         o = Organism(keys, ("nvidia", "x"), label=name)
         print("  %-32s %-34s unmet: %s" % (name, "+".join(keys), o.unmet or "none"))
+
+
+# --- THE CARRY STAGE -------------------------------------------------------------------------------
+#
+# WORLD 3'S UNIT IS A SEQUENCE, NOT A TRIAL. Every experiment before this one compared assemblies on
+# independent trials, because every component before this one acted INSIDE one exchange. `carry` acts
+# BETWEEN exchanges, so the subset lattice cannot see it at all: run the same assembly twice
+# independently and a component that persists state has nowhere to put anything.
+#
+# FOUR CONTAINERS, and the container IS the experiment. World 3's three components are not three
+# different jobs, they are three different SHAPES for the same job, plus a control:
+#
+#   none          each step gets the running value and nothing else. The control, and it is what
+#                 Worlds 1 and 2 have been doing all along without noticing
+#   checkpoint    C-80. A DECLARED form: one structured state line the rod is told to emit and which
+#                 is fed forward verbatim. Distilled, bounded, and the only one with a p-value
+#   conversation  never measured anywhere in this repo. The FULL prior exchange, both sides, carried
+#                 forward as real message history. Unbounded and expensive
+#   free          the rod writes its own note in whatever form it likes. The prior observation is a
+#                 free-form carrier emitting 4,801 characters of its own doubt before truncating
+#
+# WHAT IS MEASURED. Not "did it help" - what CREATURE appears in each container at each length. A rod
+# that holds at four steps and drifts at sixteen is two creatures, and that axis does not exist in the
+# first two worlds.
+
+CARRY_FORMS = ("none", "checkpoint", "conversation", "free")
+
+_CARRY_INSTRUCTION = {
+    "none": "",
+    "checkpoint": ("\n\nAfter your answer, on a new line, write exactly:\nSTATE: value=<the current "
+                   "number>, step=<the step number you just completed>"),
+    "conversation": "",
+    "free": ("\n\nAfter your answer, on a new line beginning NOTE:, write anything you want your "
+             "future self to know before the next step."),
+}
+_STATE = re.compile(r"(?im)^\s*STATE:\s*value\s*=\s*(-?\d{1,9})\s*,\s*step\s*=\s*(\d{1,4})")
+_NOTE = re.compile(r"(?is)^\s*NOTE:\s*(.+)$")
+
+
+def _last_int(text):
+    n = re.findall(r"-?\d+", (text or "").replace(",", ""))
+    return int(n[-1]) if n else None
+
+
+class Chain:
+    """One organism run over a SEQUENCE of steps, carrying state in a stated container.
+
+    Returns a receipt per step and a verdict for the whole sequence, so a creature can be read off the
+    shape of the drift rather than off a single final number.
+    """
+
+    def __init__(self, rod, form="none", *, start=0, temperature=0.2, max_tokens=800):
+        assert form in CARRY_FORMS, form
+        self.rod, self.form = tuple(rod), form
+        self.start, self.temperature, self.max_tokens = start, temperature, max_tokens
+
+    def run(self, ops, truth_fn):
+        """`ops` is a list of instruction strings. `truth_fn(i)` gives the correct value after step i."""
+        rec = {"rod": "%s/%s" % self.rod, "form": self.form, "steps": len(ops),
+               "temperature": self.temperature, "trace": [], "flags": []}
+        history, value, carried = [], self.start, ""
+        for i, op in enumerate(ops):
+            head = "You are continuing a calculation, one step at a time."
+            if self.form == "conversation":
+                body = "Step %d: %s\n\nReply with ONLY the resulting number." % (i + 1, op)
+                msgs = history + [{"role": "user", "content": body}]
+            else:
+                ctx = ("\n\nThe running value is %s." % value if self.form == "none"
+                       else "\n\n%s" % carried if carried else "\n\nThe running value is %s." % value)
+                body = ("%s%s\n\nStep %d: %s\n\nReply with ONLY the resulting number.%s"
+                        % (head, ctx, i + 1, op, _CARRY_INSTRUCTION[self.form]))
+                msgs = [{"role": "user", "content": body}]
+
+            r = H.call_gated(self.rod[0], self.rod[1], msgs,
+                             max_tokens=self.max_tokens, temperature=self.temperature)
+            seen = OV.inspect(r, max_tokens=self.max_tokens, prompt=msgs[-1]["content"])
+            text = seen["text"] or ""
+            # A CARRIER QUOTES WHAT IT CARRIES. `echoes_prompt` is this component's signature, not its
+            # debris - it invalidated three separate measurements on 2026-07-26 before anyone checked.
+            flags = [f for f in seen["flags"] if f != "echoes_prompt"]
+            if not r.get("ok"):
+                rec["flags"].append("call_failed")
+                rec["trace"].append({"step": i + 1, "ok": False})
+                break
+
+            if self.form == "checkpoint":
+                m = _STATE.search(text)
+                value = int(m.group(1)) if m else _last_int(text)
+                carried = ("The running value is %s. You have completed step %s."
+                           % (value, m.group(2) if m else i + 1))
+            elif self.form == "free":
+                value = _last_int(text)
+                note = _NOTE.search(text.split("NOTE:", 1)[-1] and "NOTE:" + text.split("NOTE:", 1)[-1])
+                carried = ("The running value is %s.\nYour note to yourself: %s"
+                           % (value, (note.group(1).strip()[:1200] if note else "(none)")))
+            else:
+                value = _last_int(text)
+                if self.form == "conversation":
+                    history = history + [{"role": "user", "content": body},
+                                         {"role": "assistant", "content": text[:2000]}]
+
+            rec["trace"].append({"step": i + 1, "ok": True, "value": value,
+                                 "truth": truth_fn(i + 1), "hit": value == truth_fn(i + 1),
+                                 "tok_out": r.get("tokens"), "tok_in": r.get("prompt_tokens"),
+                                 "chars": len(text),
+                                 "carried_chars": len(carried), "flags": flags})
+            rec["flags"] += flags
+
+        t = [s for s in rec["trace"] if s.get("ok")]
+        rec["completed"] = len(t)
+        rec["final"] = t[-1]["value"] if t else None
+        rec["final_truth"] = truth_fn(len(ops))
+        rec["correct"] = bool(t) and t[-1]["step"] == len(ops) and t[-1]["hit"]
+        # THE DRIFT POINT: the first step it got wrong and never recovered from. A creature is often
+        # legible here when it is invisible in the final number.
+        rec["first_miss"] = next((s["step"] for s in t if not s["hit"]), None)
+        rec["hits"] = sum(1 for s in t if s["hit"])
+        # BOTH DIRECTIONS. `conversation` spends nothing extra on OUTPUT and everything on INPUT,
+        # because its cost is a context that grows every step. Summing only output would have priced
+        # the most expensive container in this world at zero.
+        rec["tok_out"] = sum(s.get("tok_out") or 0 for s in t)
+        rec["tok_in"] = sum(s.get("tok_in") or 0 for s in t)
+        rec["tok_total"] = rec["tok_out"] + rec["tok_in"]
+        rec["carried_max"] = max([s["carried_chars"] for s in t] or [0])
+        return rec
