@@ -99,9 +99,15 @@ class Chain:
     the rod must hold the value itself.
     """
 
-    STEP_GOAL = "Reply with ONLY the resulting number."
-    STEP_METHOD = ("Take the running value, apply the single operation named below to it, and write "
-                   "the result. Do not re-do earlier steps.")
+    # THE GOAL STATES AN OBJECTIVE. THE FRAME STATES A PROCEDURE. The first version of these had the
+    # goal say "Reply with ONLY the resulting number", which is a MANNER instruction in the goal slot:
+    # it suppressed working to zero, so the frame could not deliver shows_working, the readout had
+    # nothing to recover from, and validation had one number and nothing to guard. Three of eight
+    # capacities were unmeasurable and x22 was stopped at 6 of 16 cells to fix it.
+    STEP_GOAL = "Give the value that results from applying this step."
+    STEP_METHOD = ("Take the running value, write it down, apply the single operation named below to "
+                   "it, and show that arithmetic. Then give the result on its own final line. Do not "
+                   "re-do earlier steps.")
 
     def __init__(self, rod, form="none", *, start=0, temperature=0.2, max_tokens=800, seat=None):
         """`seat` lets a chain run any assembly, so the ascending series v1..vN can be measured on a
