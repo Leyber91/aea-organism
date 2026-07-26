@@ -122,8 +122,8 @@ class Chain:
                 rec["flags"].append("call_failed")
                 rec["trace"].append({"step": i + 1, "ok": False})
                 break
-            value = r["answer"] if r["answer"] is not None else _last_int(r.get("raw"))
             text = r.get("text") or r.get("raw") or ""
+            value = r["answer"] if r["answer"] is not None else Carry.extract(self.form, text, value)
             carried = Carry.pack(self.form, text, value)
             if self.form == "conversation":
                 history = history + [{"role": "user", "content": task["data"]},

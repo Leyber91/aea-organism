@@ -266,3 +266,30 @@ Two of `x21`'s three rods scored perfectly at length 16 **with no carry at all**
 nothing to repair when nothing drifts, so every pooled margin came from one rod and the ceiling did
 the rest. Before running an aid experiment, **verify the baseline actually fails.** A high baseline is
 not a clean control; it is a measurement with no room in it.
+
+### DEFECT 11 · CALIBRATING A CONTROL IS ITSELF A MEASUREMENT, AND IT BROKE TWICE
+
+`x22` calibration, 2026-07-27. Three attempts to build a chain a memory aid could be measured on:
+
+1. **3-digit arithmetic.** Both rods failed at STEP 1. That is inability, not drift; a carry part has
+   nothing to preserve when the first step is already beyond the rod.
+2. **Trivial arithmetic on a 5-digit value** so retention rather than the sum is the burden. Still
+   failed at step 1, every trial, on `48371 + 6`. Not the model - **the control.** Fixing `none` to
+   carry nothing had also removed the STARTING VALUE, so the rod was never told what number it was
+   working from. Step 1 must state the start; that is the task, not the carry.
+3. **Then `checkpoint` failed at step 1 while `none` reached step 2**, which is impossible if it
+   works. The checkpoint variant appends `STATE: value=48377, step=1`, and the refactored reader took
+   the LAST integer - so it scored the step number as the answer. A regression the refactor
+   introduced and calibration caught.
+
+**Three bugs, all in the harness, none in the models.** After the fixes: `none` first-misses at step 2
+with 1/14 steps hit, `checkpoint` at step 5 with 4/14.
+
+**The rules.** Calibrate before running, and treat a control that fails everywhere as a **bug report
+about the control**, not as a hard task. A control can be broken in two directions and
+over-correcting one produces the other. And when a part appends a number after the answer, the
+answer is not the last number - extract per variant, never generically.
+
+**And the metric follows from the calibration.** At this difficulty final-answer correctness is 0.00
+for every arm, so it discriminates nothing. The signal is **steps-hit and the DRIFT POINT**. Score
+what separates the arms, decided from the calibration rather than from habit.

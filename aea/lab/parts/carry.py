@@ -32,6 +32,19 @@ class Carry(Part):
         ctx.note(carry_form=form, carried=self.pack(form, ctx.text, ctx.answer))
 
     @staticmethod
+    def extract(form, text, fallback=None):
+        """The VALUE the step produced. checkpoint and free both append a number AFTER the answer
+        (`step=1`, or anything in a note), so taking the last integer reads the wrong one. This
+        regression made every checkpoint trial miss at step 1 during calibration."""
+        if form == "checkpoint":
+            m = _STATE.search(text or "")
+            if m:
+                return int(m.group(1))
+        head = (text or "").split("NOTE:", 1)[0] if form == "free" else (text or "")
+        n = re.findall(r"-?\d+", head.replace(",", ""))
+        return int(n[-1]) if n else fallback
+
+    @staticmethod
     def pack(form, text, value):
         """What the next step is given. `none` is deliberately empty: a control that hands the
         running value forward IS a checkpoint, and that is the bug this method exists to prevent."""
