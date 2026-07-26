@@ -19,7 +19,7 @@ is not, which is why it keeps winning.
 | world | class | layer | components |
 |---|---|---|---|
 | 1 | THE ANSWERER | SPECIFY | GOAL, FRAME |
-| 2 | THE CORRECTOR | REPAIR | MEASURE, READOUT, VALIDATION, CLOCK, CRITIC, LADDER, COUNCIL |
+| 2 | THE WITNESS *(was THE CORRECTOR)* | SEE | MEASURE, READOUT, VALIDATION, CLOCK, CRITIC, LADDER, COUNCIL |
 | 3 | THE REMEMBERER | REMEMBER | CHECKPOINT, RECALL, CONVERSATION |
 | 4 | THE KEEPER | PERSIST | — |
 | 5 | THE HAND | ACT | — |
@@ -73,7 +73,32 @@ Components: **GOAL, METHOD, MANNER**
 
 Two correct, one toxic, two dead ends, one evolution. The only complete world.
 
-### WORLD 2 — THE CORRECTOR · REPAIR · **HALF-BUILT**
+> **WORLD 1, CORRECTED 2026-07-27.** `Egens unius` reads *0.00 to 0.53* above; the verified figure from
+> `x10` is **four rods going 0.00 to 1.00 on a method frame** — llama-3.3-70b, llama-3.2-3b,
+> mistral-small-119b, granite4.1:8b. And `Integer sufficiens` is listed here as World 1's second
+> correct creature; it has **no measured World 1 state at all** — its only receipt is against the
+> VALIDATION GUARD, a World 2 part — so it belongs to World 2 and the row above is wrong.
+>
+> World 1's true roster is eight: `Effusus`, `Clausus`, `Tacitus`, `Egens unius`, `Incuriosus`,
+> `Obtemperans`, `Rogans`, and `Speciosus operis` as the door.
+
+### WORLD 2 — THE WITNESS · SEE · **HALF-BUILT**
+
+> **RENAMED 2026-07-27, from the evidence.** It was THE CORRECTOR, the REPAIR class. Five of its seven
+> components are now measured and **not one repairs**. But that headline was itself sloppy: three of
+> the five were never accuracy instruments at all.
+>
+> | part | kind | what it actually adds |
+> |---|---|---|
+> | `MEASURE` | gauge | **can_know.** Fooled 0 of 153. It is supposed to change no answer |
+> | `CLOCK` | channel | **separability.** 8.18x on one rod, 0.95 on another. A signal, not a lever |
+> | `VALIDATION` | guard | **can_abstain.** Silent wrongness becomes visible refusal. That is the job |
+> | `READOUT` | lever | inert, +0.04 both batteries. Its one condition is eliminated by a method frame |
+> | `CRITIC` | lever | upside +0.12 inside the band, losses to −0.55, all on high baselines |
+>
+> **The world grants SIGHT, not repair.** Two levers, and neither levers. The other three do exactly
+> what they claim and none of it is accuracy. `THE WITNESS` is the honest name and the art needs no
+> change: nothing in the ten renders depends on the old one.
 
 Components: MEASURE, READOUT, VALIDATION, CLOCK · **CRITIC, LADDER, COUNCIL never assembled**
 
@@ -86,8 +111,15 @@ Components: MEASURE, READOUT, VALIDATION, CLOCK · **CRITIC, LADDER, COUNCIL nev
 | different attributes | `Tardus erroris` — legible in latency, not in text. The only creature you cannot catch by reading |
 | evolution | `Tacitus operis` —(READOUT)→ `Lectus operis` |
 
-**Three of its seven components have never been assembled, and they are the three the whole
-"prevention dominates repair" claim rests on.**
+**Three of its seven components have never been assembled as lab parts.** `CRITIC` was built and
+measured on 2026-07-27 (x20). `LADDER` and `COUNCIL` remain.
+
+> **NAMESPACE CORRECTION.** I claimed repeatedly that `LADDER` being BUILT in `state/modules.json`
+> contradicted this. It does not: that `ladder` is the **energy** ladder in `energy/energy.py`. World
+> 2's `LADDER` is C-06, the prompting ladder, and has no part. Four collisions are audited in
+> `aea/lab/organisms/namespaces.json`, and the load-bearing one is that **`scaffold` is BUILT and IS
+> `bench_core.SCAFFOLDS['bench']`** — the manner frame that takes a 70b from 8/12 to 0/6 ships in the
+> game, not only in the lab.
 
 ### WORLD 3 — THE REMEMBERER · REMEMBER · **THIN, AND IT HOLDS THE BEST MECHANIC**
 

@@ -142,8 +142,17 @@ class Chain:
             if self.form == "conversation":
                 history = history + [{"role": "user", "content": task["data"]},
                                      {"role": "assistant", "content": text[:2000]}]
+            # The capacity fields. A part adds a CAPACITY, not accuracy, so the trace has to record
+            # what became possible at this step and not only whether the number was right.
+            from aea.lab.parts.read import read_work
+            rb = r.get("read_by") or "none"
             rec["trace"].append({"step": i + 1, "ok": True, "value": value,
                                  "truth": truth_fn(i + 1), "hit": value == truth_fn(i + 1),
+                                 "showed_work": read_work(text)[0] is not None,
+                                 "from_work": rb.startswith("work:"),
+                                 "declined": rb == "declined",
+                                 "repaired": bool(r.get("repaired")),
+                                 "read_by": rb,
                                  "tok_out": r.get("tok_out"), "tok_in": r.get("tok_in"),
                                  "chars": r.get("chars"), "carried_chars": len(carried),
                                  "flags": flags})
