@@ -149,13 +149,17 @@ class Chain:
         return rec
 
     def _body(self, i, op, value, carried, history):
+        """Step 1 states the starting value; that is the TASK, not the carry. After that `none`
+        gives nothing back and the rod must hold it. Removing the start from step 1 as well made
+        every arm fail at step 1 on 48371 + 6 - a control broken in the opposite direction."""
         head = "You are continuing a calculation, one step at a time."
+        opening = "The starting value is %s.\n\n" % self.start if i == 0 else ""
         if self.form == "conversation":
-            return "Step %d: %s\n\nReply with ONLY the resulting number." % (i + 1, op)
+            return "%sStep %d: %s\n\nReply with ONLY the resulting number." % (opening, i + 1, op)
         from aea.lab.parts.carry import INSTRUCTION
         ctx = "\n\n%s" % carried if carried else ""
-        return ("%s%s\n\nStep %d: %s\n\nReply with ONLY the resulting number.%s"
-                % (head, ctx, i + 1, op, INSTRUCTION[self.form]))
+        return ("%s%s\n\n%sStep %d: %s\n\nReply with ONLY the resulting number.%s"
+                % (head, ctx, opening, i + 1, op, INSTRUCTION[self.form]))
 
 
 def _last_int(text):
