@@ -160,7 +160,7 @@ survives the model skimming the middle.
 
 ## 5 · THE WORLD 1 BRIEF, AS FIRED
 
-The verbatim text is at `design/refs/W1_CORE_BRIEF.txt`. It is the worked example of everything above:
+The verbatim text is at `design/refs/bundle/W1_THE_ANSWERER/W1_CORE_BRIEF.txt`. It is the worked example of everything above:
 committed to one material, four states each naming a part, sizes triple-encoded, eight assigned body
 plans with a leg count, absences written as positive surfaces, and a silhouette strip before anything is
 rendered.

@@ -47,7 +47,7 @@ is not, which is why it keeps winning.
 > one that ends the first world is not among them. Replies that showed complete working where the
 > working was wrong: **16 of 288 (5.6%) bare, 70 of 360 (19.4%) fitted.** The method more than triples
 > it. Every reply now shows its reasoning, one in five reasonings is wrong, and checking an answer is a
-> World 2 component. Brief at `refs/W1_THE_DOOR.txt`. Needs an annex entry.
+> World 2 component. Brief at `refs/bundle/W1_THE_ANSWERER/W1_THE_DOOR.txt`. Needs an annex entry.
 >
 > **4 · `Integer sufficiens` MOVES TO WORLD 2.** Its only measured state is against the VALIDATION
 > GUARD (7/7 to 0/7, forced abstention). It has never been tested against GOAL, METHOD or MANNER, so it
@@ -113,7 +113,7 @@ unwired; the tick loop exists unrun.
 ## THE EIGHT RENDERED CREATURES, MAPPED
 
 Eight hero renders exist in black glass (`E10_WORLD1_ART_DIRECTION.md`, brief at
-`refs/W1_EIGHT_SHOTS.txt`). They were commissioned as one world's plate. They are not.
+`refs/bundle/W1_THE_ANSWERER/W1_EIGHT_SHOTS.txt`). They were commissioned as one world's plate. They are not.
 
 | creature | world | note |
 |---|---|---|

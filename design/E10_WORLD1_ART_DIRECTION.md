@@ -115,7 +115,7 @@ renders **provisional**: amber at the seams as unfilled outline rather than soli
 ## WORLD 1 IS SHOT. THE REFERENCE MANIFEST, 2026-07-26
 
 Nine creatures and four scenes, all in BLACK GLASS, all obeying the light law. Briefs at
-`refs/WORLD_1_THE_ANSWERER.txt`, `refs/W1_EIGHT_SHOTS.txt` and `refs/W1_THE_DOOR.txt`.
+`refs/bundle/W1_THE_ANSWERER/WORLD_1_THE_ANSWERER.txt`, `refs/bundle/W1_THE_ANSWERER/W1_EIGHT_SHOTS.txt` and `refs/bundle/W1_THE_ANSWERER/W1_THE_DOOR.txt`.
 
 | # | creature | state | render |
 |---|---|---|---|
