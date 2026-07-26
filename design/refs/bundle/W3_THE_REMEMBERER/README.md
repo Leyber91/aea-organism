@@ -10,6 +10,14 @@ relief and also weight, because mistakes stay too.
 
 ---
 
+## THE SEALED OPENING
+
+`W3_SEALED_OPENING.md`, sealed `86d0cd4bd36f2c31` before the CARRY stage existed and before
+any call. Five falsifiable predictions and the scoring rules, fixed in advance so they cannot be chosen
+to flatter a result. **Score it after the runs and edit nothing, especially the losses.**
+
+---
+
 ## THE PROCESS — follow `../../E12_WORLD_EVOLUTION_SYSTEM.md`
 
 **STEP 1 · THREE DIRECTIONS.** `W3_THREE_DIRECTIONS.txt`, in this folder. Three prompts, each fired in
