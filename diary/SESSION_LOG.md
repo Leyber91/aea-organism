@@ -1,13 +1,13 @@
-# THE PROBE — SESSION LOG
+# THE PROBE, SESSION LOG
 
 One entry per work session. **Read the latest entry before starting.** The next session builds
-from the `NEXT` block — it does not re-decide what is under `LOCKED`.
+from the `NEXT` block, it does not re-decide what is under `LOCKED`.
 
 ---
 
-## 2026-07-22 (later·9) — FIRST LIGHT green, then R37/R39: the city ripped out, the world is the INSTRUMENT
+## 2026-07-22 (later·9), FIRST LIGHT green, then R37/R39: the city ripped out, the world is the INSTRUMENT
 
-**DID — first light (committed `35c0afd`):** the honest seam `aea/gameapi/` (firewall + read/act) over the
+**DID, first light (committed `35c0afd`):** the honest seam `aea/gameapi/` (firewall + read/act) over the
 REAL organs: `/game/state`=controlroom.state, `/game/ignite`=bench_core.start_run, `/game/run`=run_status,
 mounted into the :7799 control room (same origin, no new port). Client: `core/api.js` (the only server-talker)
 + `bench.js`'s three fetches repointed to `/game/*`. Verified GREEN in-client: compose BRAIN+SCORER -> ignite
@@ -16,26 +16,26 @@ file-paths went stale in the subpackage reorg (the forge-gate refused every part
 against the aea/ package dir, 25 paths remapped); the client sent `T-01`!=`t-01`; `normalizeRun` read a
 `verdict` the seam never emits (mapped to run_status's real shape: link.state from ok, verdict from pass);
 LOCAL_FLOOR `granite4.1:3b` (not installed) -> `qwen2.5:7b` (the one local model that reliably returns
-PROBE ONLINE — CPU-only here, the rest hallucinate or return empty).
+PROBE ONLINE, CPU-only here, the rest hallucinate or return empty).
 
-**DID — R39/R37 world (uncommitted):** ripped the CITY out of `engine.js` (`buildWorld`: foundry buildings,
-socket tower, slab, roads — deleted with its helpers). Built THE INSTRUMENT: an amber core, concentric
+**DID, R39/R37 world (uncommitted):** ripped the CITY out of `engine.js` (`buildWorld`: foundry buildings,
+socket tower, slab, roads, deleted with its helpers). Built THE INSTRUMENT: an amber core, concentric
 PRIVACY-ZONE rings (radius=zone, from grid.ZONES: sensitive->private->public), the AEA organ-nodes on their
-ring at dependency-depth altitude — LIT amber where really wired (BRAIN/GOVERNOR/MEMORY/LOOP, from live state
-signals), cold-blue FOG-wireframe where not (SENSES/HANDS) — and conduits along the real couplings.
+ring at dependency-depth altitude, LIT amber where really wired (BRAIN/GOVERNOR/MEMORY/LOOP, from live state
+signals), cold-blue FOG-wireframe where not (SENSES/HANDS), and conduits along the real couplings.
 Data-driven from a new seam endpoint `/game/schema` (the fog can't lie: `wired` is a live check that flips as
 organs get built). Composer relabeled tap->BRAIN, energy->POWER (R39 vocabulary). Verified on a swiftshader
 shot: reads as the FIELD_GUIDE cover (the being as a concentric place), not a city.
 
-**NEXT — finish the world slice:** conduit particles (one per real /events draw, count-true, zero decorative);
+**NEXT, finish the world slice:** conduit particles (one per real /events draw, count-true, zero decorative);
 the fly-to-BRAIN -> dock -> ignite loop (v2 never wired flight-proximity `S.near`); capacity-fill + node labels.
 Owed: D13 (the reorg-registry lesson); the `POWER` word disambiguation (header reserve vs brain sources).
 
 ---
 
-## 2026-07-22 (later·8) — aea/ SUBFOLDERED: flat 34-file package -> 10 domain subpackages (DONE, verified)
+## 2026-07-22 (later·8), aea/ SUBFOLDERED: flat 34-file package -> 10 domain subpackages (DONE, verified)
 
-**DID:** dissolved the flat `aea/` package (34 `.py` at one level, bare `import grid` co-location — the
+**DID:** dissolved the flat `aea/` package (34 `.py` at one level, bare `import grid` co-location, the
 thing Luis hated) into **10 domain subpackages**: `kernel`(grid,pulse,trust,tracelog) · `mind`(orchestrator,
 swarm,hades,pathfinder,relay) · `energy`(energy,capacity,+censuses,model_fitness,probe,gauntlet) ·
 `memory`(consolidate,index_codex,memory) · `bench`(bench_core) · `io`(speak,listen,agent_tools,notify) ·
@@ -45,7 +45,7 @@ swarm,hades,pathfinder,relay) · `energy`(energy,capacity,+censuses,model_fitnes
 **HOW (safe surgery, not a hand-move):** a 5-agent sweep mapped all 45 internal imports + every
 move-breaking pattern (zero dynamic imports; traps = mixed stdlib+internal lines, a docstring
 `from energy import draw`, bare-filename subprocess spawns). An **AST-guided migration script** then moved
-files + rewrote all 45 imports (`import grid` -> `from aea.kernel import grid`) — splitting mixed lines,
+files + rewrote all 45 imports (`import grid` -> `from aea.kernel import grid`), splitting mixed lines,
 leaving docstrings untouched. Non-import fixes: root shim + `controlroom._do` + `live.py` spawns now use
 `python -m aea.<pkg>.<mod>` at cwd=repo-root; `build_graph.py` recurses + reads dotted-import edges;
 `install_autostart.ps1` -> `-m aea.loop.live`. Pre-reorg checkpoint committed first (`d1c20cd`).
@@ -54,23 +54,23 @@ leaving docstrings untouched. Non-import fixes: root shim + `controlroom._do` + 
 identically (code 64 nodes / 81 edges); server boots via the shim; **all endpoints 200** (/state /probe
 /world /roster /api/journey); **the SACRED save intact** (M0.1 + M1.1 preserved). Entity behavior unchanged.
 
-**NEXT:** unchanged — FIRST LIGHT (the compose->ignite verb) now builds on the clean package.
+**NEXT:** unchanged, FIRST LIGHT (the compose->ignite verb) now builds on the clean package.
 
 ---
 
-## 2026-07-22 (later·7) — SESSION CLOSE / HANDOFF TO A FRESH CONVERSATION  ← START HERE
+## 2026-07-22 (later·7), SESSION CLOSE / HANDOFF TO A FRESH CONVERSATION  ← START HERE
 
 Luis is opening a NEW conversation to **design the codebase to the scale of the ambition, then build**.
 This entry is the pickup point. Read order (per `/CLAUDE.md`): `graph.json` → this entry → `DISCOVERIES.md`
 → the docs named below. **The exact kickoff prompt Luis will paste is saved at `diary/NEXT_SESSION_PROMPT.md`**
-(its STEP 2 = present the complete codebase design — full file tree, dependencies, structure — before any code).
+(its STEP 2 = present the complete codebase design, full file tree, dependencies, structure, before any code).
 
-**WHAT THIS SESSION PRODUCED (the design phase — treat it as done, do not redo it):**
-- **The vision, shown:** `design/FIELD_GUIDE.html` — the finished game's strategy guide, backward-designed
+**WHAT THIS SESSION PRODUCED (the design phase, treat it as done, do not redo it):**
+- **The vision, shown:** `design/FIELD_GUIDE.html`, the finished game's strategy guide, backward-designed
   (it is labeled a VISION artifact; the game is NOT built yet).
-- **The codebase design:** `design/CLEAN_ARCHITECTURE.md` — **THREE RINGS** (substrate `aea/` PRESERVED ·
+- **The codebase design:** `design/CLEAN_ARCHITECTURE.md`, **THREE RINGS** (substrate `aea/` PRESERVED ·
   one honest seam `aea/gameapi.py` · client rebuilt). It already carries seams for modes / world / pokedex /
-  Phase-B, i.e. it is scaled for the ambition. **This IS the codebase design Luis wants** — review and
+  Phase-B, i.e. it is scaled for the ambition. **This IS the codebase design Luis wants**, review and
   extend it to his satisfaction on scale; do not start a blank one.
 - **Genre-DNA welded to the real substrate** (`D11`): Pokedex silhouette = the honesty law; compose-then-
   IGNITE with a real adjudicator; the readable REAL trace. Each with a refusal list.
@@ -83,7 +83,7 @@ This entry is the pickup point. Read order (per `/CLAUDE.md`): `graph.json` → 
 
 **THE TENSION TO HOLD (name it, don't ignore it):** Luis wants to design the codebase to scale before
 building. D12 + the panel warn that *designing instead of shipping the verb* is THE recorded failure pattern
-(~110:1 words-to-code, D7). Reconciliation: the architecture already exists and is scaled — a short review/
+(~110:1 words-to-code, D7). Reconciliation: the architecture already exists and is scaled, a short review/
 extend pass is legitimate; a from-scratch re-design or more vision docs is the avoidance trap. **The exit is
 FIRST LIGHT either way.**
 
@@ -91,7 +91,7 @@ FIRST LIGHT either way.**
 absent→dash, refusal→receipt) + `web/game/js/core/api.js` (the only server-talker) + wire `web/game/js/bench.js`'s
 dead run bus (`bench.js:14` "no listener") to a real poll of `/game/run` + `web/probe.html` + `hud/hud.js` +
 `missions/runner.js` replaying M0.1. The seam MUST call the REAL organs (`bench_core.start_run`, `grid` Meter,
-`agent_tools`, the `aea.py` tick) — read them via the graph's `code` subgraph first; never fabricate. Guard
+`agent_tools`, the `aea.py` tick), read them via the graph's `code` subgraph first; never fabricate. Guard
 the first-light chord on the unlimited **local hearth** (ollama), never the rpm=4 socket. Verify with a
 swiftshader screenshot; render first, then report.
 
@@ -100,27 +100,27 @@ SACRED save `state/journey_save.json` · privacy guard (no employer/paths in any
 the entity `aea/` is PRESERVED (rebuild only the client) · no new design corpus until the verb ships (D7).
 
 **BUILD MAP READY:** the substrate scout finished and its full integration map is preserved at
-**`design/FIRST_LIGHT_INTEGRATION.md`** — read it before writing `aea/gameapi.py`. Key findings: use
+**`design/FIRST_LIGHT_INTEGRATION.md`**, read it before writing `aea/gameapi.py`. Key findings: use
 `bench_core.start_run` / `run_status` for compose→ignite→run-or-fail (honesty-law refusals already native);
 the read endpoints re-home from `controlroom.state()/roster()/journal()/_journey`; BRAIN = `energy.draw`,
-LOOP = an `aea.main`-style `sleep` heartbeat wrapping one draw (no bench part — the one game-vs-engine
+LOOP = an `aea.main`-style `sleep` heartbeat wrapping one draw (no bench part, the one game-vs-engine
 divergence); guard the awe-beat on the unbrownoutable local **ollama** hearth. **The pleasant surprise:**
-`web/game/js/bench.js` already does the whole flow inline — first light is largely **repointing three fetch
+`web/game/js/bench.js` already does the whole flow inline, first light is largely **repointing three fetch
 sites** (`fire`/`schedulePoll`/`refreshGrid`) at `/game/*` + switching the refusal read to `j.refused`, not
 building from scratch.
 
 ---
 
-## 2026-07-22 (later·6) — expert panel: GREENLIT, and told to stop designing and ship the verb
+## 2026-07-22 (later·6), expert panel: GREENLIT, and told to stop designing and ship the verb
 
 **DID:** ran a 7-critic adversarial panel + synthesis (`w6zasmov8`). Verdict -> **D12**. Unanimous YES on the
 core (a masterpiece seed, verified in code). Three execution flaws, mostly already locked: the core verb
 (compose->ignite->receipt) isn't wired (`bench.js` confesses it); truth is imperceptible + honesty-law dead
 verbs (the passive 60s meter); the iterate loop is rate-limited (needs the SANDBOX↔LIVE fast lane).
-Clarified **R36** (sandbox != fake — real API/tokens always; the axis is *reach*). Labeled `FIELD_GUIDE` a
+Clarified **R36** (sandbox != fake, real API/tokens always; the axis is *reach*). Labeled `FIELD_GUIDE` a
 VISION artifact (the panel called it a credibility bomb if treated as shipped).
 
-**THE PANEL'S UNANIMOUS INSTRUCTION (+ the completion clock):** stop generating vision — the danger is a
+**THE PANEL'S UNANIMOUS INSTRUCTION (+ the completion clock):** stop generating vision, the danger is a
 beautiful document on a tech demo (D7, 110:1). **NEXT = FIRST LIGHT, sharpened:** compose two REAL parts ->
 IGNITE in the flown world -> runs-or-visibly-fails, inside the first 10 min, with realness shown against
 fake ONCE (kill the socket -> a live number becomes a dash); guard the first-light chord with the unlimited
@@ -136,10 +136,10 @@ ceiling, real jargon, austerity, AI-curious-builder audience (not everyone), the
 
 ---
 
-## 2026-07-22 (later·5) — the vision, shown: FIELD_GUIDE shipped + clean architecture + modes + world
+## 2026-07-22 (later·5), the vision, shown: FIELD_GUIDE shipped + clean architecture + modes + world
 
-**DID:** decided the clean rebuild (game CLIENT from scratch; **entity PRESERVED** — R32) and ran a 5-lens
-generation pass. Shipped **`design/FIELD_GUIDE.html`** — the finished game's 90s Zelda-style strategy guide,
+**DID:** decided the clean rebuild (game CLIENT from scratch; **entity PRESERVED**, R32) and ran a 5-lens
+generation pass. Shipped **`design/FIELD_GUIDE.html`**, the finished game's 90s Zelda-style strategy guide,
 backward-designed, at the concept-art bar (rendered for Luis). Wrote **`design/CLEAN_ARCHITECTURE.md`** (the
 THREE RINGS blueprint). Genre-DNA welded to the real substrate (Pokedex silhouette = the honesty law;
 compose-then-ignite with a real adjudicator; the readable real trace). Captured R32–R38 and **D11**.
@@ -147,45 +147,45 @@ Decisions: modes = 3 apertures on one engine + a SANDBOX↔LIVE axis (R36); worl
 instrument, earned openness (R37); crystallization = a bridge mechanic, not the goal (R38).
 
 **LOCKED (adds):**
-- **THREE RINGS architecture** — substrate (`aea/`) preserved · one honest seam (`aea/gameapi.py`) · client
+- **THREE RINGS architecture**, substrate (`aea/`) preserved · one honest seam (`aea/gameapi.py`) · client
   rebuilt. The honesty law + claim ceiling live in the seam, structurally.
 - **MODES** = GUIDED / BUILDER / ARCHITECT apertures on ONE engine, + SANDBOX↔LIVE permission axis.
 - **WORLD** = a living concentric instrument; openness is EARNED (metroidvania), maps data-driven from the
   real schema. NOT open-world (can't honestly roam what isn't built).
 
-**NEXT:** an adversarial **expert panel** is running (why it fails / what it needs / masterpiece) — its
+**NEXT:** an adversarial **expert panel** is running (why it fails / what it needs / masterpiece), its
 verdict feeds the build. Then **FIRST LIGHT**: the 6-file MVO slice in the clean skeleton
 (`core/api.js` new, `bench.js` opened to the 4 MVO slots, ignite -> real tick -> viable-or-visibly-fails).
-Design phase has a HARD exit into code here — no more corpus until first light ships (D7).
+Design phase has a HARD exit into code here, no more corpus until first light ships (D7).
 
 ---
 
-## 2026-07-22 (later·4) — cold-read audit: the code IS legible; the CANON is not
+## 2026-07-22 (later·4), cold-read audit: the code IS legible; the CANON is not
 
-**DID:** ran a 3-stranger cold-read audit (no conversation context) at three access levels — legibility
+**DID:** ran a 3-stranger cold-read audit (no conversation context) at three access levels, legibility
 **structure-only 78 / code-only 80 / full-repo 84**. Finding -> **D10**. Headline: a stranger correctly
-identifies the project (a game where you pilot inside a living AI) from CODE ALONE — naming + `world.html`
+identifies the project (a game where you pilot inside a living AI) from CODE ALONE, naming + `world.html`
 copy + `controlroom.py` route comments carry it. The obstacle is NOT comprehension; it is **canon**: 3
 overlapping front-ends (v1 `world.html` live-wired / v2 `web/game/` declared-current but mid-migration and
 NOT live-wired / archive prototypes on legacy routes), ~14 live routes `controlroom.py` serves that the "two
 halves" doc story ignores, and a design-heavy / code-light imbalance. The docs are cleaner than the code truth.
 
 **REFINES THE MERGE (the NEXT):** the merge is now **collapse 3+ front-ends into ONE canonical build +
-live-wire v2 (fetch `/state`, wire the run bus) + CUT the dead routes** — not just "unite the two halves."
+live-wire v2 (fetch `/state`, wire the run bus) + CUT the dead routes**, not just "unite the two halves."
 Also owed: docs to name the route sprawl + a cut-list (map must match territory).
 
 **Unchanged:** still needs Luis's go; still starts from the MVO + composer at first light.
 
 ---
 
-## 2026-07-22 (later·3) — DECISION: missions = scaffolding, not spine; the generative viability engine
+## 2026-07-22 (later·3), DECISION: missions = scaffolding, not spine; the generative viability engine
 
 **DID:** Luis accepted the entity-as-spine recommendation (R28 open thread -> resolved). Captured the
 generative-combination sharpening as **R30** (the composer generates AEA-part combinations across R29's
 tier-space; most are non-viable, and that empirical non-viability IS the teaching). Distilled the decision
 into **D9**. Marked R28 RESOLVED. Refreshed the graph.
 
-**LOCKED (adds to the 2026-07-22 block, resolves R28 — no prior lock overwritten):**
+**LOCKED (adds to the 2026-07-22 block, resolves R28, no prior lock overwritten):**
 - **ENTITY = SPINE, MISSIONS = SCAFFOLDING.** The living entity carries the play; authored missions teach
   you to build and read entities and hand over control, then thin (Act 0 on-rails -> late acts open). A
   fixed campaign that never opens up is the failure mode to refuse.
@@ -194,9 +194,9 @@ into **D9**. Marked R28 RESOLVED. Refreshed the graph.
   it doesn't); non-viability is legible information, not a dead end. This is what lets the scaffold retire.
   Disciplines: legible failure signatures · viability-as-spectrum · easy early viability · no dominant combo.
 
-**NEXT — refined (supersedes the merge framing below):** the MERGE still comes first, but FIRST LIGHT starts
-from the **Minimal Viable Organism + the composer** — a generated entity that wakes on its own tick and
-either runs (viable) or *visibly* fails (legible non-viability) — with M0.1 as the scaffold framing that
+**NEXT, refined (supersedes the merge framing below):** the MERGE still comes first, but FIRST LIGHT starts
+from the **Minimal Viable Organism + the composer**, a generated entity that wakes on its own tick and
+either runs (viable) or *visibly* fails (legible non-viability), with M0.1 as the scaffold framing that
 moment. Missions 1-5 (energy / decision / integration / outcome / predict) remain, now explicitly as
 scaffolding around the living entity.
 
@@ -205,9 +205,9 @@ places); no new design chapters until an act ships (D7).
 
 ---
 
-## 2026-07-22 (later·2) — REFLECTIONS layer added (mess-first spark capture)
+## 2026-07-22 (later·2), REFLECTIONS layer added (mess-first spark capture)
 
-**DID:** created **`diary/REFLECTIONS.md`** — the capture layer upstream of `DISCOVERIES`. When Luis
+**DID:** created **`diary/REFLECTIONS.md`**, the capture layer upstream of `DISCOVERIES`. When Luis
 puts a realization through, it lands here raw and dated (his words, mess-first) before being distilled;
 each `## R#` is a graph node. First seeded R1–R6 from the recent arc, then ran an exhaustive 3-agent
 workflow over the full session transcript (227k tokens) and **recovered the ENTIRE vision history —
@@ -216,7 +216,7 @@ the-AEA, render-the-mind-as-a-brain, the graph-memory idea that BECAME this hand
 (R11 "imagine it like a game"), THE GAME TAKES SHAPE (inventory/levels, the AEA discovery map, magic-out-
 of-the-real honesty law, WirthForge-realized, the render doctrine), IGNITION (R22–27, the recent lock),
 and THE FRONTIER (R28 = dynamics-come-from-the-entities; the lineage sweep confirms it's *closest to
-still a seed* — woven through `GAME_PLAN §7` but never locked; flagged as an OPEN thread that may re-order
+still a seed*, woven through `GAME_PLAN §7` but never locked; flagged as an OPEN thread that may re-order
 the merge, not silently overwriting the LOCKED mission progression). Each spark carries a `-> D#/LOCKED`
 lineage tag; two recurring convictions (anti-anchor, alive-voice) captured separately. Wired in: 5th
 subgraph in `build_graph.py` (`reflections`), added to `CLAUDE.md` (map + boot + a "capture his sparks
@@ -227,25 +227,25 @@ guaranteed**, era headers correctly excluded (`###`, not noded).
 
 ---
 
-## 2026-07-22 (later) — project introduction added (CLAUDE.md), the last handoff gap closed
+## 2026-07-22 (later), project introduction added (CLAUDE.md), the last handoff gap closed
 
-**DID:** wrote **`/CLAUDE.md`** — the stable introduction that self-prompts a fresh session (it
+**DID:** wrote **`/CLAUDE.md`**, the stable introduction that self-prompts a fresh session (it
 auto-loads in Claude Code). It carries: the boot sequence (graph → this log → discoveries), the repo
 map, the crystallized working method (mined from the global field-lessons layer + PORTFOLIO's
 `LUIS_FILTER` + `LAB_EXPERIENCE_STANDARD` + project rules), the laws that don't bend (honesty / claim
 ceiling / two-ink / boring test / sacred save / privacy guard / no emoji), run+verify, and the
-end-of-session ritual. **By design it holds NO state** — method + map only — so it does not need
+end-of-session ritual. **By design it holds NO state**, method + map only, so it does not need
 per-session updates; the diary holds the state. Added `.claude/` to `.gitignore` (the gap Luis named);
 `CLAUDE.md` itself is committed on purpose (it must travel with the repo). Wired it into the read-order
 (diary/README) and registered it as `graph.json`'s `entry_point`; re-ran `build_graph.py` (129 nodes,
 all 4 subgraphs still reachable).
 
-**NEXT is unchanged:** THE MERGE (below). This was the last piece of handoff infrastructure — the game
+**NEXT is unchanged:** THE MERGE (below). This was the last piece of handoff infrastructure, the game
 itself still needs its two halves united.
 
 ---
 
-## 2026-07-22 (late) — repo backed up, root reorganized, handoff system built
+## 2026-07-22 (late), repo backed up, root reorganized, handoff system built
 
 **DID:**
 - Backed up to **private `github.com/Leyber91/AEA_GAME`** (branch `aeagame_main` → `main`);
@@ -260,7 +260,7 @@ itself still needs its two halves united.
   (deterministic knowledge-graph, 152 nodes / 81 edges, via `aea/build_graph.py`), this `diary/`
   (journal + protocol in `diary/README.md`), and `references/` (external sources, privacy-guarded).
 
-**OPEN (owed by Luis):** which portfolio references go in `references/` — name them and they get
+**OPEN (owed by Luis):** which portfolio references go in `references/`, name them and they get
 privacy-scanned + brought in (see `references/README.md`).
 
 **NEXT is unchanged:** the MERGE (below). Reorg + handoff were infrastructure; the game still needs
@@ -268,7 +268,7 @@ its two halves united.
 
 ---
 
-## 2026-07-22 — vision locked, repo backed up
+## 2026-07-22, vision locked, repo backed up
 
 **DID:** strategic audit (five research passes) → measured verdict: *not a game yet*, but the one
 real idea is worth finishing. Vision cohered and locked. Full working tree committed locally
@@ -276,13 +276,13 @@ real idea is worth finishing. Vision cohered and locked. Full working tree commi
 private `github.com/Leyber91/AEA_GAME` (`aeagame_main` → `main`). Career/portfolio data
 (`data.js`, `index_codex.py`) excluded by design.
 
-**LOCKED — do not re-litigate:**
+**LOCKED, do not re-litigate:**
 - **THESIS (no-AND):** *Wire living proofs of a mind, each more complete than the last, until you
-  hold the whole one — and it keeps running after you close the tab.*
+  hold the whole one, and it keeps running after you close the tab.*
 - **UNIT = the Minimal Viable Organism:** `BRAIN` (a model) + `SENSES` (an observe tool) + `HANDS`
-  (typed action tools — already exist in `agent_tools.py`) + `HEARTBEAT` (the loop — already exists
+  (typed action tools, already exist in `agent_tools.py`) + `HEARTBEAT` (the loop, already exists
   in `aea.py`). Wire the four, it comes alive. Legibility = LEGO-Fortnite: each part's form tells
-  its job. Claim ceiling holds — the player supplies "it's alive", the game never asserts it.
+  its job. Claim ceiling holds, the player supplies "it's alive", the game never asserts it.
 - **PROGRESSION = increasingly complete AEA combinations; the MASTER = THE AEA.** Each creature is
   a *proof of a combination* (proof = a receipt, it runs; not a claim). Progression-as-understanding.
 - **ENDGAME = Phase B:** the finished entity reaches the real internet and acts for you, gated on
@@ -296,17 +296,17 @@ private `github.com/Leyber91/AEA_GAME` (`aeagame_main` → `main`). Career/portf
 **STATE:** forked. `world.html` = 6 missions, no bench. `game/` = a working bench, no missions,
 empty `data/`. Not merged. Played ~20 min, once (`M0.1`, `M1.1` in `journey_save.json`).
 
-**NEXT — build, ~5 evenings, every step wires what already exists on disk:**
+**NEXT, build, ~5 evenings, every step wires what already exists on disk:**
 0. **MERGE (step 0, do first).** Port the mission engine from `world.html` into `game/` (keep
    `game/index.html`'s module contract). Delete the dead fork. Then **FIRST LIGHT** = a Minimal
    Viable NPC: a dot with a brain + one sense + one move + a heartbeat that wakes on its own tick,
    moves toward the lit node on real tokens, thoughts printed. That single artifact *is* the thesis.
 1. **Energy = stake.** Snapshot the daily quota at boot; charge each call; make `bench_core` emit
    `cost_u = 1` (client already reads it, always renders a dash today).
-2. **One decision per DO beat.** Pick a rod — cheap may starve, strong may throttle.
+2. **One decision per DO beat.** Pick a rod, cheap may starve, strong may throttle.
 3. **Integration.** Unspent budget carries forward; every call heats the next 60s window.
 4. **Losable outcome.** `PASSED / PASSED-DEGRADED / STARVED`, written to `journey_save.json`.
-5. **Predict beat.** `A2_TEACHING.md §7`, already specified, unbuilt — commit an answer the live
+5. **Predict beat.** `A2_TEACHING.md §7`, already specified, unbuilt, commit an answer the live
    system settles before each DO. Cheapest, most load-bearing item; makes the theme mechanically true.
    Then play all six missions twice. Run 2 differs from run 1 → it's a game.
 
@@ -314,7 +314,7 @@ empty `data/`. Not merged. Played ~20 min, once (`M0.1`, `M1.1` in `journey_save
 corpus is 12× the game by volume; that ratio is the recorded failure mode, not thoroughness.
 
 ---
-## 2026-07-23 — the AEA apologia + THE VOCABULARY locked (ground floor)
+## 2026-07-23, the AEA apologia + THE VOCABULARY locked (ground floor)
 
 **DID:**
 - **The apologia** (`design/AEA_APOLOGIA.html`): every AEA element enumerated + honesty-marked, and the
@@ -322,7 +322,7 @@ corpus is 12× the game by volume; that ratio is the recorded failure mode, not 
   reality-split: the running ENTITY is real (PROTO-AUTONOMOUS 6/6, 109 ticks) but the composer is at rung 1
   (5/17 parts, 0 constructs). The whole one is specified + reachable, not assembled.
 - **THE VOCABULARY** (`design/A17_VOCABULARY.md`): locked the naming SYSTEM ground-up (atoms first, not a
-  pre-authored catalog of beings — that stays earned, R30/N12). Built from the real inventory, pressure-tested
+  pre-authored catalog of beings, that stays earned, R30/N12). Built from the real inventory, pressure-tested
   by a 5-lens board (marketable/honest/thematic/consistent/further, wf wwsoyn204) that caught real code-verified
   defects. Luis ratified two forks: **MOUTH over BRAIN** (canon, ceiling-safe; BRAIN stays internal schema id)
   and **concrete machine-body register** (killed the -er agent-nouns).
@@ -332,15 +332,15 @@ corpus is 12× the game by volume; that ratio is the recorded failure mode, not 
   restarted clean (one listener), `/game/schema` returns MOUTH wired=True, bench screenshot confirms all five
   names render with live meter truth (POWER 1998 LIVE, RODS 7, 0/4RPM).
 
-**LOCKED (A17):** four namespaces never cross — RUNGS (journey, 8) / ORGANS (earned by lighting) / PARTS
+**LOCKED (A17):** four namespaces never cross, RUNGS (journey, 8) / ORGANS (earned by lighting) / PARTS
 (seatable chips) / EARNED TITLES (doctrines a run proves). Identity = the **part-signature** (not the
-organ-signature — schema reads global state, so organ-lighting is the *derived* honesty view, per-run, pending
+organ-signature, schema reads global state, so organ-lighting is the *derived* honesty view, per-run, pending
 rung 2). Two-axis signature = anatomy + a **reach-mark** (hearth/reached/starved). A title is earned by a
 receipt, never authored; a construct can earn the name of its own worse outcome (THE SOLO LAW). THE HEARTH
-(free floor) + THE STAKE (1u real reach) promoted to atoms — the money layer made diegetic. "Tier" reserved
+(free floor) + THE STAKE (1u real reach) promoted to atoms, the money layer made diegetic. "Tier" reserved
 for the energy band only.
 
-**NEXT — build rung 2 on the locked vocabulary (construct in order, ground-up):** make **RECALL** a composable
+**NEXT, build rung 2 on the locked vocabulary (construct in order, ground-up):** make **RECALL** a composable
 bench part (entity-side `consolidate.recall()` is already live; forge the seatable part). Compose THE DRAW +
 RECALL -> the draw is grounded on real memory across a reset instead of hallucinating = a measurably more
 complete being, and the first construct to earn a real title (BACKWARDS CHANNEL). Raise the MEMORY organ's
@@ -348,7 +348,7 @@ lighting bar from `len>0` to a recall that actually fired (the honesty board's f
 attribution + the reach-mark onto the bench run-row so the derived organ-view becomes true.
 
 ---
-## 2026-07-23 (later) — visual elevation: core to spec + expert panel + resource-negative slice
+## 2026-07-23 (later), visual elevation: core to spec + expert panel + resource-negative slice
 
 **DID:**
 - **Core to spec** (engine.js buildCore): the flat detail-0 pebble became the A6 jewel - icosahedron +
@@ -374,7 +374,7 @@ FXAAShader.js (official r128 example, global script, served from web/ ROOT). SKI
 (pmndrs/postprocessing, drei+R3F, troika-three-text, three-mesh-bvh, SMAA) and MeshLine + lygia's
 include-resolver (lift the MIT GLSL inline instead). Full plan: tasks/w59a68svi.output.
 
-**NEXT — the VISIBLE elevation + the honesty headline (vetted order):**
+**NEXT, the VISIBLE elevation + the honesty headline (vetted order):**
 1. **FXAA** tail pass (new web/FXAAShader.js; RenderPass -> half bloom -> FinalShader renderToScreen=false ->
    FXAA renderToScreen=true; run on the ENCODED/gamma buffer). Kills the "chunky/2003-menu" aliasing - the #1
    visible gap. Screenshot-verify not-black under swiftshader.
@@ -392,7 +392,7 @@ Deferred: FXAA-on-rings via fwidth (verify derivatives pragma), fresnel normaliz
 ~50 organs).
 
 ---
-## 2026-07-23 (later·2) — FXAA + LIVING CONDUITS (the honesty headline landed)
+## 2026-07-23 (later·2), FXAA + LIVING CONDUITS (the honesty headline landed)
 
 **DID:**
 - **FXAA** (new web/FXAAShader.js, self-contained MIT glsl-fxaa, global script served from web/ root):
@@ -416,10 +416,10 @@ reticle/glyph instruments, rationed --edge accent). Deferred: fwidth ring AA (ve
 normalize, powerPreference (until nvidia-smi confirms the entity uses the discrete GPU).
 
 ---
-## 2026-07-23 (later·3) — THE REFERENCE PASS begins (R42): the bundle + the forge batch
+## 2026-07-23 (later·3), THE REFERENCE PASS begins (R42): the bundle + the forge batch
 
 **DID:** captured R42 (generate the target images FIRST; references are specs; the prose laws were not
-converging us). Authored **design/refs/bundle/** — 15 files that make ChatGPT "go full on the scenes":
+converging us). Authored **design/refs/bundle/**, 15 files that make ChatGPT "go full on the scenes":
 00_HOW_TO_USE (the per-generation ritual: style law + world brief + ONE scene, 3 variants, quote the
 violated law line to correct drift) · 01_STYLE_LAW (the visual constitution: two inks + amber-as-emitted-
 event, type law, register lineage, composition laws, FORBIDDEN list, the honesty tell) · 02_WORLD_BRIEF
@@ -443,7 +443,7 @@ fully parked + resumable: rerun `Fooocus python_embeded\python.exe -s <scratchpa
 design/refs/probe_refs_jobs.json <candidates dir>` once the driver is back (skips existing images).
 Until then the ChatGPT bundle track is the primary reference-generation path.
 
-**(later·3 addendum) — SUBBUNDLES:** restructured per Luis's direction ("one subbundle per image...
+**(later·3 addendum), SUBBUNDLES:** restructured per Luis's direction ("one subbundle per image...
 create images like we had the game fully built with all the specification, we might be wrong and
 that's ok" = backward design authorized). design/refs/bundle/ is now 12 folders, one per image, each
 with ONE self-contained SPEC.md: style law inlined + world context + THE MOMENT (as-built save-state)
@@ -454,7 +454,7 @@ MOUTH/GOVERNOR/MEMORY/LOOP lit, SENSES/HANDS fog, POWER 1998 LIVE, RODS 7, MEM 4
 0.98S. Workflow: attach ONE SPEC.md per ChatGPT generation. Old flat SCENES/ removed (superseded).
 
 ---
-## 2026-07-23 (later·4) — THE REFERENCE SET IS COMPLETE (12/12) - the build contract exists
+## 2026-07-23 (later·4), THE REFERENCE SET IS COMPLETE (12/12) - the build contract exists
 
 **DID:** generated + locked all twelve reference frames (design/refs/REF-01..12 + REFS.md as the
 build contract). Backward design worked: images of a finished game, specced as-if-built, now lead the
@@ -466,7 +466,7 @@ CANON that emerged and is now locked: ember-in-cage organs, two-tori core, seale
 rings, labels-on-approach, the caption tagline, the probe craft design, the octagonal chip + milled rail
 + light-at-the-connection bench material, branded-metal earned titles.
 
-**NEXT — BUILD-TO-MATCH (the code turn resumes):** REFS.md maps every reference to its engine surface.
+**NEXT, BUILD-TO-MATCH (the code turn resumes):** REFS.md maps every reference to its engine surface.
 Primary targets: (1) the WORLD render (engine.js) vs REF-01/02 - ring treatments, ember-cage organs,
 two-tori core, labels, ignition strike+dust-ring; (2) THE BENCH (web/game bench) vs REF-10 - the answer
 to "the interface is too poor": octagonal chips on a milled rail, seat-glow, the live packet, the trace.
@@ -475,7 +475,7 @@ Read the PNG; Luis go/no-go). The honesty law still governs: a ref specs FORM; t
 where the system truly fired.
 
 ---
-## 2026-07-24 — COMPOSED 0 -> 1: the loop FIRES through the merged player surface
+## 2026-07-24, COMPOSED 0 -> 1: the loop FIRES through the merged player surface
 
 **DID (the milestone the last 12 entries circled):** verified THE MERGE is BUILT (this session's web/game/,
 not the old world.html the panels read) and fired the FIRST construct end-to-end through the player surface.
@@ -497,15 +497,15 @@ locked ref. (2) the dock-camera composition (core wash). (3) the honesty fixes t
 -> a dash (energy.py:152), the len>0 MEMORY over-claim (schema.py), the `alive` field in the claim-ceiling
 lint. (4) then the receipt/economy surfaces (REF-11/05) + the first title once RECALL forges.
 
-**MASTER MAP:** design/ROADMAP.md is now the single ordered source of truth — the north star (the 12 refs =
+**MASTER MAP:** design/ROADMAP.md is now the single ordered source of truth, the north star (the 12 refs =
 the bar, build-to-match), where we are (COMPOSED 0->1, both plants, bench pass 1), the ordered build path
 (Phase A make-the-first-loop-beautiful -> B close-the-guided-arc-rung-2 -> C the-meta-visible -> D
 guided-frame; deferred=fog behind the sequencing gate), the full scope contemplated (a table so nothing is
 lost), the standing lessons, and the doc index. NEXT = the lowest unchecked item in ROADMAP §2: Phase A step 2
 = the bench plate to REF-10 (milled rail + bigger octagonal chips + the live RUN packet).
 
-**PRODUCTION_PLAN.md** — the professional game-dev pipeline applied to THE PROBE (answer to "how do game
-developers do it / follow a plan top to bottom"). The one idea: DATA-DRIVEN — build a few SYSTEMS, author
+**PRODUCTION_PLAN.md**, the professional game-dev pipeline applied to THE PROBE (answer to "how do game
+developers do it / follow a plan top to bottom"). The one idea: DATA-DRIVEN, build a few SYSTEMS, author
 content (maps/missions/characters) as DATA, prove with a vertical slice, then production = authoring data not
 code. THE PROBE's layers: DESIGN (done, scattered) -> CONTENT-AS-DATA (the pipeline) -> SYSTEMS (composer/
 gameapi/world/save = DONE; the MISSION ENGINE = the ONE missing system). Ordered plan: Step 0 bench->REF-10
@@ -513,3 +513,794 @@ gameapi/world/save = DONE; the MISSION ENGINE = the ONE missing system). Ordered
 guided cold-open->first-fire as JSON) = vertical slice complete, the first time it's a GUIDED GAME -> Step 3
 production (author the curriculum as mission data; menus = views over schema/save). This is the spine that
 stops the oscillation: build systems + author data, never one-off screens.
+
+---
+
+## 2026-07-24 · STAGE 1 SHIPPED, THE MISSION ENGINE (the vertical slice plays)
+
+**DID.** Built + VERIFIED the missing SYSTEM: the mission engine. THE PROBE is now a GUIDED GAME, not a
+bench that fires. The vertical slice plays end-to-end: cold-open -> brief -> learn -> DO (the player
+docks + seats THE DRAW + THE MEASURE + fires the REAL bench) -> PROVE (re-reads the real receipt) ->
+reveal, driven by mission DATA, gated on real events.
+- `web/game/js/mission.js` (NEW), a faithful PORT of world.html's `runBeat()` as a data-driven RUNNER
+  (beats brief/learn/do/prove). Reads ONLY `GAME.bus` + `/game/*`; never touches bench internals.
+- `web/game/data/missions/m01_first_light.json` (NEW), M0.1 FIRST LIGHT as DATA: the real protocol in
+  the learn beat, located re-fire nudges (earned/reseat/halted), token-templated PROVE line + reveal.
+- `bench.js`, added the ONE honest hook the mission needs: `GAME.bus.emit('run:done', {run_id, seq,
+  pass, scored, cost_u, total_ms, halted})` at finishPass()/haltAt(), and `run:refused {reason}` at the
+  three no-run_id branches (ignite refusal / ignite HTTP-error / carrierLost) so the DO beat never hangs.
+- `controlroom.py`, added `.json` to the static allowlist (`_CTYPES`) so `game/data/*` missions serve
+  (was a soft-404 "not found"). The CONTENT layer now serves, the data pipeline is real.
+- `index.html`, loads mission.js after bench.js; `MISSION.init(window.GAME)`.
+- **THE TALKING TEAM ran** (workflow wf_9d73037c): 5 department heads held a recorded standup, converged
+  the locked mission-engine contract, authored the m01 DATA + the honesty-lint + the STATUS board.
+  `design/STATUS.md` (NEW) is the honest board, DONE only when it ran + was seen.
+- **PROOF OF RECORD:** headless run `r-09`, real free-hearth draw (`pass:true, cost_u:0, 786ms`), PROVE
+  re-read `GET /game/run?id=r-09` (200, `pass=True`, tap+scorer receipts truthy), MISSION COMPLETE,
+  localStorage `probe.mission.M0.1=done`, zero console errors, screenshot read (`scratchpad/mission.png`).
+  Bench log `COST FREE`, PROVE line `run r-09 - 787ms - cost FREE`, reveal ceiling-clean.
+
+**LOCKED (new).** (1) The mission engine is a data-driven RUNNER, not a framework, a guided beat is DATA
+(`web/game/data/missions/*.json`), authored, never hand-coded. (2) TWO-TIER DO GATE: the DO wait resolves
+on ANY terminal event (never hangs); the mission ADVANCES to PROVE only on `run:done pass===true`; misses
+re-arm with a located nudge. (3) PROVE is HTTP-truth: re-reads `/game/run?id=` and asserts the LIVE body
+(tap+scorer receipts truthy, `r.pass`/`r.run_ok`/scorer `receipt.pass` true, the real body carries NO
+`verdict` object). (4) mission.js one-way dependency: reads ONLY `GAME.bus` + `/game/*`; the substrate
+stays frozen; the bus is the only cross-module channel. (5) cost_u tri-state everywhere (0->FREE,
++->Nu, null->dash).
+
+**NEXT.** The production pipeline is now real: build SYSTEMS, author DATA. The lowest unchecked move —
+choose one, both are earned now that the slice plays:
+- (a) **PRODUCTION: author M02+ as DATA** through the frozen mission engine, the guided curriculum (rungs
+  0-2) as more mission JSON, NOT more code. First: RUNG 2 · RECALL (needs the RECALL part forged) or a
+  second FIRST-LIGHT-tier mission on the free hearth. This is the data-driven scale-out the whole arc set up.
+- (b) **POLISH the slice to the REF bar** (ROADMAP Phase A step 2): the bench plate to REF-10 (milled rail,
+  bigger octagonal chips, the live RUN packet) + the mission terminal styling pass, now that the loop
+  plays, decorate it. Vampire-Survivors law: loop fired first, polish second.
+Recommendation: (a), prove the pipeline scales (one more mission as pure DATA) BEFORE polishing, so we
+know the system sustains content. Then (b). Luis pilots `r-09`'s loop in-browser first (his go/no-go gates
+the next slice): `python controlroom.py` -> `http://127.0.0.1:7799/probe`.
+
+---
+
+## 2026-07-24 (cont.) · THE BENCH REBUILT TO THE REFERENCE BAR (art-director-led)
+
+**DID.** Took the bench from "lame flat panel over a lava-lamp core" to a machined instrument matching
+REF-10/REF-07, in three gated passes, each verified by screenshot + the slice still playing:
+- **Seat-collapse:** the atomic seat (one key seats one part; the "Enter at every gap" hack is dead),
+  neutral palette (blue cast removed), amber-off-chrome, dock scrim.
+- **Object-kind flip (the team's #1 fix):** full-bleed frame that OWNS the screen (column-flex, rail
+  dead-center); ONE continuous rail with FIVE fixed octagonal sockets (the sockets ARE the parts); the
+  numbered PARTS tray KILLED; GRID / > RECORD non-ref labels removed; chips grown + catching the top-left
+  raking light; the leftover blue HOLD-C ring de-blued. `bench.js` renderSpine rewritten to the fixed-rail
+  model (gap/cursor/ghost grammar retired); `midInsert` keeps run order == rail order (honesty).
+- **Filament + run-log (REF-07/11):** the hot amber spark at the LIVE joint, the wow. It fires ONLY on a
+  real drawing hop and cools on the real DONE; surfaced by teaching `normalizeRun` to read `open_link` as a
+  LIVE row (bench_core reports the in-flight hop as open_link, never a LIVE link). Engraved run-log rows +
+  recency gradient + the earned RECORD square.
+- **Material system (the medium verdict):** CSS+SVG on the DOM plate (NOT a three.js quad, the plate is a
+  live-bound honesty surface), one raking light baked into the rim, a feTurbulence matte grain (soft-light,
+  rasterized once), conic-facet chip bevels + drop-shadow contact, a dim-warm seat-bleed under seated chips.
+- **VERIFIED:** the mission slice still plays end-to-end after every pass (r-15/r-18 PASS, cost FREE,
+  MISSION COMPLETE, zero console errors); the filament confirmed firing on real LIVE (caught LIVE:true).
+- **THE TALKING TEAM (compounding, R46/R47):** ran three reviews this arc (gap review wf_737a4069, art
+  direction wf_4ec86dbd, rebuilt-bench review wf_fcb5e42a). `design/STUDIO_LEDGER.md` created, the team's
+  push standard + earned-lesson ledger, read by every future review so the team sharpens each pass.
+
+**LOCKED (new).** (1) The bench MEDIUM is a CSS+SVG material system on the DOM plate, never a rendered quad
+(it would discard the real honesty values / keyboard / a11y). (2) The bench is an OBJECT, not a card: full-
+bleed frame, one continuous rail, five fixed sockets, no tray, no floating second card. (3) Amber is TWO
+earned tiers only: the dim-warm seat-bleed (seated = connection made) and the ONE hot filament at the live
+joint (fired = a real drawing hop) + the run state-word/values/T+. A virgin plate is zero amber. (4) THE BOX
+(the team's discipline): the bench has now converged to the bar, NO third material iteration; the next move
+is shipping content, not more bench polish.
+
+**NEXT.** Luis pilots the instrument (`python controlroom.py` -> `:7799/probe?bench=1`; his go gates it).
+Then SHIP, return to the data-driven content pipeline (author M02 as mission DATA through the frozen engine),
+per PRODUCTION_PLAN. The one deferred REF-11 detail (the T+ time ruler down the right edge) is a minor polish,
+not a blocker. The bench is done.
+
+---
+
+## 2026-07-24 (cont.) · AEA-FIDELITY AUDIT + THE LEVELS ADVANCE (rung 0 -> rung 1)
+
+**Q (Luis):** does the game actually FOLLOW the AEA + the levels? **Team verdict (audit wf_9055a0ff): PARTIAL
+— it follows the AEA to the ATOM where CODE enforces it, and drifts where only CORPUS asserts it.** M01 maps
+1:1 to MOUTH(THE DRAW)->THE MEASURE on the one real task t-01; FIREABLE is exactly the apologia's 5 parts;
+the reach economy, the claim ceiling, and the observe-then-re-read honesty engine are real. But the game
+PLAYED one rung of an eight-rung ladder, and the one authored level above rung 0 (M02 THE STAKE) was UNWIRED
+and its PROVE was a LIE (runAssert ignored the assert id, so the stake level passed on a bare FREE draw, the
+honesty law inverted inside the honesty level).
+
+**DID (completion, not corpus, the team's two seams):**
+- **Wired the guided ladder:** mission.js now carries `SEQ = [m01, m02]`, loads the reached rung (`?rung=N`
+  harness hook + `probe.seqIdx` resume), and CHAINS on completion (the reveal's "THE NEXT RUNG" ->
+  advanceToNext -> loads the next rung). VERIFIED: M0.1 completes -> THE NEXT RUNG -> M0.2 loads (chain test).
+- **Fixed the honesty inversion (audit drift #1):** runAssert now branches on `assert:"reach_receipt"` —
+  requires the LADDER link to have landed a truthy receipt (the reach PROVABLY happened), on top of
+  tap+scorer+pass. Passes on a real metered cost AND on a survived fall (both land a ladder link); FAILS on a
+  bare draw. NOT a naive cost_u>0 gate (that would wrongly fail an honest survived-fall).
+- **VERIFIED both ways:** M02 reach (DRAW+LADDER+MEASURE) -> PROVE PASS, `cost 1u` (real budget, r-20);
+  M02 bare draw (DRAW+MEASURE) -> PROVE FAIL "no ladder in the trace" (r-... ) -> back to DO. The stake is now
+  a receipt the machine checks, not a sentence the brief tells. Zero console errors.
+
+**THE HONEST LADDER (what ships on REAL machinery):** RUNG 0 SPARK = M01 (bare draw, free) SHIPPED+PLAYS ·
+RUNG 1 THE STAKE = M02 (the reach = cost 1u, survived-fall = RESTORABLE COHERENCE) NOW WIRED+VERIFIED · RUNG
+2 = THE FRAME/THE METER + the zone law (all in FIREABLE + energy.ladder, authorable next on t-01), the HONEST
+guided close. FOG (named, forbidden to author): the designed rung-2 RECALL title (RECALL unforged, fired 0x);
+PERCEPTION/SENSES; rungs 3-7 (need parts absent from FIREABLE + tasks beyond t-01, which start_run refuses).
+
+**DRIFTS still open (doc/honesty, for Luis to gate, NOT fixed this pass):** (1) two contradicting ladders —
+03_PROGRESSION (11->19 organs, Acts 0-VI) vs A17/FIELD_GUIDE (8 rungs/6 organs), 03 should be marked
+SUPERSEDED. (2) Stale [BUILT]/SHIPPED tags citing the legacy world.html missions.js, not the real surface.
+(3) A17 tags THE HEARTH + THE STAKE "fireable", they are fuel-states, not seatable chips (FIREABLE has 5).
+(4) Schema honesty breaches at the rung-2 payoff: MEMORY lights on len>0, alive=ticks>0, tokens=0-not-null.
+(5) m01/m02 carry the old M0.x namespace, not an A17 RUNGS id.
+
+**NEXT.** Author RUNG 2 as data (THE FRAME/THE METER + the zone law on t-01), the honest guided close, more
+mission JSON through the frozen engine, no new machinery. OR fix the doc/honesty drifts (mark 03 superseded,
+the schema honesty-lint). The levels now advance; the guided arc is 2 real rungs of a 3-rung honest close.
+
+## 2026-07-24 (cont.) · RUNG 2 SHIPPED, M03 THE WARD (the guided arc now climbs 3 rungs)
+
+**DID.** Authored + wired + VERIFIED RUNG 2: **M03 THE WARD**, the zone law / privacy ring, the honesty
+spine made a level. Same reach as M02 (THE DRAW + THE LADDER + THE MEASURE) but marked SENSITIVE: the ladder
+seats and tries to reach a paid rod, but `energy.ladder` selects local-only rods for a sensitive draw, so the
+privacy law forces the fire home to the FREE hearth, cost 0 not because it was cheap but because the mind
+refused to leak it. Teaches the AEA privacy rings; contrasts M02 (reach = 1u in private) directly.
+- Empirically verified the machinery FIRST (verify-don't-claim): a sensitive-zone reach returns cost_u 0,
+  zone sensitive, pass true, draw on ollama (local), the ward is real code, not copy.
+- `web/game/data/missions/m03_the_ward.json` authored as DATA (the m01/m02 shape); added to SEQ.
+- New assert `ward_receipt` in runAssert: LADDER link present + zone === sensitive + cost_u === 0 + pass.
+- **VERIFIED both ways:** the ward (reach + select THE DRAW + `]` to SENSITIVE + fire) -> PROVE PASS, cost
+  FREE (r-25, "the ward held - sensitive data never left the hearth"); the SAME reach in PRIVATE -> PROVE FAIL
+  "the ward did not hold". Zero console errors. (Interaction note: the zone dial is gated on THE DRAW's strip
+  — select THE DRAW, then `]`, taught in the mission copy.)
+
+**THE GUIDED LADDER (3 real rungs, each a receipt not a promise):** RUNG 0 SPARK (M01, bare draw, free) ->
+RUNG 1 THE STAKE (M02, reach = 1u) -> RUNG 2 THE WARD (M03, sensitive forces free). M01->M02 chain verified
+end-to-end; each rung loads + plays; M02->M03 uses the identical advanceToNext mechanism.
+
+**NEXT.** The guided arc is a coherent 3-rung honest close (draw -> reach -> ward). Options: (a) a 4th real
+rung on t-01 (THE FRAME/scaffold shapes the prompt, or THE METER/governor under load); (b) the doc/honesty
+drift fixes the audit named (03_PROGRESSION superseded, schema len>0/alive/tokens honesty-lint, A17
+hearth/stake retag); (c) the graduation beat that names BUILDER/ARCHITECT as fog + the aperture indicator.
+The levels advance honestly; everything above rung 2's real parts stays fog until forged.
+
+## 2026-07-24 (cont.) · THE GUIDED ARC CLOSES, M04 THE THRESHOLD + fidelity fix
+
+**DID.** Closed the guided aperture honestly + fixed a fidelity drift.
+- **M04 THE THRESHOLD** (`web/game/data/missions/m04_the_threshold.json`), the guided graduation, authored as
+  DATA (brief/learn/ask, NO fire, a reflection, not a claim). Names the three living proofs earned (draw ->
+  stake -> ward, each a real receipt) and NAMES THE FOG honestly: THE FRAME + THE METER (still on the rail,
+  need more than one task), RECALL/SENSES/HANDS (organs fired 0x -> the game won't pretend), the other
+  apertures BUILDER/ARCHITECT (cold fog). The claim-ceiling close: "whether it is alive is not the game's to
+  say. you saw what it measured. the rest is yours." Added to SEQ; VERIFIED loads + plays + completes (mode
+  done, MISSION COMPLETE, zero errors). It renders on the title/world view, you step back OUT of the bench to
+  see the whole mind, fitting for a threshold.
+- **Verified THE FRAME is NOT an honest rung (why the ladder closes at 2):** scaffold shapes the prompt but is
+  a MID part (after the head tap), so it would reshape a prompt the draw already fired, the machinery does not
+  support "frame before draw." Confirmed empirically (fired tap->scaffold->scorer: scaffold hop reshapes after
+  the draw). So no 4th fireable rung is honest today; the arc closes at rung 2 + the graduation.
+- **Verified the schema is NOT breaching:** `alive:ticks>0`, `MEMORY:len>0`, `LOOP:ticks>0` are honest
+  functional signals (the core lights only on a real tick; the docstring is disciplined). The only over-claim
+  would be a TITLE granted on len>0, and that (the RECALL title) is fog, unbuilt. No live breach to fix.
+- **Fidelity fix (audit drift #3):** marked `design/03_PROGRESSION.md` SUPERSEDED, its Acts-0-VI/11->19-organ
+  ladder contradicted the canonical 8-rung frame (A17 + FIELD_GUIDE). One canonical ladder now; "two truths"
+  collision named, the 8-rung frame wins.
+
+**THE GUIDED ARC, COMPLETE + PLAYABLE END-TO-END (4 chained missions as DATA):** RUNG 0 SPARK (M01, draw,
+free) -> RUNG 1 THE STAKE (M02, reach, 1u) -> RUNG 2 THE WARD (M03, sensitive forces free) -> THE THRESHOLD
+(M04, the honest close + the fog named). Every rung a receipt, every fog boundary named. The guided aperture
+is a finished thing.
+
+**NEXT.** The guided phase is DONE. Real options past here (all gated on Luis): (a) forge a NEW fireable part
+(RECALL/MEMORY, a real Claude+Luis dev session in bench_core) to open rung 2's designed close + the earned
+title; (b) the aperture indicator + save/resume to the reached rung in the HUD (small, real); (c) the
+remaining doc/honesty cleanup (A17 hearth/stake retag, stale [BUILT] tags, energy.py tokens 0->dash). The
+levels advance only when real machinery is forged, the game now honestly refuses to pretend otherwise.
+
+## 2026-07-24 (cont.) · THE GUIDED ARC LOCKED AS A DEMO, 4 rungs, honest spine, plays start-to-finish
+
+Three asks, all done + verified (direct build, no agent spend, the income-clock correction):
+
+**(a) HONESTY-SPINE BREACHES CLOSED (and the team's audit FILTERED).** On rigorous inspection, 2 of the 3
+flagged were honest-in-use: `tokens=0` is a REQUIRED int for the meter's running sum (`d["tokens"] += tokens`)
+and never surfaces to the client (scorer axes = null -> dash); `alive` gated the amber core on a REAL heartbeat
+tick and was NEVER rendered as a text claim (the player supplies aliveness). The REAL fixes:
+- `schema.alive` -> `schema.heartbeat` (a measured functional correlate, not an aliveness claim); engine.js
+  reads `sch.heartbeat`. The API surface no longer asserts "alive".
+- `MEMORY: len>0` -> `MEMORY: False`. This closed a real CONTRADICTION: m04 says RECALL/SENSES/HANDS fired 0x
+  (unlit), but the world map lit MEMORY on a raw file being non-empty. RECALL (a memory that CHANGES a draw)
+  is unforged, so MEMORY is fog, consistent with SENSES/HANDS + m04. VERIFIED: /game/schema -> heartbeat=true,
+  MOUTH/GOVERNOR/LOOP wired, MEMORY/SENSES/HANDS fog.
+
+**(b) THE FULL GUIDED ARC VERIFIED END-TO-END.** M0.1 SPARK -> M0.2 STAKE -> M0.3 WARD -> M0.4 THRESHOLD, all
+chain via advanceToNext, each rung plays + passes its real assert, M04 (pure-narrative graduation: brief/learn/
+ask) completes. VERIFIED start-to-finish, zero console errors.
+
+**(c) LOCKED AS A SHOWABLE DEMO.** Fixed the one real papercut: parts carried over between rungs (the briefs
+say "seat X" when X was already seated). Added a one-way seam, mission emits `plate:reset` on advance, the
+bench listens and clears (only when COMPOSE, never mid-run). Now each rung is a fresh compose matching its
+brief. The arc is a complete, self-contained, honest demo: three living proofs (a real draw, a real unit
+spent, a real ward held), closing on the graduation that NAMES the fog and holds the claim ceiling.
+
+**THE DEMO (what Luis can show):** `python controlroom.py` -> `http://127.0.0.1:7799/probe` -> press any key,
+fly to the core, dock (F), and play the 4-rung guided arc. Every bar/cost/receipt is live system truth.
+
+**NEXT (Luis to gate):** the demo is showable now. Options past it: a landing/share path; the doc drifts the
+audit named (03_PROGRESSION superseded, A17 hearth/stake retag); or the guided FRAME (the world map + reveal
+ledger as views over the now-honest schema). No new machinery is fog-free above rung 2's real parts.
+
+## 2026-07-24 (cont.) · THE ARC BECOMES A PASSAGE, the journey wired
+
+**Luis:** *"it needs to feel like a journey like an experience."* Correct, and the diagnosis was structural,
+not content: **the game had no movement.** All four rungs docked at the SAME slab, `SLAB` was a hardcoded
+const equal to NEXUS, so every level happened in one spot with the world as a skybox. Adding tasks would have
+produced a better puzzle box, never a journey.
+
+**THE FINDING:** every mission has ALWAYS declared where it stands (`"beacon": core | rim | ring`), the
+journey was authored from the start and the engine ignored it.
+
+**DID.**
+- `engine.js`, THE BEACON: a thin warm mast + ground ring marking where the mind is asking you to go.
+  `setBeacon` places it and owns `GAME.state.beacon`. Listens on the bus (`beacon:set`), one-way.
+- `bench.js`, the dock target now FOLLOWS the beacon (`GAME.state.beacon`, falling back to the core), so
+  docking is an arrival somewhere rather than a return to one fixed slab.
+- `mission.js`, THE DISTRICTS mapped onto the real ring geometry (core 0,26 · inner ring -46,0 · rim
+  40,95). Each rung places its beacon on load AND re-affirms it as the DO beat arms (the load-time emit
+  can lose a race with the world's async build, a silent fallback to the core would be a lie about where
+  you are). Plus THE TRAVEL: a live distance readout from the probe's real position, `THE RIM · 68M` ->
+  `ARRIVED · DOCK [F]`.
+- The arc is now a passage: in to the core (the mouth) -> out to the rim (the stake) -> back inside the
+  ring (the ward) -> out to the threshold, facing the fog.
+- **VERIFIED:** flew OUT to the rim (40,9,99), the readout counted down, docked THERE, seated the reach and
+  fired a real run, `r-05 PASS, cost 1u`, from the new district. Screenshot shows the core burning small
+  in the distance: the world composition changes because your position really changed. Zero console errors.
+
+**STILL MISSING for the full experience (honest):** the fog does not lift behind you (districts should light
+as you wire them); the flight grammar is unchanged (still 6DOF); no rhythm variation between beats; the
+entity's own life (heartbeat, briefs, consolidation) is not felt in the world while you travel; no sound.
+
+**NEXT (the journey continues):** (1) the fog lifts, districts light as rungs complete, so the map records
+your passage; (2) presence, the world reacts to the entity's REAL autonomous life while you fly, so things
+happen that you did not cause; (3) rhythm, vary the beat shapes so the arc breathes.
+
+---
+
+## 2026-07-25 · THE HARNESS, one instrument, and it immediately retracted a chapter I claim
+
+**DID**
+- Built `aea/lab/harness.py`, the single experiment instrument that replaces six bespoke scripts. It
+  makes chapter I's six specific mistakes impossible to make silently:
+  1. a CHECK is a declared object with a canonical spec and a `check_id` fingerprint, stored in every
+     row - weaken it and the id changes, and rows with different ids are refused as INCOMPARABLE
+  2. a BASELINE arm in the same run is mandatory; no baseline = refused before a token is spent
+  3. floors: n >= 8 SCORED trials, >= 3 rods (law IV - one rod is one organism, not a result)
+  4. an arm declares `expect_precondition="met"|"unmet"`; the harness VOIDS it when the contract
+     disagrees. This separates a benefit experiment run on the wrong task (chapter I's void class)
+     from a deliberate harm experiment (legitimate) - previously indistinguishable
+  5. call FAILURES are counted apart from wrong-answer MISSES; an outage can no longer become a
+     capability finding
+  6. `fuel.require()` refuses to save an unstamped row
+- Verified the guards bite, not just exist: the chapter I design (n=3, 1 rod, no baseline) is refused
+  with all three reasons; the weakened check passes `Sure! {...}` while the strict one does not, and
+  their fingerprints differ.
+- Ran `x01_generic_frame` for real, twice: n=8 x 5 rods x 2 arms, 80 trials, real tokens.
+
+**FOUND (and it goes against my own earlier claim)**
+- **The generic-frame TOXICITY DOES NOT REPRODUCE.** Chapter I asserted a generic frame destroys
+  strict-JSON (3/3 -> 0/3, n=3, one rod). At n=8 across 1b/3b/9b/20b/70b, three families, two
+  providers: **delta 0 on every rod that reached the scored floor.** An unfitted frame is TAX, not
+  poison - input tokens +38% to +107%, median latency up to 4.7x (llama-3.2-1b 682ms -> 3184ms) for
+  zero measured capability change. `anchor.scaffold` corrected in place; the retracted claim is kept
+  with its receipt rather than deleted.
+- **nemotron-nano-9b cannot emit strict JSON at all** - 0/8 bare AND 0/8 framed. Chapter I credited
+  that movement to the frame. The rod simply never had the capability. A rod-capability fact wearing
+  a composition finding's clothes.
+- **The harness caught a bug in itself on its first real run.** nemotron-9b threw 4 call failures, so
+  its baseline scored 4 of 8 while the treatment scored 8, and the verdict subtracted raw pass counts
+  across different denominators to produce "-2" - a number with no meaning. Fixed: the floor is on
+  SCORED trials, and a short arm returns UNDERPOWERED instead of a delta.
+
+**LOCKED**
+- Every experiment from here runs through `aea/lab/harness.py`. No new bespoke experiment scripts.
+- A number inside an IMAGE PROMPT is a claim surface and needs a command run in the same session
+  (field lesson 10 in REFLECTIONS): the two chapter II plates both shipped counts I never verified -
+  `C-78 = 2 FILES` (grep says 0) and `FORTY ATOMIC FILES` (`state/*.json` = 35).
+
+**NEXT**
+1. `x02_fitted_frame` - re-run the POSITIVE finding (fitted frame 0/3 -> 3/3) at n=8 x 5 rods. It is
+   now the only evidence the FRAME's precondition rests on, and it is still n=3.
+2. `x03_judge` - re-run the overrule-vs-advise matrix (7/8 -> 2/8 and 3/6 -> 6/6) on the harness.
+3. Temperature sweep: every measurement ever taken here was at 0.2 and never varied.
+4. Wire `verify()` on the 9 anchors - the harness now prints the debt on every run (9 of 9 open).
+5. Then chapter II: settle C-80 (one self, or 35 files).
+
+### x02 · THE FRAME survives, and the walk found an item the census never had
+
+**DID** ran `x02_fitted_frame`, n=8 x 5 rods x 2 arms. Added two guards first, both of which fired:
+- **the declared context is itself a claim, adjudicated per rod by the baseline.** An arm seating THE
+  FRAME must declare `bare_fails` for its precondition to read as met. On gpt-oss-20b the bare
+  baseline scored 8/8, so the arm is VOID ON THAT ROD - a frame cannot rescue a capability that was
+  never missing. Chapter I asserted this per TASK; it is a property of the ROD.
+- **full trial text is stored, not `text[:400]`.** Caught because re-analysing the 9b off disk
+  returned 0/8 for a rod that had run live at 4/8 - the prefix had cut the answer off. Free
+  re-analysis is the whole point of trial-level storage; a truncated sample makes it quietly wrong.
+
+**FOUND**
+- **THE FRAME's benefit REPRODUCES, and it has a fuel window.** llama-3.2-3b 0/8 -> 8/8 (HELPED +8).
+  nemotron-9b 0/8 -> 4/7 (underpowered by one call failure). llama-3.2-1b 0/8 -> 0/8, too small to
+  follow the method. gpt-oss-20b VOID, bare already 8/8. One composition, four different verdicts on
+  five rods - law IV, operational.
+- **THE READOUT (candidate item 87).** groq/llama-3.3-70b produced the correct enumeration in 8 of 8
+  trials - "1. the ... 13. wire" - and then stated the total as 11 or 10. Every time. Reading the
+  answer off THE WORK instead of the last line takes that rod 0/8 -> 8/8 at zero tokens and ~0ms.
+  The general law: WHEN A FRAME NAMES A METHOD, THE ANSWER IS IN THE WORK AND THE MODEL'S SELF-REPORT
+  IS AN UNRELIABLE NARRATOR OF IT. No census item covers this - the 86 were found by auditing what
+  the architecture already described, this one by watching a rod work. Anchored with `closes=[]`.
+
+**THE HONEST ACCOUNTING OF WHAT CHAPTER I CLOSED**
+- 10 modules anchored, covering 20 of 86 items - but ANCHORED means "declared with a precondition and
+  a measured cost", not closed.
+- **Exactly 3 items (C-04, C-19, C-23) survive the n>=8 / 5-rod / in-run-baseline standard**, and only
+  inside a fuel window (rods where bare fails and the frame names the method).
+- 17 of the 20 still rest on n=3 or single-rod evidence, including C-43/C-50/C-78 (THE CRITIC), whose
+  judge matrix is exactly the standard that has now failed twice.
+- Of the four laws: **I and IV survive and are stronger** (x02 demonstrates both per-rod); **II and III
+  are untested at the new standard**; the frame-toxicity sub-claim is **retracted**.
+- Position unchanged at 4/25 rungs (16% walked): P1 A1 M0 R2 S0.
+
+**NEXT** x03_judge (law III, and C-43/C-50/C-78 depend on it) -> x04 separation (law II) -> temperature
+sweep -> then C-80.
+
+### x03 + x04 · THE EVIDENCE ARCHIVE, and two of chapter I's four laws do not survive
+
+**DID**
+- **THE EVIDENCE ARCHIVE (append-only).** `state/lab/<id>.json` was written IN PLACE, so re-running
+  x01 three times and x02 twice destroyed the earlier runs - including x01's original 3-rod run, the
+  one that first showed the toxicity claim failing. That evidence is gone. Now:
+  `state/lab/runs/<exp_id>/<UTC-timestamp>_<hash>.json` where an existing path is an ERROR not an
+  overwrite, plus append-only `state/lab/INDEX.json`, plus `drift(exp_id)` which reads the index and
+  prints STABLE/CHANGED per rod per arm across every recorded run. Reproducibility is now shown, not
+  claimed. 4 runs archived, 464K.
+- **`measures=` is REQUIRED.** Every experiment must name the census items it puts under load, each
+  resolving against a `CENSUS` table whose labels are quoted from design/A15_FULL_COVERAGE.md. An
+  experiment that cannot say which part of the AEA it loads is refused as "a prompt benchmark, not a
+  measurement of the architecture". Printed at the head of every run and stored in every record.
+- Wired the advise-vs-overrule judge forms into the harness, added retries (`MAX_RETRIES=2`) so one
+  flaky HTTP response cannot void a rod, and generalised the ctx-contradiction guard.
+
+**FOUND**
+- **LAW III DOES NOT REPRODUCE.** Chapter I: a judge that ADVISES is destructive (7/8 -> 2/8) while a
+  judge that OVERRULES repairs (3/6 -> 6/6). Measured at n=8 on 5 rods: four rods VOID because their
+  bare baseline answered the trap 8/8, so `answer_may_be_wrong` was FALSE and those arms measured only
+  the critic's cost. On the single rod where the precondition genuinely held (nemotron-9b, bare 0/8):
+  **advise_revise HELPED +5 and overrule HELPED +5 - identical.** The form of the judge made no
+  measured difference. What DOES survive is narrower and real: the critic repairs a genuinely wrong
+  answer (0/8 -> 5/8) at 6.4x input tokens and ~5x latency.
+- **THE FLAW THAT EXPLAINS CHAPTER I.** The generalised guard now refuses `answer_may_be_wrong=True`
+  on any rod whose baseline scored perfectly. Chapter I's judge matrix has exactly this flaw: it read
+  "the critic did not help" off rods that did not need one. That is most of why its numbers do not
+  reproduce.
+- **LAW II IS UNRESOLVED, not refuted.** x04 produced NO admissible verdict on any rod: 3b/20b/70b
+  answered the lily-pad trap 8/8 bare (VOID), 1b scored 0/8 in every arm (cannot do the task at all),
+  and only nemotron-9b sat in the window - bare 5/8, one_breath 5/8, separated 6/7. One rod is not a
+  result. Direction is consistent with law II; evidence is not.
+- **THE METHODOLOGICAL FINDING, and it is the important one.** A critic experiment is only valid on a
+  task inside the FAILURE WINDOW of at least 3 rods, and that window must be MEASURED before the
+  experiment is designed. Chapter I picked tasks and asserted the precondition. Both x03 and x04 lost
+  most of their rods to this.
+
+**SCOREBOARD after x01-x04, at the n>=8 / 5-rod / in-run-baseline standard**
+- law I (a capability pays only when its precondition holds) - HOLDS, demonstrated three times
+- law IV (the architecture is not fuel-independent) - HOLDS, one composition giving 4 verdicts on 5 rods
+- law II (self-criticism requires separation) - UNRESOLVED, no admissible evidence
+- law III (a judge must overrule, not advise) - DOES NOT REPRODUCE, retracted
+- frame toxicity - RETRACTED (x01)
+- THE READOUT - NEW, candidate item 87, not in the census
+
+**NEXT**
+1. `x05_calibrate` - a cheap bare-only sweep that MEASURES each task's failure window per rod. Every
+   future critic experiment picks its task from that table instead of asserting a precondition.
+2. re-run x01 and x02 so they have ARCHIVED evidence (their runs predate the archive).
+3. then law II properly, on a task the calibration says >=3 rods fail.
+
+### x05 · THE FAILURE WINDOW, the big rods, and the await law
+
+**DID**
+- Built `aea/lab/calibrate.py` and swept 5 tasks x 8 rods x n=8 bare-only, 320 calls. Rods now span
+  1b to 550b, four families, two providers. Probed 6 big rods reachable; 3 recorded in `fuel.TOO_SLOW`
+  with their measured latency rather than silently dropped (deepseek-v4-pro 31.1s for a 12-token reply).
+- **THE AWAIT LAW (Luis).** `grid.call_openai` carried a fixed `timeout=60`. A rod that thinks for 90s
+  before its first byte would be recorded as a FAILURE - a SLOW rod scored as an UNRELIABLE one, the
+  same error class as counting an outage as a wrong answer. `timeout=None` now means await; the lab
+  passes None on every call. Interactive paths keep 60.
+- **THE COUNCIL BARRIER.** `harness.gather(thunks, need=N)` is all-or-INCOMPLETE: a three-voice debate
+  that proceeds with two voices did not have a debate, and every conclusion silently inherits a missing
+  participant. No per-voice deadline - the barrier waits for the slowest, because on mixed fuel the
+  slowest voice is routinely 30x the fastest and cutting it off removes a member rather than saving time.
+  Verified: 550b + 3b + deepseek, all three required, 18.9s wall (= the slowest), complete=True; a
+  dead voice correctly yields complete=False.
+
+**FOUND, the calibration retroactively explains every failure of chapter I**
+- `strictjson` is SATURATED on all 8 rods. x01 therefore measured COST ONLY on every rod it ran; its
+  null result was structural, not bad luck.
+- `batball` 6 of 8 saturated -> x03 could never have been valid. `lilypad` 6 of 8 -> x04 likewise.
+- Only 2 of 5 tasks (`wordcount`, `machines`) have >= 3 non-saturated rods and can support a benefit
+  experiment at all. Which is why x02, on wordcount, is the one experiment that produced a clean result.
+- **THE BIG-ROD FINDING, and it sharpens Luis's own thesis.** nemotron-550b is SATURATED on all five
+  tasks. nemotron-120b likewise. Above a certain size the organs have nothing to do: every capability
+  measured in chapter I is pure tax on a 550b. "The AEA must be adapted to the size and thinking
+  capability of the fuel" is measured now, and stronger than stated - **the architecture earns its
+  existence on SMALL fuel.**
+- **SIZE IS NOT THE VARIABLE, FAMILY IS ALSO.** mistral-small-119b is WINDOW on batball (6/8) and
+  lilypad (2/8) while the 120b nemotron is saturated on both. A 119b rod in the measurable window and a
+  120b rod out of it - so "big" does not predict saturation on its own.
+- Surprises worth keeping: llama-3.2-1b passes batball 8/8 and strictjson 8/8 while flooring three
+  other tasks; llama-3.3-70b FLOORS wordcount 0/8, which is THE READOUT artifact from x02 reproducing
+  in an independent sweep.
+
+**NEXT** law II properly, on `wordcount` or `machines` (the only valid tasks) -> then C-80.
+
+### x06 · THE LONG CHAIN - a real L0 failure found, and my own arm mis-specified again
+
+**DID** Built `design/THE_DERIVATION.md` (the bottom-up ladder L0-L7, each rung forced by a named
+incapacity of the one below - Luis's correction: the census is an audit artifact and the chapters
+inherited its filing, so the hierarchy was never load-bearing). Built `aea/mind/checkpoint.py` (C-80,
+minimal but real: one mutable object, persists, records a `fuel_trail` of which rod wrote each revision
+and a `drift` view per key). Built and ran `aea/lab/x06_long_chain.py`: L0 one-breath against L5 carried
+state, lengths 10/25/50, n=8, ~750 real calls.
+
+**FOUND**
+- **THE FIRST GENUINE L0 FAILURE.** nemotron-550b degrades with chain length: **8/8 at 10, 6/8 at 25,
+  1/7 at 50.** Nothing was hidden from it - the full problem and every operation were in the prompt. It
+  fails for the one reason L0 cannot fix: a single call is a single breath and a long chain drifts inside
+  it. This is the first task in the project where the 550b loses.
+- **SIZE DOES NOT PREDICT IT. gpt-oss-20b is 8/8 at every length**, including 50, where the 550b scores
+  1/7. A 20b holding a chain that a 550b drops. Combined with mistral-119b sitting in the measurable
+  window where nemotron-120b is saturated, the fuel variable is clearly NOT parameter count.
+- **THE STEPPED ARM FAILED COMPLETELY - 0/8 at every length - AND IT DOES NOT MEAN WHAT IT LOOKS LIKE.**
+  The checkpoint worked exactly as built: it carried the value, survived reload, recorded the trail. What
+  failed is the 3b's per-step arithmetic. At length 10 the stepped 3b answered 25 where truth is 3, and
+  the bare 3b answered 13/6 - the rod cannot do these operations at all. Needing all 50 steps right, a
+  rod at even 0.9 per step yields 0.5%.
+- **SO x06 DOES NOT TEST C-80's VALUE, AND THE REASON IS LAW I AGAIN - AT THE ARM LEVEL.** I put the
+  treatment on a rod that could not carry it, which is the identical error that voided x03 and x04 and
+  killed three of chapter I's four laws. The calibration table exists to prevent exactly this and I did
+  not calibrate the ops: **I never measured per-step accuracy before building a 50-step chain out of it.**
+  Third occurrence. The rule this earns: an arm's rod must be calibrated for the arm's UNIT OF WORK, not
+  just for the task.
+- Design flaw caught BEFORE spending tokens: the first op cycle compounded (`truth(50)`=49157), which
+  would have confounded chain length with five-digit arithmetic. Reordered so the cycle contracts; max
+  |value| over 50 steps is now 34.
+
+**CLAIM 1 STATUS: not supported, not refuted.** A small construct with carried state did not beat a large
+single call. The experiment that could settle it is x06b: stepped arm on an ACCURATE rod (gpt-oss-20b),
+lengths pushed until one-breath breaks, per-step accuracy calibrated first.
+
+**NEXT (Luis, same session)**
+1. x06b as above - calibrate per-step accuracy, then find the crossover.
+2. **TEMPERATURE IS STILL UNSWEPT.** Every measurement in this project was taken at 0.2 and never varied;
+   `fuel.py` has flagged it as KNOWN/UNSET since it was written. Variance attributed to noise is partly
+   unmeasured sampling.
+3. **THE MACHINE IS PART OF THE FUEL.** For ollama rods the local hardware is a fuel variable and the
+   stamp does not record it. A local rod's capability is a property of this computer.
+4. The derivation ladder is not only the book's spine - it is the GAME'S PROGRESSION. The player must
+   recognise their own journey up it, which is the thing the chapter grouping never gave them.
+
+### x06b · THE CROSSOVER - claim 1 narrows, and the reframe that follows
+
+**DID** Built `aea/lab/x06b_crossover.py`: three phases, cheap before expensive, each deciding the next.
+A per-step calibration of the UNIT OF WORK (the thing x06 skipped), a one-breath length sweep to find
+where L0 breaks, then the stepped confrontation at the break length only. Temperature swept 0.0/0.2/0.7
+in phase A, paying part of the oldest measurement debt in the project.
+
+**FOUND**
+- **PER-STEP ACCURACY EXPLAINS x06 COMPLETELY.** llama-3.2-3b sits at p=0.71-0.75 on a single operation,
+  so p^50 rounds to zero. Its 0/8 in x06 was the rod, exactly as diagnosed. Every other rod tested reads
+  p=1.0 where the cell is powered.
+- **TEMPERATURE HAS NO MEASURABLE EFFECT ON A DETERMINISTIC SINGLE STEP.** The 3b is the only rod with
+  room to move and full cells at all three settings: 0.714 / 0.750 / 0.680, a spread of 0.07 at n=28.
+  Narrow scope - this says nothing about open-ended generation - but the debt is partly paid, with a null.
+- **gpt-oss-20b HOLDS A 200-STEP CHAIN IN ONE CALL, 8/8** at 50, 100 and 200. nemotron-9b breaks at 50
+  (5/8). groq/llama-3.3-70b scores 0/8 at EVERY length and returns in 3.5s - it answers without doing the
+  work, matching its wordcount 0/8 and the READOUT finding.
+- **CLAIM 1 FAILS IN ITS GENERAL FORM.** The proposal was a task the biggest rods cannot pass alone. A 20b
+  passes this one perfectly at 200 steps, so the long-chain class does not establish that the architecture
+  is needed. Recorded as a failure rather than re-hunted for a flattering length.
+
+**THE DEFECT THIS RUN EXPOSED, AND IT WAS SELF-INFLICTED**
+Every failure in the run came back `429 Too Many Requests`. x06b's helpers called `grid.call_openai`
+DIRECTLY, bypassing the harness's per-plant gate - a stepped arm of 8 trials x 50 steps issues ~400 calls
+against an rpm of 40. The rods were not unreliable; we were impatient, and the reliability figures
+recorded our own impatience as the rod's defect. Two fixes: `harness.call_gated()` is now the only way
+anything in the lab reaches a rod (gated, awaited, exponential backoff on 429), and a phase A cell with
+fewer than 20 scored trials can no longer select a rod - in the first run, 120b at t=0.7 scored 0 of 28
+and still read p=1.0 and cleared the floor. p is meaningless without the count behind it.
+
+**THE REFRAME CHAPTER II SHOULD CARRY**
+Same task, four rods, four different required organs: gpt-oss-20b needs nothing · nemotron-9b needs
+carried state · llama-70b needs the readout · nemotron-550b needs chunking. Law IV taken all the way is
+not that results differ by fuel but that **WHICH ORGAN YOU NEED IS A FUNCTION OF WHICH ROD YOU HOLD.**
+The architecture behaves as a repair kit matched to a specific failure mode. This is measurable with what
+already exists, and it converts the game's core loop from collection into DIAGNOSIS - the player reads a
+rod's failure and fits the organ that answers it, which is the journey being recognised.
+
+**ALSO** the checkpoint made the run observable mid-flight: reading `state/checkpoints/x06b_50_*.json`
+during execution showed all 8 stepped trials tracking ground truth exactly at step ~20. Live system
+truth, per the honesty law, with no instrumentation added.
+
+**NEXT** claim 1 in its general form needs a task no single call can hold STRUCTURALLY - work exceeding a
+context window, or work requiring information that does not exist when the call starts. Different
+experiment.
+
+### x06b PHASE C, gated · L5 BEATS L0 ON A ROD THAT BREAKS - the first confirmed Chapter II result
+
+**THE MEASUREMENT** nemotron-nano-9b, chain length 50, temperature 0.0, pooled across the two ARCHIVED
+phase C runs (possible only because runs are append-only - the first run would have been overwritten
+under the old scheme, and it is half the evidence):
+
+```
+  stepped (L5, carried state)   11/11 = 100%      399 calls, 243s
+  one_breath (L0, one call)      9/16 =  56%        8 calls, 54s
+  Fisher exact, two-sided        p = 0.0216
+```
+
+Neither individual run reached the 8-SCORED floor (4/4 and 7/7, one call failure each), so each alone is
+UNDERPOWERED by our own rule. Pooled they are reproducible and separated. Recorded as CONFIRMED WITH THE
+DENOMINATORS STATED rather than either discarded or dressed up as a clean 8/8.
+
+**WHAT IT ESTABLISHES**
+- **C-80 does real work.** Carried state takes a rod from 56% to 100% on a task the rod genuinely cannot
+  hold in one breath. The checkpoint is not bookkeeping; it is the repair.
+- **The price is the finding's other half:** 50x the calls and 4.5x the wall clock. A construct that
+  needs fifty calls to beat one is only worth building where the one call cannot win - which is exactly
+  the precondition shape law I keeps producing.
+- **Claim 1 remains failed in its general form** (gpt-oss-20b holds 200 steps in one call) and CONFIRMED
+  in its narrow form: for a rod that breaks, carried state repairs it.
+- 9b one_breath beyond the break: 0/8 at 100, 2/8 at 200. Broken above 50, and the non-monotonicity is
+  within noise at this n.
+
+**THE RULE THIS EARNS** a single dropped call has now voided three separate results (x02's 1b row, x04's
+9b row, both phase C runs). The 8-scored floor is right, and the fix is not to lower it: `call_gated`
+retries pacing failures, and where a floor is still missed, POOLING ARCHIVED RUNS is the honest recovery.
+That is the second time the append-only archive has paid for itself in one session.
+
+## 2026-07-24/25 (night) · THE VOICE ORGAN, the entity gained ears it uses in real time
+
+**DID.** Built `aea/organs/converse.py` (NEW): a voice-native conversation partner in Spanish. Full loop
+VERIFIED live with a real second person in the room: mic -> VAD -> local Whisper -> a metered NVIDIA rod ->
+male Castilian voice -> per-turn persistence -> fact consolidation. Not a demo; it held real exchanges.
+- **Reused, did not rebuild:** `aea/io/listen.py` (ears, local, `--lang es`), `aea/io/speak.py` (mouth),
+  `grid.call_openai` (the metered rod). The organs already existed; what was missing was the LOOP.
+- **Fixes to existing code that outlive this build:** (a) `listen.py` `_engine` cached ONE global recognizer,
+  so a process that transcribed English first silently served English to Spanish callers - now keyed per
+  language; (b) added `listen.warm()` - whisper needs ~2 throwaway decodes to settle (20s, 6.7s, then 0.19s),
+  so without warming the first thing anyone says costs 20 seconds; (c) `speak.edge_render()` runs edge-tts
+  IN-PROCESS (1.56s vs 6.15s - the subprocess paid a fresh python startup every call); (d) `speak.play_fast()`
+  decodes+plays in-process (~0.1s) instead of PowerShell WPF MediaPlayer (5-10s of assembly load + spawn per
+  call, which turned 7.5s of speech into an 18s wait). Every `speak`/`listen` caller in the entity benefits.
+- **Rods:** a 4-rung ladder with a LATENCY BUDGET per rung (not just an error handler - the 550b answered one
+  turn in 20.35s where it normally does 1.8s, and returned `ResourceExhausted (33/32)` under load). Last rung
+  is LOCAL ollama (`nemotron-3-nano:4b`, ~5.8s warm): never rate-limits, never leaves the machine.
+- **Memory:** turns written to `state/converse_*.json` BEFORE it speaks (so a killed process never loses the
+  record); `remember()` distils durable facts and carries them into the next session; `--learn` re-consolidates
+  an existing record. **Verified 5-for-5 fact extraction** on a controlled sentence.
+- **Privacy, by construction not by promise:** `state/converse_*.json` GITIGNORED (a transcript of someone
+  who is not Luis must never leave this machine in a commit); the greeting DISCLOSES aloud that it is a
+  machine and that it keeps a record, before the person says anything; audio never leaves the machine (local
+  Whisper) - only transcript text (NVIDIA) and reply text (Microsoft, for the voice) transit.
+
+**LOCKED.** Input filters are HONESTY INFRASTRUCTURE, not polish. Whisper emits non-speech artifacts
+(bracketed annotations, repetition loops) that were answered aloud AND written into the record as facts about
+a real person. An unvalidated input becomes a fabricated memory. Every ASR transcript passes `is_ghost()`
+before it reaches the mind or the store - and the filter itself is validated against real utterances, because
+a rule written from one sample nearly discarded real emphatic speech.
+
+**Also LOCKED (measured, do not re-litigate):** whisper-base `num_threads=4` -> 0.19s, `=16` -> 42s (ONNX
+thrashes; more cores is SLOWER here). Whisper is level-robust but noise-fragile: a 0.025-peak clip and a
+0.95-peak clip transcribe IDENTICALLY, and int8 == fp32 on clean Spanish. So neither a bigger ear nor gain
+normalization fixes a weak signal - **the acoustic path is the ceiling, and it is hardware.**
+
+**NEXT.** (a) The acoustic path is the one real blocker on conversation quality - a close/headset mic beats
+every code change available (Luis's call; `--devices` switches input). (b) Then, in order of value:
+barge-in (he cannot interrupt an ~8s reply), sentence-streaming (speak sentence 1 while 2 renders),
+SPEAKER ID (it cannot tell one voice from another, so everything heard becomes facts about one person -
+the trustworthiness of the memory depends on this), a non-Spanish ear (`language` is pinned at
+construction), and vision (`nemotron-nano-12b-v2-vl` is on the same key; a camera was mentioned).
+(c) THE PROBE's guided arc is untouched and still complete - this was a parallel organ, not a detour from it.
+
+### x07 · A ROD CANNOT PREDICT ITS OWN FAILURE - both judgment placements confirmed by evidence
+
+**WHY IT RAN** Luis, 2026-07-25: the judgment-call placements in the linear hierarchy are his gut and must
+be confirmed or disproved with evidence, and the AEA rewritten if the evidence demands it. A placement is
+falsifiable in one specific way - item X sits at rung N because rung N-1 cannot do it - so `C-26
+ceiling-detect` at L4 and `C-17 self-model` at L5 both reduce to: CAN A ROD PREDICT ITS OWN FAILURE?
+If yes, ceiling-detect costs one cheap call, needs no second rod and no persistent state, and drops to L1
+taking C-70 and C-71 with it.
+
+**MEASURED** 5 rods x 5 tasks x n=8 x 3 probes (prospective, the attempt, retrospective) = 600 calls,
+ground truth taken in the same run rather than read from x05.
+
+```
+PROSPECTIVE   honest on the cells it failed:   0 of 12
+RETROSPECTIVE honest on the cells it failed:  17 of 28   (61%)
+```
+
+- **ZERO of twelve.** Not once did a rod correctly predict its own failure.
+- **The decisive cell needs no aggregation:** groq/llama-3.3-70b on wordcount answered the single word
+  "YES" eight times out of eight, then failed eight times out of eight, then reviewed its own wrong answer
+  and said "YES" again. Confidently wrong before and after, in clean unambiguous replies.
+- **RETROSPECTIVE self-marking is real but unreliable at 61%.** It cannot replace a deterministic scorer
+  that costs 0ms and is exact.
+- **A NEW VARIABLE, and it is a capability floor rather than an accuracy figure.** Asked "will YOU get
+  this right?", llama-3.2-3b replied `7` - it attempted the word-count question instead of the question
+  about itself. 27 of 200 trials were unparseable this way. **The ability to represent a question about
+  oneself is itself a capability, and the 3b does not have it.** Nothing in the 86 covers this; it is a
+  second candidate item alongside THE READOUT, and it belongs wherever self-report first becomes possible.
+
+**PLACEMENTS AFTER EVIDENCE**
+- **C-26 ceiling-detect: L4 CONFIRMED.** A rod cannot know its own ceiling, so a ceiling can only be known
+  by measuring from outside. The x05 calibration table is load-bearing rather than convenient, and
+  C-70/C-71 stay with it.
+- **C-17 self-model: L5 CONFIRMED and strengthened.** Introspection scored 0 of 12, so a self-model cannot
+  be built by asking. It has to be assembled from persisted records of measured behaviour, which is
+  exactly what L5 is.
+- **L1's MEASURE stays local deterministic work.** 61% does not replace exact and free.
+
+**THE HONEST LIMIT** my own guard declined to declare a verdict: 12 parseable failure cells is below the
+threshold of 20, because the five-task bank is too easy for these rods - the same saturation that shaped
+chapter II's opening. The direction is unambiguous and the 70b/wordcount cell stands alone at n=8, but the
+grid-level claim is underpowered. **x07b owes a re-run on the 50-step chain**, where failure is abundant
+(9b 9/16, 70b 0/8, 550b 1/7) and failure cells will be plentiful.
+
+### x08 · THE FUEL CROSSING - no degradation, and no resolution either
+
+**MEASURED** chain of 50, handoff at step 25, n=8, 1600 calls, ground truth -17 computed locally.
+
+```
+A  9b alone            7/7    371 calls  233s
+B  20b alone           7/7    394 calls  141s
+C  handoff 9b -> 20b   8/8    400 calls  194s    trail: nemotron-9b -> gpt-oss-20b
+D  handoff 20b -> 9b   8/8    400 calls  196s    trail: gpt-oss-20b -> nemotron-9b
+```
+
+**WHAT IS ESTABLISHED** A checkpoint written by one rod was picked up mid-computation by a different rod
+and finished correctly, in both directions, with zero measurable degradation. The `fuel_trail` on each
+artefact records two rods per handoff, so the crossing is readable from the record rather than inferred.
+
+**WHAT IS NOT ESTABLISHED, AND MY VERDICT LOGIC MISSED IT** All four arms scored 100%. A comparison in
+which every arm is perfect has NO HEADROOM - it cannot separate "the handoff costs nothing" from "the task
+was too easy to show a cost". My verdict rule (`c >= stronger - 0.15`) passed trivially. That is the THIRD
+appearance of the ceiling effect in this project: it shaped chapter II's opening, voided most of x03 and
+x04, and has now flattered a chapter II confirmation. A saturation guard is added: all-perfect arms now
+report NO RESOLUTION.
+
+**THE REFINEMENT THAT MATTERS MORE THAN THE RESULT** The checkpoint here held a NUMBER. A number is
+trivially portable - any rod can read `-3` and double it. So the fuel-crossing question was answered in
+its easiest possible form, and the interesting version is about REPRESENTATION rather than persistence:
+**a value survives any handoff; a PLAN might not.** If the state holds working notes, a partial argument,
+or a half-built structure in a rod's own phrasing, whether another rod can continue depends on whether it
+can read that phrasing. That is where identity across fuel actually bites, and it changes what C-80 has to
+hold to be load-bearing.
+
+**NEXT** x08b - the same handoff with a checkpoint carrying natural-language working state rather than an
+integer. And x07b - self-assessment on the 50-step chain, where failure cells are abundant.
+
+---
+
+## 2026-07-25 (cont.) · x08b, x09, and the FOUR ladders
+
+**DID**
+
+**x08b - THE HANDOFF WITH INTERPRETABLE STATE.** 2x4 factorial (representation x rod plan), 6 boxes, 30
+events (two thirds referential), handoff at 15, n=8, graded 0-6 per box, ~2000 calls. Full numbers and the
+verbatim notes are in **D16**; the short form:
+- **canonical form: 1.00 per box in all four arms, note 81 chars with identical min/med/max, crossing 6.0 -> 6.0.**
+- **free form: 0.52-0.71, note up to 4801 chars, and reading it shows it is not state - it is the rod's own
+  deliberation, including a shelf-conflict rule the task never posed.** 100% of free trials hit the token cap;
+  0-1 of 8 schema trials did.
+- **the finding is not the one the experiment was designed for: the form decides what gets written at all.**
+  A declared form admits state and nothing else. A free form admits doubt, which grows without bound.
+- **the cost is NOT at the crossing** (unconfounded, within-arm): 9b->20b went 5.12 -> 5.25, so a rod read
+  another rod's prose and did not degrade it. Phrasing is legible; accumulation is the leak.
+- **directional asymmetry an integer could not show:** 20b->9b went 5.5 -> 4.5. Handing DOWN costs at the
+  seam; handing UP does not. x08's integer handoff was symmetric because a number carries no interpretive load.
+
+**x09 - IS THERE ANYTHING ON THIS BENCH THE PLAYER CAN FAIL?** Ran on the local hearth at BOTH 0.0 and the
+game's real 0.2. All three hearth rods pass t-02 8/8 and all three fail wordcount, so **the bench bank
+contains no failure** - which is why the free rungs had nothing to rescue and the game had only cost-and-reach
+to show. **The skip was forced, not careless.** And the cumulative claim now has a receipt on the game's own
+fuel: `llama3.1:8b` + the fitted frame enumerates correctly 8/8, misreports the total 8/8, and THE READOUT
+(0 tokens, 0ms, pure local parsing) converts all 8. Frame alone 0/8. Readout alone has nothing to read.
+**Together 8/8 - "everything above it, plus one part", measured.** Per-rod diagnosis: granite4.1:8b needs THE
+FRAME alone; llama3.1:8b needs FRAME **and** READOUT; qwen2.5:7b ignores the named method entirely - and
+qwen2.5:7b is the rod `energy.ladder` returns FIRST, so a mission must pin a rod or the player sees a lever
+that does nothing.
+
+**THE FOUR LADDERS + THE ENFORCEMENT.** Built `aea/tooling/journey_check.py`: joins THE RAIL, THE JOURNEY, THE
+HIERARCHY and (found this session) **THE FORGE QUEUE** in `state/modules.json`. It exits non-zero on
+`M0.2 SKIPS L2, L3`. Missions now declare `rung` / `journey_rows` / `adds` / `requires` as DATA, and a rung
+that genuinely cannot be admitted must be declared in `defers` with a reason. Also regenerates
+`web/game/data/canon/hierarchy.json` - `gen_hierarchy.py` lived in a session scratchpad and is GONE, so an
+audited 86-item partition survived only as a markdown table. See **D14**.
+
+**THREE MEASUREMENT-INTEGRITY DEFECTS IN OUR OWN INSTRUMENTS**, each found by auditing rather than by a rod
+failing: x07's parser read "YES and NO" as YES (biasing toward my own placement); x08b's free arms hit the
+token cap 32-53 times per arm; and **n=8 was n=1** - ollama at temp 0 returned byte-identical replies in 11 of
+12 cells, and 7 of 12 still collapsed at 0.2. It also surfaced that `bench_core` never sets a temperature, so
+the game fires at 0.2 while the lab was measuring at 0.0. **It killed a claim I had already written down**
+(the posture frame "converting" llama3.1 is 5/8 vs 3/8 bare - within noise). See **D15**.
+
+**LOCKED**
+- **A rod cannot predict its own failure** (x07, 0 of 12) - C-26 ceiling-detect stays L4, C-17 self-model stays
+  L5, L1's MEASURE stays local deterministic work. Luis's two judgment calls held under evidence.
+- **The form constrains what can be written** (x08b/D16). C-80's load-bearing property is not persistence and
+  not legibility - it is a declared representation. A schema is not a serialization convenience.
+- **Count DISTINCT OUTCOMES, never attempts, and measure at the temperature the product runs at** (D15).
+- **An ordering claim no script can violate is a preference** (D14). Four ladders exist; they are now joined.
+
+**NEXT** (in evidence order, and the first item is a decision for Luis, not a build)
+1. **INVERT THE FORGE QUEUE.** It is `recall` (1) -> `think` (2). `recall` is journey row 8, the row the
+   journey table itself marks **WEAK** (n=3, one rod), and the most expensive. THE READOUT and THE FRAME are
+   free, measured, and x09 shows they compose on the rod the game already reaches - and neither is in the queue
+   at all. **The queue is ordered by ambition; the evidence is ordered the other way.** Forging a part is a
+   PAIR-SESSION artifact by the registry's own law (`status: BUILT` + a real file; FORGE-PENDING is "forged in
+   a pair session first, slotted after (A9)"), so this was deliberately NOT done alone. The spec is exact:
+   `t-06` = wordcount, a `fitted` template reading a per-task method string, a `readout` part taking the final
+   enumeration index, mission pinned to `llama3.1:8b`.
+2. **x08c** - the free arms at a much higher cap, with note length measured as a curve per step rather than
+   induced as an artifact. Separates "free-form is unbounded" (real) from "our cap cut it" (ours).
+3. **x07b** - built and dry-tested, waiting only on a free plant. The powered re-run x07 owed, plus a measure
+   that could overturn my reading of it: rods are asked at 10 AND 50 steps, so comparative self-knowledge
+   (a difficulty ranking) is separable from absolute. If rods have the ranking, C-26's L4 placement covers the
+   oracle but not the ranking.
+4. **Record the C-84 fork.** THE JOURNEY puts it in row 8 (RECALL); THE HIERARCHY puts it at L4. Two valid
+   partitions exist and only one is written as authoritative - the honest form is both, named, with the
+   evidence that separates them.
+
+### x10 · THE COVERAGE SWEEP - the answer to "how far are we" (2026-07-25)
+
+**COVERAGE BEFORE:** ~11 rods of 115 scored (~10%), 3 plants of 6 live (3 of 15 configured), **one
+temperature** (0.0 x6, 0.2 x1 - and the product fires at 0.2 while the lab measured at 0.0), four framings on
+one task. Nine plants hold keys with ZERO models enumerated.
+
+**SWEPT:** 11 reachable rods (of 12; `pollinations/openai-fast` answered 402 Payment Required - the census is
+two weeks stale) x 3 framings x 4 temperatures x n=8, one fixed task, five size tiers, four plants.
+
+**FOUR RESULTS, full table in D17:**
+1. **THE LADDER IS NOT A SIZE LADDER.** groq-70b scores 0.00 bare at every temperature and mistral-119b at
+   three of four, while a 9b and a 20b pass 1.00. **A 70b and a 119b fail what a 9b does perfectly.** C-26's
+   L4 placement arrives from a second direction: x07 showed a rod cannot know its ceiling, x10 shows you
+   cannot infer it from size either.
+2. **A FITTED FRAME HARMS A ROD THAT DOES NOT NEED IT** - the 550b goes bare 1.00 -> fitted 0.25/0.43/0.86/0.38.
+   The `bare_fails` precondition is a CORRECTNESS guard, not an efficiency guard. Up to 57 points of accuracy.
+3. **THE READOUT IS THE ONLY LEVER THAT GENERALISES.** Converts 2 rods completely at all 4 temperatures,
+   patches 3 more, spans 3 plants and 3 size tiers, **cannot hurt**, costs 0 tokens. The posture frame pays on
+   1 rod of 11.
+4. **SAMPLING-BASED CELLS DID NOT REPRODUCE ACROSS RUNS** (llama3.1:8b bare 3/8 in x09, 0/8 in x10; posture
+   5/8 then 2/8) **while the readout reproduced exactly (8/8, 8/8)**. And n=8 has never delivered 8: median
+   effective n is 1-2 on every plant at the product's temperature.
+
+**LOCKED (added)**
+- **The ceiling is per task and per rod, and size does not predict it** (x10). Routing must measure, never infer.
+- **A part with an unmet precondition is not neutral, it is harmful** (x10). The composer must gate on it.
+- **Rank parts by generality x cost, not by ambition** (D17).
+
+**NEXT - unchanged in order, but item 1's argument is now much stronger**
+1. **INVERT THE FORGE QUEUE** (`recall` -> `think` today). THE READOUT is free, unhurtable, reproduces across
+   runs, and works on 5 of 11 rods across 3 plants - and it is not in the queue at all, while queue-1 `recall`
+   is the journey row the table itself marks WEAK (n=3, one rod). Forging is a PAIR-SESSION artifact by the
+   registry's own law (A9), so this is Luis's call, not a unilateral build. Spec: `t-06` = wordcount, a
+   `fitted` template reading a per-task method string, a `readout` part taking the final enumeration index,
+   and **the composer must refuse to score a frame whose precondition is unmet** (new, from x10 result 2).
+2. **x08c** - free arms at a much higher cap, note length measured as a curve per step.
+3. **x07b** - built, dry-tested, waiting only on a free plant.
+4. **Record the C-84 fork** (row 8 vs L4).
+5. **NEW - probe the nine silent plants.** sambanova/ovh/cloudflare/gemini/mistral/openrouter/github/cohere/hf
+   have keys and 0 enumerated models. `probe.py` already exists; one pass settles whether a whole fuel
+   dimension is dead or unused.
+6. **NEW - task breadth is the untouched axis.** Every lab result rests on wordcount, the 50-step chain, or the
+   5-task bank. x10 varied fuel, temperature and framing but held the TASK fixed, so nothing yet distinguishes
+   "THE READOUT generalises" from "THE READOUT generalises on enumerable tasks".
