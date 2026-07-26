@@ -99,13 +99,23 @@ class Chain:
     the rod must hold the value itself.
     """
 
-    def __init__(self, rod, form="none", *, start=0, temperature=0.2, max_tokens=800):
+    STEP_GOAL = "Reply with ONLY the resulting number."
+    STEP_METHOD = ("Take the running value, apply the single operation named below to it, and write "
+                   "the result. Do not re-do earlier steps.")
+
+    def __init__(self, rod, form="none", *, start=0, temperature=0.2, max_tokens=800, seat=None):
+        """`seat` lets a chain run any assembly, so the ascending series v1..vN can be measured on a
+        sequence. Without it the chain seats call + carry only, which is a v2 organism - x21 tested
+        World 3's component on a bare call and hand-wrote the shaping the parts were meant to do."""
         assert form in CARRY_FORMS, form
         self.rod, self.form = tuple(rod), form
         self.start, self.temperature, self.max_tokens = start, temperature, max_tokens
-        seat = ["call"] + (["carry"] if form != "none" else [])
-        self.org = Organism(seat, rod, label="chain:%s" % form,
+        keys = list(seat) if seat else (["call"] + (["carry"] if form != "none" else []))
+        if form != "none" and "carry" not in keys:
+            keys.append("carry")
+        self.org = Organism(keys, rod, label="chain:%s:%s" % ("+".join(keys), form),
                             config={"carry": {"form": form}})
+        self.seat = self.org.keys
 
     def run(self, ops, truth_fn):
         from aea.lab.parts.carry import Carry
@@ -113,9 +123,13 @@ class Chain:
                "temperature": self.temperature, "trace": [], "flags": []}
         history, value, carried = [], self.start, ""
         for i, op in enumerate(ops):
+            # The parts do the shaping. Goal and Frame prepend their own text, so v2 and v3 differ
+            # from v1 by what they SEAT rather than by what the harness writes into the string.
             task = {"id": "chain", "truth": truth_fn(i + 1),
-                    "data": self._body(i, op, value, carried, history)}
-            r = self.org.run(task, temperature=self.temperature, max_tokens=self.max_tokens)
+                    "data": self._body(i, op, value, carried, history),
+                    "goal": self.STEP_GOAL, "method": self.STEP_METHOD}
+            r = self.org.run(task, temperature=self.temperature, max_tokens=self.max_tokens,
+                             carried=carried if "carry" in self.seat else "")
             # A carrier quotes what it carries: echoes_prompt is this part's signature, not debris.
             flags = [f for f in r["flags"] if f != "echoes_prompt"]
             if not r["ok"]:
@@ -152,14 +166,13 @@ class Chain:
         """Step 1 states the starting value; that is the TASK, not the carry. After that `none`
         gives nothing back and the rod must hold it. Removing the start from step 1 as well made
         every arm fail at step 1 on 48371 + 6 - a control broken in the opposite direction."""
+        from aea.lab.parts.carry import INSTRUCTION
         head = "You are continuing a calculation, one step at a time."
         opening = "The starting value is %s.\n\n" % self.start if i == 0 else ""
         if self.form == "conversation":
-            return "%sStep %d: %s\n\nReply with ONLY the resulting number." % (opening, i + 1, op)
-        from aea.lab.parts.carry import INSTRUCTION
-        ctx = "\n\n%s" % carried if carried else ""
-        return ("%s%s\n\n%sStep %d: %s\n\nReply with ONLY the resulting number.%s"
-                % (head, ctx, opening, i + 1, op, INSTRUCTION[self.form]))
+            return "%sStep %d: %s" % (opening, i + 1, op)
+        # `carried` is prepended by the Call part, not here, so a seat without `carry` gets nothing.
+        return "%s\n\n%sStep %d: %s%s" % (head, opening, i + 1, op, INSTRUCTION[self.form])
 
 
 def _last_int(text):
