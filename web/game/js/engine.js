@@ -242,10 +242,12 @@ window.ENGINE = (function () {
     var byZone = {}; nodes.forEach(function (n) { (byZone[n.zone] = byZone[n.zone] || []).push(n); });
     var pos = {};
     Object.keys(byZone).forEach(function (z) {
-      var list = byZone[z], zi = idx[z] || 0, r = zoneRadius(zi), base = zi * 1.3 + 0.4;
+      var list = byZone[z], zi = idx[z] || 0, r = zoneRadius(zi), base = zi * (2 * Math.PI / 3);
       list.forEach(function (n, i) {
         var a = base + (i * 2 * Math.PI) / Math.max(list.length, 1);
-        pos[n.id] = new THREE.Vector3(NEXUS.x + Math.cos(a) * r, 5 + n.depth * 7, NEXUS.z + Math.sin(a) * r);
+        /* one plane, on the zone ring: organs read as clean marks, spokes as a clean radial burst - not a
+           3D web. Depth is carried by ring (zone radius), not by scattered altitude (that made the tangle). */
+        pos[n.id] = new THREE.Vector3(NEXUS.x + Math.cos(a) * r, 1.4, NEXUS.z + Math.sin(a) * r);
       });
     });
     return pos;
@@ -255,11 +257,12 @@ window.ENGINE = (function () {
     if (!scene || !sch || !sch.nodes) return;
     var pos = organAngles(sch.nodes, sch.zones);
     organPos = pos;                                    /* stash node world positions for the living conduits */
-    (sch.edges || []).forEach(function (e) {
-      var a = pos[e[0]], b = pos[e[1]]; if (!a || !b) return;
-      var line = new THREE.Line(geo(new THREE.BufferGeometry().setFromPoints([a, b])),
-        mat(new THREE.LineBasicMaterial({ color: INK.structure, transparent: true, opacity: 0.28 })));
-      line.name = "conduit"; scene.add(line);
+    var coreP = new THREE.Vector3(NEXUS.x, 4.8, NEXUS.z);
+    sch.nodes.forEach(function (n) {                    /* clean RADIAL SPOKES: every organ routes to the core (the mouth is the hub - honest) */
+      var a = pos[n.id]; if (!a) return;
+      var line = new THREE.Line(geo(new THREE.BufferGeometry().setFromPoints([a, coreP])),
+        mat(new THREE.LineBasicMaterial({ color: INK.structure, transparent: true, opacity: 0.20 })));
+      line.name = "spoke"; scene.add(line);
     });
     sch.nodes.forEach(function (n) {
       var p = pos[n.id]; if (!p) return;
@@ -354,14 +357,44 @@ window.ENGINE = (function () {
     if (any) { conduit.geo.attributes.position.needsUpdate = true; conduit.geo.attributes.life.needsUpdate = true; }
   }
 
+  /* THE BEACON — where the mind is asking you to go. Each rung of the guided ladder happens in a
+     DIFFERENT district (the mission data has always declared its beacon; this is what honours it), so the
+     arc is a passage through the instrument instead of four visits to one slab. A thin warm mast + a
+     ground ring: sparse by law, and lit only while a real mission is actually asking. */
+  var beaconRef = null;
+  function buildBeacon() {
+    var grp = new THREE.Group(); grp.name = "beacon"; grp.visible = false; scene.add(grp);
+    var ring = new THREE.Mesh(geo(new THREE.RingGeometry(3.6, 3.95, 56)),
+      mat(new THREE.MeshBasicMaterial({ color: INK.warm, transparent: true, opacity: 0.42,
+                                        side: THREE.DoubleSide, depthWrite: false })));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.14; grp.add(ring);
+    var mast = new THREE.Mesh(geo(new THREE.CylinderGeometry(0.085, 0.085, 52, 6, 1, true)),
+      mat(new THREE.MeshBasicMaterial({ color: INK.warm, transparent: true, opacity: 0.2, depthWrite: false })));
+    mast.position.y = 26; grp.add(mast);
+    beaconRef = grp;
+  }
+
+  function setBeacon(p) {
+    if (!beaconRef) return;
+    if (!p || p.x === undefined || p.x === null) {
+      beaconRef.visible = false;
+      if (GAME) GAME.state.beacon = null;
+      return;
+    }
+    beaconRef.position.set(p.x, 0, p.z);
+    beaconRef.visible = true;
+    if (GAME) GAME.state.beacon = { x: p.x, z: p.z };   /* the bench docks HERE, not at a fixed slab */
+  }
+
   function buildInstrument() {
     buildCore();   /* dark structure-ink until the schema proves the being alive */
+    buildBeacon();
     if (!GAME.state.flags.still && window.GameAPI && window.GameAPI.schema) {
       window.GameAPI.schema().then(function (sch) {
         if (!scene) return;
         buildZoneRings(sch.zones);
         buildOrgans(sch);
-        if (sch.alive) igniteCore();                 /* amber ONLY when the heartbeat is really ticking */
+        if (sch.heartbeat) igniteCore();             /* amber ONLY when the heartbeat is really ticking (a measured correlate, not "alive") */
         buildConduitTraffic(); pollEvents();         /* wire the real /game/events stream into the world */
       }, function () {});
     } else {
@@ -590,6 +623,10 @@ window.ENGINE = (function () {
     buildGround();
     buildInstrument();
     buildProbe();
+
+    /* the guided ladder asks the world where its next rung stands (one-way: the mission emits, the
+       world places the mark and owns the coordinates the bench then docks against) */
+    GAME.bus.on("beacon:set", setBeacon);
 
     /* harness poses (04 §7): ?still = the portrait · &pose=flight = mid-flight frame ·
        &title=1 = the boot scrim over the live scene */

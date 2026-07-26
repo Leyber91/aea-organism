@@ -7,19 +7,19 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 68,
+    "count": 99,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
-    "count": 58,
+    "count": 71,
     "source": "design/00_VISION.md"
    },
    "reflections": {
-    "count": 44,
+    "count": 50,
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 13,
+    "count": 18,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -35,25 +35,25 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 68
+    "count": 99
    },
    {
     "src": "THE_PROBE",
     "dst": "plan",
     "rel": "contains",
-    "count": 58
+    "count": 71
    },
    {
     "src": "THE_PROBE",
     "dst": "reflections",
     "rel": "contains",
-    "count": 44
+    "count": 50
    },
    {
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 13
+    "count": 18
    },
    {
     "src": "THE_PROBE",
@@ -85,10 +85,22 @@
      "purpose": "agent_tools.py - Phase 3: the agent reaches PAST its own weights."
     },
     {
+     "id": "anchor",
+     "type": "module",
+     "path": "aea/mind/anchor.py",
+     "purpose": "anchor.py - THE COMBINATION CONTRACT: how any subset of modules, in any order, composes into an AEA."
+    },
+    {
      "id": "autonomy",
      "type": "module",
      "path": "aea/organs/autonomy.py",
      "purpose": "autonomy.py - THE LIVE BATTERY: the system tests its OWN autonomy against the principles."
+    },
+    {
+     "id": "axes",
+     "type": "module",
+     "path": "aea/mind/axes.py",
+     "purpose": "axes.py - C-11, THE POSITION RECORD: where the entity actually stands in the 5-D growth space."
     },
     {
      "id": "bench_core",
@@ -109,6 +121,12 @@
      "purpose": "build_graph.py - the master orchestrator graph over subgraphs, for agent handoff."
     },
     {
+     "id": "calibrate",
+     "type": "module",
+     "path": "aea/lab/calibrate.py",
+     "purpose": "calibrate.py - THE FAILURE WINDOW. Measure which rods fail which task, BEFORE designing anything."
+    },
+    {
      "id": "capability_census",
      "type": "module",
      "path": "aea/energy/capability_census.py",
@@ -121,6 +139,12 @@
      "purpose": "capacity.py - THE LIVE CAPACITY GAUGE: how much free power do we ACTUALLY have, right now?"
     },
     {
+     "id": "checkpoint",
+     "type": "module",
+     "path": "aea/mind/checkpoint.py",
+     "purpose": "checkpoint.py - C-80. THE ONE MUTABLE OBJECT EVERY LAYER READS AND WRITES."
+    },
+    {
      "id": "consolidate",
      "type": "module",
      "path": "aea/memory/consolidate.py",
@@ -131,6 +155,12 @@
      "type": "module",
      "path": "aea/server/controlroom.py",
      "purpose": "controlroom.py - THE CONTROL ROOM: at any moment, see what the entity is doing."
+    },
+    {
+     "id": "converse",
+     "type": "module",
+     "path": "aea/organs/converse.py",
+     "purpose": "converse.py - THE COMPANION. A voice-native conversation partner in Spanish: local ears,"
     },
     {
      "id": "energy",
@@ -151,6 +181,12 @@
      "purpose": "extensive_census.py - THE FULL EXAM: every free capability we hold, tested for real."
     },
     {
+     "id": "fuel",
+     "type": "module",
+     "path": "aea/mind/fuel.py",
+     "purpose": "fuel.py - THE UNIT SYSTEM. No measurement exists without the fuel it was taken on."
+    },
+    {
      "id": "gauntlet",
      "type": "module",
      "path": "aea/energy/gauntlet.py",
@@ -169,6 +205,12 @@
      "purpose": "hades.py - HADES: the WATCHER over the SEDAH swarm."
     },
     {
+     "id": "harness",
+     "type": "module",
+     "path": "aea/lab/harness.py",
+     "purpose": "harness.py - THE ONE INSTRUMENT. Every experiment from here on runs through this."
+    },
+    {
      "id": "honesty",
      "type": "module",
      "path": "aea/gameapi/honesty.py",
@@ -179,6 +221,12 @@
      "type": "module",
      "path": "aea/memory/index_codex.py",
      "purpose": "index_codex.py - THE WHOLE BOOK OF LUIS, indexed: his real documents (the TRIVERSE CODEX,"
+    },
+    {
+     "id": "journey_check",
+     "type": "module",
+     "path": "aea/tooling/journey_check.py",
+     "purpose": "journey_check.py - THE ENFORCEMENT. Are the three ladders the same ladder?"
     },
     {
      "id": "listen",
@@ -215,6 +263,18 @@
      "type": "module",
      "path": "aea/mind/orchestrator.py",
      "purpose": "orchestrator.py - the AEA orchestrator."
+    },
+    {
+     "id": "organism",
+     "type": "module",
+     "path": "aea/lab/organism.py",
+     "purpose": "organism.py - AN ASSEMBLED AEA. Version N is the first N components seated, and it is a creature."
+    },
+    {
+     "id": "overseer",
+     "type": "module",
+     "path": "aea/lab/overseer.py",
+     "purpose": "overseer.py - IS THIS REPLY AN ANSWER, OR IS IT DEBRIS? The lab watching itself while it runs."
     },
     {
      "id": "pathfinder",
@@ -293,6 +353,132 @@
      "type": "module",
      "path": "aea/kernel/trust.py",
      "purpose": "trust.py - THE TRUST LEDGER: autonomy is EARNED per capability, never assumed."
+    },
+    {
+     "id": "x01_generic_frame",
+     "type": "module",
+     "path": "aea/lab/experiments/x01_generic_frame.py",
+     "purpose": "x01 - DOES A GENERIC FRAME DESTROY A CAPABILITY THE BARE ROD ALREADY HAD?"
+    },
+    {
+     "id": "x02_fitted_frame",
+     "type": "module",
+     "path": "aea/lab/experiments/x02_fitted_frame.py",
+     "purpose": "x02 - DOES A FITTED FRAME (ONE THAT NAMES THE METHOD) EARN ITS COST?"
+    },
+    {
+     "id": "x03_judge",
+     "type": "module",
+     "path": "aea/lab/experiments/x03_judge.py",
+     "purpose": "x03 - MUST A JUDGE OVERRULE RATHER THAN ADVISE? (law III)"
+    },
+    {
+     "id": "x04_separation",
+     "type": "module",
+     "path": "aea/lab/experiments/x04_separation.py",
+     "purpose": "x04 - DOES SELF-CRITICISM REQUIRE A SEPARATE CALL? (law II)"
+    },
+    {
+     "id": "x06_long_chain",
+     "type": "module",
+     "path": "aea/lab/x06_long_chain.py",
+     "purpose": "x06 - THE LONG CHAIN. L0 against L5: one breath, or carried state?"
+    },
+    {
+     "id": "x06b_crossover",
+     "type": "module",
+     "path": "aea/lab/x06b_crossover.py",
+     "purpose": "x06b - THE CROSSOVER, done properly. Calibrate the UNIT OF WORK first, then find where L0 breaks."
+    },
+    {
+     "id": "x07_self_assessment",
+     "type": "module",
+     "path": "aea/lab/x07_self_assessment.py",
+     "purpose": "x07 - CAN A ROD PREDICT ITS OWN FAILURE? The experiment that decides two rung placements."
+    },
+    {
+     "id": "x07b_self_assessment_hard",
+     "type": "module",
+     "path": "aea/lab/x07b_self_assessment_hard.py",
+     "purpose": "x07b - SELF-ASSESSMENT WHERE FAILURE IS ABUNDANT, and whether it is RELATIVE rather than absent."
+    },
+    {
+     "id": "x08_fuel_crossing",
+     "type": "module",
+     "path": "aea/lab/x08_fuel_crossing.py",
+     "purpose": "x08 - IF THE FUEL CHANGES, WHAT STAYS? The other half of C-80, and chapter II's title question."
+    },
+    {
+     "id": "x08b_interpretable_state",
+     "type": "module",
+     "path": "aea/lab/x08b_interpretable_state.py",
+     "purpose": "x08b - THE HANDOFF WHEN THE STATE IS NOT A NUMBER. What x08 answered in its easiest possible form."
+    },
+    {
+     "id": "x09_hearth_failure",
+     "type": "module",
+     "path": "aea/lab/x09_hearth_failure.py",
+     "purpose": "x09 - IS THERE ANYTHING ON THIS BENCH THE PLAYER CAN FAIL? The blocker under the skipped rungs."
+    },
+    {
+     "id": "x10_coverage_sweep",
+     "type": "module",
+     "path": "aea/lab/x10_coverage_sweep.py",
+     "purpose": "x10 - THE COVERAGE SWEEP. Every size class, four temperatures, three framings, one task."
+    },
+    {
+     "id": "x11_the_council",
+     "type": "module",
+     "path": "aea/lab/x11_the_council.py",
+     "purpose": "x11 - DOES A COUNCIL REACH ABOVE ITS FUEL? Chapter II's third claim, the one never measured."
+    },
+    {
+     "id": "x12_L0_goal_presence",
+     "type": "module",
+     "path": "aea/lab/x12_L0_goal_presence.py",
+     "purpose": "x12 - CHAPTER I / LEVEL 0. Does a call need a goal, and can bigger fuel supply one it was not given?"
+    },
+    {
+     "id": "x13_L1_read_the_output",
+     "type": "module",
+     "path": "aea/lab/x13_L1_read_the_output.py",
+     "purpose": "x13 - CHAPTER II / LEVEL 1. What can be learned from a reply without spending another call?"
+    },
+    {
+     "id": "x14_C75_parser_validation",
+     "type": "module",
+     "path": "aea/lab/x14_C75_parser_validation.py",
+     "purpose": "x14 - CLOSING C-75. What is the exchange rate between a parse that guesses and a parse that abstains?"
+    },
+    {
+     "id": "x15_L2_the_frame",
+     "type": "module",
+     "path": "aea/lab/x15_L2_the_frame.py",
+     "purpose": "x15 - CHAPTER III / LEVEL 2. The last free lever, and the creature it damages."
+    },
+    {
+     "id": "x16_the_organisms",
+     "type": "module",
+     "path": "aea/lab/x16_the_organisms.py",
+     "purpose": "x16 - RUNNING THE CREATURES. Every version of the AEA, assembled and fired on pinned fuel."
+    },
+    {
+     "id": "x17_the_lattice",
+     "type": "module",
+     "path": "aea/lab/x17_the_lattice.py",
+     "purpose": "x17 - THE ORDERING LATTICE. Deriving the dependency graph instead of reasoning it."
+    },
+    {
+     "id": "x18_second_battery",
+     "type": "module",
+     "path": "aea/lab/x18_second_battery.py",
+     "purpose": "x18 - THE SECOND BATTERY. Does the deck we hold describe the architecture, or describe counting?"
+    },
+    {
+     "id": "x19_the_unmeasured_pair",
+     "type": "module",
+     "path": "aea/lab/x19_the_unmeasured_pair.py",
+     "purpose": "x19 - THE UNMEASURED PAIR. The two creatures on the World 1 plate that no part has ever been tried on."
     },
     {
      "id": "/api/construct/run",
@@ -477,7 +663,27 @@
      "rel": "imports"
     },
     {
+     "src": "anchor",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "anchor",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "anchor",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "autonomy",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "axes",
      "dst": "grid",
      "rel": "imports"
     },
@@ -527,12 +733,32 @@
      "rel": "imports"
     },
     {
+     "src": "calibrate",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "calibrate",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "calibrate",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
      "src": "capability_census",
      "dst": "grid",
      "rel": "imports"
     },
     {
      "src": "capacity",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "checkpoint",
      "dst": "grid",
      "rel": "imports"
     },
@@ -597,6 +823,21 @@
      "rel": "imports"
     },
     {
+     "src": "converse",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "converse",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "converse",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
      "src": "energy",
      "dst": "grid",
      "rel": "imports"
@@ -613,6 +854,11 @@
     },
     {
      "src": "extensive_census",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "fuel",
      "dst": "grid",
      "rel": "imports"
     },
@@ -637,6 +883,26 @@
      "rel": "imports"
     },
     {
+     "src": "harness",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "harness",
+     "dst": "anchor",
+     "rel": "imports"
+    },
+    {
+     "src": "harness",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "harness",
+     "dst": "memory",
+     "rel": "imports"
+    },
+    {
      "src": "index_codex",
      "dst": "grid",
      "rel": "imports"
@@ -649,6 +915,11 @@
     {
      "src": "index_codex",
      "dst": "consolidate",
+     "rel": "imports"
+    },
+    {
+     "src": "journey_check",
+     "dst": "grid",
      "rel": "imports"
     },
     {
@@ -707,6 +978,26 @@
      "rel": "imports"
     },
     {
+     "src": "organism",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "organism",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "overseer",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "overseer",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
      "src": "pathfinder",
      "dst": "grid",
      "rel": "imports"
@@ -739,6 +1030,16 @@
     {
      "src": "read",
      "dst": "bench_core",
+     "rel": "imports"
+    },
+    {
+     "src": "read",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "read",
+     "dst": "axes",
      "rel": "imports"
     },
     {
@@ -884,6 +1185,346 @@
     {
      "src": "trust",
      "dst": "pulse",
+     "rel": "imports"
+    },
+    {
+     "src": "x01_generic_frame",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x02_fitted_frame",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x03_judge",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x04_separation",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x06_long_chain",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x06_long_chain",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x06_long_chain",
+     "dst": "checkpoint",
+     "rel": "imports"
+    },
+    {
+     "src": "x06_long_chain",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "x06_long_chain",
+     "rel": "imports"
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "checkpoint",
+     "rel": "imports"
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x07_self_assessment",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x07_self_assessment",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x07_self_assessment",
+     "dst": "calibrate",
+     "rel": "imports"
+    },
+    {
+     "src": "x07_self_assessment",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "x06_long_chain",
+     "rel": "imports"
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "x07_self_assessment",
+     "rel": "imports"
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "x06_long_chain",
+     "rel": "imports"
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "checkpoint",
+     "rel": "imports"
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x08b_interpretable_state",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x08b_interpretable_state",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x08b_interpretable_state",
+     "dst": "checkpoint",
+     "rel": "imports"
+    },
+    {
+     "src": "x09_hearth_failure",
+     "dst": "bench_core",
+     "rel": "imports"
+    },
+    {
+     "src": "x09_hearth_failure",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x09_hearth_failure",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x09_hearth_failure",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x10_coverage_sweep",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x10_coverage_sweep",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x10_coverage_sweep",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x11_the_council",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "x11_the_council",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x11_the_council",
+     "dst": "x06_long_chain",
+     "rel": "imports"
+    },
+    {
+     "src": "x11_the_council",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x12_L0_goal_presence",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x12_L0_goal_presence",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x12_L0_goal_presence",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x13_L1_read_the_output",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x13_L1_read_the_output",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x13_L1_read_the_output",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x14_C75_parser_validation",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x14_C75_parser_validation",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x14_C75_parser_validation",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x15_L2_the_frame",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "x15_L2_the_frame",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x15_L2_the_frame",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x16_the_organisms",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x16_the_organisms",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x16_the_organisms",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x17_the_lattice",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x17_the_lattice",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x17_the_lattice",
+     "dst": "x16_the_organisms",
+     "rel": "imports"
+    },
+    {
+     "src": "x17_the_lattice",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x18_second_battery",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x18_second_battery",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x18_second_battery",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "x12_L0_goal_presence",
+     "rel": "imports"
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "x16_the_organisms",
+     "rel": "imports"
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "fuel",
      "rel": "imports"
     }
    ]
@@ -1046,6 +1687,16 @@
      "path": "design/CLEAN_ARCHITECTURE.md"
     },
     {
+     "id": "design/E10_WORLD1_ART_DIRECTION.md",
+     "type": "design_doc",
+     "path": "design/E10_WORLD1_ART_DIRECTION.md"
+    },
+    {
+     "id": "design/E11_IMAGE_BRIEF_METHOD.md",
+     "type": "design_doc",
+     "path": "design/E11_IMAGE_BRIEF_METHOD.md"
+    },
+    {
      "id": "design/E1_CODE_ARCHITECTURE.md",
      "type": "design_doc",
      "path": "design/E1_CODE_ARCHITECTURE.md"
@@ -1111,6 +1762,11 @@
      "path": "design/P0_PROTOTYPES.md"
     },
     {
+     "id": "design/PRODUCTION_PLAN.md",
+     "type": "design_doc",
+     "path": "design/PRODUCTION_PLAN.md"
+    },
+    {
      "id": "design/R1_EVIDENCE.md",
      "type": "design_doc",
      "path": "design/R1_EVIDENCE.md"
@@ -1121,9 +1777,59 @@
      "path": "design/ROADMAP.md"
     },
     {
+     "id": "design/STATUS.md",
+     "type": "design_doc",
+     "path": "design/STATUS.md"
+    },
+    {
+     "id": "design/STUDIO.md",
+     "type": "design_doc",
+     "path": "design/STUDIO.md"
+    },
+    {
+     "id": "design/STUDIO_LEDGER.md",
+     "type": "design_doc",
+     "path": "design/STUDIO_LEDGER.md"
+    },
+    {
+     "id": "design/THE_DERIVATION.md",
+     "type": "design_doc",
+     "path": "design/THE_DERIVATION.md"
+    },
+    {
      "id": "design/THE_FIELD_GUIDE.md",
      "type": "design_doc",
      "path": "design/THE_FIELD_GUIDE.md"
+    },
+    {
+     "id": "design/THE_JOURNEY.md",
+     "type": "design_doc",
+     "path": "design/THE_JOURNEY.md"
+    },
+    {
+     "id": "design/THE_LINEAR_HIERARCHY.md",
+     "type": "design_doc",
+     "path": "design/THE_LINEAR_HIERARCHY.md"
+    },
+    {
+     "id": "design/THE_ROUTE.md",
+     "type": "design_doc",
+     "path": "design/THE_ROUTE.md"
+    },
+    {
+     "id": "design/THE_SIX_WORLDS.md",
+     "type": "design_doc",
+     "path": "design/THE_SIX_WORLDS.md"
+    },
+    {
+     "id": "design/THE_WALK.md",
+     "type": "design_doc",
+     "path": "design/THE_WALK.md"
+    },
+    {
+     "id": "design/W2_HANDOFF.md",
+     "type": "design_doc",
+     "path": "design/W2_HANDOFF.md"
     },
     {
      "id": "docs/AEA_PROOF_PLAN.md",
@@ -1448,6 +2154,42 @@
      "type": "reflection",
      "title": "R44 · The entity economy is Cities-Skylines-class: many interlocking variables to stay viable",
      "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R45",
+     "type": "reflection",
+     "title": "R45 · Advance by deepening, top to bottom — stack -> language -> file structure -> functionality -> functions",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R46",
+     "type": "reflection",
+     "title": "R46 · The studio is a real talking team - agents discuss in sessions, and the tracking reflects TRUE status",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R47",
+     "type": "reflection",
+     "title": "R47 · The studio is a LEARNING team - it accumulates experience and pushes as hard as Luis does",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R48",
+     "type": "reflection",
+     "title": "R48 · The world is a POWER INSTALLATION · players may beat the AEA · danger must be real",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "R49",
+     "type": "reflection",
+     "title": "R49 · THE CREATURE GAME — the missing piece is LIFE, and the reward must be FELT",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "2026-07-25",
+     "type": "reflection",
+     "title": "2026-07-25 · FIELD LESSON 10 — A NUMBER IN AN IMAGE PROMPT IS A CLAIM",
+     "path": "diary/REFLECTIONS.md"
     }
    ],
    "edges": []
@@ -1487,7 +2229,7 @@
     {
      "id": "D6",
      "type": "discovery",
-     "title": "D6 · Form ruling — the city is an instrument, not decoration",
+     "title": "D6 · Form ruling, the city is an instrument, not decoration",
      "path": "diary/DISCOVERIES.md"
     },
     {
@@ -1499,7 +2241,7 @@
     {
      "id": "D8",
      "type": "discovery",
-     "title": "D8 · Reorg lesson — continuity lives in the files",
+     "title": "D8 · Reorg lesson, continuity lives in the files",
      "path": "diary/DISCOVERIES.md"
     },
     {
@@ -1511,25 +2253,55 @@
     {
      "id": "D10",
      "type": "discovery",
-     "title": "D10 · Cold-read audit — legible in the parts, ambiguous in the CANON (measured 2026-07-22)",
+     "title": "D10 · Cold-read audit, legible in the parts, ambiguous in the CANON (measured 2026-07-22)",
      "path": "diary/DISCOVERIES.md"
     },
     {
      "id": "D11",
      "type": "discovery",
-     "title": "D11 · The vision crystallized — backward-designed, genre-welded, clean-architected (2026-07-22)",
+     "title": "D11 · The vision crystallized, backward-designed, genre-welded, clean-architected (2026-07-22)",
      "path": "diary/DISCOVERIES.md"
     },
     {
      "id": "D12",
      "type": "discovery",
-     "title": "D12 · Expert panel — GREENLIT masterpiece seed; three execution flaws; SHIP THE VERB (2026-07-22)",
+     "title": "D12 · Expert panel, GREENLIT masterpiece seed; three execution flaws; SHIP THE VERB (2026-07-22)",
      "path": "diary/DISCOVERIES.md"
     },
     {
      "id": "THE SHORTEST PATH FROM INSTRUMENT TO GAM",
      "type": "discovery",
      "title": "THE SHORTEST PATH FROM INSTRUMENT TO GAME (~5 evenings, all wiring what exists)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D13",
+     "type": "discovery",
+     "title": "D13 · A real-time pipeline fails at the seams you did not measure (built + measured 2026-07-24/25)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D14",
+     "type": "discovery",
+     "title": "D14 · The architecture has FOUR ladders and nothing checked them against each other (found + enforced 2026-07-25)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D15",
+     "type": "discovery",
+     "title": "D15 · n=8 was n=1: the harness measured its own determinism and called it power (found 2026-07-25)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D16",
+     "type": "discovery",
+     "title": "D16 · The form does not encode the state, it decides WHAT GETS WRITTEN AT ALL (measured 2026-07-25, x08b)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D17",
+     "type": "discovery",
+     "title": "D17 · The ladder is not a size ladder, the frame HARMS rods that don't need it, and the readout is the only lever that generalises (measured 2026-07-25, x10)",
      "path": "diary/DISCOVERIES.md"
     }
    ],

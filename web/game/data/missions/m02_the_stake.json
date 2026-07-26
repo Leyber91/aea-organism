@@ -1,0 +1,58 @@
+{
+  "id": "M0.2",
+  "act": "0",
+  "title": "THE STAKE",
+  "rung": 4,
+  "journey_rows": [6],
+  "adds": ["C-16", "C-67", "C-84"],
+  "requires": ["C-01", "C-15"],
+  "adds_note": "THE LADDER (ladder) is substrate-variation plus the catalog it reaches through. it needs the draw and the measure already wired, and nothing else in the rail.",
+  "objective": "seat THE LADDER between the head and the tail - reach up-tier - spend real budget",
+  "beacon": "rim",
+  "beats": [
+    {
+      "kind": "brief",
+      "title": "the rim rod",
+      "lines": [
+        "the core answered for free. it always will - that is the hearth.",
+        "further out, a rod sits behind a real rate limit. reaching it costs.",
+        "one unit of real budget, metered live. it can genuinely starve.",
+        "seat THE LADDER between THE DRAW and THE MEASURE. reach up. see what a stake costs."
+      ]
+    },
+    {
+      "kind": "learn",
+      "title": "the reach - nothing hidden",
+      "code": "POST /game/ignite\n{ \"spec\": [ \"tap\", \"ladder\", \"scorer\" ],   # THE DRAW -> THE LADDER -> THE MEASURE\n  \"task\": \"t-01\" }\n     -> { \"ok\": true, \"run_id\": \"...\" }\n\nGET /game/run?id=<run_id>\n     -> links: tap -> ladder -> scorer\n        ladder.receipt.rods   verdict.pass   cost_u",
+      "note": "THE DRAW alone stays on the free hearth. seat THE LADDER between the head and the tail and the draw reaches UP a tier to a paid rod - cost 1u, real budget, read live. one law comes free with the reach: if that rod is walled by a real rate limit, THE LADDER falls back to the hearth and the fire still closes. a survived fall is not a failure - it is RESTORABLE COHERENCE. seat the three parts, then fire."
+    },
+    {
+      "kind": "do",
+      "title": "the reach",
+      "label": "dock the rim [F] - seat THE DRAW, THE LADDER, THE MEASURE - fire [Space]",
+      "action": { "type": "compose" },
+      "note": "paid rod. this proof spends real budget - unless the wall sends it home to the hearth.",
+      "earned": "the ladder seated. the reach went up.",
+      "reseat": "unscored draw. seat THE MEASURE at the tail, then fire again.",
+      "halted": "a rod refused. re-seat the head and the tail, fire again."
+    },
+    {
+      "kind": "prove",
+      "title": "the receipt",
+      "assert": "reach_receipt",
+      "pass": "run {run_id} - {total_ms}ms - cost {cost_u}. THE LADDER seated and the reach closed. a number is real budget spent; FREE means the wall sent it home and the ladder still closed. the receipt is real either way.",
+      "fail": "no ladder in the trace. a bare draw stays on the free hearth - seat THE LADDER between the head and the tail, fire again."
+    }
+  ],
+  "rewards": {
+    "reveals": ["plant_pollinations"],
+    "log": "the stake - the reach lands, the meter reads",
+    "reveal": [
+      "you seated THE LADDER and reached past the hearth.",
+      "cost {cost_u} - read live from the meter, not a guess.",
+      "a hairline grey notch is milled into the hull. reach earned, one ring inward. the light stays the mind's."
+    ],
+    "tag": "honesty - cost {cost_u}, real budget or a survived fall. grey notch, no amber title - a stake is a reach, not a proven doctrine."
+  },
+  "leyber": []
+}

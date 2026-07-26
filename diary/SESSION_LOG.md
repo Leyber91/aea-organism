@@ -1304,3 +1304,58 @@ two weeks stale) x 3 framings x 4 temperatures x n=8, one fixed task, five size 
 6. **NEW - task breadth is the untouched axis.** Every lab result rests on wordcount, the 50-step chain, or the
    5-task bank. x10 varied fuel, temperature and framing but held the TASK fixed, so nothing yet distinguishes
    "THE READOUT generalises" from "THE READOUT generalises on enumerable tasks".
+
+---
+
+## 2026-07-26 — WORLD 1 SHIPPED, AND SEVEN INSTRUMENTS WERE WRONG
+
+**DID**
+
+- **World 1, THE ANSWERER, is complete.** Nine creatures and four scenes rendered in black glass, saved
+  to `design/refs/bundle/W1_THE_ANSWERER/`. Manifest and states in `E10_WORLD1_ART_DIRECTION.md`.
+- **Named `Speciosus operis`, the door out of World 1**, which existed in the measurements and in no
+  document: complete visible working that is wrong, **16 of 288 without a method frame, 70 of 360 with
+  one**. The world's great lever triples the creature the world cannot fix. Annex entry written.
+- **Wrote `design/THE_SIX_WORLDS.md`.** The world structure existed only in conversation and cost two
+  wrong answers before anyone noticed. Worlds are CLASSES, not the eight rungs of the hierarchy.
+- **Wrote `design/W2_HANDOFF.md`**, `design/E11_IMAGE_BRIEF_METHOD.md`, and the INSTRUMENT LAW section
+  of `aea/lab/METHOD.md`.
+- **Ran `x07b`** (self-assessment at power) and **`x19`** twice (the unmeasured pair, 640 calls each).
+- **Corrected eight sites across four documents** for retracted figures still being asserted as live,
+  including the book's front page.
+
+**SEVEN INSTRUMENT DEFECTS, all ours, five of them in a verdict or detector rather than in data**
+
+1. `Tacitus operis`'s defining quote was truncated before the answer; the full 256-char reply ends in
+   `cerebras` and failed only a `len < 60` gate. Creature demoted from 100% to **3 of 153**.
+2. `Integer sufficiens` is **ADVERSE (VALIDATION)**, not sealed: 7/7 to 0/7 by forced abstention, three
+   times. It moves to World 2.
+3. The 28 `degenerate` loop flags are markdown artifacts. Real verbatim loops in the whole project:
+   **three**. `Iterans sui` then failed to reproduce in 1,280 attempts.
+4. `median 3 characters to 320` never existed anywhere. Invented in an image brief, carried through three.
+5. `x07b`'s "21 of 21, x07 IS OVERTURNED" is a one-sided metric; a rod that says NO to everything scores
+   100%. Two-sided: 0.733 against a 0.650 baseline. Real finding is the asymmetry — **P(YES|will fail)
+   = 0.000**, P(YES|will pass) = 0.590. A YES is trustworthy, a NO is noise.
+6. `x19` scored its detectors over `rec["raw"]`, the last 320 chars, where 74% of replies are longer.
+   It erased `Rogans vacui` (1 ask where there were 9). `organism.run` now takes `keep_full`.
+7. `x19`'s spread pooled conditions where the effect is impossible and compared top-to-second. Corrected:
+   **`Rogans` is a fuel phenotype, 20% and 15% on two plants, 0% on two others, spread 0.20.**
+
+**LOCKED**
+
+- **BLACK GLASS** is World 1's visual system. Two candidates beaten and recorded so it is not re-run.
+- **A state names a part.** Anything untested renders UNMEASURED, dark with visibly empty sockets.
+- **A method frame CURES muteness** (28/288 bare to 0/360 fitted). The annex arrow
+  `Clausus —(FRAME)→ Tacitus` was backwards and is corrected.
+- **World 1 carries three parts**, GOAL / METHOD / MANNER, because `Obtemperans`'s whole receipt is a
+  manner frame.
+
+**NEXT**
+
+**Build `CRITIC`, `LADDER` and `COUNCIL`.** They are three of World 2's seven components, none has ever
+been assembled, and they carry the entire "prevention dominates repair" claim. Write the sealed opening
+with its predictions before the calls, as Chapter III did. Then `Tardus erroris`, the only creature that
+cannot be caught by reading. Read `design/W2_HANDOFF.md` first.
+
+Also open: `Rogans vacui` is provisional at 3.9% until an ask detector runs that excludes leaked
+reasoning; Chapter I and II need the `Speciosus` correction folded into their closing arguments.

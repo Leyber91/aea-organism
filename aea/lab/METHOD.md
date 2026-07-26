@@ -198,3 +198,47 @@ EFFECT_MIN_DELTA = 3    below this the report says WITHIN NOISE
 And one the code cannot enforce: **the instrument outranks the author.** Eighteen entries in the revision
 queue, and not one of them is a rod behaving unexpectedly. Every single one is the harness, a parser, a
 cap, a floor, a ground truth, or the person writing it down.
+
+---
+
+## THE INSTRUMENT LAW — added 2026-07-26 after seven defects in one day
+
+**Every false finding this project has produced came from our own instrument. Not one came from a model
+behaving unexpectedly.** Seven in a single session, and they fall into three kinds:
+
+| # | defect | kind | cost |
+|---|---|---|---|
+| 1 | `max_tokens=320` severed replies the frame made longer | **budget** | invented `Auratus gravis`, a creature and a game mechanic |
+| 2 | the scorer counted a prompt echo as an answer | **detector** | Chapter I's 52% headline law |
+| 3 | `len(t.strip()) < 60` failed a 256-char reply ending in the answer | **gate** | invented `Tacitus operis`'s defining trait |
+| 4 | the 6-repeat loop check tripped on markdown tables | **detector** | 28 fictional loops, one rod, zero real |
+| 5 | `rec["raw"]` is the last 320 chars; 74% of replies are longer | **window** | erased a real creature, 1 ask where there were 9 |
+| 6 | "honest on failure" only scores cells the rod failed | **one-sided metric** | "x07 IS OVERTURNED" off a rod that said NO to everything |
+| 7 | spread pooled conditions where the effect is impossible | **scope** | "evenly distributed" on a total split, 0.01 for 0.20 |
+
+**FIVE OF SEVEN WERE IN A VERDICT OR A DETECTOR, NOT IN THE DATA.** The numbers the models returned were
+always fine. What kept being wrong was the thing we pointed at them.
+
+### The five checks, and run them BEFORE spending calls
+
+1. **VERIFY THE DETECTOR AGAINST KNOWN POSITIVES AND KNOWN NEGATIVES.** In code, in the `__main__`
+   block, with asserts. `x19` catches all three real loops and clears all 28 known false positives, and
+   that self-test cost nothing. Defects 2, 4 and 6 would all have died here.
+2. **ASK WHERE IN THE REPLY THE THING LIVES.** An ANSWER lands at the end; a BEHAVIOUR lands anywhere.
+   `rec["raw"]` is a tail and was never wrong for answers. Any detector reading the BODY of a reply
+   needs `keep_full=True`. Record `chars` so the window can be audited afterwards.
+3. **EVERY METRIC NEEDS BOTH ARMS.** A rate over failures alone cannot see a false alarm. A rate over
+   successes alone cannot see a miss. Print the confusion matrix and the always-say-the-majority
+   baseline next to the score, always.
+4. **SCOPE THE DENOMINATOR TO WHERE THE EFFECT CAN OCCUR.** Pooling in conditions that force the
+   outcome to zero divides every rate and crushes every spread. And spread is **top minus bottom**,
+   never top minus second.
+5. **GUARD THE FLOOR.** Below ~5 occurrences, distribution questions are undecidable: the spread is
+   zero by construction. Say "undecidable", never "even".
+
+### The tell
+
+**A creature sourced from a scoring rule rather than from a reply is our artifact until a second
+instrument sees it.** When a finding is unusually clean, unusually quotable, or unusually convenient
+for the game, that is the moment to re-read the check that produced it. Three creatures were named,
+receipted, entered in an annex and built into mechanics before anyone re-read the gate.

@@ -49,3 +49,7 @@ voice/sherpa-onnx-v1.13.4-win-x64-shared-MD-Release/
 *.wav
 *.log
 live.instance
+
+# --- added 2026-07-24: private third-party conversation records. A transcript of someone
+# who is not Luis must NEVER leave this machine in a commit. Privacy guard, absolute. ---
+state/converse_*.json

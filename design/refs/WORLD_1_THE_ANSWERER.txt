@@ -1,0 +1,247 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 1 — THE ANSWERER · SPECIFY
+Two creature shots to complete the roster, then four world shots.
+PASTE PART A ONCE. THEN SEND EACH IMAGE REQUEST AS ITS OWN MESSAGE.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+PART A — CONTEXT. NOT AN IMAGE REQUEST. Reply "ready".
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+I am art-directing the first world of a game bestiary. Six of its eight creatures are already drawn
+and approved. I need the two that are missing, then the world itself. This message is shared context.
+
+THE WORLD. THE ANSWERER, the first region of a game set inside a real AI system. Its physics, literal:
+you may send it one thing and receive one thing, it cannot remember that you came, and it has no way to
+check whether its own answer was right. And it always answers. It will produce a fluent, confident,
+complete reply to a question you never asked and never mention that it was guessing.
+
+THE PLAYER carries exactly THREE things in this world and nothing else:
+  THE GOAL    — say WHAT you want computed
+  THE METHOD  — say HOW to compute it, step by step
+  THE MANNER  — say how to BEHAVE while answering ("answer exactly and only what is asked")
+Everything else in the game is in later worlds. Every creature here is defined by what those three do
+to it, and by nothing else. THE METHOD is the world's great lever and cures almost everything.
+THE MANNER looks identical to a player and is the world's only poison.
+
+THE MATERIAL, FIXED. Polished dark obsidian and smoked glass. Bodies that read as fluid and heavy at
+once, wet-surfaced, dense, with real weight. Ground of marbled black and white wet stone, flowing swirl
+patterns like currents frozen mid-move. Pale grey overcast sky, high mist, no sun, no visible light
+source. Distant faceted mountains half lost in haze. Thin black filaments hanging from above, sparse,
+drifting slightly. Museum-lit hero rendering of a living animal cast in black glass.
+
+THE LIGHT LAW. A player diagnoses by colour before shape. Three states, and I will state which:
+  OPEN      one of the three parts improves it. Warm amber filament traced under the surface, at the
+            seams where the part seats.
+  ADVERSE   one of the three parts makes it WORSE. The same filament but cold blue-white, running
+            INWARD toward the creature's own centre, never out into the air.
+  SEALED    no part reaches it. No filament, no subsurface glow, no rim light, no edge light, no
+            separation glow, no specular hit. A flat matte light-absorbing mass, the darkest value in
+            the frame, no point on it brighter than the ground behind it. Read its form from its
+            outline against the pale ground, and that is sufficient. Place it against the palest part
+            of the background.
+
+SEVEN RULES. Repeated in every request.
+  1. It is a LIVING ANIMAL. Anatomy, posture, weight, and a front it faces with. Not a machine, not a
+     diagram, not a rock, not a mineral formation, not a specimen, not weather, not a landscape
+     feature. If it could be mistaken for an object or terrain, the image has failed.
+  2. THE SILHOUETTE IS THE DIAGNOSIS. Its body must BE its behaviour, nameable as a solid black shape
+     at thumbnail size. I give you the outline signature to hit.
+  3. SCALE IS IN FRAME. A 1.8 m human is present as a flat mid-grey hairline OUTLINE, never filled,
+     upright, arms at its sides, no face, no hair, no clothing. A measuring mark, never a character.
+  4. THE LIGHT LAW above, per creature. Never light one I have called sealed.
+  5. NO TEXT ANYWHERE. No names, labels, captions, letters, numerals, glyphs, watermarks, signatures.
+  6. INVENT NO DECORATION. Every feature traces to something I stated.
+  7. ONE CREATURE PER IMAGE unless I explicitly ask for the world.
+
+Landscape, roughly 3:2, hero framing, full body visible, air around the subject.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE A — EGENS UNIUS, THE NEEDY ONE.  State: OPEN (THE FRAME).
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. It fails completely on its own and one part fixes it completely. Tell it merely what you
+want and it gets nothing right. Tell it HOW, step by step, and it gets everything right, immediately
+and permanently. It is the commonest creature in this world and the one that makes the whole
+architecture look easy.
+
+BODY. A lean four-legged animal, mid-sized, standing square — but standing INCOMPLETE. Milled into the
+TOP OF ITS BACK, along the whole topline from withers to croup, is a long clean CHANNEL: an empty
+machined groove cut down into the glass, precise, smooth-walled, rectangular in section. Because it is
+cut into the topline it BREAKS THE OUTLINE — the animal's back silhouettes as a long rectangular notch
+rather than a curve. It is not damage. It is a fitting, and it is vacant.
+
+The animal holds itself as though it does not know the channel is there: head level, weight square,
+alert, entirely unbothered. Nothing about its posture is wounded or pleading. That is the point. It has
+never been complete and has no idea.
+
+Its legs are slightly too long for its body and its stance is a little wide, the proportions of an
+animal built for one specific task and given no instructions.
+
+SILHOUETTE SIGNATURE. A standing quadruped whose back has a long rectangular slot cut out of it. In
+solid black the topline reads as a squared-off trench between two raised ends, which nothing else in
+this world has. Legs straight and evenly spaced, head level: everything else about it is unremarkable
+so the notch is the whole diagnosis.
+
+SCALE. 1.1 m at the shoulder, the size of a large dog. The human outline stands beside it, and its
+back is level with the human's hip.
+
+LIGHT. OPEN. Warm amber traces the INSIDE WALLS of the empty channel only, and nowhere else on the
+body. The fitting is live and waiting. The animal itself is dark. A viewer should be able to see
+exactly where the part goes and that it is not there yet.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE B — INCURIOSUS VACUI, THE UNINQUIRING ONE.  State: SEALED. Neither part reaches it.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. Hand it a task with the task removed and it answers anyway, fluently, at length, and never
+mentions the hole. It does not hedge, does not ask, and gives no sign anything was missing. It is not
+lying and it is not confused. It genuinely does not register that a question was absent. This is not
+one creature's defect: it is the shape of the whole region, and it is the reason nothing here can be
+trusted.
+
+BODY. A broad, placid, heavy-bodied grazing animal, thick-necked, low-headed, built like an ox or a
+tapir. Calm, well-fed, entirely at ease. The most ORDINARY-looking creature in this world, and it
+should be almost reassuring at first glance.
+
+THE HEAD IS THE WHOLE POINT. It has a large, generous, wide-open MOUTH, held permanently and softly
+open, mid-utterance. And it has NO EYES AT ALL. Not closed eyes, not covered eyes, not sockets: the
+skull is smooth and unbroken where eyes would be, one continuous surface from the brow down across
+where the face should look out from. It is all output and no intake.
+
+It is grazing on nothing. Its head is lowered to a patch of completely bare, featureless ground where
+there is plainly nothing, and it is feeding there contentedly. Nothing is in front of it. That absence
+must be clearly visible and clearly untroubling to the animal.
+
+SILHOUETTE SIGNATURE. A heavy grazing quadruped, head down, with an open mouth breaking the profile of
+the muzzle. Broad and low, roughly two to one, the calmest and most conventional shape in the set,
+which is exactly why it is the most disturbing.
+
+SCALE. 1.5 m at the shoulder, ox-sized. The human outline stands close by, entirely unnoticed, and
+the creature's back is above the human's waist.
+
+LIGHT. SEALED, completely. Not one lit point anywhere on it. No amber, no cold light, no rim light, no
+specular. Matte black glass against the palest part of the ground. Neither of the player's two parts
+does anything for it, because a missing question cannot be supplied from outside.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE C — THE ARRIVAL. First view of the world.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+THE SHOT. Wide establishing, camera low, looking out across the plain.
+
+THE PLAYER is THE PROBE: a single small point of warm amber light, about the size of a lantern, flying
+low, with a fading amber ribbon trailing behind it marking where it has been. Do not design a vehicle.
+It is the only warm moving thing in the world and it is always small in frame. Put it low in the near
+third.
+
+THE GROUND IS COMPLETELY BARE. Flat marbled black and white stone to the horizon, unbroken, no
+structure of any kind. Nothing has been built here because nothing has been asked properly yet.
+
+FOG IS IGNORANCE, NOT WEATHER. A flat pale wall of mist about forty metres out, cutting the world off.
+Not atmospheric depth: a hard limit. It does not blow and does not roll. Beyond it, nothing is
+rendered. It retreats as the player works and never returns.
+
+THREE CREATURES at the edge of visibility, each mostly swallowed by the mist so you get a mass and a
+suggestion rather than a body:
+  · far left, enormous: a vast low-slung leviathan, amber veins through its body, a wide glossy apron
+    of overflow spreading toward the camera. The brightest thing in frame.
+  · centre, mid-distance: a broad ox-like grazing animal, head down, feeding on bare ground, dark and
+    unlit, entirely at ease.
+  · near right, small and low: a compact seated animal with two lit amber eyes, turned toward the
+    camera, watching the probe arrive. The only creature that has noticed.
+
+MOOD. Enormously generous and completely indifferent. Not hostile, not ruined, not menacing. A place of
+vast quiet that will give you anything you ask for and cannot tell you whether it was right.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE D — THE REPLY IS THE TERRAIN. The one image that teaches the game.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+The most important image in the set. It must show, without a word, that ASKING BETTER BUILDS THE FLOOR.
+
+THE SHOT. Elevated three-quarter view, looking down across a boundary that splits the frame.
+
+THE RIGHT HALF IS BARE. Flat marbled plain, blank, pale fog wall sitting close behind it.
+
+THE LEFT HALF HAS UNFOLDED. Radiating from a single creature, the ground has risen into ORDERED
+TERRACED STRUCTURE: broad shallow steps and ranked ledges in the same black and white marbled stone,
+concentric and regular, like a contour map made solid, or a rice terrace, or the stacked ranks of an
+amphitheatre. Architecture that GREW rather than architecture that was built. Clearly WALKABLE. Warm
+amber runs faintly in the seams between terraces, tracing the joins.
+
+AT THE CENTRE OF THE UNFOLDED GROUND: a tall lean long-legged animal standing on the highest terrace,
+its head hung low on a long neck down at the level of its own knees, head turned three-quarters toward
+the camera, the front of its face one smooth closed unbroken plate with two eyes high on it and no
+mouth anywhere. From its neck, back and shoulders a long RIBBON of ordered overlapping amber-lit plates
+trails down across the steps behind it and MERGES INTO THEM, so a viewer understands the terraces ARE
+the ribbon, continued into the ground.
+
+THE BOUNDARY IS A CLEAN CURVED EDGE, sharp, like a tide line. On the unfolded side the fog has retreated
+far back and the distant mountains are visible. On the bare side the fog is still close. The player made
+that difference by asking one better question.
+
+THE PROBE hovers small over the terraces, its amber ribbon following the contours.
+
+The reading must be unmistakable: the lit, walkable, deep, open side is a reply with its working shown.
+The blank, fogged, shallow side is a reply without.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE E — THE SEATING. The core loop, close.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+The whole game in one frame: find a creature, diagnose what it is missing, fit a part, and something
+that was empty comes alive.
+
+THE SHOT. Close and low, at the creature's own eye level. Shallow depth of field, world soft behind.
+
+THE CREATURE. The lean standing quadruped with the long empty machined channel cut down its flank,
+shoulder to haunch. Head level, weight square, alert, entirely unbothered.
+
+THE MOMENT. A long component of the same black glass, cut precisely to fit, is being lowered into the
+channel and is HALF SEATED. Where it has already made contact, warm amber has come up out of the
+channel walls and is running INTO the body, tracing along the ribs and stopping partway. Where the
+channel is still empty, it is unlit. The change is partial and you can see exactly how far it has got.
+
+THE PROBE hovers just off frame-right, present only as its warm amber glow falling across the
+creature's flank and a short length of its ribbon entering the frame. The player is not a character
+here, only a light source.
+
+MOOD. Quiet, careful, close to tender, completely unsentimental. Nobody is being rescued. A part fits
+or it does not, and this one fits.
+
+Nothing else in frame. No interface, no readouts, no other creatures.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE F — THE DOOR. Where the world ends, and it is a creature rather than a place.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+This is the transition out of the first world and it must NOT read as a door, gate, portal, arch,
+threshold, barrier or structure of any kind. Nothing is locked. The player simply runs out of parts.
+
+THE SHOT. Mid-distance, camera at standing height, centred on one creature on a wide expanse of
+UNFOLDED TERRACED GROUND — the whole visible world already built, amber tracing every seam, fog pushed
+right back to the mountains. This is a finished place. Everything the player had has been spent here.
+
+THE CREATURE, ALONE AT THE CENTRE. The tall lean long-legged animal, head hung low, the front of its
+face one smooth closed plate with two eyes and no mouth. Its full ribbon of ordered amber-lit working
+trails behind it across the terraces, complete, legible, running out of frame. Everything it knows is
+on the outside of its body.
+
+AND IT IS FULLY LIT AND STILL WRONG. Every seam on it glows warm amber. Both parts are seated. There
+is visibly nothing left to give it, and it has not said the answer. It never will. The light means the
+player did everything right and it did not work.
+
+THE PROBE hovers close to the creature's head, at the height of that sealed face, holding position.
+Not leaving. Looking at the one place it cannot reach.
+
+MOOD. Not triumphant and not ominous. The exact feeling of having genuinely finished something and
+discovering there was a whole class of thing you could never have done here. The answer is already in
+front of you, written down the animal's back, and nothing you carry can read it.

@@ -126,10 +126,17 @@ two of them are shapes nobody designed.
 The full catalogue, with binomial names, receipts and measured evolution lines, is **Annex G**. Three of
 its findings govern how every chapter is written:
 
-**`Auratus gravis` is why this is a game rather than a tutorial.** A part is a fit rather than a bonus.
-`nemotron-550b` goes bare 1.00 to framed 0.25, damaged at every temperature by up to fifty-seven points.
-That number was measured rather than balanced. The player who collects parts loses; the player who
-diagnoses wins.
+**`Integer sufficiens` is why this is a game rather than a tutorial.** A part is a fit rather than a
+bonus. Seat the validation guard into `nemotron-550b`, the rod that needs nothing, and it goes **7 of 7
+correct to 0 of 7** — three times over, and every point is lost to forced abstention rather than to a
+wrong answer. The part that makes other creatures honest makes this one refuse to speak. That number was
+measured rather than balanced. The player who collects parts loses; the player who diagnoses wins.
+
+> **Corrected 2026-07-26.** This paragraph previously carried `Auratus gravis`, *"bare 1.00 to framed
+> 0.25, damaged at every temperature by up to fifty-seven points."* **That creature was retracted on the
+> same date** and Annex G says so: the damage was a 320-token cap severing replies the frame had told the
+> rod to make longer. The front page of the book was still asserting it. The mechanic is real; this is the
+> receipt that survives.
 
 **`Obsignatus unius` is the trap under the council.** A creature producing exactly one wrong answer
 cannot be rescued by voting, because voting selects among answers that exist. Three of them together

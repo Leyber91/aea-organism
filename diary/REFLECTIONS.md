@@ -562,3 +562,195 @@ the full web; custom lets you re-plumb the grid.
 **The filter:** CS-depth must stay HONEST - every variable a real endpoint reading, never a simulated
 economy. And it must not become another design-forever hole: guided needs only the FIRST variable (free
 hearth vs paid reach) firing on the real merge, not the whole grid sim.
+
+## R45 · Advance by deepening, top to bottom — stack -> language -> file structure -> functionality -> functions
+
+**Spark (2026-07-24, his words):** *"one principle must be always present... as you advance you will go
+deeper and deeper on what is needed, from stack to code language, to file structure, to functionality, and
+functions."*
+
+**Realized:** the working order is a descent, never a scatter. Decide the STACK first (three.js r128 no-build,
+the /game/* seam, python organs), then the LANGUAGE within it, then the FILE STRUCTURE (which file owns the new
+system), then the FUNCTIONALITY (the behaviour that file provides), then the individual FUNCTIONS. Each layer is
+locked before the next is opened - the same spine as PRODUCTION_PLAN (design->system->data) but stated as a
+personal working law: don't touch a function until its file's role is settled; don't settle a file until the
+functionality it must sustain is settled. This is how the mission engine gets built: the seam contract (stack)
+-> mission.js owns the runner (file) -> port runBeat + gate on real endpoints + observe the bench (functionality)
+-> the beat handlers (functions). Prevents the failure of writing clever functions that don't sit in the right
+file for the right system.
+
+**The filter:** deepening is not an excuse to keep planning the upper layers - each layer is settled by BUILDING
+the layer below it, not by more prose about it. The descent bottoms out in shipped functions that ran.
+
+## R46 · The studio is a real talking team - agents discuss in sessions, and the tracking reflects TRUE status
+
+**Spark (2026-07-24, his words):** *"make sure the team is there, the team of agents, they talk, make sessions
+where they have discussions, and actually reflect what is the status the tracking."*
+
+**Realized:** STUDIO.md's departments must not be a metaphor - they are agents that actually convene, surface
+tensions to each other, converge on a contract, and then produce. And the project tracking must obey the honesty
+law like everything else: a status board marks a thing DONE only when it RAN and was SEEN, PENDING otherwise -
+never a claimed-done. A "standup" is recorded (the discussion is an artifact); the STATUS board is the honest
+mirror of what actually shipped vs what's still fog. This makes the agent-team visible (Luis sees them talk) and
+keeps it honest (the tracking can't lie). It composes with R45: the standup settles the upper layers (stack/file/
+functionality) by discussion, then the build deepens into functions - and QA verifies before the board flips a
+row to DONE.
+
+**The filter (standing law, do not drop):** the talking team must PRODUCE, never just discuss - agents author the
+DATA and the contract; the human-context work (live-server build, CDP verify) stays with the driver who can
+actually run it. A discussion that ends without an artifact + a verified status row IS the avoidance pattern the
+whole repo guards against. Agent-hours are burn rate (38 Studios: org-before-product) - the team exists to ship
+STAGE 1, not to staff a company.
+
+## R47 · The studio is a LEARNING team - it accumulates experience and pushes as hard as Luis does
+
+**Spark (2026-07-24, his words):** *"This team will learn of the experience, will learn to collaborate and
+they will give us better and better insight as the steps progress, emulate my behaviour, emulate how much I
+push."*
+
+**Realized:** the agent team is not spun fresh and thrown away each workflow - it must COMPOUND. Two moving
+parts. (1) LEARNING: a persistent team ledger (`design/STUDIO_LEDGER.md`) that banks every earned lesson from
+every standup/review, and every future workflow reads it as context - so the team gets sharper each pass
+instead of re-deriving from zero. Real earned examples already: "verify the substrate before demanding a
+rebuild" (the standup's 'unbuilt' read was stale), "'it plays' and 'it matches the bar' are separate tests",
+"a core verb that needs a script hack is a defect, not polish". (2) THE PUSH STANDARD: the agents must carry
+Luis's filter - name the failure before the strength, devil's advocate standing, dissatisfaction is structural
+until proven cosmetic, no menus (one opinionated call), completion over corpus, the boring test gates
+shipping, verify-don't-claim. Every agent prompt injects "you push like Luis pushes" so the team is a critical
+partner, not a validating mirror. This is R46 (the talking team + honest tracking) evolved: the team now also
+REMEMBERS and PUSHES.
+
+**Where it goes:** `design/STUDIO_LEDGER.md` is the team's growing memory + the push standard; the workflow
+CTX block includes it every run; each review/standup appends what it earned. The ledger is honest like
+everything else - a lesson enters only when a real session proved it, never a theoretical best-practice.
+
+**The filter (so this doesn't become its own avoidance):** the ledger earns entries from SHIPPED work, not
+from meta-discussion about how the team should work. A team that spends its tokens refining its own process
+instead of shipping the seat-collapse is the exact avoidance pattern the whole repo guards against. Learn BY
+shipping; bank the lesson; push harder next time.
+
+## R48 · The world is a POWER INSTALLATION · players may beat the AEA · danger must be real
+
+**Sparks (2026-07-24, his words):** *"we need mandatory tutorials so people understand the game, understand
+the world"* · *"the narrative chronicle... this is a technique we should use"* · *"we need prebuilt examples,
+partial versions of the AEA, and who knows, maybe players come up with better versions of the AEA that prove
+us wrong"* · *"the player needs to feel danger of loose if does something wrong, like it has attachment to the
+thing is building and one wrong movement has real implications"* · (earlier) *"we need players to get free
+nvidia and groq keys... it learns the budget of tokens"* · *"what is this world? is it space and
+astrophysics? is it an adventure game?"*
+
+**Realized — four locks:**
+
+1. **THE WORLD IS A THINKING POWER INSTALLATION, not space.** The answer was in the locked vocabulary all
+along: PLANTS, RODS (fuel rods), THE HEARTH, THE GRID, BROWNOUT, CAPACITY, STARVATION, THE METER, THE
+FOUNDRY. That is an energy system. The core is a REACTOR not a star; the privacy rings are CONTAINMENT
+perimeters not orbits; the plants are generating stations you physically connect. This is TRUE (AI really is
+an energy/infrastructure story) which is the one thing this project has that no one else does, it fights no
+locked vocabulary, and it makes the antagonist native (starvation is a power story). Space would be the
+generic AI-fiction default and the exact abstraction trap that sank the genre leader.
+
+2. **ONBOARDING IS THE GAME.** Only 2 of 15 plants need no key (local ollama + the keyless socket at 4rpm),
+so first light needs ZERO setup — install friction can never block the hook. Every other plant is a station
+you bring online by going and getting a real free-tier key (nvidia 40rpm, groq 30rpm/1000rpd, cerebras,
+gemini 1500/day), and paid keys open the deep rim. Connecting a key = lighting a district on the map. The
+budget is taught by the plant's own real caps arriving with it.
+
+3. **PLAYERS MAY PROVE THE AEA WRONG — and it is nearly FREE mechanically.** A construct spec is ALREADY a
+portable JSON object (parts + wiring + rods + zone); the scorer ALREADY measures fixed comparable axes
+(latency_ms, tokens, ok, zone, pass); records ALREADY persist. The ONLY missing piece is a COMMON BENCHMARK -
+we ship one task, and architectures cannot be compared without a shared test set. So the task library is not
+"content variety", it is the instrument that makes a player's architecture a real result. The AEA stops being
+the answer key and becomes the BASELINE to beat. This also resolves the edutainment trap: we are not teaching
+a simplification, we are handing over a real system with real measurement and inviting a better answer.
+
+4. **DANGER MUST BE REAL, AND IT ALREADY CAN BE.** Five honest stakes, zero fabrication: (a) real budget is
+finite and genuinely exhaustible; (b) tripping a rate limit browns a plant out for a real cooldown - real
+time lost; (c) rods ROT, so what you built can degrade under you; (d) a runaway construct you wired really
+does eat the capacity keeping everything else alive; (e) **sending data out of containment is IRREVERSIBLE** -
+mark it public, fire, and it went, forever. That last is the most thematic consequence in the game.
+**The apertures are therefore a RISK LADDER, not just a depth ladder:** GUIDED protects you (rails on, no
+loss), BUILDER lets you waste real budget, ARCHITECT lets you starve the whole station. Danger requires that
+the rails become REMOVABLE - a game that always protects you can never be dangerous.
+
+**Where it goes:** the task library is the keystone (benchmark + variety + the reach decision + the jobs
+board). Then: the connect-a-station onboarding, prebuilt partial AEAs as inspectable reference builds, and
+the chronicle technique applied per act BEFORE building it.
+
+**The filter:** "players prove us wrong" is only honest if the benchmark is fair - same task, comparable rod
+class, reproducible. A lucky model beating a better architecture would be a lie. And danger must never be
+fabricated: no invented loss, no fake meter. Every consequence has to be a real system fact.
+
+## R49 · THE CREATURE GAME — the missing piece is LIFE, and the reward must be FELT
+
+**Sparks (2026-07-24, his words):** *"on the power of habit... something successful becomes successful not
+because it is effective in itself, but because it tells you it has been used — that's why toothpaste has
+flavor, why deodorant has aroma, because it shows it has been used. we need this."* · *"this is a creature
+game, you construct the creatures, you find creatures around prebuilt that consume your budget, either you
+kill them to have more budget or let them live, but there will be a fight for it as it is important the token
+capacity, how many models you have available."* · *"do you realize we are entering a piece we were missing?"*
+
+**Yes. The missing piece is LIFE.** Everything built so far PROVES something and then vanishes: a construct
+fires once, prints a receipt, and dies. Nothing persists, nothing competes, nothing can be lost. That is the
+root cause of every gap named this arc — no attachment, no danger, no stakes, no reason to return tomorrow.
+Proof is not life.
+
+**1. THE HABIT PRINCIPLE (Duhigg / Pepsodent).** The mint tingle never cleaned a single tooth - it was the
+PERCEPTIBLE SIGNAL that the product had worked, and that signal is what built the habit in millions of
+people. Our failure mode is the mirror image of the usual one: we have perfect TRUTH and almost no TINGLE.
+Honest-and-unfelt loses to felt-and-hollow, every time, and that is uncomfortable but it is the evidence.
+**The discipline that saves it: the tingle must fire on a REAL event.** Amber IS our mint - the filament at
+the joint, the flare on the record, the sting when a name lands. We have the law; we have barely built the
+sensation. Every real event deserves a body: light, sound, weight, aftermath.
+
+**2. THE CREATURE GAME — and it is ALREADY TRUE.** Evidence, read live this session: cerebras shows **38
+requests and 10,944 tokens consumed today, and the player fired it ZERO times.** That is the entity's own
+autonomous life eating real capacity right now. So the ecology is not a design proposal, it is already
+running and merely unrendered:
+- **WILD creatures** = the entity's own background processes (the heartbeat, the briefs, consolidation, the
+  fitness sweeps). Real, already consuming, already measurable per plant.
+- **YOUR creatures** = constructs you compose and leave running.
+- **THE SCARCITY** = finite rpd/rpm per plant (groq 1000/day is a real ceiling, not a designed one).
+- **KILL** = stop it and genuinely reclaim its capacity. **SPARE** = it keeps doing its job.
+- **THE DILEMMA IS REAL, NOT AUTHORED:** kill consolidation and you free budget but the mind stops
+  remembering. Kill the fitness sweep and you free budget but your rod rankings go stale and the ladder
+  routes worse. Nobody wrote that trade-off - it falls out of the real system.
+
+**3. WHAT IT ANSWERS.** The antagonist is settled: not a monster, an ECOLOGY competing for finite capacity,
+and some of it is yours. It delivers in one stroke everything asked for this arc - attachment (you built it),
+danger (it can starve you), moral weight (kill or spare), collection (the bestiary of things that live), and
+habit (the tingle each time one fires).
+
+**4. THE ONE HONEST GAP.** Constructs do not PERSIST - they do not survive the session or run on a schedule.
+That is the single real system to build: a creature = a spec + a schedule + a budget line + a life. Everything
+else (capacity, rot, consumption, the wild population) is already true and already measured.
+
+**The filter:** no fabricated creature, no fake hunger. A creature's consumption must be its REAL metered
+draws; its death must genuinely free capacity; its rot must be real fitness decay. The moment a creature eats
+an invented number, the whole thing becomes a Tamagotchi with an AI skin - which is exactly the trap the
+honesty law exists to prevent.
+
+---
+
+## 2026-07-25 · FIELD LESSON 10 — A NUMBER IN AN IMAGE PROMPT IS A CLAIM
+
+Two Chapter II plates came back near-perfect and both carried a number I had never verified.
+
+The RUNTIME FABRIC plate states `C-78 · FALSIFY · 2 FILES`. Re-checked: `grep -rl "falsify" aea/`
+returns **zero**. I inherited the 2 from the census and typed it into an image without re-deriving
+it. The ONE-SELF-OR-FORTY plate states `FORTY ATOMIC FILES`. Re-checked:
+`find state -name "*.json"` returns **35**. I wrote FORTY because forty sounded like the number.
+
+Both plates exist to indict exactly this - a codex that claims what the code does not contain. The
+plate that accuses the codex of fabricating a count, fabricated a count.
+
+**The rule this earns.** The fuel stamp discipline (`fuel.require()` refuses an unstamped
+measurement) applies to prompts too. Every number, count, and name inside an image prompt must be
+derived by a command run in the same session as the prompt is written, and the command goes in the
+SPEC.md beside it. A generated image is a published claim surface with no runtime to catch it -
+there is no test that fails, no endpoint that 404s. It just looks correct forever.
+
+**The second lesson, compositional.** The ONE/THIRTY-FIVE plate leans: the octagon is a designed
+jewel and the drawer bank is filing furniture, so the eye picks ONE as the answer. C-80 is not
+settled. A composition that leans toward an unproven answer is a fabricated finding rendered in
+metal. Equal amber is not enough - equal DESIGN INVESTMENT is the actual requirement when the
+image poses an open question.

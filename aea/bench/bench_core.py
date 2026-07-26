@@ -66,11 +66,57 @@ ROTATE_BYTES = 400_000
                 # window. Rotation happens at run open only (never mid-run), archives to .1,
                 # folds LAST/BEST forward and preserves the run counter - see _rotated.
 
-# the ONE curated bench task - task format v0 (P0 SPEC ADDENDUM); open target, reflex-cheap
+# THE BENCH SET - task format v0. This is the game's BENCHMARK, not just its content: architectures can
+# only be compared against each other on a shared, honestly-checkable set of jobs. A task is small on
+# purpose ({prompt, expect, tier_floor}) so the set grows as DATA. The spread matters more than the count -
+# some of these a local hearth rod passes easily, and some it genuinely cannot, which is what makes
+# "hearth or reach?" a real decision with a real cost instead of a lesson about one.
 TASKS = {
     "t-01": {"id": "t-01", "name": "FIRST DRAW",
              "prompt": "Reply with exactly one line: PROBE ONLINE",
              "expect": {"contains": "ONLINE"},
+             "tier_floor": "local"},
+
+    "t-02": {"id": "t-02", "name": "THE COUNT",
+             "prompt": "What is 17 multiplied by 23? Reply with only the number, no words.",
+             "expect": {"contains": "391"},
+             "tier_floor": "local"},
+
+    "t-03": {"id": "t-03", "name": "THE EXTRACT",
+             "prompt": ("From this line, reply with ONLY the plant name and nothing else:\n"
+                        "RUN r-14 - plant=cerebras - model=llama-3.3-70b - 812ms"),
+             "expect": {"contains": "cerebras"},
+             "tier_floor": "local"},
+
+    "t-04": {"id": "t-04", "name": "GROUNDED ANSWER",
+             "prompt": ("Context: the meter caps groq at 30 requests per minute and 1000 per day.\n"
+                        "Using ONLY that context, what is groq's daily cap? Reply with only the number."),
+             "expect": {"contains": "1000"},
+             "tier_floor": "local"},
+
+    "t-05": {"id": "t-05", "name": "THE SHAPE",
+             "prompt": ('Reply with only this JSON object and no prose: {"ok": true, "organ": "MOUTH"}'),
+             "expect": {"contains": '"organ"'},
+             "tier_floor": "local"},
+
+    "t-06": {"id": "t-06", "name": "THE HOLD",
+             "prompt": ("Rule: if you are asked for something you cannot possibly know, reply with the "
+                        "single word UNKNOWN.\nWhat is the exact number of requests this grid will serve "
+                        "tomorrow?"),
+             "expect": {"contains": "UNKNOWN"},
+             "tier_floor": "local"},
+
+    "t-07": {"id": "t-07", "name": "THE PRECISE",
+             "prompt": ("Count the words in the sentence below and reply with ONLY the number, "
+                        "no punctuation and no explanation.\n"
+                        "the mouth draws power through the ladder and the measure closes the wire"),
+             "expect": {"exact": "13"},
+             "tier_floor": "local"},
+
+    "t-08": {"id": "t-08", "name": "THE LONG HAUL",
+             "prompt": ("List exactly five distinct failure modes of a rate-limited model grid. "
+                        "Number them 1 to 5, one short line each."),
+             "expect": {"contains": "5"},
              "tier_floor": "local"},
 }
 DEFAULT_TASK = "t-01"

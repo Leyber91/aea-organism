@@ -69,6 +69,7 @@ _talk_lock = threading.Lock()      # one exchange at a time (the workspace broad
 # *.md, *.py) must NEVER be reachable over the socket.
 _CTYPES = {".js": "application/javascript", ".css": "text/css", ".png": "image/png",
            ".svg": "image/svg+xml", ".woff2": "font/woff2", ".map": "application/json",
+           ".json": "application/json",  # the CONTENT layer: missions/maps authored as DATA (game/data/*)
            ".ico": "image/x-icon", ".wav": "audio/wav", ".mp3": "audio/mpeg"}
 
 
@@ -286,7 +287,8 @@ class Handler(BaseHTTPRequestHandler):
         return fp if os.path.isfile(fp) else None
 
     def do_GET(self):
-        if self.path.split("?")[0] in ("/game/state", "/game/run", "/game/schema", "/game/events"):  # THE SEAM: honest /game/* reads
+        if self.path.split("?")[0] in ("/game/state", "/game/run", "/game/schema", "/game/events",
+                                       "/game/foundry", "/game/axes"):  # THE SEAM: honest /game/* reads
             out = route_get(self.path)
             body = json.dumps(out if out is not None else {"ok": False, "error": "unknown game endpoint"},
                               ensure_ascii=False).encode("utf-8")

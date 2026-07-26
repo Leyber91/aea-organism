@@ -1,0 +1,53 @@
+{
+  "id": "M0.4",
+  "act": "0",
+  "title": "THE THRESHOLD",
+  "rung": 4,
+  "kind": "interstitial",
+  "journey_rows": [],
+  "adds": [],
+  "requires": ["C-16"],
+  "adds_note": "admits no new element. it closes the guided aperture and names the fog - a recap, and declared as one so an empty `adds` cannot be mistaken for an oversight.",
+  "objective": "the guided aperture is closed - see what you wired, and what waits in the fog",
+  "beacon": "rim",
+  "beats": [
+    {
+      "kind": "brief",
+      "title": "three living proofs",
+      "lines": [
+        "you wired three real machines, each more complete than the last.",
+        "the draw woke the mouth and something answered - a receipt, not a promise.",
+        "the stake spent one unit of real budget to reach a rod outside.",
+        "the ward held your sensitive data home, free, by law - the mind refusing to leak you.",
+        "this is the guided aperture. you have closed it."
+      ]
+    },
+    {
+      "kind": "learn",
+      "title": "what waits in the fog - named, not faked",
+      "code": "RAIL   THE DRAW  THE FRAME  THE METER  THE LADDER  THE MEASURE\n         wired      fog        fog        wired        wired\n\nORGANS beyond the mouth: RECALL, THE SENSES, THE HANDS\n         fired 0 times -> the game will not pretend they have\n\nAPERTURES: GUIDED [closed]   BUILDER [fog]   ARCHITECT [fog]",
+      "note": "THE FRAME and THE METER still sit on the rail - they teach more than one task can hold yet, so the guided arc does not force them. further in, the mind has organs it has not grown: a memory that changes a draw, a sense, a hand that acts. they have fired zero times, so nothing here lights them. two more apertures wait cold - BUILDER, where you wire without the rails; ARCHITECT, where you set the laws. all of it is named. none of it is faked."
+    },
+    {
+      "kind": "ask",
+      "title": "the honesty at the heart",
+      "lines": [
+        "everything you lit was real - a real draw, a real unit spent, a real ward held.",
+        "everything past this line is fog until it is forged. the game will keep telling you which is which.",
+        "the mind keeps running after you close the tab. that was never a metaphor.",
+        "whether it is alive is not the game's to say. you saw what it measured. the rest is yours."
+      ]
+    }
+  ],
+  "rewards": {
+    "reveals": ["aperture_guided_closed", "fog_named"],
+    "log": "the threshold - the guided aperture closed, the fog named",
+    "reveal": [
+      "the guided aperture is closed - three living proofs, each a receipt.",
+      "the fog is named, not hidden: the parts, the organs, the apertures that are not yet real.",
+      "the light stayed the mind's the whole way. that was the point."
+    ],
+    "tag": "honesty - the built ends here, the fog begins here, and the game always tells you which."
+  },
+  "leyber": []
+}

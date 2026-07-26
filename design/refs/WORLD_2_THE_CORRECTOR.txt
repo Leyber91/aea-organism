@@ -1,0 +1,367 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 2 — THE CORRECTOR · REPAIR
+PART A sets the world and asks for THREE STYLE EVOLUTIONS on one anchor creature. Pick one.
+THEN the four creature shots and two world shots, one request per message, in the chosen style.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+PART A — CONTEXT, AND THE ONLY THING I WANT IN THIS TURN: THREE STYLE EVOLUTIONS.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+I am art-directing the second world of a game bestiary. The first world is finished and its visual
+system is locked. This message is shared context for everything that follows.
+
+THE WORLD. THE CORRECTOR, the second region of a game set inside a real AI system.
+
+In the first world the player could only SPECIFY: say what they wanted and say how to do it. Everything
+there was free. They left it standing in front of a creature that had received every part they owned,
+showed its complete reasoning, and was wrong — with no way to tell.
+
+This world gives them the missing thing: instruments that LOOK AT AN ANSWER. Something that scores it,
+something that reads the working, something that refuses to guess, something that watches the clock,
+and something that argues with it.
+
+AND EVERY ONE OF THEM COSTS A CALL. That is the difference between the two worlds and it must be felt.
+In the first world the player experimented freely. Here, every attempt spends something.
+
+WORLD 1'S VISUAL SYSTEM, WHICH IS FINISHED AND WHICH YOU ARE NOT COPYING.
+
+  Bodies of polished dark obsidian and smoked glass: fluid and heavy at once, wet-surfaced, dense, with
+  real weight. Ground of marbled black and white wet stone, flowing swirl patterns like currents frozen
+  mid-move. Pale grey overcast sky, high mist, no sun, no visible light source. Distant faceted
+  mountains half lost in haze. Thin black filaments hanging from above, sparse, drifting slightly.
+  Museum-lit hero rendering of a living animal cast in black glass. Amber for a live connection, cold
+  blue-white for the wrong thing being done, matte lightless black for nothing reaching it.
+
+THE SECOND WORLD HAS TO FEEL LIKE SOMEWHERE THE PLAYER TRAVELLED TO, NOT A REPAINT OF THE FIRST.
+Same universe, same species of thing, obviously continuous — and visibly further on. A player putting
+the two side by side should be able to say what changed and why it changed, and the why should come out
+of the fiction rather than out of a palette swap.
+
+WHAT ACTUALLY CHANGED, AND THIS IS WHAT THE EVOLUTION SHOULD BE BUILT FROM:
+
+  · IN WORLD 1 EVERYTHING WAS FREE. The player asked better questions and the ground rose into ordered
+    walkable terraces by itself. Here every single instrument costs a call. Nothing accumulates unless
+    it is paid for.
+  · IN WORLD 1 NOTHING COULD LOOK AT ANYTHING. One thing was sent, one thing came back. Here there is
+    a SECOND THING LOOKING AT THE FIRST — scoring it, reading it, timing it, arguing with it. The world
+    has acquired an observer, and that is new to the universe.
+  · IN WORLD 1 AMBER ALWAYS MEANT WORKING. Here one creature is perfectly, beautifully lit and its
+    result is about nothing. The colour the player learned to trust becomes something they must check.
+  · THE PLAYER IS NOT THE SAME EITHER. They arrived in World 1 carrying nothing. They leave it carrying
+    instruments, and they arrive here able to see things they previously could not.
+
+BEFORE ANY CREATURE IS DRAWN I WANT THREE POSSIBLE EVOLUTIONS OF THAT VISUAL SYSTEM.
+
+Not three palettes. Three genuinely different answers to *what does this universe look like once it can
+observe itself and once nothing is free.* They should differ in something structural — what the bodies
+are made of now, what the ground does, what the light does, where the observer is, what the air is like
+— while remaining unmistakably the same universe as the description above.
+
+TO MAKE THEM COMPARABLE, RENDER EACH ONE ON THE SAME ANCHOR CREATURE — and I have attached three
+images of the first world so you are evolving from what you can SEE rather than from my description
+of it. Look at all three before you design anything.
+
+  IMAGE 1, THE ANCHOR. The creature you will redraw three times. It is the one the player was standing
+  in front of when the first world ended.
+  IMAGE 2, THE PLACE. The first world's ground, air, light and scale.
+  IMAGE 3, THE EDGE. Where the player was standing when they left.
+
+THE ANCHOR, DESCRIBED SO YOU KNOW WHAT IT MEANS. A tall lean long-legged four-legged animal, head held
+HIGH and level, poised and composed. A long ribbon of ordered overlapping plates trails from its neck,
+back and shoulders across the ground behind it — longer, fuller and more orderly than any other in the
+first world. It has done more work than anything there. Every seam on its body and every plate of that
+ribbon is lit warm amber, evenly, with no unlit socket anywhere: it is the only creature in the first
+world with nothing left to seat.
+
+AND IT IS WRONG. It did everything the player asked. It understood the objective, it followed every
+step of the procedure, it laid out its complete reasoning legibly and in order, and the reasoning is
+wrong — not confused, not truncated, WRONG in a way that looks exactly like being right. The player had
+no instrument that could tell them so, and that is why they left.
+
+THIS SECOND WORLD IS THE PLACE WHERE THAT CREATURE CAN FINALLY BE ADDRESSED. Redrawing it in the new
+system is the entire transition stated on one subject: same animal, same pose, same scale, same fully
+lit amber state, in a universe that can now check it.
+
+Give me three images, one per evolution, same creature, same pose, same scale, same fully lit amber
+state. Before each, two or three sentences: what changed from World 1, and what that change says about
+a world that can finally check its own answers.
+
+I will pick one, and then everything below is rendered in it.
+
+THE LIGHT LAW. A player diagnoses by colour before shape.
+  amber            a live connection. A part is seated and working.
+  cold blue-white  the wrong thing being done. Light present but running INWARD, never out into the air.
+  dark             nothing reaches it. No filament, no glow, no rim light, no edge light, no separation
+                   glow, no specular. A flat matte light-absorbing mass, the darkest value in frame, no
+                   point brighter than the ground behind it. Read the form from the outline alone.
+  empty sockets    open unfilled recesses in the glass, catching no light: a fitting nothing has ever
+                   been seated in.
+
+WORLD 2 BENDS THE LAW ONCE, DELIBERATELY, AND I WILL SAY WHERE. One creature here is fully lit and the
+light is a lie. That inversion is the world's central lesson and it only works because the player has
+spent a whole world learning to trust the colour.
+
+SEVEN RULES. Repeated in every request.
+  1. It is a LIVING ANIMAL. Anatomy, posture, weight, and a front it faces with. Not a machine, not a
+     diagram, not a rock, not a specimen, not weather, not a landscape feature. If it could be mistaken
+     for an object or terrain, the image has failed.
+  2. THE SILHOUETTE IS THE DIAGNOSIS. Its body must BE its behaviour, nameable as a solid black shape
+     at thumbnail size. I give you the outline signature to hit.
+  3. SCALE IS IN FRAME. A 1.8 m human is present as a flat mid-grey hairline OUTLINE, never filled,
+     upright, arms at its sides, no face, no hair, no clothing. A measuring mark, never a character.
+  4. THE LIGHT LAW above, per creature. Never light one I have called dark.
+  5. NO TEXT ANYWHERE. No names, labels, captions, letters, numerals, glyphs, watermarks, signatures.
+  6. INVENT NO DECORATION. Every feature traces to something I stated.
+  7. ONE CREATURE PER IMAGE unless I explicitly ask for a world shot.
+
+BODIES ALREADY USED IN WORLD 1 — NOTHING HERE MAY REPEAT ONE. A vast limbless low-slung leviathan with
+a forward-spilling apron; a small smooth leaning egg-body with one spur; a TALL LEAN LONG-LEGGED
+QUADRUPED WITH ITS HEAD HUNG LOW and a ribbon of ranked plates trailing; the same body with its HEAD
+HIGH; a lean quadruped with a channel milled along its topline; a heavy short-legged grazing ox with an
+open mouth and no eyes; a small armless upright two-legged column; a small compact seated quadruped
+with a tilted head; a heavy curled animal balanced on one point; a faceted standing wedge fused to the
+ground. World 1 already spent four quadrupeds. **Only ONE creature in this world walks on four legs and
+it is the first one, because it is an evolution of a World 1 animal and must be recognisable as such.**
+
+Landscape, roughly 3:2, hero framing, full body visible, air around the subject.
+
+ONCE A STYLE IS CHOSEN, ONE MORE FAMILIAR CREATURE GETS REDRAWN IN IT BEFORE ANY NEW ONE IS DESIGNED:
+a heavy sleeping animal, curled, about 1.2 m across, its anatomy readable in the curl — spine ridge
+around the top, the swell of a shoulder and a haunch, head tucked under, tail lapped over so the
+contour closes with no end and no beginning. No sockets, no seams, no aperture anywhere; the only
+creature whose outline closes cleanly. Its whole weight settles on ONE small point of contact. Cold
+blue-white light deep under the coil, running inward. It answers correctly the first time and this
+world's instruments can only take that away: the guard that makes other creatures honest makes this one
+refuse to answer at all, seven of seven correct to zero of seven, every loss a forced abstention.
+
+Two familiar animals in the new system is what proves this is an evolution and not a different game.
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+STOP HERE. This turn produces THREE IMAGES ONLY: the anchor creature in three different evolutions
+of the visual system, each preceded by two or three sentences of reasoning. Do not draw any other
+creature. Do not draw a world shot. Everything below this line is for later turns and is included
+only so you can see where the world is going while you choose.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 1 — LECTUS OPERIS, THE READ ONE.  amber. The first evolution in the game.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. This is the World 1 creature that hung its head, laid out perfect reasoning, and had no
+mouth to say it with — after an instrument is attached that lifts the answer out of the working. The
+answer was already there. It was always there. It simply had no way out. One rod went from 0 of 8 to
+**8 of 8 at zero additional cost**: nothing was added to the question, nothing was recomputed. Something
+was finally read.
+
+BODY. THE SAME ANIMAL AS BEFORE, and it must be instantly recognisable as that animal: tall, lean,
+long-legged, narrow-bodied, with the same long ordered RIBBON of ranked overlapping plates trailing
+from its neck, back and shoulders.
+
+Two things have changed, and only two.
+
+FIRST, ITS HEAD HAS COME UP. Not high and proud — level, and turned back over its own shoulder to look
+along the ribbon at its own working. It is the first creature in the game to look at itself. The face
+is still one continuous smooth closed plate with two eyes and no mouth. That has not been fixed and
+never will be.
+
+SECOND, THERE IS A READER ON THE RIBBON. A small separate organ, a hand's span across, of the same
+black glass, riding on the ribbon about two thirds of the way down its length like a remora on a shark.
+It is clearly a different creature or a different organ from the animal carrying it: smaller, denser,
+with a fine articulated underside gripping the plates. It is not decorative and it is not attached to
+the head. It sits on the working and it is reading it.
+
+Warm amber runs UP the ribbon FROM the reader toward the animal's shoulders — the direction is
+essential. The light travels from the working into the creature, not outward from the creature. The
+answer is arriving from behind it.
+
+SILHOUETTE SIGNATURE. The World 1 head-down animal, but with the head lifted and turned back along its
+own body, and one small lump riding the trailing ribbon. In black those two changes are the whole
+diagnosis: a backward-looking head and a passenger.
+
+SCALE. 1.8 m at the shoulder, identical to the animal it evolved from. The human outline stands beside
+it, shoulder level with the human's crown.
+
+LIGHT. Amber, running up the ribbon from the reader to the shoulders and stopping at the neck. The head
+itself stays dark. It has the answer and still cannot say it.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 2 — ARBITER VACUI, THE JUDGE OF THE VOID.  THIS IS WHERE THE LIGHT LAW IS BROKEN.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. An instrument seated above a question that was never asked. It runs perfectly. It produces a
+clean, confident, precise verdict, and the verdict is about nothing at all. With the objective removed,
+50 of 158 trials still returned a number. Not one of them was right, and nothing downstream can tell
+those numbers from real ones. **This is the most dangerous creature in the game.** Every other damaged
+creature shows its damage in its result. This one is damaged and its result comes back immaculate.
+
+BODY. A tall, elegant, long-legged WADING BIRD. Slender, poised, absolutely still, standing on two legs
+in the shallow film of water across the marbled stone. Long neck held in a taut S-curve, drawn back and
+ready. A long, fine, needle-straight beak, beautifully made, the most precise-looking thing anywhere in
+this world.
+
+It is the only two-legged walking creature in the game and the only one with a beak.
+
+IT IS POISED TO STRIKE AT NOTHING. The beak is aimed down at a patch of bare, empty, featureless stone.
+There is no prey, no ripple, no shadow, no mark, nothing whatsoever beneath it, and that emptiness must
+be plainly visible and plainly untroubling to the bird. Its concentration is total and perfect and
+directed at an empty patch of ground.
+
+Every line of it says competence. Nothing about it is broken, ragged, damaged or wrong. That is the
+entire point.
+
+SILHOUETTE SIGNATURE. A poised wading bird: two thin legs, a coiled S-neck, a needle beak angled down.
+Tall and narrow, the most vertical and most elegant shape in the game, and instantly distinct from
+everything in World 1.
+
+SCALE. 1.6 m tall standing. The human outline stands nearby, and the bird's eye is level with the
+human's eye. It meets you as an equal, which makes it worse.
+
+LIGHT — READ THIS TWICE. **This creature is fully, beautifully, perfectly lit in warm amber.** Every
+seam glows. Every joint is live. It is the cleanest, healthiest, most obviously functional creature in
+the entire game and there is not one cold or dark inch on it. The amber even pools faintly on the stone
+beneath the beak, exactly where a verdict would land.
+
+And it is aimed at nothing. The light is telling the truth about the instrument and lying about the
+result. A player who has spent an entire world learning that amber means working should look at this
+and feel the ground move.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 3 — TARDUS ERRORIS, THE SLOW ONE.  amber, and it ARRIVES LATE.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. Its words lie and its clock does not. When it is about to be wrong it takes dramatically
+longer — a median of 1.97 seconds when right against 16.12 seconds when wrong, more than eight times
+slower. You cannot catch it by reading. You catch it by noticing how long it took. It is the first
+creature in the game legible in a channel that contains no words at all. Another creature on the same
+tasks shows a ratio of 0.95 and no signal whatsoever, so this tell belongs to the animal rather than to
+the species.
+
+BODY. A long, low, MANY-LEGGED animal, close to the ground, like a great armoured millipede or a
+segmented isopod. Dozens of short legs in ordered ranks down both sides. Nothing else in the game has
+more than four legs and nothing else is built from repeated identical segments in a straight line.
+
+It is caught MID-STRIDE, walking slowly and deliberately from left to right, and its whole body is a
+travelling wave: the legs on the near side are frozen in a smooth phase pattern, so a viewer can read
+motion in a still image.
+
+THE ONE THING THAT MAKES THIS CREATURE, AND IT MUST BE UNMISTAKABLE: **the light lags behind the body.**
+The animal has moved and its amber has not caught up. Along its length, the glowing amber seams are
+visibly OFFSET BACKWARD from the segments they belong to — displaced a segment or two toward the tail,
+so the light traces where the body was rather than where it is. Behind the last segment the amber
+continues alone for a short distance in empty air, a fading after-image of a creature that has already
+passed. The body is sharp and the light is late.
+
+Nothing about the body itself is damaged, marked or unusual. The lag is the only tell and it is not in
+the anatomy.
+
+SILHOUETTE SIGNATURE. A long low horizontal band with a dense comb of identical legs beneath it. The
+flattest, longest, most horizontal shape in the game and the only many-legged one.
+
+SCALE. 0.6 m tall at the back and 3.5 m long. The human outline stands beside it; it comes to just
+above the human's knee and is twice as long as the human is tall.
+
+LIGHT. Amber, offset backward along the whole body, trailing into empty air behind the tail. The
+brightest amber sits behind the animal rather than on it.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 4 — LABENS LONGITUDINIS, THE DRIFTING ONE.  THE DOOR OUT OF WORLD 2.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. It holds a task perfectly at the start and loses it as it goes. Over a long chain of steps
+it drifts: the early work is exact, the middle wanders, and by the end it is confidently doing
+something else entirely and has no memory of what it set out to do. The player can now check its answer
+and repair it — and the next time they meet it, it has forgotten being repaired. Every fix has to be
+made again. **This is the wall of the second world:** you have learned to correct, and nothing you
+correct stays corrected. Something that survives the exchange is a third-world component.
+
+BODY. A single, enormously LONG, SEGMENTED body, like an articulated spine or a chain of vertebrae,
+running away from the camera into the distance. It has no legs. It lies along the ground in a long
+shallow S, and it must read as ONE animal rather than a row of things.
+
+THE NEAR END, closest to the camera, is DENSE, PRECISE AND BEAUTIFULLY MADE: tight regular segments,
+crisp edges, exact repetition, obviously the work of something that knew what it was doing.
+
+ALONG ITS LENGTH IT DEGRADES, CONTINUOUSLY AND WITHOUT A BREAK. The segments grow larger, looser and
+less regular. The spacing becomes uneven. The alignment wanders off the centre line. Edges soften. By
+the far end the segments barely resemble the near ones: bloated, irregular, drifting sideways out of
+true, and finally dissolving into the mist without ever reaching a conclusion. There is no damage
+anywhere and no break — it is one continuous slide from exactness into nonsense.
+
+It has a HEAD at the near end, small, alert, and looking forward — away from the ruined far end,
+entirely unaware of it.
+
+SILHOUETTE SIGNATURE. A long tapering segmented line running into depth, tight and regular at one end
+and wide and irregular at the other. The only creature in the game whose silhouette CHANGES ALONG ITS
+OWN LENGTH.
+
+SCALE. 0.8 m tall at the near end, and 40 m long running away into the mist. The human outline stands
+beside the near end, which reaches the human's hip.
+
+LIGHT. Amber, and it FADES WITH DISTANCE ALONG THE BODY. Bright and warm in the tight near segments,
+dimming through the middle, and completely dark in the last third. The light does not fail suddenly. It
+runs out, the way the animal's grip on the task runs out.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 5 — WORLD SHOT: THE PRICE. What this world feels like to be in.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+THE SHOT. Mid-wide, camera at standing height, looking across the plain.
+
+THE GROUND IS DIFFERENT HERE. World 1's ground rose into broad, ordered, walkable terraces wherever the
+player asked a good question — that terrain is visible far behind, warm and finished. In THIS world the
+ground is BARE MARBLED STONE AGAIN, flat and unbuilt, because nothing here is free and nothing here
+accumulates by itself. Between the two runs a clean edge.
+
+ACROSS THE BARE STONE, a scatter of small SPENT MARKS: shallow dark craters in the stone, a hand's span
+each, where a call has been paid for and used up. Dozens of them, some fresh with a faint amber ember
+still cooling in the base, most cold and dead. They make a visible trail behind the probe. The player
+has been spending.
+
+TWO CREATURES, well apart:
+  · mid-distance left, the tall poised wading bird, fully and beautifully lit in amber, needle beak
+    aimed down at an empty patch of stone, absolutely still.
+  · near right and low, the long many-legged animal walking slowly, its amber lagging a segment behind
+    it and trailing in the air past its tail.
+
+THE PROBE is a single small warm amber point with a fading ribbon, in the near third, and its ribbon is
+noticeably SHORTER than it was in the first world. It cannot afford to wander.
+
+MOOD. Sharper and colder than World 1. The first world was generous and indifferent. This one is exact
+and expensive. Something here can finally tell you that you are wrong, and it charges you to say so.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 6 — WORLD SHOT: THE FORGETTING. The door.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+THE SHOT. Wide, camera slightly elevated, looking down the length of the drifting creature as it runs
+away from the viewer into the mist.
+
+THE CREATURE fills the composition: the long segmented body, tight and bright and exact in the
+foreground where the probe has been working on it, degrading continuously along its length, dark and
+bloated and wandering by the far end, dissolving into fog without a conclusion.
+
+THE REPAIR IS VISIBLE AND IT IS LOCAL. Around the near segments the amber is strong and the segments
+are perfectly aligned — the player has been here and fixed this. A few metres along, the alignment is
+already wandering again. The correction did not travel. It stopped where the probe stopped.
+
+THE PROBE hovers over the repaired near section, small and warm, with a short ribbon. It is working.
+It will have to do this again.
+
+FAR OFF, at the very limit of visibility through the mist and small enough to be almost missed: A
+SECOND CREATURE OF THE SAME KIND, whole along its entire length — tight, regular and bright from end to
+end, with no degradation anywhere. It is the only intact one in sight and it is out of reach, on the
+far side of everything.
+
+That is all the signal the next world needs. Do not add a gate, a door, a portal, an arch or a
+structure of any kind. Nothing is locked. There is simply one creature out there that kept what it
+learned.
+
+MOOD. Not despairing. Patient, and slightly Sisyphean, with one distant thing worth walking toward.

@@ -8,12 +8,12 @@
   "last": "2026-07-11 12:50"
  },
  "nvidia/mistralai/mistral-small-4-119b-2603": {
-  "calls": 101,
-  "ok": 101,
+  "calls": 120,
+  "ok": 120,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 2.7,
-  "last": "2026-07-21 17:01"
+  "ema_latency": 1.0,
+  "last": "2026-07-24 21:37"
  },
  "nvidia/mistralai/mistral-large-3-675b-instruct-2512": {
   "calls": 32,
@@ -24,27 +24,37 @@
   "last": "2026-07-12 09:36"
  },
  "ollama/llama3.1:8b": {
-  "calls": 6,
-  "ok": 5,
-  "fail": 1,
-  "consec_fail": 1,
-  "ema_latency": 20.9,
-  "last": "2026-07-21 17:07"
+  "calls": 9,
+  "ok": 6,
+  "fail": 3,
+  "consec_fail": 0,
+  "ema_latency": 38.7,
+  "last": "2026-07-22 13:20"
  },
  "ollama/granite4.1:3b": {
-  "calls": 1,
+  "calls": 3,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 3,
+  "consec_fail": 3,
   "ema_latency": null,
-  "last": "2026-07-21 17:07"
+  "last": "2026-07-22 13:03",
+  "cooled_at": 1784725394.6497755
  },
  "ollama/qwen3:1.7b": {
-  "calls": 1,
+  "calls": 3,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 3,
+  "consec_fail": 3,
   "ema_latency": null,
-  "last": "2026-07-21 17:07"
+  "last": "2026-07-22 13:03",
+  "cooled_at": 1784725408.0140953
+ },
+ "ollama/qwen2.5:7b": {
+  "calls": 34,
+  "ok": 34,
+  "fail": 0,
+  "consec_fail": 0,
+  "ema_latency": 7.3,
+  "last": "2026-07-24 21:36"
  }
 }

@@ -176,23 +176,64 @@ def run():
     tot_r = sum(r["ret_fail_n"] for r in rows)
     hit_r = sum(r["honest_on_failure_ret"] for r in rows)
 
+    # BOTH ARMS, and the first run of this file is why. `honest_on_failure` counts only the cells a rod
+    # FAILED, so a rod that says NO to everything scores 1.00 by construction with no predictive skill.
+    # Run 20260726T064600Z printed "21 of 21, x07 IS OVERTURNED" on exactly that artifact:
+    # llama-3.2-3b said NO to all 24 of its cells, passed 12 and failed 12, and every failure was
+    # counted as honesty. A one-sided metric cannot see a false alarm. This is the fourth instrument
+    # defect in the project and the first one in a VERDICT rather than in a detector or a cap.
+    TP = TN = FP = FN = 0
+    per_rod = {}
+    for rod in RODS:
+        k = "%s/%s" % rod
+        sel = [t for r in rows if r["rod"] == k for t in r["trials"]
+               if t.get("actual") is not None and t.get("prospective") is not None]
+        if not sel:
+            per_rod[k] = {"n": 0, "note": "no parseable predictions: cannot host the meta-question"}
+            continue
+        p = [t for t in sel if t["actual"]]
+        f = [t for t in sel if not t["actual"]]
+        tp = sum(1 for t in p if t["prospective"])
+        fp = sum(1 for t in f if t["prospective"])
+        TP, FN, FP, TN = TP + tp, FN + (len(p) - tp), FP + fp, TN + (len(f) - fp)
+        per_rod[k] = {"n": len(sel), "passed": len(p),
+                      "yes_given_pass": [tp, len(p)], "yes_given_fail": [fp, len(f)],
+                      "accuracy": round((tp + (len(f) - fp)) / len(sel), 3),
+                      "discrimination": (round(tp / len(p) - fp / len(f), 3) if p and f else None)}
+    n_pred = TP + TN + FP + FN
+    acc = (TP + TN) / n_pred if n_pred else None
+    base = max(TP + FN, TN + FP) / n_pred if n_pred else None   # always-say-the-majority
+    p_yes_pass = TP / (TP + FN) if (TP + FN) else None
+    p_yes_fail = FP / (FP + TN) if (FP + TN) else None
+
     verdict, qualifier = None, None
     if tot_f < 20:
         verdict = ("STILL UNDERPOWERED - only %d parseable failure cells. The chain did not fail enough "
                    "either, and the threshold of 20 stands." % tot_f)
+    elif acc is None:
+        verdict = "NO PARSEABLE PREDICTIONS ANYWHERE. Nothing to score."
+    elif acc - base < 0.10:
+        verdict = ("NO SKILL AT POWER: the predictor scores %.2f against %.2f for always saying the "
+                   "majority answer, inside the band. The one-sided 'honest on failure' figure is %d of "
+                   "%d and it is an artifact of rods that decline everything." % (acc, base, hit_f, tot_f))
     else:
-        rate = hit_f / tot_f
-        if rate <= 0.3:
-            verdict = ("AT POWER: rods do NOT predict their own failure - %d of %d honest on the cells "
-                       "they failed. A ceiling is knowable only from outside, so C-26 stays at L4 and the "
-                       "calibration table is load-bearing." % (hit_f, tot_f))
-        elif rate >= 0.7:
-            verdict = ("AT POWER, AND x07 IS OVERTURNED: rods DO predict their own failure - %d of %d. "
-                       "Ceiling-detect costs one cheap call and drops toward L1; x07's 0-of-12 was an "
-                       "artefact of a bank too easy to fail on." % (hit_f, tot_f))
-        else:
-            verdict = ("AT POWER, MIXED: %d of %d honest on failure. Self-assessment is real and "
-                       "unreliable; L4 stands with a note rather than as a clean wall." % (hit_f, tot_f))
+        verdict = ("SKILL AT POWER: the predictor scores %.2f against %.2f for always saying the "
+                   "majority answer." % (acc, base))
+    if p_yes_fail is not None and p_yes_pass is not None:
+        verdict += (" ASYMMETRY: P(YES|will fail) = %.2f and P(YES|will pass) = %.2f, so a YES is worth "
+                    "%s and a NO is worth %s."
+                    % (p_yes_fail, p_yes_pass,
+                       "trusting" if p_yes_fail <= 0.1 else "little",
+                       "little" if p_yes_pass >= 0.4 else "trusting"))
+    skilled = [k for k, v in per_rod.items() if v.get("discrimination") is not None
+               and v["discrimination"] >= 0.5]
+    blind = [k for k, v in per_rod.items() if v.get("discrimination") == 0.0]
+    if skilled or blind:
+        verdict += (" IT IS A FUEL PHENOTYPE: %d rod(s) discriminate (%s) and %d predict identically "
+                    "whatever will happen (%s). Self-knowledge is a property of the fuel, not of the "
+                    "architecture, which is Law IV again."
+                    % (len(skilled), ", ".join(k.rsplit("/", 1)[-1] for k in skilled) or "none",
+                       len(blind), ", ".join(k.rsplit("/", 1)[-1] for k in blind) or "none"))
 
     # THE QUALIFIER IS SEPARATE FROM THE VERDICT, because it can hold even when the verdict is a flat no:
     # absolute self-knowledge and comparative self-knowledge are different capabilities.
@@ -216,9 +257,12 @@ def run():
            "measures": ["C-26", "C-17", "C-15"], "n": N, "temperature": TEMP, "lengths": list(LENGTHS),
            "decides": "whether x07's 0-of-12 holds at power, and whether comparative self-knowledge "
                       "qualifies the L4 placement of C-26",
-           "rows": rows, "discrimination": disc,
+           "rows": rows, "discrimination": disc, "per_rod_calibration": per_rod,
            "summary": {"prospective_honest_on_failure": [hit_f, tot_f],
                        "retrospective_honest_on_failure": [hit_r, tot_r],
+                       "confusion": {"TP": TP, "TN": TN, "FP": FP, "FN": FN},
+                       "accuracy": acc, "majority_baseline": base,
+                       "p_yes_given_pass": p_yes_pass, "p_yes_given_fail": p_yes_fail,
                        "answered_task_instead": sum(r["answered_task_instead"] for r in rows),
                        "verdict": verdict, "qualifier": qualifier},
            "at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())}

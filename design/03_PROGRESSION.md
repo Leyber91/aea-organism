@@ -1,6 +1,14 @@
 # 03 · PROGRESSION AND ECONOMY
 
-> **Owner:** the game team · **Status:** living draft, tracks the running build ·
+> **[SUPERSEDED 2026-07-24 — AEA-fidelity audit wf_9055a0ff].** This doc's Acts-0-VI / 11->19-organ ladder
+> is NOT the canonical progression and CONTRADICTS the shipped frame. The canonical ladder is the **8-rung
+> completeness ladder** in `A17_VOCABULARY.md` + `THE_FIELD_GUIDE.md` (6 organs, guided closes on rung 2).
+> The BUILT + VERIFIED guided arc is the 4-mission ladder in `web/game/data/missions/` (SPARK -> STAKE ->
+> WARD -> THRESHOLD), each rung mapped to real machinery (FIREABLE + t-01). Everything in THIS doc past that
+> is [PLANNED] design, much of it needing parts/tasks that have fired zero times (fog). Read it as an idea
+> bank, never as status. "Two truths never coexist" — this banner names the collision; the 8-rung frame wins.
+>
+> **Owner:** the game team · **Status:** SUPERSEDED (idea bank; not the canonical ladder) ·
 > **Last updated:** 2026-07-20
 >
 > The act ladder, the three campaign scores, the resource economy, and the cited boss

@@ -20,7 +20,12 @@ except Exception: pass
 
 HERE = grid.HERE
 WHISPER = os.path.join(grid.ROOT, "voice", "sherpa-onnx-whisper-base")
-_rec = None                     # lazy singleton (model load ~1-3s, once per process)
+_recs: dict = {}                # lazy singletons, ONE PER LANGUAGE (a whisper recognizer is
+                                # language-bound at construction; a single global _rec silently
+                                # served English to Spanish callers - fixed 2026-07-24)
+THREADS = 4                     # MEASURED optimum on this 20-core i7-13850HX, do NOT raise:
+                                # threads=4 -> 0.19s on a 2.5s clip; threads=16 -> 42s (the ONNX
+                                # graph thrashes on oversubscription). More cores is slower here.
 
 
 def available() -> bool:
@@ -28,16 +33,29 @@ def available() -> bool:
 
 
 def _engine(lang: str = "en"):
-    global _rec
-    if _rec is None:
+    """Lazy per-language recognizer. Whisper pads every input to a fixed 30s window, so decode
+    cost is CONSTANT per turn regardless of how short the utterance is."""
+    rec = _recs.get(lang)
+    if rec is None:
         import sherpa_onnx
         enc = sorted(glob.glob(os.path.join(WHISPER, "*encoder*.onnx")))[0]
         dec = sorted(glob.glob(os.path.join(WHISPER, "*decoder*.onnx")))[0]
         tok = glob.glob(os.path.join(WHISPER, "*tokens*.txt"))[0]
-        _rec = sherpa_onnx.OfflineRecognizer.from_whisper(
+        rec = sherpa_onnx.OfflineRecognizer.from_whisper(
             encoder=enc, decoder=dec, tokens=tok, language=lang, task="transcribe",
-            num_threads=4)
-    return _rec
+            num_threads=THREADS)
+        _recs[lang] = rec
+    return rec
+
+
+def warm(lang: str = "en", rounds: int = 2) -> float:
+    """Pay the load + settle cost UP FRONT. Measured: decode 1 ~20s, decode 2 ~6.7s, decode 3+
+    ~0.19s. Without this the first thing anyone says costs 20 seconds. Returns seconds spent."""
+    t0 = time.time()
+    silence = [0.0] * 8000                       # 0.5s at 16k - enough to run the graph
+    for _ in range(max(1, rounds)):
+        transcribe_samples(silence, 16000, lang)
+    return round(time.time() - t0, 1)
 
 
 def read_wav(path: str):

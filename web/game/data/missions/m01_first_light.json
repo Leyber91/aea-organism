@@ -1,0 +1,57 @@
+{
+  "id": "M0.1",
+  "act": "0",
+  "title": "FIRST LIGHT",
+  "rung": 1,
+  "journey_rows": [1, 2],
+  "adds": ["C-62", "C-01", "C-15", "C-60"],
+  "requires": [],
+  "adds_note": "THE DRAW (tap) is layer 0 and the axis Path; THE MEASURE (scorer) is the coherence score and restorable coherence. it does NOT wire the rest of L0/L1 - goal-presence, the parser validation and the latency tracker stay unbuilt.",
+  "objective": "fly to the core and fire the first construct",
+  "beacon": "core",
+  "beats": [
+    {
+      "kind": "brief",
+      "title": "the instrument at rest",
+      "lines": [
+        "cold boot. no memory of why.",
+        "you are a probe. the dark around you is a mind that is running right now.",
+        "one structure at the center is drawing power. it is keyless - it answers anyone who asks.",
+        "go to it. wake it once. see if anything is listening."
+      ]
+    },
+    {
+      "kind": "learn",
+      "title": "the whole protocol - nothing hidden",
+      "code": "POST /game/ignite\n{ \"spec\": [ \"tap\", \"scorer\" ],   # THE DRAW -> THE MEASURE\n  \"task\": \"t-01\" }\n     -> { \"ok\": true, \"run_id\": \"...\" }\n\nGET /game/run?id=<run_id>\n     -> links: tap -> scorer\n        verdict.pass  cost_u",
+      "note": "a prompt goes in. tokens come out. THE DRAW draws at the head; THE MEASURE closes at the tail. everything above this line is architecture. seat the two parts, then fire."
+    },
+    {
+      "kind": "do",
+      "title": "the core",
+      "label": "dock the core [F] - seat THE DRAW at the head - THE MEASURE at the tail - fire [Space]",
+      "action": { "type": "compose" },
+      "note": "free hearth. this proof costs nothing.",
+      "earned": "it drew at the head. it closed at the tail.",
+      "reseat": "unscored draw. seat THE MEASURE at the tail, then fire again.",
+      "halted": "a rod refused. re-seat the head and the tail, fire again."
+    },
+    {
+      "kind": "prove",
+      "title": "the receipt",
+      "assert": "run_receipt",
+      "pass": "run {run_id} - {total_ms}ms - cost {cost_u}. THE DRAW drew, THE MEASURE closed. the receipt is real.",
+      "fail": "the live read did not settle to a pass. re-seat the head and the tail, fire again."
+    }
+  ],
+  "rewards": {
+    "reveals": ["plant_local"],
+    "log": "first light - the socket answers",
+    "reveal": [
+      "something answered. it was listening the whole time.",
+      "the socket is real."
+    ],
+    "tag": "honesty - cost {cost_u}, read live from the meter."
+  },
+  "leyber": []
+}

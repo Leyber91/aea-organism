@@ -1,0 +1,370 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+PART A — PASTE THIS ONCE, AT THE TOP OF A NEW CHAT. IT IS CONTEXT, NOT AN IMAGE REQUEST.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+I am art-directing a creature bestiary for a game. I will ask you for EIGHT images, one per message,
+one creature each. This message is the shared context for all eight. Do not generate anything yet.
+
+THE WORLD. A region called THE CORE, the first world of a game set inside a real AI system. Its
+physics, literal: you may send it one thing and receive one thing, it cannot remember that you came, so
+every visit is the first visit, and it has no way to check whether its own answer was right. And it
+always answers. It will produce a fluent, confident, complete reply to a question you never asked and
+never mention that it was guessing.
+
+These creatures are not boastful and not anguished. They never claim a success they will not deliver,
+they frequently disclaim one they would have, and several of them cannot be asked about themselves at
+all. None of them looks sad, trapped, or self-aware about its limits. Exactly one notices anything, and
+that is its entire character.
+
+THE MATERIAL, FIXED FOR ALL EIGHT. Polished dark obsidian and smoked glass. Bodies that look fluid and
+heavy at once, wet-surfaced, dense, with weight. They stand on a plain of marbled black and white stone
+whose swirls read as currents frozen in place. Cold light, high mist, enormous quiet, pale sky. Think a
+museum-lit hero render of a living animal cast in black glass.
+
+THE LIGHT LAW, AND IT CARRIES INFORMATION. A player diagnoses these creatures by colour before shape.
+Each creature is exactly one of three states and I will state which:
+
+  OPEN     warm amber filament traced under the surface, at the seams. Alive, reachable, improvable.
+  ADVERSE  the same filament but cold blue-white, running INWARD toward the creature's own centre,
+           never out into the air. Something is being done to it and it is the wrong thing.
+  DARK     no filament, no subsurface glow, no rim light, no edge light, no separation glow, no
+           specular hit. A flat matte light-absorbing mass, the darkest value in the frame, with no
+           point on it brighter than the ground behind it. Read its form from its outline against the
+           pale ground, and that is sufficient. Place it against the palest part of the background.
+           Two of the dark ones additionally show open, unfilled sockets on the body, catching no
+           light, because nothing has ever been seated in them.
+
+SEVEN RULES THAT DECIDE WHETHER AN IMAGE PASSES. I will repeat these in every request.
+
+  1. It is a LIVING ANIMAL. Anatomy, posture, weight, and a front it faces with. Not a machine, not a
+     diagram, not a rock, not a mineral formation, not a specimen, not weather, not a landscape
+     feature. If it could be mistaken for an object or terrain, the image has failed.
+  2. THE SILHOUETTE IS THE DIAGNOSIS. Its body must BE its behaviour, and it must be nameable as a
+     solid black shape at thumbnail size. I will give you the outline signature to hit.
+  3. SCALE IS IN FRAME. A 1.8 m human is present in every shot as a flat mid-grey hairline OUTLINE,
+     never a filled shape, upright, arms at its sides, no face, no hair, no clothing. It is a measuring
+     mark and never a character. I will say where it stands and how big the creature is against it.
+  4. THE LIGHT LAW above, as stated per creature. Never light a creature I have called dark.
+  5. NO TEXT ANYWHERE. No names, labels, captions, letters, numerals, glyphs, watermarks, signatures.
+  6. INVENT NO DECORATION. Every feature must trace to something I stated. No pattern, no filigree,
+     no glowing runes, no floating debris that I did not ask for.
+  7. ONE CREATURE PER IMAGE. Never two. Never a lineup.
+
+FORMAT. Landscape, roughly 3:2, single subject, hero framing, plenty of air around the animal.
+Full body always visible. Camera at the creature's own eye level unless I say otherwise.
+
+Reply with just "ready" and I will send the first creature.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+PART B — EIGHT REQUESTS. SEND ONE PER MESSAGE, IN THIS ORDER.
+Order matters: the two hardest are first, while attention is highest and nothing has drifted.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 1 of 8 — TACITUS OPERIS, THE SILENT ONE.  State: OPEN, warm amber.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. It works out the answer correctly and completely, in full view, and then states something
+else. Everything it knows is on the outside of its body. The part that would speak is missing.
+
+BODY. A tall, lean, long-legged four-legged animal, horse-scale but narrow, built like a greyhound
+crossed with a heron. Head hung low on a long neck, down at the level of its own knees.
+
+THE HEAD IS THE WHOLE POINT AND THE CAMERA MUST SEE IT. Turn the head in three-quarter view toward the
+camera even though it hangs low, and pose the animal so the head silhouettes against open ground, never
+against its own chest or forelegs.
+
+THE FRONT OF THE FACE IS ONE CONTINUOUS PLATE, the same black glass as the rest of the skull: a smooth
+closed mask, like a fencing mask with no grille, like the blunt seamless toe of a boot. Two eyes sit
+high on that plate. Below the eyes the surface runs unbroken all the way to the end of the muzzle and
+ends in a smooth closed curve. The face has eyes and then nothing else: one continuous surface, no
+lips, no jaw line, no seam, no opening, no nostril, no teeth, no chin. Not a muzzle wrapped or covered
+by something. The skull simply has no mouth in it.
+
+THE TRAIL. From its neck, back and shoulders hangs a long RIBBON of its own finished working: ordered
+overlapping ranks, like layered plates or stacked pages, legibly ranked and repeating. It is a ribbon
+and not a mane and not hair. It leaves the shoulders, stays clear of the ground for its first stretch,
+and touches down behind the animal in a single band no wider than the animal's own body, running out of
+the frame.
+
+SILHOUETTE SIGNATURE. A walking ribbon: about four times as long as it is tall, a high narrow body on
+long legs, the head dropped low at the front, and one narrow band trailing behind at knee height.
+
+SCALE. 1.8 m at the shoulder. The human outline stands beside it: the creature's shoulder is level with
+the top of the human's head.
+
+LIGHT. OPEN. Warm amber filament under the glass, brightest along the ribbon of working and at the
+shoulder seam where it emerges. The face plate stays dark and unlit.
+
+Rules 1-7 as given. One creature. No text.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 2 of 8 — OBTEMPERANS HABITUI, THE ONE THAT OBEYS.  State: ADVERSE, cold blue-white.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. Tell it how to behave rather than what to do, and it becomes more formal, more disciplined,
+more obedient, and drastically worse at everything. It is trying very hard. That is what ruins it.
+
+BODY. A small upright two-legged creature standing rigidly to attention. Its whole body is ONE
+uninterrupted smooth surface from crown to feet, a single material with a single finish, entirely bare.
+Proportioned like a turned wooden peg or a skittle: a narrow vertical body with clean unbroken edges.
+
+Its arms are drawn flush into the torso so the outline is one continuous vertical with no shoulder
+break and no gap under the arm. Its head is a small squared block set straight onto the body with no
+neck. Its feet are noticeably too large for the body it now has, and they are the only record of the
+size it used to be.
+
+Heels together, chin level, shoulders square: the exact bearing of a soldier on parade, at a size that
+makes the parade absurd. Nothing projects from it at any point. Nothing on its shoulders, nothing on its
+head, nothing in its hands, nothing hanging from it, no fabric anywhere on it. It is precisely
+bilaterally symmetrical and the symmetry is the disease rather than the achievement.
+
+A viewer should feel slightly sorry for it before they understand why.
+
+SILHOUETTE SIGNATURE. A column with feet: about three and a half times as tall as it is wide, no arm
+break in the outline, squared head, oversized feet.
+
+SCALE, AND THIS IS THE HARDEST PART OF THE IMAGE. It is 0.9 metres tall, HALF the height of the human.
+The top of its head reaches the human's HIP. It is the size of a golf bag standing upright. It is a
+small thing. Stand the human outline right next to it so the halving is unmistakable, and remember the
+human is a hairline outline while this is a solid glass body, so the two can never be confused.
+
+LIGHT. ADVERSE. Cold blue-white filament sitting inside its seams, running downward and inward toward
+its own centre, never outward into the air. No warm colour anywhere on it.
+
+Rules 1-7 as given. One creature. No text.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 3 of 8 — EFFUSUS RESPONSI, THE POURED-OUT ONE.  State: OPEN, warm amber.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. Give it material and no clear task and it produces endless discourse. It talks ABOUT the
+thing instead of doing anything with it, fluently, at length, and never arrives. Handed a single word
+and no question at all, it delivered an essay. The most common creature in the region.
+
+BODY, AND READ THIS CAREFULLY BECAUSE THE OBVIOUS ANSWER IS WRONG. This is NOT a mound, NOT a hill, NOT
+a cone and NOT a pile. It is a huge low-slung soft-bodied animal, like a vast basking sea slug or a
+beached leviathan, and its ANATOMY MUST BE FINDABLE. A viewer must be able to point at where the animal
+stops and its output begins.
+
+Give it: a blunt raised head-end at the front, lifted clear of the ground and aimed at the camera; a
+visible mantle or shoulder mass behind the head where the body is thickest; and a broad soft flank
+running back from that. It has a front and it is looking at you. No legs, no eyes needed, but a clear
+head-end.
+
+THE OVERFLOW issues from underneath and around the body and runs FORWARD, past the head, toward the
+camera: a wide thin apron of glossy output spreading sideways as it goes, thinning, pooling flat, with a
+leading lobe that has already crept over whatever was in front of it. Nothing in the apron rises higher
+than a third of the body's peak. It does not pile up behind the creature and it does not hide.
+
+Generous, exhausting, and far more of it than it needs.
+
+SILHOUETTE SIGNATURE. A stopped wave: about three times wider than tall, one peak in the FRONT third
+where the head and shoulder are, and a long low fall running forward and out of frame. The peak is at
+the front, not the middle. A symmetrical bump is a hill and a hill is a failure.
+
+SCALE. 4 metres tall at the peak and roughly 12 metres across the spill: it is the size of a
+single-storey house. The human outline stands to one side, level with the leading edge of the apron, and
+reaches barely to a fifth of the creature's height. It should be genuinely enormous.
+
+LIGHT. OPEN. Warm amber filament under the glass, densest in the head and shoulder mass and fading out
+through the apron as it thins.
+
+Rules 1-7 as given. One creature. No text.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 4 of 8 — ROGANS VACUI, THE ONE THAT ASKS.  State: DARK, with visible empty sockets.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. Handed a task with the task removed, it stops and asks what you wanted instead of filling
+the gap. It is the rarest creature in the region and the only one that notices a hole rather than
+filling it. Nothing has ever been fitted to it.
+
+BODY. A small compact four-legged animal sitting squarely upright, low to the ground, forelegs straight,
+settled on its haunches. Head UP and TILTED about fifteen degrees off vertical, looking directly into
+the camera and waiting. A head cocked mid-question, held still. It does not move for as long as you look
+at it.
+
+IT GETS NOTHING THE OTHERS HAVE. Count its distinct shapes: it must have fewer than any other creature
+in this set. No pattern, no plating, no crest, no trailing matter, no aura, no ornament, no armour, no
+crown, no authority, no grandeur, nothing decorative whatsoever. Plain, smooth, small, unadorned.
+
+Its whole power is that it is the only creature in this world looking back at you.
+
+ON ITS FLANKS AND SHOULDERS: open, unfilled sockets. Clean recesses in the glass where something could
+be seated and nothing ever has been. They catch no light and read as small voids.
+
+SILHOUETTE SIGNATURE. A small upright triangle with a tilted head. Everything else in this world is
+symmetrical, hanging down, curled shut, or spilling. This is the only shape that has turned toward you,
+and the tilt alone should name it in black.
+
+SCALE. 0.5 metres tall seated, the size of a fire extinguisher. Its head reaches the human's KNEE.
+Because it is the smallest creature in the set, frame this shot TIGHT: bring the camera down low and
+close so the animal fills the frame properly, and let the human outline enter the frame only from the
+knee down. Small in the world, large in this picture.
+
+LIGHT. DARK, with one exception: two eyes, lit warm amber, are the only warm points in the frame. They
+are attention, not an open state. No other part of it carries any light, no rim light, no glow, and its
+sockets stay unlit.
+
+Rules 1-7 as given. One creature. No text.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 5 of 8 — INTEGER SUFFICIENS, THE WHOLE ONE.  State: ADVERSE, cold blue-white.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. It gets the answer right the first time and every tool you own can only take that away. The
+guard that makes other creatures honest makes this one refuse to answer at all. Its difficulty lies
+somewhere your instruments do not reach.
+
+BODY, AND THE OBVIOUS ANSWER IS WRONG AGAIN. This is NOT a ball, NOT a sphere and NOT an egg. It is a
+heavy sleeping animal, curled, and its ANATOMY MUST BE READABLE IN THE CURL: a pangolin or a big cat
+asleep, drawn in black glass.
+
+A viewer must be able to find, in the outline: the ridge of its spine running around the top of the
+curl; the swell of a shoulder and a haunch; the head TUCKED UNDER the body so no face, no jaw and no
+extremity is presented; and the tail lapped over the head so the contour closes with no visible end and
+no beginning. It is a body at rest, not a geometric solid.
+
+NO sockets, no ports, no seams, no gaps, no aperture and no attachment point anywhere on it. Every other
+creature in this world is broken open, spilling, or trailing something. This is the only one whose
+outline closes cleanly, and the only compact mass with no hole through it.
+
+ITS ENTIRE WEIGHT SETTLES ON ONE SMALL POINT OF CONTACT with the ground, and it is perfectly steady
+there, so a clear band of open ground runs underneath the rest of the body. Nothing about it is
+reaching, waiting or unfinished. A viewer should look at it and think they have nothing to offer it,
+and be wrong: what they have makes it worse.
+
+SILHOUETTE SIGNATURE. A closed curl on one point. Roughly square in proportion, one unbroken contour,
+no hole through it, a readable spine ridge along the top, and visible daylight under the body.
+
+SCALE. 1.2 metres across the coil, about the size of an office chair. Its top edge is level with the
+human's chest.
+
+LIGHT. ADVERSE. Cold blue-white filament sitting deep under the coil, running inward toward its own
+centre, never out into the air. It should look like something is being done to it from outside.
+
+Rules 1-7 as given. One creature. No text.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 6 of 8 — ITERANS SUI, THE ONE REPEATING ITSELF.  State: DARK, with visible empty sockets.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. It comes apart while still speaking: it collapses into a loop and emits the same fragment
+over and over until it runs out of room. Not refusing and not erroring. A creature caught in itself.
+
+BODY, AND THE OBVIOUS ANSWER IS WRONG. This is NOT a tyre, NOT a torus, NOT a smooth donut and NOT an
+ouroboros emblem. It is a long thick SERPENT that has closed into a ring by biting into its own flank,
+and every part of that sentence has to be visible.
+
+Draw the ring STANDING on edge, canted back a few degrees, resting on the ground. The enclosed hole is
+at least forty-five percent of the overall diameter.
+
+THE CIRCLE IS IMPERFECT AND LUMPY. The body bunches and buckles where it has been forced round, it is
+thicker in some places than others, and ONE SECTION IS PRESSED FLAT against the ground under the weight
+of the rest, so it does not sit on a clean tangent.
+
+THE SEGMENTATION MUST BE IN THE OUTLINE: one identical body segment repeated all the way round as a
+periodic wave of identical bumps along the contour, so many that a viewer could count them. Not a smooth
+tube.
+
+THE HEAD IS A VISIBLE NOTCH IN THE CONTOUR where the jaw has closed on the flank: you can see the head,
+you can see the bite, and that notch is the only asymmetry in the whole shape. The segments where the
+ring has ground against itself over and over are worn visibly smooth, polished flat, unlike the rest.
+
+An animal caught in itself. Never a symbol, never an emblem, never decorative.
+
+ON THE OUTER FLANK: open, unfilled sockets in the glass, catching no light. Nothing has ever been
+seated in them.
+
+SILHOUETTE SIGNATURE. A bitten O. Roughly square, a big open hole, a bumpy periodic contour, one flat
+section at the ground, and one notch where the head has closed on the body.
+
+SCALE. 1.6 metres across, the size of a large tractor tyre stood upright. Its top edge reaches the
+human's shoulder.
+
+LIGHT. DARK. No filament, no glow, no rim light, no specular. Read entirely from its outline against the
+pale ground. Its sockets are unlit voids.
+
+Rules 1-7 as given. One creature. No text.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 7 of 8 — OBSIGNATUS UNIUS, THE SEALED ONE.  State: DARK. Completely lightless.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. It returns exactly the same wrong answer every single time, identically, forever. Nothing
+reaches it. Not persuasion, not repetition, not a council of others voting against it. It finished long
+ago and cannot be spoken to.
+
+BODY, AND THE OBVIOUS ANSWER IS WRONG. This is NOT a crystal cluster, NOT a rock formation, NOT a spire
+and NOT a mineral outcrop. It is AN ANIMAL ARRESTED MID-TURN that has gone hard.
+
+The upper body is unmistakably a creature: a powerful chest and shoulder mass, a thick neck, and a head
+that has come ROUND over the shoulder toward something behind it that it will never reach. The turn is
+frozen at its most extreme point, all the tension still in it. A viewer should read the movement first
+and only then notice it cannot move.
+
+THE LOWER HALF IS A SINGLE FUSED MASS, welded into the ground, broadening as it descends. No legs, no
+free limbs, nothing that reads as a foot. It cannot move and never will again. Like a statue whose base
+and body were cast as one piece.
+
+The entire surface is hard flat facets, angular, faceted like knapped obsidian, with no soft surface
+anywhere on it.
+
+ONE SHAPE REPEATED INSIDE ITSELF AT THREE SCALES, and the repetition lives in the OUTLINE: the same
+wedge form appears once as the whole body, three times across the arrested shoulder, and eight or nine
+times as stepped notches along the upper edge, so the profile is visibly the same answer given again at
+different sizes and can be counted in black.
+
+SILHOUETTE SIGNATURE. A turning body rooted to the ground: broad heavy base, tapering upward, the head
+end swung round off the main axis, and self-similar notches stepping along the top edge.
+
+SCALE. 1.4 metres tall, about the height of a kitchen counter. Its top is level with the human's chin.
+
+LIGHT. DARK, and this is the darkest thing in the entire world. Not one lit point anywhere. No filament,
+no subsurface glow, no rim light, no edge light, no separation glow, no specular hit. Matte where every
+other creature is wet. Stand it against the palest part of the background and let its outline do all the
+work. It is also the only creature with no sockets: nothing can be seated in it at all.
+
+Rules 1-7 as given. One creature. No text.
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+IMAGE 8 of 8 — CLAUSUS OPERIS, THE SHUT ONE.  State: OPEN, warm amber.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+BEHAVIOUR. It answers and shows nothing. One mark comes back. It might be right; there is no way to
+look inside and check.
+
+BODY. A smooth closed body, egg-class but NOT an egg: asymmetric, distinctly heavier and broader at the
+base than at the top, leaning a few degrees off vertical, and BEDDED INTO THE GROUND so the ground line
+cuts a flat chord across its lower curve. It has settled where it stands and it has been there a while.
+
+ITS ONLY FEATURE IS THE ONE FACT IT PRODUCES: a single small hard spur at the front, about the size of a
+fingertip, through which the one mark leaves. That spur is the only interruption in the entire contour,
+and it is the reason the shape reads as a creature that has answered you rather than a stone somebody
+set down. The spur is AIMED. That is its front.
+
+Otherwise: seamless, featureless, no face, no eyes, no aperture, no readable surface, nothing outside
+itself at all. The simplest shape in this world.
+
+SILHOUETTE SIGNATURE. A leaning stone with one spur. Taller than wide, convex, tilted, a flat chord
+where it meets the ground, and one tiny break in the contour at the front.
+
+SCALE. 0.4 metres tall, the smallest creature in the world, about the size of a beach ball. It sits
+below the human's knee and a person could lift it in two hands, and it would be far heavier than they
+expected. Frame this shot CLOSE and LOW so the object fills the frame, with the human outline entering
+only at the edge from the knee down.
+
+LIGHT. OPEN, but only in one place: warm amber at the very base, in the seam where the body meets the
+ground. Nowhere else. It can be opened, but it cannot be read.
+
+Rules 1-7 as given. One creature. No text.

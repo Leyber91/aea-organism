@@ -160,12 +160,11 @@ window.BENCH = (function () {
       '<div class="rgn task" style="--i:2"><div class="t-line" id="b-task"></div><div class="t-check">' + esc(TASK.check) + "</div></div>" +
       '<div class="spine" id="b-spine" style="--i:3"></div>' +
       '<div class="strip" id="b-strip"></div>' +
-      '<div class="railwrap" id="b-rail" style="--i:4"></div>' +
       '<div class="rider" style="--i:5"><span id="b-lastbest">LAST —.——s · BEST —.——s</span><span id="b-zone"></span></div>' +
       '<div class="runlog" id="b-log" style="--i:6"></div>' +
       '<div class="ctl-line" style="--i:7"><span class="k" id="b-run"></span>' +
       '<span class="k" id="b-clear">CLEAR <b>[HOLD C]</b><svg id="b-cring" width="14" height="14" viewBox="0 0 14 14">' +
-      '<circle cx="7" cy="7" r="5.5" fill="none" stroke="rgba(120,155,175,1)" stroke-width="1.5" stroke-dasharray="34.56" stroke-dashoffset="34.56" transform="rotate(-90 7 7)"></circle></svg></span>' +
+      '<circle cx="7" cy="7" r="5.5" fill="none" stroke="rgba(168,164,155,.85)" stroke-width="1.5" stroke-dasharray="34.56" stroke-dashoffset="34.56" transform="rotate(-90 7 7)"></circle></svg></span>' +
       '<span class="k">EXIT <b>[F]</b></span></div>';
     D.wrap.appendChild(D.plate);
     document.body.appendChild(D.wrap);
@@ -212,7 +211,10 @@ window.BENCH = (function () {
 
   function renderRider() {
     var f = function (ms) { return ms === null ? "—.——s" : (ms / 1000).toFixed(2) + "s"; };
-    D.lastbest.textContent = "LAST " + f(S.last) + " · BEST " + f(S.best);
+    var hasRec = S.best !== null;
+    D.lastbest.innerHTML = (hasRec ? "RECORD · " : "") + "LAST " + f(S.last) + " · BEST " + f(S.best) +
+      (hasRec ? ' <i class="recsq"></i>' : "");           /* the earned record square (REF-11) */
+    if (D.lastbest.parentNode) D.lastbest.parentNode.classList[hasRec ? "add" : "remove"]("hasrec");
     D.zone.textContent = "ZONE " + zoneWord();
   }
 
@@ -232,85 +234,50 @@ window.BENCH = (function () {
     return "";
   }
 
-  /* gap list actually rendered, in spine order — the cursor walks THIS list */
-  function gapList() {
-    var gaps = [];
-    if (!S.head) gaps.push({ t: "head" });
-    if (S.ghost && PARTS[S.ghost].slot === "mid") {
-      for (var i = 0; i <= S.mid.length; i++) gaps.push({ t: "mid", i: i });
-    } else if (S.mid.length === 0) {
-      gaps.push({ t: "mid", i: 0 });   /* the virgin plate's middle break in the hairline */
-    }
-    if (!S.tail) gaps.push({ t: "tail" });
-    return gaps;
+  /* THE FIXED RAIL (art-direction 2026-07-24): five sockets, one per real part, ALWAYS present in RAIL
+     order — the sockets ARE the parts (REF-10, no separate tray). Empty = a recessed socket; seated = a
+     raised chip on one continuous milled rail. Wires between sockets form the groove the packet rides. */
+  function isSeated(id) { return S.head === id || S.tail === id || S.mid.indexOf(id) >= 0; }
+  function refOf(id) {
+    if (PARTS[id].slot === "head") return { t: "head", i: 0 };
+    if (PARTS[id].slot === "tail") return { t: "tail", i: 0 };
+    return { t: "mid", i: S.mid.indexOf(id) };
+  }
+  function sameRef(a, b) { return !!(a && b && a.t === b.t && a.i === b.i); }
+  function midInsert(id) {
+    S.mid.push(id);
+    S.mid.sort(function (a, b) { return RAIL.indexOf(a) - RAIL.indexOf(b); });   /* run order == rail order (honesty) */
+  }
+  function socketHtml(id, num) {
+    var p = PARTS[id];
+    return '<span class="snum">' + num + "</span>" +
+      '<span class="glyph ' + (p.glyph === "pent" ? "pent" : "") + '"></span>' +
+      '<span class="nm">' + p.nm + "</span>";
   }
 
   function renderSpine() {
-    var gaps = gapList();
-    if (S.cursor >= gaps.length) S.cursor = Math.max(0, gaps.length - 1);
     D.spine.innerHTML = "";
-    D.spine.appendChild(el("span", "end", "GRID"));
     D.spine.appendChild(el("span", "wire trunk"));
-
-    var gi = 0;
-    function gapNode(g) {
-      var idx = gi++;
-      var n = el("span", "gap" + (idx === S.cursor ? " cur" : ""));
-      if (S.ghost && idx === S.cursor) { n.className += " holds"; n.innerHTML = '<span class="chip ghost">' + chipHtml(S.ghost, true) + "</span>"; }
-      n.onclick = function () { S.cursor = idx; seatAttempt(g); };
-      return n;
-    }
-    function chipNode(id, slotRef) {
-      var selected = S.sel && S.sel.t === slotRef.t && S.sel.i === slotRef.i;
-      var n = el("span", "chip seated" + (selected ? " sel" : ""), chipHtml(id, false));
-      if (S.failTick && S.failTick.t === slotRef.t && S.failTick.i === slotRef.i) n.appendChild(el("i", "ftick"));
-      n.onclick = function () { selectSeat(slotRef, id); };
-      n.oncontextmenu = function (e) { e.preventDefault(); unseat(slotRef, id); };
-      return n;
-    }
-
-    if (S.head) D.spine.appendChild(chipNode(S.head, { t: "head", i: 0 }));
-    else D.spine.appendChild(gapNode({ t: "head" }));
-    D.spine.appendChild(el("span", "wire"));
-
-    var midGaps = gaps.filter(function (g) { return g.t === "mid"; });
-    if (midGaps.length) {
-      /* interleave: gap(0) mid[0] gap(1) mid[1] ... (only the ghost-legal gaps render) */
-      var withInserts = S.ghost && PARTS[S.ghost].slot === "mid";
-      for (var i = 0; i <= S.mid.length; i++) {
-        if (withInserts || (S.mid.length === 0 && i === 0)) {
-          D.spine.appendChild(gapNode({ t: "mid", i: i }));
-          if (i < S.mid.length) D.spine.appendChild(el("span", "wire"));
-        }
-        if (i < S.mid.length) {
-          D.spine.appendChild(chipNode(S.mid[i], { t: "mid", i: i }));
-          D.spine.appendChild(el("span", "wire"));
-        }
+    for (var i = 0; i < RAIL.length; i++) {
+      var id = RAIL[i], node;
+      if (isSeated(id)) {
+        var ref = refOf(id), selected = sameRef(S.sel, ref);
+        node = el("span", "chip seated" + (selected ? " sel" : ""), chipHtml(id, false));
+        if (sameRef(S.failTick, ref)) node.appendChild(el("i", "ftick"));
+        node.onclick = (function (ref, id) { return function () { selectSeat(ref, id); }; })(ref, id);
+        node.oncontextmenu = (function (ref, id) { return function (e) { e.preventDefault(); unseat(ref, id); }; })(ref, id);
+      } else {
+        node = el("span", "chip socket", socketHtml(id, i + 1));
+        node.onclick = (function (id) { return function () { pick(id); }; })(id);
       }
-      if (!withInserts && S.mid.length === 0) D.spine.appendChild(el("span", "wire"));
-    } else {
-      for (var m = 0; m < S.mid.length; m++) {
-        D.spine.appendChild(chipNode(S.mid[m], { t: "mid", i: m }));
-        D.spine.appendChild(el("span", "wire"));
-      }
+      D.spine.appendChild(node);
+      D.spine.appendChild(el("span", "wire" + (i === RAIL.length - 1 ? " trunk" : "")));
     }
-
-    if (S.tail) D.spine.appendChild(chipNode(S.tail, { t: "tail", i: 0 }));
-    else D.spine.appendChild(gapNode({ t: "tail" }));
-    D.spine.appendChild(el("span", "wire trunk"));
-    D.spine.appendChild(el("span", "end", "&gt; RECORD"));
   }
 
-  function renderRail() {
-    D.rail.innerHTML = '<span class="lab s60 railtag">PARTS</span>';
-    RAIL.forEach(function (id, i) {
-      var seatedNow = S.head === id || S.tail === id || S.mid.indexOf(id) >= 0;
-      var n = el("span", "chip rchip" + (seatedNow ? " onspine" : "") + (S.ghost === id ? " picked" : ""),
-        '<span class="idx">' + (i + 1) + "</span>" + chipHtml(id, false));
-      n.onclick = function () { pick(id); };
-      D.rail.appendChild(n);
-    });
-  }
+  /* the numbered PARTS tray is RETIRED (art-direction 2026-07-24): the rail sockets ARE the parts, so the
+     duplicate inventory strip is gone. Kept as a no-op so every renderAll call site stays valid. */
+  function renderRail() { if (D.rail) D.rail.innerHTML = ""; }
 
   function renderCtl() {
     if (S.state === "RUN") { D.runchip.innerHTML = 'PLATE LOCKED — RUN LIVE'; D.runchip.classList.add("live"); return; }
@@ -350,40 +317,24 @@ window.BENCH = (function () {
     return S.mid[ref.i] || null;
   }
 
+  /* ATOMIC SEAT on the fixed rail: a number key / a socket click fills that socket. A part always seats
+     into its own socket (head/tail determined by the part; a mid sorts into RAIL order so run order ==
+     display order). A filled socket selects instead (X unseats). One gesture — no cursor, no ghost. */
+  function seat(id) {
+    var slot = PARTS[id].slot;
+    if (slot === "head") { S.head = id; receipt("seated THE DRAW at the head"); }
+    else if (slot === "tail") { S.tail = id; receipt("seated THE MEASURE at the tail"); }
+    else { midInsert(id); receipt("seated " + PARTS[id].nm + " on the spine"); }
+    blip(520, 40);
+    renderSpine(); renderCtl();
+    var ws = D.spine.querySelectorAll(".wire");                 /* the rail redraws left-to-right (04 §0) */
+    for (var i = 0; i < ws.length; i++) ws[i].classList.add("draw");
+  }
+
   function pick(id) {
     if (S.state !== "COMPOSE") { lockRefuse(); return; }
-    if (S.head === id || S.tail === id || S.mid.indexOf(id) >= 0) { receipt("the " + PARTS[id].nm + " is seated — X unseats"); return; }
-    S.ghost = id;
-    var gaps = gapList(), want = PARTS[id].slot;
-    for (var i = 0; i < gaps.length; i++) if (gaps[i].t === want || (want === "mid" && gaps[i].t === "mid")) { S.cursor = i; break; }
-    blip(520, 40);
-    renderSpine(); renderRail();
-  }
-
-  function moveCursor(dir) {
-    var gaps = gapList();
-    if (!gaps.length) return;
-    S.cursor = (S.cursor + dir + gaps.length) % gaps.length;
-    renderSpine();
-  }
-
-  function seatAttempt(g) {
-    if (S.state !== "COMPOSE") { lockRefuse(); return; }
-    if (!S.ghost) return;
-    var id = S.ghost, slot = PARTS[id].slot;
-    if (g.t === "head" && slot !== "head") { receipt("the head holds THE DRAW — a being draws first"); return; }
-    if (g.t === "tail" && slot !== "tail") { receipt("the tail holds THE MEASURE — it closes the wire"); return; }
-    if (g.t === "mid" && slot === "head") { receipt("THE DRAW holds the head — it draws the power"); return; }
-    if (g.t === "mid" && slot === "tail") { receipt("THE MEASURE holds the tail — every task ends measured"); return; }
-    if (g.t === "head") { S.head = id; receipt("seated THE DRAW at the head"); }
-    else if (g.t === "tail") { S.tail = id; receipt("seated THE MEASURE at the tail"); }
-    else { S.mid.splice(g.i, 0, id); receipt("seated " + PARTS[id].nm + " on the spine"); }
-    S.ghost = null; S.cursor = 0;
-    blip(520, 40);
-    renderSpine(); renderRail(); renderCtl();
-    /* seat closes the wire: hairlines redraw left-to-right 180ms (04 §0) */
-    var ws = D.spine.querySelectorAll(".wire");
-    for (var i = 0; i < ws.length; i++) ws[i].classList.add("draw");
+    if (isSeated(id)) { selectSeat(refOf(id), id); return; }    /* the socket is filled — select it (X unseats) */
+    seat(id);
   }
 
   function selectSeat(ref, id) {
@@ -449,7 +400,9 @@ window.BENCH = (function () {
       if (!S.run || S.run.n !== n) return;
       if (!j || j.ok === false || !(j.run_id || (j.run && j.run.run_id))) {
         /* the carrier ANSWERED with a refusal — the honesty seam, printed verbatim (j.refused) */
-        receipt((j && (j.refused || j.error)) ? (j.refused || j.error) : "run refused — no run_id returned");
+        var why = (j && (j.refused || j.error)) ? (j.refused || j.error) : "run refused — no run_id returned";
+        receipt(why);
+        announceRefused(why);                    /* the mission holds the DO beat open on this reason */
         endToCompose();
         return;
       }
@@ -460,6 +413,7 @@ window.BENCH = (function () {
       if (err && err.status) {
         /* the carrier answered wrong — no run exists; the plate unlocks, the receipt stands */
         receipt("/game/ignite · HTTP " + err.status + " — NO RUN");
+        announceRefused("/game/ignite answered HTTP " + err.status + " — no run");
         endToCompose();
       } else carrierLost("POST /game/ignite unreachable");
     });
@@ -496,6 +450,12 @@ window.BENCH = (function () {
       return { seq: L.seq, part: L.part, ms: L.ms, ok: L.ok, tried: L.tried, receipt: rc,
                state: L.state || (L.ok ? "DONE" : "FAIL") };
     });
+    /* the in-flight hop is reported as open_link (not a link with state LIVE) — surface it as a real LIVE
+       row so the packet sits on the working part and the filament sparks at its joint. Not invented: it is
+       the true currently-drawing hop, and it vanishes the instant that hop lands as a completed link. */
+    if (r.open_link && r.open_link.part) {
+      links.push({ seq: r.open_link.seq, part: r.open_link.part, ms: null, ok: null, tried: null, receipt: null, state: "LIVE" });
+    }
     var verdict = r.verdict || ((r.pass !== undefined && r.pass !== null) ? { pass: !!r.pass } : null);
     return {
       state: String(r.state || r.status || "RUNNING").toUpperCase(),
@@ -539,6 +499,19 @@ window.BENCH = (function () {
     if (g) g.classList[on ? "add" : "remove"]("fire");
   }
 
+  /* THE FILAMENT (REF-07, the wow): a hot amber spark at the joint of the LIVE chip — the pin meeting
+     the rail slot. Fired ONLY on a real LIVE trace row, cooled on the real DONE/HALT. The single hottest
+     pixel on the plate; pulses on opacity only (no filter in the paint path). Honesty: light at the
+     connection, and only where the run truly crossed. */
+  function fireFilament(i) {
+    var r = S.run; if (!r || !r.chips || !r.chips[i]) return;
+    var c = r.chips[i];
+    if (!r.filament) { r.filament = el("i", "filament"); D.spine.appendChild(r.filament); }
+    r.filament.style.left = (c.offsetLeft + c.offsetWidth) + "px";   /* the joint — the chip's pin meeting the rail */
+    r.filament.className = "filament on";
+  }
+  function coolFilament() { var r = S.run; if (r && r.filament) r.filament.className = "filament cool"; }
+
   function tName(ms) { return ms === null ? "T+—" : "T+" + (ms / 1000).toFixed(2) + "s"; }
 
   function applyStatus(run) {
@@ -555,11 +528,12 @@ window.BENCH = (function () {
           r.liveAt = i;
           packetTo(i + 1);            /* sits ON the working part — hot, still (the wait IS the drama) */
           glyphFire(i, true);
+          fireFilament(i);            /* the hot spark at the live joint (REF-07) */
         }
         break;                         /* nothing beyond the live link is real yet */
       }
       if (st === "DONE" || st === "PASS" || st === "OK") {
-        if (r.liveAt === i) glyphFire(i, false);
+        if (r.liveAt === i) { glyphFire(i, false); coolFilament(); }
         packetTo(i + 1);
         r.tMs += (typeof L.ms === "number" ? L.ms : 0);
         var cum = (typeof L.ms === "number") ? r.tMs : null;
@@ -638,8 +612,35 @@ window.BENCH = (function () {
       logLine("r-" + pad2(r.n) + " DONE · UNSCORED · NO RECORD");
     }
     renderRider();
+    /* the mission engine OBSERVES the player's real fire — one honest event, the real run_id, the
+       measured outcome. Not a cosmetic: it fires only when a real run actually settled (E1 §2.2 bus). */
+    announceRun(r.rid, r.n, run.verdict ? true : null, !!run.verdict, cost, totalMs, false);
     endToCompose();
     refreshGrid();   /* the meter genuinely recovering is part of the truth (E4 §9) */
+  }
+
+  /* announceRun — the ONE mission-facing signal: a real run settled. Carries the real run_id (so the
+     mission can re-read GET /game/run?id= and assert the receipt itself) + the measured outcome. Absent
+     values stay null; nothing is invented. The bus is the only sanctioned cross-module channel (E1 §2.2). */
+  function announceRun(rid, seq, pass, scored, cost_u, total_ms, halted) {
+    if (!GAME || !GAME.bus) return;
+    GAME.bus.emit("run:done", {
+      run_id: rid || null,
+      seq: seq,
+      pass: pass,                                   /* true | false | null (unscored) */
+      scored: !!scored,
+      cost_u: (cost_u === undefined ? null : cost_u),
+      total_ms: (total_ms === undefined ? null : total_ms),
+      halted: !!halted
+    });
+  }
+
+  /* announceRefused — a run that never minted a run_id (a loud refusal, or a lost carrier). Distinct
+     from run:done because there is no run to read: the mission's DO beat holds open and shows the
+     reason, it never advances. Honest — nothing was spent on a refused draw. */
+  function announceRefused(reason) {
+    if (!GAME || !GAME.bus) return;
+    GAME.bus.emit("run:refused", { reason: reason || "run refused" });
   }
 
   /* A CONSTRUCT'S FIRST RUN — the sanctioned ritual (E4 §8.4 [GRAFT-B3]): once per
@@ -687,13 +688,15 @@ window.BENCH = (function () {
     S.state = "HALT";
     D.plate.classList.add("halt");
     if (r.chips && r.chips[linkIdx]) r.chips[linkIdx].classList.add("fail");
-    glyphFire(linkIdx, false);
+    glyphFire(linkIdx, false); coolFilament();
     if (r.tplusEl) r.tplusEl.classList.add("cool");   /* the light goes out of the counter too */
     renderCtl();
 
     /* the failed seat keeps a structure tick for the visit (settled story cools) */
     var seatRef = seatRefOfIndex(linkIdx);
     if (seatRef) S.failTick = seatRef;
+    /* a located fail is still a real run that settled — the mission hears it and holds the DO beat open */
+    announceRun(r.rid, r.n, false, !!(run && run.verdict), (run && run.cost_u !== undefined ? run.cost_u : null), null, true);
     /* frame HOLDS until any input. no sound but the hum — silence is the failure sting. */
   }
 
@@ -708,6 +711,7 @@ window.BENCH = (function () {
   function carrierLost(why) {
     /* honest on fetch failure: the game cannot see the entity and says exactly that (A10) */
     receipt("CARRIER LOST — " + why);
+    announceRefused("carrier lost — " + why);   /* the mission resolves the DO card, never spins */
     S.grid = false;
     renderHeader();
     endToCompose();
@@ -734,6 +738,7 @@ window.BENCH = (function () {
     if (r.packetEl && r.packetEl.parentNode) r.packetEl.parentNode.removeChild(r.packetEl);
     if (r.tplusEl && r.tplusEl.parentNode) r.tplusEl.parentNode.removeChild(r.tplusEl);
     if (r.wmark && r.wmark.parentNode) r.wmark.parentNode.removeChild(r.wmark);
+    if (r.filament && r.filament.parentNode) r.filament.parentNode.removeChild(r.filament);
     if (r.marks) r.marks.forEach(function (m) { if (m.parentNode) m.parentNode.removeChild(m); });
     if (r.chips) for (var i = 0; i < r.chips.length; i++) r.chips[i].classList.remove("fail", "ritual");
   }
@@ -832,11 +837,9 @@ window.BENCH = (function () {
     if (S.state === "HALT") { e.preventDefault(); haltRelease(); return; }
     if (S.state === "RUN") { e.preventDefault(); lockRefuse(); return; }
 
-    /* COMPOSE */
+    /* COMPOSE — the ATOMIC SEAT on the fixed rail: one number key fills one socket (no cursor, no Enter,
+       no ghost). The arrow/Enter/gap grammar is fully retired (fixed-rail rebuild 2026-07-24). */
     if (k >= "1" && k <= "5") { e.preventDefault(); pick(RAIL[+k - 1]); return; }
-    if (k === "ArrowLeft") { e.preventDefault(); moveCursor(-1); return; }
-    if (k === "ArrowRight") { e.preventDefault(); moveCursor(1); return; }
-    if (k === "Enter") { e.preventDefault(); var g = gapList()[S.cursor]; if (g && S.ghost) seatAttempt(g); return; }
     if (k === "x" || k === "X") { e.preventDefault(); if (S.sel) unseat(S.sel, seatId(S.sel)); return; }
     if (k === "[") { e.preventDefault(); cycleZone(-1); return; }
     if (k === "]") { e.preventDefault(); cycleZone(1); return; }
@@ -906,17 +909,20 @@ window.BENCH = (function () {
     var eng = GAME.state.engine;
     if (!eng) return;
 
-    /* proximity from the engine's own probe — read, never tracked twice (E1 §2.2) */
+    /* proximity from the engine's own probe — read, never tracked twice (E1 §2.2). The dock target
+       FOLLOWS the active beacon: each rung of the ladder stands in its own district, so docking is an
+       arrival somewhere, not a return to one fixed slab. Falls back to the core when nothing is asking. */
+    var dock = GAME.state.beacon ? { x: GAME.state.beacon.x, y: SLAB.y, z: GAME.state.beacon.z } : SLAB;
     if (!S.still) {
       if (!probeRef) probeRef = eng.scene.getObjectByName("probe");
       if (probeRef) {
-        var dx = probeRef.position.x - SLAB.x, dz = probeRef.position.z - SLAB.z;
+        var dx = probeRef.position.x - dock.x, dz = probeRef.position.z - dock.z;
         S.near = (dx * dx + dz * dz) <= RANGE * RANGE;
       }
-      /* the prompt stands above the slab, in the world's own projection (E4 §4) */
+      /* the prompt stands above the dock, in the world's own projection (E4 §4) */
       if (!S.docked && S.near) {
         if (!v3) v3 = new THREE.Vector3();
-        v3.set(SLAB.x, SLAB.y + 3.2, SLAB.z).project(eng.camera);
+        v3.set(dock.x, dock.y + 3.2, dock.z).project(eng.camera);
         if (v3.z < 1) {
           D.prompt.style.display = "block";
           D.prompt.style.left = ((v3.x * 0.5 + 0.5) * window.innerWidth) + "px";
@@ -961,6 +967,12 @@ window.BENCH = (function () {
       listen(window, "blur", onBlur);
 
       GAME.onFrame(frame);
+
+      /* the guided ladder asks for a fresh plate between rungs — the mission EMITS, the bench clears
+         (one-way: the mission never touches bench internals). Only when composing, never mid-run. */
+      GAME.bus.on("plate:reset", function () {
+        if (S.state === "COMPOSE") { S.zone = "private"; clearPlate(); }
+      });
 
       /* ?still&bench=1 — the docked virgin plate, deterministic (no network), for the harness (E4 §13).
          ?bench=1 (live, no ?still) — the same docked plate WITH the network up, so a headless verify can

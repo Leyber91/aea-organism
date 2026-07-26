@@ -27,6 +27,10 @@ def route_get(path: str) -> Optional[dict]:
         return read.state()
     if p == "/game/schema":
         return schema.schema()
+    if p == "/game/foundry":
+        return read.foundry()
+    if p == "/game/axes":
+        return read.axes()
     if p == "/game/run":
         qid = ""
         if "id=" in path:

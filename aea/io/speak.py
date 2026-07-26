@@ -115,25 +115,67 @@ def edge_available() -> bool:
         return False
 
 
-def edge_speak(text: str, timeout: int = 300) -> bool:
-    """Generate with edge-tts (mp3) then play via WPF MediaPlayer. Cloud - never for sensitive text."""
-    mp3 = os.path.join(grid.STATE, "_live_edge.mp3")
+def edge_render(text: str, mp3: str, voice: str | None = None, timeout: int = 300) -> bool:
+    """Render text to an mp3. IN-PROCESS first - MEASURED 1.56s vs 6.15s for the subprocess path,
+    which pays a fresh python startup on every single call. Subprocess stays as the fallback."""
+    v = voice or EDGE_VOICE
     try:
-        r = subprocess.run([sys.executable, "-m", "edge_tts", "--voice", EDGE_VOICE,
+        import asyncio, edge_tts
+        asyncio.run(edge_tts.Communicate(text[:1200], v).save(mp3))
+        if os.path.exists(mp3) and os.path.getsize(mp3) >= 400:
+            return True
+    except Exception:
+        pass                                      # a running loop / network blip -> subprocess
+    try:
+        r = subprocess.run([sys.executable, "-m", "edge_tts", "--voice", v,
                             "--text", text[:1200], "--write-media", mp3],
                            capture_output=True, text=True, timeout=timeout)
-        if r.returncode != 0 or not os.path.exists(mp3) or os.path.getsize(mp3) < 400:
-            return False
-        ps = ("Add-Type -AssemblyName presentationCore; "
-              f"$p = New-Object System.Windows.Media.MediaPlayer; $p.Open([uri]'{mp3}'); $p.Play(); "
-              "$t0 = Get-Date; while (-not $p.NaturalDuration.HasTimeSpan -and "
-              "((Get-Date) - $t0).TotalSeconds -lt 8) { Start-Sleep -Milliseconds 100 }; "
-              "if ($p.NaturalDuration.HasTimeSpan) { "
-              "Start-Sleep -Milliseconds ([int]$p.NaturalDuration.TimeSpan.TotalMilliseconds + 300) }; "
-              "$p.Close()")
+        return r.returncode == 0 and os.path.exists(mp3) and os.path.getsize(mp3) >= 400
+    except Exception:
+        return False
+
+
+def play_fast(path: str) -> bool:
+    """Decode + play IN-PROCESS (soundfile -> sounddevice). MEASURED: the PowerShell MediaPlayer
+    below costs 5-10s per call for an assembly load + process spawn - it turned 7.5s of speech
+    into an 18s wait. This path costs ~0.1s. Blocks until the audio ends (half-duplex)."""
+    try:
+        import soundfile as sf, sounddevice as sd
+        data, sr = sf.read(path, dtype="float32")
+        sd.play(data, sr)
+        sd.wait()
+        return True
+    except Exception:
+        return False
+
+
+def play_mp3(path: str, timeout: int = 300) -> bool:
+    """Play an mp3 and BLOCK until it finishes (the half-duplex guarantee: callers rely on this
+    returning only once the room is quiet again). Fast in-process path first, WPF as fallback."""
+    if play_fast(path):
+        return True
+    ps = ("Add-Type -AssemblyName presentationCore; "
+          f"$p = New-Object System.Windows.Media.MediaPlayer; $p.Open([uri]'{path}'); $p.Play(); "
+          "$t0 = Get-Date; while (-not $p.NaturalDuration.HasTimeSpan -and "
+          "((Get-Date) - $t0).TotalSeconds -lt 8) { Start-Sleep -Milliseconds 100 }; "
+          "if ($p.NaturalDuration.HasTimeSpan) { "
+          "Start-Sleep -Milliseconds ([int]$p.NaturalDuration.TimeSpan.TotalMilliseconds + 300) }; "
+          "$p.Close()")
+    try:
         p = subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command", ps],
                            capture_output=True, text=True, timeout=timeout)
         return p.returncode == 0
+    except Exception:
+        return False
+
+
+def edge_speak(text: str, timeout: int = 300, voice: str | None = None) -> bool:
+    """Generate with edge-tts (mp3) then play via WPF MediaPlayer. Cloud - never for sensitive text."""
+    mp3 = os.path.join(grid.STATE, "_live_edge.mp3")
+    try:
+        if not edge_render(text, mp3, voice=voice, timeout=timeout):
+            return False
+        return play_mp3(mp3, timeout=timeout)
     except Exception:
         return False
 

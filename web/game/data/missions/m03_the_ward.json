@@ -1,0 +1,59 @@
+{
+  "id": "M0.3",
+  "act": "0",
+  "title": "THE WARD",
+  "rung": 4,
+  "journey_rows": [],
+  "adds": [],
+  "candidates": ["THE WARD"],
+  "requires": ["C-16"],
+  "adds_note": "NO CENSUS ITEM COVERS THIS. routing a draw by a privacy constraint - the zone filter in energy.ladder that keeps a sensitive draw on-machine - is not any of the 86, and it is not a row in THE JOURNEY either. it is a third candidate found by building rather than by auditing, alongside THE READOUT and the self-representation floor x07 turned up. it belongs wherever a constraint first overrides a capability choice.",
+  "objective": "seat the reach, then mark the zone SENSITIVE - watch the mind refuse to leak",
+  "beacon": "ring",
+  "beats": [
+    {
+      "kind": "brief",
+      "title": "the privacy ring",
+      "lines": [
+        "the reach cost a unit because the data was open - it went to a paid rod outside.",
+        "mark the same draw SENSITIVE and the mind will not sell it. it keeps it home, free.",
+        "the privacy ring is a law, not a setting. seat the reach again - but ward it first.",
+        "seat THE DRAW, THE LADDER, THE MEASURE. set the zone to SENSITIVE. then fire."
+      ]
+    },
+    {
+      "kind": "learn",
+      "title": "the ward - nothing hidden",
+      "code": "POST /game/ignite\n{ \"spec\": [ \"tap\", \"ladder\", \"scorer\" ],\n  \"zone\": \"sensitive\",             # the ward\n  \"task\": \"t-01\" }\n\nGET /game/run?id=<run_id>\n     -> zone: sensitive   cost_u: 0\n        the ladder seated, but the reach stayed home",
+      "note": "THE LADDER still seats and still tries to reach up. but energy.ladder selects rods BY zone - and a sensitive draw is allowed local rods only. the paid rod is refused by the ward; the fire falls home to the free hearth and still closes. cost 0, not because it was cheap, but because the mind would not leak it. the zone dial lives on THE DRAW - select THE DRAW, press ] until it reads SENSITIVE, then fire."
+    },
+    {
+      "kind": "do",
+      "title": "the ward",
+      "label": "dock [F] - seat the reach - select THE DRAW, press ] to SENSITIVE - fire [Space]",
+      "action": { "type": "compose" },
+      "note": "sensitive data. the ladder is seated but the ward forces it home - cost FREE, the leak refused.",
+      "earned": "the ladder seated and the ward held. it stayed home.",
+      "reseat": "unscored draw. seat THE MEASURE at the tail, then fire again.",
+      "halted": "the local hearth is cold - a sensitive draw has nowhere free to go. rare, and honest. retry."
+    },
+    {
+      "kind": "prove",
+      "assert": "ward_receipt",
+      "title": "the receipt",
+      "pass": "run {run_id} - cost {cost_u}. the ladder seated, the ward held - sensitive data never left the hearth. FREE is not cheap here; it is the mind refusing to leak you, measured live.",
+      "fail": "the ward did not hold - the zone was not SENSITIVE, or THE LADDER was not seated. press ] until the zone reads SENSITIVE and seat THE LADDER between the head and the tail, fire again."
+    }
+  ],
+  "rewards": {
+    "reveals": ["zone_law"],
+    "log": "the ward - the mind kept it home",
+    "reveal": [
+      "you seated the reach and the mind refused to spend it - sensitive stays local, free, by law.",
+      "cost {cost_u} - the privacy ring held, read live from the meter, not a promise.",
+      "a second grey notch is milled inward. the ward is earned. the light stays the mind's."
+    ],
+    "tag": "honesty - cost {cost_u}, the privacy law enforced in code. grey notch, no amber title - a ward is a law kept, not a doctrine proven."
+  },
+  "leyber": []
+}

@@ -31,7 +31,7 @@ import concurrent.futures as _futures
 import time
 
 from aea.lab import overseer as OV
-from aea.lab.organism import Organism, ascending, oblique, toxic
+from aea.lab.organism import Organism, ascending, deprived, oblique
 from aea.mind import fuel
 
 N = 8
@@ -100,7 +100,7 @@ def run():
                     "and work anyway?",
         "n": N, "temperature": TEMP, "rods": ["%s/%s" % r for r in RODS], "tasks": list(TASKS)})
     plan = ([("ascending", "v%d" % v, keys) for v, keys in ascending()]
-            + [("toxic", name, keys) for name, keys in toxic()]
+            + [("deprived", name, keys) for name, keys in deprived()]
             + [("oblique", name, keys) for name, keys in oblique()])
     print("x16 - %d assemblies x %d rods x %d tasks x n=%d\n" % (len(plan), len(RODS), len(TASKS), N),
           flush=True)
@@ -129,7 +129,7 @@ def run():
     tox = {name: {"correct": rate(lambda r, n=name: r["organism"] == n),
                   "empty": sum(r["empty_verdicts"] for r in rows if r["organism"] == name),
                   "unmet": next((r["precondition_unmet"] for r in rows if r["organism"] == name), None)}
-           for name, _ in toxic()}
+           for name, _ in deprived()}
     obl = {name: {"correct": rate(lambda r, n=name: r["organism"] == n)} for name, _ in oblique()}
 
     v = []
@@ -147,7 +147,7 @@ def run():
     else:
         v.append("NO OBLIQUE ASSEMBLY REACHED 0.5. C-63 survives this run.")
     for n, d in tox.items():
-        v.append("TOXIC %s: correct %.2f, empty verdicts %d, unmet %s."
+        v.append("DEPRIVED %s: correct %.2f, empty verdicts %d, unmet %s."
                  % (n, d["correct"] or 0, d["empty"], d["unmet"]))
 
     led.done(ascending=asc, toxic=tox, oblique=obl, verdict=v)

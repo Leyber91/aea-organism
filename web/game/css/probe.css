@@ -4,16 +4,19 @@
    E2_VISUAL_DIRECTION.md §6 (title = radial scrim over the live scene, no key wall). */
 
 :root{
-  --void:#050a10;
-  --s35:rgba(120,155,175,.35);
-  --s60:rgba(120,155,175,.6);
-  --s100:rgba(120,155,175,1);
+  /* structure grey is NEUTRAL near-black, not blue — the reference bar has no blue anywhere
+     (gap review 2026-07-24: the blue-grey cast read as a translucent web modal). Warm-neutral grey
+     on a neutral void; amber stays the only ink with hue. */
+  --void:#08080a;
+  --s35:rgba(156,154,148,.34);
+  --s60:rgba(161,158,150,.6);
+  --s100:rgba(170,166,157,1);
   --hot:#ffb000;
   --warm:#d4a24c;
-  --pan:rgba(5,10,16,.55);
-  --pan-deep:rgba(5,10,16,.88);
-  --rule:rgba(120,155,175,.25);
-  --bracket:rgba(120,155,175,.6);
+  --pan:rgba(9,9,10,.55);
+  --pan-deep:rgba(9,9,10,.9);
+  --rule:rgba(158,156,148,.2);
+  --bracket:rgba(158,156,148,.5);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -52,7 +55,7 @@ canvas{display:block}
 .pan .hd{display:flex;justify-content:space-between;align-items:baseline;
   font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s100);
   padding-bottom:8px;border-bottom:1px solid var(--rule);
-  box-shadow:0 -1px 0 rgba(120,155,175,.12) inset}
+  box-shadow:0 -1px 0 rgba(158,156,148,.12) inset}
 /* ---- row choreography (04 §0: fade + translateY(6px), 160ms, 30ms stagger via --i) ---- */
 .rin{opacity:0;transform:translateY(6px);animation:rin .16s ease-out forwards;
   animation-delay:calc(var(--i,0)*30ms)}
@@ -69,57 +72,105 @@ canvas{display:block}
   font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);white-space:nowrap}
 #bench{position:fixed;inset:0;z-index:25;display:none;align-items:center;justify-content:center;
   pointer-events:none}
-#bench.on{display:flex}
-#bench .plate{width:664px;pointer-events:auto;font-variant-numeric:tabular-nums;
-  /* REF-10: an opaque machined matte plate — kills the world wash + gives real depth */
-  padding:22px 26px;
-  background:linear-gradient(157deg,#0b131b 0%,#080e15 58%,#05090e 100%);
-  box-shadow:inset 0 0 0 1px rgba(120,155,175,.09),
-             inset 0 0 26px rgba(0,0,0,.55),
-             0 30px 74px -22px rgba(0,0,0,.75);
+/* DOCK SCRIM (art-direction 2026-07-24): docked, the living world dies to near-black so the plate reads as
+   a machined instrument (REF-10 composition), never a widget over the core wash. A faint bleed survives —
+   still running, never fully hidden (honest focus, not a cut). */
+#bench.on{display:flex;background:radial-gradient(125% 95% at 50% 46%,rgba(6,6,8,.82) 0%,rgba(4,4,6,.97) 100%)}
+/* THE PLATE (art-direction 2026-07-24): a machined cast-metal slab under ONE top-left raking light.
+   Opaque 3-layer material — base gradient + raking wash + a baked matte grain (::after, soft-light). The
+   rim shadow encodes the single light: top-left catches a specular hairline, bottom-right falls to black. */
+/* FULL-BLEED FRAME (art-direction 2026-07-24): the plate IS the frame — a machined slab that owns the
+   screen (column-flex so the rail sits dead-center with air above and below, header on the top rim,
+   log+footer on the bottom rim). Strong directional falloff bright top-left -> dark bottom-right = one
+   raking light across the whole object, never a flat fill. */
+#bench .plate{position:relative;width:min(1280px,96vw);min-height:92vh;display:flex;flex-direction:column;
+  pointer-events:auto;font-variant-numeric:tabular-nums;padding:30px 48px 24px;
+  background:radial-gradient(130% 100% at 20% 8%,rgba(184,182,174,.07),transparent 52%),
+             linear-gradient(142deg,#17161b 0%,#100f13 42%,#0b0a0d 72%,#070709 100%);
+  box-shadow:inset 2px 2px 0 rgba(174,170,160,.17),      /* top-left catch (the source) */
+             inset -2px -2px 0 rgba(0,0,0,.62),           /* bottom-right fall */
+             inset 0 0 0 1px rgba(168,164,155,.10),       /* milled edge */
+             0 40px 90px -30px rgba(0,0,0,.85);           /* the world dies behind */
   clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
 #bench .plate>.ck{display:none}   /* REF-10 uses a milled rim, not corner brackets */
-#bench .plate::before{content:"";position:absolute;inset:7px;pointer-events:none;
-  box-shadow:inset 0 0 0 1px rgba(120,155,175,.06)}   /* the inner double-hairline rim */
+#bench .plate::before{content:"";position:absolute;inset:7px;pointer-events:none;z-index:0;
+  box-shadow:inset 0 1px 0 rgba(180,176,167,.06),inset 0 0 0 1px rgba(158,156,148,.06)}  /* inner double-hairline + top catch */
+/* MATTE GRAIN — baked feTurbulence, composited once (soft-light). No smooth face ships without grain
+   (smooth == plastic). Zero runtime cost: rasterized, GPU-composited, never re-run per frame. */
+#bench .plate::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
+  mix-blend-mode:soft-light;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E")}
+#bench .plate>*{position:relative;z-index:1}   /* content rides above grain + rim pseudo-layers */
 .plate .rgn{padding:10px 2px 0}
 .task .t-line{color:var(--s100)}
 .task .t-check{color:var(--s60);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
-.spine{position:relative;display:flex;align-items:center;gap:0;padding:46px 2px 30px}
+/* the rail band GROWS to fill the frame's mid-third — the rail dead-center with real air (REF-10) */
+.spine{position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:0;padding:24px 0}
 .spine .end{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);white-space:nowrap;padding:0 8px}
 /* the continuous MILLED RAIL: recessed groove segments the chips mount onto (align-items:center runs it through the chip middle) */
-.wire{flex:1;min-width:12px;height:7px;background:linear-gradient(#060b11,#0b141d 50%,#060b11);
-  box-shadow:inset 0 1px 1px rgba(0,0,0,.6),inset 0 -1px 0 rgba(120,155,175,.09)}
+.wire{flex:1;min-width:12px;height:7px;background:linear-gradient(#070708,#101013 50%,#070708);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.72),inset 0 -1px 0 rgba(168,164,155,.10)}   /* recessed groove, lit bottom lip */
 .wire.trunk{flex:0 0 12px;min-width:12px}
 .wire.draw{transform-origin:left center;animation:wdraw .18s ease-out}
 @keyframes wdraw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 /* REF-07/10 chip: full-octagon machined badge, debossed, chamfered edges */
+/* THE OCTAGONAL CHIP (art-direction 2026-07-24): a beveled cast-metal octagon under the top-left light.
+   The conic-gradient shades the eight chamfer facets by their facing to the source — top-left facets
+   catch, bottom-right fall. Deterministic, crisp at any width, no lighting filter in the paint path. */
+/* THE OCTAGONAL CHIP: a beveled cast-metal octagon under the top-left light. The conic shades the eight
+   chamfer facets by facing to the source; a top-plane linear light-catch brightens the upper face so it
+   reads as a milled block, not a drawn outline (tech-artist note 2026-07-24). */
 .chip{position:relative;z-index:1;display:flex;align-items:center;gap:7px;padding:8px 12px;cursor:pointer;
-  background:linear-gradient(158deg,#131e28,#0b131b 72%,#080f16);
-  clip-path:polygon(7px 0,calc(100% - 7px) 0,100% 7px,100% calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,0 calc(100% - 7px),0 7px);
-  box-shadow:inset 0 1px 0 rgba(120,155,175,.13),inset 0 -2px 3px rgba(0,0,0,.5),inset 2px 0 3px rgba(0,0,0,.3),inset -2px 0 3px rgba(0,0,0,.3)}
-/* the MOUNTED rail chip (REF-10): big, glyph/name/stat stacked, warm seat-glow rising from under the seat */
-.spine .chip{flex-direction:column;justify-content:center;gap:5px;min-width:90px;padding:13px 12px 12px;
-  box-shadow:inset 0 1px 0 rgba(120,155,175,.15),inset 0 -15px 17px -8px rgba(212,162,76,.5),
-             inset 2px 0 3px rgba(0,0,0,.3),inset -2px 0 3px rgba(0,0,0,.3)}
+  background:linear-gradient(158deg,rgba(184,180,172,.11),transparent 44%),
+             conic-gradient(from 315deg at 50% 44%,#302e37 0deg,#1e1d24 92deg,#0b0b0e 178deg,#080809 262deg,#302e37 360deg);
+  clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);
+  box-shadow:inset 1.5px 1.5px 0 rgba(174,170,160,.16),inset -1px -3px 4px rgba(0,0,0,.66)}
+/* the SEATED chip (REF-07/10): a raised octagon that SEATS — a real contact drop-shadow stops the float,
+   and a DIM WARM seat-bleed under the base means 'connection made' (a true seated state, never hot). */
+.spine .chip{flex-direction:column;justify-content:center;gap:7px;min-width:132px;min-height:104px;padding:0 14px;
+  filter:drop-shadow(0 8px 12px rgba(0,0,0,.64));
+  box-shadow:inset 1.5px 1.5px 0 rgba(174,170,160,.17),inset -1px -4px 6px rgba(0,0,0,.66),
+             0 9px 14px -4px rgba(212,162,76,.42)}   /* the dim-warm seat-bleed: connection made */
+.spine .chip .nm{white-space:nowrap}                 /* THE MEASURE must never wrap */
+/* the EMPTY SOCKET: a recessed octagon cut INTO the rail — a hole (casts nothing), dim, showing its key */
+.spine .chip.socket{background:#0a0a0c;filter:none;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.74),inset 0 -1px 0 rgba(168,164,155,.06),inset 0 1px 0 rgba(0,0,0,.5)}
+.spine .chip.socket .nm{color:var(--s35)}
+.spine .chip.socket .glyph{border-color:var(--s35);opacity:.6}
+.spine .chip .snum{position:absolute;top:9px;left:12px;font-size:10px;letter-spacing:.06em;color:var(--s35)}
 .spine .chip .nm{font-size:11px;color:var(--s100)}
 .chip .glyph{width:11px;height:11px;border:1.5px solid var(--s100);border-radius:50%;flex:none}
 .chip .glyph.pent{border-radius:0;border:none;background:var(--s100);
   clip-path:polygon(50% 0,100% 38%,81% 100%,19% 100%,0 38%)}
 .chip .glyph.fire{border-color:var(--hot)}
 .chip .glyph.pent.fire{background:var(--hot)}
-.chip .nm{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s100);
-  text-shadow:0 1px 1px rgba(0,0,0,.65)}   /* debossed into the metal */
+.chip .nm{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--s100);
+  text-shadow:0 1px 0 rgba(168,164,155,.14),0 -1px 1px rgba(0,0,0,.55)}   /* ENGRAVED: light lower edge, dark upper */
 .chip .st{font-size:10px;letter-spacing:.08em;color:var(--s35);text-transform:uppercase}
 .chip .st.vflare{animation:vfl .72s ease-out forwards}
 @keyframes vfl{0%{color:var(--hot)}17%{color:var(--hot)}100%{color:var(--warm)}}
-.chip.sel{background:rgba(120,155,175,.16)}
+.chip.sel{background:rgba(158,156,148,.16)}
 .chip.ghost{opacity:.6;cursor:default}
 .chip.ritual .nm,.chip.ritual .st{color:var(--hot)}
 .chip.ritual .glyph{border-color:var(--hot)}
 .chip .ftick{width:1px;height:6px;background:var(--s100);margin-left:4px}
 .gap{position:relative;width:52px;height:26px;flex:none;cursor:pointer}
-.gap.cur{background:rgba(120,155,175,.07)}
+.gap.cur{background:rgba(158,156,148,.07)}
 .gap.holds{width:auto;height:auto}
+/* THE FILAMENT (REF-07): the hot spark at the live joint — a vertical core + a horizontal pool + a static
+   bloom. The single hottest thing on the plate; fires only on a real LIVE row, cools on the real DONE. */
+.filament{position:absolute;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:3;opacity:0;
+  width:2px;height:34px;
+  background:linear-gradient(rgba(255,242,208,0),#fff2d0 28%,#ffb000 55%,rgba(212,162,76,0))}
+.filament::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:26px;height:2px;background:linear-gradient(90deg,rgba(255,176,0,0),#ffb000,rgba(255,176,0,0))}
+.filament::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:22px;height:22px;border-radius:50%;background:radial-gradient(rgba(255,176,0,.55),transparent 68%);filter:blur(5px)}
+.filament.on{opacity:1;animation:fil .66s ease-in-out infinite alternate}
+.filament.cool{opacity:0;transition:opacity .9s ease-out}
+@keyframes fil{from{opacity:.72}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.filament.on{animation:none;opacity:1}}
 .packet{position:absolute;top:50%;width:16px;height:3px;margin:5px 0 0 -8px;pointer-events:none;
   background:linear-gradient(90deg,rgba(212,162,76,0),#d4a24c 45%,#ffb000);
   transition:left .16s cubic-bezier(.3,.7,.3,1)}
@@ -139,12 +190,21 @@ canvas{display:block}
 .railwrap .railtag{margin-right:4px}
 .rchip .idx{font-size:10px;color:var(--s60)}
 .rchip.onspine{opacity:.35}
-.rchip.picked{background:rgba(120,155,175,.16)}
+.rchip.picked{background:rgba(158,156,148,.16)}
 .rider{display:flex;justify-content:space-between;font-size:10px;text-transform:uppercase;
   letter-spacing:.12em;color:var(--s60);padding:12px 2px 4px;border-top:1px solid var(--rule);margin-top:14px}
-.runlog{padding:8px 2px 2px;min-height:84px}
-.runlog .ln{color:var(--s35);font-size:13px;white-space:pre-wrap}
-.runlog .ln.hotln{color:var(--warm)}
+/* THE RUN-LOG (REF-11): engraved rows pressed into the plate, a recency gradient (newest brightest),
+   the earned summary in amber. */
+.runlog{padding:10px 2px 2px;min-height:84px}
+.runlog .ln{color:var(--s35);font-size:13px;letter-spacing:.04em;white-space:pre-wrap;
+  text-shadow:0 1px 0 rgba(168,164,155,.10),0 -1px 1px rgba(0,0,0,.5)}
+.runlog .ln:nth-last-child(1){color:var(--s60)}
+.runlog .ln:nth-last-child(2){color:rgba(158,156,148,.5)}
+.runlog .ln:nth-last-child(3){color:rgba(158,156,148,.42)}
+.runlog .ln.hotln{color:var(--warm);text-shadow:0 0 6px rgba(255,176,0,.38)}
+/* the RECORD close: a hot rule + a solid amber square, shown only once a real run has set a record */
+.rider.hasrec{border-top:1px solid rgba(255,176,0,.45)}
+.recsq{display:inline-block;width:8px;height:8px;background:var(--hot);margin-left:9px;vertical-align:-1px}
 .ctl-line{display:flex;justify-content:space-between;align-items:baseline;
   border-top:1px solid var(--rule);margin-top:12px;padding:10px 2px 0}
 .ctl-line .k{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--s60);position:relative}

@@ -18,7 +18,31 @@ withheld, and **each component promises one animal.**
 | we go looking for | the component | what we expect to meet |
 |---|---|---|
 | the one that knows whether it worked | C-15, THE MEASURE | a construct that can finally tell a right answer from a wrong one, at no cost |
-| the one that reads the work | C-87, THE READOUT | **the creature this whole level exists for.** Chapter I ended holding 52% of its failures with the answer already inside them |
+| the one that reads the work | C-87, THE READOUT | **the creature this whole level exists for.** Chapter I ended believing 52% of its failures already held the answer. That figure was retracted before this chapter ran; the surviving number is **3 of 153**, and the gap between those two is what this level is really about |
+
+> #### SECOND CORRECTION, entered 2026-07-26. The readout is not this creature's cure; it is its second-best cure.
+>
+> This chapter is built on `Tacitus operis`, the creature whose work is right and whose mouth is wrong,
+> and it treats THE READOUT as the part that answers it. Chapter III, one level later, measured the
+> same population under a frame that names a method:
+>
+> ```
+> mute trials, work right and mouth wrong        x15
+>   bare        28 of 288
+>   posture     24 of 288
+>   fitted       0 of 360
+> ```
+>
+> **A method frame does not repair muteness. It makes the condition impossible**, because a rod made to
+> show its working also states what the working reached. So the readout is a repair for a rod you
+> cannot frame rather than the level's headline lever, and the honest ordering is that L2's frame sits
+> *above* L1's readout in value while sitting *below* it in the ladder. The chapter's reasoning stands;
+> its billing does not.
+>
+> **And the frame's cure has a cost this chapter could not see.** Making every reply show its working
+> also makes wrong working visible and common: complete-but-wrong reasoning goes from 16 of 288 to
+> **70 of 360**. That creature is `Speciosus operis`, it is what actually ends the first world, and no
+> instrument at this level touches it.
 | the one that refuses to guess | C-75, PARSER VALIDATION | a guard against our own instrument, which has already turned correct working into a confident wrong answer once |
 | the one that listens to the clock | C-74, LATENCY | probably nothing. A number the census carries and nobody has ever asked a question of |
 
@@ -229,14 +253,17 @@ Chapter I's stored replies, with the goal entirely withheld, **50 of 158 trials 
 and with a merely ambiguous goal, 64 of 146. Every one of those values is a confident answer to a
 question nobody asked, and a scorer downstream cannot tell them from real ones.
 
-**This is worse than `Auratus gravis`, the gilded creature that carries a part it did not need.** The
-gilded one is harmed and the harm appears in its score. The judge of the void is harmed and its score
-comes back clean. It cannot be caught by reading a result, only by checking a precondition, and the bench
-has no mechanism that refuses to run when one is missing.
+**This is worse than `Obtemperans habitui`, the creature that obeys a manner and loses the answer.** The
+obedient one is harmed and the harm appears in its score, two thirds correct to zero. The judge of the
+void is harmed and its score comes back clean. It cannot be caught by reading a result, only by checking
+a precondition, and the bench has no mechanism that refuses to run when one is missing.
+
+> **Corrected 2026-07-26.** The contrast case in this passage was `Auratus gravis`, retracted since. The
+> argument did not depend on it and the replacement is better measured.
 
 It also reveals that the bestiary has **two axes** rather than one. `Vocatus dirigens` and its chain are
-constructs: what the player builds. `Tacitus operis` and `Auratus gravis` are fuel phenotypes: what the
-player finds. An encounter is a cell in that grid, and the same construct meeting different fuel is a
+constructs: what the player builds. `Tacitus operis` and `Obtemperans habitui` are fuel phenotypes: what
+the player finds. An encounter is a cell in that grid, and the same construct meeting different fuel is a
 different creature, which is Law IV stated a second way.
 
 ## The creatures of this level

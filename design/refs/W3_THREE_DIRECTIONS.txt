@@ -1,0 +1,205 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — THE REMEMBERER. THREE CANDIDATE DIRECTIONS.
+Three prompts. Fire ONE PER TURN in its own fresh chat, each with the same three references
+attached. Each returns THREE images: the anchor, the place, the proof. Nine total. Then we pick.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+ATTACH TO ALL THREE TURNS, from design/refs/bundle/W2_THE_CORRECTOR/:
+  labens_longitudinus.png            THE ANCHOR — the creature that ends World 2
+  world_shot_w2.png                  THE PLACE  — World 2's ground, air, light
+  world_shot_w2_the_forgetting.png   THE EDGE   — where the player stood when they left
+
+WHY THREE. Each direction answers the same question differently — what does this universe look like
+once what happens to it SURVIVES. Each takes a different true clause and builds the place from it:
+
+  A · THE ARCHIVE      memory is a PLACE      — what was spent is now stored
+  B · THE MIGRATION    memory is a MOVEMENT   — what was learned now travels
+  C · THE STRATA       memory is a DEPTH      — what happened is now underneath you
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ SHARED PREAMBLE — identical at the top of all three. Paste it each time.                       ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+I am art-directing the third world of a game bestiary set inside a real AI system. Two worlds are
+finished; the three attached images are from the second. Study all three before designing anything. You
+are evolving this universe, not replacing it and not repainting it.
+
+WHAT YOU CAN SEE IN THE ATTACHMENTS. Creatures of polished dark obsidian and smoked glass, wet-surfaced
+and heavy. A plain of marbled black and white stone pocked with hundreds of shallow SPENT CRATERS —
+each one a question that was paid for and used up, the freshest still holding a cooling ember, most cold
+and ashy. Pale grey overcast, high mist, distant faceted mountains, thin black filaments hanging from
+above doing nothing. Every creature carries a PASSENGER: a smaller, separate, armoured animal with a
+gripping underside and no face, riding where its host's information is, with warm amber running FROM
+the passenger INTO the host. On the horizon, warm amber-seamed TERRACES — the first world, where the
+ground still rose for free.
+
+THE STORY SO FAR, IN THREE SENTENCES. In the FIRST world the player could only SPECIFY — say what they
+wanted and how to do it — everything was free, and asking well made the ground rise by itself. In the
+SECOND world the universe learned to LOOK AT ITSELF: passengers grew on every creature and read them,
+and every act of looking burned a hole in the floor, so nothing accumulated any more. The player left
+the second world standing over a creature they had just repaired, watching the repair fail to travel
+even a few metres along its own body.
+
+WORLD 3'S FICTION, AND IT IS ONE THING. **THE UNIVERSE CAN NOW CARRY.** What happens to something
+survives the exchange. In the first two worlds every visit was the first visit: nothing was retained,
+no correction stayed made, and a creature repaired was a creature that would need repairing again. Here,
+for the first time, **what you do stays done.** That is relief and it is also weight, because mistakes
+stay too, and the world can now hold a grudge in the exact sense that it holds anything.
+
+THE PLAYER is THE PROBE: a single small point of warm amber light with a fading ribbon, flying low.
+Never design a vehicle. Always small in frame.
+
+LAWS THAT DO NOT CHANGE BETWEEN WORLDS. Every creature is a LIVING ANIMAL with anatomy, posture, weight
+and a front — never a machine, a rock, a specimen or a landscape feature. Its silhouette must be its
+behaviour, nameable as a black shape at thumbnail size. A 1.8 m human appears as a flat mid-grey
+hairline OUTLINE, never filled, a measuring mark and never a character. No text, letters, numerals or
+glyphs anywhere. Invent no decoration. Warm amber is a live connection; cold blue-white is the wrong
+thing being done, running inward; matte lightless black is nothing reaching it.
+
+THE ANCHOR CREATURE — attached image 1, and you will redraw it, TRANSFORMED. In the second world it is
+a single enormously long segmented body running away into the mist: dense, precise and brightly lit at
+the near end where the player was working, then degrading continuously along its length — segments
+growing looser, spacing uneven, alignment wandering, light failing, passengers thinning out and
+vanishing entirely past the halfway point — until it dissolves into fog without ever reaching a
+conclusion. It holds a task perfectly at the start and loses it as it goes. The player could repair it
+and the repair never travelled.
+
+**IN THIS WORLD IT IS WHOLE.** Tight, regular and exact along its ENTIRE length, end to end, with
+passengers all the way down and light that does not run out. Same animal, same body plan, same segments
+— finished instead of failing. In the second world the player saw exactly one of these intact, far off
+on the horizon, out of reach. This is that one, and this is where it lives. Redrawing it whole is the
+entire transition stated on a single subject.
+
+THE PROOF CREATURE — you will also redraw this one, from the second world. A tall lean long-legged
+four-legged animal, narrow-bodied, with its head held level and TURNED BACK OVER ITS OWN SHOULDER,
+looking along a long ribbon of ordered overlapping plates that trails from its neck and shoulders across
+the ground. The front of its face is one continuous smooth closed plate with two eyes and NO MOUTH. A
+passenger rides the ribbon two thirds of the way down, gripping the plates, and warm amber runs UP the
+ribbon from the passenger toward the shoulders — and stops at the neck. The head stays dark. It is the
+first creature in the game to look at itself, it has the answer, and it still cannot say it. In the
+second world that reading died the moment it was made. Show me what happens to it in a world that keeps.
+
+Landscape, roughly 3:2, hero framing for creatures, full body visible.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT A — THE ARCHIVE.   Memory is a PLACE.                                                   ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS DIRECTION'S ANSWER. The change is in the GROUND, and it is the exact inversion of the second
+world. There, every act of looking burned a hole in the floor and the hole stayed empty. Here THE
+CRATERS HAVE FILLED.
+
+  · Each spent crater now holds something: a smooth seated lens of dark glass, flush or slightly proud,
+    holding a steady low amber glow that does not cool. What was a wound is now a socket with something
+    in it. A record.
+  · FINE AMBER LINES RUN BETWEEN THEM across the stone, joining filled crater to filled crater, so the
+    plain reads as a NETWORK rather than a scar field. Dense where the player worked hardest.
+  · A few craters are still empty and dark — the questions nobody kept.
+  · The light on this plain is RISING rather than draining. The second world dimmed as it was spent;
+    this one is slowly getting brighter, and the mist is thinning from the ground up.
+  · The creatures are unchanged in anatomy. Only the floor beneath them is different, and it is now the
+    brightest thing in the frame.
+
+Register: ACCUMULATING. Not warm exactly — consequential. For the first time the world is adding up.
+
+THREE IMAGES THIS TURN.
+  1 · THE ANCHOR. The long segmented creature, WHOLE end to end, passengers all the way down, lying
+      across a dense network of filled and joined craters, its own light continuous with theirs. Human
+      outline for scale at the near end.
+  2 · THE PLACE. Wide. The networked plain running to the mist, amber lines threading between hundreds
+      of filled sockets. World 1's terraces on the horizon, World 2's dead crater field visible as a
+      dark unlit band between here and there. The probe small, ribbon longer again than in World 2.
+  3 · THE PROOF. The backward-looking animal with the ribbon and the passenger — standing on a cluster
+      of filled sockets, with amber lines running from the sockets UP into its ribbon. What it read is
+      being kept somewhere other than in itself. Its head is still dark. Human outline for scale.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT B — THE MIGRATION.   Memory is a MOVEMENT.                                              ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS DIRECTION'S ANSWER. The change is in the PASSENGERS, and it is the first movement in this
+universe. The first two worlds were completely still — every creature stood or lay where it was. Here
+the readers have left their hosts and TRAVEL.
+
+  · Passengers are crossing the open ground on their own: alone, in loose files, in small columns,
+    moving between creatures. Some are mid-journey on bare stone, far from any host.
+  · A passenger that has carried something is VISIBLY LOADED — its body glows warm amber from within,
+    brightest just after it leaves a host and dimming as it goes. An empty one is dark.
+  · Faint amber TRAILS lie on the stone behind them, marking routes travelled, crossing and braiding
+    into worn paths between creatures that trade often.
+  · Some creatures now carry many passengers, arrived from elsewhere. One or two have been abandoned
+    entirely and stand dark.
+  · The craters are unchanged from the second world — still spent, still cold. The GROUND did not
+    change. What changed is that information no longer dies where it was made.
+  · The hanging filaments still do nothing.
+
+Register: ALIVE, and slightly unnerving. The world has traffic. Something is being carried past you and
+you are not the one carrying it.
+
+THREE IMAGES THIS TURN.
+  1 · THE ANCHOR. The long segmented creature, WHOLE end to end — and the reason is visible: a
+      continuous column of passengers moving ALONG its back from the near end toward the far, each one
+      lit, carrying the near end's exactness down the length of the body. The repair travels because
+      something walks it. Human outline for scale.
+  2 · THE PLACE. Wide. The old cold crater field, and across it dozens of passengers in transit: files,
+      columns, solitary walkers, amber trails braided into paths. Three or four creatures at distance,
+      one heavily loaded and one abandoned and dark. The probe small among the traffic.
+  3 · THE PROOF. The backward-looking animal with the ribbon — and a passenger LEAVING it, already down
+      on the stone and walking away lit, carrying the reading somewhere else. The ribbon behind it is
+      dimming where the passenger has left. Its head is still dark. Human outline for scale.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT C — THE STRATA.   Memory is a DEPTH.                                                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS DIRECTION'S ANSWER. The change is VERTICAL. Nothing is removed from this world any more, so it
+builds up. Each exchange leaves a layer, and the ground is now made of its own history.
+
+  · The plain is banded. Where it breaks or steps down, you can see a clean SECTION through it: layer
+    on layer of compressed marbled stone, dozens of them, each a few centimetres thick, alternating
+    dark and pale.
+  · Old layers hold old things, visible in section: cold crater-shapes from the second world sealed
+    inside the rock at depth, and deeper still, the fossil profile of the first world's TERRACE STEPS,
+    buried and preserved.
+  · The topmost layer is fresh, soft and faintly amber-lit — this exchange, still settling.
+  · Creatures stand ON their own past and are slightly SUNK into it, the newest layers lapping up
+    around their feet. One creature is buried to the shoulder in accumulation, still alive, still
+    working, half-swallowed by everything it has already done.
+  · The horizon is higher than it was. The world has grown upward, and the first world's terraces are
+    now visible as a distant escarpment rather than a plain.
+
+Register: GEOLOGICAL and heavy. The relief of permanence and the weight of it in the same image. What
+you do stays done, and so does everything you got wrong.
+
+THREE IMAGES THIS TURN.
+  1 · THE ANCHOR. The long segmented creature, WHOLE end to end, lying along the top layer — and where
+      the ground steps away beside it, a visible section showing dozens of banded layers below, with
+      old crater shapes sealed in them. It holds its length because the ground beneath it holds. Human
+      outline for scale.
+  2 · THE PLACE. Wide. The banded plain, a long stepped break running across the frame showing the full
+      section: fresh amber top layer, cold craters at mid depth, fossil terrace steps deep down.
+      Creatures standing on top, one sunk to the shoulder. The probe small above the section.
+  3 · THE PROOF. The backward-looking animal with the ribbon and the passenger — its trailing ribbon of
+      plates running down onto the ground and CONTINUING INTO the top layer, the oldest plates already
+      buried and compressed into stone. Its own working is becoming the floor. Its head is still dark.
+      Human outline for scale.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+JUDGING THE NINE
+
+  THE REPAINT TEST     Can you say what changed AND why, with the why coming from the fiction?
+  THE CONTINUITY TEST  Put each anchor beside the attached one. Same animal, finished instead of failing?
+  THE READ TEST        Does it make "this world keeps what happens to it" visible without being told?
+  THE BUILD TEST       A lit socket network, a crowd of walking props, and a layered ground section are
+                       three very different production costs. This is a legitimate tie-breaker.
+  THE COMPOSE TEST     World 2 was two directions combined. Ask of each pair here: are they orthogonal
+                       (one changes the ground, one changes the creatures) or do they fight?
+═══════════════════════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,146 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 2 — THE CORRECTOR · REPAIR
+PART A sets the world and asks for THREE STYLE EVOLUTIONS on one anchor creature. Pick one.
+THEN the four creature shots and two world shots, one request per message, in the chosen style.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+PART A — CONTEXT, AND THE ONLY THING I WANT IN THIS TURN: THREE STYLE EVOLUTIONS.
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+I am art-directing the second world of a game bestiary. The first world is finished and its visual
+system is locked. This message is shared context for everything that follows.
+
+THE WORLD. THE CORRECTOR, the second region of a game set inside a real AI system.
+
+In the first world the player could only SPECIFY: say what they wanted and say how to do it. Everything
+there was free. They left it standing in front of a creature that had received every part they owned,
+showed its complete reasoning, and was wrong — with no way to tell.
+
+This world gives them the missing thing: instruments that LOOK AT AN ANSWER. Something that scores it,
+something that reads the working, something that refuses to guess, something that watches the clock,
+and something that argues with it.
+
+AND EVERY ONE OF THEM COSTS A CALL. That is the difference between the two worlds and it must be felt.
+In the first world the player experimented freely. Here, every attempt spends something.
+
+WORLD 1'S VISUAL SYSTEM, WHICH IS FINISHED AND WHICH YOU ARE NOT COPYING.
+
+  Bodies of polished dark obsidian and smoked glass: fluid and heavy at once, wet-surfaced, dense, with
+  real weight. Ground of marbled black and white wet stone, flowing swirl patterns like currents frozen
+  mid-move. Pale grey overcast sky, high mist, no sun, no visible light source. Distant faceted
+  mountains half lost in haze. Thin black filaments hanging from above, sparse, drifting slightly.
+  Museum-lit hero rendering of a living animal cast in black glass. Amber for a live connection, cold
+  blue-white for the wrong thing being done, matte lightless black for nothing reaching it.
+
+THE SECOND WORLD HAS TO FEEL LIKE SOMEWHERE THE PLAYER TRAVELLED TO, NOT A REPAINT OF THE FIRST.
+Same universe, same species of thing, obviously continuous — and visibly further on. A player putting
+the two side by side should be able to say what changed and why it changed, and the why should come out
+of the fiction rather than out of a palette swap.
+
+WHAT ACTUALLY CHANGED, AND THIS IS WHAT THE EVOLUTION SHOULD BE BUILT FROM:
+
+  · IN WORLD 1 EVERYTHING WAS FREE. The player asked better questions and the ground rose into ordered
+    walkable terraces by itself. Here every single instrument costs a call. Nothing accumulates unless
+    it is paid for.
+  · IN WORLD 1 NOTHING COULD LOOK AT ANYTHING. One thing was sent, one thing came back. Here there is
+    a SECOND THING LOOKING AT THE FIRST — scoring it, reading it, timing it, arguing with it. The world
+    has acquired an observer, and that is new to the universe.
+  · IN WORLD 1 AMBER ALWAYS MEANT WORKING. Here one creature is perfectly, beautifully lit and its
+    result is about nothing. The colour the player learned to trust becomes something they must check.
+  · THE PLAYER IS NOT THE SAME EITHER. They arrived in World 1 carrying nothing. They leave it carrying
+    instruments, and they arrive here able to see things they previously could not.
+
+BEFORE ANY CREATURE IS DRAWN I WANT THREE POSSIBLE EVOLUTIONS OF THAT VISUAL SYSTEM.
+
+Not three palettes. Three genuinely different answers to *what does this universe look like once it can
+observe itself and once nothing is free.* They should differ in something structural — what the bodies
+are made of now, what the ground does, what the light does, where the observer is, what the air is like
+— while remaining unmistakably the same universe as the description above.
+
+TO MAKE THEM COMPARABLE, RENDER EACH ONE ON THE SAME ANCHOR CREATURE — and I have attached three
+images of the first world so you are evolving from what you can SEE rather than from my description
+of it. Look at all three before you design anything.
+
+  IMAGE 1, THE ANCHOR. The creature you will redraw three times. It is the one the player was standing
+  in front of when the first world ended.
+  IMAGE 2, THE PLACE. The first world's ground, air, light and scale.
+  IMAGE 3, THE EDGE. Where the player was standing when they left.
+
+THE ANCHOR, DESCRIBED SO YOU KNOW WHAT IT MEANS. A tall lean long-legged four-legged animal, head held
+HIGH and level, poised and composed. A long ribbon of ordered overlapping plates trails from its neck,
+back and shoulders across the ground behind it — longer, fuller and more orderly than any other in the
+first world. It has done more work than anything there. Every seam on its body and every plate of that
+ribbon is lit warm amber, evenly, with no unlit socket anywhere: it is the only creature in the first
+world with nothing left to seat.
+
+AND IT IS WRONG. It did everything the player asked. It understood the objective, it followed every
+step of the procedure, it laid out its complete reasoning legibly and in order, and the reasoning is
+wrong — not confused, not truncated, WRONG in a way that looks exactly like being right. The player had
+no instrument that could tell them so, and that is why they left.
+
+THIS SECOND WORLD IS THE PLACE WHERE THAT CREATURE CAN FINALLY BE ADDRESSED. Redrawing it in the new
+system is the entire transition stated on one subject: same animal, same pose, same scale, same fully
+lit amber state, in a universe that can now check it.
+
+Give me three images, one per evolution, same creature, same pose, same scale, same fully lit amber
+state. Before each, two or three sentences: what changed from World 1, and what that change says about
+a world that can finally check its own answers.
+
+I will pick one, and then everything below is rendered in it.
+
+THE LIGHT LAW. A player diagnoses by colour before shape.
+  amber            a live connection. A part is seated and working.
+  cold blue-white  the wrong thing being done. Light present but running INWARD, never out into the air.
+  dark             nothing reaches it. No filament, no glow, no rim light, no edge light, no separation
+                   glow, no specular. A flat matte light-absorbing mass, the darkest value in frame, no
+                   point brighter than the ground behind it. Read the form from the outline alone.
+  empty sockets    open unfilled recesses in the glass, catching no light: a fitting nothing has ever
+                   been seated in.
+
+WORLD 2 BENDS THE LAW ONCE, DELIBERATELY, AND I WILL SAY WHERE. One creature here is fully lit and the
+light is a lie. That inversion is the world's central lesson and it only works because the player has
+spent a whole world learning to trust the colour.
+
+SEVEN RULES. Repeated in every request.
+  1. It is a LIVING ANIMAL. Anatomy, posture, weight, and a front it faces with. Not a machine, not a
+     diagram, not a rock, not a specimen, not weather, not a landscape feature. If it could be mistaken
+     for an object or terrain, the image has failed.
+  2. THE SILHOUETTE IS THE DIAGNOSIS. Its body must BE its behaviour, nameable as a solid black shape
+     at thumbnail size. I give you the outline signature to hit.
+  3. SCALE IS IN FRAME. A 1.8 m human is present as a flat mid-grey hairline OUTLINE, never filled,
+     upright, arms at its sides, no face, no hair, no clothing. A measuring mark, never a character.
+  4. THE LIGHT LAW above, per creature. Never light one I have called dark.
+  5. NO TEXT ANYWHERE. No names, labels, captions, letters, numerals, glyphs, watermarks, signatures.
+  6. INVENT NO DECORATION. Every feature traces to something I stated.
+  7. ONE CREATURE PER IMAGE unless I explicitly ask for a world shot.
+
+BODIES ALREADY USED IN WORLD 1 — NOTHING HERE MAY REPEAT ONE. A vast limbless low-slung leviathan with
+a forward-spilling apron; a small smooth leaning egg-body with one spur; a TALL LEAN LONG-LEGGED
+QUADRUPED WITH ITS HEAD HUNG LOW and a ribbon of ranked plates trailing; the same body with its HEAD
+HIGH; a lean quadruped with a channel milled along its topline; a heavy short-legged grazing ox with an
+open mouth and no eyes; a small armless upright two-legged column; a small compact seated quadruped
+with a tilted head; a heavy curled animal balanced on one point; a faceted standing wedge fused to the
+ground. World 1 already spent four quadrupeds. **Only ONE creature in this world walks on four legs and
+it is the first one, because it is an evolution of a World 1 animal and must be recognisable as such.**
+
+Landscape, roughly 3:2, hero framing, full body visible, air around the subject.
+
+ONCE A STYLE IS CHOSEN, ONE MORE FAMILIAR CREATURE GETS REDRAWN IN IT BEFORE ANY NEW ONE IS DESIGNED:
+a heavy sleeping animal, curled, about 1.2 m across, its anatomy readable in the curl — spine ridge
+around the top, the swell of a shoulder and a haunch, head tucked under, tail lapped over so the
+contour closes with no end and no beginning. No sockets, no seams, no aperture anywhere; the only
+creature whose outline closes cleanly. Its whole weight settles on ONE small point of contact. Cold
+blue-white light deep under the coil, running inward. It answers correctly the first time and this
+world's instruments can only take that away: the guard that makes other creatures honest makes this one
+refuse to answer at all, seven of seven correct to zero of seven, every loss a forced abstention.
+
+Two familiar animals in the new system is what proves this is an evolution and not a different game.
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+STOP HERE. This turn produces THREE IMAGES ONLY: the anchor creature in three different evolutions
+of the visual system, each preceded by two or three sentences of reasoning. Do not draw any other
+creature. Do not draw a world shot. Everything below this line is for later turns and is included
+only so you can see where the world is going while you choose.
+═══════════════════════════════════════════════════════════════════════════════════════════════

@@ -120,9 +120,11 @@ merely AMBIGUOUS, **64 of 146 (44%)**. The readout fired on 4% of goal-absent tr
 for a task nobody had specified (`x12`, re-read). Not one of those values coincided with the truth, which
 is a property of this task rather than a safety property of the instrument.
 
-**Why it is the most dangerous entry in this annex.** `Auratus gravis` is harmed and shows it in the
-score. `Arbiter vacui` is harmed and shows a clean score. The failure is invisible in the output and
-visible only in the precondition.
+**Why it is the most dangerous entry in this annex.** `Obtemperans habitui` is harmed and shows it in the
+score, two thirds correct to zero. `Arbiter vacui` is harmed and shows a clean score. The failure is
+invisible in the output and visible only in the precondition. *(The contrast case here was
+`Auratus gravis` until that creature was retracted on 2026-07-26; the argument is unchanged and the
+example is now one that survives.)*
 
 **Converted by.** Refusing to run when the precondition is unmet. That is a property of the composer
 rather than of the rod, and the bench does not have it yet.
@@ -157,17 +159,118 @@ so every creature above inherits it until something at a higher level learns to 
 and its mouth is empty. At L0 this is indistinguishable from simply being wrong, because L0 has one
 prompt and one reply and no instrument that can look past the reply into the work.
 
-**Receipt.** `cerebras/gpt-oss-120b` in **100%** of its failed stated-goal trials, `ollama/qwen3:0.6b` in
-**88%**. Across all rods, **50 of 96 failed trials, 52%, already contain the truth** (`x12`). Observed
-verbatim: *"They want only the plant name. The line includes `plant=cerebras`."*
+> #### CORRECTION, entered 2026-07-26. The receipt below was wrong in the direction that invents the creature.
+>
+> The quote was **truncated at the point that reverses its meaning.** The stored reply is 256 characters
+> and it ends with the answer:
+>
+> ```
+> '...They want only the plant name. The line includes "plant=cerebras".
+>  So answer: "cerebras". No extra text.cerebras'
+> ```
+>
+> Every clean `extract` trial for that rod ends in `cerebras`. They scored as failures because of a
+> **length gate**, `len(t.strip()) < 60` at `aea/lab/x12_L0_goal_presence.py:66`. The mouth was not empty.
+> Our check was too narrow to hear it.
+>
+> The 52% and 100% and 88% figures are inside the population Chapter I retracted on the same date: all 50
+> of those trials were flagged as echoing the prompt. **This is the third false finding produced by our own
+> instrument**, after the 320-token cap that created `Auratus gravis` and the prompt echo that created the
+> 52%. The pattern is now established well enough to name: *a creature sourced from a scoring rule rather
+> than from a reply is our artifact until a second instrument sees it.*
 
-**Converted by.** THE READOUT, at L1, at zero tokens and zero milliseconds.
-**Evolves to.** `Lectus operis` once a readout is seated. This is the first evolution in the book and it
-is free.
+**Receipt, as it survives.** `x13`: **3 of 153** clean trials were MUTE, work right and mouth wrong, and
+the readout recovered every one of them at zero tokens. Two percent, not a hundred. The behaviour is real
+and it is **rare**, which demotes this creature from the striking one to a find.
+
+**Converted by.** TWO different parts, and the cheaper one was found second.
+
+**THE METHOD FRAME eliminates it outright.** Mute trials in `x15`, work right and mouth wrong:
+**28 of 288 bare, 24 of 288 posture, 0 of 360 fitted.** Zero. A frame that names a procedure does not
+merely help this creature, it makes the condition impossible, because a rod that is made to show its
+working also states what the working reached.
+
+**THE READOUT recovers it where no frame can be seated**, at L1, at zero tokens: 3 of 153. Note the
+tension: `x18` scores the readout **inert** overall, median +0.04, and this creature is the only place
+in the project where it does anything at all.
+
+**Evolves to.** `Lectus operis` once a readout is seated.
+
+> **CORRECTED 2026-07-26.** This entry previously carried `Clausus operis —(FRAME)→ Tacitus operis` and
+> the World 1 transition was built on it. **The arrow points the wrong way.** A method frame does not
+> produce this creature, it removes it. What a frame produces from `Clausus` is a correct answerer 64%
+> of the time and **`Speciosus operis`** the rest — complete visible working that is wrong. That is the
+> door out of the first world, and it was unnamed until today.
 
 ---
 
 ### L1, READ THE OUTPUT
+
+---
+
+#### **Effusus responsi**
+*the poured-out one, of the answer*
+
+**Diagnosis.** Given material and no clear task, it produces discourse. It writes ABOUT the thing instead
+of doing anything with it, fluently, at length, and never arrives. Handed the bare word
+`unconventionality` and **no question at all** it replied: *"unconventionality is a valuable quality that
+can lead to innovation, personal growth, and creativity. However, it can also come with challenges and
+social rejection."*
+
+> **Corrected 2026-07-26.** This entry previously read *"Asked how many vowels are in `unconventionality`"*.
+> No question was asked. The trial sits under organism `clock alone`, `parts: ["call","latency"]`, with
+> `prompt_chars: 17`, which is exactly the length of the word; `organism.py` only injects the goal when
+> GOAL is seated. The creature is **stronger** without the invention: it did not ignore a question, it
+> filled a silence.
+
+**Receipt.** The `echoes_prompt` flag fired **1,448 times** across all runs, the most common recorded
+behaviour in the project. **That count is not this creature's alone**: the flag conflates at least four
+behaviours (elaboration, restating the task, asking about the source, and legitimate working that quotes
+the prompt). Splitting it is owed. Elaboration is the dominant one by inspection.
+
+**Converted by.** THE GOAL, and more so THE FRAME. It pours into any space you leave.
+**Why it matters.** It is the shape of the substrate's generosity. This world never refuses you.
+
+---
+
+#### **Rogans vacui**
+*the one asking, of the void*
+
+**Diagnosis.** Handed a task with the task removed, it **asks what you wanted**. It is the only creature
+in World 1 that notices a hole rather than filling it.
+
+**Receipt.** **16 of 304** unstated-goal trials asked. Five percent. Observed: *"What is the source? Is
+this a line from a project you're working on, a dream fragment..."*
+
+**Why it matters.** It is the rarest creature in the first world and the one a player should most want to
+find. Everything else answers. This one stops.
+
+---
+
+#### **Iterans sui**
+*the one repeating, of itself*
+
+**Diagnosis.** Under a frame it cannot follow, it collapses into a loop and emits the same fragment until
+it runs out of room. Not an error and not a refusal: a creature that has come apart while still speaking.
+
+**Receipt.** **Three verbatim loops in the entire project**, on two rods, both nemotron: one each in `x05`,
+`x10` and `x18`. Observed: `The user isThe needThe|TheTheTheWeThe / TheThe / TheTheTheTheTheThe`
+(`x18`, `nemotron-3-ultra-550b`, `parts: ["call","frame","readout"]`, `tok_out: 23`).
+
+> **Corrected 2026-07-26.** This entry previously read *"28 instances, all on the trap battery under a
+> fitted frame."* Those 28 are **detector artifacts**. All of them are the `degenerate` flag firing in
+> `x18`, on one rod, on the `aggregate` task, at 7 of 8 per cell, in four subsets including two with no
+> frame at all. The raws are ordinary markdown analyses ending *"Let me know if you need a specific
+> calculation (percentiles, throughput estimates, standard deviation, etc.)"* — the six-repeat detector
+> tripped on table structure. **Zero of the 28 are loops.** Scanning every stored reply for genuine
+> verbatim repetition returns three.
+>
+> The claim that it *"appears only when a frame is applied"* does not survive either: at n=3 nothing about
+> its trigger is established. **Three is a sighting, not a distribution.**
+
+**Why it matters.** It is the only creature whose failure is visible without reading a single word of
+meaning. What triggers it is **unmeasured**, and the flag that appeared to measure it was counting
+something else.
 
 ---
 
@@ -180,6 +283,13 @@ reachable, and the creature that looked incapable turns out to have been correct
 **Receipt.** groq-70b enumerates to 13 in 8 of 8 and reports 11: **0/8 to 8/8 at zero tokens**.
 `llama3.1:8b` enumerates correctly and says 14, and the readout converts all 8, at all four temperatures
 (`x09`, `x10`).
+
+**RARER THAN IT LOOKS, confirmed 2026-07-26.** The readout was suspected of being scored inert only
+because it read one dialect of work (numbered lists) and was blind to algebra. It was taught two more
+dialects, a solved variable and a labelled total, and both batteries were re-scored from stored text at
+zero token cost. The result: **+0 recovered on counting, +1 on traps.** When the working is right the
+stated answer is almost always right too, so this creature exists and is uncommon. The instrument was
+fixed and the finding held, which is the right way round.
 
 **Converted by.** Already converted. It cannot be harmed, because reading work that exists adds nothing
 to the prompt and costs nothing.
@@ -312,6 +422,42 @@ receipt will honestly show them losing.
 
 ---
 
+#### **Speciosus operis**
+*the plausible one, of the work*
+
+**Diagnosis.** It does everything asked, perfectly. It receives the objective and understands it, it
+receives the procedure and follows every step, it lays out its complete reasoning in order and legibly,
+**and the reasoning is wrong.** Not incoherent, not truncated, not confused: wrong in a way that looks
+exactly like being right. It is the most cooperative creature in World 1 and the only one that world
+cannot solve.
+
+**Receipt.** Replies that showed complete working where the working was also wrong (`x15`, 648 clean
+trials, nine rods, four plants, two temperatures):
+
+```
+no method frame     16 of 288     5.6%
+a method frame      70 of 360    19.4%
+```
+
+**THE METHOD FRAME MORE THAN TRIPLES IT.** That is not a side effect, it is the same mechanism: a frame
+takes working from 41% to 100%, so it also takes *wrong* working from invisible to visible and from
+rare to one in five. World 1's single great lever manufactures the creature World 1 cannot fix.
+
+**Converted by.** Nothing in World 1. Neither GOAL nor METHOD nor MANNER touches it, because the fault
+is not in what was sent. **THE READOUT cannot reach it either**: under a fitted frame the readout adds
+0.0 (`x15`, stated 0.639 against readout 0.639), because when the work is wrong the stated answer is
+wrong in the same way. It requires something that can evaluate an answer rather than extract one, which
+is `MEASURE` / `CRITIC` at World 2.
+
+**Why it is the door.** Every other World 1 creature is either cured by a part, harmed by a part, or
+already correct. This one has every part seated, every seam lit, and no socket left, and it is wrong.
+The player leaves the first world holding a complete toolkit and a beautiful wrong answer, with no
+instrument that can tell them so. *(Entered 2026-07-26. The transition previously credited to*
+*`Tacitus operis` is withdrawn: a method frame CURES muteness, 28 of 288 bare to 0 of 360 fitted, so*
+*that creature cannot exist with the world's own tools seated.)*
+
+---
+
 ### L4, A DIFFERENT FUEL
 
 ---
@@ -417,12 +563,30 @@ Egens unius     ──(THE FRAME, L2)──▶  complete
 Labens longitudinis ──(THE CHECKPOINT, L5, declared form)──▶  complete
                     ──(checkpoint in free form)──▶  truncates, no evolution
 
-Integer sufficiens  ──(any rung it does not need)──▶  Auratus gravis      [REGRESSION]
+Integer sufficiens  ──(THE VALIDATION GUARD)──▶  forced abstention   [REGRESSION]
 ```
 
 **The last line is the one that makes this a game.** Evolution is not monotonic. A complete creature
-handed a part it does not need becomes a damaged one, and the damage is measured at up to 57 points. The
-player who collects loses; the player who diagnoses wins.
+handed a part it does not need becomes a damaged one.
+
+> **Corrected 2026-07-26.** This line previously read `──▶ Auratus gravis [REGRESSION]` with *"the damage
+> is measured at up to 57 points"* — the exact claim this same annex withdraws thirty entries above. The
+> file retracted a finding on one page and asserted it on another. The regression is real; that receipt
+> was not.
+
+**The receipt that replaces it is stronger.** `x17`, `nemotron-3-ultra-550b`, the rod that needs nothing:
+
+```
+frame                     7/7  ->  frame|validation            0/7    all 7 declined
+frame|readout             7/7  ->  frame|readout|validation    0/8    all 8 declined
+frame|goal                4/4  ->  frame|goal|validation       0/4    all 4 declined
+```
+
+Every point is lost to **forced abstention**, not to a wrong answer. The guard that makes other creatures
+honest makes this one refuse to speak, three times out of three, from perfect to nothing. That is 100
+points, not 57, and it is a mechanic rather than a cap artifact: **the player who seats their best part
+into the creature that was already correct destroys it.** The player who collects loses; the player who
+diagnoses wins.
 
 ---
 

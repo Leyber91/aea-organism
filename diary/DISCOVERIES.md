@@ -400,12 +400,20 @@ per-rod ceiling is the actual shape of the space. This is C-26's L4 placement
 arriving from a second direction: x07 showed a rod cannot know its own ceiling, and x10 shows you cannot infer
 it from size either. **The ceiling is only knowable by measuring, from outside, per task.**
 
-**2 · A FITTED FRAME HARMS A ROD THAT DOES NOT NEED IT, and the harm is large.** `nemotron-3-ultra-550b` goes
-**bare 1.00 -> fitted 0.25 / 0.43 / 0.86 / 0.38** across the four temperatures - damaged at every one. gpt-oss-20b
-takes a smaller hit (1.00 -> 0.88). x01 retracted the harm claim for a POSTURE frame and left it as pure tax;
-this is different and worse. **The `bare_fails` precondition is a CORRECTNESS guard, not an efficiency guard.**
-Seating a frame on a capable rod is not a wasted 34 tokens, it costs up to 57 points of accuracy. A composer
-that lets a player seat THE FRAME without checking the precondition is teaching a falsehood.
+**2 · ~~A FITTED FRAME HARMS A ROD THAT DOES NOT NEED IT~~ — RETRACTED 2026-07-26. The harm was our cap.**
+The original reading: `nemotron-3-ultra-550b` bare 1.00 to fitted 0.25 / 0.43 / 0.86 / 0.38, up to 57 points.
+**Twenty-seven of thirty fitted trials were truncated at `max_tokens=320` and not one bare trial was.** The
+frame told the rod to write a numbered list and state the count on the last line; our cap severed the reply
+before the last line arrived. Re-measured at 1200 tokens the same rod goes **bare 0.93 to fitted 1.00**.
+
+**What survives is quieter and points the other way.** A frame naming a METHOD is free or better on every
+rod tested; the rods that gain are the ones that fail without it (both granites, 0.00 bare), and the rods
+that already pass gain +0.067 and +0.083. **An unmet precondition buys nothing rather than costing
+something.** The `bare_fails` check is an efficiency guard after all.
+
+**The real correctness guard is a different part entirely.** Seat THE VALIDATION GUARD into the rod that
+needs nothing and it goes 7/7 to 0/7, three times over, every loss a forced abstention (`x17`). A composer
+that lets a player seat a part without checking its fit is still teaching a falsehood — just not this one.
 
 **3 · THE READOUT IS THE ONLY LEVER THAT GENERALISES - and it is free.** It converts two rods COMPLETELY
 (llama-3.2-1b nano and llama3.1:8b normal, both `fitted .00 -> +readout 1.00`) at **all four temperatures**, and

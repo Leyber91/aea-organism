@@ -162,3 +162,32 @@ Build-target map (reference -> engine surface):
 Method that worked (for the next set): anchor image + canon block; spec MATTER not information;
 counts stated twice; preempt tics in the base prompt; fresh gen over edit chains; reference-reuse
 within a conversation. 9 of 12 landed at zero fix rolls.
+
+---
+
+## THE CHAPTER II SET — REF-13, REF-14 (generated 2026-07-25)
+
+Save the two generated PNGs as `design/refs/REF-13_THE_RUNTIME_FABRIC.png` and
+`design/refs/REF-14_ONE_SELF_OR_FORTY.png`. Prompts and corrections live in
+`design/refs/bundle/18_RUNTIME_FABRIC/SPEC.md` and `bundle/19_ONE_SELF_OR_FORTY/SPEC.md`.
+
+### REF-13 — what it locks
+
+THE CODEX DETAIL PLATE: the surface that shows one layer of the 11-layer construction stack with the
+codex claim and the substrate finding in adjacent columns, a milled gutter carrying a `!=` mark on
+every row where they disagree, and heavier rules on the one contradiction that gates the others. Amber
+appears only on the highlighted layer in the corner inset and on the word PRESENT where something was
+genuinely found - 4 marks in the frame. Generated first try with zero attachments; the 5-column
+engraved register survives at 11 rows, which settles that Image 2.0 holds dense tabular type.
+**Known defect, not yet regenerated:** the C-78 MACHINE cell reads `2 FILES` and `grep -rl falsify
+aea/` returns 0. Corrected prompt is in the SPEC.
+
+### REF-14 — what it locks
+
+THE UNRESOLVED-QUESTION PLATE: two anatomies of the same information across a centre groove carrying
+the question vertically, with equal amber on both halves so the image poses C-80 without answering it.
+The device generalises to any open question in the book.
+**Two known defects:** the count should be THIRTY-FIVE (`find state -name "*.json"` = 35, not 40, and
+the render draws neither), and the composition leans left because the octagon is a designed jewel while
+the drawer bank is filing furniture. Corrected prompt in the SPEC. Until it is regenerated, REF-14 is a
+COMPOSITION reference only, never a source for the number.

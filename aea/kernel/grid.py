@@ -158,8 +158,13 @@ UNLIMITED = None
 PLANTS = {
     "ollama": dict(privacy="local", base="http://localhost:11434/v1", auth=None, openai=True,
                    rpm=UNLIMITED, rpd=UNLIMITED, note="local, private, unlimited"),
+    # rpm=40 is the PUBLISHED figure; MEASURED 2026-07-25 the real ceiling is ~25 IN FLIGHT per rod,
+    # per-model (not shared): 50 concurrent on one model -> 25 ok / 25 rejected in 1.8s, while three
+    # other models answered 200 in the same second; 78 requests cleared in <7s. max_inflight=20
+    # keeps a safety margin under the measured 25.
     "nvidia": dict(privacy="no-train", base="https://integrate.api.nvidia.com/v1", auth="NVIDIA_API_KEY", openai=True,
-                   rpm=40, rpd=UNLIMITED, note="121 models, 40 rpm/model, 256K ctx"),
+                   rpm=40, rpd=UNLIMITED, max_inflight=20,
+                   note="118 models; ~25 in-flight/rod measured, per-model not shared; 256K ctx"),
     "groq": dict(privacy="no-train", base="https://api.groq.com/openai/v1", auth="GROQ_API_KEY", openai=True,
                  rpm=30, rpd=1000, note="fast; qwen3-32b is 60 rpm"),
     "cerebras": dict(privacy="no-train", base="https://api.cerebras.ai/v1", auth="CEREBRAS_API_KEY", openai=True,
@@ -299,6 +304,28 @@ class Meter:
                 "calls_month": m["calls"], "monthly_calls_cap": cap.get("monthly_calls"),
             }
 
+    # IN-FLIGHT, per rod. MEASURED 2026-07-25: firing 50 concurrent requests at ONE nvidia model
+    # returned 25 x 200 and 25 x 429 in 1.8s, while three OTHER models answered 200 in the same
+    # second. So the ceiling that actually rejects you is CONCURRENCY PER ROD - not requests per
+    # minute, and not shared across the plant. 78 requests went through in under 7s (~670/min),
+    # which no rpm model predicts. The meter was guarding the wrong dimension.
+    _inflight: dict = {}
+
+    def enter(self, plant: str, model: str) -> None:
+        """Claim an in-flight slot on this rod (call immediately before the request)."""
+        with self.lock:
+            mk = f"{plant}:{model}"
+            Meter._inflight[mk] = Meter._inflight.get(mk, 0) + 1
+
+    def leave(self, plant: str, model: str) -> None:
+        """Release the slot (ALWAYS, in a finally - a leaked slot silently shrinks the rod)."""
+        with self.lock:
+            mk = f"{plant}:{model}"
+            Meter._inflight[mk] = max(0, Meter._inflight.get(mk, 0) - 1)
+
+    def inflight(self, plant: str, model: str) -> int:
+        return Meter._inflight.get(f"{plant}:{model}", 0)
+
     def can_spend(self, plant: str, model: str, est_tokens: int = 800):
         """(ok, wait_seconds, reason). wait_seconds = how long until a slot frees (rpm only)."""
         with self.lock, file_lock(self.state_path):
@@ -307,6 +334,12 @@ class Meter:
             tt = st["throttle"].get(mk)
             if tt and now < tt["until"]:                    # bucket in 429 cooldown -> route around it
                 return (False, round(tt["until"] - now, 1), "throttled (429 cooldown)")
+            # the real ceiling first: too many already in flight ON THIS ROD -> the next one 429s.
+            # Spreading across rods costs nothing, so this pushes the ladder toward rod DIVERSITY,
+            # which is what the measurement says the platform actually rewards.
+            mif = cap.get("max_inflight")
+            if mif is not None and Meter._inflight.get(mk, 0) >= mif:
+                return (False, 1.0, "in-flight (rod saturated)")
             win = self._win(st, mk, now)
             rpm = cap.get("rpm")
             if rpm is not None and len(win) >= rpm:
@@ -398,8 +431,35 @@ class Router:
 # --------------------------------------------------------------------------------------
 # 4. The client - actually draw the power (OpenAI-compatible plants). Always metered.
 # --------------------------------------------------------------------------------------
-def call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.2, timeout=60):
-    """Low-level OpenAI-compatible chat call. Returns dict(ok, latency, text, tokens, status, error)."""
+def call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.2, timeout=60,
+                tools=None):
+    # TIMEOUT IS AN INACTIVITY BUDGET, NOT A DEADLINE, AND `None` MEANS AWAIT THE RESPONSE.
+    # Luis, 2026-07-25: "for any model, experimenting and waiting for a response, more than setting
+    # timeouts, should be async await for the response... otherwise on chain of tasks it might fail
+    # for the wait." He is right, and it was already live: deepseek-v4-pro took 31.1s to return a
+    # TWELVE token reply, and the two big nemotrons emit reasoning before their answer. A rod that
+    # thinks for 90s before its first byte would trip a fixed 60s wait and be recorded as a FAILURE -
+    # a SLOW rod scored as an UNRELIABLE one, which is the same class of error as counting an outage
+    # as a wrong answer. urllib applies this value per blocking socket operation rather than to the
+    # whole exchange, so passing None waits as long as the peer is alive. Interactive paths keep 60;
+    # the lab passes None because a measurement must never be truncated by our own impatience.
+    """Low-level OpenAI-compatible chat call.
+
+    Returns dict(ok, latency, text, tokens, prompt_tokens, total_tokens, tool_calls, deprecation,
+    status, error).
+
+    THE FULL BILL (2026-07-25): completion_tokens alone is HALF the invoice. Everything the AEA
+    actually spends on - the system frame, conversation history, tool schemas, retrieved context -
+    arrives as PROMPT tokens and was being discarded. An economy measured on half its cost cannot
+    be honest, so both halves are carried now.
+
+    DEPRECATION: platforms announce a rod's death in the response header (NVIDIA sends
+    `Deprecation: <iso8601>`). That is ROT with a real timestamp, read rather than simulated - the
+    ladder can route off a dying rod BEFORE it dies instead of discovering it as a failure.
+
+    `tools` is passed through when given, so the tool-schema tax can be measured against the
+    identical prompt with and without it (the largest invisible cost in an agentic construct).
+    """
     cap = PLANTS[plant]
     url = cap["base"].rstrip("/") + "/chat/completions"
     headers = {"Content-Type": "application/json",
@@ -411,24 +471,36 @@ def call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.
         headers["Authorization"] = f"Bearer {k}"
     elif cap.get("anon"):
         headers["Authorization"] = f"Bearer {cap['anon']}"   # keyless-with-placeholder-token (LLM7 'unused')
-    body = json.dumps({"model": model, "messages": messages,
-                       "max_tokens": max_tokens, "temperature": temperature}).encode("utf-8")
+    payload_out = {"model": model, "messages": messages,
+                   "max_tokens": max_tokens, "temperature": temperature}
+    if tools:
+        payload_out["tools"] = tools          # the schema rides on EVERY call, used or not - the tax
+    body = json.dumps(payload_out).encode("utf-8")
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     t0 = time.time()
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            payload = json.loads(r.read().decode("utf-8"))
+            raw = r.read().decode("utf-8")
+            dep = r.headers.get("Deprecation")     # the rod's announced death, when the plant says so
+        payload = json.loads(raw)
         dt = time.time() - t0
         m = (payload.get("choices") or [{}])[0].get("message", {}) or {}
         text = m.get("content") or m.get("reasoning_content") or ""   # reasoning models put text here
         usage = payload.get("usage", {}) or {}
         toks = usage.get("completion_tokens", 0) or 0
-        return dict(ok=True, latency=dt, text=text, tokens=toks, status=200, error=None)
+        ptoks = usage.get("prompt_tokens")
+        ttoks = usage.get("total_tokens")
+        return dict(ok=True, latency=dt, text=text, tokens=toks,
+                    prompt_tokens=ptoks, total_tokens=ttoks,
+                    tool_calls=(m.get("tool_calls") or None),
+                    deprecation=dep, status=200, error=None)
     except urllib.error.HTTPError as e:
-        return dict(ok=False, latency=time.time() - t0, text="", tokens=0, status=e.code,
+        return dict(ok=False, latency=time.time() - t0, text="", tokens=0, prompt_tokens=None,
+                    total_tokens=None, tool_calls=None, deprecation=None, status=e.code,
                     error=(e.read().decode("utf-8", "ignore")[:200] if hasattr(e, "read") else str(e)))
     except Exception as e:
-        return dict(ok=False, latency=time.time() - t0, text="", tokens=0, status=0, error=str(e))
+        return dict(ok=False, latency=time.time() - t0, text="", tokens=0, prompt_tokens=None,
+                    total_tokens=None, tool_calls=None, deprecation=None, status=0, error=str(e))
 
 
 def complete(prompt: str, capability="reasoning", zone="private", depth=0,

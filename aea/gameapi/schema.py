@@ -4,8 +4,9 @@ Every field is a real fact, checked against live state - the map cannot lie abou
   - zones  = the real privacy rings, read from grid.ZONES and ordered by restrictiveness (fewest
              allowed plant-classes innermost): sensitive (local-only) -> private -> public. NOT a
              hand-copied literal; a zone added/renamed in grid.ZONES changes the map.
-  - alive  = the being's heartbeat has actually ticked. Gates the world's amber core: the core is
-             only lit when the mind is really running, never as unconditional decoration.
+  - heartbeat = the being's heartbeat has actually ticked (a MEASURED functional correlate, never a
+             claim of aliveness). Gates the world's amber core: lit only when the mind is really
+             running. Whether that is "alive" is the player's to supply - the claim ceiling holds.
   - nodes  = the AEA organs. `wired` is TRUE only when the organ's REAL signal is present - a draw
              actually recorded (not a file that merely exists), a memory that exists, a meter that
              has metered, a heartbeat that ticked. An un-wired organ is FOG (cold-blue wireframe),
@@ -55,14 +56,17 @@ def _live() -> dict:
     gs = load("grid_state.json", {})
     ticks = int(hb.get("total_ticks") or 0)
     return {
-        "alive": ticks > 0,
+        "heartbeat": ticks > 0,   # a measured functional correlate, NOT a claim of aliveness (ceiling)
         "wired": {
             # a draw was actually recorded through the mouth (a rod with calls > 0), not just a file
             "BRAIN":    any((v or {}).get("calls", 0) > 0 for v in usage.values()),
             # the meter has actually metered real usage (daily/rpm windows exist), not merely a file
             "GOVERNOR": bool(gs.get("daily") or gs.get("rpm")),
-            "MEMORY":   isinstance(mem, list) and len(mem) > 0,   # semantic memories exist
-            "LOOP":     ticks > 0,                                # the heartbeat has ticked
+            # RECALL (a memory that CHANGES a draw) has fired 0x in the composable mind. A raw memory
+            # store existing is the entity's autonomous consolidation, NOT the composable organ being
+            # wired - so MEMORY stays FOG, consistent with SENSES/HANDS and the guided close (m04).
+            "MEMORY":   False,
+            "LOOP":     ticks > 0,                                # the heartbeat has ticked (a real loop signal)
             "SENSES":   False,   # no standalone sense organ wired into the live mind yet
             "HANDS":    False,   # agent_tools reaches nothing in the live mind yet
         },
@@ -74,7 +78,7 @@ def _build() -> dict:
     w = live["wired"]
     nodes = [{"id": o["id"], "label": _LABEL.get(o["id"], o["id"]), "zone": o["zone"],
               "depth": o["depth"], "entry": o["entry"], "wired": bool(w.get(o["id"]))} for o in _ORGANS]
-    return {"ok": True, "core": "MIND", "alive": live["alive"],
+    return {"ok": True, "core": "MIND", "heartbeat": live["heartbeat"],
             "zones": _zones(), "nodes": nodes, "edges": _EDGES}
 
 

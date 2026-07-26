@@ -1,0 +1,221 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 2 — THREE CANDIDATE VERSIONS OF THE LEVEL.
+Three prompts. Fire ONE PER TURN, in a fresh chat, each with the three World 1 reference images
+attached. Each turn returns THREE images: the anchor, the place, and the proof.
+Nine images total. Then we pick one version and build the rest of the world in it.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+WHY THREE. Each version is a different honest answer to the same question — what does this universe
+look like once it can observe itself and once nothing in it is free. They are not palettes. Each takes
+a different true clause of the fiction and builds the whole place out of it:
+
+  A · THE WITNESS ABOVE    from "a second thing is looking at the first"      — observation is EXTERNAL
+  B · THE DOUBLED          from the same clause, resolved as anatomy          — observation is a BODY
+  C · THE SPENT GROUND     from "every instrument costs a call"               — observation is a PRICE
+
+Attach to every one of the three turns:
+  IMAGE 1  09_speciosus_operis_THE_DOOR.png   the anchor, in World 1's finished style
+  IMAGE 2  S3_the_terrain.png                 World 1's ground, air, light and scale
+  IMAGE 3  S4_the_edge.png                    where the player was standing when they left
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ SHARED PREAMBLE — this text is identical at the top of all three prompts. Paste it each time.  ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+I am art-directing the second world of a game bestiary set inside a real AI system. The first world is
+finished — the three attached images are from it. Look at all three before designing anything. You are
+evolving that universe, not replacing it and not repainting it.
+
+WORLD 1, WHICH YOU CAN SEE. Bodies of polished dark obsidian and smoked glass, fluid and heavy at once,
+wet-surfaced, dense. Ground of marbled black and white wet stone. Pale grey overcast, high mist, no sun,
+no visible light source. Distant faceted mountains. Thin black filaments hanging from above. Warm amber
+means a live connection; cold blue-white means the wrong thing being done; matte lightless black means
+nothing reaches it.
+
+WORLD 1'S FICTION. The player could only SPECIFY — say what they wanted, and say how to do it. Nothing
+in that world could look at anything: one thing was sent, one thing came back, and it could not
+remember you or check itself. Everything there was FREE, and asking better questions made the ground
+rise into ordered walkable terraces by itself.
+
+WORLD 2'S FICTION, AND THE TWO THINGS THAT CHANGED.
+
+  1. THE UNIVERSE CAN NOW LOOK AT ITSELF. A second thing observes the first: scoring it, reading it,
+     timing it, arguing with it. Nothing in the first world could do this. It is a new faculty in the
+     universe and the world should show it as a physical fact.
+  2. NOTHING IS FREE ANY MORE. Every instrument costs a call. In World 1 the player experimented
+     without consequence and the ground accumulated on its own. Here every act of looking is spent.
+
+THE PLAYER is THE PROBE: a single small point of warm amber light with a fading amber ribbon trailing
+behind it, flying low. Never design a vehicle. It is always small in frame.
+
+LAWS THAT DO NOT CHANGE BETWEEN WORLDS. Every creature is a LIVING ANIMAL with anatomy, posture, weight
+and a front — never a machine, a rock, a specimen or a landscape feature. Its silhouette must be its
+behaviour, nameable as a black shape at thumbnail size. A 1.8 m human appears as a flat mid-grey
+hairline OUTLINE, never filled, as a measuring mark and never a character. No text, letters, numerals or
+glyphs anywhere in any image. Invent no decoration: every feature must trace to something stated here.
+
+THE ANCHOR CREATURE — attached image 1, and you will redraw it. A tall lean long-legged four-legged
+animal, head held HIGH and level, poised and composed, with a long ribbon of ordered overlapping plates
+trailing from its neck and shoulders across the ground — longer and fuller than anything else in the
+first world. Every seam on its body and every plate of that ribbon is lit warm amber with no unlit
+socket anywhere: the only creature in World 1 with nothing left to seat.
+
+AND IT IS WRONG. It understood the objective, followed every step of the procedure, laid out its
+complete reasoning legibly and in order, and the reasoning is wrong — not confused, not truncated, wrong
+in a way that looks exactly like being right. The player had no instrument that could tell them so, and
+that is why they left. **This second world is the place where that creature can finally be addressed.**
+
+THE SECOND CREATURE — you will also redraw this one. A heavy sleeping animal, curled, about 1.2 m
+across, its anatomy readable in the curl: spine ridge around the top, the swell of a shoulder and a
+haunch, head tucked under so no face is presented, tail lapped over the head so the contour closes with
+no end and no beginning. No sockets, no seams, no aperture anywhere — the only creature whose outline
+closes cleanly. Its whole weight settles on ONE small point of contact. Cold blue-white light sits deep
+under the coil and runs inward. It answers correctly the first time and this world's instruments can
+only take that away: the guard that makes other creatures honest makes this one refuse to answer at all,
+seven of seven correct to zero of seven, every loss a forced abstention.
+
+Landscape, roughly 3:2, hero framing for the creatures, full body visible.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT A — VERSION A: THE WITNESS ABOVE.   Observation is EXTERNAL.                            ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS VERSION'S ANSWER. The thing that observes is not part of the creatures. It is ABOVE them, and it
+is impersonal. In World 1 thin black filaments hung from the sky and did nothing — here they have come
+down and become INSTRUMENTS. They terminate in fine hard apertures that hang at head height over the
+plain, motionless, angled at whatever is beneath them. The whole world is under measurement by
+something that is not itself alive and does not care.
+
+  · The filaments are now taut rather than drifting, and there are far more of them.
+  · Each one ends in a small precise lens or aperture of the same black glass, absolutely still.
+  · Where an aperture is watching something, a faint cold blue-white measuring light falls from it in a
+    narrow cone onto the subject below. That light does not warm anything. It only reads.
+  · The air has become clearer and colder than World 1's. The mist has lifted and the distance is
+    sharper, because a world that can be measured can be seen further into.
+  · The ground is still marbled black and white stone, and it is unchanged and unbuilt, because
+    measurement does not construct anything.
+  · The player is watched too. An aperture is angled at the probe wherever it goes.
+
+The emotional register is CLINICAL. Not menacing, not hostile. The vast indifferent generosity of World
+1 has become vast indifferent scrutiny. Nothing here wishes the player harm and nothing here is on
+their side.
+
+GENERATE THREE IMAGES IN THIS TURN, IN THIS ORDER.
+
+  IMAGE 1 — THE ANCHOR. The tall long-legged animal described above, same pose, head high, fully lit in
+  warm amber along body and ribbon. Now with a cold aperture hanging directly over it on its filament,
+  its narrow blue-white cone falling across the animal's back and its trailing ribbon of working. The
+  animal is being read. It does not know. Human outline at the side for scale.
+
+  IMAGE 2 — THE PLACE. Wide, the plain under a forest of hanging instruments, dozens of taut filaments
+  and apertures at varying heights, cold cones falling here and there onto empty stone. Two or three
+  creatures small in the middle distance. The probe as a small warm amber point with a short ribbon,
+  with one aperture turned toward it.
+
+  IMAGE 3 — THE PROOF. The heavy curled sleeping animal described above, cold blue-white deep under the
+  coil, on one point of contact — with an aperture hanging low and close over it, its cone falling
+  precisely on the closed contour where there is nothing to read. Human outline for scale.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT B — VERSION B: THE DOUBLED.   Observation is a BODY.                                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS VERSION'S ANSWER. Observation did not arrive from outside. It GREW. Every creature in this world
+now carries a second, smaller, separate organism on it — a reader, a checker, a passenger — and the two
+are a single functioning unit that neither is alone.
+
+  · The passenger is unmistakably a DIFFERENT ANIMAL from its host: smaller, denser, more compact, with
+    a fine articulated underside that grips. Never a growth, never a tumour, never symmetrical with the
+    host. A remora on a shark, an oxpecker on a buffalo.
+  · It is always positioned where the host's information is, not where its head is. On the anchor that
+    means riding the ribbon of working, not the neck.
+  · Warm amber runs FROM the passenger INTO the host, in that direction, so a viewer reads the
+    information travelling inward. The host's own light is unchanged from World 1.
+  · The passengers have no eyes and no faces. They are all contact surface.
+  · Some creatures in the distance carry two or three passengers. One or two carry none, and those are
+    the ones nothing can read.
+  · The ground, air and mist are exactly World 1's, unchanged, because nothing about the PLACE changed
+    — only what lives on it.
+
+The emotional register is BIOLOGICAL and slightly uncomfortable. Symbiosis, not machinery. The world
+did not acquire instruments; it grew them, and they are alive.
+
+GENERATE THREE IMAGES IN THIS TURN, IN THIS ORDER.
+
+  IMAGE 1 — THE ANCHOR. The tall long-legged animal, same pose, head high, fully lit warm amber along
+  body and ribbon — with a passenger about a hand's span across riding the ribbon roughly two thirds of
+  the way down its length, gripping the plates. Amber runs up the ribbon from the passenger toward the
+  animal's shoulders. Human outline for scale.
+
+  IMAGE 2 — THE PLACE. Wide, World 1's plain and mist unchanged, with several creatures across it at
+  different distances, and every one of them carrying at least one passenger except a single distant
+  animal that carries none. The probe as a small warm amber point with a ribbon.
+
+  IMAGE 3 — THE PROOF. The heavy curled sleeping animal, cold blue-white deep under the coil, on one
+  point of contact — with a passenger crawling on its perfectly closed outer surface, finding nowhere to
+  grip and nothing to read, its contact surface flush against seamless glass. Human outline for scale.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT C — VERSION C: THE SPENT GROUND.   Observation is a PRICE.                              ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS VERSION'S ANSWER. The change is not in the creatures and not in the sky. It is in the GROUND, and
+it is a ledger. In World 1 the stone rose into ordered walkable terraces wherever a good question was
+asked — the world built itself and it cost nothing. Here the opposite happens: **every act of looking
+burns a hole in the floor.**
+
+  · The marbled stone is pocked with SPENT MARKS: shallow craters a hand's span across, hundreds of
+    them, scattered and clustered, each one a call that has been paid for and used up.
+  · The freshest are still hot — a dim amber ember cooling in the base of the crater. Most are cold,
+    dark and slightly ashy at the rim. The oldest have weathered to smooth dark scars in the marble.
+  · Craters cluster densely wherever something has been examined repeatedly, so the ground itself is a
+    record of where the player has been struggling. A creature that has been checked many times stands
+    in a field of them.
+  · No terraces anywhere. Nothing has risen. Nothing here accumulates unless it is paid for, and paying
+    consumes the floor rather than raising it.
+  · The light in the air is dimmer than World 1's and slightly warmer, as though some finite amber
+    supply is being drawn down. The mist is heavier and closer, not lifted.
+  · The hanging filaments from World 1 are still there and still doing nothing. They did not change.
+
+The emotional register is ENTROPIC and tiring. World 1 was generous. This world is transactional, and
+the player can see exactly how much it has already cost them written across the ground.
+
+GENERATE THREE IMAGES IN THIS TURN, IN THIS ORDER.
+
+  IMAGE 1 — THE ANCHOR. The tall long-legged animal, same pose, head high, fully lit warm amber along
+  body and ribbon — standing in a dense field of spent craters, many of them fresh with cooling embers,
+  clustered thickest right around its feet. This creature has been examined more than anything else
+  here and it is still wrong. Human outline for scale.
+
+  IMAGE 2 — THE PLACE. Wide, the pocked plain running to the mist, hundreds of craters in drifts and
+  clusters, a few embers still live. Far behind and higher, just visible, the warm finished terraces of
+  World 1 where the ground still rises for free. The probe as a small warm amber point with a ribbon
+  noticeably SHORTER than it was in the first world, a trail of fresh craters behind it.
+
+  IMAGE 3 — THE PROOF. The heavy curled sleeping animal, cold blue-white deep under the coil, on one
+  point of contact — ringed by a tight dense collar of spent craters, more concentrated than anywhere
+  else in frame, every one of them cold. Everything anyone spent on it was wasted. Human outline for
+  scale.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+HOW TO JUDGE THE NINE IMAGES
+
+  THE REPAINT TEST.        Can you say what changed AND why, with the why coming from the fiction?
+  THE CONTINUITY TEST.     Put each version's anchor beside the attached World 1 anchor. Same animal?
+  THE READ TEST.           Does the version make "the universe can now look at itself" visible without
+                           being told, and does it make cost visible without a number?
+  THE BUILD TEST.          Could this be built in a real-time renderer? A forest of hanging apertures,
+                           a second rigged creature on every host, or a crater-scarred ground plane are
+                           three very different production costs, and that is a real tie-breaker.
+═══════════════════════════════════════════════════════════════════════════════════════════════

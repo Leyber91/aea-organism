@@ -114,6 +114,24 @@ works. So the floor is real and it was misnamed:
 > **A call must specify WHAT TO COMPUTE. A goal and a procedure are two ways of doing that, and either
 > one suffices.**
 
+> #### REFINEMENT, entered 2026-07-26 after the organisms were assembled
+>
+> *"Either one suffices"* is true and it hides the size of the difference. Run as assembled organisms on
+> pinned fuel, with nothing else seated:
+>
+> ```
+> call + goal     0.38
+> call + frame    0.65        27 points, well outside the 0.10 noise band
+> ```
+>
+> Both beat the 0.00 that a call with neither produces, so both satisfy the law. **They are not
+> interchangeable.** A procedure is worth twenty-seven points more than an objective, and adding the
+> objective to a procedure moves the number by 0.01, inside the band.
+>
+> So they are alternatives at one rung rather than two rungs, and **the stronger one currently sits three
+> positions higher in the spine than the weaker.** Whether that makes `goal` a rung at all is what the
+> ordering lattice is measuring.
+
 Which is a better law, because it explains the L0 result rather than merely restating it. And the
 companion cell measures the other direction: the task's own method, with the goal sentence removed,
 succeeded **33 of 34**. A method carries its objective almost perfectly.

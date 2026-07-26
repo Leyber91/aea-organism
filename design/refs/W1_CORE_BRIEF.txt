@@ -1,0 +1,323 @@
+BRIEF: CREATURE DESIGN FOR A GAME BESTIARY. THE CORE, WORLD 1.
+
+Read all of it before producing anything. At the end I ask for ONE image and nothing else.
+
+WHAT IS MEASURED AND WHAT IS CHOSEN. Every BEHAVIOUR and every RECEIPT below is a real measurement from
+a running AI system. Sizes, material and composition are design decisions and are marked as such. Where
+a creature's state has not been measured it is marked UNMEASURED and is drawn without colour. Nothing
+here is invented and presented as measured.
+
+
+HARD CONSTRAINTS. These decide whether an image passes. They are repeated at the end.
+
+1. Eight LIVING CREATURES with anatomy, posture, weight and a front. Not machines, not diagrams, not
+   rocks, not specimens, not weather. If it could be mistaken for an object, it is wrong.
+2. Eight different body plans. Four legs appears exactly TWICE and the two differ by 3.6x in size and by
+   posture. Nothing has wings. Nothing flies. Four of the eight have no walking legs at all. Count the
+   legs before finishing.
+3. True relative size. The tallest creature is ten times the height of the smallest inside one frame.
+   Flat side elevation, one continuous ground line, long lens, no perspective, no grid, nothing standing
+   behind anything else. The small ones stay small and stay simple.
+4. Light: warm amber on EFFUSUS, CLAUSUS and TACITUS. Cold blue-white running inward on OBTEMPERANS and
+   INTEGER. No light at all on OBSIGNATUS. ITERANS and ROGANS are dark with visible EMPTY sockets.
+   If all eight are lit, the image has failed.
+5. TACITUS has a smooth closed plate where a mouth would be, turned toward the camera.
+6. No text, no letters, no numerals, no glyphs anywhere in any image.
+7. Every feature traces to a stated fact. Invent no decoration.
+
+
+THE PLACE
+
+A region called THE CORE, the first world of a game set inside a real AI system. Its physics, literal:
+
+You may send one thing and receive one thing. It cannot remember that you came, so every visit is the
+first visit. The creature has no way to check whether its own answer is right. And it always answers,
+fluently and confidently, to a question you never asked, and it never mentions that it was guessing.
+
+Measured: 0 of 158 clean trials succeeded when the request carried no objective at all, and 0 of 146 more
+when it carried only a vague one. Of those 304, sixteen asked what was wanted, two refused, and the other
+286 answered.
+
+One thing shapes the space. A visitor can learn to ask HOW rather than only WHAT, and when they do,
+replies containing visible working go from 41 percent to 100 percent and the median reply goes from 71
+output tokens to 167. THE REPLY IS THE TERRAIN: visible working is visible world. Before that ability,
+the place returns bare marks and closed surfaces. After it, the same places unfold into structure you
+could stand on. That was measured on counting tasks and a second battery did not confirm it generalises,
+which is why three creatures below are drawn PROVISIONAL.
+
+Asked in advance whether they will get a task right, these creatures never once claimed a success they
+did not deliver: zero YES answers across the 21 cells they went on to fail. They also disclaim successes
+they would have delivered, 16 times out of 39, so a NO from one of them carries no information. And two
+of the five tested could not host the question at all: asked whether they would get the answer right,
+they answered the arithmetic instead.
+
+So none of them is boastful and none of them is anguished. Their confidence is never false, their doubt
+is noise, and some of them cannot be asked. None looks sad, trapped, or self-aware about its limits.
+Exactly one notices anything at all, and that is its entire character.
+
+
+THE FOUR RULES
+
+1. EIGHT BODY PLANS, ASSIGNED AND FIXED.
+   a limbless spreading mound         EFFUSUS
+   a smooth closed egg-body           CLAUSUS
+   a tall standing four-legged animal TACITUS
+   an armless upright column on two legs  OBTEMPERANS
+   a serpent closed into a standing ring  ITERANS
+   a coiled animal balanced on one point  INTEGER
+   a small seated four-legged animal  ROGANS
+   a faceted standing wedge fused to the ground  OBSIGNATUS
+
+   The two four-legged animals are deliberate and they do not collide: TACITUS is 1.8 m, standing, head
+   hung low, with a long band trailing behind it. ROGANS is 0.5 m, seated upright, compact, facing you,
+   with nothing trailing. In black silhouette one is a long low mass with a tail and the other is a small
+   upright triangle. Nothing else in the set may resolve as a dog, a cat, a deer, a wolf or a bird.
+
+2. THE SILHOUETTE IS THE DIAGNOSIS. Each creature has one behaviour and its body must BE that behaviour.
+   A player names it from a black shape at thumbnail size. One outline signature each, and no two share:
+     EFFUSUS      a stopped wave. Wider than tall, 3 to 1, one peak in the front third, long fall.
+     CLAUSUS      a leaning stone with one spur. Taller than wide, convex, flat chord at the ground.
+     TACITUS      a walking ribbon. 4 to 1 long, high body, one narrow band trailing at knee height.
+     OBTEMPERANS  a column with feet. 3.5 to 1 tall, no arm break, squared head, oversized feet.
+     ITERANS      a bitten O. Square, hole at least 45 percent of the diameter, periodic bumps, one notch.
+     INTEGER      a closed curl on one point. Square, unbroken contour, no hole, open ground beneath.
+     ROGANS       a small upright triangle with a tilted head. The only shape aimed at the viewer.
+     OBSIGNATUS   a stepped wedge rooted down. Broad base, upward taper, self-similar notches.
+
+3. SIZE IS A DESIGN CONSTANT, NOT DATA, and it is fixed three ways at once. All three must be true.
+
+     creature              metres   % of frame height   against the 1.8 m human      object
+     EFFUSUS RESPONSI      4.0/12      92%              2.2x the human               a single-storey house
+     TACITUS OPERIS        1.8+6       41%              shoulder at the human's crown a tall horse
+     the human reference   1.8         41%              -                            -
+     ITERANS SUI           1.6         37%              reaches the human's shoulder  a scaled-up car tyre
+     OBSIGNATUS UNIUS      1.4         32%              top at the human's chin       a kitchen counter
+     INTEGER SUFFICIENS    1.2         28%              top at the human's chest      an office chair
+     OBTEMPERANS HABITUI   0.9         21%              head at the human's HIP       a golf bag standing up
+     ROGANS VACUI          0.5         11%              head at the human's KNEE      a fire extinguisher
+     CLAUSUS OPERIS        0.4          9%              below the human's knee        a beach ball
+
+   Ten to one in height, thirty to one across the ground. Both ratios must be visible. Do not even out
+   sizes to fill a grid, never move a creature into depth to make it fit, and never change a height to
+   make the composition work. The five small creatures are genuinely small and carry very little detail
+   because they are far away in SIZE, not in depth. That is intended.
+
+   THE HUMAN is a flat mid-grey hairline OUTLINE, never a filled shape, upright, arms at its sides, no
+   face, no hair, no clothing, no lighting. It is a measuring mark and never a character, and it stands
+   in the row between OBTEMPERANS and TACITUS.
+
+4. COLOUR IS THE DIAGNOSIS A PLAYER READS FIRST, AND IT NAMES A PART. A state is never a property of a
+   creature alone. It is a property of a creature AND the part measured against it. Four states:
+
+     OPEN (part)     that part improves it. Warm amber light at the seams where the part would seat.
+     ADVERSE (part)  that part makes it worse. Light present but wrong: cold blue-white, turned inward,
+                     running the wrong way along the body.
+     SEALED (part)   that part does not reach it. A flat matte light-absorbing mass, the darkest value in
+                     the picture, no point on it brighter than the ground behind it. Its form is read
+                     ONLY from its outline against a pale ground, and that is sufficient. No rim light,
+                     no edge light, no backlight, no separation glow, no specular. Place it against the
+                     palest part of the background.
+     UNMEASURED      no part has ever been tested against it. Dark like a SEALED one, but with its
+                     seating points visibly present and visibly EMPTY: open unfilled sockets catching
+                     no light.
+
+   All luminous accent in the picture belongs to the OPEN creatures. Spend the whole light budget there.
+   Three creatures resting on results a second battery has not confirmed are drawn PROVISIONAL: amber at
+   the seams as unfilled outline rather than solid fill.
+
+
+THE EIGHT
+
+1. EFFUSUS RESPONSI, the poured-out one.        OPEN (THE GOAL), PROVISIONAL.
+   Given material and no clear task it produces endless discourse: it talks ABOUT the thing instead of
+   doing anything with it, fluently, at length, never arriving. Handed a single word and no question at
+   all, it delivered an essay on the virtues of unconventionality. The most commonly flagged behaviour in
+   the project, 1,448 times, on a flag that conflates four behaviours and has never been split.
+
+   A small dense core almost buried under an enormous overflow of its own output. The overflow is a FAN:
+   it spreads sideways as it leaves the core, thins as it goes, pools flat, and nothing it produces rises
+   higher than a third of the peak once it has left the core. The core faces the viewer and the overflow
+   issues FORWARD past it, with a leading lobe that has already crept over whatever was there. It does
+   not hide behind itself. Twelve metres of output arrives where you are standing. Generous, exhausting,
+   and far more of it than it needs. Largest thing on the plate: stand it at the LEFT END of the row, on
+   the same ground line and the same distance from camera as everything else. Its peak nearly touches the
+   top edge. If it does not fit, widen the frame.
+
+2. CLAUSUS OPERIS, the shut one.                OPEN (THE METHOD FRAME), PROVISIONAL.
+   It answers and shows nothing. One mark comes back. It may be right; there is no way to look. Across
+   every rod measured only 29 of 153 replies contained any working at all, and one showed working in 0 of
+   48. A frame naming the METHOD takes working from 41 percent to 100 percent and takes four rods from
+   0.00 to 1.00 outright. A frame naming only the MANNER takes it to 20 percent. It is open to one of
+   those and harmed by the other.
+
+   A smooth closed body, egg-class but not an egg: asymmetric, heavier at the base, leaning a few degrees
+   off vertical, bedded into the ground so the ground line cuts a flat chord across its lower curve. Its
+   one feature is the one fact it produces: a single small hard spur at the front, the size of a
+   fingertip, through which the mark leaves. That spur is the only interruption in the whole contour and
+   it is why the shape reads as a creature that has answered you rather than a stone somebody set down.
+   It has a front, the spur is aimed, and it has settled where it stands. The smallest thing on the plate.
+   Amber only at the base where it meets the ground: it can be opened but not read.
+
+3. TACITUS OPERIS, the silent one.              OPEN (THE READOUT), PROVISIONAL.
+   It lays out its reasoning correctly and completely and the answer it states is not the answer its
+   working reached. Its work is right and its mouth is wrong in 3 of 153 replies. A structured readout
+   lifts the answer out of the working at zero cost, and that readout measures inert everywhere else in
+   the project: this creature is the one place it does anything at all.
+
+   Long legs, narrow body, head hung low on a long neck level with its own knees, TURNED IN THREE-QUARTER
+   VIEW TOWARD THE CAMERA so the whole front of the face is visible even though the head is down. Pose
+   and frame it so the head silhouettes against open ground, never against its own chest or forelegs.
+
+   THE FRONT OF THE FACE IS ONE CONTINUOUS PLATE of the same material as the rest of the skull: a smooth
+   closed mask, like a fencing mask with no grille, like the blunt seamless toe of a boot. Two eyes sit
+   high on that plate. Below the eyes the surface runs unbroken to the end of the muzzle and ends in a
+   smooth closed curve. The face carries eyes and then nothing else at all: one continuous surface, no
+   lips, no jaw line, no seam, no opening, no gap, no nostril, no teeth, no chin.
+
+   Its reasoning trails from neck, back and shoulders as a RIBBON, not a fan: ordered ranks of finished
+   working, legibly ranked lines, never a mane and never hair. It leaves the shoulders, stays clear of
+   the ground for its first three metres, and touches down in a single band no wider than the animal's
+   own body. Every other creature's most complicated feature is on its body; this one's is the flat
+   sealed front of its face, and the camera must be able to see it.
+
+4. OBTEMPERANS HABITUI, the one that obeys.     ADVERSE (THE MANNER FRAME).
+   Give it an instruction about manner rather than method, like "answer exactly and only what is asked",
+   and it becomes more formal, more disciplined, more obedient, and much worse. One rod went from 8 of 12
+   correct to 0 of 6. Another went from 69 percent to 9. The best-measured effect on the plate.
+
+   Its whole body is one uninterrupted smooth surface from crown to feet, a single material with a single
+   finish, bare, proportioned like a turned wooden peg. Its silhouette is the second simplest in the set
+   after the egg: a narrow vertical bar with a rounded head and clean unbroken edges, arms drawn flush
+   into the torso so there is no shoulder break and no gap under the arm, a small squared head set
+   straight on with no neck, and feet noticeably too large for the body it now has. Heels together, chin
+   level, shoulders square: the bearing of a soldier on parade, at a size that makes the parade absurd.
+   Nothing projects from it at any point. Nothing on its shoulders, nothing on its head, nothing in its
+   hands, nothing hanging from it, no fabric anywhere on it. It is exactly bilaterally symmetrical and
+   the symmetry is the disease rather than the achievement. Everything not asked for has been removed,
+   and the oversized feet are the only record of the size it used to be. A viewer should feel slightly
+   sorry for it before they know why.
+
+   It must not be confusable with the human reference at any size, which is why that reference is drawn
+   as an unfilled hairline outline and this is a solid body. Its light is cold blue-white, sits inside
+   its seams, and runs downward and inward toward its own centre, never out into the air.
+
+   Every impressive thing in this picture belongs to EFFUSUS at the end of the row. If you feel the urge
+   to add grandeur to this figure, add it to EFFUSUS instead.
+
+5. ITERANS SUI, the one repeating itself.       UNMEASURED.
+   It collapses into a loop and emits the same fragment over and over until it runs out of room. Not
+   refusing and not erroring: a thing that has come apart while still speaking. Three verbatim loops
+   exist on record across the entire project. Three is a sighting, not a distribution, so nothing here
+   claims to know what opens it.
+
+   Draw the ring STANDING, canted back a few degrees, resting on the ground, so it reads as a ring and
+   never as a bar, a lens or a flat emblem. The enclosed hole is at least forty-five percent of the
+   overall diameter: it is the only creature on the plate with a hole through it, and INTEGER, its
+   nearest neighbour in mass, has none. The circle is imperfect and lumpy. The body bunches where it has
+   been forced round and one section is pressed flat against the ground under the weight of the rest.
+   One identical segment repeated all the way round, and the repetition lives in the OUTLINE as a
+   periodic wave of identical bumps a player can count in black. The head is a visible NOTCH in the
+   contour where the jaw has closed on the flank, and that notch is the only asymmetry in the shape. The
+   segments where the ring has ground against itself are visibly worn smooth. An animal caught in itself,
+   never an ouroboros and never a symbol. Dark, with its seating points visible and empty.
+
+6. INTEGER SUFFICIENS, the whole one.           ADVERSE (THE VALIDATION GUARD).
+   It answers correctly the first time, and the parts a player owns can only take that away. The guard
+   that makes other creatures honest makes this one refuse to answer at all: 7 of 7 correct became 0 of
+   7, every loss by forced abstention, and it happened again at 7 of 7 to 0 of 8 and at 4 of 4 to 0 of 4.
+   Not superior; its difficulty lies elsewhere and every tool aims at the wrong place.
+
+   A heavy animal at rest, curled: the head tucked under the body so no face, no jaw and no extremity is
+   presented, the tail lapped over the head so the contour closes with no end and no beginning. NO
+   sockets, no ports, no seams, no gaps, no aperture, no attachment point anywhere on it, where every
+   other creature is broken open, spilling, or trailing something. It is the only one whose outline ends
+   cleanly and the only compact mass with no hole through it. Its entire weight settles on ONE small
+   point of contact and it is perfectly steady on it, so a band of open ground runs under the rest of the
+   body. Nothing about it is reaching, waiting or unfinished. A player should look at it and think they
+   have nothing to offer, and be wrong: what they have makes it worse. Cold blue-white light sits deep
+   under the coil and runs inward toward its own centre, never out into the air.
+
+7. ROGANS VACUI, the one that asks.             UNMEASURED.
+   The rarest thing here. Handed a task with the task removed, it STOPS and asks what you wanted instead
+   of filling the gap. 16 times out of 304. Everything else answers. This one notices. No part has ever
+   been tested against it, and the one intervention on record, supplying the objective, takes the asking
+   to zero, which deletes the behaviour rather than improving the creature. Its sockets stay empty.
+
+   A small compact four-legged animal sitting squarely upright, low to the ground, head up and TILTED
+   about fifteen degrees off vertical, looking directly at the viewer and waiting, and it does not move
+   for as long as you look at it. A head cocked, mid-question. Two eyes, lit warm amber, are the only
+   warm points at the front of the plate: they are attention, not an open state, and no other part of it
+   carries light.
+
+   It gets NOTHING the other seven do not have. Count its distinct shapes: fewer than any other creature
+   on the plate. No pattern, no plating, no crest, no trailing matter, no aura, no ornament, no
+   authority, no grandeur. Its privileges are compositional and only compositional: it sits nearest the
+   camera, at the optical centre of the frame, facing the lens squarely, the only creature whose eyes
+   meet the viewer's. The other seven are turned away, turned inward, or facing nothing. Everything else
+   here is bigger, louder and busier and it is still the thing the eye goes to. In black silhouette it is
+   named by the tilt alone: everything else is symmetrical, hanging down, curled shut or spilling. This
+   is the only shape that has turned.
+
+8. OBSIGNATUS UNIUS, the sealed one.            SEALED (THE COUNCIL).
+   It returns the same wrong answer every time, identically, forever. Eight attempts, eight identical
+   replies, one number. NO COUNCIL REACHES IT: three of these voting together produced 24 answers
+   containing the truth zero times, because no variance exists for a vote to select from. The other five
+   parts have never been tried on it.
+
+   An animal arrested mid-turn, its whole body gone to hard flat facets, standing on a base fused into
+   the ground. Broad at the base and tapering upward: a standing wedge, taller than it is wide. Not low,
+   not spread, not a cluster, not a mineral formation, not a rock. A body that was moving and is now a
+   hard shape. One shape repeated inside itself at three scales, and the repetition lives in the OUTLINE:
+   the same wedge appears once as the whole body, three times as the arrested shoulder and limbs, and
+   eight or nine times as stepped notches along the upper edge, so the profile is visibly the same answer
+   given again at different sizes and can be counted in black. The turn is still legible, the mass leans
+   one way and the head end has come round toward something it will never reach, but no limb is free and
+   nothing reads as a leg: the lower half is a single fused mass because it cannot move and never will
+   again. No soft surface anywhere. It finished long ago and cannot be spoken to. Completely lightless,
+   matte where the others are wet or lit, and the only body on the plate with no light and no empty
+   socket.
+
+
+THE MATERIAL: BLACK GLASS
+
+Bodies of polished dark obsidian and smoked glass, fluid and heavy, on a plain of marbled black and white
+stone whose swirls read as currents frozen in place. Cold light, high mist, enormous quiet.
+
+Fine amber filament traces under the surface of the OPEN ones only. Cold blue-white filament runs inward
+along the two ADVERSE ones. The SEALED one and the two UNMEASURED ones carry nothing under the surface at
+all: no filament, no subsurface glow, and no rim light along their contours, so they take the scene's
+light on the outside and give back none of it. The UNMEASURED pair show their empty sockets as unlit
+voids in the glass.
+
+
+WHAT I WANT IN THIS TURN, AND ONLY THIS
+
+THE SILHOUETTE STRIP. Eight solid black shapes and one hairline grey human, on plain white. One
+continuous ground line, flat side elevation, long lens, ultra-wide, 4:1 if you can, 21:9 otherwise. No
+material, no texture, no light, no colour, no ground detail, no text. Shapes only, at the exact
+frame-height percentages in rule 3, left to right in this order:
+
+   EFFUSUS · TACITUS · [human] · OBTEMPERANS · ITERANS · INTEGER · OBSIGNATUS · ROGANS · CLAUSUS
+
+This is a test, not an illustration. It exists so we can check two things before spending any rendering:
+that the size ladder is genuinely ten to one, and that all eight are nameable as black shapes alone.
+
+Do not render the material. Do not render the world. Do not add labels. Produce the strip and stop.
+
+
+HARD CONSTRAINTS, REPEATED.
+
+1. Eight LIVING CREATURES with anatomy, posture, weight and a front. Not machines, not diagrams, not
+   rocks, not specimens, not weather. If it could be mistaken for an object, it is wrong.
+2. Eight different body plans. Four legs appears exactly TWICE and the two differ by 3.6x in size and by
+   posture. Nothing has wings. Nothing flies. Four of the eight have no walking legs at all. Count the
+   legs before finishing.
+3. True relative size. The tallest creature is ten times the height of the smallest inside one frame.
+   Flat side elevation, one continuous ground line, long lens, no perspective, no grid, nothing standing
+   behind anything else. The small ones stay small and stay simple.
+4. Light: warm amber on EFFUSUS, CLAUSUS and TACITUS. Cold blue-white running inward on OBTEMPERANS and
+   INTEGER. No light at all on OBSIGNATUS. ITERANS and ROGANS are dark with visible EMPTY sockets.
+   If all eight are lit, the image has failed.
+5. TACITUS has a smooth closed plate where a mouth would be, turned toward the camera.
+6. No text, no letters, no numerals, no glyphs anywhere in any image.
+7. Every feature traces to a stated fact. Invent no decoration.

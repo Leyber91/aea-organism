@@ -47,6 +47,74 @@ def run(run_id: str) -> dict:
     return receipt(_run)
 
 
+def axes() -> dict:
+    """/game/axes - C-11, the entity's position in the 5-D growth space.
+
+    The progression readout, and it is the SAME number the architecture is judged by: canon defines
+    growth as movement through five axes (L0..L5 each), so the game shows coordinates rather than
+    experience points. A level appears here only because a receipt raised it (OP1 axis-extension);
+    `rung` is null wherever canon never named that rung - an honest gap, never a filled-in guess.
+    """
+    from aea.mind import axes as ax
+
+    def _a():
+        st = ax.load()
+        pos = ax.position()
+        rows = []
+        for a in ax.AXES:
+            lv = st["levels"][a]
+            rows.append({"axis": a, "name": ax.AXIS[a]["name"], "line": ax.AXIS[a]["line"],
+                         "proof_module": ax.AXIS[a]["proof"], "level": lv, "top": ax.TOP,
+                         "rung": ax.rung(a, lv),
+                         "next_rung": ax.rung(a, lv + 1) if lv < ax.TOP else None})
+        return {"ok": True, "axes": rows, "sum": pos["sum"], "max": pos["max"],
+                "walked": pos["walked"], "raised": st.get("raised", [])[-8:]}
+    return receipt(_a)
+
+
+def foundry() -> dict:
+    """/game/foundry - THE FUEL, honestly. Every source on the map with the only three facts that
+    matter: is it connected, what is its metabolism, and what has it actually served today.
+
+    A dark plant is NAMED, never hidden - the map shows what you could connect and what holding that
+    key would buy you, because the opening of the game is going and getting one. Metabolism is the real
+    free-tier shape (a sustained 40/min with no daily cap is a different animal from a fast 30/min that
+    dies at 1000/day), read from grid.PLANTS rather than described - add a plant there and it appears
+    here. Nothing is scored or ranked: the caps are the truth and the player draws the conclusion.
+    """
+    import os
+    from aea.kernel import grid
+
+    def _f():
+        # energy_usage is keyed by ROD ("plant/model"), never by plant - fold the rods up to their
+        # plant. A plant with no rods on record reports null (the client renders a dash): we have not
+        # drawn on it, which is NOT the same fact as having drawn zero times.
+        usage = grid.load_json(os.path.join(grid.STATE, "energy_usage.json"), {})
+        out = []
+        for name, p in grid.PLANTS.items():
+            auth = p.get("auth")
+            prefix = name + "/"
+            calls, rods = 0, 0
+            for rod, v in usage.items():
+                if rod.startswith(prefix):
+                    rods += 1
+                    calls += ((v or {}).get("calls") or 0)
+            out.append({
+                "plant": name,
+                "privacy": p.get("privacy"),          # local | no-train | trains | none -> the zone law
+                "keyless": not auth,                  # can a stranger draw on it with no setup at all
+                "connected": True if not auth else bool(grid.key(auth)),
+                "key_env": auth,                      # the exact variable to set; null when keyless
+                "rpm_cap": p.get("rpm"),              # null = unmetered by the minute
+                "rpd_cap": p.get("rpd"),              # null = no daily ceiling
+                "calls_served": calls if rods else None,   # ALL-TIME, not today - never mislabel a clock
+                "rods_met": rods if rods else None,        # distinct models of this plant encountered
+            })
+        lit = sum(1 for r in out if r["connected"])
+        return {"ok": True, "connected": lit, "total": len(out), "plants": out}
+    return receipt(_f)
+
+
 def events(since: float = 0.0) -> dict:
     """/game/events?since= - the live nervous signal (pulse), one real row per emitted event.
 
