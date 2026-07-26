@@ -1,0 +1,23 @@
+{
+  "schema": "aea.organism/1",
+  "id": "lectus_operis",
+  "name": "Lectus operis",
+  "gloss": "the read one, of the work",
+  "world": 2,
+  "seat": ["call", "readout"],
+  "wiring_note": "The readout sits alone at the READ stage, so no seam exists. Add `validation` and it acquires one: validation is read.order 2 and an abstention there must END the read rather than hand control down. That handoff cost 18 points in x16.",
+  "fuel": {
+    "plant": "groq",
+    "model": "llama-3.1-8b-instant",
+    "temperature": 0.2,
+    "law": "IV. The same seat on different fuel is a different organism. Fuel is part of the creature, never chosen at run time."
+  },
+  "evolves_from": {"id": "tacitus_operis", "by": "readout"},
+  "receipt": {
+    "claim": "the answer was already present and had no way out",
+    "measured": "0/8 -> 8/8 at zero additional tokens",
+    "runs": ["x09", "x10"],
+    "caveat": "rarer than it looks. Re-scored on two batteries after the readout learned two more dialects: +0 recovered on counting, +1 on traps."
+  },
+  "state": {"kind": "OPEN", "part": "readout", "provisional": false}
+}

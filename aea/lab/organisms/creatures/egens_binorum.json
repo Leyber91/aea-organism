@@ -1,0 +1,22 @@
+{
+  "schema": "aea.organism/1",
+  "id": "egens_binorum",
+  "name": "Egens binorum",
+  "gloss": "the needy one, of a pair",
+  "world": 2,
+  "seat": ["call", "frame", "readout"],
+  "wiring_note": "THE ONLY MEASURED SUPERADDITIVITY IN THE PROJECT. frame acts at shape, readout at read, and neither does anything alone. This is the counterexample to reading every marginal null as a verdict: a lattice CAN see a whole that exceeds its parts, and here it did.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "llama3.1:8b",
+    "temperature": 0.2,
+    "law": "IV. Also measured on nvidia/meta/llama-3.2-1b-instruct with the same result."
+  },
+  "receipt": {
+    "claim": "two rungs jointly necessary; neither alone does anything at all",
+    "measured": "frame alone 0/8, readout alone has nothing to read, both together 8/8, at every temperature tested",
+    "runs": ["x09", "x10"],
+    "why_it_matters": "a player who seats one part, sees no change and concludes the part is worthless has learned exactly the wrong thing"
+  },
+  "state": {"kind": "OPEN", "part": "frame+readout", "provisional": false}
+}

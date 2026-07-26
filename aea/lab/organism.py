@@ -40,6 +40,8 @@ Run: python -m aea.lab.organism            (self-test: assemble v1..vN and show 
 """
 from __future__ import annotations
 
+import json
+import os
 import re
 import time
 
@@ -52,9 +54,14 @@ from aea.lab import overseer as OV
 class Component:
     """One seatable part of an AEA. `stage` says where it acts; `requires` is checked, never assumed."""
 
-    def __init__(self, key, name, census, stage, requires=(), note=""):
+    def __init__(self, key, name, census, stage, requires=(), note="",
+                 *, order=1, kind="lever", metric="accuracy", warning=""):
         self.key, self.name, self.census = key, name, census
         self.stage, self.requires, self.note = stage, tuple(requires), note
+        # THE FIELDS THAT MAKE A NULL READABLE. `kind` and `metric` exist because this project scored
+        # nine components of four different kinds against ONE outcome and read every null as a verdict.
+        # A gauge that changes no answer is working. A guard that forces abstention is working.
+        self.order, self.kind, self.metric, self.warning = order, kind, metric, warning
 
     def __repr__(self):
         return "<%s %s>" % (self.key, self.census or "candidate")
@@ -62,7 +69,55 @@ class Component:
 
 # The order is the NECESSITY order the walk has measured, not the census's filing order. Where a
 # measurement moved something, the measurement wins and the note says which run.
-CATALOGUE = [
+_HERE = os.path.dirname(os.path.abspath(__file__))
+ORGANISMS_DIR = os.path.join(_HERE, "organisms")
+
+
+def load_catalogue(path=None):
+    """THE PARTS, FROM DISK. Stage order and within-stage order are DECLARED, never inferred.
+
+    Until 2026-07-27 the parts lived in a Python literal and the wiring lived in if-statements, which
+    meant the one thing that actually broke was the one thing nothing declared: the ORDER of two
+    components sharing a stage. x16 lost 18 points to exactly that seam, when validation abstained at
+    read.order 2 and silently handed control to the readout instead of ending the read.
+    """
+    path = path or os.path.join(ORGANISMS_DIR, "catalogue.json")
+    with open(path, encoding="utf-8") as fh:
+        doc = json.load(fh)
+    parts = [Component(c["key"], c["name"], c["census"], c["stage"],
+                       requires=c.get("requires", ()), note=c.get("receipt", ""),
+                       order=c.get("order", 1), kind=c.get("kind", "lever"),
+                       metric=c.get("metric"), warning=c.get("warning", ""))
+             for c in doc["components"]]
+    parts.sort(key=lambda c: (doc["stages"].index(c.stage), c.order))
+    return parts, doc
+
+
+def load_creature(name_or_path):
+    """AN ASSEMBLED ORGANISM FROM ITS FILE: seat, pinned fuel, receipt, measured state.
+
+    Law IV lives here: the fuel is written into the creature rather than chosen at run time, because
+    the same seat on different fuel is a different organism.
+    """
+    p = name_or_path
+    if not os.path.isabs(p) and not p.endswith(".json"):
+        p = os.path.join(ORGANISMS_DIR, "creatures", "%s.json" % p)
+    with open(p, encoding="utf-8") as fh:
+        spec = json.load(fh)
+    f = spec["fuel"]
+    org = Organism(spec["seat"], (f["plant"], f["model"]), label=spec["name"])
+    org.spec = spec
+    org.temperature = f.get("temperature", 0.2)
+    return org
+
+
+def creatures():
+    """Every organism on disk, by id."""
+    d = os.path.join(ORGANISMS_DIR, "creatures")
+    return sorted(f[:-5] for f in os.listdir(d) if f.endswith(".json")) if os.path.isdir(d) else []
+
+
+_SUPERSEDED_BY_JSON = [
     Component("call", "THE CALL", "C-62", "fire", (),
               "without it there is no organism; every version contains it"),
     Component("goal", "THE GOAL", "C-12", "shape", ("call",),
@@ -88,6 +143,10 @@ CATALOGUE = [
     Component("carry", "THE CHECKPOINT", "C-80", "carry", ("call",),
               "x06b: 11/11 vs 9/16, p=0.0216, at 50x calls. ONE task at ONE chain length"),
 ]
+
+# The list above is kept only as the diff record of what the JSON replaced. The live catalogue is the
+# file, so a part cannot be edited in one place and read from another.
+CATALOGUE, CATALOGUE_DOC = load_catalogue()
 BY_KEY = {c.key: c for c in CATALOGUE}
 
 

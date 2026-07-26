@@ -1,0 +1,23 @@
+{
+  "schema": "aea.organism/1",
+  "id": "obtemperans_habitui",
+  "name": "Obtemperans habitui",
+  "gloss": "the one obeying, of manner",
+  "world": 1,
+  "seat": ["call", "goal", "frame"],
+  "seat_config": {"frame": {"names": "manner"}},
+  "wiring_note": "Identical seat to the healthy organism. The ONLY difference is a config value on one component: the frame names a MANNER rather than a METHOD. That is why the config belongs in the file - the creature is not distinguishable by its component list.",
+  "fuel": {
+    "plant": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "temperature": 0.2,
+    "law": "IV. Also measured on llama-3.2-3b: 69% -> 9%."
+  },
+  "receipt": {
+    "claim": "told how to behave rather than what to do, it becomes more obedient and much worse",
+    "measured": "8 of 12 correct -> 0 of 6",
+    "runs": ["x15"],
+    "source_of_the_frame": "bench_core.SCAFFOLDS['bench'] - it is in the shipped code"
+  },
+  "state": {"kind": "ADVERSE", "part": "frame:manner", "provisional": false}
+}
