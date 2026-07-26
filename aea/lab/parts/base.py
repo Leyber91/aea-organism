@@ -132,3 +132,13 @@ def unmet(seat):
     """Declared preconditions that are absent. Recorded, never assumed satisfied."""
     have = set(seat)
     return [(k, r) for k in seat for r in Part.registry[k].requires if r not in have]
+
+
+def load_tasks(path=None):
+    """The task bank as data. Experiments stop carrying their own copies."""
+    path = path or os.path.join(os.path.dirname(_HERE), "organisms", "tasks.json")
+    with open(path, encoding="utf-8") as fh:
+        doc = json.load(fh)
+    for tid, t in doc["tasks"].items():
+        t["id"] = tid
+    return doc["tasks"], doc

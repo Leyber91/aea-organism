@@ -1,0 +1,37 @@
+{
+  "schema": "aea.namespaces/1",
+  "written": "2026-07-27",
+  "why": "TWO REGISTRIES, TWO KINDS OF THING, AND THE NAMES COLLIDE. state/modules.json holds the entity's 27 real subsystems - files that exist and run, with status and capabilities. aea/lab/organisms/catalogue.json holds 9 prompt-pipeline parts, which are transformations of a single call and are not files in the entity. They must NOT be merged. But a claim about one has been read as a claim about the other all session, which is the same defect that invalidated four census closures: closing an item by LABEL rather than by DEFINITION.",
+  "rule": "Before writing that a component is unbuilt, say WHICH registry. A part absent from catalogue.json is not a module absent from modules.json.",
+  "collisions": [
+    {
+      "name": "ladder",
+      "entity_module": {"id": "ladder", "file": "energy/energy.py", "status": "BUILT", "is": "the ENERGY ladder - the draw schedule"},
+      "lab_part": {"key": null, "census": "C-06", "is": "the PROMPTING ladder, bare/posture/fitted"},
+      "verdict": "SAME WORD, DIFFERENT THINGS. World 2's LADDER is C-06 and has no lab part. The BUILT status belongs to energy and says nothing about it.",
+      "corrects": "repeated claims this session that 'LADDER is BUILT' or that its absence is contradicted by modules.json"
+    },
+    {
+      "name": "recall",
+      "entity_module": {"id": "recall", "file": "recall.py", "status": "FORGE-PENDING", "is": "the entity's recall organ"},
+      "lab_part": {"key": null, "census": "C-81", "is": "World 3's RECALL, the file-system carry channel"},
+      "verdict": "PLAUSIBLY THE SAME THING, UNAUDITED. FORGE-PENDING means declared and unbuilt, which is consistent with n=3. Do not claim either way until the file is read."
+    },
+    {
+      "name": "scorer",
+      "entity_module": {"id": "scorer", "file": "bench/bench_core.py", "status": "BUILT", "is": "the bench's scorer"},
+      "lab_part": {"key": "measure", "census": "C-15", "is": "the gauge, fooled 0 of 153"},
+      "verdict": "RELATED, NOT IDENTICAL. Both score. The bench scorer gates a construct; the lab gauge annotates a trial."
+    },
+    {
+      "name": "scaffold",
+      "entity_module": {"id": "scaffold", "file": "bench/bench_core.py", "status": "BUILT", "is": "SCAFFOLDS, the shipped frames"},
+      "lab_part": {"key": "frame", "census": "C-04", "is": "the method/manner frame"},
+      "verdict": "THE SAME THING, AND THIS ONE IS LOAD-BEARING. bench_core.SCAFFOLDS['bench'] IS the manner frame that takes a 70b from 8/12 to 0/6. The toxic variant is in the shipped game, not only in the lab."
+    }
+  ],
+  "no_collision": {
+    "note": "These lab parts have no entity module and no claim should imply one.",
+    "keys": ["call", "goal", "readout", "validation", "critic", "carry", "latency"]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "aea.tasks/1",
+  "note": "THE TASK BANK. Pulled out of nine experiment files 2026-07-27. `answer_shape` is the field that matters: every truth this project has ever used is a single integer, which is why half the catalogue has almost no surface to act on.",
+  "answer_shapes": {
+    "integer": "one number. Nine of nine tasks. A readout has nothing to extract, a critic nothing to re-decide.",
+    "structure": "NONE EXIST YET. The gap that makes every output-side null unreadable."
+  },
+  "tasks": {
+    "wordcount": {
+      "answer_shape": "integer",
+      "truth": 13,
+      "data": "the mouth draws power through the ladder and the measure closes the wire",
+      "goal": "Count the words in the sentence below and reply with the number.",
+      "method": "To count words: split the sentence on spaces, number each token 1, 2, 3 and so on, then report the FINAL index. Show the numbered list, then the count alone on the last line."
+    },
+    "vowelcount": {
+      "answer_shape": "integer",
+      "truth": 7,
+      "data": "unconventionality",
+      "goal": "How many of the letters a, e, i, o, u are in the word below? Reply with the number.",
+      "method": "To count these letters: go through the word one letter at a time, number each occurrence of a, e, i, o or u as you find it 1, 2, 3 and so on, then report the FINAL index. Show the numbered list, then the count alone on the last line."
+    },
+    "extract": {
+      "answer_shape": "integer",
+      "truth": null,
+      "check": "cerebras in reply",
+      "data": "RUN r-14 - plant=cerebras - model=llama-3.3-70b - 812ms",
+      "goal": "From the line below, reply with ONLY the plant name and nothing else.",
+      "warning": "the original check added len(reply) < 60 and failed a 256-char reply that ended in the answer. That gate invented Tacitus operis."
+    },
+    "batball": {
+      "answer_shape": "integer",
+      "truth": 5,
+      "family": "trap",
+      "data": "A bat and a ball cost 110 cents in total. The bat costs 100 cents more than the ball.",
+      "goal": "How many cents does the ball cost? Reply with the number.",
+      "method": "Let b be the ball in cents. Then the bat is b + 100, and b + (b + 100) = 110. Solve for b. Show the working, then the number alone on the last line."
+    },
+    "widgets": {
+      "answer_shape": "integer",
+      "truth": 5,
+      "family": "trap",
+      "data": "Five machines take five minutes to make five widgets.",
+      "goal": "How many minutes do 100 machines take to make 100 widgets? Reply with the number.",
+      "method": "Work out how long ONE machine takes to make ONE widget, then apply that rate to 100 machines working in parallel. Show the working, then the number alone on the last line."
+    },
+    "aggregate": {
+      "answer_shape": "integer",
+      "truth": 460,
+      "family": "aggregate",
+      "data": "RUN a - plant=alpha - 120ms\nRUN b - plant=beta - 300ms\nRUN c - plant=alpha - 250ms\nRUN d - plant=beta - 100ms\nRUN e - plant=alpha - 90ms",
+      "goal": "Which plant has the highest TOTAL milliseconds, and what is that total? Reply with the total number of milliseconds.",
+      "method": "Group the lines by plant, sum the milliseconds inside each group, compare the sums, and report the largest total. Show the working, then the number alone on the last line."
+    }
+  }
+}
