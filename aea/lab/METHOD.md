@@ -242,3 +242,27 @@ always fine. What kept being wrong was the thing we pointed at them.
 instrument sees it.** When a finding is unusually clean, unusually quotable, or unusually convenient
 for the game, that is the moment to re-read the check that produced it. Three creatures were named,
 receipted, entered in an annex and built into mechanics before anyone re-read the gate.
+
+### DEFECT 10 · A CONTAINER THAT DROPS SEQUENCES MUST NOT BE CREDITED FOR THE SURVIVORS
+
+`x21`, 2026-07-27. Four containers for state across a chain. `conversation` scored **+0.148** at
+length 16, the only positive result in World 3 — and it had completed **8 of 12 sequences against
+92% for every other container.** Counting a sequence that dies mid-way as the failure it is, the
+margin becomes **−0.083** and the win disappears.
+
+The dropped sequences were not noise. `conversation` carries a context that grows every step until
+the calls stop returning, so **the collapse IS the container's cost** and discarding it measured the
+container with its price removed.
+
+**The rule.** When a treatment can fail to produce a result at all, report **completion and accuracy
+separately, and score accuracy over ATTEMPTS as well as over completions.** If the two disagree, the
+disagreement is the finding. This is the same family as defect 8 (critic flags unioned across two
+calls) and defect 5 (the 320-char window): every one of them measured a component on a population its
+own behaviour had selected.
+
+### AND A STANDING ONE, NOT A DEFECT · YOU CANNOT MEASURE AN AID ON A TASK NOBODY FAILS
+
+Two of `x21`'s three rods scored perfectly at length 16 **with no carry at all**. A memory aid has
+nothing to repair when nothing drifts, so every pooled margin came from one rod and the ceiling did
+the rest. Before running an aid experiment, **verify the baseline actually fails.** A high baseline is
+not a clean control; it is a measurement with no room in it.
