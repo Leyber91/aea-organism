@@ -1,7 +1,14 @@
 {
   "schema": "aea.organism.catalogue/1",
   "note": "THE PARTS, AS DATA. Moved out of Python 2026-07-27 so a creature is a file rather than an argument list. Every field here is load-bearing at run time; nothing is documentation.",
-  "stages": ["shape", "fire", "read", "repair", "carry", "judge"],
+  "stages": [
+    "shape",
+    "fire",
+    "read",
+    "repair",
+    "carry",
+    "judge"
+  ],
   "stage_note": "The pipeline runs stages in this order, and WITHIN a stage in ascending `order`. That within-stage number is the wiring the old code did not declare: x16 lost 18 points because validation handed control to the readout at the same stage and nothing said which went first.",
   "kinds": {
     "enabling": "without it there is no organism. Not scored.",
@@ -12,65 +19,183 @@
   },
   "components": [
     {
-      "key": "call", "name": "THE CALL", "census": "C-62",
-      "stage": "fire", "order": 1, "kind": "enabling", "metric": null,
+      "key": "call",
+      "name": "THE CALL",
+      "census": "C-62",
+      "stage": "fire",
+      "order": 1,
+      "kind": "enabling",
+      "metric": null,
       "requires": [],
       "receipt": "without it there is no organism; every version contains it"
     },
     {
-      "key": "goal", "name": "THE GOAL", "census": "C-12",
-      "stage": "shape", "order": 1, "kind": "lever", "metric": "accuracy",
-      "requires": ["call"],
+      "key": "goal",
+      "name": "THE GOAL",
+      "census": "C-12",
+      "stage": "shape",
+      "order": 1,
+      "kind": "lever",
+      "metric": "accuracy",
+      "requires": [
+        "call"
+      ],
       "receipt": "x12: 0 of 158 clean trials succeed with no objective, 0 of 146 more with a vague one"
     },
     {
-      "key": "frame", "name": "THE METHOD FRAME", "census": "C-04",
-      "stage": "shape", "order": 2, "kind": "lever", "metric": "accuracy",
-      "requires": ["call"],
+      "key": "frame",
+      "name": "THE METHOD FRAME",
+      "census": "C-04",
+      "stage": "shape",
+      "order": 2,
+      "kind": "lever",
+      "metric": "accuracy",
+      "requires": [
+        "call"
+      ],
       "receipt": "x15: working 41% -> 100%, four rods 0.00 -> 1.00. A METHOD frame only",
-      "warning": "a frame naming only a MANNER is the most harmful thing measured in World 1: 8/12 -> 0/6"
+      "warning": "a frame naming only a MANNER is the most harmful thing measured in World 1: 8/12 -> 0/6",
+      "variants": {
+        "method": {
+          "default": true,
+          "template": "{method}\n\n{prompt}",
+          "receipt": "x15: working 41% -> 100%, four rods 0.00 -> 1.00"
+        },
+        "manner": {
+          "template": "You are on the bench. Answer exactly and only what is asked.\n\n{prompt}",
+          "class": "toxic",
+          "receipt": "x15: 8/12 -> 0/6 on one rod, 69% -> 9% on another. It is in the shipped code"
+        }
+      }
     },
     {
-      "key": "readout", "name": "THE READOUT", "census": "C-87?",
-      "stage": "read", "order": 1, "kind": "lever", "metric": "accuracy",
-      "requires": ["call"],
+      "key": "readout",
+      "name": "THE READOUT",
+      "census": "C-87?",
+      "stage": "read",
+      "order": 1,
+      "kind": "lever",
+      "metric": "accuracy",
+      "requires": [
+        "call"
+      ],
       "receipt": "x13: recovers 3 of 153 mute replies at zero tokens. x18 scores it inert overall, median +0.04",
       "warning": "a method frame ELIMINATES the condition this repairs: mute goes 28/288 bare to 0/360 fitted"
     },
     {
-      "key": "validation", "name": "THE VALIDATION GUARD", "census": "C-75",
-      "stage": "read", "order": 2, "kind": "guard", "metric": "false_commitment_rate",
-      "requires": ["call"],
+      "key": "validation",
+      "name": "THE VALIDATION GUARD",
+      "census": "C-75",
+      "stage": "read",
+      "order": 2,
+      "kind": "guard",
+      "metric": "false_commitment_rate",
+      "requires": [
+        "call"
+      ],
       "receipt": "x17: on the rod that needs nothing, 7/7 -> 0/7, every loss a forced abstention",
-      "warning": "SCORED ON ACCURACY IT LOOKS HARMFUL. It is a guard. Converting a silent wrong answer into a visible abstention is the job, not the failure."
+      "warning": "SCORED ON ACCURACY IT LOOKS HARMFUL. It is a guard. Converting a silent wrong answer into a visible abstention is the job, not the failure.",
+      "conflicts": [
+        {
+          "with": "fuel:passes_bare",
+          "receipt": "x17: 7/7 -> 0/7, 7/7 -> 0/8, 4/4 -> 0/4, every loss a forced abstention"
+        }
+      ]
     },
     {
-      "key": "critic", "name": "THE CRITIC", "census": "C-14",
-      "stage": "repair", "order": 1, "kind": "lever", "metric": "accuracy",
-      "requires": ["call"],
+      "key": "critic",
+      "name": "THE CRITIC",
+      "census": "C-14",
+      "stage": "repair",
+      "order": 1,
+      "kind": "lever",
+      "metric": "accuracy",
+      "requires": [
+        "call"
+      ],
       "receipt": "x20: 18 paired cells. Upside bounded at +0.12, inside the band. Losses to -0.55, all on high baselines. Cost 1.18x",
-      "warning": "it breaks what was already right. Seat when stuck, remove when not"
+      "warning": "it breaks what was already right. Seat when stuck, remove when not",
+      "conflicts": [
+        {
+          "with": "fuel:passes_bare",
+          "receipt": "x20: losses to -0.55, all on high baselines. It breaks what was already right"
+        }
+      ],
+      "variants": {
+        "recheck": {
+          "default": true,
+          "template": "Below is a task and an answer that was given to it. Check the answer. If it is correct, reply with it unchanged. If it is wrong, work out the correct answer and reply with that.\n\nTASK:\n{prompt}\n\nANSWER GIVEN:\n{text}"
+        }
+      }
     },
     {
-      "key": "carry", "name": "THE CHECKPOINT", "census": "C-80",
-      "stage": "carry", "order": 1, "kind": "lever", "metric": "accuracy_over_sequence",
-      "requires": ["call"],
+      "key": "carry",
+      "name": "THE CHECKPOINT",
+      "census": "C-80",
+      "stage": "carry",
+      "order": 1,
+      "kind": "lever",
+      "metric": "accuracy_over_sequence",
+      "requires": [
+        "call"
+      ],
       "receipt": "x06b: 11/11 vs 9/16, p=0.0216 at 50x calls. ONE task at ONE chain length",
-      "warning": "UNMEASURED as of 2026-07-27. x21's control passed the running value to the no-carry arm, so the baseline contained the treatment and the -0.09 result is void. organism.py:431"
+      "warning": "UNMEASURED as of 2026-07-27. x21's control passed the running value to the no-carry arm, so the baseline contained the treatment and the -0.09 result is void. organism.py:431",
+      "variants": {
+        "none": {
+          "template": "",
+          "note": "carries NOTHING. A control that hands the running value forward IS a checkpoint."
+        },
+        "checkpoint": {
+          "default": true,
+          "template": "The running value is {value}.",
+          "instruction": "\n\nAfter your answer, on a new line, write exactly:\nSTATE: value=<the current number>, step=<the step number you just completed>"
+        },
+        "conversation": {
+          "template": "",
+          "note": "carries the full prior exchange as message history. Cost is INPUT tokens."
+        },
+        "free": {
+          "template": "The running value is {value}.\nYour note to yourself: {note}",
+          "instruction": "\n\nAfter your answer, on a new line beginning NOTE:, write anything you want your future self to know before the next step.",
+          "class": "toxic",
+          "receipt": "x21: -0.167 at four steps, -0.636 at sixteen. It injects noise, it does not merely lose information"
+        }
+      }
     },
     {
-      "key": "measure", "name": "THE MEASURE", "census": "C-15",
-      "stage": "judge", "order": 1, "kind": "gauge", "metric": "can_know",
-      "requires": ["call"],
+      "key": "measure",
+      "name": "THE MEASURE",
+      "census": "C-15",
+      "stage": "judge",
+      "order": 1,
+      "kind": "gauge",
+      "metric": "can_know",
+      "requires": [
+        "call"
+      ],
       "receipt": "x13: fooled 0 times in 153. It changes no answer and changes what can be known",
       "warning": "reporting this as inert on accuracy is the category error, not a finding"
     },
     {
-      "key": "latency", "name": "THE CLOCK", "census": "C-74",
-      "stage": "judge", "order": 2, "kind": "channel", "metric": "separability",
+      "key": "latency",
+      "name": "THE CLOCK",
+      "census": "C-74",
+      "stage": "judge",
+      "order": 2,
+      "kind": "channel",
+      "metric": "separability",
       "requires": [],
       "receipt": "x13: 1.97s right vs 16.12s wrong, ratio 8.18 on one rod and 0.95 on another",
       "warning": "requires nothing beneath it and depends on everything. Two edges, one word"
     }
-  ]
+  ],
+  "classes": {
+    "healthy": "every seated module has its requirements met and no conflict edge fires.",
+    "toxic": "A CONFLICT EDGE FIRES. Two seated modules, or a module and its fuel, make the organism worse than either alone. It runs, it answers, and the answer is worse for the help. A virus: it added something.",
+    "inert": "A REQUIRES EDGE IS UNMET. The module does nothing because a key partner is absent. Technically dead rather than broken - seat the partner and it wakes. Egens binorum is the proof: frame alone 0/8, readout alone 0/8, both 8/8.",
+    "feral": "FUNCTIONAL WITHOUT THE ARCHITECTURE. Few modules, still correct. The AEA is not necessary for this fuel on this task, and every part the player owns can only take that away. Integer sufficiens: 1.00 bare, and the validation guard takes it to 0/7."
+  },
+  "classification_note": "A creature's class is not a label, it is READ OFF THE WIRING GRAPH. toxic = a conflict edge, inert = an unmet requires edge, feral = correct with an almost empty seat. These are the same edges x17 derived from the margins.",
+  "prompt_note": "Prompt text is DATA. A variant is a data change, never a code change. Templates use {field} against the task dict plus {prompt} for the accumulating prompt."
 }

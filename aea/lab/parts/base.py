@@ -92,6 +92,32 @@ def check_against_catalogue(doc=None):
     return problems
 
 
+_CAT = None
+
+
+def variant_of(key, config=None):
+    """The chosen variant, or the one marked default."""
+    v = (config or {}).get(key, {}).get("variant")
+    if v:
+        return v
+    vs = _entry(key).get("variants", {})
+    return next((n for n, d in vs.items() if d.get("default")), None)
+
+
+def template(key, variant=None, field="template"):
+    """Prompt text is DATA. A variant is a data change, never a code change."""
+    vs = _entry(key).get("variants", {})
+    v = variant or next((n for n, d in vs.items() if d.get("default")), None)
+    return (vs.get(v) or {}).get(field, "")
+
+
+def _entry(key):
+    global _CAT
+    if _CAT is None:
+        _CAT = load_catalogue()
+    return next((c for c in _CAT["components"] if c["key"] == key), {})
+
+
 def wire(seat):
     """Seat keys in, ordered part instances out. Stage order then within-stage order."""
     unknown = [k for k in seat if k not in Part.registry]

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from aea.lab import harness as H
 from aea.lab import overseer as OV
-from aea.lab.parts.base import Part
+from aea.lab.parts.base import Part, template, variant_of
 from aea.lab.parts.read import read_work, stated
 
 
@@ -14,12 +14,9 @@ class Critic(Part):
     key, stage, order = "critic", "repair", 1
     kind, metric, requires = "lever", "accuracy", ("call",)
 
-    PROMPT = ("Below is a task and an answer that was given to it. Check the answer. If it is "
-              "correct, reply with it unchanged. If it is wrong, work out the correct answer "
-              "and reply with that.\n\nTASK:\n%s\n\nANSWER GIVEN:\n%s")
-
     def run(self, ctx):
-        p = self.PROMPT % (ctx.prompt, ctx.text or "(none)")
+        v = ctx.cfg("critic", "variant") or variant_of("critic")
+        p = template("critic", v).format(prompt=ctx.prompt, text=ctx.text or "(none)")
         r = H.call_gated(ctx.rod[0], ctx.rod[1], [{"role": "user", "content": p}],
                          max_tokens=ctx.max_tokens, temperature=ctx.temperature)
         seen = OV.inspect(r, max_tokens=ctx.max_tokens, prompt=p)

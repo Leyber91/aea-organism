@@ -1,7 +1,7 @@
 """Parts that build the prompt. They run before anything is sent."""
 from __future__ import annotations
 
-from aea.lab.parts.base import Part
+from aea.lab.parts.base import Part, template, variant_of
 
 
 class Goal(Part):
@@ -18,12 +18,7 @@ class Frame(Part):
     key, stage, order = "frame", "shape", 2
     kind, metric, requires = "lever", "accuracy", ("call",)
 
-    MANNER = "You are on the bench. Answer exactly and only what is asked."
-
     def run(self, ctx):
-        if ctx.cfg("frame", "names") == "manner":
-            ctx.prompt = "%s\n\n%s" % (self.MANNER, ctx.prompt)
-            ctx.note(frame_names="manner")
-        else:
-            ctx.prompt = "%s\n\n%s" % (ctx.task["method"], ctx.prompt)
-            ctx.note(frame_names="method")
+        v = ctx.cfg("frame", "variant") or ctx.cfg("frame", "names") or variant_of("frame")
+        ctx.prompt = template("frame", v).format(prompt=ctx.prompt, **ctx.task)
+        ctx.note(frame_variant=v)
