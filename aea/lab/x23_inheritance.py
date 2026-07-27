@@ -206,8 +206,17 @@ def run():
 
 
 if __name__ == "__main__":
-    assert truth_at(1) == START + 6 and truth_at(HANDOFF) == 48369, truth_at(HANDOFF)
-    print("truths verified locally: handoff value at step %d = %d, final = %d\n"
+    # Verified by a SECOND ROUTE, never against a literal. The first version of this line asserted
+    # 48369 from memory and the real value is 48370; the check caught it before any call was spent.
+    def _by_hand(n):
+        v = START
+        for op in OPS[:n]:
+            k = int(op.split()[-1])
+            v = v + k if op.startswith("add") else v - k
+        return v
+    assert all(truth_at(i) == _by_hand(i) for i in range(1, len(OPS) + 1))
+    assert truth_at(1) == START + 6
+    print("truths verified locally by two routes: handoff at step %d = %d, final = %d\n"
           % (HANDOFF, truth_at(HANDOFF), truth_at(len(OPS))))
     d = run()
     print("\nRESULT\n")

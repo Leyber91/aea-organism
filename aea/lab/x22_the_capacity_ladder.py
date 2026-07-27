@@ -71,28 +71,12 @@ def truth_at(n):
     return v
 
 
+# The definitions are sealed in catalogue.json; parts/capacity.py is only the reader.
+from aea.lab.parts import capacity as CAP  # noqa: E402
+
+
 def capacities(rec):
-    """What this sequence DEMONSTRATED, read off the per-step trace. Each is a rate, not a score."""
-    t = [s for s in rec["trace"] if s.get("ok")]
-    if not t:
-        return {}
-    steps = len(t)
-    return {
-        # an answer exists at all
-        "answered": sum(1 for s in t if s.get("value") is not None) / steps,
-        # it APPLIED the operation rather than handing back what it was given
-        "on_task": sum(1 for s in t if s.get("on_task")) / steps,
-        # visible working, in any of the three dialects the readout speaks
-        "shows_working": sum(1 for s in t if s.get("showed_work")) / steps,
-        # the answer was taken OUT of the working rather than off the end
-        "recoverable": sum(1 for s in t if s.get("from_work")) / steps,
-        # a refusal, rather than a guess
-        "can_abstain": sum(1 for s in t if s.get("declined")) / steps,
-        # a second look moved it
-        "revised": sum(1 for s in t if s.get("repaired")) / steps,
-        # state survived into the next step
-        "held": sum(1 for s in t if s.get("hit")) / steps,
-    }
+    return CAP.of(rec)
 
 
 def cell(led, ver, seat, form, adds, rod):
