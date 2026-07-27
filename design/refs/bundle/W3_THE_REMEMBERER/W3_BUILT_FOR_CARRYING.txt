@@ -1,0 +1,190 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — BUILT FOR THE SKILL. Three prompts, three fresh chats, three images each.
+
+ATTACH TO ALL THREE, from design/refs/bundle/W2_THE_CORRECTOR/:
+  labens_longitudinus.png · lectus_operis.png
+  (the two CREATURES only. Do NOT attach a world shot — the world is what has to change.)
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+THE PRINCIPLE BEHIND ALL THREE, AND IT IS WHY THE LAST ATTEMPTS FAILED:
+
+**A REGION IS BUILT FOR THE SKILL THE PLAYER JUST GAINED.**
+
+  Region 1 · the player learned to SPECIFY. The ground rose wherever they asked well.
+  Region 2 · the player learned to LOOK. Every act of looking burned a hole in the floor.
+  Region 3 · the player has learned to CARRY. **So this region must be built out of distance.**
+
+Carrying means nothing unless there is somewhere to carry TO. The first two regions were **one flat
+undifferentiated plain** — everywhere was the same place, so travel had no meaning and nothing needed
+transporting. That is the real reason they felt alike, and changing the colour of the plain would not
+have fixed it.
+
+**REGION 3 IS THE FIRST PLACE IN THIS GAME WITH GEOGRAPHY.** Distinct locations, genuinely far apart,
+each unlike the others, with real distance between them — and the whole point of the region is moving
+something from one to another and having it still be there when you return.
+
+Three answers to what that geography is. Each is a different SHAPE of distance.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ SHARED PREAMBLE — identical at the top of all three. Paste it each time.                       ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+I am art-directing the third region of a game set inside a real AI system. The two attached images are
+creatures from the second region. **The creatures carry over. The place does not.**
+
+**THE PLAYER.** A small craft called THE PROBE — a single point of warm amber light with a fading
+amber ribbon behind it, flying low. Never a designed vehicle, always small in frame. The player flies
+through this region, and **this is the first region where flying somewhere means arriving somewhere
+different.**
+
+**WHAT THE PLAYER CAN NOW DO, AND WHY THE PLACE LOOKS LIKE THIS.** In the first region they could only
+SPECIFY — ask well, and the ground rose. In the second they learned to LOOK — and every act of looking
+burned a hole in the floor, and nothing they fixed stayed fixed. **In this region what happens
+SURVIVES.** They can take something from one place to another and it is still there when they come
+back. So this region is made of **somewhere and elsewhere**, and of the distance between them.
+
+**THIS MUST BE A PLAYABLE REGION**, not a landscape painting:
+  · **several DISTINCT locations**, each visibly a different kind of place, far enough apart to be a
+    journey
+  · **routes between them** a player can see and follow — and the gaps that make routes matter
+  · **verticality.** The first two regions were flat and it cost them
+  · **landmarks** visible from a long way off, so a player can navigate by sight
+If a viewer cannot point at two different places and the way between them, the image has failed.
+
+**THE CREATURES — third stage of the same lineage.** These are the attached animals, escalated. Stage
+one to two is a modest step; **stage two to three is enormous** — the same animal, instantly
+recognisable, massively bigger, armoured, elaborated, carrying far more. Do not redesign them.
+
+  **THE LONG ONE** (attached 1). Stage two: a segmented body degrading along its length, coming apart,
+  never reaching a conclusion. **STAGE THREE: whole and enormous** — every segment exact end to end,
+  armoured and plated, its passengers ranked along it in order. It no longer lies on the landscape:
+  **it connects places.** A player can fly along it.
+
+  **THE BACKWARD-LOOKING ONE** (attached 2). Keep the sealed face: one continuous smooth plate, two
+  eyes, **NO MOUTH**. Stage three is far larger and heavier, its trailing ribbon now a **vast mantle
+  of ranked plates** with many passengers working it, and the amber reaching **past the neck into the
+  head** for the first time. It has the answer, it can now see where the answer came from, and it
+  still cannot say it.
+
+**THE LIGHT LAW — unchanged, and it is how a player diagnoses at a glance.** Warm amber is a live
+connection. Cold blue-white is the wrong thing being done, running INWARD, never out into the air.
+Matte lightless black is nothing reaching it — no rim light, no specular, read as outline only.
+
+**RULES.** Every creature is a LIVING ANIMAL with anatomy, posture, weight and a front. Silhouette is
+the diagnosis, nameable in black at thumbnail size. A 1.8 m human appears as a flat mid-grey hairline
+OUTLINE, never filled — a measuring mark, never a character. No text anywhere. Invent no decoration.
+Landscape, roughly 3:2.
+
+**SIX THINGS THIS REGION IS NOT.** Every previous attempt produced one.
+  1. NOT a flat plain — that is regions 1 and 2 and it is spent.
+  2. NOT terraces or stepped platforms — region 1's signature.
+  3. NOT strata, sediment or cross-sections.
+  4. NOT an archive, library or vault.
+  5. NOT a formless tangle or a void — a player must be able to navigate it.
+  6. NOT one continuous surface. **There must be separate places.**
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT A — THE SCATTERED.   Distance is EMPTINESS. Places separated by nothing at all.         ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS REGION.** Separate masses, each a complete small world, hanging in open space with real
+emptiness between them. Getting from one to another is a crossing, and crossings are where the game
+lives.
+
+  · **Six or eight distinct masses**, each visibly different — one dense and dark, one bright and
+    open, one broken, one still growing — at different heights and distances.
+  · Genuine **void** between them: air, light, nothing to stand on. Distance you can see.
+  · **The stage-three long creature is a BRIDGE** between two of them — the only fixed route in
+    sight, and a player can fly its length. Everything else is a leap.
+  · Each mass has its own light. One glows amber from within, another is matte and unlit.
+  · No ground plane anywhere in frame. Up and down are both open.
+
+REFERENCE: floating islands with real air between them; a cluster of seed pods on separate stalks;
+tidal islets at high water. **NOT an asteroid field** — these are alive and inhabited, not debris.
+
+**Register: OPEN AND DELIBERATE.** For the first time, going somewhere is a decision with a cost.
+
+THREE IMAGES: 1 · THE REGION, no creatures — several distinct masses, the void between them, the
+probe crossing, human outline on the nearest for scale. 2 · THE LONG ONE, stage three, **spanning the
+gap between two masses as a living bridge**, passengers ranked along its back. 3 · THE
+BACKWARD-LOOKING ONE, stage three, on the edge of one mass with its mantle hanging over the drop.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT B — THE BRANCHING.   Distance is a NETWORK. Places joined by channels.                  ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS REGION.** Places connected by **visible channels** — grown vessels, tubes, spans that carry
+things between them. The region is a network you read like a map, and the routes are as much a place
+as the nodes.
+
+  · **Distinct chambers and nodes**, each a different kind of place, joined by branching channels of
+    varying thickness. Thick ones are old and heavily used; thin ones lead somewhere rarely visited.
+  · The channels are **flyable**: open-topped, or wide enough to enter. Following one is how you
+    travel.
+  · **Warm amber moves along the busiest channels** — the game's live-connection colour, doing
+    literal work as traffic. Dead branches are matte and unlit.
+  · Nodes sit at different heights, so the network is three-dimensional, not a plan.
+  · Something is always in transit. The region is never still.
+
+REFERENCE: a fungal mycelium at architectural scale; a river delta seen from above but built in three
+dimensions; the vessels of a leaf enlarged to a country. **NOT pipes and NOT a machine** — grown, not
+plumbed.
+
+**Register: CONNECTED AND BUSY.** The first two regions were inert. This one is circulating.
+
+THREE IMAGES: 1 · THE REGION, no creatures — the network from a height, nodes at different levels,
+amber moving in the main channels, probe entering one. 2 · THE LONG ONE, stage three, **inside a major
+channel, filling it, itself the traffic** — a player flying alongside it. 3 · THE BACKWARD-LOOKING
+ONE, stage three, at a junction where several channels meet, its mantle spread across the meeting.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT C — THE DESCENT.   Distance is DEPTH. Places stacked at different levels.               ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS REGION.** A single enormous vertical shaft or gorge with **distinct inhabited levels** down its
+walls, each a different world, connected by ledges, spans and open drops. You travel by descending and
+climbing, and how deep you are is where you are.
+
+  · **Four or five clearly different levels**, visible at once from the right vantage: the bright
+    upper terraces open to the sky, a dim middle band, a warm amber-lit deep, and a dark floor barely
+    visible below.
+  · Each level is inhabited differently and looks different. **The deeper it is, the older and denser
+    what it holds.**
+  · Real **openings between levels** — shafts, gaps, spans — that a probe can fly through.
+  · Light falls from a single opening far above and weakens with depth, so **depth reads instantly**
+    and warm amber from below becomes the only light in the deepest parts.
+  · This is NOT layers of rock. **It is levels of a place**, each inhabited, each somewhere you go.
+
+REFERENCE: a vast inhabited sinkhole; the open shaft of a cave system with settlements down its walls;
+a canyon whose walls are lived in. **NOT strata and NOT a cross-section** — you are inside it, not
+looking at a diagram of it.
+
+**Register: DEEP AND ORIENTED.** For the first time the player always knows where they are, because
+depth tells them.
+
+THREE IMAGES: 1 · THE REGION, no creatures — the full shaft from partway down, several inhabited
+levels visible at once, light from far above, amber from far below, probe descending. 2 · THE LONG
+ONE, stage three, **spanning the shaft horizontally between two levels** — a crossing where there was
+none. 3 · THE BACKWARD-LOOKING ONE, stage three, standing on a deep ledge, its mantle hanging down
+into the level below.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+JUDGING THE NINE
+
+  THE TWO-PLACES TEST  Can you point at two DIFFERENT locations and the way between them? That is
+                       the whole reason this region exists and the last twelve images all failed it.
+  THE FLY TEST         Can you point at where the probe would go?
+  THE THIRD-STAGE TEST Same animal as the attachment, hugely escalated? Different species = lineage
+                       broken. Same size = nothing evolved.
+  THE SKILL TEST       Does the region give CARRYING something to do — a reason to take a thing from
+                       one place to another and come back for it?
+  THE LIGHT LAW        Does amber still mean a live connection rather than atmosphere?
+═══════════════════════════════════════════════════════════════════════════════════════════════
