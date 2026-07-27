@@ -66,3 +66,33 @@ opened `recall.py` to check whether it is region 3's `RECALL` or a fifth name co
 
 Eight is where the evidence stops. **Six are safe, one is measured and unpriced, one is ahead of its
 evidence and says so.**
+
+---
+
+## THE NAMES, AND THE FILENAMES
+
+Same convention as regions 1 and 2: a Latin binomial, participle or adjective plus a genitive, stored
+lowercase with underscores. Five needed naming. One needed a **new** name.
+
+| creature | binomial | gloss | file |
+|---|---|---|---|
+| the long one, whole | **`Tenens longitudinis`** | *the one holding, of length* | `tenens_longitudinis.png` ✔ |
+| the backward-looking one | `Lectus operis` | *the read one, of the work* | `lectus_operis_s3.png` |
+| receives anything, from anyone | **`Recipiens omnium`** | *the one receiving, of all* | `recipiens_omnium.png` |
+| writes itself a worse note | **`Inficiens sui`** | *the one infecting, of itself* | `inficiens_sui.png` |
+| carries a wrong thing perfectly | **`Servans erroris`** | *the one keeping, of error* | `servans_erroris.png` |
+| the passenger species | **`Vector operis`** | *the bearer, of the work* | `vector_operis.png` |
+| carries everything, stops | **`Sistens oneris`** | *the one halting, of the burden* | `sistens_oneris.png` |
+| keeps all, reaches none | **`Inaccessus sui`** | *the unreachable one, of itself* | `inaccessus_sui.png` |
+
+**`Labens longitudinis` becomes `Tenens longitudinis`, and the rename is the evolution.** *Labens* is
+the drifting one — it holds a task at the start and loses it along its length. At third stage **it
+does not drift**, so the name no longer describes it. Same genitive, opposite participle: *drifting of
+length* becomes *holding of length*. That pair is the cleanest evolution in the whole bestiary and it
+reads in the name alone.
+
+**`Lectus operis` keeps its name at third stage**, because its diagnosis is unchanged: the work is
+read and the mouth is still shut. What changed is that the reading now survives — a property of the
+region, not of the creature. Marked `_s3` rather than renamed.
+
+Scenes keep the region prefix: `S1_the_network.png` is the locked establishing shot.
