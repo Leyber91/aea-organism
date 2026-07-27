@@ -176,6 +176,19 @@ def run():
         prev = caps
 
     v = []
+    # THE ADDITION LAW leads the verdict: a module must not subtract when it is added. A rung that
+    # gains its own capacity while destroying another has failed, whatever its own number did.
+    breaches = [x for x in ladder if x["lost"]]
+    if breaches:
+        v.append("THE ADDITION LAW IS BREACHED BY %d OF %d RUNGS. A component must not subtract "
+                 "functionality when added." % (len(breaches), len(ladder)))
+        for x in breaches:
+            v.append("  %-3s +%-12s SUBTRACTED %s"
+                     % (x["version"], x["adds"],
+                        ", ".join("%s %+0.2f" % (k, val) for k, val in x["lost"].items())))
+    else:
+        v.append("THE ADDITION LAW HOLDS ON EVERY RUNG: no capacity dropped by more than the band "
+                 "anywhere on the ladder.")
     kept = [x for x in ladder if x["delivered"]]
     v.append("PARTS THAT DELIVERED THE CAPACITY THEY CLAIM: %d of %d." % (len(kept), len(ladder)))
     for x in ladder:
