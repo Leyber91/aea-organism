@@ -5,14 +5,42 @@
 
 ---
 
-## FIRST, A CORRECTION: FOUR PILLARS, AND THEY BELONG TO NO WORLD
+## TWO DIFFERENT THINGS THAT ARE EASY TO CONFLATE
 
-`00_VISION.md §2` — **four** design pillars, not five, and they are not AEA components. They are
-**tests every design decision is measured against**, the first being *diegetic truth*: the interface
-IS the fiction and the fiction IS the system, the same bytes.
+**THE AEA HAS FIVE AXES.** `aea/mind/axes.py:29` — `AXES = ("P", "A", "M", "R", "S")`, each running
+L0–L5, and the walk is scored as `sum(levels) / (TOP * len(AXES))`. Position currently reads **1 of
+25**. This is the AEA's own coordinate system, in running code.
 
-They sit alongside the honesty law and the claim ceiling. **A law does not live in a world; it governs
-all of them.** Asking which world holds the pillars is like asking which world holds the two-ink law.
+**THE GAME HAS FOUR DESIGN PILLARS.** `00_VISION.md §2` — tests every design decision is measured
+against, the first being *diegetic truth*: the interface IS the fiction, the same bytes. They sit
+alongside the honesty law and the claim ceiling, and **a law does not live in a world, it governs all
+of them.**
+
+*An earlier version of this file corrected "five pillars" to "four" and was answering about the wrong
+document. Five was right — for the axes.*
+
+---
+
+## THE FIVE AXES ARE THE WORLD PROGRESSION
+
+This is the strongest convergence in the map, and it was not designed in: the six worlds were derived
+from CLASS names, the five axes from canon's coordinate system, and they land on each other.
+
+| axis | canon's own definition | world |
+|---|---|---|
+| **R** · prompting | bare → framed | **1 · THE ANSWERER.** THE FRAME |
+| **P** · path | L0 single call → L3 multi-step plan **+ critique** | **2 · THE WITNESS.** THE CRITIC |
+| **M** · multiplicity | L0 one path → L3 **a council of N** | **2 · THE WITNESS.** THE COUNCIL |
+| **A** · abstraction | the task with a **real recalled memory** injected | **3 · THE REMEMBERER.** RECALL |
+| **S** · async | L0 synchronous → **a receipt timestamped while nobody was watching** | **4 · THE KEEPER** |
+
+**S lands exactly on World 4's faculty** — *it runs while nobody is watching* — which was derived
+independently from the class name. Two decompositions, arrived at separately, agreeing.
+
+**And the two worlds with no axis are the two with no evidence.** World 5 (THE HAND, `act-external`)
+and World 6 (THE APPRENTICE, the ops and the innovation layer) have no growth axis in canon, because
+they are not movement along a coordinate — they are **capabilities the entity acquires** and **things
+that happen TO the map.** The axes measure growth; those two change what is growing.
 
 ---
 
