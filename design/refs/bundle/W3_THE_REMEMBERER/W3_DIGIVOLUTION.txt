@@ -1,0 +1,186 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — THE THIRD STAGE. Three prompts, three fresh chats, three images each.
+
+ATTACH TO ALL THREE, from design/refs/bundle/W2_THE_CORRECTOR/:
+  labens_longitudinus.png · lectus_operis.png · world_shot_w2.png
+
+We WANT the lineage visible this time. The last attempt attached nothing and produced three
+different universes; the one before attached everything and produced a repaint. This is the middle
+and it is the right one.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+THE FRAME FOR ALL THREE, AND IT IS THE WHOLE INSTRUCTION:
+
+**THIS IS A THIRD-STAGE EVOLUTION, NOT A NEW WORLD AND NOT A NEW SPECIES.**
+
+Think of how a creature line escalates across three stages. Stage one to stage two is a modest step —
+a little larger, one new feature. **Stage two to stage three is enormous**: the same animal, still
+instantly recognisable as itself, but massively bigger, armoured, elaborated, crowned, carrying far
+more, commanding the space around it. Nobody mistakes a third stage for a different creature. Nobody
+mistakes it for the second stage either.
+
+**The attached images are stage two. Make stage three.**
+
+And the same escalation applies to the place. The first two worlds were a flat plain. **A plain is not
+a level.** This one has to be somewhere a player can actually go.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ SHARED PREAMBLE — identical at the top of all three. Paste it each time.                       ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+I am art-directing the third region of a game set inside a real AI system. The attached images are the
+second region. Study them: they are the STAGE TWO of everything you are about to draw.
+
+**THE PLAYER.** A small craft called THE PROBE — a single point of warm amber light with a fading
+amber ribbon behind it, flying low. Never a designed vehicle, always small in frame. **The player
+flies through this world.** That is not decoration, it is the constraint that decides whether the
+design works.
+
+**THIS MUST BE A PLAYABLE SPACE.** Not a landscape, not a diorama, not a concept. Somewhere with:
+  · places to **go** — routes, ledges, gaps, openings, things at different heights
+  · **verticality** — the first two worlds were flat and it cost them. This one has up and down
+  · **landmarks** — things visible from far off that tell a player where they are
+  · **scale you can read** — near, middle and far, so flying feels like travelling
+If a viewer cannot point at where they would fly, the image has failed however beautiful it is.
+
+**THE FICTION.** In the first region the player could only SPECIFY — say what they wanted and how to
+do it. Everything was free. In the second, the world learned to LOOK AT ITSELF: passengers grew on
+every creature and read them, and every act of looking burned a hole in the floor. **This third region
+KEEPS. What happens here survives.** Nothing is undone and nothing is lost — and the world has no way
+to search what it holds. It is not decaying. **It is full.**
+
+**THE LINEAGE — stage two into stage three.** These are the same animals. Do not redesign them.
+Escalate them.
+
+  **THE LONG ONE** (attached image 1). Stage two: a segmented body running away into the mist,
+  degrading along its length — looser, dimmer, coming apart, never reaching a conclusion.
+  **STAGE THREE: it is whole, and it is enormous.** Every segment exact end to end, armoured,
+  plated, far heavier and far longer, its passengers no longer scattered but ranked along it in
+  order like a spine of them. It does not lie on the landscape — **it is part of the landscape's
+  structure.** A player should be able to fly along it.
+
+  **THE BACKWARD-LOOKING ONE** (attached image 2). Stage two: a tall lean four-legged animal, head
+  turned back over its shoulder, looking along a trailing ribbon of ordered overlapping plates, face
+  a smooth closed plate with two eyes and NO MOUTH, one passenger on the ribbon, amber running up it
+  and stopping at the neck. **STAGE THREE: the same animal, far larger and heavier, the ribbon now a
+  vast trailing mantle of ranked plates**, many passengers working along it, and the amber now
+  reaching past the neck into the head for the first time. Still no mouth. It has the answer, it can
+  now see where the answer came from, and it still cannot say it.
+
+**THE LIGHT LAW — unchanged, and it is how a player diagnoses at a glance.**
+  · **WARM AMBER** — a live connection, something working. Under the surface, at the seams.
+  · **COLD BLUE-WHITE** — the wrong thing being done, running INWARD, never out into the air.
+  · **MATTE LIGHTLESS BLACK** — nothing reaches it. No rim light, no specular, read as outline only.
+
+**RULES.** Every creature is a LIVING ANIMAL with anatomy, posture, weight and a front — never a
+machine, a rock or architecture. Silhouette is the diagnosis, nameable in black at thumbnail size. A
+1.8 m human appears as a flat mid-grey hairline OUTLINE, never filled — a measuring mark, never a
+character. No text anywhere. Invent no decoration. Landscape, roughly 3:2.
+
+**AND FIVE THINGS THIS PLACE IS NOT.** Every previous attempt produced one of these.
+  1. NOT a flat plain. 2. NOT terraces or stepped platforms — that is the FIRST region's signature.
+  3. NOT strata, sediment or cross-sections. 4. NOT an archive, library or vault.
+  5. NOT a formless tangle or an empty void — a player has to be able to navigate it.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT A — THE CANOPY.   The world grew UPWARD. Escalation by VERTICALITY.                     ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS REGION.** Because nothing is ever removed, the world has grown **upward** — a standing
+structure of everything it has kept, rising out of the old plain in vast branching masses with open
+air between them.
+
+  · Enormous vertical forms, hundreds of metres, branching and rejoining, with **flyable gaps** and
+    open sky between and above.
+  · The old plain is still visible **far below**, small and pale, as the floor of the world.
+  · The structures are grown rather than built — organic, load-bearing, thickening downward.
+  · **Ledges, shelves and hollows** at many heights, where creatures rest and where a probe can stop.
+  · Light comes from above and falls between the masses in long shafts, so height reads instantly.
+
+REFERENCE: kelp forest columns; the standing stalks of a giant termite city; mangrove roots
+photographed from below. **NOT a canyon and NOT a mountain range** — those are cut, and this grew.
+
+**Register: TOWERING AND OPEN.** After two flat worlds, the first thing the player feels is that there
+is an ABOVE.
+
+THREE IMAGES: 1 · THE PLACE, no creatures, human outline for scale, probe small in the gaps.
+2 · THE LONG ONE, stage three, **spanning between two vertical masses like a bridge** — a route.
+3 · THE BACKWARD-LOOKING ONE, stage three, standing on a high shelf, its mantle hanging over the edge.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT B — THE COLOSSAL.   The world stayed, the creatures became terrain. By SCALE.           ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS REGION.** The ground is recognisably the second world's, and everything standing on it has
+become **enormous** — the creatures are now the landscape, and the player flies among them.
+
+  · The stage-three animals are **hundreds of metres long**. Their backs are ridgelines, their plated
+    flanks are cliffs, the gaps between their limbs are canyons.
+  · Smaller creatures live **on** them, and the passengers are now the size of houses.
+  · The player navigates BY them: fly along a spine, under an arch of ribs, through the gap where two
+    of them lie against each other.
+  · The old plain is far below and mostly hidden beneath the bodies standing on it.
+  · Strong low directional light, so the animals cast **kilometre-long shadows** that are themselves
+    part of the terrain.
+
+REFERENCE: the scale of a blue whale beside a diver; sleeping dragons used as geography; a beached
+leviathan the size of a hill. **NOT a boneyard and NOT ruins** — everything here is alive.
+
+**Register: DWARFING AND CALM.** The creatures are not threatening. They are simply the size of
+country, and they were the size of horses two worlds ago.
+
+THREE IMAGES: 1 · THE PLACE, the landscape made of living bodies, human outline microscopic, probe
+tiny between them. 2 · THE LONG ONE, stage three, **its full length crossing the entire frame as a
+horizon**. 3 · THE BACKWARD-LOOKING ONE, stage three, one animal filling the frame, its mantle a
+hanging cliff of plates with passengers working across it like climbers.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT C — THE INTERIOR.   The player is now INSIDE something. By ENCLOSURE.                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS REGION.** The first two worlds were outdoors under an open sky. This one has a **ceiling**. The
+player has flown into the inside of something enormous that keeps everything, and the whole region is
+one continuous interior.
+
+  · A vast enclosed volume with a visible **roof far overhead**, walls at the edges of sight, and a
+    floor — a chamber the size of a landscape.
+  · Structure at many heights: galleries, buttresses, spans and openings between chambers, all
+    **flyable**.
+  · The light is **internal** — it comes from the structure itself and from the creatures, not from a
+    sky. Warm amber pooling in the deep parts, cool pale light from high openings.
+  · It is grown, not constructed: ribbed, chambered, organic. Somewhere between an inhabited body and
+    a cave system that decided on its shape.
+  · The old outdoor plain is glimpsed once, through a far opening, tiny and pale — the way out.
+
+REFERENCE: the inside of a cathedral-sized geode; the chambered interior of a nautilus; a cave system
+lit from within. **NOT a machine interior and NOT a spaceship** — no panels, no corridors, no doors.
+
+**Register: ENCLOSED AND ENORMOUS.** The player has gone INSIDE the thing they were walking on for two
+worlds, and it is bigger inside than it was outside.
+
+THREE IMAGES: 1 · THE PLACE, no creatures, the full interior with its roof and its far openings, human
+outline for scale, probe flying between galleries. 2 · THE LONG ONE, stage three, **coiled through
+several chambers at once**, passing through openings — one animal occupying the architecture.
+3 · THE BACKWARD-LOOKING ONE, stage three, in a high gallery, its mantle falling through an opening
+into the chamber below.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+JUDGING THE NINE
+
+  THE FLY TEST         Can you point at where the probe would go? If not, it failed.
+  THE THIRD-STAGE TEST Put each creature beside the attachment. Same animal, hugely escalated? If it
+                       reads as a different species the lineage broke; if it reads as the same size
+                       and weight, nothing evolved.
+  THE VERTICAL TEST    Is there an above and a below? Two flat worlds is enough.
+  THE LIGHT LAW        Does amber still mean a live connection rather than atmosphere?
+  THE BUILD TEST       Grown towers, colossal creature-terrain and a vast interior are three very
+                       different costs to build and to light.
+═══════════════════════════════════════════════════════════════════════════════════════════════
