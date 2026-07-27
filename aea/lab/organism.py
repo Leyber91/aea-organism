@@ -129,6 +129,7 @@ class Chain:
                "temperature": self.temperature, "trace": [], "flags": []}
         history, value, carried = [], self.start, ""
         for i, op in enumerate(ops):
+            prev_value = value
             # The parts do the shaping. Goal and Frame prepend their own text, so v2 and v3 differ
             # from v1 by what they SEAT rather than by what the harness writes into the string.
             task = {"id": "chain", "truth": truth_fn(i + 1),
@@ -155,6 +156,9 @@ class Chain:
             rec["trace"].append({"step": i + 1, "ok": True, "value": value,
                                  "truth": truth_fn(i + 1), "hit": value == truth_fn(i + 1),
                                  "showed_work": read_work(text)[0] is not None,
+                                 # ON_TASK: did it APPLY the operation, or hand back what it was
+                                 # given? Orthogonal to length, unlike the <400-char proxy it replaces.
+                                 "on_task": value is not None and value != prev_value,
                                  "from_work": rb.startswith("work:"),
                                  "declined": rb == "declined",
                                  "repaired": bool(r.get("repaired")),

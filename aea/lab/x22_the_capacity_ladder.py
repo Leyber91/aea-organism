@@ -80,8 +80,8 @@ def capacities(rec):
     return {
         # an answer exists at all
         "answered": sum(1 for s in t if s.get("value") is not None) / steps,
-        # the reply is about this step rather than a restatement or an essay
-        "on_task": sum(1 for s in t if (s.get("chars") or 0) < 400) / steps,
+        # it APPLIED the operation rather than handing back what it was given
+        "on_task": sum(1 for s in t if s.get("on_task")) / steps,
         # visible working, in any of the three dialects the readout speaks
         "shows_working": sum(1 for s in t if s.get("showed_work")) / steps,
         # the answer was taken OUT of the working rather than off the end

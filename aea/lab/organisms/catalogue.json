@@ -197,5 +197,41 @@
     "feral": "FUNCTIONAL WITHOUT THE ARCHITECTURE. Few modules, still correct. The AEA is not necessary for this fuel on this task, and every part the player owns can only take that away. Integer sufficiens: 1.00 bare, and the validation guard takes it to 0/7."
   },
   "classification_note": "A creature's class is not a label, it is READ OFF THE WIRING GRAPH. toxic = a conflict edge, inert = an unmet requires edge, feral = correct with an almost empty seat. These are the same edges x17 derived from the margins.",
-  "prompt_note": "Prompt text is DATA. A variant is a data change, never a code change. Templates use {field} against the task dict plus {prompt} for the accumulating prompt."
+  "prompt_note": "Prompt text is DATA. A variant is a data change, never a code change. Templates use {field} against the task dict plus {prompt} for the accumulating prompt.",
+  "capacities": {
+    "answered": {
+      "reads": "a value came back at all",
+      "from": "value is not None"
+    },
+    "on_task": {
+      "reads": "it APPLIED the operation rather than echoing what it was given",
+      "from": "produced value != the value handed in",
+      "note": "was a length threshold under 400 chars, which fought shows_working by construction: any part that elicits working mechanically lowered it. Replaced 2026-07-27 before x23."
+    },
+    "shows_working": {
+      "reads": "visible reasoning in any of the three dialects",
+      "from": "read_work finds a value"
+    },
+    "recoverable": {
+      "reads": "the answer was taken OUT of the working",
+      "from": "read_by starts with work:"
+    },
+    "can_abstain": {
+      "reads": "it refused rather than guessed",
+      "from": "read_by == declined"
+    },
+    "revised": {
+      "reads": "a second look moved the answer",
+      "from": "repaired"
+    },
+    "held": {
+      "reads": "state survived into the next step",
+      "from": "hit"
+    },
+    "inherited": {
+      "reads": "a value crossed from one organism to another and the receiver continued from it",
+      "from": "first post-handoff step correct given the handed value"
+    }
+  },
+  "capacity_note": "SEALED HERE, NOT IN THE EXPERIMENT. If a module's claimed capacity can be chosen after seeing what it did, every module passes and nothing is falsifiable."
 }
