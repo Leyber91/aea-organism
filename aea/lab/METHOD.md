@@ -293,3 +293,36 @@ answer is not the last number - extract per variant, never generically.
 **And the metric follows from the calibration.** At this difficulty final-answer correctness is 0.00
 for every arm, so it discriminates nothing. The signal is **steps-hit and the DRIFT POINT**. Score
 what separates the arms, decided from the calibration rather than from habit.
+
+### DEFECT 12 · WE APPLIED THE ADDITION LAW TO THE ARCHITECTURE AND NOT TO OURSELVES
+
+2026-07-27. Eight structural changes were made to the lab in one session and every one was verified
+by running `import`. **Importing is a control that contains the treatment: it proves the module loads,
+not that it still does what it did.** The subject matter of this project is components that silently
+subtract capability when added, and we did exactly that to our own code.
+
+**What it cost.** The parts refactor moved the naive stated-read out of the runner and into
+`Validation`. An organism with **no guard seated silently stopped answering at all** - `answer=None`
+on a bare call. Nothing caught it for eight commits, and the chain path masked it with a fallback.
+
+**The fix is `aea/lab/tests/test_golden.py`**: seven seats, scripted fuel, no network, frozen
+`(answer, read_by)` per seat. A part that changes what it does fails there instead of six commits
+later. **It found two further defects on its first run, both pre-existing:**
+
+1. `stated` could not see a number at the end of a sentence. The lookahead `(?![\d.])` was meant to
+   avoid matching inside decimals and rejected every digit followed by a full stop - so *"the count
+   is 4."* read as nothing.
+2. The readout's `total` dialect matched `answer` and `result`, which are **the mouth speaking**, not
+   the working. On a mute reply - work right, mouth wrong - it recovered **the mouth's wrong number
+   and reported it as recovered-from-work.** The exact inversion of the part's purpose, on the exact
+   creature it exists for.
+
+**And the structural lesson underneath, which is Law IV read back into the code.** The fuel was
+imported by `fire.py` rather than seated into the organism, so a creature could not be run on a
+recorded or scripted rod and every test had to hit the network. `parts/fuel.py` now offers Live,
+Scripted and Replay behind one interface. **Law IV says the fuel is part of the creature; the code
+now says so too.**
+
+**The rule.** Any change to a part is a capability change until a frozen trace says otherwise. Run
+the golden test before committing, and when it disagrees, decide whether the code regressed or the
+expectation was wrong - and write down which.

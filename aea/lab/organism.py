@@ -42,10 +42,13 @@ class Organism:
         self.unmet = P.unmet(self.keys)
         self.spec = None
         self.temperature = 0.2
+        self.fuel = None
 
-    def run(self, task, *, temperature=None, max_tokens=1200, keep_full=False, carried=""):
+    def run(self, task, *, temperature=None, max_tokens=1200, keep_full=False, carried="",
+            fuel=None):
         ctx = P.Ctx(task, self.rod, temperature=temperature or self.temperature,
-                    max_tokens=max_tokens, seat=self.keys, config=self.config)
+                    max_tokens=max_tokens, seat=self.keys, config=self.config,
+                    fuel=fuel or self.fuel)
         ctx.ok = False
         if carried:
             ctx.note(carried=carried)

@@ -13,8 +13,12 @@ CATALOGUE_PATH = os.path.join(os.path.dirname(_HERE), "organisms", "catalogue.js
 class Ctx:
     """The wire. Parts read and write here; nothing is passed between them directly."""
 
-    def __init__(self, task, rod, *, temperature=0.2, max_tokens=1200, seat=(), config=None):
+    def __init__(self, task, rod, *, temperature=0.2, max_tokens=1200, seat=(), config=None,
+                 fuel=None):
+        from aea.lab.parts.fuel import DEFAULT
         self.task, self.rod = task, rod
+        # FUEL IS SEATED, NOT IMPORTED. Law IV in the code rather than only in the JSON.
+        self.fuel = fuel or DEFAULT
         self.temperature, self.max_tokens = temperature, max_tokens
         self.seat, self.config = set(seat), dict(config or {})
         self.prompt = task.get("data", "")

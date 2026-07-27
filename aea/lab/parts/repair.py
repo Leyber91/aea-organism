@@ -1,7 +1,6 @@
 """A second call on the same fuel, looking at the first one's answer. The first stage that costs."""
 from __future__ import annotations
 
-from aea.lab import harness as H
 from aea.lab import overseer as OV
 from aea.lab.parts.base import Part, template, variant_of
 from aea.lab.parts.read import read_work, stated
@@ -17,8 +16,8 @@ class Critic(Part):
     def run(self, ctx):
         v = ctx.cfg("critic", "variant") or variant_of("critic")
         p = template("critic", v).format(prompt=ctx.prompt, text=ctx.text or "(none)")
-        r = H.call_gated(ctx.rod[0], ctx.rod[1], [{"role": "user", "content": p}],
-                         max_tokens=ctx.max_tokens, temperature=ctx.temperature)
+        r = ctx.fuel.call(ctx.rod, [{"role": "user", "content": p}],
+                          max_tokens=ctx.max_tokens, temperature=ctx.temperature)
         seen = OV.inspect(r, max_tokens=ctx.max_tokens, prompt=p)
         if not r.get("ok"):
             ctx.note(critic_error=r.get("error"))

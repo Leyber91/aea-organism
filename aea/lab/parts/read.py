@@ -10,8 +10,14 @@ from aea.lab.parts.base import Part
 # it was simply blind to: counting work is a numbered list, algebra is not.
 _ENUM = re.compile(r"(?m)^\s*(\d{1,3})[.)]\s+\S")
 _SOLVE = re.compile(r"(?m)^\s*\?\[?\s*([a-zA-Z])\s*=\s*(-?\d{1,6})")
-_TOTAL = re.compile(r"(?i)\b(?:total|sum|answer|result)\b\D{0,18}?(-?\d{1,6})")
-_NUM = re.compile(r"(?<![\d.])(-?\d{1,5})(?![\d.])")
+# WORK LABELS ONLY. `answer` and `result` are the MOUTH speaking; `total` and `sum` are the working
+# labelling itself. Including the first two made the readout recover the mouth's wrong answer and
+# report it as recovered-from-work - the exact inversion of what this part exists for, on the exact
+# creature it exists for. Caught by the golden trace on its first run.
+_TOTAL = re.compile(r"(?i)\b(?:total|subtotal|sum)\b\D{0,18}?(-?\d{1,6})")
+# `(?![\d.])` rejected "the count is 4." because the 4 is followed by a full stop. Now it rejects
+# only a genuine decimal: a digit, or a dot WITH a digit after it.
+_NUM = re.compile(r"(?<![\d.])(-?\d{1,5})(?!\d)(?!\.\d)")
 
 
 def read_work(text):
@@ -62,7 +68,9 @@ class Readout(Part):
     kind, metric, requires = "lever", "accuracy", ("call",)
 
     def run(self, ctx):
-        if ctx.answer is not None or ctx.declined:
+        # It defers to a guard's abstention but NOT to the naive stated read, which is the value it
+        # exists to correct: work right, mouth wrong.
+        if ctx.declined or ctx.read_by not in (None, "stated"):
             return
         val, dialect = read_work(ctx.text)
         if val is not None:
