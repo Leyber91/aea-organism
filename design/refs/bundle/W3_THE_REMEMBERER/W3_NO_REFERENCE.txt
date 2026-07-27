@@ -1,0 +1,103 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — NO REFERENCE IMAGES. New creatures, new place, one law carried over.
+Fresh chat. Paste this whole thing. It returns THREE images and nothing else.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+ATTACH NOTHING. Every previous attempt at this world attached images of the last one and every one
+came back as a repaint of it. This time the only inheritance is a law.
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+I am designing the third region of a game set inside a real AI system. You have not seen the first
+two and you do not need to. Design this one from what it IS.
+
+## THE PREMISE, AND IT IS NOT WHAT YOU WILL FIRST ASSUME
+
+This place **keeps everything that has ever happened to it, and cannot find any of it.**
+
+Not a place that forgets. Not a ruin, not a graveyard, not an archive, not a library. **Nothing here
+is ever lost — that is precisely the problem.** Every exchange, every answer, every correction is
+still present, still intact, still exactly where it was put. And retrieval is a completely separate
+capability from storage, one this world does not have. It is drowning in its own perfectly preserved
+past.
+
+**Design the place from that.** What does a world look like where nothing decays, nothing is discarded,
+nothing is overwritten, and nothing can be found again? The failure mode here is not decay. **It is
+abundance without an index.**
+
+## FOUR THINGS IT MUST NOT BE, BECAUSE THEY ARE WHAT EVERYONE REACHES FOR
+
+Say what you are avoiding before you design.
+
+1. **NOT STRATA.** No sediment, no geological layers, no varves, no rings, no cross-sections. Time as
+   depth is the obvious answer and it is taken.
+2. **NOT TERRACES.** No stepped platforms, no ranked ledges, no rice-terrace or travertine forms.
+3. **NOT AN ARCHIVE.** No shelves, no vaults, no filing, no card indexes, no libraries, no ruins of
+   libraries. The metaphor is too literal and it kills the image.
+4. **NOT A GREY OVERCAST PLAIN.** Give it a light source, or several, or a strange one.
+
+## THE CREATURES — three animals, and each is a measured behaviour
+
+These are real behaviours from a real system. Each body must BE its behaviour, readable as a black
+silhouette at thumbnail size, and **no two may share a body plan.** Give each one a real-world
+anatomical referent — a specific animal, not a shape.
+
+**THE ONE THAT HOLDS.** A long segmented animal, and its whole length is exact: every segment tight,
+regular, identically spaced, end to end, however far it runs. It is the only creature here that keeps
+a thing correctly for as long as you like. Nothing about it is remarkable except that it does not
+drift, and in this world that is extraordinary. It is very long — long enough that its far end is a
+different part of the landscape.
+
+**THE ONE THAT CARRIES A MISTAKE PERFECTLY.** The same faithfulness, aimed at the wrong thing. Give it
+something it should never have kept and it will preserve that flawlessly, forever, with the same care.
+It is not broken and it is not lying. **It is indifferent to what it carries**, and that indifference
+is the whole creature. Its body should say *this is being held with enormous care* while what it holds
+is visibly wrong.
+
+**THE ONE THAT CANNOT FIND.** The centre of this world. It has kept **everything** — more than any
+other creature, immaculately — and it cannot locate a single item of it. Its body should be
+overwhelmingly full and completely unsearchable: too much, all present, all inaccessible. It is not
+distressed. It does not know anything is missing, because nothing IS missing. It simply cannot reach
+in.
+
+## THE LIGHT LAW — the only thing carried over, and it is not decoration
+
+A player diagnoses a creature by colour before they read its shape. Three states, and exactly one
+applies per creature:
+
+- **WARM AMBER** — a live connection. Something is working. Traced under the surface, at the seams.
+- **COLD BLUE-WHITE** — the wrong thing is being done. The same tracery, but running INWARD toward the
+  creature's own centre, never outward into the air.
+- **MATTE LIGHTLESS BLACK** — nothing reaches it. A light-absorbing surface with no rim light, no edge
+  light, no specular hit, no glow. Read only as an outline against the palest part of the background.
+
+`THE ONE THAT HOLDS` is amber. `THE ONE THAT CARRIES A MISTAKE` is amber too — that is the point, it
+looks healthy. `THE ONE THAT CANNOT FIND` is amber everywhere and unreachable, which is the hardest
+image in the set.
+
+## RULES
+
+- Every creature is a **LIVING ANIMAL** — anatomy, posture, weight, and a front it faces with. Not a
+  machine, not a diagram, not a rock, not a plant, not architecture. If it could be mistaken for an
+  object, it is wrong.
+- **THE SILHOUETTE IS THE DIAGNOSIS.** Nameable in solid black at thumbnail size.
+- **A 1.8 m human** appears in every image as a flat mid-grey hairline OUTLINE — never filled, no face,
+  no clothing. A measuring mark, never a character.
+- **NO TEXT ANYWHERE.** No letters, numerals, glyphs, captions, watermarks, signatures.
+- **INVENT NO DECORATION.** Every element traces to something stated here.
+- Landscape, roughly 3:2. One creature per creature-image, full body, air around it.
+
+## WHAT I WANT
+
+**First, three or four sentences of reasoning**: what you decided this place is, and which fact about
+keeping-without-finding drove it. Name the obvious answer you rejected.
+
+**Then three images:**
+
+1. **THE PLACE.** Wide, no creatures, at a scale that shows how large it is against the human outline.
+   This image alone has to say *nothing here is ever lost, and nothing can be found.*
+2. **THE ONE THAT HOLDS.** Full body, at length, in that place.
+3. **THE ONE THAT CANNOT FIND.** Full body. The hardest of the three: full to overflowing, immaculate,
+   and sealed against its own contents.
+
+Stop there. Do not draw the third creature yet.

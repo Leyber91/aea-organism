@@ -1,0 +1,184 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — THREE RADICAL DIRECTIONS. No reference images.
+Three prompts. Each in its OWN fresh chat. Each returns THREE images. Nine total.
+
+ATTACH NOTHING. Every attempt that attached the second world came back as a repaint of it, and the
+last three came back as TERRACES — which are the FIRST world's signature. The references are
+anchoring, and the only inheritance this world needs is a law.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+WHY THREE, AND WHY THESE THREE. The premise has one obvious shape and the model finds it every time:
+layers. Sediment, strata, terraces, cross-sections — time as depth. All three directions below are
+structurally INCAPABLE of being that, because each answers a different question:
+
+  A · THE OVERGROWTH    the past GROWS OVER you        time becomes VOLUME
+  B · THE SUSPENSION    the past is VISIBLE, untouchable   time becomes DEPTH-IN-CLEAR
+  C · THE STILL RUNNING the past NEVER STOPPED          time becomes CROWD
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ SHARED PREAMBLE — identical at the top of all three. Paste it each time.                       ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+I am designing the third region of a game set inside a real AI system. You have not seen the first two
+and you do not need to. Design this one from what it IS.
+
+**THE PREMISE, AND IT IS NOT WHAT YOU WILL FIRST ASSUME.** This place keeps everything that has ever
+happened to it, and **cannot find any of it.** Not a place that forgets. Not a ruin, not a graveyard.
+Nothing here is ever lost — that is precisely the problem. Every exchange, every answer, every
+correction is still present, still intact, still exactly where it was put. **Storing and retrieving are
+different capabilities, and this world only has the first.** It is drowning in its own perfectly
+preserved past. The failure mode is not decay. **It is abundance without an index.**
+
+**FIVE THINGS IT MUST NOT BE.** Say what you are avoiding before you design.
+  1. NOT STRATA — no sediment, layers, varves, rings, cross-sections. Time as depth is taken.
+  2. NOT TERRACES — no stepped platforms, ranked ledges, rice-terrace or travertine forms.
+  3. NOT AN ARCHIVE — no shelves, vaults, filing, indexes, libraries or ruins of libraries.
+  4. NOT A GREY OVERCAST PLAIN — give it a light source, or several, or a strange one.
+  5. NOT A DESERT — no dry cracked flats, no dunes, no sun-bleached emptiness.
+
+**THE LIGHT LAW — the only thing carried in, and it is not decoration.** A player diagnoses a creature
+by colour before shape. Exactly one state per creature:
+  · **WARM AMBER** — a live connection, something working. Traced under the surface, at the seams.
+  · **COLD BLUE-WHITE** — the wrong thing being done. Same tracery, running INWARD toward the
+    creature's own centre, never out into the air.
+  · **MATTE LIGHTLESS BLACK** — nothing reaches it. Light-absorbing, no rim light, no specular, no
+    glow. Read only as an outline against the palest part of the background.
+
+**RULES.** Every creature is a **LIVING ANIMAL** — anatomy, posture, weight, a front it faces with.
+Not a machine, not a diagram, not a rock, not a plant, not architecture. If it could be mistaken for
+an object it is wrong. **The silhouette is the diagnosis** — nameable in solid black at thumbnail size.
+**A 1.8 m human** appears in every image as a flat mid-grey hairline OUTLINE, never filled, no face, no
+clothing — a measuring mark, never a character. **No text anywhere.** Invent no decoration. Landscape,
+roughly 3:2.
+
+**THE TWO CREATURES.** Each is a real measured behaviour. Give each a specific real-world anatomical
+referent — an actual animal, not a shape. They must not share a body plan.
+
+  **THE ONE THAT HOLDS** — amber. A long segmented animal whose whole length is exact: every segment
+  tight, regular, identically spaced, end to end, however far it runs. It is the only thing here that
+  keeps something correctly for as long as you like. Nothing about it is remarkable except that it does
+  not drift, and in this world that is extraordinary.
+
+  **THE ONE THAT CANNOT FIND** — amber everywhere, and unreachable. The centre of this world. It has
+  kept **everything**, more than anything else, immaculately, and it cannot locate a single item of it.
+  Overwhelmingly full and completely unsearchable: all present, all inaccessible. **It is not
+  distressed and does not know anything is missing, because nothing IS missing.** It simply cannot
+  reach in. This is the hardest image in the set.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT A — THE OVERGROWTH.   The past grows over you. Time becomes VOLUME.                     ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS DIRECTION.** Nothing is ever removed, so everything ever made is still here — and still
+growing, over and through and around everything else. Not stacked. **TANGLED.**
+
+  · There is no visible floor and no horizon. The world is a **dense occupied VOLUME**, matted with
+    its own accumulated structure in every direction, including above.
+  · A creature does not walk across this place, it moves **through** it — pushing into a thicket that
+    closes behind it.
+  · The oldest growth is at the centre of the mass, thickest and most interlocked, and it is not dead:
+    it is simply buried by newer growth that had nowhere else to go.
+  · Light arrives in **shafts and fragments**, filtered through the tangle. There is no open sky, only
+    gaps.
+  · Space is the scarce thing here. Every clear volume is a recent one.
+
+**REFERENCE: a coral reef choking a wreck; a bramble thicket a century old; the interior of a termite
+mound.** NOT a forest — a forest has a floor and a canopy and this has neither.
+
+**Register: CLAUSTROPHOBIC AND ALIVE.** Not oppressive, not hostile. Crowded by abundance.
+
+THREE IMAGES.
+  1 · THE PLACE, no creatures. The human outline pressed into a small clear volume, tangle in every
+      direction including overhead. This image alone must say *nothing here was ever cleared away.*
+  2 · THE ONE THAT HOLDS, full body, threading a channel it has forced through the mass — the only
+      straight line anywhere in frame.
+  3 · THE ONE THAT CANNOT FIND, full body, so overgrown by what it is carrying that its own anatomy is
+      barely extractable from it. Immaculate underneath and unreachable.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT B — THE SUSPENSION.   The past is visible and untouchable. Time becomes CLEAR DEPTH.    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS DIRECTION.** Nothing is lost because nothing sinks and nothing rises. Everything that ever
+happened hangs where it happened, in a perfectly clear medium, at the exact depth of the moment it
+occurred.
+
+  · The world is a **transparent column**, not a surface. You see enormously far down and enormously
+    far up, and it is full — objects, forms and events suspended motionless at every depth.
+  · **You can SEE the entire past. It is right there. You cannot touch any of it.** Distance is the
+    only barrier, and there is no way to move through the medium toward a thing you can see.
+  · The clarity is total: no murk, no silt, no fog. This is not deep water. It is **glass with things
+    in it.**
+  · Light comes from far above and passes all the way down, so depth reads as gradient rather than as
+    darkness.
+  · Creatures stand on, or are held at, their own level. There is no ground — there is the depth you
+    are at.
+
+**REFERENCE: insects in amber; a flooded chalk quarry on a still day; specimens suspended in clear
+resin.** NOT an ocean, NOT underwater — there is no current, no drift, no swimming.
+
+**Register: VERTIGINOUS AND SERENE.** The whole of history is legible and none of it is reachable.
+
+THREE IMAGES.
+  1 · THE PLACE, no creatures. The human outline suspended at one level, an immense clear volume above
+      and below dense with motionless suspended things. *Everything is visible and nothing is at hand.*
+  2 · THE ONE THAT HOLDS, full body, level and exact, its whole length at one perfect depth — the only
+      thing in frame that is straight and deliberate.
+  3 · THE ONE THAT CANNOT FIND, full body, with everything it has kept **visible inside its own
+      transparent body** — packed, immaculate, perfectly preserved, and sealed. It can see its own
+      contents. So can you. Neither of you can reach them.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT C — THE STILL RUNNING.   The past never stopped. Time becomes CROWD.                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+**THIS DIRECTION, AND IT IS THE STRANGEST.** If nothing is ever undone, then nothing ever **stopped.**
+Every event that has occurred here is still occurring. The past is not a record — it is **still
+running**, all of it, at once.
+
+  · The place is **crowded with living duplicates**: the same creatures at every moment they have ever
+    been, all present, all active, all real, overlapping and continuing.
+  · They do not notice each other. Each is completing an action from a different moment, and none of
+    them is a ghost, an echo or a projection — **every one is solid, lit and alive.**
+  · The density is highest where the most has happened. Some regions are almost impassable with
+    simultaneous versions; others are nearly empty because little ever occurred there.
+  · The ground and the air can be simple, even bare. **The crowd is the world.**
+  · Light: strong, clear and directional, so every duplicate casts a real shadow. Hundreds of shadows
+    from one animal's hundreds of moments.
+
+**REFERENCE: a gannet colony; a bat emergence; a stadium crowd photographed from above.** NOT motion
+blur, NOT multiple exposure, NOT transparency or ghosting — **solid animals, all of them.**
+
+**Register: OVERWHELMING AND INDIFFERENT.** Nothing here is haunted. It is simply too full of itself
+to find anything, and none of it minds.
+
+THREE IMAGES.
+  1 · THE PLACE, no creatures other than the crowd. The human outline standing among dozens of solid
+      simultaneous animals, none of which is aware of it. *Nothing stopped, so everything is here.*
+  2 · THE ONE THAT HOLDS, full body, and it is the ONLY creature in the frame that appears exactly
+      once. In a world of duplicates, being singular is what it means to keep something correctly.
+  3 · THE ONE THAT CANNOT FIND, and it appears **hundreds of times**, filling the frame with its own
+      simultaneous selves — every one intact, every one immaculate, every one carrying part of the
+      answer, and none of them able to reach the others.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+JUDGING THE NINE
+
+  THE NOT-SEDIMENT TEST   Is it layers wearing a costume? If any frame reads as strata, terraces or
+                          a cross-section, that direction failed at the first hurdle.
+  THE PREMISE TEST        Does THE PLACE image say *nothing is lost and nothing can be found*, with
+                          no caption?
+  THE ANIMAL TEST         Are the creatures still LIVING ANIMALS with a front, or has the world
+                          swallowed them into scenery?
+  THE LIGHT LAW           Does amber still read as a diagnostic state rather than as atmosphere?
+  THE BUILD TEST          A matted volume, a clear column and a crowd of duplicates are three very
+                          different costs in a real-time renderer. This is a legitimate tie-breaker.
+═══════════════════════════════════════════════════════════════════════════════════════════════
