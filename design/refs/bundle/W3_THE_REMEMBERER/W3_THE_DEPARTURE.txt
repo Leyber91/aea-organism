@@ -1,0 +1,113 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — THE DEPARTURE. A fresh chat, and a deliberate break.
+One prompt. It returns THREE images. Attach the three W2 references.
+
+This is the alternative to W3_THREE_MORPHOLOGIES.txt, not an addition to it. That file asks how to
+evolve the second world. This one asks what a genuinely DIFFERENT place looks like, with one thing
+held fixed. Fire whichever answers the question you actually have.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+ATTACH, from design/refs/bundle/W2_THE_CORRECTOR/:
+  labens_longitudinus.png · world_shot_w2.png · world_shot_w2_the_forgetting.png
+
+
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+I am art-directing the third world of a game bestiary set inside a real AI system. The three attached
+images are from the second world. Study them, and then depart from them.
+
+**THIS IS NOT AN EVOLUTION AND I DO NOT WANT CONTINUITY OF PLACE.** The first two worlds share almost
+everything — the same black glass, the same marbled stone plain, the same pale overcast, the same
+mist and the same distant mountains. Only the creatures' attachments and the ground's surface changed
+between them. That was correct for the second world and it is wrong for this one.
+
+**ONE THING IS FIXED AND EVERYTHING ELSE IS YOURS.**
+
+THE FIXED THING: **THE ANIMALS.** Same bodies, same anatomy, same silhouettes, same postures, same
+species. A player must look at a creature here and recognise it instantly as the same animal they met
+before. That recognition is the whole reason this reads as travelling rather than restarting, and it
+is the only thing I am protecting.
+
+**FREE: everything else.** The ground, the sky, the light and where it comes from, the air, the
+horizon, the scale of the space, the architecture if there is any, the palette, the weather, whether
+there is weather, whether there is a ground at all. If the second world is a grey plain under an
+overcast, this one does not have to be a plain, does not have to be grey, and does not have to be
+under anything.
+
+---
+
+## WHY THIS WORLD IS DIFFERENT IN KIND, WHICH IS WHERE THE FORM SHOULD COME FROM
+
+In the FIRST world the player could only SPECIFY — say what they wanted and how to do it. Everything
+was free, and asking well made the ground rise by itself.
+
+In the SECOND world the universe learned to LOOK AT ITSELF. Passengers grew on every creature and read
+them, and every act of looking burned a hole in the floor. The player left standing over a creature
+they had just repaired, watching the repair fail to travel even a few metres along its own body.
+
+**BOTH OF THOSE WORLDS LIVE IN AN ETERNAL PRESENT.** Nothing was retained. No correction stayed made.
+Every visit was the first visit, and a creature repaired was a creature that would need repairing
+again. They are frozen — one moment, held.
+
+**THIS WORLD HAS A PAST.** It is the first place in this universe where what happens SURVIVES. What
+you do stays done, which is relief, and also weight, because mistakes stay too. It is not a better
+version of the second world. It is a place where time exists and the previous two did not have any.
+
+**Design from that.** A world with duration is not a still world with a memory bolted on. Ask what the
+ground does, what the light does, what the air does, what the horizon does, in a place where nothing
+is ever undone. The three attached images show a world with no yesterday. Make one that has nothing
+but yesterdays.
+
+---
+
+## THE LAWS THAT SURVIVE ANY DEPARTURE
+
+These are the game's, not the world's, and they hold everywhere:
+
+- Every creature is a **LIVING ANIMAL** with anatomy, posture, weight and a front. Never a machine, a
+  rock, a specimen or a landscape feature. If it could be mistaken for an object, it is wrong.
+- **THE SILHOUETTE IS THE DIAGNOSIS** — nameable as a solid black shape at thumbnail size.
+- **A 1.8 m human** appears as a flat mid-grey hairline OUTLINE, never filled, a measuring mark and
+  never a character.
+- **THE LIGHT LAW.** Warm amber is a live connection. Cold blue-white is the wrong thing being done,
+  running inward. Matte lightless black is nothing reaching it — a light-absorbing surface placed
+  against the palest part of the background, no rim light, no specular. This is how a player diagnoses
+  a creature at a glance and it survives any palette you choose.
+- **NO TEXT ANYWHERE.** No letters, numerals, glyphs, captions, watermarks.
+- **INVENT NO DECORATION.** Every element should trace to something stated here.
+
+---
+
+## THE THREE IMAGES
+
+**1 · THE ANCHOR, AND IT IS THE TEST.** In the second world this creature is a single enormously long
+segmented body running away into the mist — dense, precise and brightly lit at the near end, then
+degrading continuously along its length until it dissolves into fog without ever reaching a
+conclusion. It holds a task perfectly at the start and loses it as it goes.
+
+**HERE IT IS WHOLE.** Tight, regular and exact end to end, passengers all the way down, light that
+does not run out. Same animal, same segments, same body plan — finished instead of failing, in a place
+that is not the place it was.
+
+Put it in your new world. If a viewer cannot tell it is the same creature, the departure went too far
+and I need to know that from this image.
+
+**2 · THE PLACE.** Wide. Whatever this world is, at a scale that shows how large it is compared to a
+visitor. Include the human hairline outline. Include the small warm amber point of the player's probe
+with its short fading ribbon. No text, no interface.
+
+**3 · THE PROOF.** A tall lean long-legged four-legged animal, narrow-bodied, head level and TURNED
+BACK OVER ITS OWN SHOULDER, looking along a long ribbon of ordered overlapping plates that trails from
+its neck and shoulders. The front of its face is one continuous smooth closed plate with two eyes and
+NO MOUTH — not covered, not wrapped: the skull simply has no mouth in it. A passenger rides the ribbon
+two thirds of the way down, and warm amber runs UP the ribbon from the passenger toward the shoulders,
+stopping at the neck. The head stays dark.
+
+It is the first creature in this universe to look at itself. It has the answer and it cannot say it.
+In the second world that reading died the moment it was made. **In this one it does not.** Show me
+what that means here.
+
+---
+
+Before the images, three or four sentences: what you decided this world is, and which fact about a
+place that keeps everything drove it. I care about the reasoning as much as the picture.
