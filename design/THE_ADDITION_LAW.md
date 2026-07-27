@@ -107,3 +107,73 @@ The player's loop is this protocol. They meet a creature, read what it is missin
 watch the capacity vector move — including the column that goes **down**. The lesson World 1 already
 teaches is the law stated as play: **the part that promises repair is the one that takes your correct
 answer away.**
+
+---
+
+## MEASURED — x22, 2026-07-27. The ladder is not a ladder.
+
+Eight rungs, two rods, the calibrated retention chain. Accuracy flat across all eight, inside the band
+end to end. The capacities are not:
+
+```
+v1 call          answ 1.00                     held 0.07  show 0.26              drift@2.0
+v2 +goal         show 0.26 -> 0.57             held 0.08                         drift@2.0
+v3 +frame        show 0.57 -> 0.38   COST      held 0.04                         drift@1.5
+v4 +readout      reco 0.00 -> 0.54   show 0.54 held 0.12   <- THE PEAK           drift@1.5
+v5 +validation   can_ 0.00 -> 0.61   COST reco -0.404      held 0.04             drift@1.5
+v6 +critic       revi 0.00 -> 0.74   COST can_ -0.607      held 0.04             drift@1.5
+v7 +carry        held 0.04 -> 0.00   COST show -0.327      revi 1.00             drift@1.0
+v8 +measure      not delivered                                                   drift@1.0
+```
+
+### THE ARCHITECTURE IS NOT MONOTONIC
+
+**v4 is the best organism on this task and it is four parts, not eight.** It carries the widest set of
+live capacities — answered, on_task, shows_working, recoverable — and the **highest retention on the
+whole ladder at 0.12**, above the bare call and above every assembly larger than it.
+
+Everything above v4 trades one capacity for another, and above v6 it trades for nothing at all. The
+drift point moves *earlier* as parts are added: step 2.0 at v1, step 1.0 at v8.
+
+**So completeness is a TOOLKIT, not a configuration.** The full architecture is the set of capacities
+made available. It is not the assembly you should be running. A player who seats everything has not
+built the strongest creature, they have built one that abstains, overrides its own abstention, and
+carries the override forward.
+
+### AND PARTIAL ASSEMBLIES ARE NOT DEGRADED FULL ONES
+
+They are different organisms with different competences, and the numbers say so:
+
+| assembly | what it is best at |
+|---|---|
+| `v1` bare call | the highest hit rate on the ladder, 7.1%, and it holds better than six of the seven assemblies above it |
+| `v2` +goal | the most working elicited, 0.57 — more than the frame produces |
+| `v4` +readout | the widest competence and the best retention. The peak |
+| `v5` +validation | the only assembly that can refuse, 0.61 |
+| `v6` +critic | the only assembly that re-decides, 0.74 |
+
+None of those is a worse version of another. **`v5` is the only thing on the ladder that can abstain;
+that capacity exists nowhere else and is destroyed the moment you add the rung above it.**
+
+### THE TWO SUBTRACTIONS THAT ARE WIRING, NOT MODULES
+
+Both are fixable without touching either component, which is the whole value of declaring the wiring.
+
+**`validation` costs `recoverable` −0.404.** It sits at `read.order 2`, its abstention ends the read,
+and the readout never fires. This is x16's eighteen-point seam seen as the capacity loss it always was.
+
+**`critic` costs `can_abstain` −0.607, all of it.** `repair` runs after `read`, makes its own call and
+overwrites the answer, so **the critic un-does the guard.** Seat both and you get neither. Nothing
+declared that, and no accuracy measurement could have surfaced it.
+
+**And `carry` compounds the second.** At v7 the critic revises every step, so what `carry` carries is
+the critic's rewrite rather than the working value: `held` 0.04 to 0.00. Three parts that each deliver
+their own capacity combine into a system that holds nothing.
+
+### CAVEATS, BEFORE ANY OF THIS IS QUOTED
+
+n=3 on two rods. Every assembly fails the task, so "accuracy is flat" means uniformly bad rather than
+equally good. And `v3`'s `shows_working` drop is suspect: the goal elicited more working than the
+frame, which is backwards, and the `on_task` proxy is a length threshold that fights `shows_working`
+by construction. That orthogonality hole was flagged before the run and it landed where it was
+expected to.
