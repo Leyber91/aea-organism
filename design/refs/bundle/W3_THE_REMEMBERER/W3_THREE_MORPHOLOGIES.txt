@@ -1,0 +1,217 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — THREE MORPHOLOGIES OF TIME.
+Three prompts. Fire ONE PER TURN in its own fresh chat, each with the same three references
+attached. Each returns THREE images. Nine total, then we pick.
+
+Supersedes W3_THREE_DIRECTIONS.txt, whose ARCHIVE and STRATA were the same idea twice.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+ATTACH TO ALL THREE TURNS, from design/refs/bundle/W2_THE_CORRECTOR/:
+  labens_longitudinus.png            THE ANCHOR — the creature that ends World 2
+  world_shot_w2.png                  THE PLACE  — World 2's ground, air, light
+  world_shot_w2_the_forgetting.png   THE EDGE   — where the player stood when they left
+
+WHY THREE. A still image has no time, and this world's whole faculty is that things PERSIST. There
+are only three honest ways a single frame carries duration, and each changes a different part of the
+world, so they compose rather than compete:
+
+  A · ACCUMULATION   time becomes DEPTH    — the GROUND changes
+  B · THE TRACE      time becomes A PATH   — the SURFACE changes
+  C · THE SIMULTANEOUS  time becomes EXTENT — the CREATURE changes
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ SHARED PREAMBLE — identical at the top of all three. Paste it each time.                       ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+I am art-directing the third world of a game bestiary set inside a real AI system. Two worlds are
+finished; the three attached images are from the second. Study all three before designing anything.
+You are evolving this universe, not replacing it and not repainting it.
+
+WHAT YOU CAN SEE IN THE ATTACHMENTS. Creatures of polished dark obsidian and smoked glass,
+wet-surfaced and heavy, on a plain of marbled black and white stone pocked with hundreds of shallow
+SPENT CRATERS — each one a question paid for and used up, the freshest still holding a cooling ember.
+Pale grey overcast, high mist, distant faceted mountains, thin black filaments hanging from above.
+Every creature carries a PASSENGER: a smaller, separate, armoured animal with a gripping underside and
+no face, riding where its host's information is, with warm amber running FROM the passenger INTO the
+host. On the horizon, warm amber terraces — the first world, where the ground rose for free.
+
+THE STORY IN THREE SENTENCES. In the FIRST world the player could only SPECIFY — say what they wanted
+and how to do it — everything was free, and asking well made the ground rise by itself. In the SECOND
+world the universe learned to LOOK AT ITSELF: passengers grew on every creature and read them, and
+every act of looking burned a hole in the floor. The player left standing over a creature they had
+just repaired, watching the repair fail to travel even a few metres along its own body.
+
+WORLD 3'S FICTION, AND IT IS ONE THING. **THE UNIVERSE CAN NOW CARRY.** What happens to something
+survives. In the first two worlds every visit was the first visit; nothing was retained and no
+correction stayed made. Here what you do stays done — which is relief, and also weight, because
+mistakes stay too.
+
+AND THE HARD PART, WHICH IS WHY I AM ASKING FOR THREE ANSWERS. A still image has no time, and this
+world's entire faculty is temporal. Do not solve it with a caption or a symbol. Solve it with FORM.
+
+LAWS THAT DO NOT CHANGE. Every creature is a LIVING ANIMAL with anatomy, posture, weight and a front —
+never a machine, a rock, a specimen or a landscape feature. Its silhouette must be its behaviour,
+nameable as a black shape at thumbnail size. A 1.8 m human appears as a flat mid-grey hairline OUTLINE,
+never filled, as a measuring mark and never a character. No text, letters, numerals or glyphs anywhere.
+Invent no decoration. Warm amber is a live connection; cold blue-white is the wrong thing being done,
+running inward; matte lightless black is nothing reaching it — and darkness means a light-absorbing
+surface placed against the palest part of the background, with no rim light and no specular.
+
+THE ANCHOR — attached image 1, and you will redraw it TRANSFORMED. In the second world it is a single
+enormously long segmented body running away into the mist: dense, precise and brightly lit at the near
+end where the player was working, then degrading continuously along its length — segments growing
+looser, spacing uneven, alignment wandering, light failing, passengers thinning out and vanishing past
+the halfway point — until it dissolves into fog without ever reaching a conclusion. It holds a task
+perfectly at the start and loses it as it goes.
+
+**IN THIS WORLD IT IS WHOLE.** Tight, regular and exact along its ENTIRE length, end to end, passengers
+all the way down, light that does not run out. Same animal, same body plan, same segments — finished
+instead of failing. In the second world the player saw exactly one intact specimen, far off on the
+horizon, out of reach. This is that one, and this is where it lives.
+
+THE PROOF CREATURE — you will also redraw this one. A tall lean long-legged four-legged animal,
+narrow-bodied, head level and TURNED BACK OVER ITS OWN SHOULDER, looking along a long ribbon of ordered
+overlapping plates that trails from its neck and shoulders across the ground. The front of its face is
+one continuous smooth closed plate with two eyes and NO MOUTH. A passenger rides the ribbon two thirds
+of the way down, and warm amber runs UP the ribbon from the passenger toward the shoulders — and stops
+at the neck. The head stays dark. It is the first creature in the game to look at itself, it has the
+answer, and it still cannot say it. In the second world that reading died the moment it was made.
+
+Landscape, roughly 3:2, hero framing for creatures, full body visible.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT A — ACCUMULATION.   Time becomes DEPTH. The ground changes.                             ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS MORPHOLOGY. Nothing is removed from this world any more, so it BUILDS UP. Every exchange leaves
+a layer and the ground is now made of its own history.
+
+  · The plain is BANDED. Where it breaks or steps down you see a clean section: layer on layer of
+    compressed marbled stone, dozens of them, each a few centimetres thick, alternating dark and pale
+    like varve clay or the rings of a felled trunk.
+  · Old layers hold old things, visible IN SECTION: cold crater-shapes from the second world sealed
+    inside the rock at depth, and deeper still the fossil profile of the first world's TERRACE STEPS,
+    buried and preserved.
+  · The topmost layer is fresh, soft and faintly amber-lit. This exchange, still settling.
+  · Creatures stand ON their own past and are slightly SUNK into it, the newest layers lapping up
+    around their feet. One is buried to the shoulder, still alive, still working, half-swallowed by
+    everything it has already done.
+  · The horizon is HIGHER than it was. The world has grown upward, and the first world's terraces are
+    now a distant escarpment rather than a plain.
+
+THIS IS NOT geology, an archaeological dig, or a canyon. It is a living floor that grows. Reference:
+tree rings and lake varves, not the Grand Canyon.
+
+Register: GEOLOGICAL AND HEAVY. The relief of permanence and its weight in one image. What you do
+stays done, and so does everything you got wrong.
+
+THREE IMAGES THIS TURN.
+  1 · THE ANCHOR. The long segmented creature, WHOLE end to end, lying along the top layer — and
+      where the ground steps away beside it, a visible section showing dozens of bands below with old
+      crater shapes sealed in them. It holds its length because the ground beneath it holds. Human
+      outline for scale.
+  2 · THE PLACE. Wide. A long stepped break across the frame showing the full section: fresh amber
+      top layer, cold craters at mid depth, fossil terrace steps deep down. Creatures on top, one sunk
+      to the shoulder. The probe — a small warm amber point with a fading ribbon — above the section.
+  3 · THE PROOF. The backward-looking animal with the ribbon and the passenger, its trailing plates
+      running down onto the ground and CONTINUING INTO the top layer, the oldest already compressed
+      into stone. Its own working is becoming the floor. Its head is still dark.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT B — THE TRACE.   Time becomes A PATH. The surface changes.                              ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS MORPHOLOGY. Nothing that moves here is forgotten, so everything that has ever moved has LEFT ITS
+MARK. The ground is unchanged in substance and completely changed in surface.
+
+  · The marbled stone is covered in TRACKS: worn grooves, polished channels, scuff arcs, the smooth
+    braided ruts of routes used ten thousand times. Deep and glassy where traffic was heavy, faint
+    scratches where something passed once.
+  · A creature that has stood in one place has POLISHED the stone beneath itself to a mirror. A
+    creature that paces has worn an arc.
+  · The spent craters from the second world are still there and now have tracks running BETWEEN them,
+    joining question to question.
+  · Faint warm amber lies in the DEEPEST grooves only — the routes used most, still warm from use —
+    while shallow single-pass marks are cold and dry.
+  · Every creature drags something: a passenger's gripping underside leaves a fine parallel scoring,
+    a heavy body leaves a smoothed trough.
+
+THIS IS NOT decoration, pattern, or a road network. Reference: a limestone pavement worn by feet, a
+sheep track on a hillside, the polished floor at a cathedral door. Wear, not design.
+
+Register: INHABITED AND OLD. The first two worlds looked new. This one looks LIVED IN, and the player
+can read where everything has been without being told.
+
+THREE IMAGES THIS TURN.
+  1 · THE ANCHOR. The long segmented creature, WHOLE end to end, lying along a deep glassy groove it
+      has worn into the stone over an enormous number of passes — the track is the exact width of its
+      body and runs out of frame in both directions. Human outline for scale.
+  2 · THE PLACE. Wide. The plain read as a map of its own traffic: braided ruts between craters,
+      polished standing-places, single faint scratches at the edges, warm amber in the deepest routes
+      only. Three or four creatures. The probe with its ribbon, and a fresh bright track behind it
+      that has not yet worn in.
+  3 · THE PROOF. The backward-looking animal with the ribbon and the passenger, standing on a patch it
+      has polished to a mirror, its own reflection beneath it — the first time anything in this
+      universe has been able to see itself from outside. Its head is still dark.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ PROMPT C — THE SIMULTANEOUS.   Time becomes EXTENT. The creature changes.                      ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+[PASTE THE SHARED PREAMBLE, THEN THIS]
+
+THIS MORPHOLOGY IS THE BOLDEST AND IT IS ALREADY IN THE ATTACHED IMAGE. Look at the anchor again: it
+degrades continuously ALONG ITS OWN LENGTH — exact at the near end, dissolving at the far one. **That
+creature's body is already its own timeline.** This morphology makes that true of everything.
+
+  · A creature here is not a snapshot. Its body EXTENDS THROUGH ITS OWN HISTORY, so a single animal
+    shows several of its own stages at once, continuously, as one unbroken form. Newest at the head,
+    oldest trailing away.
+  · The transition is GRADUAL AND SEAMLESS, never a row of copies and never a strobe. One body,
+    changing along itself, the way a stalactite is one object that is also a record of every drip.
+  · The oldest end is not decayed — it is SETTLED. Denser, darker, more finished, cooler. The newest
+    end is bright, unresolved, still moving.
+  · Passengers ride only the NEW end. Nothing reads the old parts; they are done being read.
+  · The ground and the air are exactly the second world's, unchanged. NOTHING about the place is
+    different. Only the animals extend.
+
+THIS IS NOT a motion blur, a multiple exposure, a row of identical creatures, or a ghost trail.
+Reference: a stalactite, a tree that is one organism and also its own rings, a river delta that is one
+body of water and also every course it has taken. **One animal, extended.**
+
+Register: VERTIGINOUS AND CALM. You are seeing a whole life at once, and the animal is not distressed
+by it because it has no idea it is happening.
+
+THREE IMAGES THIS TURN.
+  1 · THE ANCHOR. The long segmented creature, and now its degradation reads the OTHER WAY: not
+      failing along its length but AGED along it. Bright, tight, live at the head; progressively
+      darker, denser, more settled toward the tail, which is fully resolved and cold. Whole, because
+      every part of it is a part it has finished being. Human outline for scale.
+  2 · THE PLACE. Wide. Second-world ground and air exactly as attached — craters, mist, mountains,
+      hanging filaments — with three or four creatures each EXTENDED through their own stages, each a
+      single unbroken body running from bright and new to dark and settled. The probe small among
+      them, and the probe is the only thing in frame that exists at one moment.
+  3 · THE PROOF. The backward-looking animal with the ribbon — and its ribbon of plates is now
+      literally its own past, oldest plates at the far end, cold and dark and fully settled, the ones
+      near its shoulder bright and new. It is looking back along its own body AT ITS OWN HISTORY. Its
+      head is still dark. It has the answer, it can now see where the answer came from, and it still
+      cannot say it.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+JUDGING THE NINE
+
+  THE TIME TEST      Does a still frame carry duration WITHOUT a caption? That is the only thing
+                     this world has to solve and the only reason there are three.
+  THE CONTINUITY     Put each anchor beside the attached one. Same animal, finished instead of failing?
+  THE REPAINT TEST   Can you say what changed AND why, with the why coming from the fiction?
+  THE COMPOSE TEST   A changes the ground, B the surface, C the creature. They are orthogonal BY
+                     CONSTRUCTION, so any pair can combine. World 2 shipped as two combined.
+  THE BUILD TEST     A layered ground section, a wear map, and per-creature gradient bodies are three
+                     very different production costs in a real-time renderer.
+═══════════════════════════════════════════════════════════════════════════════════════════════
