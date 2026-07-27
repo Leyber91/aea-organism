@@ -71,7 +71,14 @@ class Chain:
                 rec["trace"].append({"step": i + 1, "ok": False})
                 break
             text = r.get("text") or r.get("raw") or ""
-            value = r["answer"] if r["answer"] is not None else Carry.extract(self.form, text, value)
+            # THE CARRY VARIANT WINS THE READ when its instruction appends a number after the
+            # answer. `checkpoint` ends "STATE: value=48379, step=1" and `free` ends with a note, so
+            # the naive last-number read returns the STEP INDEX. That regression scored three whole
+            # rods at 0.00 solo in x23b and read as "the task is too hard for this fleet".
+            if self.form in ("checkpoint", "free"):
+                value = Carry.extract(self.form, text, r["answer"])
+            else:
+                value = r["answer"] if r["answer"] is not None else Carry.extract(self.form, text, value)
             carried = Carry.pack(self.form, text, value)
             if self.form == "conversation":
                 history = history + [{"role": "user", "content": task["data"]},
