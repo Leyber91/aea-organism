@@ -1,82 +1,100 @@
 # PROMPT FOR THE NEXT SESSION
 
-*Paste the block below as the first message. Everything after it explains why it is written that way,
-and is for a human, not for the prompt.*
+*Paste the block below as the first message. Everything after it is for a human, not for the prompt.*
 
 ---
 
 ```
-Read these four files before doing anything, in this order:
+Read these before doing anything, in this order:
 
-  diary/HANDOFF_2026-07-28.md   the whole of the last session: what was built, what
-                                every failure taught, what is pending with a verdict
+  diary/HANDOFF_2026-07-29.md   the last session: eleven instrument defects, what every rod
+                                actually does, the dev/qa/prod ladder, what is still unwired
   design/THE_LAWS.md            43 laws, each paid for by a real failure. They bind you.
-  design/E12_BOARD_SPEC.md      the design specification. Every value resolved, no ranges.
-  diary/OPEN_LOOPS.md           the work, each item carrying FINISH / LATER / KILL
+  diary/DISCOVERIES.md          D18 is the one that governs this session
+  diary/OPEN_LOOPS.md           every open item carries FINISH / LATER / KILL
 
-Then run `python -m aea.tooling.selfcheck` and `python -m aea.tooling.xray` so you are
-looking at the live state rather than at the handoff's description of it. The handoff is
-a point-in-time record; the code is the truth.
+Then run these so you are looking at the live state rather than at a description of it:
 
-THE TWO JOBS, in order.
+  python -m aea.tooling.selfcheck
+  python -m aea.tooling.xray
+  python -m aea.energy.rodprobe --show
 
-FIRST: the interface does not read as an instrument. Luis's verdict, verbatim: "It doesn't
-read JARVIS. Not futuristic, no live vibes. It's just very plain. And you need to make it
-readable." Sections 4 (atmosphere: grain, vignette, glow, depth cueing) and 6 (the full
-12-column layout at 1700x1000, which solves the dead space) of E12_BOARD_SPEC.md are
-UNIMPLEMENTED. That is where the gap is. Implement the spec in the order its section 8
-gives, screenshot after each change, and READ the PNG before claiming anything. The spec
-exists because taste already failed twice; follow its numbers rather than your judgement.
+THE RULE THAT GOVERNS THIS SESSION, and it was measured rather than argued: THE INSTRUMENT IS
+WRONG MORE OFTEN THAN THE MODEL. Eleven instrument defects in one session against almost no
+model behaving unexpectedly, and six of the eleven were in code written to CHECK something.
+Before believing any finding, ask what would have to be true of the INSTRUMENT for it to be
+false, and test that first. Every one of the eleven was caught by pointing the tool at a case
+whose answer was already known. A detector that has never been shown a positive it must catch
+has not been tested, it has only been run.
 
-SECOND: 88 of 110 modules cannot be reached by any wake. hands, seats, fit, goals,
-crystal, shadow, laws, xray, selfcheck and heal are all built, tested and connected to
-nothing. Wire them into aea/loop/live.py the way impasse and unstick now are. An entity
-whose kernel is orphaned is a library, not an entity.
+THE JOB: OUTBOUND CAPABILITIES. An autonomous entity that cannot reach the world cannot help
+anyone. In priority order, and Luis set this order:
+
+1 INTERNET. hands.web_fetch and json_get exist, are permission-gated at the call site, and are
+  now reachable from the wake through brief. Extend from two hardcoded fetches to real search.
+  Law B3: a read tool IS an outbound channel the moment the model writes the address.
+2 VOICE. aea/organs/converse.py is 531 lines, verified running end to end: the mind answers in
+  1.49s and VOICE synthesis is the bottleneck at 14.7s of a 16.2s turn. It is unwired. Audio
+  never leaves the machine; only transcript text does.
+3 RAG. Retrieval over design/ (3.4 MB, 196 files), NOT over code where the AST is exact. Six
+  hosted embedders are measured and working; nemotron-3-embed-1b is best (2048 dims, margin
+  0.528, 0.6s). But ZONES permits `local` only in the sensitive zone, so anything private needs
+  a local embedder. torch is installed CPU-only; a CUDA build is a decision, not a default.
+
+BEFORE ANY OF IT, three things that are cheap and that everything else rests on:
+  - fix the discriminator's INPUTS before wiring kernel/fit.py (421 lines). The tool-calling
+    census undercounts and 59 of 86 model cards are unread. Wiring fit on bad data makes bad
+    selection authoritative.
+  - re-read those 59 cards across SIX ROTATED READERS. One reader at eight workers destroyed
+    the last run with 429s.
+  - decide the outbound boundary deliberately. send_outbound and spend_money are FORBIDDEN with
+    no implementation at all.
 
 HOW TO WORK HERE.
 
-Be a filter, not a mirror. Name failure points before validating strengths. Disagreement
-is wanted and only counts when you bring a measurement; contrarianism without evidence
-should be discounted, and Luis will discount it.
+Be a filter, not a mirror. Name failure points before validating strengths. Disagreement is
+wanted and only counts with a measurement; contrarianism without evidence gets discounted.
 
-Verify, do not claim. "Done" means it ran: the server returned 200, the screenshot was
+Verify, do not claim. "Done" means it RAN: the gate returned 5 green checks, the screenshot was
 read, the test printed. Report failures with the output.
 
-Measure before you believe. If something looks 100x better, prove it, then go. The word
-"know" has to mean measured. Every false finding this project has produced came from its
-own instrument, not from a model behaving unexpectedly.
+At the SECOND repetition, extract it. Sixteen throwaway probes in one session were fifteen
+copies of one module; aea/energy/rodprobe.py is now that module, so use it.
 
-No emoji anywhere. No em dashes, ever, in chat or code or docs; use a comma, a colon, or
-two sentences. No negative parallelism ("it's not X, it's Y"). These are recorded rules
-that were broken twice in the last session; scan your drafts before sending.
+Never test a regex or a path through a shell heredoc. The Bash tool eats backslashes and it
+made the same diagnosis wrong twice. Write it to a real file and run the file.
 
-Nothing is committed until Luis asks. Privacy-scan first: no keys, no absolute paths, no
-employer strings. The sacred save state/journey_save.json is never touched.
+"No timeout" means a generous INACTIVITY budget (rodprobe.IDLE = 300s), never timeout=None.
+None hung two experiments for 28 and 64 minutes on one second of CPU each.
 
-Kill the listener PID before restarting controlroom.py or route edits will not load.
+Drop to the primitive when a tool fails on a source. WebFetch times out on build.nvidia.com;
+a plain urllib GET with a browser User-Agent returns 200 and the whole page.
+
+No emoji anywhere. No em dashes, ever, in chat or code or docs. No negative parallelism
+("it's not X, it's Y"). These are recorded rules that keep getting broken; scan before sending.
+
+Nothing is committed until Luis asks. Privacy-scan first. state/journey_save.json is sacred.
+Known-good is 44525f3 - roll back to that, never to "the last commit".
 ```
 
 ---
 
 ## HOW TO INTERPRET THE HANDOFF (for the human)
 
-**It is a record, not a specification.** Section 1's status column will be stale the moment anything
-is wired in. Run `xray` first; if its numbers disagree with the handoff, the handoff is wrong.
+**Section 1 is the load-bearing part.** Eleven instrument defects in a table. If a new session
+proposes trusting a stored number, that table is the argument for re-measuring it first.
 
-**Section 3 is the load-bearing part.** The laws are not style preferences. Each one has a failure
-attached and the failure is the argument. If a new session proposes something that violates one,
-the correct response is to point at the cost that was paid, not to re-litigate.
+**Section 2 is the only place the rod facts are written down in prose.** The machine-readable
+version is `state/rods.json` via `rodprobe.facts(rod)`, and it wins on conflict.
 
-**Section 5 is the open wound.** It contains measured numbers (ΔL\* below the JND, 2.5% ink coverage,
-twelve font sizes at unreadable ratios) that explain *mechanically* why the board feels flat. Anyone
-who tries to fix it by taste will fail the same way twice. The spec is the answer; it exists because
-taste already lost.
+**Section 3 is what Luis authorised.** dev/qa/prod with declared blind spots. The important detail
+is that a proposal cannot edit its own judge and there is deliberately no `promote()`. If a future
+session wants to add one, that is a conversation with Luis, never a refactor.
 
-**Section 7 is there so the next session does not have to relearn how to talk to you.** It is the
-part most likely to be skipped and the part that costs the most when it is.
+**The critique in section 6 is the part most likely to be skipped.** In particular: a model squad
+approving its own proposals is not independence, and x11 already measured that councils tie their
+best member at 5x the cost. Models propose. The gate approves.
 
-**The order of the <REDACTED-CIRCUMSTANCE> is deliberate and arguable.** The interface is first because it is what
-Luis actually asked for last and because the board is how the next session will see its own progress.
-The wiring is second because it is larger. If the next session wants to invert them, that is a
-reasonable call, and it should say so out loud rather than drift into the easier one — which is
-exactly what happened last session, where nine modules got built and none got connected.
+**What is deliberately NOT in the next session:** the board's visual work (E12 sections 4 and 6),
+wiring the remaining 30 unwired modules, and the 43 unmeasured models. All real, all deferred by
+Luis in favour of outbound capability.

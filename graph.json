@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 139,
+    "count": 140,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 139
+    "count": 140
    },
    {
     "src": "THE_PROBE",
@@ -523,6 +523,12 @@
      "purpose": "THE ADDITION LAW, APPLIED TO OURSELVES. No network, no cost, exactly reproducible."
     },
     {
+     "id": "test_pipeline",
+     "type": "module",
+     "path": "aea/lab/tests/test_pipeline.py",
+     "purpose": "test_pipeline.py - THE SELF-MODIFICATION LADDER, TESTED ON CHANGES DESIGNED TO GET THROUGH."
+    },
+    {
      "id": "tracelog",
      "type": "module",
      "path": "aea/kernel/tracelog.py",
@@ -995,6 +1001,11 @@
     {
      "src": "brief",
      "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "brief",
+     "dst": "hands",
      "rel": "imports"
     },
     {
@@ -1720,6 +1731,21 @@
     {
      "src": "test_golden",
      "dst": "read",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "test_pipeline",
+     "dst": "shadow",
      "rel": "imports"
     },
     {
