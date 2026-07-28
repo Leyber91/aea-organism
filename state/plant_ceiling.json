@@ -1,0 +1,37 @@
+{
+ "schema": "aea.plant_ceiling/1",
+ "plants": {
+  "nvidia": {
+   "measured_at": "2026-07-28 23:07 UTC",
+   "on_model": "nvidia/nemotron-3-super-120b-a12b",
+   "clean_at": 4,
+   "declared_max_inflight": 20,
+   "ramp": [
+    {
+     "concurrency": 1,
+     "throttled": 0,
+     "other_errors": 0,
+     "ok": 1
+    },
+    {
+     "concurrency": 2,
+     "throttled": 0,
+     "other_errors": 0,
+     "ok": 2
+    },
+    {
+     "concurrency": 4,
+     "throttled": 0,
+     "other_errors": 0,
+     "ok": 4
+    },
+    {
+     "concurrency": 8,
+     "throttled": 3,
+     "other_errors": 0,
+     "ok": 5
+    }
+   ]
+  }
+ }
+}

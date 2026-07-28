@@ -1,0 +1,1442 @@
+{
+ "schema": "aea.nvidia_owncall/1",
+ "models": [
+  {
+   "id": "01-ai/yi-large",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 663
+  },
+  {
+   "id": "adept/fuyu-8b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1112
+  },
+  {
+   "id": "ai21labs/jamba-1.5-large-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "aisingapore/sea-lion-7b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1162
+  },
+  {
+   "id": "baai/bge-m3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 5174
+  },
+  {
+   "id": "bigcode/starcoder2-15b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1078
+  },
+  {
+   "id": "databricks/dbrx-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 693
+  },
+  {
+   "id": "deepseek-ai/deepseek-coder-6.7b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "deepseek-ai/deepseek-v4-flash",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 16384
+   },
+   "think_marks": [
+    "chat_template_kwargs",
+    "reasoning_effort"
+   ],
+   "code_bytes": 9133
+  },
+  {
+   "id": "deepseek-ai/deepseek-v4-pro",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 16384
+   },
+   "think_marks": [
+    "chat_template_kwargs"
+   ],
+   "code_bytes": 9182
+  },
+  {
+   "id": "google/codegemma-1.1-7b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "google/codegemma-7b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 678
+  },
+  {
+   "id": "google/deplot",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "google/diffusiongemma-26b-a4b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking"
+   ],
+   "code_bytes": 13971
+  },
+  {
+   "id": "google/gemma-2b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 666
+  },
+  {
+   "id": "google/gemma-3-12b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "google/gemma-3-4b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "google/gemma-4-31b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking"
+   ],
+   "code_bytes": 13122
+  },
+  {
+   "id": "google/recurrentgemma-2b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 693
+  },
+  {
+   "id": "ibm/granite-3.0-3b-a800m-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "ibm/granite-3.0-8b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "ibm/granite-34b-code-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 708
+  },
+  {
+   "id": "ibm/granite-8b-code-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 705
+  },
+  {
+   "id": "meta/codellama-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 2708
+  },
+  {
+   "id": "meta/llama-3.1-70b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "meta/llama-3.1-8b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "meta/llama-3.2-11b-vision-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 900
+  },
+  {
+   "id": "meta/llama-3.2-1b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 0.2,
+    "top_p": 0.7,
+    "max_tokens": 1024
+   },
+   "think_marks": [],
+   "code_bytes": 20941
+  },
+  {
+   "id": "meta/llama-3.2-3b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 0.2,
+    "top_p": 0.7,
+    "max_tokens": 1024
+   },
+   "think_marks": [],
+   "code_bytes": 20939
+  },
+  {
+   "id": "meta/llama-3.2-90b-vision-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 900
+  },
+  {
+   "id": "meta/llama-3.3-70b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "meta/llama-guard-4-12b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 16930
+  },
+  {
+   "id": "meta/llama2-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1098
+  },
+  {
+   "id": "microsoft/kosmos-2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "microsoft/phi-3-vision-128k-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1199
+  },
+  {
+   "id": "microsoft/phi-3.5-moe-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "minimaxai/minimax-m3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 7552
+  },
+  {
+   "id": "mistralai/codestral-22b-instruct-v0.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "mistralai/mistral-7b-instruct-v0.3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "mistralai/mistral-large",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "mistralai/mistral-large-2-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "mistralai/mistral-medium-3.5-128b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [
+    "reasoning_effort"
+   ],
+   "code_bytes": 10632
+  },
+  {
+   "id": "mistralai/mistral-nemotron",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 0.6,
+    "top_p": 0.7,
+    "max_tokens": 4096
+   },
+   "think_marks": [],
+   "code_bytes": 5776
+  },
+  {
+   "id": "mistralai/mixtral-8x22b-v0.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "moonshotai/kimi-k2.6",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 9840
+  },
+  {
+   "id": "nv-mistralai/mistral-nemo-12b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 735
+  },
+  {
+   "id": "nvidia/ai-synthetic-video-detector",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/cosmos-reason2-8b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 5079
+  },
+  {
+   "id": "nvidia/embed-qa-4",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1075
+  },
+  {
+   "id": "nvidia/ising-calibration-1.5-31b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 10395
+  },
+  {
+   "id": "nvidia/llama-3.1-nemoguard-8b-content-safety",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.1-nemoguard-8b-topic-control",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-51b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-70b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-nano-8b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 9735
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-ultra-253b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.2-nv-embedqa-1b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.3-nemotron-super-49b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/llama-nemotron-embed-1b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/embeddings",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 10490
+  },
+  {
+   "id": "nvidia/llama-nemotron-embed-vl-1b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/embeddings",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 12035
+  },
+  {
+   "id": "nvidia/llama3-chatqa-1.5-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/mistral-nemo-minitron-8b-8k-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 750
+  },
+  {
+   "id": "nvidia/nemoretriever-parse",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 7962
+  },
+  {
+   "id": "nvidia/nemotron-3-embed-1b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 14784
+  },
+  {
+   "id": "nvidia/nemotron-3-nano-30b-a3b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 1,
+    "max_tokens": 16384,
+    "reasoning_budget": 16384
+   },
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "reasoning_budget"
+   ],
+   "code_bytes": 43149
+  },
+  {
+   "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "max_tokens": 20480,
+    "temperature": 0.6,
+    "top_p": 0.95
+   },
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "reasoning_budget"
+   ],
+   "code_bytes": 44111
+  },
+  {
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 16384
+   },
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "force_nonempty_content",
+    "low_effort",
+    "reasoning_budget"
+   ],
+   "code_bytes": 52229
+  },
+  {
+   "id": "nvidia/nemotron-3-ultra-550b-a55b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 16384
+   },
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "force_nonempty_content",
+    "reasoning_budget"
+   ],
+   "code_bytes": 68974
+  },
+  {
+   "id": "nvidia/nemotron-3.5-content-safety",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [
+    "chat_template_kwargs"
+   ],
+   "code_bytes": 21519
+  },
+  {
+   "id": "nvidia/nemotron-4-340b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 714
+  },
+  {
+   "id": "nvidia/nemotron-4-340b-reward",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1146
+  },
+  {
+   "id": "nvidia/nemotron-mini-4b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 0.2,
+    "top_p": 0.7,
+    "max_tokens": 1024
+   },
+   "think_marks": [],
+   "code_bytes": 6528
+  },
+  {
+   "id": "nvidia/nemotron-nano-12b-v2-vl",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [
+    "/no_think"
+   ],
+   "code_bytes": 15198
+  },
+  {
+   "id": "nvidia/nemotron-nano-3-30b-a3b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/nemotron-parse",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 9273
+  },
+  {
+   "id": "nvidia/neva-22b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1135
+  },
+  {
+   "id": "nvidia/nv-embed-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 5171
+  },
+  {
+   "id": "nvidia/nv-embedcode-7b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 7966
+  },
+  {
+   "id": "nvidia/nv-embedqa-e5-v5",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/embeddings",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 10446
+  },
+  {
+   "id": "nvidia/nv-embedqa-mistral-7b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/embeddings",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 2843
+  },
+  {
+   "id": "nvidia/nvclip",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/embeddings",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 2815
+  },
+  {
+   "id": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "max_tokens": 2048,
+    "frequency_penalty": 0,
+    "presence_penalty": 0,
+    "min_thinking_tokens": 1024,
+    "max_thinking_tokens": 2048
+   },
+   "think_marks": [
+    "/no_think",
+    "enable_thinking",
+    "max_thinking_tokens",
+    "thinking_budget"
+   ],
+   "code_bytes": 35445
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1127
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct-v1.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 651
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 10811
+  },
+  {
+   "id": "nvidia/vila",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 1076
+  },
+  {
+   "id": "openai/gpt-oss-120b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 1,
+    "max_tokens": 4096
+   },
+   "think_marks": [],
+   "code_bytes": 10301
+  },
+  {
+   "id": "openai/gpt-oss-20b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 1,
+    "max_tokens": 4096
+   },
+   "think_marks": [],
+   "code_bytes": 10868
+  },
+  {
+   "id": "poolside/laguna-xs-2.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 8192
+   },
+   "think_marks": [],
+   "code_bytes": 7823
+  },
+  {
+   "id": "snowflake/arctic-embed-l",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/embeddings",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 2594
+  },
+  {
+   "id": "stepfun-ai/step-3.7-flash",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": "/v1/chat/completions",
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 7603
+  },
+  {
+   "id": "thinkingmachines/inkling",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 8192
+   },
+   "think_marks": [],
+   "code_bytes": 9571
+  },
+  {
+   "id": "writer/palmyra-creative-122b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 705
+  },
+  {
+   "id": "writer/palmyra-fin-70b-32k",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 699
+  },
+  {
+   "id": "writer/palmyra-med-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 687
+  },
+  {
+   "id": "writer/palmyra-med-70b-32k",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 699
+  },
+  {
+   "id": "z-ai/glm-5.2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": "chat.completions",
+   "endpoint": "/v1/chat/completions",
+   "published": {
+    "temperature": 1,
+    "top_p": 1,
+    "max_tokens": 16384,
+    "seed": 42
+   },
+   "think_marks": [],
+   "code_bytes": 8732
+  },
+  {
+   "id": "zyphra/zamba2-7b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "method": null,
+   "endpoint": null,
+   "published": null,
+   "think_marks": [],
+   "code_bytes": 696
+  }
+ ]
+}

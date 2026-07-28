@@ -1,0 +1,1620 @@
+{
+ "schema": "aea.nvidia_specs/1",
+ "models": [
+  {
+   "id": "01-ai/yi-large",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "adept/fuyu-8b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "ai21labs/jamba-1.5-large-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "aisingapore/sea-lion-7b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "baai/bge-m3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "bigcode/starcoder2-15b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "databricks/dbrx-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "deepseek-ai/deepseek-coder-6.7b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "deepseek-ai/deepseek-v4-flash",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [
+    "chat_template_kwargs",
+    "reasoning_effort"
+   ],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "deepseek-ai/deepseek-v4-pro",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [
+    "chat_template_kwargs"
+   ],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/codegemma-1.1-7b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/codegemma-7b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/deplot",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/diffusiongemma-26b-a4b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking"
+   ],
+   "published": {
+    "model": "google/diffusiongemma-26b-a4b-it",
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       {
+        "type": "text",
+        "text": "What is in this image?"
+       },
+       {
+        "type": "image_url",
+        "image_url": {
+         "url": "https://assets.ngc.nvidia.com/products/api-catalog/phi-3-5-vision/example1b.jpg"
+        }
+       }
+      ]
+     }
+    ],
+    "max_tokens": 1024
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "google/gemma-2b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/gemma-3-12b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/gemma-3-4b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/gemma-4-31b-it",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking"
+   ],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "google/recurrentgemma-2b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "ibm/granite-3.0-3b-a800m-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "ibm/granite-3.0-8b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "ibm/granite-34b-code-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "ibm/granite-8b-code-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/codellama-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": {
+    "model": "meta/codellama-70b",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Write a Python function to calculate the factorial of a number."
+     }
+    ],
+    "max_tokens": 64
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-3.1-70b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-3.1-8b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-3.2-11b-vision-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-3.2-1b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-3.2-3b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-3.2-90b-vision-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-3.3-70b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama-guard-4-12b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "meta/llama2-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "microsoft/kosmos-2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "microsoft/phi-3-vision-128k-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "microsoft/phi-3.5-moe-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "minimaxai/minimax-m3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "mistralai/codestral-22b-instruct-v0.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "mistralai/mistral-7b-instruct-v0.3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "mistralai/mistral-large",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "mistralai/mistral-large-2-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "mistralai/mistral-medium-3.5-128b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [
+    "reasoning_effort"
+   ],
+   "published": {
+    "model": "mistralai/mistral-medium-3.5-128b",
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       {
+        "type": "text",
+        "text": "What is in this image?"
+       },
+       {
+        "type": "image_url",
+        "image_url": {
+         "url": "https://assets.ngc.nvidia.com/products/api-catalog/phi-3-5-vision/example1b.jpg"
+        }
+       }
+      ]
+     }
+    ],
+    "max_tokens": 1024
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "mistralai/mistral-nemotron",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "mistralai/mixtral-8x22b-v0.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "moonshotai/kimi-k2.6",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nv-mistralai/mistral-nemo-12b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/ai-synthetic-video-detector",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/cosmos-reason2-8b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/embed-qa-4",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/ising-calibration-1.5-31b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemoguard-8b-content-safety",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemoguard-8b-topic-control",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-51b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-70b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-nano-8b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "model": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       {
+        "type": "image_url",
+        "image_url": {
+         "url": "https://assets.ngc.nvidia.com/products/api-catalog/llama-cosmos-nemotron-8b-instruct/performance.png"
+        }
+       },
+       {
+        "type": "text",
+        "text": "For MOE Switch XXL training what is speed of H100 over A100 and H100 with NVLink over A100?"
+       }
+      ]
+     }
+    ]
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-ultra-253b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.2-nv-embedqa-1b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.3-nemotron-super-49b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-nemotron-embed-1b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/embeddings"
+   ],
+   "think_marks": [],
+   "published": {
+    "model": "nvidia/llama-nemotron-embed-1b-v2",
+    "input": "What is the capital of France?",
+    "input_type": "query",
+    "encoding_format": "float",
+    "truncate": "NONE"
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama-nemotron-embed-vl-1b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/embeddings"
+   ],
+   "think_marks": [],
+   "published": {
+    "input": [
+     "Hello world"
+    ],
+    "model": "nvidia/llama-nemotron-embed-vl-1b-v2",
+    "input_type": "query"
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/llama3-chatqa-1.5-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/mistral-nemo-minitron-8b-8k-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemoretriever-parse",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": {
+    "model": "nvidia/nemoretriever-parse",
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       {
+        "type": "image_url",
+        "image_url": {
+         "url": "https://assets.ngc.nvidia.com/products/api-catalog/nemoretriever-parse/example_1.jpg"
+        }
+       }
+      ]
+     }
+    ],
+    "max_tokens": 256
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-3-embed-1b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/embeddings"
+   ],
+   "think_marks": [],
+   "published": {
+    "model": "nvidia/nemotron-3-embed-1b",
+    "input": "What symptoms and common triggers help distinguish eczema from other inflammatory skin conditions?",
+    "input_type": "query",
+    "encoding_format": "float",
+    "truncate": "END"
+   },
+   "n_bodies": 1,
+   "maxseq": "32768"
+  },
+  {
+   "id": "nvidia/nemotron-3-nano-30b-a3b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "reasoning_budget"
+   ],
+   "published": {
+    "model": "model",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Write a haiku about GPUs"
+     }
+    ],
+    "chat_template_kwargs": {
+     "enable_thinking": false
+    }
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "reasoning_budget"
+   ],
+   "published": {
+    "model": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Hello, what can you do?"
+     }
+    ],
+    "temperature": 1.0,
+    "top_k": 1
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "low_effort",
+    "reasoning_budget"
+   ],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-3-ultra-550b-a55b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [
+    "chat_template_kwargs",
+    "enable_thinking",
+    "reasoning_budget"
+   ],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-3.5-content-safety",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [
+    "chat_template_kwargs"
+   ],
+   "published": {
+    "model": "nvidia/nemotron-3.5-content-safety",
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       {
+        "type": "text",
+        "text": "What is in this image?"
+       },
+       {
+        "type": "image_url",
+        "image_url": {
+         "url": "https://assets.ngc.nvidia.com/products/api-catalog/phi-3-5-vision/example1b.jpg"
+        }
+       }
+      ]
+     }
+    ],
+    "max_tokens": 1024
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-4-340b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-4-340b-reward",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-mini-4b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-nano-12b-v2-vl",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [
+    "/no_think"
+   ],
+   "published": {
+    "model": "nvidia/nemotron-nano-12b-v2-vl",
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       {
+        "type": "text",
+        "text": "What is in this image?"
+       },
+       {
+        "type": "image_url",
+        "image_url": {
+         "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/1280px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+        }
+       }
+      ]
+     }
+    ],
+    "max_tokens": 1024
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-nano-3-30b-a3b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nemotron-parse",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": {
+    "model": "nvidia/nemotron-parse",
+    "messages": [
+     {
+      "role": "user",
+      "content": [
+       {
+        "type": "image_url",
+        "image_url": {
+         "url": "https://assets.ngc.nvidia.com/products/api-catalog/nemotron-parse/example_2.jpg"
+        }
+       }
+      ]
+     }
+    ],
+    "max_tokens": 256
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/neva-22b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nv-embed-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nv-embedcode-7b-v1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nv-embedqa-e5-v5",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/embeddings"
+   ],
+   "think_marks": [],
+   "published": {
+    "input": [
+     "Hello world"
+    ],
+    "model": "nvidia/nv-embedqa-e5-v5",
+    "input_type": "query"
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nv-embedqa-mistral-7b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/embeddings"
+   ],
+   "think_marks": [],
+   "published": {
+    "input": [
+     "Hello world"
+    ],
+    "model": "nvidia/nv-embedqa-mistral-7b-v2",
+    "input_type": "query"
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nvclip",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/embeddings"
+   ],
+   "think_marks": [],
+   "published": {
+    "input": [
+     "The quick brown fox jumped over the lazy dog",
+     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAEElEQVR4nGK6HcwNCAAA//8DTgE8HuxwEQAAAABJRU5ErkJggg=="
+    ],
+    "model": "nvidia/nvclip-vit-h-14",
+    "encoding_format": "float"
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [
+    "/no_think",
+    "enable_thinking",
+    "max_thinking_tokens",
+    "thinking_budget"
+   ],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct-v1.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct-v2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "nvidia/vila",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "openai/gpt-oss-120b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "openai/gpt-oss-20b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "poolside/laguna-xs-2.1",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "snowflake/arctic-embed-l",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/embeddings"
+   ],
+   "think_marks": [],
+   "published": {
+    "input": [
+     "Hello world"
+    ],
+    "model": "snowflake/arctic-embed-l",
+    "input_type": "query"
+   },
+   "n_bodies": 1,
+   "maxseq": null
+  },
+  {
+   "id": "stepfun-ai/step-3.7-flash",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [
+    "/v1/chat/completions"
+   ],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "thinkingmachines/inkling",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "writer/palmyra-creative-122b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "writer/palmyra-fin-70b-32k",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "writer/palmyra-med-70b",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "writer/palmyra-med-70b-32k",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "z-ai/glm-5.2",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  },
+  {
+   "id": "zyphra/zamba2-7b-instruct",
+   "pages": [
+    "/deploy",
+    "/modelcard",
+    "root"
+   ],
+   "endpoints": [],
+   "think_marks": [],
+   "published": null,
+   "n_bodies": 0,
+   "maxseq": null
+  }
+ ]
+}

@@ -451,3 +451,42 @@ cost 12 calls and caught it before the sweep spent a thousand on a dead endpoint
 **generality x cost**, not by ambition - THE READOUT is free, unhurtable, and works on 5 of 11 rods across 3
 plants, and it was queued behind two parts with weaker evidence. And never seat a capability-shaped part
 without checking its precondition: on the wrong rod, the same frame that rescues a 70b breaks a 550b.
+
+## D18 · The instrument is wrong more often than the model (counted 2026-07-28)
+
+Law M2 already said "the instrument is the likeliest thing to be wrong", earned when five of seven
+defects in one day were in a verdict or a detector. That was a ratio. This is a count, and it is
+worse: **ten instrument defects in one session, against almost no model behaving unexpectedly.**
+
+1. The privacy regex matched 1 of 5 real path forms and had never fired. Masked by a permanently red
+   emoji check sharing its verdict line, so it never had to prove it could go green for a real reason.
+2. `xray`'s store extractor invented stores from bare extensions (`".json"` inside `pid + ".json"`,
+   and a tuple of file EXTENSIONS), from format placeholders, and from an order-dependent ternary
+   that classified a constant as read or write by whichever was seen first in the walk.
+3. `xray`'s import-time detector matched bare attribute names, so five of six reported violations
+   were `str.replace`.
+4. `xray`'s orphan count added three unrelated facts together: 88 alarmed, 31 was the defect.
+5. `call_openai` sent one temperature and one token budget to every rod while the owners publish a
+   4x temperature range and a 20x token range.
+6. `hands.rods_that_call` collapsed transport failures into capability failures; two rods stored as
+   "cannot call a tool" call tools correctly.
+7. The Meter's `can_spend` then `enter` is a check-then-act race; thirty threads all read inflight=0.
+8. The Meter's `max_inflight=20` rests on a nine-day-old measurement that does not reproduce.
+9. My own probe asked 102 models of 9 kinds one question, and declared 16 living models dead.
+10. `timeout=None` implemented "never cut off a slow rod" as "hang forever", twice, for an hour.
+
+**THE TRANSFERABLE MOVE.** Before believing any finding about a subject, ask what would have to be
+true of the INSTRUMENT for this finding to be false, and test that first. Every one of the ten above
+was found by pointing the tool at a case whose answer was already known: a planted leak, a model we
+had just called successfully, a burst whose ceiling we could count. **A detector that has never been
+shown a positive it must catch has not been tested, it has only been run.**
+
+**THE SECOND HALF, which is the expensive one.** Six of the ten were in code written to CHECK
+something. The instruments are where the defects concentrate because nothing checks the checkers,
+and because a checker's failure is silent by construction: a guard that never fires and a world with
+nothing to guard against look identical from the outside. So the invariant is: **every detector ships
+with a case it must catch**, and a verdict line that cannot go green for a real reason is already
+broken.
+
+**COROLLARY, paid for the same day.** A permanently failing check disables every check that shares
+its verdict. Style and safety must never share a line: one is advisory and reports, the other blocks.

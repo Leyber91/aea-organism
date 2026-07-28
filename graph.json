@@ -7,19 +7,19 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 130,
+    "count": 139,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
-    "count": 79,
+    "count": 81,
     "source": "design/00_VISION.md"
    },
    "reflections": {
-    "count": 50,
+    "count": 51,
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 18,
+    "count": 19,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -35,25 +35,25 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 130
+    "count": 139
    },
    {
     "src": "THE_PROBE",
     "dst": "plan",
     "rel": "contains",
-    "count": 79
+    "count": 81
    },
    {
     "src": "THE_PROBE",
     "dst": "reflections",
     "rel": "contains",
-    "count": 50
+    "count": 51
    },
    {
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 18
+    "count": 19
    },
    {
     "src": "THE_PROBE",
@@ -113,6 +113,12 @@
      "type": "module",
      "path": "aea/bench/bench_core.py",
      "purpose": "bench_core.py - THE BENCH HARNESS (P0): compose a construct, run it for real, measure it."
+    },
+    {
+     "id": "board",
+     "type": "module",
+     "path": "aea/tooling/board.py",
+     "purpose": "board.py - THE COMMAND CENTRE. A shell, not a page."
     },
     {
      "id": "brief",
@@ -283,6 +289,12 @@
      "purpose": "harness.py - THE ONE INSTRUMENT. Every experiment from here on runs through this."
     },
     {
+     "id": "heal",
+     "type": "module",
+     "path": "aea/tooling/heal.py",
+     "purpose": "heal.py - DETERMINISTIC DETECTORS THAT LOOK FOR WHAT COULD BE BETTER, NOT FOR WHAT IS BROKEN."
+    },
+    {
      "id": "honesty",
      "type": "module",
      "path": "aea/gameapi/honesty.py",
@@ -311,6 +323,12 @@
      "type": "module",
      "path": "aea/lab/parts/judge.py",
      "purpose": "Parts that annotate after the answer exists. Neither changes the answer."
+    },
+    {
+     "id": "laws",
+     "type": "module",
+     "path": "aea/kernel/laws.py",
+     "purpose": "laws.py - THE LAWS, LOADABLE. One file the entity reads about how to behave, not what to do."
     },
     {
      "id": "listen",
@@ -427,6 +445,12 @@
      "purpose": "rescore.py - READ A STORED RUN AGAIN, WITH A DIFFERENT READER, FOR NOTHING."
     },
     {
+     "id": "rodprobe",
+     "type": "module",
+     "path": "aea/energy/rodprobe.py",
+     "purpose": "rodprobe.py - ONE HARNESS FOR ASKING A ROD ANYTHING, AND ONE STORE FOR WHAT IT ANSWERED."
+    },
+    {
      "id": "schema",
      "type": "module",
      "path": "aea/gameapi/schema.py",
@@ -437,6 +461,18 @@
      "type": "module",
      "path": "aea/kernel/seats.py",
      "purpose": "seats.py - CUSTOM SUBAGENTS, BUT A SUBAGENT IS NOT A PROMPT."
+    },
+    {
+     "id": "selfcheck",
+     "type": "module",
+     "path": "aea/tooling/selfcheck.py",
+     "purpose": "selfcheck.py - EVERY INVARIANT THIS SYSTEM HAS EARNED, IN ONE COMMAND."
+    },
+    {
+     "id": "shadow",
+     "type": "module",
+     "path": "aea/kernel/shadow.py",
+     "purpose": "shadow.py - THE ENTITY TESTS A CHANGE TO ITSELF WITHOUT BECOMING IT YET."
     },
     {
      "id": "shape",
@@ -531,140 +567,158 @@
     {
      "id": "x06_long_chain",
      "type": "module",
-     "path": "aea/lab/x06_long_chain.py",
+     "path": "aea/lab/experiments/x06_long_chain.py",
      "purpose": "x06 - THE LONG CHAIN. L0 against L5: one breath, or carried state?"
     },
     {
      "id": "x06b_crossover",
      "type": "module",
-     "path": "aea/lab/x06b_crossover.py",
+     "path": "aea/lab/experiments/x06b_crossover.py",
      "purpose": "x06b - THE CROSSOVER, done properly. Calibrate the UNIT OF WORK first, then find where L0 breaks."
     },
     {
      "id": "x07_self_assessment",
      "type": "module",
-     "path": "aea/lab/x07_self_assessment.py",
+     "path": "aea/lab/experiments/x07_self_assessment.py",
      "purpose": "x07 - CAN A ROD PREDICT ITS OWN FAILURE? The experiment that decides two rung placements."
     },
     {
      "id": "x07b_self_assessment_hard",
      "type": "module",
-     "path": "aea/lab/x07b_self_assessment_hard.py",
+     "path": "aea/lab/experiments/x07b_self_assessment_hard.py",
      "purpose": "x07b - SELF-ASSESSMENT WHERE FAILURE IS ABUNDANT, and whether it is RELATIVE rather than absent."
     },
     {
      "id": "x08_fuel_crossing",
      "type": "module",
-     "path": "aea/lab/x08_fuel_crossing.py",
+     "path": "aea/lab/experiments/x08_fuel_crossing.py",
      "purpose": "x08 - IF THE FUEL CHANGES, WHAT STAYS? The other half of C-80, and chapter II's title question."
     },
     {
      "id": "x08b_interpretable_state",
      "type": "module",
-     "path": "aea/lab/x08b_interpretable_state.py",
+     "path": "aea/lab/experiments/x08b_interpretable_state.py",
      "purpose": "x08b - THE HANDOFF WHEN THE STATE IS NOT A NUMBER. What x08 answered in its easiest possible form."
     },
     {
      "id": "x09_hearth_failure",
      "type": "module",
-     "path": "aea/lab/x09_hearth_failure.py",
+     "path": "aea/lab/experiments/x09_hearth_failure.py",
      "purpose": "x09 - IS THERE ANYTHING ON THIS BENCH THE PLAYER CAN FAIL? The blocker under the skipped rungs."
     },
     {
      "id": "x10_coverage_sweep",
      "type": "module",
-     "path": "aea/lab/x10_coverage_sweep.py",
+     "path": "aea/lab/experiments/x10_coverage_sweep.py",
      "purpose": "x10 - THE COVERAGE SWEEP. Every size class, four temperatures, three framings, one task."
     },
     {
      "id": "x11_the_council",
      "type": "module",
-     "path": "aea/lab/x11_the_council.py",
+     "path": "aea/lab/experiments/x11_the_council.py",
      "purpose": "x11 - DOES A COUNCIL REACH ABOVE ITS FUEL? Chapter II's third claim, the one never measured."
     },
     {
      "id": "x12_L0_goal_presence",
      "type": "module",
-     "path": "aea/lab/x12_L0_goal_presence.py",
+     "path": "aea/lab/experiments/x12_L0_goal_presence.py",
      "purpose": "x12 - CHAPTER I / LEVEL 0. Does a call need a goal, and can bigger fuel supply one it was not given?"
     },
     {
      "id": "x13_L1_read_the_output",
      "type": "module",
-     "path": "aea/lab/x13_L1_read_the_output.py",
+     "path": "aea/lab/experiments/x13_L1_read_the_output.py",
      "purpose": "x13 - CHAPTER II / LEVEL 1. What can be learned from a reply without spending another call?"
     },
     {
      "id": "x14_C75_parser_validation",
      "type": "module",
-     "path": "aea/lab/x14_C75_parser_validation.py",
+     "path": "aea/lab/experiments/x14_C75_parser_validation.py",
      "purpose": "x14 - CLOSING C-75. What is the exchange rate between a parse that guesses and a parse that abstains?"
     },
     {
      "id": "x15_L2_the_frame",
      "type": "module",
-     "path": "aea/lab/x15_L2_the_frame.py",
+     "path": "aea/lab/experiments/x15_L2_the_frame.py",
      "purpose": "x15 - CHAPTER III / LEVEL 2. The last free lever, and the creature it damages."
     },
     {
      "id": "x16_the_organisms",
      "type": "module",
-     "path": "aea/lab/x16_the_organisms.py",
+     "path": "aea/lab/experiments/x16_the_organisms.py",
      "purpose": "x16 - RUNNING THE CREATURES. Every version of the AEA, assembled and fired on pinned fuel."
     },
     {
      "id": "x17_the_lattice",
      "type": "module",
-     "path": "aea/lab/x17_the_lattice.py",
+     "path": "aea/lab/experiments/x17_the_lattice.py",
      "purpose": "x17 - THE ORDERING LATTICE. Deriving the dependency graph instead of reasoning it."
     },
     {
      "id": "x18_second_battery",
      "type": "module",
-     "path": "aea/lab/x18_second_battery.py",
+     "path": "aea/lab/experiments/x18_second_battery.py",
      "purpose": "x18 - THE SECOND BATTERY. Does the deck we hold describe the architecture, or describe counting?"
     },
     {
      "id": "x19_the_unmeasured_pair",
      "type": "module",
-     "path": "aea/lab/x19_the_unmeasured_pair.py",
+     "path": "aea/lab/experiments/x19_the_unmeasured_pair.py",
      "purpose": "x19 - THE UNMEASURED PAIR. The two creatures on the World 1 plate that no part has ever been tried on."
     },
     {
      "id": "x20_the_critic",
      "type": "module",
-     "path": "aea/lab/x20_the_critic.py",
+     "path": "aea/lab/experiments/x20_the_critic.py",
      "purpose": "x20 - THE CRITIC. World 2's first assemblable repair part, and the test its whole world rests on."
     },
     {
      "id": "x21_the_carry_battery",
      "type": "module",
-     "path": "aea/lab/x21_the_carry_battery.py",
+     "path": "aea/lab/experiments/x21_the_carry_battery.py",
      "purpose": "x21 - THE CARRY BATTERY. World 3's three components are three SHAPES of one job, plus a control."
     },
     {
      "id": "x22_the_capacity_ladder",
      "type": "module",
-     "path": "aea/lab/x22_the_capacity_ladder.py",
+     "path": "aea/lab/experiments/x22_the_capacity_ladder.py",
      "purpose": "x22 - THE CAPACITY LADDER. What does each part ENABLE, as the seat grows?"
     },
     {
      "id": "x23_inheritance",
      "type": "module",
-     "path": "aea/lab/x23_inheritance.py",
+     "path": "aea/lab/experiments/x23_inheritance.py",
      "purpose": "x23 - INHERITANCE. The only creature-to-creature interaction in the project."
     },
     {
      "id": "x23b_inheritance_across_plants",
      "type": "module",
-     "path": "aea/lab/x23b_inheritance_across_plants.py",
+     "path": "aea/lab/experiments/x23b_inheritance_across_plants.py",
      "purpose": "x23b - INHERITANCE ACROSS PLANTS, with a calibration gate."
     },
     {
      "id": "x24_the_store_and_the_door",
      "type": "module",
-     "path": "aea/lab/x24_the_store_and_the_door.py",
+     "path": "aea/lab/experiments/x24_the_store_and_the_door.py",
      "purpose": "x24 - THE STORE AND THE DOOR. Keeping a thing and reaching it are two capabilities."
+    },
+    {
+     "id": "xray",
+     "type": "module",
+     "path": "aea/tooling/xray.py",
+     "purpose": "xray.py - WHAT THIS SYSTEM IS MADE OF RIGHT NOW, read from the code rather than from a document."
+    },
+    {
+     "id": "xray_graph",
+     "type": "module",
+     "path": "aea/tooling/xray_graph.py",
+     "purpose": "xray_graph.py - THE CODEBASE AS A LIVING GRAPH. Canvas, real edges, honest motion."
+    },
+    {
+     "id": "xray_view",
+     "type": "module",
+     "path": "aea/tooling/xray_view.py",
+     "purpose": "xray_view.py - the xray, rendered. GENERATED FROM THE CODE, NEVER HAND-AUTHORED."
     },
     {
      "id": "/api/construct/run",
@@ -899,6 +953,31 @@
      "rel": "imports"
     },
     {
+     "src": "board",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "board",
+     "dst": "laws",
+     "rel": "imports"
+    },
+    {
+     "src": "board",
+     "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "board",
+     "dst": "xray",
+     "rel": "imports"
+    },
+    {
+     "src": "board",
+     "dst": "xray_graph",
+     "rel": "imports"
+    },
+    {
      "src": "brief",
      "dst": "grid",
      "rel": "imports"
@@ -1075,6 +1154,11 @@
     },
     {
      "src": "energy",
+     "dst": "energy",
+     "rel": "imports"
+    },
+    {
+     "src": "energy",
      "dst": "pulse",
      "rel": "imports"
     },
@@ -1214,6 +1298,11 @@
      "rel": "imports"
     },
     {
+     "src": "heal",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "impasse",
      "dst": "grid",
      "rel": "imports"
@@ -1249,6 +1338,11 @@
      "rel": "imports"
     },
     {
+     "src": "laws",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "listen",
      "dst": "grid",
      "rel": "imports"
@@ -1271,6 +1365,21 @@
     {
      "src": "live",
      "dst": "memory",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "impasse",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "unstick",
      "rel": "imports"
     },
     {
@@ -1449,6 +1558,11 @@
      "rel": "imports"
     },
     {
+     "src": "rodprobe",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "schema",
      "dst": "grid",
      "rel": "imports"
@@ -1486,6 +1600,26 @@
     {
      "src": "seats",
      "dst": "unstick",
+     "rel": "imports"
+    },
+    {
+     "src": "selfcheck",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "selfcheck",
+     "dst": "xray",
+     "rel": "imports"
+    },
+    {
+     "src": "selfcheck",
+     "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "shadow",
+     "dst": "grid",
      "rel": "imports"
     },
     {
@@ -2087,6 +2221,26 @@
      "src": "x24_the_store_and_the_door",
      "dst": "fuel",
      "rel": "imports"
+    },
+    {
+     "src": "xray",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "xray_view",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "xray_view",
+     "dst": "xray",
+     "rel": "imports"
+    },
+    {
+     "src": "xray_view",
+     "dst": "xray_graph",
+     "rel": "imports"
     }
    ]
   },
@@ -2258,6 +2412,11 @@
      "path": "design/E11_IMAGE_BRIEF_METHOD.md"
     },
     {
+     "id": "design/E12_BOARD_SPEC.md",
+     "type": "design_doc",
+     "path": "design/E12_BOARD_SPEC.md"
+    },
+    {
      "id": "design/E12_WORLD_EVOLUTION_SYSTEM.md",
      "type": "design_doc",
      "path": "design/E12_WORLD_EVOLUTION_SYSTEM.md"
@@ -2401,6 +2560,11 @@
      "id": "design/THE_JOURNEY.md",
      "type": "design_doc",
      "path": "design/THE_JOURNEY.md"
+    },
+    {
+     "id": "design/THE_LAWS.md",
+     "type": "design_doc",
+     "path": "design/THE_LAWS.md"
     },
     {
      "id": "design/THE_LINEAR_HIERARCHY.md",
@@ -2791,6 +2955,12 @@
      "type": "reflection",
      "title": "2026-07-25 · FIELD LESSON 10 — A NUMBER IN AN IMAGE PROMPT IS A CLAIM",
      "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "2026-07-28 — RESOURCE-AWARE EVOLUTION, N",
+     "type": "reflection",
+     "title": "2026-07-28 — RESOURCE-AWARE EVOLUTION, NO HALF-SOLUTIONS, AND CHAMBERS OF ORIGINAL THOUGHT",
+     "path": "diary/REFLECTIONS.md"
     }
    ],
    "edges": []
@@ -2903,6 +3073,12 @@
      "id": "D17",
      "type": "discovery",
      "title": "D17 · The ladder is not a size ladder, the frame HARMS rods that don't need it, and the readout is the only lever that generalises (measured 2026-07-25, x10)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D18",
+     "type": "discovery",
+     "title": "D18 · The instrument is wrong more often than the model (counted 2026-07-28)",
      "path": "diary/DISCOVERIES.md"
     }
    ],

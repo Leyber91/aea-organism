@@ -34,8 +34,8 @@ import statistics
 
 from aea.lab import overseer as OV
 from aea.lab.organism import Organism
-from aea.lab.x16_the_organisms import TASKS as COUNT_TASKS
-from aea.lab.x18_second_battery import TASKS as TRAP_TASKS
+from aea.lab.experiments.x16_the_organisms import TASKS as COUNT_TASKS
+from aea.lab.experiments.x18_second_battery import TASKS as TRAP_TASKS
 from aea.mind import fuel
 
 N = 8

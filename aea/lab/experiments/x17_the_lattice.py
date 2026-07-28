@@ -41,7 +41,7 @@ import itertools
 
 from aea.lab import overseer as OV
 from aea.lab.organism import Organism, classify
-from aea.lab.x16_the_organisms import TASKS
+from aea.lab.experiments.x16_the_organisms import TASKS
 from aea.mind import fuel
 
 N = 8

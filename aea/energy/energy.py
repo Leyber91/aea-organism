@@ -21,6 +21,7 @@ that fails 3 draws in a row is COOLING (skipped) until a sweep or a successful r
 from __future__ import annotations
 import json, os, sys, time
 from aea.kernel import grid
+from aea.energy import rodprobe
 from aea.kernel import pulse
 
 try: sys.stdout.reconfigure(encoding="utf-8")
@@ -128,20 +129,36 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
     return rods
 
 
-def draw(prompt: str, tier: str = "solid", zone: str = "private", mx: int = 500,
-         temp: float = 0.2, timeout: int = 60, system: str | None = None,
+def draw(prompt: str, tier: str = "solid", zone: str = "private", mx: int | None = None,
+         temp: float | None = None, timeout: int = 60, system: str | None = None,
          order: str | None = None) -> dict:
     """THE MOUTH. Burn the best live rod; on failure fall down the ladder; never raise.
-    Returns dict(ok, text, plant, model, latency, tried)."""
+    Returns dict(ok, text, plant, model, latency, tried).
+
+    `mx` and `temp` default to None meaning USE WHAT THIS ROD'S OWNER PUBLISHES. Passing a value
+    still wins, so every existing explicit call site is unchanged. MEASURED 2026-07-28: the owners
+    publish temperature 0.2 to 1.0 and max_tokens 1024 to 20480, while this function sent 0.2 and
+    500 to all of them. `nemotron-3-nano-omni` asks for 20480 and was getting 500; a reasoning rod
+    handed too small a budget spends it thinking and returns nothing, which is the empty-reply
+    failure already recorded in unstick.py. Every fitness score in this repo was taken through that
+    filter, so the ladder has been ranking rods on our defaults rather than on the rods.
+    """
     msgs = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
     tried = []
     for plant, model in ladder(tier, zone, order=order):
+        known = rodprobe.facts(model)
+        if known.get("nvidia_catalog_state", "").startswith("http4"):
+            # measured as not served. Trying it again burns a slot in the ladder to learn nothing.
+            tried.append(f"{plant}/{model}:not-served"); continue
+        pub = grid.own_params(model)
+        use_mx = mx if mx is not None else int(min(pub.get("max_tokens", 500), 4096))
+        use_temp = temp if temp is not None else pub.get("temperature", 0.2)
         if _cooling(plant, model):
             tried.append(f"{plant}/{model}:cooling"); continue
         ok_spend, _, why = _meter.can_spend(plant, model)
         if not ok_spend:
             tried.append(f"{plant}/{model}:{why}"); continue
-        r = grid.call_openai(plant, model, msgs, max_tokens=mx, temperature=temp,
+        r = grid.call_openai(plant, model, msgs, max_tokens=use_mx, temperature=use_temp,
                              timeout=(180 if plant == "ollama" else timeout))
         text = (r.get("text") or "").strip()
         good = bool(r["ok"] and text)                  # EMPTY = failure (the silent-killer lesson)

@@ -1,0 +1,265 @@
+{
+ "schema": "aea.orchestrator/1",
+ "models": [
+  {
+   "id": "z-ai/glm-5.2",
+   "own_params": true,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 7.2,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"nemotron\", \"confidence\": 95, \"reason\": \"A"
+    },
+    "B json_object": {
+     "state": "PASS",
+     "secs": 9.3,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 95, \"reason\": \"The "
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 9.3,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"nemotron\", \"confidence\": 90, \"reason\": \"R"
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 5.6,
+    "detail": "92837 * 4471"
+   }
+  },
+  {
+   "id": "nvidia/nemotron-3-ultra-550b-a55b",
+   "own_params": true,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 2.4,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 100, \"reason\": \"The"
+    },
+    "B json_object": {
+     "state": "fail",
+     "secs": 0.4,
+     "detail": "HTTP503 {\"error\":{\"message\":\"ResourceExhausted: Worker local total req"
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 3.7,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 85, \"reason\": \"The "
+    }
+   },
+   "tool": {
+    "state": "fail",
+    "secs": 0.4,
+    "detail": "HTTP503 {\"error\":{\"message\":\"ResourceExhausted: Worker local"
+   }
+  },
+  {
+   "id": "minimaxai/minimax-m3",
+   "own_params": false,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 24.8,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 85, \"reason\": \"The "
+    },
+    "B json_object": {
+     "state": "PASS",
+     "secs": 12.0,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 82, \"reason\": \"The "
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 19.0,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 82, \"reason\": \"The "
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 30.0,
+    "detail": "92837 * 4471"
+   }
+  },
+  {
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "own_params": true,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 3.3,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 85, \"reason\": \"Runn"
+    },
+    "B json_object": {
+     "state": "PASS",
+     "secs": 5.9,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 80, \"reason\": \"Runn"
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 1.4,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 90, \"reason\": \"Runn"
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 1.1,
+    "detail": "92837 * 4471"
+   }
+  },
+  {
+   "id": "deepseek-ai/deepseek-v4-pro",
+   "own_params": true,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 23.0,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 100, \"reason\": \"The"
+    },
+    "B json_object": {
+     "state": "PASS",
+     "secs": 9.3,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"nemotron\", \"confidence\": 85, \"reason\": \"T"
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 5.2,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 95, \"reason\": \"The "
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 3.2,
+    "detail": "92837 * 4471"
+   }
+  },
+  {
+   "id": "openai/gpt-oss-120b",
+   "own_params": true,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 37.9,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 90, \"reason\": \"The "
+    },
+    "B json_object": {
+     "state": "PASS",
+     "secs": 4.1,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 92, \"reason\": \"The "
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 71.4,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 95, \"reason\": \"The "
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 7.6,
+    "detail": "92837 * 4471"
+   }
+  },
+  {
+   "id": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "own_params": true,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 6.3,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 95, \"reason\": \"The "
+    },
+    "B json_object": {
+     "state": "PASS",
+     "secs": 9.1,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 95, \"reason\": \"The "
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 6.3,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 85, \"reason\": \"Loca"
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 3.3,
+    "detail": "92837 * 4471"
+   }
+  },
+  {
+   "id": "mistralai/mistral-medium-3.5-128b",
+   "own_params": false,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 30.7,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 95, \"reason\": \"The "
+    },
+    "B json_object": {
+     "state": "PASS",
+     "secs": 18.6,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 95, \"reason\": \"The "
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 46.9,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 100, \"reason\": \"The"
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 0.9,
+    "detail": "92837 * 4471"
+   }
+  },
+  {
+   "id": "nvidia/nemotron-3-nano-30b-a3b",
+   "own_params": true,
+   "modes": {
+    "A json_schema": {
+     "state": "PASS",
+     "secs": 8.4,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 100, \"reason\": \"Pri"
+    },
+    "B json_object": {
+     "state": "MALFORMED",
+     "secs": 1.6,
+     "how": "strict",
+     "detail": "{\".confidence_interval\": []}"
+    },
+    "C prompted": {
+     "state": "PASS",
+     "secs": 3.8,
+     "how": "strict",
+     "detail": "{\"chosen_worker\": \"local\", \"confidence\": 85, \"reason\": \"Loca"
+    }
+   },
+   "tool": {
+    "state": "CALLED",
+    "secs": 2.3,
+    "detail": "92837 * 4471"
+   }
+  }
+ ]
+}

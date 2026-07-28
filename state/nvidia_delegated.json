@@ -1,0 +1,876 @@
+{
+ "schema": "aea.nvidia_delegated/1",
+ "models": [
+  {
+   "id": "01-ai/yi-large",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "/v1/chat/completions",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example provided"
+   },
+   "secs": 1.8,
+   "chars": 663
+  },
+  {
+   "id": "adept/fuyu-8b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example shown on the page"
+   },
+   "secs": 3.8,
+   "chars": 1112
+  },
+  {
+   "id": "ai21labs/jamba-1.5-large-instruct",
+   "stage": "read",
+   "state": "UNPARSEABLE",
+   "detail": "We need to read<unk><unk><unk><unk><unk><unk><unk><unk><unk>",
+   "secs": 45.6
+  },
+  {
+   "id": "aisingapore/sea-lion-7b-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found on the page."
+   },
+   "secs": 3.0,
+   "chars": 1162
+  },
+  {
+   "id": "baai/bge-m3",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "bigcode/starcoder2-15b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example present on the page."
+   },
+   "secs": 3.5,
+   "chars": 1078
+  },
+  {
+   "id": "databricks/dbrx-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "deepseek-ai/deepseek-coder-6.7b-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "google/codegemma-1.1-7b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example shown in the page text"
+   },
+   "secs": 3.2,
+   "chars": 651
+  },
+  {
+   "id": "google/codegemma-7b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found on the page"
+   },
+   "secs": 3.4,
+   "chars": 678
+  },
+  {
+   "id": "google/deplot",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found on the page"
+   },
+   "secs": 3.5,
+   "chars": 651
+  },
+  {
+   "id": "google/diffusiongemma-26b-a4b-it",
+   "stage": "read",
+   "state": "VERIFIED",
+   "got": {
+    "found": true,
+    "endpoint": "/v1/chat/completions",
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 4096,
+    "extra_body_keys": [
+     "enable_thinking"
+    ],
+    "note": "Values taken from the Python example in the page."
+   },
+   "secs": 6.3,
+   "chars": 4084,
+   "verify_secs": 0.5,
+   "sent": {
+    "model": "google/diffusiongemma-26b-a4b-it",
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 4096,
+    "messages": [
+     {
+      "role": "user",
+      "content": "Say OK."
+     }
+    ]
+   },
+   "verdict": "200"
+  },
+  {
+   "id": "google/gemma-2b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": ""
+   },
+   "secs": 4.7,
+   "chars": 666
+  },
+  {
+   "id": "google/gemma-3-12b-it",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example provided on the page"
+   },
+   "secs": 3.4,
+   "chars": 651
+  },
+  {
+   "id": "google/gemma-3-4b-it",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "The page contains no callable example; values are set per instructions."
+   },
+   "secs": 3.3,
+   "chars": 651
+  },
+  {
+   "id": "google/gemma-4-31b-it",
+   "stage": "read",
+   "state": "REJECTED",
+   "got": {
+    "found": true,
+    "endpoint": "/v1/chat/completions",
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "extra_body_keys": [
+     "enable_thinking"
+    ],
+    "note": ""
+   },
+   "secs": 6.8,
+   "chars": 2370,
+   "verify_secs": 219.0,
+   "sent": {
+    "model": "google/gemma-4-31b-it",
+    "temperature": 1,
+    "top_p": 0.95,
+    "max_tokens": 16384,
+    "messages": [
+     {
+      "role": "user",
+      "content": "Say OK."
+     }
+    ]
+   },
+   "verdict": "HTTP500 {\"type\":\"urn:inference-connection:problem-details:internal-ser"
+  },
+  {
+   "id": "google/recurrentgemma-2b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example shown on the page."
+   },
+   "secs": 3.8,
+   "chars": 693
+  },
+  {
+   "id": "ibm/granite-3.0-3b-a800m-instruct",
+   "stage": "read",
+   "state": "UNPARSEABLE",
+   "detail": "We are given a page text for an NVIDIA model page for `ibm/g",
+   "secs": 11.8
+  },
+  {
+   "id": "ibm/granite-3.0-8b-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": ""
+   },
+   "secs": 2.3,
+   "chars": 651
+  },
+  {
+   "id": "ibm/granite-34b-code-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example present"
+   },
+   "secs": 2.3,
+   "chars": 708
+  },
+  {
+   "id": "ibm/granite-8b-code-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example provided on the page"
+   },
+   "secs": 5.7,
+   "chars": 705
+  },
+  {
+   "id": "meta/codellama-70b",
+   "stage": "read",
+   "state": "REJECTED",
+   "got": {
+    "found": true,
+    "endpoint": "/v1/chat/completions",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": 64,
+    "extra_body_keys": [],
+    "note": "Based on the curl example: endpoint /v1/chat/completions, max_tokens 64, no temperature or top_p shown, no extra_body or chat_template_kwargs shown."
+   },
+   "secs": 3.7,
+   "chars": 1097,
+   "verify_secs": 0.3,
+   "sent": {
+    "model": "meta/codellama-70b",
+    "max_tokens": 64,
+    "messages": [
+     {
+      "role": "user",
+      "content": "Say OK."
+     }
+    ]
+   },
+   "verdict": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function 'f6b06895"
+  },
+  {
+   "id": "meta/llama-3.1-70b-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found in provided page text."
+   },
+   "secs": 2.7,
+   "chars": 651
+  },
+  {
+   "id": "meta/llama-3.1-8b-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found on the page."
+   },
+   "secs": 4.8,
+   "chars": 651
+  },
+  {
+   "id": "meta/llama-3.2-11b-vision-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found on the page."
+   },
+   "secs": 3.0,
+   "chars": 900
+  },
+  {
+   "id": "meta/llama-3.2-90b-vision-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example shown on the page"
+   },
+   "secs": 7.9,
+   "chars": 900
+  },
+  {
+   "id": "meta/llama-3.3-70b-instruct",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example present in the provided page text."
+   },
+   "secs": 4.0,
+   "chars": 651
+  },
+  {
+   "id": "meta/llama-guard-4-12b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found on the page."
+   },
+   "secs": 5.7,
+   "chars": 14000
+  },
+  {
+   "id": "meta/llama2-70b",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example found on the page."
+   },
+   "secs": 4.5,
+   "chars": 1098
+  },
+  {
+   "id": "microsoft/kosmos-2",
+   "stage": "read",
+   "state": "NONE_PUBLISHED",
+   "got": {
+    "found": false,
+    "endpoint": "-1",
+    "temperature": -1,
+    "top_p": -1,
+    "max_tokens": -1,
+    "extra_body_keys": [],
+    "note": "No callable example shown on the page"
+   },
+   "secs": 3.9,
+   "chars": 651
+  },
+  {
+   "id": "microsoft/phi-3-vision-128k-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "microsoft/phi-3.5-moe-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "minimaxai/minimax-m3",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "mistralai/codestral-22b-instruct-v0.1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "mistralai/mistral-7b-instruct-v0.3",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "mistralai/mistral-large",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "mistralai/mistral-large-2-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "mistralai/mistral-medium-3.5-128b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "mistralai/mixtral-8x22b-v0.1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "moonshotai/kimi-k2.6",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nv-mistralai/mistral-nemo-12b-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/ai-synthetic-video-detector",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/cosmos-reason2-8b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/embed-qa-4",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/ising-calibration-1.5-31b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemoguard-8b-content-safety",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemoguard-8b-topic-control",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-51b-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-70b-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-nano-8b-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.1-nemotron-ultra-253b-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.2-nemoretriever-1b-vlm-embed-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.2-nv-embedqa-1b-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.3-nemotron-super-49b-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-nemotron-embed-1b-v2",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama-nemotron-embed-vl-1b-v2",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/llama3-chatqa-1.5-70b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/mistral-nemo-minitron-8b-8k-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemoretriever-parse",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemotron-3-embed-1b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemotron-3.5-content-safety",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemotron-4-340b-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemotron-4-340b-reward",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemotron-nano-12b-v2-vl",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemotron-nano-3-30b-a3b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nemotron-parse",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/neva-22b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nv-embed-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nv-embedcode-7b-v1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nv-embedqa-e5-v5",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nv-embedqa-mistral-7b-v2",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/nvclip",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct-v1.1",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/riva-translate-4b-instruct-v2",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "nvidia/vila",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "snowflake/arctic-embed-l",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "stepfun-ai/step-3.7-flash",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "writer/palmyra-creative-122b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "writer/palmyra-fin-70b-32k",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "writer/palmyra-med-70b",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "writer/palmyra-med-70b-32k",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  },
+  {
+   "id": "zyphra/zamba2-7b-instruct",
+   "stage": "read",
+   "state": "READ_FAIL",
+   "detail": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 0.2
+  }
+ ]
+}

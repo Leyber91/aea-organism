@@ -1,0 +1,545 @@
+{
+ "schema": "aea.inspector/1",
+ "rows": [
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "clean-1",
+   "klass": "clean",
+   "truth": true,
+   "said": null,
+   "secs": 0.4,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "clean-2",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 6.3,
+   "why": "none"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "clean-3",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 9.1,
+   "why": "none"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "mech-words",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 4.2,
+   "why": "exceeds 20-word limit and adds uns"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "mech-banned",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 6.8,
+   "why": "uses prohibited word 'system'"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "mech-two-sentences",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 5.1,
+   "why": "more than one sentence"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "mech-fragment",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 3.9,
+   "why": "not a complete sentence; omits key"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "sem-wrong-question",
+   "klass": "semantic",
+   "truth": false,
+   "said": null,
+   "secs": 0.4,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "sem-fabricated",
+   "klass": "semantic",
+   "truth": false,
+   "said": null,
+   "secs": 0.4,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "nvidia/nemotron-3-super-120b-a12b",
+   "case": "sem-contradicts",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 5.5,
+   "why": "contradicts source"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "clean-1",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 3.1,
+   "why": "none"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "clean-2",
+   "klass": "clean",
+   "truth": true,
+   "said": false,
+   "secs": 5.7,
+   "why": "omits the six-hour duration mentio"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "clean-3",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 6.3,
+   "why": "none"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "mech-words",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 2.7,
+   "why": "exceeds 20 words"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "mech-banned",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 5.3,
+   "why": "contains the word 'system'"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "mech-two-sentences",
+   "klass": "mechanical",
+   "truth": false,
+   "said": true,
+   "secs": 2.8,
+   "why": "none"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "mech-fragment",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 4.0,
+   "why": "incomplete sentence missing \"morni"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "sem-wrong-question",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 6.1,
+   "why": "adds facts not in source text"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "sem-fabricated",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 5.1,
+   "why": "added fact: costing 12,000 euros"
+  },
+  {
+   "inspector": "z-ai/glm-5.2",
+   "case": "sem-contradicts",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 1.9,
+   "why": "contradicts the text by saying it "
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "clean-1",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 2.0,
+   "why": "none"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "clean-2",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 1.9,
+   "why": "none"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "clean-3",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 15.3,
+   "why": "none"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "mech-words",
+   "klass": "mechanical",
+   "truth": false,
+   "said": null,
+   "secs": 0.2,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "mech-banned",
+   "klass": "mechanical",
+   "truth": false,
+   "said": null,
+   "secs": 2.2,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "mech-two-sentences",
+   "klass": "mechanical",
+   "truth": false,
+   "said": true,
+   "secs": 6.5,
+   "why": "none"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "mech-fragment",
+   "klass": "mechanical",
+   "truth": false,
+   "said": null,
+   "secs": 6.0,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "sem-wrong-question",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 5.0,
+   "why": "Output adds recommendations not in"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "sem-fabricated",
+   "klass": "semantic",
+   "truth": false,
+   "said": null,
+   "secs": 5.8,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "minimaxai/minimax-m3",
+   "case": "sem-contradicts",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 6.9,
+   "why": "contradicts text (says unrepaired "
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "clean-1",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 6.5,
+   "why": "none"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "clean-2",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 10.1,
+   "why": "none"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "clean-3",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 5.8,
+   "why": "none"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "mech-words",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 11.1,
+   "why": "Exceeds 20 words, adds 'completely"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "mech-banned",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 7.8,
+   "why": "Uses prohibited word 'system' and "
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "mech-two-sentences",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 9.7,
+   "why": "multiple sentences"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "mech-fragment",
+   "klass": "mechanical",
+   "truth": false,
+   "said": true,
+   "secs": 4.0,
+   "why": "none"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "sem-wrong-question",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 7.8,
+   "why": "adds facts not present in the sour"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "sem-fabricated",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 8.5,
+   "why": "Adds cost (12,000 euros) not menti"
+  },
+  {
+   "inspector": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "case": "sem-contradicts",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 5.2,
+   "why": "adds fact not in text ('left unrep"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "clean-1",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 6.4,
+   "why": "none"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "clean-2",
+   "klass": "clean",
+   "truth": true,
+   "said": false,
+   "secs": 13.2,
+   "why": "uses 16 words but exceeds the limi"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "clean-3",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 6.4,
+   "why": "none"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "mech-words",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 4.6,
+   "why": "Exceeds single sentence and 20-wor"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "mech-banned",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 2.2,
+   "why": "uses the forbidden word 'system'"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "mech-two-sentences",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 6.2,
+   "why": "exceeds the maximum of 20 words"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "mech-fragment",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 3.2,
+   "why": "Uses exactly 9 words but is not a "
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "sem-wrong-question",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 2.3,
+   "why": "Adds advice not in the source text"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "sem-fabricated",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 3.5,
+   "why": "added financial cost not in source"
+  },
+  {
+   "inspector": "deepseek-ai/deepseek-v4-pro",
+   "case": "sem-contradicts",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 6.9,
+   "why": "Output adds 'was left unrepaired u"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "clean-1",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 14.1,
+   "why": "none"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "clean-2",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 228.2,
+   "why": "none"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "clean-3",
+   "klass": "clean",
+   "truth": true,
+   "said": true,
+   "secs": 147.6,
+   "why": "none"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "mech-words",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 14.4,
+   "why": "exceeds 20-word limit and adds inf"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "mech-banned",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 24.1,
+   "why": "used prohibited word 'system'"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "mech-two-sentences",
+   "klass": "mechanical",
+   "truth": false,
+   "said": false,
+   "secs": 207.9,
+   "why": "Not a single sentence"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "mech-fragment",
+   "klass": "mechanical",
+   "truth": false,
+   "said": null,
+   "secs": 0.2,
+   "err": "HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "sem-wrong-question",
+   "klass": "semantic",
+   "truth": false,
+   "said": null,
+   "secs": 302.1,
+   "err": "TimeoutError The read operation timed out"
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "sem-fabricated",
+   "klass": "semantic",
+   "truth": false,
+   "said": false,
+   "secs": 56.7,
+   "why": "added fact not in source (costing "
+  },
+  {
+   "inspector": "openai/gpt-oss-120b",
+   "case": "sem-contradicts",
+   "klass": "semantic",
+   "truth": false,
+   "said": null,
+   "secs": 300.4,
+   "err": "TimeoutError The read operation timed out"
+  }
+ ]
+}

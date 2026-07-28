@@ -32,7 +32,7 @@ import time
 
 from aea.kernel import grid
 from aea.lab import harness as H
-from aea.lab.x06_long_chain import START, apply_op, chain, truth
+from aea.lab.experiments.x06_long_chain import START, apply_op, chain, truth
 from aea.mind import checkpoint as CP
 from aea.mind import fuel
 

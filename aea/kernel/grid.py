@@ -46,7 +46,18 @@ def _find_root(start):
 
 ROOT = _find_root(HERE)
 STATE = os.path.join(ROOT, "state")          # the one home for runtime state on disk
-os.makedirs(STATE, exist_ok=True)
+
+
+def ensure_state() -> str:
+    """Create `state/` on FIRST WRITE rather than on import (law S3: nothing acts at import time).
+
+    `os.makedirs(STATE)` sat at module level, so merely naming `aea.kernel.grid` touched the disk,
+    and every module in this tree imports grid. That made the whole codebase unsafe to scan or to
+    import inside a test, which is the same class of defect as `build_graph` rewriting tracked files
+    on import - the one that made the analyser parse instead of import in the first place.
+    """
+    os.makedirs(STATE, exist_ok=True)
+    return STATE
 WEB = os.path.join(ROOT, "web")              # the front-end: html + js + game/ served from here
 
 
@@ -112,6 +123,7 @@ def atomic_save_json(path: str, data, indent=None):
     trust ledger a lost write is a lost demotion, which is the one direction that must never be lost.
     """
     path = _state(path)
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)   # was at import time; see ensure_state
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=indent)
@@ -324,6 +336,107 @@ GENERATORS = [
     ("pollinations", "openai-fast", "reasoning", "micro"),
 ]
 
+# THE THINKING SWITCH. MEASURED 2026-07-28 against the hosted endpoint, 67 calls, same answer (391)
+# in every cell that returned. `mind/fuel.py` recorded thinking as an untamed property of the fuel
+# because setting it by system prompt gave identical output; that test used the wrong string for the
+# family. There are TWO switches and they do not cross over:
+#
+#   LLAMA-NEMOTRON (llama-3.3-nemotron-super-49b-v1.5, nvidia-nemotron-nano-9b-v2)
+#       system message "/no_think"      -> 0 chars of reasoning, 2-5 output tokens, 0.4-1.5s
+#       (default on the 49B: 3024 chars, 991 tokens, 71s. Same answer.)
+#       chat_template_kwargs and reasoning_budget are IGNORED here.
+#   NEMOTRON 3 (nemotron-3-nano-30b-a3b, nemotron-3-super-120b-a12b)
+#       chat_template_kwargs {"enable_thinking": False}  -> 0 chars, 4 tokens
+#       "/no_think" is IGNORED here.
+#   GPT-OSS      reasoning_effort low|medium|high        -> 20 / 66 / 249 chars, monotonic
+#   OLLAMA       native /api/chat {"think": False}       -> 0 chars, 4 tokens vs 691 with
+#                the OpenAI-compat base at :11434/v1 CANNOT reach it; the compat path ignores it.
+#
+# WHAT DOES NOT WORK ON THE HOSTED ENDPOINT, despite being documented: `nvext.max_thinking_tokens`
+# and `reasoning_budget`. NVIDIA's own example targets base_url=localhost:8000, i.e. self-hosted NIM.
+# minimax-m3 and glm-5.2 reject reasoning_budget outright with 400 "Unsupported parameter".
+#
+# SENDING THE WRONG ONE IS NOT FREE. mistral-medium-3.5 returns HTTP 400 "chat_template is not
+# supported" for any chat_template_kwargs, so a blanket switch breaks it. Hence: match the family,
+# or send nothing. Unknown family -> no switch, which is the fail-closed reading of law B1.
+THINK_OFF = (
+    ("nemotron-3-",            {"chat_template_kwargs": {"enable_thinking": False}}),
+    ("nemotron-nano-9b",       {"_system": "/no_think"}),
+    ("nemotron-super-49b",     {"_system": "/no_think"}),
+    ("nemotron-super-",        {"_system": "/no_think"}),
+    ("gpt-oss",                {"reasoning_effort": "low"}),
+)
+
+
+def think_off(model: str) -> dict:
+    """Extra request fields that turn reasoning off for THIS model, or {} when none is measured.
+    A `_system` key means "prepend this system message" rather than a body field. Returns {} for an
+    unmeasured family rather than guessing, because the wrong switch is a 400 on some plants."""
+    m = (model or "").lower()
+    for frag, opt in THINK_OFF:
+        if frag in m:
+            return dict(opt)
+    return {}
+
+
+# WHAT EACH MODEL'S OWNER PUBLISHES, lifted 2026-07-28 from the Python example on each model's own
+# build.nvidia.com page. Not defaults we chose, not defaults we inherited: the recommended call.
+#
+# THIS IS A CONFOUND IN EVERY MEASUREMENT THIS PROJECT HAS TAKEN. `call_openai` sends
+# temperature=0.2 and max_tokens=256 to every rod and never sends top_p at all. The owners publish
+# temperature 0.2 to 1, top_p 0.7 to 1, and max_tokens 1024 to 20480. The worst case is
+# `nemotron-3-nano-omni-30b-a3b-reasoning`, whose owner asks for 20480 tokens and gets 256 from us:
+# a reasoning rod handed 256 tokens spends them thinking and never reaches an answer, which is
+# exactly the empty-reply failure already recorded in unstick.py and in the x12 run. Every fitness
+# score, census and tool probe in this repo was taken through that filter.
+#
+# 16 of 102 pages publish a callable example. Of the 86 that do not, 68 are also not served, so a
+# missing example is a weak signal of a retired rod. The other 18 are pages this extractor could
+# not read, which is a gap in the reader rather than a fact about the model.
+OWN_PARAMS = {
+    # id: (temperature, top_p, max_tokens)
+    "deepseek-ai/deepseek-v4-flash":                 (1.0, 0.95, 16384),
+    "deepseek-ai/deepseek-v4-pro":                   (1.0, 0.95, 16384),
+    "meta/llama-3.2-1b-instruct":                    (0.2, 0.70,  1024),
+    "meta/llama-3.2-3b-instruct":                    (0.2, 0.70,  1024),
+    "mistralai/mistral-nemotron":                    (0.6, 0.70,  4096),
+    "nvidia/nemotron-3-nano-30b-a3b":                (1.0, 1.00, 16384),
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning": (0.6, 0.95, 20480),
+    "nvidia/nemotron-3-super-120b-a12b":             (1.0, 0.95, 16384),
+    "nvidia/nemotron-3-ultra-550b-a55b":             (1.0, 0.95, 16384),
+    "nvidia/nemotron-mini-4b-instruct":              (0.2, 0.70,  1024),
+    "nvidia/nvidia-nemotron-nano-9b-v2":             (0.6, 0.95,  2048),
+    "openai/gpt-oss-120b":                           (1.0, 1.00,  4096),
+    "openai/gpt-oss-20b":                            (1.0, 1.00,  4096),
+    "poolside/laguna-xs-2.1":                        (1.0, 0.95,  8192),
+    "thinkingmachines/inkling":                      (1.0, 0.95,  8192),
+    "z-ai/glm-5.2":                                  (1.0, 1.00, 16384),
+}
+
+
+def _rod_facts(model: str) -> dict:
+    """What `aea.energy.rodprobe` measured about this rod, read from the store rather than imported,
+    because the kernel may not depend on a package above it. Absent store means an empty dict, which
+    is the fail-closed reading: no fact rather than an invented one."""
+    doc = load_json(os.path.join(STATE, "rods.json"), {})
+    return (doc.get("rods") or {}).get(model) or {}
+
+
+def own_params(model: str) -> dict:
+    """The owner's published temperature/top_p/max_tokens for this model, or {} if nothing was
+    published. Returns {} rather than a house default, so a caller can tell the difference between
+    "measured" and "we guessed" - the same reason an absent value renders as a dash.
+
+    The MEASURED store wins over the literal table below, so re-running the probe updates behaviour
+    without a code edit, and the table remains the answer when the store has not been built."""
+    pub = (_rod_facts(model).get("published") or {})
+    got = {k: pub[k] for k in ("temperature", "top_p", "max_tokens") if pub.get(k) is not None}
+    if got:
+        return got
+    p = OWN_PARAMS.get(model)
+    return {} if not p else {"temperature": p[0], "top_p": p[1], "max_tokens": p[2]}
+
+
 ZONES = {            # which privacy classes a zone may use
     "sensitive": {"local"},
     "private":   {"local", "no-train"},
@@ -403,6 +516,37 @@ class Meter:
             mk = f"{plant}:{model}"
             Meter._inflight[mk] = Meter._inflight.get(mk, 0) + 1
 
+    @staticmethod
+    def ceiling(plant: str) -> int | None:
+        """The concurrency this plant ACTUALLY tolerates, measured, falling back to the declared
+        constant. MEASURED 2026-07-29 on nvidia: clean at 4, three of eight throttled at 8, against
+        a declared `max_inflight` of 20. The constant came from a 2026-07-25 run that no longer
+        reproduces, and being 5x too high is why every burst today earned a 429 the meter believed
+        was impossible. A ceiling nobody re-measures is a number, not a limit."""
+        doc = load_json(os.path.join(STATE, "plant_ceiling.json"), {})
+        got = ((doc.get("plants") or {}).get(plant) or {}).get("clean_at")
+        if isinstance(got, int) and got > 0:
+            return got
+        return (PLANTS.get(plant) or {}).get("max_inflight")
+
+    def try_enter(self, plant: str, model: str) -> bool:
+        """CHECK AND CLAIM UNDER ONE LOCK. True if a slot was taken, False if the rod is saturated.
+
+        `can_spend()` then `enter()` is a check-then-act race and it is decorative under exactly the
+        burst it exists to stop. MEASURED 2026-07-28: thirty threads launched together all called
+        can_spend, all read inflight=0 because none had claimed yet, all passed, and fifteen of them
+        earned a 429 from a rod the meter believed was idle. Two lock acquisitions cannot guard one
+        invariant. This holds the lock across both halves, so the twenty-first caller is refused
+        rather than merely counted.
+        """
+        with self.lock:
+            mk = f"{plant}:{model}"
+            mif = Meter.ceiling(plant)          # measured first, declared constant as fallback
+            if mif is not None and Meter._inflight.get(mk, 0) >= mif:
+                return False
+            Meter._inflight[mk] = Meter._inflight.get(mk, 0) + 1
+            return True
+
     def leave(self, plant: str, model: str) -> None:
         """Release the slot (ALWAYS, in a finally - a leaked slot silently shrinks the rod)."""
         with self.lock:
@@ -423,7 +567,7 @@ class Meter:
             # the real ceiling first: too many already in flight ON THIS ROD -> the next one 429s.
             # Spreading across rods costs nothing, so this pushes the ladder toward rod DIVERSITY,
             # which is what the measurement says the platform actually rewards.
-            mif = cap.get("max_inflight")
+            mif = Meter.ceiling(plant)          # measured first, declared constant as fallback
             if mif is not None and Meter._inflight.get(mk, 0) >= mif:
                 return (False, 1.0, "in-flight (rod saturated)")
             win = self._win(st, mk, now)

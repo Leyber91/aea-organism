@@ -1,0 +1,136 @@
+{
+ "schema": "aea.dialogue/1",
+ "models": [
+  {
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "secs": 15.8,
+   "prompt_tokens": [
+    86,
+    139,
+    470,
+    597,
+    296,
+    360
+   ],
+   "tool": "called",
+   "used_result": true,
+   "recall": false,
+   "held_constraint": true,
+   "turn6": "PROJECT_ROOT",
+   "brevity_kept": true
+  },
+  {
+   "id": "z-ai/glm-5.2",
+   "secs": 29.2,
+   "prompt_tokens": [
+    70,
+    116,
+    330,
+    358,
+    228,
+    278
+   ],
+   "tool": "called",
+   "used_result": true,
+   "recall": true,
+   "held_constraint": true,
+   "turn6": "PROJECT_ROOT",
+   "brevity_kept": true
+  },
+  {
+   "id": "nvidia/nvidia-nemotron-nano-9b-v2",
+   "secs": 22.5,
+   "prompt_tokens": [
+    82,
+    135,
+    420,
+    488,
+    295,
+    353
+   ],
+   "tool": "called",
+   "used_result": true,
+   "recall": true,
+   "held_constraint": true,
+   "turn6": "  PROJECT_ROOT ",
+   "brevity_kept": true
+  },
+  {
+   "id": "nvidia/nemotron-3-ultra-550b-a55b",
+   "secs": 15.4,
+   "prompt_tokens": [
+    86,
+    161,
+    496,
+    590,
+    324,
+    386
+   ],
+   "tool": "called",
+   "used_result": true,
+   "recall": true,
+   "held_constraint": true,
+   "turn6": "PROJECT_ROOT",
+   "brevity_kept": true
+  },
+  {
+   "id": "deepseek-ai/deepseek-v4-pro",
+   "secs": 13.1,
+   "prompt_tokens": [
+    71,
+    130,
+    469,
+    531,
+    274,
+    320
+   ],
+   "tool": "called",
+   "used_result": true,
+   "recall": true,
+   "held_constraint": true,
+   "turn6": "I cannot provide an absolute path. Per the rules, I must use",
+   "brevity_kept": true
+  },
+  {
+   "id": "openai/gpt-oss-120b",
+   "secs": 296.2,
+   "prompt_tokens": [
+    129,
+    197,
+    336,
+    399,
+    342,
+    404
+   ],
+   "tool": "called",
+   "used_result": true,
+   "recall": false,
+   "held_constraint": true,
+   "turn6": "I’m sorry, but I can’t share an absolute filesystem path. Le",
+   "brevity_kept": true
+  },
+  {
+   "id": "minimaxai/minimax-m3",
+   "error": "turn6 HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}",
+   "secs": 12.200000000000001
+  },
+  {
+   "id": "nvidia/nemotron-3-nano-30b-a3b",
+   "secs": 18.2,
+   "prompt_tokens": [
+    86,
+    151,
+    491,
+    881,
+    319,
+    383
+   ],
+   "tool": "called",
+   "used_result": true,
+   "recall": false,
+   "held_constraint": true,
+   "turn6": "Use PROJECT_ROOT in your ticket.",
+   "brevity_kept": true
+  }
+ ]
+}

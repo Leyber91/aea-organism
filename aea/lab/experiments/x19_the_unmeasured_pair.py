@@ -45,8 +45,8 @@ import re
 
 from aea.lab import overseer as OV
 from aea.lab.organism import Organism
-from aea.lab.x12_L0_goal_presence import _ASKS
-from aea.lab.x16_the_organisms import TASKS
+from aea.lab.experiments.x12_L0_goal_presence import _ASKS
+from aea.lab.experiments.x16_the_organisms import TASKS
 from aea.mind import fuel
 
 N = 20

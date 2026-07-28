@@ -107,6 +107,42 @@ operating rules' field-lessons layer, the PORTFOLIO project rules, `LUIS_FILTER`
   capability — if the shiny thing delays shipping, name what it costs against the income clock and stop.
 - **The income clock is real.** On ties, the move that earns or that ships a playable act beats the one
   that polishes. Name the trade when scope competes with the clock.
+- **Batch the exploration into a script; never a dozen live calls.** Law W1 applies to the assistant
+  too. When an investigation needs more than about three lookups, stop and write ONE script that
+  answers every open question in a single pass, then read one output. Fifteen small greps cost more
+  tokens, take longer, and lose the intermediate results the moment the context compacts, while a
+  script is re-runnable, diffable, and can be promoted into `aea/tooling/` once something calls it.
+  Same rule for verification: a probe with a control beats three ad-hoc checks. *Named by Luis,
+  2026-07-28, against a session that made a dozen greps where one survey would have done.*
+- **Never test a regex or a path through a shell heredoc.** The Bash tool eats backslashes, so a
+  pattern that works reports as broken and a broken one can report as fine. Write the test to a real
+  file and run the file. *Paid for:* a privacy-guard diagnosis that was wrong twice before the shell
+  was taken out of the loop.
+- **A tool failing on a source is not the source being closed. Drop to the primitive.** A convenience
+  tool has its own limits, and those limits are not the world's. When one fails, ask what it was doing
+  underneath and do that directly: a raw GET with a browser User-Agent, the provider's own list
+  endpoint, the file on disk. *Paid for:* `WebFetch` timed out twice on `build.nvidia.com` and it was
+  nearly recorded as "the page cannot be read"; a plain `urllib` GET with a desktop UA returned 200
+  and 200KB of server-rendered payload carrying every parameter the docs omitted. Corollary: an
+  authoritative list is almost always an API call away, so derive the set from the provider
+  (`/v1/models` returned 102 ids) rather than asking a human to paste links.
+- **"No timeout" means a generous INACTIVITY budget, never `timeout=None`.** A rod that thinks for
+  minutes must survive; a socket whose peer vanished must not hang the run. `None` gives urllib no
+  read deadline at all, so a peer that stops sending without closing blocks forever. *Paid for:* two
+  experiments sat 28 and 64 minutes on one second of CPU each, produced nothing, and were killed.
+  Use ~300s per read, which is five times the worst latency ever measured here.
+- **The SECOND time you write it, extract it. Not the tenth.** W1 governs your own process, and the
+  trigger is repetition, not volume. *Paid for:* sixteen scratchpad probes in one session, each
+  re-implementing the same untimed POST, the same reasoning/content parse, the same per-model
+  parameter lookup, the same concurrent map and the same result table. That is fifteen copies of one
+  module. When a script is about to repeat a block you already wrote today, stop and promote the
+  block; when a finding is about to be re-derived, write it where it is loaded at boot. The same
+  applies to lessons: a rule learned twice and recorded zero times will be learned a third time.
+- **Ask the live thing, never the description of it.** Documentation describes the product; the
+  endpoint describes what you actually have. Both matter and they disagree constantly: NVIDIA's docs
+  document `nvext.max_thinking_tokens` and `reasoning_budget` that the hosted endpoint ignores or
+  rejects, a model card can list a rod the endpoint 404s, and a catalogue entry is not a served
+  model. Read the doc for the parameter NAME, then measure the behaviour. *Named by Luis, 2026-07-28.*
 
 ---
 

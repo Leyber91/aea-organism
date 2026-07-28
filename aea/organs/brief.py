@@ -15,6 +15,7 @@ from aea.kernel import grid
 from aea.mind import orchestrator
 from aea.mind import hades
 from aea.kernel import trust
+from aea.kernel import hands
 from aea.kernel.tracelog import Trace
 try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
@@ -144,8 +145,33 @@ def main():
     print(f"ROOT GOAL: {ROOT_GOAL}\n" + "=" * 78)
 
     # ---- Section 1: project status (PUBLIC, real GitHub) ----
+    # THE FETCH GOES THROUGH THE GATE NOW. These two calls are the only outbound reads the wake
+    # makes, and until 2026-07-28 they went straight to `grid.fetch_json` with NO permission check
+    # of any kind: `hands.allowed()` existed, enforced `gather_public` at the call site, and no wake
+    # path reached it. Law B5 says a permission the model can talk past is a decoration; a
+    # permission nothing calls is not even that. `reach()` returns the fetch outcome separately from
+    # the model's prose, because grading `gather_public` on a substring of a summary is law G1's
+    # named defect and it was live here.
+    fetch_ok = {"github": None, "hn": None}
+
+    def reach(label: str, url: str):
+        """One permitted outbound read. Returns (parsed, error-or-None) and records the OUTCOME."""
+        v = hands.allowed("json_get", "public")
+        if not v["ok"]:
+            fetch_ok[label] = False
+            return None, "refused: " + v["why"]
+        try:
+            data = fetch_json(url)
+            fetch_ok[label] = True
+            return data, None
+        except Exception as ex:
+            fetch_ok[label] = False
+            return None, "%s: %s" % (type(ex).__name__, str(ex)[:90])
+
     try:
-        raw = fetch_json(f"https://api.github.com/users/{GH_USER}/repos?sort=pushed&per_page=15&type=owner")
+        raw, ferr = reach("github", f"https://api.github.com/users/{GH_USER}/repos?sort=pushed&per_page=15&type=owner")
+        if ferr:
+            raise RuntimeError(ferr)
         repos = [r for r in raw if not r.get("fork")][:8]            # authorship integrity: never present a FORK as his work
         n_forks = sum(1 for r in raw if r.get("fork"))
         repo_block = "\n".join(f"- {r['name']} ({r.get('language') or '?'}, pushed {r['pushed_at'][:10]}): "
@@ -159,7 +185,9 @@ def main():
 
     # ---- Section 2: one AI opportunity (PUBLIC, real Hacker News) ----
     try:
-        hn = fetch_json("https://hn.algolia.com/api/v1/search_by_date?tags=story&query=AI%20agent&hitsPerPage=12")
+        hn, ferr = reach("hn", "https://hn.algolia.com/api/v1/search_by_date?tags=story&query=AI%20agent&hitsPerPage=12")
+        if ferr:
+            raise RuntimeError(ferr)
         story_block = "\n".join(f"- {h['title']} ({h.get('points', 0)} pts) {h.get('url') or ''}"
                                 for h in hn.get("hits", []) if h.get("title"))[:1800]
         print(f"[real data] fetched {len(hn.get('hits', []))} fresh AI stories from Hacker News")
@@ -181,10 +209,27 @@ def main():
     syn = T.spawn("assemble the brief (deterministic, local)", parent=[s1, s2, s3], zone="sensitive", depth=1,
                   why="the merge combines PUBLIC + PRIVATE -> deterministic template, never a grid model (no leak)")
     T.mark(syn, "assemble", "Python template; no LLM ever sees the public+private combination")
-    brief_md = (f"# Morning brief - {PRIV.get('date', 'today')}\n\n"
+    # THE HEADING DATES THE BRIEF, NOT THE PRIVATE FILE. This read `PRIV["date"]`, so a private
+    # snapshot last written on 2026-06-28 titled the brief "Morning brief - 2026-06-28" for a month
+    # while every public section in it was fetched minutes earlier. Law H2: stale data must announce
+    # its age, and the failure it names is a REAL number under the WRONG label - which is what a
+    # month-old date at the top of today's brief is. The prompt already warned the model; the
+    # artifact Luis actually reads still lied. The private section now carries its own age instead.
+    _brief_day = _dt.datetime.now().strftime("%Y-%m-%d (%A)")
+    _pdate = (PRIV.get("date") or "")[:10]
+    _pnote = ""
+    if _pdate and _pdate != _dt.datetime.now().strftime("%Y-%m-%d"):
+        try:
+            _pn = (_dt.date.today() - _dt.date.fromisoformat(_pdate)).days
+            _pnote = f"  \n*calendar and inbox below are from {_pdate}, {_pn} days old*"
+        except Exception:
+            _pnote = f"  \n*calendar and inbox below are from {_pdate}*"
+    elif not _pdate:
+        _pnote = "  \n*no dated private snapshot available*"
+    brief_md = (f"# Morning brief - {_brief_day}\n\n"
                 f"## What you're moving on\n{status_txt}\n\n"
                 f"## One opportunity\n{opp_txt}\n\n"
-                f"## Today\n{focus_txt}\n")
+                f"## Today{_pnote}\n{focus_txt}\n")
     T.done(syn, brief_md, model="deterministic/local")
 
     # ---- HADES signs off LOCALLY (Law 3): the brief holds private data, so its watcher is LOCAL + heterogeneous (no leak) ----
@@ -215,7 +260,11 @@ def main():
     # ---- TRUST LEDGER (Law 3 extended): every run stamps the ledger; autonomy is earned, never assumed ----
     clean = (verdict.get("verdict") == "accept")
     sections_ok = all(section_ok(t) for t in (status_txt, opp_txt, focus_txt))
-    trust.record("gather_public", "fetch failed" not in status_txt.lower())
+    # GRADED ON THE FETCH ITSELF. This read `"fetch failed" not in status_txt.lower()`, where
+    # status_txt is a MODEL's three-bullet summary - so the capability passed whenever the model
+    # avoided a phrase, and would have passed with both fetches dead. Law G1: grade the outcome,
+    # never a proxy for it. `None` means the branch never ran, which is not a pass.
+    trust.record("gather_public", all(v is True for v in fetch_ok.values()))
     trust.record("reason_private_local", boundary_ok and "ERR" not in focus_txt[:40])
     t_state = trust.record("produce_brief", clean and sections_ok,
                            note=f"hades={verdict.get('verdict')} sections_ok={sections_ok}")

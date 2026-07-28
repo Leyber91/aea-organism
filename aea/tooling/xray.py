@@ -35,6 +35,7 @@ from __future__ import annotations
 import ast
 import json
 import os
+import re
 import sys
 import time
 
@@ -49,12 +50,45 @@ OUT = os.path.join(grid.STATE, "xray.json")
 ENTRIES = {
     "wake": ["aea.loop.live", "aea.loop.aea", "aea.organs.brief"],
     "server": ["aea.server.controlroom"],
+    # A CLI TOOL AND AN EXPERIMENT ARE DOORS TOO. Counting only wake+server called `lab.harness`
+    # and every `lab.parts.*` orphaned, when they are the library the experiments import. The
+    # question is never "orphaned" in the abstract, it is "reachable FROM WHAT" - so the doors a
+    # HUMAN opens are declared here rather than left implicit, and the leftover set becomes the
+    # honest one: code no door of any kind reaches.
+    "tools": [],        # filled at scan time: every aea.tooling.* module
+    "lab": [],          # filled at scan time: every numbered experiment
 }
 
 # Module-level calls that TOUCH THE WORLD. A module doing any of these at import time acts merely on
 # being named, which makes it unusable inside anything that scans or tests the tree.
-SIDE_EFFECT_CALLS = {"open", "dump", "atomic_save_json", "save", "replace", "write",
-                     "urlopen", "system", "run", "Popen", "makedirs", "remove", "rmtree"}
+#
+# QUALIFIED, because a bare attribute name is not a call to the thing you think it is. MEASURED
+# 2026-07-28: five of six reported violations were `str.replace` - `META = STORE.replace(".json",
+# ".meta.json")` was being read as a filesystem write. A detector that fires on every `.replace()`
+# in the tree trains the reader to ignore the one real hit, which is the only way this check fails.
+BARE_CALLS = {"open", "exec", "eval"}
+QUALIFIED_CALLS = {
+    "os": {"makedirs", "remove", "replace", "rename", "system", "mkdir", "rmdir", "unlink"},
+    "shutil": {"rmtree", "copy", "move", "copytree"},
+    "subprocess": {"run", "Popen", "call", "check_output"},
+    "json": {"dump"},
+    "grid": {"atomic_save_json", "save_json"},
+    "urllib.request": {"urlopen"},
+}
+SIDE_EFFECT_CALLS = BARE_CALLS | {c for s in QUALIFIED_CALLS.values() for c in s}
+
+
+def _dotted(node) -> str:
+    """`os.path.join` from an ast.Attribute chain, or "" when the receiver is a value rather than a
+    module - which is exactly the case that made `.replace()` on a string look dangerous."""
+    parts = []
+    while isinstance(node, ast.Attribute):
+        parts.append(node.attr)
+        node = node.value
+    if isinstance(node, ast.Name):
+        parts.append(node.id)
+        return ".".join(reversed(parts))
+    return ""
 
 STATE_WRITERS = {"atomic_save_json", "save_json", "dump"}
 STATE_READERS = {"load_json", "load"}
@@ -87,17 +121,65 @@ def _toplevel_calls(tree: ast.Module) -> list:
             if "__name__" in src and "__main__" in src:
                 continue
         for sub in ast.walk(node):
-            if isinstance(sub, ast.Call):
-                f = sub.func
-                name = getattr(f, "id", None) or getattr(f, "attr", None)
-                if name in SIDE_EFFECT_CALLS:
-                    hits.append({"call": name, "line": getattr(sub, "lineno", 0)})
+            if not isinstance(sub, ast.Call):
+                continue
+            f = sub.func
+            if isinstance(f, ast.Name):
+                if f.id in BARE_CALLS:
+                    hits.append({"call": f.id, "line": getattr(sub, "lineno", 0)})
+                continue
+            if not isinstance(f, ast.Attribute):
+                continue
+            dotted = _dotted(f)                      # "" when the receiver is a value, not a module
+            if not dotted:
+                continue
+            mod, _, attr = dotted.rpartition(".")
+            for prefix, calls in QUALIFIED_CALLS.items():
+                if attr in calls and (mod == prefix or mod.endswith("." + prefix)):
+                    hits.append({"call": dotted, "line": getattr(sub, "lineno", 0)})
+                    break
     return hits
 
 
 def _state_touch(tree: ast.Module) -> dict:
     """Which state files this module reads and writes. Found by pairing a load/save call with the
-    nearest .json literal, which is how every write site in this repo is actually written."""
+    nearest .json literal, which is how every write site in this repo is actually written.
+
+    THREE DEFECTS FIXED 2026-07-28, all of them producing stores that do not exist:
+      1. A BARE EXTENSION is not a filename. `pid + ".json"` contributed a store literally named
+         ".json", and `LEAK_SCAN = (".py", ".md", ".json")` contributed the same one from a tuple
+         of extensions that is not a path at all. The panel then reported a three-way write
+         collision on a store nobody has ever written, which is a false alarm in the one place whose
+         entire purpose is catching real ones.
+      2. A FORMAT PLACEHOLDER is not a filename either: "%s_latest.json" and "filename like
+         heartbeat.json" both appeared as stores.
+      3. THE MODULE-LEVEL SCAN WAS ORDER-DEPENDENT. `writes.add(v) if not reads else reads.add(v)`
+         classified a constant as a read or a write based on whether any read had been seen EARLIER
+         in the walk, which is arbitrary. Now a module-level constant is recorded only when the
+         assignment is a plain literal or a path join, and it is attributed to neither side until a
+         real call site references it.
+    """
+    def is_store(v):
+        if not isinstance(v, str) or not (v.endswith(".json") or v.endswith(".jsonl")):
+            return False
+        base = os.path.basename(v)
+        if base in (".json", ".jsonl"):
+            return False                       # a bare extension, not a name
+        return "%" not in v and " " not in base
+
+    # NAME -> filename, from module-level constants. Resolving these at the CALL SITE is what keeps
+    # the real collisions visible: `STORE = os.path.join(grid.STATE, "capability_census.json")`
+    # followed by `grid.atomic_save_json(STORE, ...)` is a write, and dropping it to avoid the
+    # phantom stores traded four false positives for every true one. Both directions are defects.
+    consts = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 \
+                and isinstance(node.targets[0], ast.Name):
+            for s in ast.walk(node.value):
+                if isinstance(s, ast.Constant) and is_store(s.value):
+                    consts[node.targets[0].id] = os.path.basename(s.value)
+                    break
+
     reads, writes = set(), set()
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
@@ -105,19 +187,12 @@ def _state_touch(tree: ast.Module) -> dict:
         name = getattr(node.func, "attr", None) or getattr(node.func, "id", None)
         if name not in (STATE_WRITERS | STATE_READERS):
             continue
-        lits = [s.value for s in ast.walk(node)
-                if isinstance(s, ast.Constant) and isinstance(s.value, str)
-                and (s.value.endswith(".json") or s.value.endswith(".jsonl"))]
-        target = reads if name in STATE_READERS else writes
-        target.update(lits)
-    # Constants defined at module level often hold the path; catch those too.
-    for node in tree.body:
-        if isinstance(node, ast.Assign):
-            for s in ast.walk(node):
-                if (isinstance(s, ast.Constant) and isinstance(s.value, str)
-                        and (s.value.endswith(".json") or s.value.endswith(".jsonl"))):
-                    writes.add(s.value) if not reads else reads.add(s.value)
-    return {"reads": sorted(reads), "writes": sorted(writes)}
+        found = {os.path.basename(s.value) for s in ast.walk(node)
+                 if isinstance(s, ast.Constant) and is_store(s.value)}
+        found |= {consts[s.id] for s in ast.walk(node)
+                  if isinstance(s, ast.Name) and s.id in consts}
+        (reads if name in STATE_READERS else writes).update(found)
+    return {"reads": sorted(reads), "writes": sorted(writes), "declared": sorted(consts.values())}
 
 
 def scan() -> dict:
@@ -177,16 +252,58 @@ def reach(mods: dict, roots: list) -> set:
     return seen
 
 
+def _doors(mods: dict) -> dict:
+    """The human-opened doors, derived rather than listed, so a new tool or experiment counts the
+    day it lands instead of the day someone remembers to add it (law S1: derive the map)."""
+    e = {k: list(v) for k, v in ENTRIES.items()}
+    e["tools"] = sorted(n for n in mods if n.startswith("aea.tooling."))
+    e["lab"] = sorted(n for n in mods if n.startswith("aea.lab.")
+                      and re.match(r"x\d", n.rsplit(".", 1)[-1]))
+    return e
+
+
+def role_of(name: str, orphaned: bool) -> str:
+    """WHY a module has no caller, which is the part the old count threw away.
+
+    "88 orphaned" was three unrelated facts added together, and the sum alarmed without directing:
+    51 of them are experiments that are SUPPOSED to run once and produce evidence, 9 are CLI tools a
+    human runs, and only the remainder are capabilities built and left unreachable. An invariant
+    that cannot separate a correct state from a defect trains the reader to skim it (law W3).
+
+      live      reachable from a wake or the server
+      tool      reachable from a CLI tool a human runs
+      evidence  reachable from a numbered lab experiment
+      paused    the game API, parked by an explicit decision
+      unwired   NO door of any kind reaches it. THIS is the only one that is a defect.
+    """
+    if not orphaned:
+        return "live"
+    if name.startswith("aea.gameapi."):
+        return "paused"
+    return "unwired"
+
+
 def build() -> dict:
     mods = scan()
     wake = reach(mods, ENTRIES["wake"])
     server = reach(mods, ENTRIES["server"])
     live = wake | server
 
+    doors = _doors(mods)
+    by_tool = reach(mods, doors["tools"])
+    by_lab = reach(mods, doors["lab"])
+
     for name, m in mods.items():
         m["reachable_from_wake"] = name in wake
         m["reachable_from_server"] = name in server
         m["orphaned"] = name not in live
+        # ROLE ANSWERS "reachable from WHICH door", most load-bearing door first. A module the wake
+        # reaches is live even if a tool also imports it; one only a tool reaches is a tool's
+        # library, not a defect.
+        m["role"] = ("live" if name in live else
+                     "tool" if name in by_tool else
+                     "evidence" if name in by_lab else
+                     role_of(name, True))
         m["imported_by"] = sorted(o for o, x in mods.items() if name in x["imports"])
 
     # WHO WRITES WHAT. Two modules writing one store is not automatically wrong, but it is always
@@ -210,8 +327,13 @@ def build() -> dict:
             "reachable_from_server": len(server),
             "orphaned": sum(1 for m in mods.values() if m["orphaned"]),
             "lines": sum(m["lines"] for m in mods.values()),
+            # by ROLE, because the bare orphan count adds three different facts together
+            "by_role": {r: sum(1 for m in mods.values() if m["role"] == r)
+                        for r in ("live", "tool", "evidence", "paused", "unwired")},
+            "unwired": sum(1 for m in mods.values() if m["role"] == "unwired"),
         },
         "orphans": sorted(n for n, m in mods.items() if m["orphaned"]),
+        "unwired": sorted(n for n, m in mods.items() if m["role"] == "unwired"),
         "import_time_effects": sorted(
             (n for n, m in mods.items() if m["import_time_effects"])),
         "stores": stores,

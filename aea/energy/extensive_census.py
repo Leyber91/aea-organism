@@ -217,18 +217,40 @@ def rank(report=None):
     print(f"\n  FRONTIER (>= {mx-1}/{mx}): {len(frontier)} rods")
 
 
-def promote():
-    """Bless the exam into capability_census.json so energy.ladder runs on it."""
+def promote(force: bool = False):
+    """Bless the exam into capability_census.json so energy.ladder runs on it.
+
+    THE SECOND WRITER, MADE ATTRIBUTABLE AND REVERSIBLE. This is the only store in the tree written
+    by two modules, and it is the one the whole energy ladder ranks on. The write used to be
+    anonymous and unconditional: nothing recorded WHICH census produced the live ladder, and a
+    partial exam (a rate-limited run, a half-finished sweep) silently replaced a complete one with
+    fewer rods. A ladder that shrinks without saying so is the same shape as the eighteen-day
+    incident - a real degradation that looks exactly like normal operation.
+
+    Now it stamps `source` and `promoted_at` so the ladder can be traced back, and it REFUSES a
+    promotion that would drop rods unless --force says that is intended (law B1: fail closed).
+    """
     rep = grid.load_json(OUT, None)
     if not rep:
         print("no exam yet"); return
-    grid.atomic_save_json(os.path.join(grid.STATE, "capability_census.json"),
+    live_path = os.path.join(grid.STATE, "capability_census.json")
+    live = grid.load_json(live_path, {}) or {}
+    have, incoming = len(live.get("models") or []), len(rep["models"])
+    if incoming < have and not force:
+        print(f"REFUSED: the exam has {incoming} models, the live ladder has {have}. "
+              f"Promoting would remove {have - incoming} rods from selection.\n"
+              f"Re-run the exam, or pass --force if the shrink is intended.")
+        return
+    grid.atomic_save_json(live_path,
                           {"generated": rep["generated"], "battery": rep["battery"],
+                           "source": "aea.energy.extensive_census",   # who wrote the live ladder
+                           "promoted_at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
                            "models": rep["models"]}, indent=1)
-    print(f"promoted {len(rep['models'])} exam results into capability_census.json (the live ladder)")
+    print(f"promoted {incoming} exam results into capability_census.json (the live ladder)"
+          + (f" - REPLACED a census of {have}" if have else ""))
 
 
 if __name__ == "__main__":
     if "--rank" in sys.argv:      rank()
-    elif "--promote" in sys.argv: promote()
+    elif "--promote" in sys.argv: promote(force="--force" in sys.argv)
     else:                          run()

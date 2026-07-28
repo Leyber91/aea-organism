@@ -42,14 +42,28 @@ OUT = os.path.join(grid.STATE, "selfcheck.json")
 # rather than remembered. The parent tree of this repo contains an employer folder name, so an
 # absolute path is a leak even when it looks harmless.
 LEAKS = {
-    "absolute windows path": r"[A-Za-z]:\\\\Users",
+    # THIS PATTERN WAS DEAD FOR ITS WHOLE LIFE. `\\\\` in a raw string is two escaped backslashes, so
+    # it matched only the JSON/Python-escaped form `C:\\Users` and never a plain `C:\Users`, a
+    # `c:/Users`, or a POSIX `/home/`. Measured 1 of 5 real forms. It was never noticed because the
+    # emoji rule kept this check's verdict permanently red, so it never had to prove it could go
+    # green for the right reason. A leak in `design/A16_WIRTHFORGE.md` sat inside it, committed.
+    # The lookbehind keeps `https:` out; the bracket class in the POSIX branch keeps URLs out.
+    "absolute windows path": r"(?<![A-Za-z])[A-Za-z]:[\\/]{1,4}(?:Users|home)\b"
+                             r"|(?:^|[\s\"'(=`\[])/(?:home|Users)/",
     "employer name": r"(?i)\bindicia\b|\badm group\b",
     # example.org / example.com / .test are RESERVED for documentation (RFC 2606) and are the
     # correct thing to put in synthetic fixtures. Flagging them trains the reader to ignore the
     # check, which is how a real hit gets missed.
     "email address": r"[\w.+-]+@(?!example\.|supplier\.io)[\w-]+\.\w{2,}",
+}
+# HOUSE RULES ARE NOT LEAKS. An emoji is a style violation with zero blast radius; a leaked employer
+# name is irreversible once pushed. They shared one verdict line, that line was permanently red from
+# 18 emoji in design docs whose cleanup is a deliberate KILL, and so the privacy guard - the one rule
+# this repo calls absolute - could not signal. Law W3: an invariant blocks, a candidate proposes.
+HOUSE = {
     "emoji": "[\U0001F300-\U0001FAFF☀-➿]",
 }
+ALL_RULES = dict(LEAKS, **HOUSE)
 LEAK_SCAN = (".py", ".md", ".json", ".html", ".js", ".css", ".txt")
 # A DETECTOR MUST NOT FLAG ITS OWN DEFINITIONS. This file contains the emoji range and the employer
 # pattern by necessity, so it matched itself on the first run. A checker that always reports one hit
@@ -88,16 +102,26 @@ def check_imports() -> dict:
             "detail": "0 failures" if n == 0 else "; ".join(lines[1:6])[:200]}
 
 
+# THE COUNT IS READ, NOT HARDCODED, AND IT HAS A FLOOR. Both this check and shadow's gate
+# matched the literal string "all 31 frozen behaviours hold", so ADDING a frozen behaviour
+# broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
+# alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
+# the suite must report at least this many. Raise it when behaviours are added on purpose.
+FROZEN_FLOOR = 46
+
+
 def check_frozen() -> dict:
     """The 31 frozen behaviours. Two are frozen at a KNOWN-BAD value on purpose: fixing the reader
     is SUPPOSED to break this, which is what makes it a frozen test rather than a passing one."""
     p = os.path.join(ROOT, "aea", "lab", "tests", "test_golden.py")
     if not os.path.exists(p):
-        return {"check": "31 frozen behaviours", "pass": False, "detail": "test file missing"}
+        return {"check": "%d frozen behaviours" % FROZEN_FLOOR, "pass": False, "detail": "test file missing"}
     rc, out = _py([p])
-    ok = rc == 0 and "all 31 frozen behaviours hold" in out
-    return {"check": "31 frozen behaviours", "pass": ok,
-            "detail": "all hold" if ok else out.strip()[-180:]}
+    m = re.search(r"all (\d+) frozen behaviours hold", out)
+    n = int(m.group(1)) if m else 0
+    ok = rc == 0 and n >= FROZEN_FLOOR
+    return {"check": "%d frozen behaviours" % FROZEN_FLOOR, "pass": ok,
+            "detail": ("all %d hold" % n) if ok else out.strip()[-180:]}
 
 
 def check_structure() -> dict:
@@ -114,8 +138,20 @@ def check_structure() -> dict:
                      "orphans": d["orphans"], "effects": d["import_time_effects"]}}
 
 
-def check_leaks() -> dict:
-    """The privacy guard, enforced rather than remembered. Absolute, and irreversible once pushed."""
+_SCAN_CACHE = {}
+
+
+def _scan(patterns: dict) -> list:
+    """Every tracked file against every pattern given. Memoised on the pattern set, because splitting
+    privacy from house style meant two callers over one tree and a measured pass costs 2.5s against a
+    7.4s whole check. The two callers now share one walk of the merged set."""
+    key = tuple(sorted(patterns))
+    if key in _SCAN_CACHE:
+        return _SCAN_CACHE[key]
+    if patterns is not ALL_RULES:                       # one walk, then filter by kind
+        want = set(patterns)
+        out = [h for h in _scan(ALL_RULES) if h.rpartition(": ")[2] in want]
+        return _SCAN_CACHE.setdefault(key, out)
     hits = []
     for root, dirs, files in os.walk(ROOT):
         dirs[:] = [x for x in dirs if x not in (".git", "node_modules", "__pycache__", "archive",
@@ -131,12 +167,39 @@ def check_leaks() -> dict:
                 s = io.open(p, encoding="utf-8", errors="ignore").read()
             except Exception:
                 continue
-            for name, pat in LEAKS.items():
+            for name, pat in patterns.items():
                 if re.search(pat, s):
                     hits.append("%s: %s" % (rel, name))
+    return _SCAN_CACHE.setdefault(key, sorted(set(hits)))
+
+
+def _by_kind(hits: list) -> str:
+    """Group before truncating. The old detail line sorted by PATH and cut at eight, so a real hit in
+    web/ sat behind eighteen in design/ and never printed. A truncation that can hide the finding is
+    the check failing quietly."""
+    kinds = {}
+    for h in hits:
+        rel, _, kind = h.rpartition(": ")
+        kinds.setdefault(kind, []).append(rel)
+    return " | ".join("%s x%d (%s%s)" % (k, len(v), v[0], ", +%d" % (len(v) - 1) if len(v) > 1 else "")
+                      for k, v in sorted(kinds.items()))
+
+
+def check_leaks() -> dict:
+    """The privacy guard, enforced rather than remembered. Absolute, and irreversible once pushed."""
+    hits = _scan(LEAKS)
     return {"check": "no private data in tracked files", "pass": not hits,
-            "detail": "clean" if not hits else "; ".join(sorted(set(hits))[:8]),
-            "data": {"hits": sorted(set(hits))}}
+            "detail": "clean" if not hits else _by_kind(hits),
+            "data": {"hits": hits}}
+
+
+def check_house() -> dict:
+    """House rules. ADVISORY: it reports and never blocks, because a style violation must not be able
+    to mask an invariant. Counted so that zero is still a real answer."""
+    hits = _scan(HOUSE)
+    return {"check": "house style", "pass": True, "advisory": True,
+            "detail": "clean" if not hits else _by_kind(hits),
+            "data": {"hits": hits}}
 
 
 def check_paths() -> dict:
@@ -150,7 +213,14 @@ def check_paths() -> dict:
     reports every URL in the repo as an absolute path - which is exactly what the first run did,
     turning 6 real hits into 61 files of noise. A check that cries wolf is a check nobody reads.
     """
-    pat = re.compile(r"(?<![A-Za-z])[A-Za-z]:[\\/]|(?:^|[\s\"'(=])/(?:home|Users)/", re.I)
+    # AND THE PATH MUST HAVE A BODY. `[A-Za-z]:[\\/]` alone matches `e:\` inside the ordinary
+    # Python source line `"except Exception as e:\n"` - a drive letter followed by the escape of a
+    # newline. Found 2026-07-29 by this check firing on a file that contains no path at all.
+    # Requiring two further non-quote, non-space characters keeps `<path>` and `c:/Users/` and
+    # rejects every `X:\n"` / `X:\t"` in a string literal. Same discipline as the lookbehind above:
+    # a checker that cries wolf is a checker nobody reads.
+    pat = re.compile(r"(?<![A-Za-z])[A-Za-z]:[\\/][^\s\"'\\]{2,}"
+                     r"|(?:^|[\s\"'(=])/(?:home|Users)/", re.I)
     hits = []
     for root, dirs, files in os.walk(os.path.join(ROOT, "aea")):
         dirs[:] = [x for x in dirs if x not in ("__pycache__", "site_assets")]
@@ -190,7 +260,7 @@ def check_state() -> dict:
 
 CHECKS = [("structure", check_structure), ("state", check_state), ("leaks", check_leaks),
           ("paths", check_paths),
-          ("imports", check_imports), ("frozen", check_frozen)]
+          ("imports", check_imports), ("frozen", check_frozen), ("house", check_house)]
 SLOW = {"imports", "frozen"}
 
 
@@ -208,14 +278,17 @@ def run(quick: bool = False) -> dict:
     return {"schema": "aea.selfcheck/1",
             "at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
             "seconds": round(time.time() - t0, 1),
-            "pass": all(c["pass"] for c in out), "checks": out}
+            # An advisory row never moves the verdict. If it could, the verdict would be reporting
+            # style and the reader would learn to ignore a red line.
+            "pass": all(c["pass"] for c in out if not c.get("advisory")), "checks": out}
 
 
 def render(d: dict) -> str:
     L = ["SELFCHECK - whole-system invariants (%.1fs)" % d["seconds"], "=" * 84]
     for c in d["checks"]:
-        L.append("  [%s] %-34s %s" % ("PASS" if c["pass"] else "FAIL", c["check"],
-                                      (c["detail"] or "").replace("\n", " ")[:44]))
+        mark = "note" if c.get("advisory") else ("PASS" if c["pass"] else "FAIL")
+        L.append("  [%4s] %-34s %s" % (mark, c["check"],
+                                       (c["detail"] or "").replace("\n", " ")[:44]))
     L.append("")
     L.append("VERDICT: %s" % ("ALL INVARIANTS HOLD" if d["pass"] else "SOMETHING IS BROKEN"))
     return "\n".join(L)

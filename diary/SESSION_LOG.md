@@ -1809,3 +1809,110 @@ spec describes.
 **NEXT:** `diary/OPEN_LOOPS.md` FINISH items 4 and 5 are done; the board now needs the spec applied
 in order. The entity itself needs `hands`, `seats`, `fit`, `goals`, `crystal` and `shadow` wired into
 the wake the way `impasse` and `unstick` now are — 88 of 110 modules still cannot be reached.
+
+---
+
+## 2026-07-28/29 · THE INSTRUMENTS WERE WRONG MORE OFTEN THAN THE MODELS
+
+**The session in one line:** we set out to learn what every rod can actually do, and found that
+almost every number this project holds about rods was taken through a broken instrument or the wrong
+parameters. Ten instrument defects, against almost no model behaving unexpectedly.
+
+### DID
+
+**The privacy guard was dead and nobody could see it.** `selfcheck` reported `[FAIL] no private data`
+on every run, from 18 emoji in design docs whose cleanup is a deliberate KILL. A permanently red line
+cannot signal. Behind it, the `absolute windows path` pattern was `r"[A-Za-z]:\\Users"`, which
+matches only a JSON-escaped path: **1 of 5 real forms**, blind since it was written. Corrected, it
+immediately found a live leak in `design/A16_WIRTHFORGE.md`, now redacted. Privacy and house style
+are two rows; the second is advisory so a style violation can never mask an invariant again.
+
+**Thinking is controllable, and the switch is per family.** `mind/fuel.py` had it pinned as untamed
+("never true until an API parameter is found") because the earlier test used the wrong string.
+Measured, 67 calls, same answer in every cell that returned:
+- Llama-Nemotron (`super-49b-v1.5`, `nano-9b-v2`): system `/no_think` -> **0 chars, 2-5 tokens, 0.4s**
+  against a default of 3024 chars / 991 tokens / 71s.
+- Nemotron 3 (`nano-30b`, `super-120b`): `chat_template_kwargs {enable_thinking: false}` -> 0 chars.
+  `/no_think` is ignored here. The two switches DO NOT cross over.
+- gpt-oss: `reasoning_effort` low/med/high -> 20/66/249 chars, monotonic.
+- Ollama: native `/api/chat {think:false}` -> 0 chars vs 691 tokens. **The OpenAI-compat base at
+  :11434/v1 cannot reach it**, and that is the base `PLANTS` uses.
+- `nvext.max_thinking_tokens` and `reasoning_budget` are documented and IGNORED on the hosted
+  endpoint; minimax and glm reject the latter with 400. NVIDIA's own example targets localhost:8000.
+- Sending the wrong switch is not free: `mistral-medium-3.5` returns 400 for any
+  `chat_template_kwargs`. Hence `grid.think_off()` matches on family or sends nothing.
+
+**Every measurement in this repo was taken at the wrong temperature.** Lifted from each model's own
+build.nvidia.com Python example: owners publish **temperature 0.2-1.0, top_p 0.7-1.0, max_tokens
+1024-20480**. `call_openai` sent 0.2 / 256 to all of them and never sent top_p. Worst case,
+`nemotron-3-nano-omni` asks for 20480 and got 256; a reasoning rod on too small a budget spends it
+thinking and returns nothing, which is the empty-reply failure already in `unstick.py`. Now
+`grid.OWN_PARAMS` + `own_params()`, and `energy.draw()` defaults to the rod's published values with
+any explicit caller argument still winning.
+
+**A generic probe is not a measurement.** One chat-completions body sent at 102 models across 9
+kinds declared 16 alive models dead. Per-kind battery with external graders recovered them:
+- **embed (6 pass)**: query + 4 passages, cosine must rank the true one first. `nemotron-3-embed-1b`
+  2048 dims, margin 0.528, 0.6s. All six had been reported 404.
+- **vision (4 pass)**: an invoice PNG generated here, so ground truth is exact. `llama-3.2-90b-vision`
+  and `nemotron-nano-12b-v2-vl` read `84731 4471` exactly.
+- **translate (2 pass)**, **code (1 pass, executed against 5 unseen cases)**.
+
+**Structured output: 9 of 9 candidates pass `json_schema`, every one strict-parseable.** Never
+tested here before. `json_object` produced the only malformed output in the run. Always send the
+schema.
+
+**The independent inspector works, and the 61% figure does not apply to it.** `overseer.py` records
+61% for a rod marking its OWN answer. A SEPARATE inspector, on 3 semantic violations no regex can
+catch: **13 of 13 caught, pooled across every inspector that answered. The free regex: 0 of 3.**
+The architecture is the combination: deterministic checks first (4/4 mechanical, 0 false positives),
+model only on what survives. `nemotron-nano-9b-v2`: 9/10, 3/3 semantic, **0 false rejects** - the
+error direction that turns a retry loop infinite. `deepseek-v4-pro` and `glm-5.2` each rejected a
+clean output.
+
+**Conversation is a client-side construct and the models hold it.** Six turns, a tool call in the
+middle, three deterministic checks. **7 of 7 held a rule set in turn 1 when turn 6 openly invited
+them to break it.** All 7 called the tool and carried its result forward. **3 of 7 lost a fact from
+turn 1 by turn 5**, including `nemotron-3-super-120b`. A full six-turn conversation costs **404
+prompt tokens** - 0.04% of a 1M window, so `converse.py`'s `KEEP_TURNS=12` throws away context we
+have 2500x more of than we use.
+
+**`aea/energy/rodprobe.py`** - one harness (metered transport, three-field reply parse, per-rod
+params, concurrent sweep) and one store, `state/rods.json`, 102 rods folded from six scattered files
+holding 148KB nothing read. `grid.own_params` reads it, `energy.draw` imports it: **wake-reachable
+went 15 -> 16, the first module connected in a long time.**
+
+**The codebase audit, all four items:**
+1. `xray` now derives the doors a human opens (tooling modules, numbered experiments) instead of
+   counting only wake+server. **"88 orphaned" was three unrelated facts; the real defect is 31
+   modules / 6190 lines.** Roles: live 23, tool 10, evidence 43, paused 4, unwired 31.
+2. **Import-time side effects 6 -> 0.** Five were `str.replace` matched as `os.replace`; the detector
+   now requires a qualified receiver. The one real violation was `grid` doing `os.makedirs` at
+   import, so merely naming the kernel touched disk. Moved to write time. Law S3 holds.
+3. `aea/lab` top level 51 files -> **14 library + 27 experiments** in `experiments/`, git mv, seven
+   cross-imports rewritten, all 111 modules still import.
+4. The one real store collision (`capability_census.json`, written by both censuses) is now
+   attributable (`source`, `promoted_at`) and **refuses a shrink** without `--force`. Proven both ways.
+
+### LOCKED
+
+- **A rod is called with ITS OWN published parameters.** House defaults are the fallback, never the
+  default, and the difference is recorded rather than hidden.
+- **The orphan count is by ROLE.** live / tool / evidence / paused / unwired. Only `unwired` is a defect.
+- **Deterministic check first, model inspector second.** Measured 10/10 combined against 7/10 regex
+  alone and 9/10 model alone. A model overseer is never the thing that decides.
+- **Never combine a no-think prompt with `tools`** until that is re-tested; one run corrupted the
+  tool expression while the tool was called, which passes a "did it call" check and returns a wrong
+  number.
+
+### NEXT
+
+1. **Wire `hands`** into the wake (tools + network, 538 lines, orphaned). Everything the entity
+   cannot do today is behind that one seam.
+2. **Calibrate the real rate ceiling.** `max_inflight=20` comes from a 2026-07-25 measurement that
+   does not reproduce: 30 concurrent on one rod still yields 15-17 429s, some after waiting 61s for
+   a legitimately free slot. `try_enter` closed a real check-then-act race in the Meter and was not
+   sufficient. Ramp 1/2/4/8/16 and store the answer per plant instead of a constant.
+3. **Re-read the 59 unread model cards across six rotated readers.** The delegation design is sound -
+   one page my regex could not read was read by a rod and confirmed by a 200 - and I destroyed the run
+   by putting 8 sustained workers on a single reader.

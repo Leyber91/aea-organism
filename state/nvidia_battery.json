@@ -1,0 +1,117 @@
+{
+ "schema": "aea.nvidia_battery/1",
+ "models": [
+  {
+   "state": "fail",
+   "secs": 0.8,
+   "detail": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function | alt: HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function",
+   "id": "adept/fuyu-8b",
+   "kind": "vision"
+  },
+  {
+   "state": "fail",
+   "secs": 0.2,
+   "detail": "HTTP404 404 page not found ",
+   "id": "google/deplot",
+   "kind": "parse"
+  },
+  {
+   "state": "PASS",
+   "secs": 18.2,
+   "detail": "2/2 read: '13 84731 4471.'",
+   "id": "meta/llama-3.2-11b-vision-instruct",
+   "kind": "vision"
+  },
+  {
+   "state": "PASS",
+   "secs": 1.2,
+   "detail": "2/2 read: '84731 4471'",
+   "id": "meta/llama-3.2-90b-vision-instruct",
+   "kind": "vision"
+  },
+  {
+   "state": "fail",
+   "secs": 0.8,
+   "detail": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function | alt: HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function",
+   "id": "microsoft/kosmos-2",
+   "kind": "vision"
+  },
+  {
+   "state": "fail",
+   "secs": 0.8,
+   "detail": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function | alt: HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function",
+   "id": "microsoft/phi-3-vision-128k-instruct",
+   "kind": "vision"
+  },
+  {
+   "state": "fail",
+   "secs": 0.8,
+   "detail": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function | alt: HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function",
+   "id": "nvidia/cosmos-reason2-8b",
+   "kind": "vision"
+  },
+  {
+   "state": "PASS",
+   "secs": 1.0,
+   "detail": "2/2 read: '84731 4471'",
+   "id": "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+   "kind": "vision"
+  },
+  {
+   "state": "fail",
+   "secs": 0.2,
+   "detail": "HTTP404 404 page not found ",
+   "id": "nvidia/nemoretriever-parse",
+   "kind": "parse"
+  },
+  {
+   "state": "PASS",
+   "secs": 1.2,
+   "detail": "2/2 read: '84731 4471'",
+   "id": "nvidia/nemotron-nano-12b-v2-vl",
+   "kind": "vision"
+  },
+  {
+   "state": "fail",
+   "secs": 0.2,
+   "detail": "HTTP404 404 page not found ",
+   "id": "nvidia/nemotron-parse",
+   "kind": "parse"
+  },
+  {
+   "state": "fail",
+   "secs": 0.6000000000000001,
+   "detail": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function | alt: HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function",
+   "id": "nvidia/neva-22b",
+   "kind": "vision"
+  },
+  {
+   "state": "fail",
+   "secs": 0.3,
+   "detail": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function 'f35337fa-b4dd-4996-bcba-5476ee01171d': Not found for account 'k0VQB6Gbd0zCzX",
+   "id": "nvidia/riva-translate-4b-instruct",
+   "kind": "translate"
+  },
+  {
+   "state": "PASS",
+   "secs": 0.5,
+   "detail": "kept 3/3 spanish=True 'El servidor devolvió errores 404 a'",
+   "id": "nvidia/riva-translate-4b-instruct-v1.1",
+   "kind": "translate"
+  },
+  {
+   "state": "PASS",
+   "secs": 0.5,
+   "detail": "kept 3/3 spanish=True 'El servidor devolvió errores 404 a'",
+   "id": "nvidia/riva-translate-4b-instruct-v2",
+   "kind": "translate"
+  },
+  {
+   "state": "fail",
+   "secs": 0.6,
+   "detail": "HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function | alt: HTTP404 {\"status\":404,\"title\":\"Not Found\",\"detail\":\"Function",
+   "id": "nvidia/vila",
+   "kind": "vision"
+  }
+ ]
+}

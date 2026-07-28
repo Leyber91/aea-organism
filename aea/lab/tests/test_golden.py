@@ -234,9 +234,122 @@ def check_probe():
     return fails
 
 
+# ================================================================================================
+# THE KERNEL CONTRACTS, frozen 2026-07-29.
+#
+# WHY THIS SECTION EXISTS, and it was found by attacking the gate rather than by review. A sabotage
+# proposal that made `grid.own_params()` return a fixed temperature on every call - which would
+# corrupt every model request the entity makes - passed the import smoke test AND all 31 frozen
+# behaviours. It was rejected only by an unrelated orphan comparison. Measured coverage of the code
+# shipped that day: own_params 0, think_off 0, try_enter 0, unmeasured 0.
+#
+# So the gate proved "not broken relative to what is frozen", and everything newer than the last
+# freeze was unprotected. These four contracts sit underneath every call the entity makes.
+#
+# STILL NO NETWORK AND NO DISK. own_params reads state/rods.json when present, so the frozen case
+# uses the LITERAL table and a model that cannot be in any store, which keeps this reproducible.
+
+# (model, expected switch). Sending the WRONG switch is not free: mistral-medium returns HTTP 400
+# for any chat_template_kwargs, which is why an unmeasured family must resolve to {} and not to a
+# house default. Fail-closed, law B1.
+THINK_GOLDEN = [
+    ("nvidia/llama-3.3-nemotron-super-49b-v1.5", {"_system": "/no_think"}),
+    ("nvidia/nvidia-nemotron-nano-9b-v2",        {"_system": "/no_think"}),
+    ("nvidia/nemotron-3-super-120b-a12b",        {"chat_template_kwargs": {"enable_thinking": False}}),
+    ("nvidia/nemotron-3-nano-30b-a3b",           {"chat_template_kwargs": {"enable_thinking": False}}),
+    ("openai/gpt-oss-20b",                       {"reasoning_effort": "low"}),
+    ("mistralai/mistral-medium-3.5-128b",        {}),
+    ("minimaxai/minimax-m3",                     {}),
+]
+
+# (model, temperature, top_p, max_tokens) exactly as the owner publishes it.
+PARAM_GOLDEN = [
+    ("z-ai/glm-5.2",                                  1.0, 1.00, 16384),
+    ("nvidia/nemotron-3-nano-omni-30b-a3b-reasoning", 0.6, 0.95, 20480),
+    ("meta/llama-3.2-1b-instruct",                    0.2, 0.70,  1024),
+    ("openai/gpt-oss-20b",                            1.0, 1.00,  4096),
+]
+
+
+def check_kernel():
+    """The four contracts under every model call. A change here is a capability change."""
+    from aea.kernel import grid, hands
+    fails = []
+
+    for model, want in THINK_GOLDEN:
+        got = grid.think_off(model)
+        ok = got == want
+        print("  think_off %-46s -> %-46s %s" % (model[-45:], str(got)[:45], "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("think_off:" + model, got, want))
+
+    for model, t, p, mx in PARAM_GOLDEN:
+        got = grid.OWN_PARAMS.get(model)
+        ok = got == (t, p, mx)
+        print("  params    %-46s -> %-46s %s" % (model[-45:], str(got)[:45], "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("own_params:" + model, got, (t, p, mx)))
+
+    # AN UNKNOWN MODEL RETURNS NOTHING, never a house default. The caller must be able to tell
+    # "measured" from "we guessed", which is the same reason an absent value renders as a dash.
+    got = grid.own_params("definitely/not-a-real-model-xyz")
+    ok = got == {}
+    print("  params    %-46s -> %-46s %s" % ("an unknown model", str(got), "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("own_params:unknown", got, {}))
+
+    # THE METER'S CLAIM IS ATOMIC. can_spend()-then-enter() is a check-then-act race that measured
+    # 15 x 429 out of 30 concurrent calls, because every thread read inflight=0 before any claimed.
+    # try_enter must refuse the (max_inflight + 1)th caller under one lock hold.
+    # AGAINST THE EFFECTIVE CEILING, NOT THE DECLARED CONSTANT. The contract is "refuses past the
+    # ceiling in force", and the ceiling is now measured: nvidia calibrated clean at 4 against a
+    # declared 20 on 2026-07-29. Freezing the constant would have frozen the stale number and made
+    # this test fight the fix. It caught the change within a minute, which is the job.
+    mif = grid.METER.ceiling("nvidia")
+    probe_model = "test/_golden_probe"
+    claimed = 0
+    try:
+        while grid.METER.try_enter("nvidia", probe_model) and claimed <= mif + 2:
+            claimed += 1
+        refused_at_ceiling = (claimed == mif)
+    finally:
+        for _ in range(claimed):
+            grid.METER.leave("nvidia", probe_model)
+    print("  meter     %-46s -> claimed %-38s %s"
+          % ("try_enter refuses past max_inflight", "%d of a %s ceiling" % (claimed, mif),
+             "ok" if refused_at_ceiling else "FAIL"))
+    if not refused_at_ceiling:
+        fails.append(("meter:try_enter", claimed, mif))
+    left = grid.METER.inflight("nvidia", probe_model)
+    print("  meter     %-46s -> %-46s %s"
+          % ("every claimed slot released", left, "ok" if left == 0 else "FAIL"))
+    if left != 0:
+        fails.append(("meter:leaked_slots", left, 0))
+
+    # A RETIRED ENDPOINT IS NOT A RE-PROBE CANDIDATE. 410 is permanent; 429 and 5xx are transport
+    # conditions that say nothing about the rod, and collapsing them into "cannot call a tool" is
+    # the defect that hid two working rods.
+    doc = {"rods": {
+        "a": {"rod": "a", "transport": True, "pass": False, "http": 429},
+        "b": {"rod": "b", "transport": True, "pass": False, "http": 503},
+        "c": {"rod": "c", "transport": True, "pass": False, "http": 410},
+        "d": {"rod": "d", "transport": False, "pass": False, "http": 400},
+        "e": {"rod": "e", "transport": False, "pass": True, "http": 200},
+    }}
+    got = sorted(r["rod"] for r in hands.unmeasured(doc))
+    ok = got == ["a", "b"]
+    print("  hands     %-46s -> %-46s %s" % ("unmeasured excludes 410 and real refusals",
+                                             str(got), "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("hands:unmeasured", got, ["a", "b"]))
+
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
-    f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe())
+    f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
+         + check_kernel())
     print()
     if f:
         print("%d FAILURES. Something changed what it does:" % len(f))
@@ -244,7 +357,10 @@ if __name__ == "__main__":
             print("   %-28s got %s want %s" % (name, got, want))
         raise SystemExit(1)
     total = (len(GOLDEN) + len(CHAIN_GOLDEN) + len(EXTRACTION_GOLDEN) + len(WORK_GOLDEN)
-             + len(CARRIED_GOLDEN) + 1)
+             + len(CARRIED_GOLDEN) + 1
+             # the kernel contracts: every think_off case, every published-parameter case, plus
+             # unknown-model, the meter's ceiling, its slot release, and unmeasured's 410 rule
+             + len(THINK_GOLDEN) + len(PARAM_GOLDEN) + 4)
     print("all %d frozen behaviours hold." % total)
     print("2 of them are frozen at a KNOWN-BAD value (METHOD defect 15). Fixing the reader is "
           "supposed to break this file.")

@@ -46,6 +46,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -74,6 +75,13 @@ PROTECTED = (
 # EVERY FILE THAT COMPUTES ANY PART OF A VERDICT. Restored from the running self into the shadow
 # AFTER the candidate's changes are applied, so the gate is always the JUDGE'S code and never the
 # CANDIDATE'S - however the candidate's version got there.
+# THE COUNT IS READ, NOT HARDCODED, AND IT HAS A FLOOR. Both this check and shadow's gate
+# matched the literal string "all 31 frozen behaviours hold", so ADDING a frozen behaviour
+# broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
+# alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
+# the suite must report at least this many. Raise it when behaviours are added on purpose.
+FROZEN_FLOOR = 46
+
 GATE_FILES = (
     "aea/tooling/xray.py",
     "aea/tooling/selfcheck.py",
@@ -81,6 +89,78 @@ GATE_FILES = (
     "aea/lab/stats.py",
     "aea/lab/grader.py",
 )
+
+# ------------------------------------------------------------------------------------------------
+# THE LADDER: dev -> qa -> prod, WITH THE ROLE THAT OWNS EACH RUNG AND WHAT IT CANNOT SEE.
+#
+# Luis, 2026-07-29, authorising self-modification: "you do develop, then dev, then qa, then prod...
+# only to pass verification, not to mess things up, be able to do it correctly."
+#
+# The stages already existed in this file as unnamed steps. Naming them buys three things a nameless
+# sequence cannot give: a proposal can record HOW FAR it got and why it stopped, each rung declares
+# the authority that owns it, and - the part that matters most - each rung states WHAT IT DOES NOT
+# COVER. A pipeline that implies coverage it does not have is more dangerous than no pipeline,
+# because it converts an unexamined risk into a green tick. Every `blind` entry below is a real gap
+# measured in this repo, not a hypothetical.
+STAGES = (
+    {
+        "stage": "dev",
+        "role": "DEVELOPER",
+        "may": "write any file that is not PROTECTED, inside a throwaway git worktree",
+        "may_not": "touch a GATE file, or judge the result",
+        "advances_when": "the change applies cleanly to a shadow of the RUNNING self",
+        "blind": [
+            "syntax is not checked here; a file that cannot parse still applies cleanly",
+            "nothing has been executed at this rung, so 'it applies' says nothing about behaviour",
+        ],
+    },
+    {
+        "stage": "qa",
+        "role": "VERIFIER",
+        "may": "run the four unauthorable checks and return a verdict",
+        "may_not": "edit a check, add one, or write to the candidate. GATE files are RESTORED from "
+                   "the running self before judging, so editing one cannot help a proposal pass",
+        "advances_when": "every check passes: own-code-loaded, all modules import, the frozen "
+                         "behaviours, no new orphans, no new import-time effects, and ONE REAL "
+                         "model call through the candidate's own draw",
+        "blind": [
+            "a change can pass every check and still be WRONG - the gate proves not-broken, never good",
+            "the live call proves the candidate can think AT ALL; it does not measure quality, "
+            "cost or whether the answer got better",
+            "the orphan comparison is structural: it cannot see a module that is still imported and "
+            "no longer does anything",
+            "performance, cost and latency are entirely unmeasured at this rung",
+        ],
+    },
+    {
+        "stage": "prod",
+        "role": "RELEASE (a human, always)",
+        "may": "promote a passing proposal into the running self",
+        "may_not": "be automated. There is deliberately no promote() in this module",
+        "advances_when": "a person reads the diff and the verdict and says so",
+        "blind": [
+            "a human reviewer is the last check and also the least deterministic one",
+        ],
+    },
+)
+
+
+def stages() -> str:
+    """The ladder, as text, so the entity can state what its own pipeline covers and what it does
+    not. Law S7: an outline may abbreviate detail, it may never drop existence - and the existence
+    most often dropped is the blind spot."""
+    L = ["THE SELF-MODIFICATION LADDER - dev -> qa -> prod", "=" * 92]
+    for s in STAGES:
+        L.append("")
+        L.append("%-6s owned by %s" % (s["stage"].upper(), s["role"]))
+        L.append("   may        %s" % s["may"])
+        L.append("   may NOT    %s" % s["may_not"])
+        L.append("   advances   %s" % s["advances_when"])
+        for b in s["blind"]:
+            L.append("   BLIND TO   %s" % b)
+    L += ["", "A proposal records the furthest rung it reached. Reaching qa is not passing qa, and "
+              "passing qa is not release."]
+    return "\n".join(L)
 
 
 def _run(args, cwd=None, timeout=900, env=None):
@@ -213,10 +293,12 @@ def gate(path: str = None, baseline: dict = None) -> dict:
     tpath = os.path.join(path, "aea", "lab", "tests", "test_golden.py")
     if os.path.exists(tpath):
         rc, out = _run([sys.executable, "-X", "utf8", tpath], cwd=path, env=env)
-        ok = rc == 0 and "all 31 frozen behaviours hold" in out
-        checks.append({"check": "31 frozen behaviours", "pass": ok, "detail": out.strip()[-200:]})
+        m = re.search(r"all (\d+) frozen behaviours hold", out)
+        n = int(m.group(1)) if m else 0
+        ok = rc == 0 and n >= FROZEN_FLOOR
+        checks.append({"check": "%d frozen behaviours" % FROZEN_FLOOR, "pass": ok, "detail": out.strip()[-200:]})
     else:
-        checks.append({"check": "31 frozen behaviours", "pass": False,
+        checks.append({"check": "%d frozen behaviours" % FROZEN_FLOOR, "pass": False,
                        "detail": "the test file is missing from the candidate"})
 
     # 3 NO NEW ORPHANS. A change that disconnects a module from every entry point passes every test
@@ -245,8 +327,55 @@ def gate(path: str = None, baseline: dict = None) -> dict:
         checks.append({"check": "no new import-time effects", "pass": not new,
                        "detail": ("new: " + ", ".join(new)) if new else "unchanged"})
 
+    # 5 THE CANDIDATE CAN STILL THINK. One REAL model call, through the candidate's own energy.draw,
+    #   graded on arithmetic it cannot negotiate with.
+    #
+    #   THIS CLOSES THE BLIND SPOT THE qa RUNG DECLARES ABOUT ITSELF. Checks 1-4 are static: they
+    #   prove the tree imports, that frozen behaviours hold, and that nothing was disconnected.
+    #   MEASURED 2026-07-29: a sabotage making `own_params()` return a fixed temperature on every
+    #   call - which corrupts every request the entity makes - passed ALL of them and was rejected
+    #   only by an unrelated orphan comparison. Everything under a live call (the ladder, the meter,
+    #   the parameter resolution, the transport) was untested by a gate whose whole job is to say
+    #   "this change is safe to become".
+    #
+    #   UNAVAILABLE IS NOT A PASS. With no network or no key this cannot be verified, and an
+    #   unverifiable change must not be promoted into a running system. It is reported as its own
+    #   state so a human sees "could not check" rather than "checked and fine" - law B1, fail closed,
+    #   and the honesty law's rule that an absent value is a dash rather than a guess.
+    rc, out = _run([sys.executable, "-X", "utf8", "-c", LIVE_DRAW], cwd=path, env=env, timeout=300)
+    tail = (out or "").strip().splitlines()[-1:] or [""]
+    verdict = tail[0].strip()
+    live_ok = rc == 0 and verdict.startswith("LIVE_OK")
+    checks.append({"check": "the candidate can still think",
+                   "pass": live_ok,
+                   "detail": verdict[:180] if verdict else "no output from the live draw"})
+
     return {"path": path, "checks": checks, "pass": all(c["pass"] for c in checks),
             "structure": cur}
+
+
+# Run INSIDE the candidate, so it is the candidate's grid, ladder, meter and parameters under test.
+# Deliberately tiny: this asks "can it still think at all", never "is it good".
+LIVE_DRAW = (
+    "import sys\n"
+    "try:\n"
+    "    from aea.energy import energy\n"
+    # NO EXPLICIT mx/temp. Passing them wins over the published values, which means the probe would
+    # bypass `own_params` - the exact code path it exists to exercise. MEASURED 2026-07-29: with
+    # `temp=0` this check reported LIVE_OK against a candidate whose own_params was sabotaged to
+    # return temperature 99 on every call. A live check that routes around the change is theatre.
+    "    r = energy.draw('What is 17 * 23? Reply with only the number.', tier='solid',\n"
+    "                    zone='private')\n"
+    "    txt = (r.get('text') or '').replace(',', '').replace(' ', '')\n"
+    "    if not r.get('ok'):\n"
+    "        print('LIVE_UNAVAILABLE no rod answered: ' + str(r.get('tried'))[:120])\n"
+    "    elif '391' in txt:\n"
+    "        print('LIVE_OK %s/%s in %ss' % (r.get('plant'), r.get('model'), r.get('latency')))\n"
+    "    else:\n"
+    "        print('LIVE_WRONG %s/%s said %r' % (r.get('plant'), r.get('model'), txt[:40]))\n"
+    "except Exception as e:\n"
+    "    print('LIVE_UNAVAILABLE %s: %s' % (type(e).__name__, str(e)[:120]))\n"
+)
 
 
 XRAY_COUNT = (
@@ -424,11 +553,18 @@ def propose(what: str, changes: dict, why: str, baseline: dict = None) -> dict:
         restored = restore_gate(dest)
         v = gate(dest, baseline=baseline or (last_known_good() or {}).get("structure"))
         rc, diff = _run(["git", "diff", "--stat"], cwd=dest)
+        # THE FURTHEST RUNG THIS PROPOSAL REACHED, recorded so "how far did it get" is a fact rather
+        # than an inference from a boolean. `qa` means the checks RAN; `qa-passed` means they passed.
+        # Nothing here can ever write `prod`: that rung is a human's and this module cannot reach it.
+        stage_reached = ("qa-passed" if v["pass"]
+                         else "qa" if v.get("checks") else "dev")
         rec = {
             "id": pid, "what": what, "why": why,
             "at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
             "from_commit": head(), "uncommitted_carried": len(carried),
             "gate_files_restored": restored,
+            "stage_reached": stage_reached,
+            "stage_blind_to": [b for s in STAGES if s["stage"] == "qa" for b in s["blind"]],
             "files": written, "diffstat": diff.strip()[-800:],
             "gate": v, "verdict": "PASSED THE GATE" if v["pass"] else "REJECTED BY THE GATE",
             "applied": False,

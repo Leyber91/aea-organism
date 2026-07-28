@@ -429,9 +429,27 @@ def probe(rod: str) -> dict:
             "seconds": round(time.time() - t0, 1)}
 
 
+def unmeasured(doc: dict = None) -> list:
+    """Rods whose probe failed on TRANSPORT, so nothing is known about their tool calling either way.
+
+    `probe()` already separates these: a 429, a 410 or a 5xx sets `transport` and the comment there
+    says why. Both consumers then filtered on `pass` alone, which collapses "throttled while we
+    asked" into "cannot call a tool" - the producer kept the distinction and the readers threw it
+    away. MEASURED 2026-07-28: two rods stored as failures, `deepseek-v4-flash` (503) and
+    `nemotron-3-super-120b-a12b` (429), both call tools correctly on a re-test. A transport
+    condition recorded as a capability is defect 19 again, one layer further out.
+
+    A 410 is excluded: `probe()` marks it transport because it is not a rod's refusal, but Gone is
+    permanent and re-probing a retired endpoint forever is the same wasted wake as U4."""
+    doc = doc if doc is not None else grid.load_json(MEASURED, {"rods": {}})
+    return [r for r in doc.get("rods", {}).values()
+            if r.get("transport") and not r.get("pass") and r.get("http") != 410]
+
+
 def rods_that_call(min_level: str = "pass") -> list:
     """Rods MEASURED to use a tool, best first. Empty until `--probe` has run, and it says so rather
-    than falling back to a guess."""
+    than falling back to a guess. Transport failures are NOT in this list and are not a denial
+    either; ask `unmeasured()` for those and re-probe them before believing anything about them."""
     doc = grid.load_json(MEASURED, {"rods": {}})
     out = [r for r in doc.get("rods", {}).values()
            if (r.get("pass") if min_level == "pass" else r.get("result") == "called")]
@@ -456,9 +474,15 @@ def board() -> str:
         L.append("Run: python -m aea.kernel.hands --probe")
     else:
         good = [r for r in rods.values() if r.get("pass")]
-        L.append("measured %d rods: %d use a tool correctly" % (len(rods), len(good)))
+        stale = unmeasured(doc)
+        L.append("measured %d rods: %d use a tool correctly, %d UNKNOWN (transport failed)"
+                 % (len(rods), len(good), len(stale)))
         for r in sorted(good, key=lambda r: r.get("seconds") or 999)[:10]:
             L.append("   %-52s %-10s %5.1fs" % (r["rod"], r["result"], r.get("seconds") or 0))
+        if stale:
+            L.append("   re-probe (nothing is known about these, they are not refusals):")
+            for r in stale:
+                L.append("   %-52s %-10s http=%s" % (r["rod"], r["result"], r.get("http")))
     return "\n".join(L)
 
 

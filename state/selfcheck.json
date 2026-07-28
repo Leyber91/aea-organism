@@ -1,16 +1,16 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-07-28 14:16 UTC",
- "seconds": 6.7,
- "pass": false,
+ "at": "2026-07-28 23:13 UTC",
+ "seconds": 6.4,
+ "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "110 modules, 15 reachable from a wake, 88 orphaned, 6 act at import",
+   "detail": "111 modules, 22 reachable from a wake, 82 orphaned, 0 act at import",
    "data": {
-    "modules": 110,
-    "wake": 15,
+    "modules": 111,
+    "wake": 22,
     "orphans": [
      "aea.energy.capability_census",
      "aea.energy.capacity",
@@ -27,7 +27,6 @@
      "aea.kernel.crystal",
      "aea.kernel.fit",
      "aea.kernel.goals",
-     "aea.kernel.hands",
      "aea.kernel.laws",
      "aea.kernel.seats",
      "aea.kernel.shadow",
@@ -37,13 +36,34 @@
      "aea.lab.experiments.x02_fitted_frame",
      "aea.lab.experiments.x03_judge",
      "aea.lab.experiments.x04_separation",
+     "aea.lab.experiments.x06_long_chain",
+     "aea.lab.experiments.x06b_crossover",
+     "aea.lab.experiments.x07_self_assessment",
+     "aea.lab.experiments.x07b_self_assessment_hard",
+     "aea.lab.experiments.x08_fuel_crossing",
+     "aea.lab.experiments.x08b_interpretable_state",
+     "aea.lab.experiments.x09_hearth_failure",
+     "aea.lab.experiments.x10_coverage_sweep",
+     "aea.lab.experiments.x11_the_council",
+     "aea.lab.experiments.x12_L0_goal_presence",
+     "aea.lab.experiments.x13_L1_read_the_output",
+     "aea.lab.experiments.x14_C75_parser_validation",
+     "aea.lab.experiments.x15_L2_the_frame",
+     "aea.lab.experiments.x16_the_organisms",
+     "aea.lab.experiments.x17_the_lattice",
+     "aea.lab.experiments.x18_second_battery",
+     "aea.lab.experiments.x19_the_unmeasured_pair",
+     "aea.lab.experiments.x20_the_critic",
+     "aea.lab.experiments.x21_the_carry_battery",
+     "aea.lab.experiments.x22_the_capacity_ladder",
+     "aea.lab.experiments.x23_inheritance",
+     "aea.lab.experiments.x23b_inheritance_across_plants",
+     "aea.lab.experiments.x24_the_store_and_the_door",
      "aea.lab.fleet",
      "aea.lab.fuels",
      "aea.lab.grader",
-     "aea.lab.harness",
      "aea.lab.organism",
      "aea.lab.overseer",
-     "aea.lab.pace",
      "aea.lab.parts.base",
      "aea.lab.parts.capacity",
      "aea.lab.parts.carry",
@@ -59,34 +79,8 @@
      "aea.lab.rescore",
      "aea.lab.site",
      "aea.lab.stats",
-     "aea.lab.x06_long_chain",
-     "aea.lab.x06b_crossover",
-     "aea.lab.x07_self_assessment",
-     "aea.lab.x07b_self_assessment_hard",
-     "aea.lab.x08_fuel_crossing",
-     "aea.lab.x08b_interpretable_state",
-     "aea.lab.x09_hearth_failure",
-     "aea.lab.x10_coverage_sweep",
-     "aea.lab.x11_the_council",
-     "aea.lab.x12_L0_goal_presence",
-     "aea.lab.x13_L1_read_the_output",
-     "aea.lab.x14_C75_parser_validation",
-     "aea.lab.x15_L2_the_frame",
-     "aea.lab.x16_the_organisms",
-     "aea.lab.x17_the_lattice",
-     "aea.lab.x18_second_battery",
-     "aea.lab.x19_the_unmeasured_pair",
-     "aea.lab.x20_the_critic",
-     "aea.lab.x21_the_carry_battery",
-     "aea.lab.x22_the_capacity_ladder",
-     "aea.lab.x23_inheritance",
-     "aea.lab.x23b_inheritance_across_plants",
-     "aea.lab.x24_the_store_and_the_door",
-     "aea.memory.memory",
-     "aea.mind.anchor",
      "aea.mind.axes",
      "aea.mind.checkpoint",
-     "aea.mind.fuel",
      "aea.mind.pathfinder",
      "aea.mind.relay",
      "aea.organs.converse",
@@ -101,14 +95,7 @@
      "aea.tooling.xray_graph",
      "aea.tooling.xray_view"
     ],
-    "effects": [
-     "aea.energy.capability_census",
-     "aea.energy.extensive_census",
-     "aea.kernel.grid",
-     "aea.lab.x09_hearth_failure",
-     "aea.lab.x12_L0_goal_presence",
-     "aea.memory.consolidate"
-    ]
+    "effects": []
    }
   },
   {
@@ -118,8 +105,35 @@
   },
   {
    "check": "no private data in tracked files",
-   "pass": false,
-   "detail": "design/02_SYSTEMS.md: emoji; design/A17_VOCABULARY.md: emoji; design/FIELD_GUIDE.html: emoji; design/PRODUCTION_PLAN.md: emoji; design/bundle_02/full_book/02_SYSTEMS.md: emoji; design/refs/bundle/W3_THE_REMEMBERER/W3_FULL_ROSTER.md: emoji; diary/REORG_PLAN.md: emoji; docs/AUTONOMY_PLAN.md: emoji",
+   "pass": true,
+   "detail": "clean",
+   "data": {
+    "hits": []
+   }
+  },
+  {
+   "check": "no absolute paths in code",
+   "pass": true,
+   "detail": "every path anchors on ROOT or HOME",
+   "data": {
+    "hits": []
+   }
+  },
+  {
+   "check": "every module imports",
+   "pass": true,
+   "detail": "0 failures"
+  },
+  {
+   "check": "46 frozen behaviours",
+   "pass": true,
+   "detail": "all 46 hold"
+  },
+  {
+   "check": "house style",
+   "pass": true,
+   "advisory": true,
+   "detail": "emoji x18 (design/02_SYSTEMS.md, +17)",
    "data": {
     "hits": [
      "design/02_SYSTEMS.md: emoji",
@@ -141,14 +155,6 @@
      "web/lab/data/x18_second_battery/latest.json: emoji",
      "web/world.html: emoji"
     ]
-   }
-  },
-  {
-   "check": "no absolute paths in code",
-   "pass": true,
-   "detail": "every path anchors on ROOT or HOME",
-   "data": {
-    "hits": []
    }
   }
  ]
