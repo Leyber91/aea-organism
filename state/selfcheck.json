@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-07-28 12:12 UTC",
- "seconds": 7.5,
+ "at": "2026-07-28 14:16 UTC",
+ "seconds": 6.7,
  "pass": false,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "109 modules, 15 reachable from a wake, 87 orphaned, 6 act at import",
+   "detail": "110 modules, 15 reachable from a wake, 88 orphaned, 6 act at import",
    "data": {
-    "modules": 109,
+    "modules": 110,
     "wake": 15,
     "orphans": [
      "aea.energy.capability_census",
@@ -91,6 +91,7 @@
      "aea.mind.relay",
      "aea.organs.converse",
      "aea.organs.reflect",
+     "aea.tooling.board",
      "aea.tooling.build_graph",
      "aea.tooling.export_city",
      "aea.tooling.heal",
@@ -149,16 +150,6 @@
    "data": {
     "hits": []
    }
-  },
-  {
-   "check": "every module imports",
-   "pass": true,
-   "detail": "0 failures"
-  },
-  {
-   "check": "31 frozen behaviours",
-   "pass": true,
-   "detail": "all hold"
   }
  ]
 }
