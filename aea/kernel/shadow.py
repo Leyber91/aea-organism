@@ -193,6 +193,25 @@ def head() -> str:
     return out.strip() if code == 0 else "?"
 
 
+# TELEMETRY, NOT SELF. These stores are counters the act of running rewrites: a usage tally, a
+# rate observation, the verdict of the check that just ran. The gate's fifth check makes a REAL
+# model call, so running the gate ALWAYS writes them - which meant a passing gate could never mark
+# a known-good, because the very act of proving the tree good made the tree dirty. Introduced and
+# caught the same hour, 2026-07-29.
+#
+# THE LINE IS NARROW ON PURPOSE, and it is not "anything under state/". `rods.json` and
+# `plant_ceiling.json` live there too and are READ BY THE KERNEL: they change what the code does,
+# so an uncommitted one must still block. Only counters that no decision reads are listed here.
+TELEMETRY = (
+    "state/energy_usage.json",     # rolling ok-rate and latency per rod, written on every call
+    "state/pace_observed.json",    # observed plant pacing, written by any live draw
+    "state/selfcheck.json",        # the verdict of the run that is checking
+    "state/heartbeat.json",        # the wake's own liveness stamp
+    "state/grid_state.json",       # the meter's rolling windows (gitignored, listed for clarity)
+    "state/trust_ledger.json",     # a run stamps it; the ledger is a record, not a version
+)
+
+
 def dirty() -> list:
     """Tracked files modified but not committed. THE SELF THAT IS RUNNING vs THE SELF GIT KNOWS.
 
@@ -218,6 +237,7 @@ def dirty() -> list:
     code, new = _run(["git", "ls-files", "--others", "--exclude-standard"])
     if code == 0:
         out += [l.strip() for l in new.splitlines() if l.strip()]
+    out = [p for p in out if p.replace("\\", "/") not in TELEMETRY]
     return sorted(set(out))
 
 

@@ -59,11 +59,11 @@
   "last": "2026-07-24 21:36"
  },
  "groq/llama-3.3-70b-versatile": {
-  "calls": 5,
-  "ok": 5,
+  "calls": 6,
+  "ok": 6,
   "fail": 0,
   "consec_fail": 0,
   "ema_latency": 0.2,
-  "last": "2026-07-28 23:11"
+  "last": "2026-07-28 23:17"
  }
 }
