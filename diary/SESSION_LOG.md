@@ -1750,3 +1750,62 @@ removed from `consolidate.py`, `index_codex.py`, `memory.py`. Enforced permanent
 
 **NEXT** — unchanged: wire the seven orphaned kernel modules into the wake. Then preconditions and
 effects on the action registry.
+
+### SAME SESSION — THE COMMAND CENTRE, AND THE FIRST KNOWN-GOOD VERSION
+
+**COMMITTED.** `83c10ae` (194 files, privacy-scanned clean) then `7bb6e01`, which is the **first
+known-good version this system has ever had** — a commit that EARNED the status by passing four
+checks it cannot author. Before today there was no version to return to.
+
+**THE BOARD**, `web/board.html`, served by the existing control room. A shell rather than a page:
+persistent rail and periphery, three permanent answers at the top, working surface in the middle.
+Every panel derives from state on disk. Views: status, open loops (three verdict columns), the 43
+laws as parsed cards, proposals with gate pips, the living import graph, curated endpoints.
+
+**THE ENDPOINT RAIL IS CURATED, NOT DUMPED.** Generating it from the server's route table was right
+for recognition-over-recall and wrong for judgment: it listed every game-era route on a page about
+the entity, making the reader do the triage the tool exists to do. Eight KEEP entries each carry a
+reason; the 22 that belong to THE PROBE are counted and named, never silently hidden. Same discipline
+as OPEN_LOOPS: an item with no verdict does not appear.
+
+**WHAT THE DESIGN RESEARCH FOUND, all measured rather than asserted:**
+
+- **IBM Plex Mono had never loaded.** No `@font-face`, no font files, not installed. Every screenshot
+  all session was Consolas. The most identity-carrying asset in the design was absent.
+- Ink coverage **2.5%**, with **45% of the work column dead**, while ~20 of 27 cards clipped mid-word.
+  Content was being thrown away into empty space.
+- Amber was **22-31% of all ink across 81 elements**. Our own law says sparse and earned; amber had
+  become the default state.
+- The **failing** invariant rendered at 3.18:1 against passing ones at 10.40:1 — the alarm was
+  quieter than the all-clear. NASA's rule is the exact inverse.
+- Seven `font-weight` declarations, **all 400**, in a design whose own E8 law states weight carries
+  hierarchy and colour never does.
+- Surface steps of dL* 1.40 / 1.31 / 2.03 are **below the just-noticeable difference**: three of five
+  surfaces were literally indistinguishable. That arithmetic IS the flatness.
+- Twelve font sizes at adjacent ratios of 1.04-1.09 (a step needs ~1.15 to read as a level), and
+  twenty-one distinct spacing values sharing no denominator.
+- The graph's package anchor was 0.020 against an edge spring of 0.030, so anchors lost to 140
+  cross-package edges. Simulated fix (anchor .060, spring .012, exclude the universal hub) takes
+  package separation from **0.91 to 2.12**.
+- Labels were gated at `zoom > 1.7` on a page that opens at `zoom = 1`: the graph was 108 anonymous
+  dots. The canvas also never stopped repainting a static image.
+- `font-variant-numeric: tabular-nums` is a **no-op on this entire stack** — neither Plex face ships
+  the feature. Numbers are stable because the advance is fixed, not because of the CSS.
+
+**FIXED:** the font, the surface ladder, three weights, five sizes with a focal number, flat card
+fills with real padding and a visible radius, the semantic inversion (fail is now the loudest mark),
+amber spent like money, every truncation at its SOURCE rather than in CSS, the light source over the
+work column, the graph constants, the label ramp, and the canvas halting when static.
+
+**`design/E12_BOARD_SPEC.md`** — 75k characters from an 8-specialist workflow, every value resolved,
+no ranges. Token block, component specs with states, motion table, atmosphere and graph code, a
+concrete answer for every region of a 1700x1000 screen, the psychology rationale, and twelve changes
+ordered by visual return per line. **This is the artefact that makes the rest finishable without me.**
+
+**STILL OPEN:** the spec's sections 4 (grain, vignette, depth cueing) and 6 (the full 12-column
+layout) are unimplemented. The lower band fills the dead space but is not yet the composition the
+spec describes.
+
+**NEXT:** `diary/OPEN_LOOPS.md` FINISH items 4 and 5 are done; the board now needs the spec applied
+in order. The entity itself needs `hands`, `seats`, `fit`, `goals`, `crystal` and `shadow` wired into
+the wake the way `impasse` and `unstick` now are — 88 of 110 modules still cannot be reached.

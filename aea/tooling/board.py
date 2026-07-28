@@ -132,14 +132,42 @@ def usage() -> dict:
     return tot
 
 
+# THE RAIL IS CURATED, NOT DUMPED. Generating it from the server's route table was correct for
+# recognition-over-recall and wrong for judgment: it listed every game-era endpoint on a page about
+# the entity, so the reader had to do the triage the tool was supposed to do. Each route now carries
+# a verdict, exactly like OPEN_LOOPS. A route with no verdict does not appear.
+#
+#   KEEP  it answers a question about the entity, and the answer is live
+#   GAME  it belongs to THE PROBE, a different program sharing this server
+#   DEAD  nothing reads it any more
+KEEP = [
+    ("/state", "the meter: rpm, rpd, throttles"),
+    ("/autonomy", "the live autonomy battery"),
+    ("/decisions", "every choice the entity made"),
+    ("/events", "the pulse stream"),
+    ("/chains", "chain verdicts (private goals redacted)"),
+    ("/journal", "the trace tail"),
+    ("/roster", "seats and capabilities"),
+    ("/skills", "what it can reach for"),
+]
+GAME = ("/game", "/game/", "/game/axes", "/game/events", "/game/foundry", "/game/ignite",
+        "/game/run", "/game/schema", "/game/state", "/probe", "/city", "/builder", "/api/journey",
+        "/api/construct/run", "/api/node/run", "/api/tickets", "/do", "/brain")
+
+
 def routes() -> list:
-    """Every route the server exposes, read from its source so the rail cannot go stale."""
+    """The curated rail, verified against the server so a KEEP entry cannot rot silently."""
     src = _read(os.path.join(grid.ROOT, "aea", "server", "controlroom.py"))
-    found = set(re.findall(r'self\.path\s*==\s*"(/[a-z/]*)"', src))
-    found |= set(re.findall(r'self\.path\.startswith\("(/[a-z/]*)"', src))
-    found |= set(re.findall(r'"(/game/[a-z]+)"', src))
-    skip = {"/", "/favicon.ico"}
-    return sorted(r for r in found if r not in skip and len(r) > 1)
+    live = set(re.findall(r'self\.path\s*==\s*"(/[a-z/]*)"', src))
+    live |= set(re.findall(r'self\.path\.startswith\("(/[a-z/]*)"', src))
+    return [(r, why, r in live) for r, why in KEEP]
+
+
+def routes_dropped() -> int:
+    src = _read(os.path.join(grid.ROOT, "aea", "server", "controlroom.py"))
+    live = set(re.findall(r'self\.path\s*==\s*"(/[a-z/]*)"', src))
+    live |= set(re.findall(r'self\.path\.startswith\("(/[a-z/]*)"', src))
+    return len([r for r in live if r not in dict((k, v) for k, v in KEEP) and len(r) > 1])
 
 
 def _n(v) -> str:
@@ -181,7 +209,7 @@ body{margin:0;background:var(--void);color:var(--text);font-size:12.5px;line-hei
 .answers{display:grid;grid-template-columns:repeat(3,1fr)}
 .ans{padding:10px 18px;border-right:1px solid var(--line);position:relative}
 .ans .lab{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
-.ans .val{font-size:22px;line-height:1.2;color:var(--hi);letter-spacing:-.012em;
+.ans .val{font-size:17px;line-height:1.3;color:var(--hi);letter-spacing:-.008em;
   white-space:normal;overflow-wrap:anywhere}
 .ans .val.hot{color:var(--amber)}
 .ans .sub{font-size:10.5px;color:var(--mid)}
@@ -198,6 +226,8 @@ body{margin:0;background:var(--void);color:var(--text);font-size:12.5px;line-hei
 .rail button:hover,.rail a:hover{color:var(--hi);background:rgba(255,255,255,.022)}
 .rail button.on{color:var(--amber);border-left-color:var(--amber);background:var(--ghost)}
 .rail .c{font-size:10px;color:var(--dim)}
+.rail .drop{padding:8px 14px;color:var(--ink-6,#3c4450);font-size:10px;line-height:1.5}
+.rail a span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rail button.on .c{color:var(--amber-d)}
 
 /* ---- centre ---- */
@@ -269,8 +299,10 @@ iframe{width:100%;height:calc(100vh - 190px);border:1px solid var(--line2);backg
   background:linear-gradient(180deg,#090b0e,#07080a)}
 .side h4{margin:0 0 7px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:400}
 .side section{margin-bottom:20px}
-.kv{display:flex;justify-content:space-between;gap:8px;padding:2.5px 0;font-size:11.5px}
-.kv b{font-weight:500;color:var(--hi);white-space:nowrap}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:3px 0;font-size:11.5px;align-items:baseline}
+.card .kv span:first-child{overflow:visible;white-space:normal}
+.kv b{font-weight:500;color:var(--hi);white-space:nowrap;font-size:11px;letter-spacing:.02em}
+.kv span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .kv.warn b{color:var(--amber)}
 .spark{display:flex;align-items:flex-end;gap:2px;height:34px;margin:6px 0}
 .spark i{flex:1;background:var(--amber-d);min-height:1px;opacity:.75}
@@ -363,7 +395,7 @@ def build() -> str:
          (", ".join(al) or "no open alarms") + (" &middot; %d invariant" % len(broke) if broke else "")),
         ("what changed", "%d/%d" % (c["reachable_from_wake"], c["modules"]), False,
          "reachable from a wake &middot; %d orphaned" % c["orphaned"]),
-        ("what is next", loops["FINISH"][0]["t"][:42] if loops["FINISH"] else "nothing queued",
+        ("what is next", loops["FINISH"][0]["t"] if loops["FINISH"] else "nothing queued",
          True, "%d to finish &middot; %d killed" % (len(loops["FINISH"]), len(loops["KILL"]))),
     ]
     strip = "".join(
@@ -379,10 +411,16 @@ def build() -> str:
     nav[3] = ("v-props", "proposals", str(npro))
     rl = "".join('<button data-v="%s"><span>%s</span><span class="c">%s</span></button>'
                  % (i, E(t), E(n)) for i, t, n in nav)
-    rt = "".join('<a href="%s" target="_blank">%s</a>' % (E(r), E(r)) for r in routes()[:18])
+    rt = "".join('<a href="%s" target="_blank" title="%s"><span>%s</span>'
+                 '<span class="c">%s</span></a>' % (E(r), E(why), E(r), "" if ok else "gone")
+                 for r, why, ok in routes())
+    rt += ('<div class="drop">%d game-era routes not shown &middot; '
+           'they belong to THE PROBE, not the entity</div>' % routes_dropped())
 
     # ---- status ----
-    stats = [("brief", hb.get("last_brief_date") or "never", "%d days ago" % stale if stale else "today", stale >= 1),
+    stats = [("brief", ("%d" % stale) if stale else "0",
+              "days since %s" % (hb.get("last_brief_date") or "never") if stale else "written today",
+              stale >= 1),
              ("reachable", c["reachable_from_wake"], "of %d" % c["modules"], False),
              ("orphaned", c["orphaned"], "unreachable", True),
              ("alarms", len(al), ", ".join(al)[:26] or "none", bool(al)),
@@ -465,11 +503,32 @@ def build() -> str:
         % (_n(us["out"]), _n(us["in"]), _n(us["cache_read"]), _n(us["cache_write"]),
            _n(us["records"]), spark, us["sessions"],
            "".join('<div class="kv%s"><span>%s</span><b>%s</b></div>'
-                   % (" warn" if (e.get("level") or 0) < 2 else "", E(k), LEVELS[e.get("level") or 0][:4])
+                   % (" warn" if (e.get("level") or 0) < 2 else "", E(k), LEVELS[e.get("level") or 0])
                    for k, e in sorted(led.items())),
            hb.get("boot_count"), hb.get("total_ticks"),
            " warn" if stale else "", hb.get("last_brief_date") or "never",
            len(lv["goals"]), lv["crystal_parts"], lv["experience_attempts"]))
+
+    fin = loops["FINISH"][:3]
+    orphk = [n.split(".")[-1] for n in d["orphans"] if n.startswith("aea.kernel.")]
+    lower = (
+        '<div class="card"><div class="tag">next, in order</div>%s</div>'
+        '<div class="card"><div class="tag">kernel not reached by any wake</div>'
+        '<div class="body" style="line-height:2">%s</div>'
+        '<div class="paid">Built, tested, and wired to nothing. %d of %d modules total.</div></div>'
+        '<div class="card"><div class="tag">what it has been given</div>%s</div>'
+        % ("".join('<div class="kv"><span>%s</span><b>%s</b></div>' % (E(x["t"]), E(x["size"]))
+                   for x in fin) or '<p class="body">nothing queued</p>',
+           " &middot; ".join('<span style="color:var(--am-steady)">%s</span>' % E(x) for x in orphk),
+           c["orphaned"], c["modules"],
+           "".join('<div class="kv"><span>%s</span><b>%s</b></div>' % (E(k), E(str(v))) for k, v in
+                   (("goals", len(lv["goals"])), ("seats", len(lv["seats"])),
+                    ("crystal parts", lv["crystal_parts"]),
+                    ("experience", lv["experience_attempts"]),
+                    ("known-good versions",
+                     len((grid.load_json(os.path.join(grid.STATE, "known_good.json"), {})
+                          or {}).get("versions", []))),
+                    ("proposals", npro)))))
 
     V = lambda i, t, l, b: ('<div class="view" id="%s"><h2>%s</h2><p class="lede">%s</p>%s</div>'
                             % (i, t, l, b))
@@ -479,7 +538,8 @@ def build() -> str:
           '<div class="card"><div class="tag">the ledger</div><table>'
           '<tr><th>capability</th><th>level</th><th class="r">runs</th><th class="r">fails</th></tr>%s</table></div>'
           '<div class="card"><div class="tag">invariants &middot; %s</div><table>%s</table></div></div>'
-          % (sts, ledr, E(sc.get("at", "never")), inv)) +
+          '<div class="grid g3" style="margin-top:10px">%s</div>'
+          % (sts, ledr, E(sc.get("at", "never")), inv, lower)) +
         V("v-loops", "open loops",
           "Every item carries a verdict. A LATER still sitting at LATER becomes a KILL.",
           '<div class="cols">%s%s%s</div>' % (col("FINISH", "f"), col("LATER", "l"), col("KILL", "k"))) +
@@ -495,7 +555,7 @@ def build() -> str:
           '<div class="grid g3">%s</div>' % "".join(
               '<a class="card" href="%s" target="_blank" style="text-decoration:none;display:block">'
               '<div class="claim">%s</div><div class="body">open in a new tab</div></a>'
-              % (E(r), E(r)) for r in routes())))
+              % (E(r), E(r)) for r, why, ok in routes())))
 
     return ("<title>AEA command centre</title>"
             "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>"
