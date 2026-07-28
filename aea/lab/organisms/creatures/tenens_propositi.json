@@ -1,0 +1,22 @@
+{
+  "schema": "aea.organism/1",
+  "id": "tenens_propositi",
+  "name": "Tenens propositi",
+  "gloss": "the one holding, of the objective",
+  "world": 3,
+  "seat": ["call", "goal", "carry"],
+  "wiring_note": "Named in advance under the binomial law for census item C-53, working_objective.set, so that a name with no animal behind it stays visible instead of becoming a quiet omission. It should carry a stated objective into a later call that did not restate it. The seat above is the nearest available approximation, not the part: C-53 has no implementation anywhere in the runtime, and the catalogue has no key for it. The world is a placement rather than a measurement. The item is filed at L2 in the linear hierarchy because setting an objective is local work on what you send, while the behaviour it claims, an objective surviving into a call that did not contain it, is the REMEMBER class. Nothing has been run that could decide it.",
+  "fuel": {
+    "plant": null,
+    "model": null,
+    "temperature": null,
+    "law": "IV. No fuel, because nothing has been called. A composition with no fuel is a name rather than an organism."
+  },
+  "receipt": {
+    "claim": "would carry a stated objective into a call that did not restate it",
+    "measured": null,
+    "runs": [],
+    "why_it_matters": "C-53, C-54 and C-55 are OPEN and they do not exist: grep for working_objective across the runtime returns one hit, inside an experiment's own docstring. They are absent rather than compressed. Chapter III's sealed prediction 4 concerned append without consolidate and could not be run for the same reason. An entry that says UNMEASURED here is the honest state; the failure mode this file prevents is a receipt written from the expectation table."
+  },
+  "state": {"kind": "UNMEASURED", "part": "C-53 working_objective.set, unimplemented", "provisional": true}
+}

@@ -1,0 +1,154 @@
+═══════════════════════════════════════════════════════════════════════════════════════════════
+WORLD 3 — THE NEXT BATCH. Same conversation, so the style is already established. Five prompts.
+
+FIRE FOUR OF THEM: 1, 2, 3, 5.
+HOLD 4 until x24 reports. The reason is written under it and it is not a style reason.
+
+The region has eight creatures and ONE scene. World 1 has four scenes. What is missing is not more
+creatures — it is the region doing its job in front of the player.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+WHAT THE LAST BATCH SETTLED, so none of it needs re-specifying:
+
+  · the palette, the plated black shells, the amber tracery, the low cloud, the far spires
+  · the hairline human outline as the scale mark
+  · third stage reads as PASSENGERS WORKING A BODY, not as armour or crowns
+  · a creature that receives from everywhere has NO FRONT (Recipiens omnium is radial and correct)
+
+Say "same world, same style, same light law as the previous images" at the top of each and let the
+conversation carry the rest.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ 1 · S2 — THE CROSSING.  THE MOST IMPORTANT IMAGE IN THE REGION AND IT DOES NOT EXIST YET.      ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Same world, same style, same light law as the previous images.
+
+This region exists to teach ONE action: take a thing from one place, carry it somewhere else, and
+have it still be there. Every image so far shows the network or shows a creature. **None shows the
+act.** This one is the region's thesis and everything else is support.
+
+  · **TWO CLEARLY DIFFERENT PLACES IN ONE FRAME.** Not two similar nodes. One dense, dark and closed
+    with almost no amber; one open and brightly lit from within. A viewer must be able to point at
+    both and say they are not the same kind of place.
+  · **A REAL GAP BETWEEN THEM** — a single trunk spanning it and nothing else, so the route is the
+    only way across and the drop below it is visible.
+  · **ONE LOADED CARRIER** (the isopod species from the body sheet) at the middle of the span,
+    amber glowing along its flanks because it is loaded, moving from the dark place toward the bright
+    one. It is small. The distance is the subject, not the animal.
+  · **THE PROBE** — a single point of warm amber light with a fading amber ribbon, flying alongside
+    the span, small in frame.
+  · Human outline standing at the near end of the trunk, watching it go.
+
+The question the image must answer without a caption: **where did it come from, where is it going,
+and what happens if it does not arrive.**
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ 2 · S3 — THE STALL.  The failure state, as a place rather than as a portrait.                  ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Same world, same style, same light law as the previous images.
+
+**Sistens oneris** has stopped on a main trunk under its own load, and the region is backing up behind
+it. Its portrait already exists; this is the same animal seen as a **traffic condition**.
+
+  · The stalled animal in the MIDDLE DISTANCE, not the foreground, seen from behind and slightly
+    above so the blocked route reads before the creature does.
+  · **DOZENS OF CARRIERS BANKED UP BEHIND IT** along the trunk, stopped, still loaded, still amber.
+    Some have started onto a thinner side branch that is clearly a worse route.
+  · The amber in the trunk ahead of the blockage is **thin and starved**; behind it, dense and packed.
+    That difference across the blockage is the whole image.
+  · Its load is **amber, not blue.** It is not doing the wrong thing. It is doing the right thing and
+    never arriving, and the picture must not accuse it.
+  · The probe threading past the jam. Human outline on the side branch for scale.
+
+Register: **CONGESTED, NOT HOSTILE.** Nothing here is malicious. The road is simply occupied.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ 3 · BODY SHEET — TENENS LONGITUDINIS.  The format that worked, applied to the one you fly on.  ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Same world, same style, same light law as the previous images.
+
+Do this **exactly like the Vector operis body sheet** — flat mid-grey studio ground, multiple views of
+one animal, hairline human outline at the left for scale, no landscape, no atmosphere. That sheet is
+the best reference document in the set and this animal needs one more than any other, because the
+player **flies along its body** and it has only ever been drawn as scenery.
+
+**THE ANIMAL.** The long one at third stage: an enormous segmented body, every segment exact and
+identically spaced end to end, armoured and plated, amber running unbroken from one end to the other.
+At the previous stage it came apart along its length. It does not any more, and the sheet must make
+that legible: **the regularity is the diagnosis.**
+
+SIX PANELS on one sheet:
+  1 · full length in profile, small, so the whole animal fits and the segment rhythm reads
+  2 · the head end, three-quarter, close
+  3 · a single mid-body segment, large, showing how one joins the next
+  4 · underside of three segments, showing the grip
+  5 · the same three segments **with passengers ranked along them in order** — the third-stage tell
+  6 · a cross-section-free view of it anchored to a trunk, showing how it becomes a route
+
+No text, no labels, no callouts. The panels alone.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ 4 · *** CANCELLED. THE NUMBER CAME BACK AND IT KILLED THE CREATURE. ***                        ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+**NEVER FIRE THIS.** `Inaccessus sui` is retracted.
+
+x24 asked whether an organism holding every prior exchange can reach into it. It reached ALL of it:
+40 of 40, at every depth, including the first step of a sixteen-step chain. Holding it and being able
+to reach it turned out to be the same thing. The creature that keeps everything and can find none of
+it is the exact opposite of what was measured.
+
+The render stays on disk as evidence of the rule working. It is not annexed and it is not a species.
+Full reasoning in W3_FULL_ROSTER.md.
+
+**ITS REPLACEMENT IS DESIGNED AND ALSO ON HOLD** — `Immemor itineris`, the one unmindful of the
+journey. It arrives correctly every time and remembers nothing of how: token recall 0 of 40 while
+completing the chain at 1.000 per step. Thin, fast, carrying one bright bead, and it leaves the trunk
+DARK behind it where every other creature here leaves amber. Same discipline as before: it gets drawn
+when the full grid confirms 0/N across five rods, not on one rod at n=8.
+
+The hold cost one image. It saved a species with a beautiful render and nothing behind it, which is
+exactly how `Auratus gravis` happened. Keep doing this.
+
+
+╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+║ 5 · S4 — THE APPROACH.  Arrival. Every region needs one and this one has none.                 ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Same world, same style, same light law as the previous images.
+
+The player's **first sight** of the region, from outside and above, still at distance. The locked
+establishing shot is from inside the network looking across it; this is the shot before that one.
+
+  · The whole network seen as **one object** against the sky — its extent visible, its far edge
+    fading, the amber in its main trunks reading as a single circulatory pattern rather than as
+    individual roads.
+  · **The region has a shape.** Denser and brighter toward one region of the mass, thinning and
+    darkening toward its edges, so a player can see where the interesting part is from outside it.
+  · The route **in** is visible: one main trunk running from the near edge toward the bright interior.
+  · **The probe entering frame at the near edge**, small, its amber ribbon the only warm thing in the
+    foreground.
+  · No human outline in this one. The scale is the region, and nothing human-sized would read.
+
+Register: **ARRIVAL.** The previous two regions were places you were already in. This is the first one
+you can see the outside of, and that is what makes the crossing later mean something.
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+JUDGING THE FOUR
+
+  THE TWO-PLACES TEST  Image 1 only. Point at two different places and the way between them.
+                       Twelve earlier images failed this and it is why the region kept feeling flat.
+  THE VERB TEST        Can a viewer name the action the region is about, from image 1 alone?
+  THE SHEET TEST       Image 3: could a modeller build the animal from it? That is what a sheet is.
+  THE LIGHT LAW        Amber is a live connection. Image 2's load stays amber; the failure is
+                       postural, not chromatic, and the picture must not cheat that.
+  THE HOLD             Image 4 stays unmade until a number says it exists.
+═══════════════════════════════════════════════════════════════════════════════════════════════

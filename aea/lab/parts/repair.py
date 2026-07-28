@@ -33,5 +33,5 @@ class Critic(Part):
         val = stated(text)
         if val is None:
             val = read_work(text)[0]
-        ctx.answer, ctx.read_by = val, "critic"
+        ctx.claim("critic", val, "critic")
         ctx.note(repaired=val != before, tok_out_critic=r.get("tokens"), raw_critic=text[-320:])

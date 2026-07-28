@@ -19,9 +19,34 @@ silently destroying another has failed even if its own number went up.
 
 Every one of these is measured, and every one is a component subtracting on addition.
 
+**ROW 1 REATTRIBUTED 2026-07-27. The subtraction is real; the cause was not the guard.**
+
+Reproduced with no network at all, on a mute reply where the working is right and the mouth says 9:
+
+```
+call                      -> 9     stated             the mouth, wrong
+call+readout              -> 4     work:enumerated    RECOVERED
+call+readout+validation   -> None  declined           the recovery is destroyed
+```
+
+`Readout` is `read.order 1` and `Validation` is `read.order 2`, so **Readout runs first**, recovers
+correctly, and Validation then re-reads the raw text from scratch and overwrites the shared answer
+slot. It never checks whether a lever has already acted. Four parts write that one slot — `Call`,
+`Readout`, `Validation`, `Critic` — and the last one to run wins.
+
+Worse, `Readout`'s own deference line, `if ctx.declined or ctx.read_by not in (None, "stated"):
+return`, is **unreachable**: the abstention it defers to has not happened yet. And the note recorded
+elsewhere in this repo has the direction backwards — it says validation "handed control down to
+readout", when readout ran first and was clobbered.
+
+**So the row below states a true measurement and the wrong cause.** This is the document's own
+protocol point 5 — *"wrong placement subtracts without the module being wrong; the module was fine,
+the seam was not"* — and the headline table contradicts it. Both rows now frozen in
+`tests/test_golden.py`, so a wiring change breaks the test instead of silently moving the finding.
+
 | module | added | subtracted | receipt |
 |---|---|---|---|
-| `validation` | can_abstain | **all accuracy on a rod that was already right.** 7/7 to 0/7, three times | x17 |
+| ~~`validation`~~ **WITHDRAWN** | can_abstain | ~~all accuracy on a rod that was already right~~ **the treatment was never independently manipulated - see above** | x17, void |
 | `critic` | revised | **up to −0.55**, and every large loss lands on a high baseline | x20 |
 | `carry:free` | held (nominally) | **−0.636 at sixteen steps.** Nine of eleven sequences destroyed | x21 |
 | `frame:manner` | nothing | **8/12 to 0/6** on one rod, 69% to 9% on another | x15 |
@@ -113,27 +138,105 @@ answer away.**
 ## MEASURED — x22, 2026-07-27. The ladder is not a ladder.
 
 Eight rungs, two rods, the calibrated retention chain. Accuracy flat across all eight, inside the band
-end to end. The capacities are not:
+end to end. The capacities are not. THE `held` COLUMN IS A DASH ON EVERY RUNG: six had no state
+channel and the other two were misread. An absent measurement is a dash, never a number.
 
 ```
-v1 call          answ 1.00                     held 0.07  show 0.26              drift@2.0
-v2 +goal         show 0.26 -> 0.57             held 0.08                         drift@2.0
-v3 +frame        show 0.57 -> 0.38   COST      held 0.04                         drift@1.5
-v4 +readout      reco 0.00 -> 0.54   show 0.54 held 0.12   <- THE PEAK           drift@1.5
-v5 +validation   can_ 0.00 -> 0.61   COST reco -0.404      held 0.04             drift@1.5
-v6 +critic       revi 0.00 -> 0.74   COST can_ -0.607      held 0.04             drift@1.5
-v7 +carry        held 0.04 -> 0.00   COST show -0.327      revi 1.00             drift@1.0
+v1 call          answ 1.00                     held  --   show 0.26              drift@2.0
+v2 +goal         show 0.26 -> 0.57             held  --                          drift@2.0
+v3 +frame        show 0.57 -> 0.38   COST      held  --                          drift@1.5
+v4 +readout      reco 0.00 -> 0.54   show 0.54 held  --                          drift@1.5
+v5 +validation   can_ 0.00 -> 0.61   COST reco -0.404      held  --              drift@1.5
+v6 +critic       revi 0.00 -> 0.74   COST can_ -0.607      held  --              drift@1.5
+v7 +carry        held  --            read returned the step index; text unstored drift@1.0
 v8 +measure      not delivered                                                   drift@1.0
 ```
 
-### THE ARCHITECTURE IS NOT MONOTONIC
+### THE ARCHITECTURE IS NOT MONOTONIC — AND THE PEAK WAS AN ARTIFACT
 
-**v4 is the best organism on this task and it is four parts, not eight.** It carries the widest set of
-live capacities — answered, on_task, shows_working, recoverable — and the **highest retention on the
-whole ladder at 0.12**, above the bare call and above every assembly larger than it.
+**CORRECTED 2026-07-27.** This section read: *"v4 is the best organism on this task and it is four
+parts, not eight ... the highest retention on the whole ladder at 0.12, above the bare call and above
+every assembly larger than it."* **The peak does not exist.**
 
-Everything above v4 trades one capacity for another, and above v6 it trades for nothing at all. The
-drift point moves *earlier* as parts are added: step 2.0 at v1, step 1.0 at v8.
+x22 selected its scored chains with `done = [r for r in recs if r["completed"]]` — a truthiness test,
+not `== steps` — and then took an unweighted mean of per-chain rates. So a chain that died after one
+step weighed exactly as much as a chain of fourteen. v4's 0.119 is **one chain**:
+
+```
+v4   llama-3.1-8b   completed 2 of 14   hits 1   held 0.500   flags: call_failed
+```
+
+A connection that dropped after two steps, whose single hit was **step 1 — the opener, where the task
+itself states the starting value** — averaged against a full fourteen-step sequence. That is the whole
+peak. It is a dead socket, not an organism.
+
+**WITHDRAWN A SECOND TIME, SAME DAY, AND THE SECOND WITHDRAWAL MATTERS MORE THAN THE FIRST.**
+
+The correction above re-derived the ladder over completed sequences and concluded: *"the bare call
+retains best at 0.071, and nothing added to it ever retains better."* **That is also wrong, and it is
+wrong in a worse way, because it was computed from a run that could not have shown retention at all.**
+
+```
+v1 - v6    form = "none"        THERE IS NO STATE CHANNEL
+v7 - v8    form = "checkpoint"
+
+max hits any chain ever achieved:   1        across all 48 chains of 14 steps
+first_miss across the whole ladder: {1, 2}   and nothing else, ever
+1/14 = 0.0714                                v1 scored 0.071
+```
+
+`Chain._body` emits the starting value at step 1 only. For `form="none"` every later step is
+*"Step N: subtract 13"* with **no running value, no carried string and no history** - `Carry.pack`
+returns empty for that form and `chain.py` passes history only for `conversation`. So on six of the
+eight rungs the rod was asked to continue a calculation it was never given.
+
+The traces say it out loud. v1's step 2 records `value=13` against truth 48364 - **the operand,
+echoed back**, because nothing else was in the prompt. On the repaired instrument the replies are
+stored and they are not drift at all: *"To proceed with the calculation, please provide the number
+you would like to subtract 13 from."* That is a refusal.
+
+**So `held` is arithmetically the indicator "was step 1 right", divided by fourteen.** A fourteen-step
+chain delivered one step of dynamic range, and `0.071` is the ceiling of a zero-channel arm rather
+than a property of the bare call. v7 and v8 are the only rungs with a channel and their `0.000` is a
+read artifact - their traces record the STEP COUNTER as the value (1, 2, 3, 4 against truths 48377,
+48364, 48385) - and no reply text was stored, so they can never be re-scored.
+
+**THE RETENTION COLUMN OF THIS TABLE MEASURES NOTHING. Not in either direction.** There is no ladder,
+no peak, and no null result. There is an empty axis. The claim is withdrawn rather than replaced.
+
+The document's own criterion, thirty lines above, forbade exactly this: *"The baseline must fail, and
+fail by DRIFT rather than by INABILITY."* The baseline first-misses at step 2 of 14 by asking for the
+number back.
+
+### AND THE LESSON IS ABOUT THE CORRECTION, NOT THE ORIGINAL
+
+The first withdrawal found a real defect and recomputed the number from the same run. **Recomputing a
+number from a run that could not have produced evidence is not a correction - it is the same error
+with better arithmetic.** Before re-deriving anything, ask what range the measurement could have
+taken. If the answer is "two values, one of which the prompt gives away," there was never anything
+there to re-derive.
+
+**What survives, and it is not nothing.** The non-retention columns on v1-v6 have real dynamic range
+- `shows_working` 0.26 to 0.57, `recoverable` 0.00 to 0.54, `can_abstain` 0.61, `revised` 0.74 - and
+those rungs share the same absent channel, so the ADDITION-LAW SUBTRACTIONS between v3 and v6 are
+untouched by this. The law itself is unharmed. Only the retention reading dies, and v7/v8's entire
+capacity row goes with it.
+
+The document already knew this and contradicted itself. Line 149 states *"the bare call — the highest
+hit rate on the ladder, 7.1%, and it holds better than six of the seven assemblies above it."* That
+sentence was true and this section denied it. The correction resolves the contradiction in favour of
+the evidence.
+
+**What survives unchanged.** v4 does carry the widest set of LIVE CAPACITIES — `recoverable` is 0.000
+at v1 through v3 under either aggregation, so it genuinely first appears at v4. Capacity and retention
+are different claims and only the retention one dies. Everything above v4 still trades one capacity
+for another, above v6 it trades for nothing, and the drift point still moves *earlier* as parts are
+added: step 2.0 at v1, step 1.0 at v8.
+
+**Two qualifications, neither rescuing the peak.** The corrected v4 groq row rests on a single
+surviving chain, so 0.036 is defect-17-clean but not well-powered. And the hit reads themselves came
+through the `total` dialect, which returns an addend — v1's trace shows value 13 against truth 48364 —
+so every rung carries defect 15 uniformly. Neither moves v4 back above v1.
 
 **So completeness is a TOOLKIT, not a configuration.** The full architecture is the set of capacities
 made available. It is not the assembly you should be running. A player who seats everything has not
@@ -148,7 +251,7 @@ They are different organisms with different competences, and the numbers say so:
 |---|---|
 | `v1` bare call | the highest hit rate on the ladder, 7.1%, and it holds better than six of the seven assemblies above it |
 | `v2` +goal | the most working elicited, 0.57 — more than the frame produces |
-| `v4` +readout | the widest competence and the best retention. The peak |
+| `v4` +readout | the widest competence. NOT the best retention - see the correction above |
 | `v5` +validation | the only assembly that can refuse, 0.61 |
 | `v6` +critic | the only assembly that re-decides, 0.74 |
 

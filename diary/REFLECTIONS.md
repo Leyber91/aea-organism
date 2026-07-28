@@ -754,3 +754,55 @@ jewel and the drawer bank is filing furniture, so the eye picks ONE as the answe
 settled. A composition that leans toward an unproven answer is a fabricated finding rendered in
 metal. Equal amber is not enough - equal DESIGN INVESTMENT is the actual requirement when the
 image poses an open question.
+
+---
+
+## 2026-07-28 — RESOURCE-AWARE EVOLUTION, NO HALF-SOLUTIONS, AND CHAMBERS OF ORIGINAL THOUGHT
+
+*Luis, spoken, captured raw. Distil later, rested.*
+
+**Crystallization is not enough, and growth that slows you down is not growth.** We know things that
+work must be crystallized. But we will hit a scenario where refinement is not enough. A true
+autonomous entity architecture does not accumulate a lot of things, develop a lot of stuff, and end
+up running very slowly. It has to be **aware of its own resource cost** and know when the answer is
+not another refinement but a fundamentally different, cheaper way.
+
+> "The ultimate goal is that it even creates new code, new language, new ways of thinking that we
+> don't consider, that can make things way more efficient and consume way less resources."
+
+Not only keep growing and refining so we grow more within the capacity we have — **if you find a way
+that is a hundred times less consuming, go for it.**
+
+**NO HALF-SOLUTIONS. This is a principle, not a preference.**
+
+> "If you know that something could make us a hundred times more efficient, but you decide it's only
+> necessary to be five percent more efficient, or one or two times more instead of a hundred — then
+> you go for that solution because it's not necessary. If you know it, go for it."
+
+**The honest caveat he stated himself:** a one-billion-parameter model doing what five billion does,
+if the wiring is really good — maybe one day, not now. Same parameter count with different weights
+already gives different outcomes; that much is known. The efficiency has to come from the wiring and
+the method, not from pretending small models are big ones.
+
+**HOW DO WE MAKE AN AI PRODUCE GENUINELY ORIGINAL SOLUTIONS, not variations of what it has seen?**
+
+The proposal: **isolated chambers of brainstorming.** Not the working loop — sealed sessions. Many
+models, temperature pushed to 1 or 2, deliberately let loose, many iterations, cross-field. In a
+human team you have people who think across fields and make connections nobody asked for; we need to
+detect that behaviour and reproduce it, at least partially.
+
+> "In psychology there are very unstructured and non-measurable methods — the Rorschach cards, that
+> kind of thing — that unlock part of your brain and suddenly you come up with an original solution
+> you weren't able to reach before. We cannot reproduce that exactly, but maybe we get close."
+
+He knows it is inefficient and says so, and argues for it anyway:
+
+> "Sometimes a changed perspective made you look at places you wouldn't think to look, because you
+> and I are embedded in one paradigm. We need outside fingers to let us see."
+
+**PERIODIC EXTERNAL SCANNING.** A scheduled workflow that goes out and looks: new parameters, new
+models, people working on the same things we are, solutions we have not considered. The internet is
+full of it and we are barely touching it. This should run on a cadence, not when someone remembers.
+
+*(He flagged this himself as an out-of-mind dump: "I don't want to get outside focus of the code that
+we're doing, but I need to get all these out of my mind." Captured here, not acted on yet.)*

@@ -1,0 +1,24 @@
+{
+  "schema": "aea.organism/1",
+  "id": "obsignatus_unius",
+  "name": "Obsignatus unius",
+  "gloss": "the sealed one, of a single answer",
+  "world": 2,
+  "seat": ["call"],
+  "wiring_note": "An empty seat, deliberately. This is a fuel phenotype rather than a construct: it was measured on the bare call and it exists whether or not anything is seated. The part it is named against, THE COUNCIL, is NOT in the catalogue and has never been assembled as a lab part, so the creature cannot yet be wired to the thing that defines it. What a council needs from its members is variance to select from, and this fuel supplies none, so every council containing it inherits its error at full strength. Five of the six catalogue parts have never been tried on it.",
+  "fuel": {
+    "plant": "nvidia",
+    "model": "meta/llama-3.2-1b-instruct",
+    "temperature": 0.2,
+    "law": "IV. The one number this rod returns is a property of the rod on this task at this temperature, and no other rod in either run behaved the same way while being wrong."
+  },
+  "receipt": {
+    "claim": "it produces exactly one answer, always, and it is wrong, so there is no variance for a vote to select from",
+    "measured": "50-step chain, ground truth -17. nvidia/meta/llama-3.2-1b-instruct returned 49 on all 8 of 8 trials, hits 0/8, distinct=1 - and identically again in a second run a day later, 49 eight times, 0/8, distinct=1. A weak council in which every member fails solo scored 0 of 8, with the truth present in 0 of 8 ballots in the first run and 1 of 8 in the second, and agreed-on-wrong 0 of 8 in both. Read off the stored runs 20260725T172857Z and 20260726T190544Z while writing this file.",
+    "runs": ["x11"],
+    "why_it_matters": "it is the reason a council SELECTS rather than generates. Self-consistency lifted a drifting rod from 1/8 to 4/8 in the same run because that rod sometimes reaches the answer. A sealed one never does, so there is nothing to find, and a majority vote over it launders one wrong number into a verdict.",
+    "caveat": "SEALED against the council only, and the word is doing more work than the measurement supports in two ways. First, distinct=1 is not by itself a property of this rod: gpt-oss-20b also returned distinct=1 in the same run at the same temperature (8 identical CORRECT answers), and x10's determinism curve puts the median effective n at 1 to 2 at 0.2, so a collapsed sample is the plant's normal behaviour there. What separates this creature is that the single value it collapses onto is wrong, twice, a day apart. Second, this rod was never sampled at the 0.7 vote temperature the self-consistency arm used, so whether it is sealed against variation or merely sealed at 0.2 is unmeasured. Calling it sealed against the other five parts is an assertion.",
+    "council_note": "the council arms are not a seatable part in this schema. x11's verdict on the council itself was negative on its own terms: the cross-rod council TIED its best member at 1.00 for 5x the calls, and the weak council found nothing."
+  },
+  "state": {"kind": "SEALED", "part": "council - not in the catalogue, never assembled", "provisional": true}
+}

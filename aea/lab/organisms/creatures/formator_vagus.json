@@ -1,0 +1,23 @@
+{
+  "schema": "aea.organism/1",
+  "id": "formator_vagus",
+  "name": "Formator vagus",
+  "gloss": "the wandering shaper, the overframed one",
+  "world": 1,
+  "seat": ["call", "frame"],
+  "wiring_note": "A frame naming only posture, seated above a task the bare rod already performs, claimed to destroy a strict output form the rod produced unaided. The seam was never in the organism. It was in the check: two Chapter I scripts scored strict JSON differently and nothing announced the difference, so the toxic row and the non-toxic row were never comparable. This is why a check in the harness is now a declared object with a fingerprint that changes when it is weakened.",
+  "fuel": {
+    "plant": "nvidia",
+    "model": "openai/gpt-oss-20b",
+    "temperature": 0.2,
+    "law": "IV. The original 3/3 row has no recorded rod, plant or temperature, which is itself part of why it is void. The rod named here is the one the replacement run added because Chapter I's claim was most likely measured on it; x01 spans five rods from 1b to 70b across nvidia and groq."
+  },
+  "receipt": {
+    "claim": "VOID. Claimed a generic posture frame destroys strict-JSON output the bare rod already produces, 3/3 to 0/3",
+    "measured": null,
+    "voided_by": "instrument defect, Chapter I strict-JSON check. One script's check had dropped startswith('{') while another kept it, so a reply of 'Sure! {\"ok\": true, \"organ\": \"DRAW\"}' counted as a pass. The check was weakened and nothing failed, nothing 404'd, and the number just looked correct. Same family as the seven defects of 2026-07-26: five of seven were in a verdict or a detector, never in the data.",
+    "runs": ["x01"],
+    "why_it_matters": "The replacement run exists and it disconfirms the creature. x01 run 2026-07-25, check id b486fef7c4, n=8, five rods: delta 0 and WITHIN NOISE on llama-3.2-3b, nemotron-nano-9b, gpt-oss-20b and llama-3.3-70b, and UNDERPOWERED on llama-3.2-1b where one call failed to a 429. No rod lost a point to the generic frame. What it did cost is tokens, a ratio of 1.38x to 2.06x for nothing, which is the surviving finding and it belongs to the frame rather than to an animal. No number here replaces the void one; the void one measured a scoring rule."
+  },
+  "state": {"kind": "RETRACTED", "part": "frame:manner", "provisional": true}
+}

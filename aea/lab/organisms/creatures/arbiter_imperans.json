@@ -1,0 +1,23 @@
+{
+  "schema": "aea.organism/1",
+  "id": "arbiter_imperans",
+  "name": "Arbiter imperans",
+  "gloss": "the judge, commanding",
+  "world": 2,
+  "seat": ["call", "critic"],
+  "wiring_note": "One more call on the same fuel with the first answer in the prompt, seated at the repair stage above whatever produced that answer. The seam is the precondition, and it is the seam this creature was destroyed by: the critic can only be credited where the baseline is genuinely wrong. Seated above a rod that already answers correctly it has nothing to repair and the arm measures only its price. The catalogue records that as a conflict edge with `fuel:passes_bare`, and no code checks it before seating. The name predates the bestiary's naming law, which is why the species half is a participle rather than a genitive.",
+  "fuel": {
+    "plant": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "temperature": 0.2,
+    "law": "IV. The creature was named for a fuel split, groq/llama-3.3-70b against nvidia/nemotron-nano-9b, and the split is what turned out to be the artifact."
+  },
+  "receipt": {
+    "claim": "a judge that OVERRULES repairs where a judge that advises destroys, and the difference is a property of the fuel",
+    "measured": null,
+    "voided_by": "the unchecked-precondition defect. Chapter I's judge matrix read `the critic did not help` off rods that had already answered the trap correctly, where there was no wrong answer to repair. Re-run through the harness at n=8 on 5 rods, four of the five arms are VOID for exactly that reason and law III did not reproduce: on nemotron-nano-9b, the one rod whose bare baseline genuinely failed at 0/8, advise repaired +5 and overrule repaired +5, identical. The named fuel split is also inverted: groq/llama-3.3-70b scored 8/8 BARE in both x03 runs, so the `repaired 6 of 6` it is famous for was measured where nothing needed repair, while nemotron-9b, credited with `no repair at all`, is the only rod that was repaired. Not one of the thirteen numbered instrument defects; the same class as all of them, and it is standing rule `check the precondition before crediting a part` in METHOD plus amendment 4 in ANNEX_E. The original pre-harness evidence file cannot be re-read: early runs were written in place and overwritten.",
+    "runs": ["x03", "x20"],
+    "why_it_matters": "the codebase's oldest binomial and the one the whole naming convention was taken from, and its receipt is void. What survives is narrower and is not what the name claims. x03: a separate critic takes a genuinely wrong answer from 0/8 to 5/8 at 6.4x the input tokens and about 5x the wall clock, on ONE rod, with the form of the judge making no measured difference. x20 put the same part through the full lattice on 3 rods, 3 tasks and 18 paired cells: overall margin 0.0 against a measured noise band of 0.10, upside bounded at +0.12, losses to -0.55 and every one of them on a high baseline, cost 1.18x median. The commanding judge does not command. It is inert on average and it breaks what was already right."
+  },
+  "state": {"kind": "RETRACTED", "part": "critic", "provisional": true}
+}

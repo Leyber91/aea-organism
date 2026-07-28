@@ -7,11 +7,11 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 99,
+    "count": 130,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
-    "count": 71,
+    "count": 79,
     "source": "design/00_VISION.md"
    },
    "reflections": {
@@ -35,13 +35,13 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 99
+    "count": 130
    },
    {
     "src": "THE_PROBE",
     "dst": "plan",
     "rel": "contains",
-    "count": 71
+    "count": 79
    },
    {
     "src": "THE_PROBE",
@@ -103,6 +103,12 @@
      "purpose": "axes.py - C-11, THE POSITION RECORD: where the entity actually stands in the 5-D growth space."
     },
     {
+     "id": "base",
+     "type": "module",
+     "path": "aea/lab/parts/base.py",
+     "purpose": "The wire and the socket. Everything a part needs, and the contract it implements."
+    },
+    {
      "id": "bench_core",
      "type": "module",
      "path": "aea/bench/bench_core.py",
@@ -135,8 +141,20 @@
     {
      "id": "capacity",
      "type": "module",
-     "path": "aea/energy/capacity.py",
-     "purpose": "capacity.py - THE LIVE CAPACITY GAUGE: how much free power do we ACTUALLY have, right now?"
+     "path": "aea/lab/parts/capacity.py",
+     "purpose": "Read a run's capacities off its trace, against the definitions sealed in catalogue.json."
+    },
+    {
+     "id": "carry",
+     "type": "module",
+     "path": "aea/lab/parts/carry.py",
+     "purpose": "State that outlives the call. The only part whose unit is a SEQUENCE rather than a trial:"
+    },
+    {
+     "id": "chain",
+     "type": "module",
+     "path": "aea/lab/chain.py",
+     "purpose": "A sequence runner. The unit is a CHAIN of steps, not a trial."
     },
     {
      "id": "checkpoint",
@@ -163,6 +181,18 @@
      "purpose": "converse.py - THE COMPANION. A voice-native conversation partner in Spanish: local ears,"
     },
     {
+     "id": "crystal",
+     "type": "module",
+     "path": "aea/kernel/crystal.py",
+     "purpose": "crystal.py - A RESOLUTION THAT HELD, BECOMING A PART THE ENTITY KNOWS IT HAS."
+    },
+    {
+     "id": "dna",
+     "type": "module",
+     "path": "aea/lab/parts/dna.py",
+     "purpose": "Read a creature's class off its wiring graph. The class is derived, never labelled."
+    },
+    {
      "id": "energy",
      "type": "module",
      "path": "aea/energy/energy.py",
@@ -181,16 +211,52 @@
      "purpose": "extensive_census.py - THE FULL EXAM: every free capability we hold, tested for real."
     },
     {
+     "id": "fire",
+     "type": "module",
+     "path": "aea/lab/parts/fire.py",
+     "purpose": "The one part every organism contains. Without it there is nothing to read, repair or judge."
+    },
+    {
+     "id": "fit",
+     "type": "module",
+     "path": "aea/kernel/fit.py",
+     "purpose": "fit.py - ONE PLACE THAT ANSWERS \"WHICH ROD FOR THIS JOB\", AND SAYS WHY NOT FOR ALL THE OTHERS."
+    },
+    {
+     "id": "fleet",
+     "type": "module",
+     "path": "aea/lab/fleet.py",
+     "purpose": "fleet.py - TEST EVERY ROD, WITH THE TEST IT CAN ACTUALLY SIT."
+    },
+    {
      "id": "fuel",
      "type": "module",
      "path": "aea/mind/fuel.py",
      "purpose": "fuel.py - THE UNIT SYSTEM. No measurement exists without the fuel it was taken on."
     },
     {
+     "id": "fuels",
+     "type": "module",
+     "path": "aea/lab/fuels.py",
+     "purpose": "fuels.py - OUR OWN CATALOGUE OF RODS, AND OUR OWN BENCHMARK OF THEM."
+    },
+    {
      "id": "gauntlet",
      "type": "module",
      "path": "aea/energy/gauntlet.py",
      "purpose": "gauntlet.py - THE GAUNTLET: the integrated entity examined through its own front door."
+    },
+    {
+     "id": "goals",
+     "type": "module",
+     "path": "aea/kernel/goals.py",
+     "purpose": "goals.py - IT CAN BE GIVEN A JOB. The largest missing element until now."
+    },
+    {
+     "id": "grader",
+     "type": "module",
+     "path": "aea/lab/grader.py",
+     "purpose": "grader.py - AN OUTCOME NO COMPONENT CAN WRITE."
     },
     {
      "id": "grid",
@@ -205,6 +271,12 @@
      "purpose": "hades.py - HADES: the WATCHER over the SEDAH swarm."
     },
     {
+     "id": "hands",
+     "type": "module",
+     "path": "aea/kernel/hands.py",
+     "purpose": "hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISSION FIRST."
+    },
+    {
      "id": "harness",
      "type": "module",
      "path": "aea/lab/harness.py",
@@ -217,6 +289,12 @@
      "purpose": "aea.gameapi.honesty - THE FIREWALL. The single boundary where the honesty law is enforced."
     },
     {
+     "id": "impasse",
+     "type": "module",
+     "path": "aea/kernel/impasse.py",
+     "purpose": "impasse.py - THE ENTITY NOTICING IT IS STUCK, AND SAYING WHY."
+    },
+    {
      "id": "index_codex",
      "type": "module",
      "path": "aea/memory/index_codex.py",
@@ -227,6 +305,12 @@
      "type": "module",
      "path": "aea/tooling/journey_check.py",
      "purpose": "journey_check.py - THE ENFORCEMENT. Are the three ladders the same ladder?"
+    },
+    {
+     "id": "judge",
+     "type": "module",
+     "path": "aea/lab/parts/judge.py",
+     "purpose": "Parts that annotate after the answer exists. Neither changes the answer."
     },
     {
      "id": "listen",
@@ -268,13 +352,19 @@
      "id": "organism",
      "type": "module",
      "path": "aea/lab/organism.py",
-     "purpose": "organism.py - AN ASSEMBLED AEA. Version N is the first N components seated, and it is a creature."
+     "purpose": "An assembled AEA. A creature is a seat of parts on pinned fuel, and both live in files."
     },
     {
      "id": "overseer",
      "type": "module",
      "path": "aea/lab/overseer.py",
      "purpose": "overseer.py - IS THIS REPLY AN ANSWER, OR IS IT DEBRIS? The lab watching itself while it runs."
+    },
+    {
+     "id": "pace",
+     "type": "module",
+     "path": "aea/lab/pace.py",
+     "purpose": "pace.py - THE PLANTS PUBLISH THEIR LIMITS. READ THEM INSTEAD OF GUESSING."
     },
     {
      "id": "pathfinder",
@@ -297,8 +387,14 @@
     {
      "id": "read",
      "type": "module",
-     "path": "aea/gameapi/read.py",
-     "purpose": "aea.gameapi.read - the /game/* GET handlers: pure reads, re-homed to the REAL organ functions."
+     "path": "aea/lab/parts/read.py",
+     "purpose": "Parts that turn a reply into an answer. Both sit at the READ stage and the ORDER between them"
+    },
+    {
+     "id": "reboot",
+     "type": "module",
+     "path": "aea/lab/reboot.py",
+     "purpose": "reboot.py - RE-RUN THE EXPERIMENTS WHOSE EVIDENCE CANNOT BE READ."
     },
     {
      "id": "reflect",
@@ -313,16 +409,58 @@
      "purpose": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads"
     },
     {
+     "id": "repair",
+     "type": "module",
+     "path": "aea/lab/parts/repair.py",
+     "purpose": "A second call on the same fuel, looking at the first one's answer. The first stage that costs."
+    },
+    {
+     "id": "report",
+     "type": "module",
+     "path": "aea/lab/report.py",
+     "purpose": "report.py - THE EVIDENCE, BROWSABLE. Every reply, and every judgement made about it."
+    },
+    {
+     "id": "rescore",
+     "type": "module",
+     "path": "aea/lab/rescore.py",
+     "purpose": "rescore.py - READ A STORED RUN AGAIN, WITH A DIFFERENT READER, FOR NOTHING."
+    },
+    {
      "id": "schema",
      "type": "module",
      "path": "aea/gameapi/schema.py",
      "purpose": "aea.gameapi.schema - THE BEING AS A STRUCTURE (the world's fog map)."
     },
     {
+     "id": "seats",
+     "type": "module",
+     "path": "aea/kernel/seats.py",
+     "purpose": "seats.py - CUSTOM SUBAGENTS, BUT A SUBAGENT IS NOT A PROMPT."
+    },
+    {
+     "id": "shape",
+     "type": "module",
+     "path": "aea/lab/parts/shape.py",
+     "purpose": "Parts that build the prompt. They run before anything is sent."
+    },
+    {
+     "id": "site",
+     "type": "module",
+     "path": "aea/lab/site.py",
+     "purpose": "site.py - THE EVIDENCE SITE. Builds web/lab/ from the archive. Data-driven, not baked."
+    },
+    {
      "id": "speak",
      "type": "module",
      "path": "aea/io/speak.py",
      "purpose": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):"
+    },
+    {
+     "id": "stats",
+     "type": "module",
+     "path": "aea/lab/stats.py",
+     "purpose": "stats.py - THE INTERVAL, computed, instead of THE BAND, declared."
     },
     {
      "id": "swarm",
@@ -343,6 +481,12 @@
      "purpose": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,"
     },
     {
+     "id": "test_golden",
+     "type": "module",
+     "path": "aea/lab/tests/test_golden.py",
+     "purpose": "THE ADDITION LAW, APPLIED TO OURSELVES. No network, no cost, exactly reproducible."
+    },
+    {
      "id": "tracelog",
      "type": "module",
      "path": "aea/kernel/tracelog.py",
@@ -353,6 +497,12 @@
      "type": "module",
      "path": "aea/kernel/trust.py",
      "purpose": "trust.py - THE TRUST LEDGER: autonomy is EARNED per capability, never assumed."
+    },
+    {
+     "id": "unstick",
+     "type": "module",
+     "path": "aea/kernel/unstick.py",
+     "purpose": "unstick.py - WHEN REPEATING CANNOT HELP, CHANGE SOMETHING. Steps 3 and 4 of five."
     },
     {
      "id": "x01_generic_frame",
@@ -479,6 +629,42 @@
      "type": "module",
      "path": "aea/lab/x19_the_unmeasured_pair.py",
      "purpose": "x19 - THE UNMEASURED PAIR. The two creatures on the World 1 plate that no part has ever been tried on."
+    },
+    {
+     "id": "x20_the_critic",
+     "type": "module",
+     "path": "aea/lab/x20_the_critic.py",
+     "purpose": "x20 - THE CRITIC. World 2's first assemblable repair part, and the test its whole world rests on."
+    },
+    {
+     "id": "x21_the_carry_battery",
+     "type": "module",
+     "path": "aea/lab/x21_the_carry_battery.py",
+     "purpose": "x21 - THE CARRY BATTERY. World 3's three components are three SHAPES of one job, plus a control."
+    },
+    {
+     "id": "x22_the_capacity_ladder",
+     "type": "module",
+     "path": "aea/lab/x22_the_capacity_ladder.py",
+     "purpose": "x22 - THE CAPACITY LADDER. What does each part ENABLE, as the seat grows?"
+    },
+    {
+     "id": "x23_inheritance",
+     "type": "module",
+     "path": "aea/lab/x23_inheritance.py",
+     "purpose": "x23 - INHERITANCE. The only creature-to-creature interaction in the project."
+    },
+    {
+     "id": "x23b_inheritance_across_plants",
+     "type": "module",
+     "path": "aea/lab/x23b_inheritance_across_plants.py",
+     "purpose": "x23b - INHERITANCE ACROSS PLANTS, with a calibration gate."
+    },
+    {
+     "id": "x24_the_store_and_the_door",
+     "type": "module",
+     "path": "aea/lab/x24_the_store_and_the_door.py",
+     "purpose": "x24 - THE STORE AND THE DOOR. Keeping a thing and reaching it are two capabilities."
     },
     {
      "id": "/api/construct/run",
@@ -688,6 +874,11 @@
      "rel": "imports"
     },
     {
+     "src": "base",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
      "src": "bench_core",
      "dst": "grid",
      "rel": "imports"
@@ -754,7 +945,32 @@
     },
     {
      "src": "capacity",
-     "dst": "grid",
+     "dst": "base",
+     "rel": "imports"
+    },
+    {
+     "src": "carry",
+     "dst": "base",
+     "rel": "imports"
+    },
+    {
+     "src": "chain",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "chain",
+     "dst": "carry",
+     "rel": "imports"
+    },
+    {
+     "src": "chain",
+     "dst": "carry",
+     "rel": "imports"
+    },
+    {
+     "src": "chain",
+     "dst": "read",
      "rel": "imports"
     },
     {
@@ -838,6 +1054,21 @@
      "rel": "imports"
     },
     {
+     "src": "crystal",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "crystal",
+     "dst": "unstick",
+     "rel": "imports"
+    },
+    {
+     "src": "dna",
+     "dst": "base",
+     "rel": "imports"
+    },
+    {
      "src": "energy",
      "dst": "grid",
      "rel": "imports"
@@ -858,13 +1089,73 @@
      "rel": "imports"
     },
     {
+     "src": "fire",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "fire",
+     "dst": "base",
+     "rel": "imports"
+    },
+    {
+     "src": "fire",
+     "dst": "read",
+     "rel": "imports"
+    },
+    {
+     "src": "fit",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "fit",
+     "dst": "unstick",
+     "rel": "imports"
+    },
+    {
+     "src": "fit",
+     "dst": "pace",
+     "rel": "imports"
+    },
+    {
+     "src": "fleet",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "fleet",
+     "dst": "fuels",
+     "rel": "imports"
+    },
+    {
      "src": "fuel",
      "dst": "grid",
      "rel": "imports"
     },
     {
+     "src": "fuels",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "fuels",
+     "dst": "pace",
+     "rel": "imports"
+    },
+    {
      "src": "gauntlet",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "goals",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "goals",
+     "dst": "trust",
      "rel": "imports"
     },
     {
@@ -880,6 +1171,21 @@
     {
      "src": "hades",
      "dst": "swarm",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
+     "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
+     "dst": "pace",
      "rel": "imports"
     },
     {
@@ -899,7 +1205,22 @@
     },
     {
      "src": "harness",
+     "dst": "pace",
+     "rel": "imports"
+    },
+    {
+     "src": "harness",
      "dst": "memory",
+     "rel": "imports"
+    },
+    {
+     "src": "impasse",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "impasse",
+     "dst": "trust",
      "rel": "imports"
     },
     {
@@ -920,6 +1241,11 @@
     {
      "src": "journey_check",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "judge",
+     "dst": "base",
      "rel": "imports"
     },
     {
@@ -979,12 +1305,17 @@
     },
     {
      "src": "organism",
-     "dst": "harness",
+     "dst": "carry",
      "rel": "imports"
     },
     {
      "src": "organism",
-     "dst": "overseer",
+     "dst": "read",
+     "rel": "imports"
+    },
+    {
+     "src": "organism",
+     "dst": "chain",
      "rel": "imports"
     },
     {
@@ -995,6 +1326,21 @@
     {
      "src": "overseer",
      "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "pace",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "pace",
+     "dst": "harness",
+     "rel": "imports"
+    },
+    {
+     "src": "pace",
+     "dst": "pace",
      "rel": "imports"
     },
     {
@@ -1024,32 +1370,17 @@
     },
     {
      "src": "read",
-     "dst": "controlroom",
+     "dst": "base",
      "rel": "imports"
     },
     {
-     "src": "read",
-     "dst": "bench_core",
-     "rel": "imports"
-    },
-    {
-     "src": "read",
+     "src": "reboot",
      "dst": "grid",
      "rel": "imports"
     },
     {
-     "src": "read",
-     "dst": "axes",
-     "rel": "imports"
-    },
-    {
-     "src": "read",
-     "dst": "grid",
-     "rel": "imports"
-    },
-    {
-     "src": "read",
-     "dst": "pulse",
+     "src": "reboot",
+     "dst": "site",
      "rel": "imports"
     },
     {
@@ -1093,12 +1424,77 @@
      "rel": "imports"
     },
     {
+     "src": "repair",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "repair",
+     "dst": "base",
+     "rel": "imports"
+    },
+    {
+     "src": "repair",
+     "dst": "read",
+     "rel": "imports"
+    },
+    {
+     "src": "report",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "rescore",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "schema",
      "dst": "grid",
      "rel": "imports"
     },
     {
      "src": "schema",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "seats",
+     "dst": "fit",
+     "rel": "imports"
+    },
+    {
+     "src": "seats",
+     "dst": "goals",
+     "rel": "imports"
+    },
+    {
+     "src": "seats",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "seats",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "seats",
+     "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "seats",
+     "dst": "unstick",
+     "rel": "imports"
+    },
+    {
+     "src": "shape",
+     "dst": "base",
+     "rel": "imports"
+    },
+    {
+     "src": "site",
      "dst": "grid",
      "rel": "imports"
     },
@@ -1173,6 +1569,26 @@
      "rel": "imports"
     },
     {
+     "src": "test_golden",
+     "dst": "chain",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "read",
+     "rel": "imports"
+    },
+    {
      "src": "tracelog",
      "dst": "grid",
      "rel": "imports"
@@ -1185,6 +1601,26 @@
     {
      "src": "trust",
      "dst": "pulse",
+     "rel": "imports"
+    },
+    {
+     "src": "trust",
+     "dst": "notify",
+     "rel": "imports"
+    },
+    {
+     "src": "unstick",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "unstick",
+     "dst": "impasse",
+     "rel": "imports"
+    },
+    {
+     "src": "unstick",
+     "dst": "trust",
      "rel": "imports"
     },
     {
@@ -1526,6 +1962,131 @@
      "src": "x19_the_unmeasured_pair",
      "dst": "fuel",
      "rel": "imports"
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "x16_the_organisms",
+     "rel": "imports"
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "x18_second_battery",
+     "rel": "imports"
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x21_the_carry_battery",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x21_the_carry_battery",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x21_the_carry_battery",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "read",
+     "rel": "imports"
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "capacity",
+     "rel": "imports"
+    },
+    {
+     "src": "x23_inheritance",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x23_inheritance",
+     "dst": "organism",
+     "rel": "imports"
+    },
+    {
+     "src": "x23_inheritance",
+     "dst": "carry",
+     "rel": "imports"
+    },
+    {
+     "src": "x23_inheritance",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x23b_inheritance_across_plants",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x23b_inheritance_across_plants",
+     "dst": "chain",
+     "rel": "imports"
+    },
+    {
+     "src": "x23b_inheritance_across_plants",
+     "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "overseer",
+     "rel": "imports"
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "stats",
+     "rel": "imports"
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "chain",
+     "rel": "imports"
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "carry",
+     "rel": "imports"
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "fuel",
+     "rel": "imports"
     }
    ]
   },
@@ -1697,6 +2258,16 @@
      "path": "design/E11_IMAGE_BRIEF_METHOD.md"
     },
     {
+     "id": "design/E12_WORLD_EVOLUTION_SYSTEM.md",
+     "type": "design_doc",
+     "path": "design/E12_WORLD_EVOLUTION_SYSTEM.md"
+    },
+    {
+     "id": "design/E13_WHAT_THE_IMAGE_MODEL_DOES.md",
+     "type": "design_doc",
+     "path": "design/E13_WHAT_THE_IMAGE_MODEL_DOES.md"
+    },
+    {
      "id": "design/E1_CODE_ARCHITECTURE.md",
      "type": "design_doc",
      "path": "design/E1_CODE_ARCHITECTURE.md"
@@ -1792,9 +2363,34 @@
      "path": "design/STUDIO_LEDGER.md"
     },
     {
+     "id": "design/THE_ADDITION_LAW.md",
+     "type": "design_doc",
+     "path": "design/THE_ADDITION_LAW.md"
+    },
+    {
+     "id": "design/THE_AEA_TO_WORLDS_MAP.md",
+     "type": "design_doc",
+     "path": "design/THE_AEA_TO_WORLDS_MAP.md"
+    },
+    {
+     "id": "design/THE_CLASS_INTERIORS.md",
+     "type": "design_doc",
+     "path": "design/THE_CLASS_INTERIORS.md"
+    },
+    {
+     "id": "design/THE_COMBINATION_MAP.md",
+     "type": "design_doc",
+     "path": "design/THE_COMBINATION_MAP.md"
+    },
+    {
      "id": "design/THE_DERIVATION.md",
      "type": "design_doc",
      "path": "design/THE_DERIVATION.md"
+    },
+    {
+     "id": "design/THE_ELEMENTS.md",
+     "type": "design_doc",
+     "path": "design/THE_ELEMENTS.md"
     },
     {
      "id": "design/THE_FIELD_GUIDE.md",
@@ -1815,6 +2411,11 @@
      "id": "design/THE_ROUTE.md",
      "type": "design_doc",
      "path": "design/THE_ROUTE.md"
+    },
+    {
+     "id": "design/THE_SERPAC_GRID.md",
+     "type": "design_doc",
+     "path": "design/THE_SERPAC_GRID.md"
     },
     {
      "id": "design/THE_SIX_WORLDS.md",

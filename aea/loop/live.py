@@ -88,9 +88,24 @@ def corpus_state() -> tuple[int, int]:
         return 0, 0
 
 
+BRIEF_GIVE_UP = 3        # consecutive failures after which the brief stops monopolising the loop
+
+
 def choose_action(hb: dict) -> tuple[str, list[str], int]:
-    """AWAKE if today's brief is undone, else ASLEEP (consolidate) if backlog remains, else IDLE."""
-    if hb.get("last_brief_date") != today():
+    """AWAKE if today's brief is undone, else ASLEEP (consolidate) if backlog remains, else IDLE.
+
+    THE STARVATION FIX. This used to return AWAKE:brief on EVERY tick until the brief succeeded. A
+    brief that fails for an external reason therefore re-ran the byte-identical action forty-eight
+    times a day, and every branch below it - consolidation, the reflection tick - was unreachable for
+    the entire outage. `state/trust_ledger.json` holds the receipt: twelve identical entries on
+    2026-07-21 at half-hour spacing, and no brief has been produced since 2026-07-20.
+
+    Repeating an action that has failed three times in a row with one cause is not persistence, it is
+    the definition of stuck. After BRIEF_GIVE_UP the loop stops paying for it and does the work it can
+    still do. The brief is retried on the next calendar day, or immediately once a move is applied.
+    """
+    stuck = int(hb.get("brief_fails", 0)) >= BRIEF_GIVE_UP
+    if hb.get("last_brief_date") != today() and not stuck:
         return "AWAKE:brief", ["-m", "aea.organs.brief"], 240
     done, total = corpus_state()
     if total and done < total:
@@ -100,6 +115,55 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     if os.path.exists(os.path.join(os.path.dirname(HERE), "organs", "reflect.py")):
         return "REFLECT:self", ["-m", "aea.organs.reflect", "--once"], 240
     return "IDLE", [], 0
+
+
+def _notice_and_propose(hb: dict, tail: str):
+    """THE WIRE FROM A FAILING WAKE TO THE MACHINERY THAT KNOWS WHAT TO CHANGE.
+
+    Until now `impasse`, `unstick` and `crystal` were CLI-only: a full five-rung notice/diagnose/vary/
+    record/crystallise loop that no wake path could reach. The entity could be asked whether it was
+    stuck and would answer correctly, and nothing ever asked it.
+
+    Two things happen here and the order matters.
+
+    1 THE OUTCOME IS RECORDED EVEN WHEN THE SUBPROCESS DIED. `organs/brief.py` writes the ledger
+      itself on a normal run, but a timeout or a crash never reaches that line - so the failure mode
+      MOST likely to kill an unattended system was the one the consecutive-failure alarm could never
+      see. When the child produced no ledger entry, this writes one, with the cause.
+
+    2 A DIAGNOSIS IS COMPUTED AND SURFACED. `unstick.propose` is still PROPOSE-only by design: it
+      writes what it would change and why. Nothing here applies a move. Varying without recording is
+      thrashing, and applying without a human is a ceiling this charter has not granted.
+    """
+    cap = "produce_brief"
+    try:
+        from aea.kernel import trust, impasse, unstick
+        cause = (tail or "").strip()[:70] or "no output"
+
+        # 1 - did the child manage to record anything? Compare the run count before and after.
+        led = grid.load_json(trust.LEDGER, {})
+        before = (led.get(cap) or {}).get("runs", 0)
+        if hb.get("_brief_runs_seen") == before:
+            trust.record(cap, False, note="wake: child produced no verdict (%s)" % cause)
+        hb["_brief_runs_seen"] = (grid.load_json(trust.LEDGER, {}).get(cap) or {}).get("runs", 0)
+
+        # 2 - diagnose, and say what to change.
+        d = impasse.read(cap)
+        if d.get("stuck"):
+            p = unstick.propose(cap, zone="sensitive")
+            move = (p.get("move") or {}) if isinstance(p, dict) else {}
+            hb["proposed_move"] = move
+            log("  STUCK: %s" % str(d.get("why"))[:90])
+            if move:
+                log("  PROPOSED: %s %s -> %s" % (move.get("move"), move.get("knob"),
+                                                 str(move.get("to"))[:44]))
+                log("  WHY: %s" % str(move.get("why"))[:100])
+                pulse.emit("life", "propose", "%s: %s -> %s"
+                           % (cap, move.get("move"), str(move.get("to"))[:40]), ok=False)
+            else:
+                log("  EXHAUSTED: every declared move has been tried. Ask for help.")
+    except Exception as e:
+        log("  (notice/propose failed, loop continues: %s)" % str(e)[:80])
 
 
 def tick(hb: dict, demo: bool):
@@ -117,6 +181,10 @@ def tick(hb: dict, demo: bool):
     if action.startswith("AWAKE"):
         if ok:
             hb["last_brief_date"] = today()
+            hb["brief_fails"] = 0
+        else:
+            hb["brief_fails"] = int(hb.get("brief_fails", 0)) + 1
+            _notice_and_propose(hb, tail)
     done, total = corpus_state()
     hb["consolidated_sessions"] = done
     hb["history"] = (hb.get("history", []) + [f"{now_iso()} {action} {'ok' if ok else 'FAIL'} :: {tail[:80]}"])[-30:]
@@ -168,7 +236,19 @@ def main():
             tick(hb, demo)
         except Exception as e:
             log(f"tick error (survived): {e}")       # the life never dies on a bad tick
-        save_hb(hb)                                   # persist EVERY tick -> asleep-still-alive
+        # THE SAVE IS INSIDE THE GUARD TOO, and it was not.
+        #
+        # `tick` was wrapped so a bad tick could never kill the life, and then the very next line
+        # wrote to disk UNGUARDED. On Windows a save raises PermissionError whenever anything else
+        # holds the file open for a few milliseconds - an editor, a sync client, a virus scanner -
+        # so the one call that exists to prove the entity is still alive was also the one call that
+        # could end it, for a reason that resolves itself in 50ms. A heartbeat that dies of a
+        # transient write is worse than no heartbeat, because the log stops mid-sentence and looks
+        # like a crash.
+        try:
+            save_hb(hb)                               # persist EVERY tick -> asleep-still-alive
+        except Exception as e:
+            log(f"heartbeat save failed (survived, will retry next tick): {str(e)[:80]}")
         n += 1
         if max_ticks and n >= max_ticks:
             break

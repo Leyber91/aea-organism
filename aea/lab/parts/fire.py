@@ -15,9 +15,11 @@ class Call(Part):
     def run(self, ctx):
         carried = ctx.rec.get("carried")
         prompt = "%s\n\n%s" % (carried, ctx.prompt) if carried else ctx.prompt
+        # PRIOR TURNS GO ON THE WIRE. A carried string and a message history are two different
+        # containers and this part now sends both; sending only the first is defect 13.
+        msgs = ctx.history + [{"role": "user", "content": prompt}]
         t0 = time.time()
-        r = ctx.fuel.call(ctx.rod, [{"role": "user", "content": prompt}],
-                          max_tokens=ctx.max_tokens, temperature=ctx.temperature)
+        r = ctx.fuel.call(ctx.rod, msgs, max_tokens=ctx.max_tokens, temperature=ctx.temperature)
         seen = OV.inspect(r, max_tokens=ctx.max_tokens, prompt=prompt)
         ctx.text = seen["text"] or ""
         ctx.flags = list(seen["flags"])
@@ -29,7 +31,13 @@ class Call(Part):
         # extracted here and read parts refine it. Moving this into Validation during the parts
         # refactor meant an organism with no guard read NOTHING - a silent capability loss that no
         # import check could see. The Addition Law, broken on our own code.
-        ctx.answer, ctx.read_by = stated(ctx.text), "stated"
+        ctx.claim("call", stated(ctx.text), "stated")
+        # THE WHOLE REPLY. `raw` was ctx.text[-320:] and that single slice is the root of four
+        # recorded defects: it erased a creature (defect 5, 74% of replies were longer), it made
+        # every chain body-read a tail read (defect 14), and it silently collapses distinctness
+        # counts - two replies differing only in their opening are counted as one, which is how
+        # x09, x10, x12 and x19 all measure `distinct_replies`. A stored reply is the only thing
+        # that makes a run re-scorable; storing a slice of it is storing a guess.
         ctx.note(elapsed_s=round(time.time() - t0, 3), prompt_chars=len(prompt),
                  chars=len(ctx.text), tok_out=r.get("tokens"), tok_in=r.get("prompt_tokens"),
-                 raw=ctx.text[-320:])
+                 raw=ctx.text)

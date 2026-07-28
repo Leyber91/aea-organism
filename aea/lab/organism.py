@@ -45,15 +45,27 @@ class Organism:
         self.fuel = None
 
     def run(self, task, *, temperature=None, max_tokens=1200, keep_full=False, carried="",
-            fuel=None):
+            fuel=None, history=None):
         ctx = P.Ctx(task, self.rod, temperature=temperature or self.temperature,
                     max_tokens=max_tokens, seat=self.keys, config=self.config,
-                    fuel=fuel or self.fuel)
+                    fuel=fuel or self.fuel, history=history)
         ctx.ok = False
         if carried:
             ctx.note(carried=carried)
         for part in self.parts:
+            # THE MANIPULATION CHECK, AS AN ASSERTION RATHER THAN A CONVENTION. Experimental
+            # psychology calls the failure this catches CONSTRUCT CONFOUNDING: manipulating more
+            # than the intended construct. Seating a component must change that component's fields
+            # and nothing else, or the arm is not a manipulation of that component - it is a
+            # manipulation of whatever else it touched. The lab's flagship result was exactly this
+            # failure and it survived for weeks because nothing ever checked.
+            before = set(ctx.reads)
             part.run(ctx)
+            stray = (set(ctx.reads) - before) - {part.key}
+            if stray:
+                raise RuntimeError(
+                    "%s wrote reads it does not own: %s. Seating a part must change only its own "
+                    "fields, or the arm measures more than the part." % (part.key, sorted(stray)))
             if part.stage == "fire" and not ctx.ok:
                 break
         rec = {"organism": self.label, "version": self.version, "parts": list(self.keys),
@@ -92,6 +104,59 @@ def load_creature(name_or_path):
 def creatures():
     d = os.path.join(ORGANISMS_DIR, "creatures")
     return sorted(f[:-5] for f in os.listdir(d) if f.endswith(".json")) if os.path.isdir(d) else []
+
+
+# THE THREE ASSEMBLY FAMILIES x16 MEASURES. Removed in the modularity audit (bc0b27c) because
+# nothing in the runtime called them - but x16 did, and x17/x19/x20 import x16, so FOUR experiment
+# modules stopped importing at all. Found 2026-07-28 by importing all 86 runtime modules rather than
+# reading them. It matters beyond tidiness: x19's findings are cited as evidence in METHOD.md and in
+# the annex, and a result whose experiment cannot be re-run is a result nobody can check. Restored
+# verbatim from the commit that dropped them.
+
+def ascending(order=None):
+    """v1..vN, each everything before it plus one part. The spine."""
+    keys = list(order or [c["key"] for c in CATALOGUE_DOC["components"]])
+    return [(i + 1, keys[:i + 1]) for i in range(len(keys))]
+
+
+def deprived(order=None):
+    """Seats missing a DECLARED precondition. Nothing is called toxic before it runs: x16 ran
+    call+frame, whose declared precondition is absent, and it scored 0.65 against 0.66 for the seat
+    that satisfies it. A precondition in a catalogue is a hypothesis until an assembly convicts it."""
+    keys = list(order or [c["key"] for c in CATALOGUE_DOC["components"]])
+    out = []
+    for c in CATALOGUE_DOC["components"]:
+        for r in c.get("requires", ()):
+            if r != "call":
+                out.append(("%s without %s" % (c["key"], r),
+                            [k for k in keys if k in ("call", c["key"])]))
+    if not out:
+        # AN EMPTY FAMILY IS A CLAIM AND IT HAS TO BE MADE OUT LOUD.
+        #
+        # Every component in the catalogue today declares `requires: [call]` and nothing else, and
+        # this function filters `call` out by design - so it returns [] for the whole catalogue.
+        # Re-running x16 would report an empty "toxic" family, no error, no warning, and a reader
+        # would take it as "nothing was toxic" rather than "nothing was tested". That is defect 20's
+        # exact shape: a container that silently never ran. Raising costs one line and makes the
+        # difference between a measured zero and an unmeasured one impossible to confuse.
+        raise ValueError(
+            "no deprived seat exists: every component in the catalogue declares only `call` as a "
+            "precondition, so there is no non-trivial precondition to withhold. This family cannot "
+            "be measured against the current catalogue - that is a finding about the catalogue, not "
+            "an empty result to report.")
+    return out
+
+
+def oblique(order=None):
+    """Seats that SKIP a rung beneath them. Whether they WORK is measured, never assumed.
+
+    REQUIRES and DEPENDS are two edges and the census encodes one. Latency requires nothing and
+    depends on everything, so it is not a counterexample to the ordering claim; the frame seats are.
+    """
+    return [("frame without measure", ["call", "goal", "frame"]),
+            ("frame+readout without measure", ["call", "goal", "frame", "readout"]),
+            ("clock alone", ["call", "latency"]),
+            ("procedure without goal", ["call", "frame"])]
 
 
 def __getattr__(name):

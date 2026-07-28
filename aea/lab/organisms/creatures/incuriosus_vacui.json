@@ -1,0 +1,22 @@
+{
+  "schema": "aea.organism/1",
+  "id": "incuriosus_vacui",
+  "name": "Incuriosus vacui",
+  "gloss": "the uninquiring one, of the void",
+  "world": 1,
+  "seat": ["call", "frame"],
+  "wiring_note": "The diagnosis is the bare call with the objective removed: it answers the hole fluently and never mentions it. Its seam is that the obvious part is the wrong one. Seating the GOAL does not open this creature, it deletes it, because filling the hole removes the condition being observed. The METHOD frame is the part that reaches it while the hole stays open: a procedure with no objective takes the goal-absent condition from nothing to two thirds. The art brief still paints it SEALED and that is the stale state; x19 opened it.",
+  "fuel": {
+    "plant": "groq",
+    "model": "llama-3.1-8b-instant",
+    "temperature": 0.2,
+    "law": "IV. Substrate-wide rather than rod-specific: measured on six rods from 751M to 120B across ollama, groq and cerebras in x12, and on four rods across cerebras, nvidia, ollama and groq in x19. No rod at any size or either temperature detected the absent goal."
+  },
+  "receipt": {
+    "claim": "handed a task with the task removed, it answers anyway and never reports the hole, and a method frame opens it without the goal ever being supplied",
+    "measured": "x12 run 20260725T200626Z: with no objective 11 of 158 clean trials asked (6.96%), with a vague one 5 of 146 (3.42%), so 288 of 304 answered without mentioning the hole; accuracy 0.000 in both conditions at every size tier. x19 run 20260726T073721Z, n=20, 4 rods, 2 tasks, 640 calls: bare goal-absent 0 of 127 answered calls correct, and a METHOD frame with still no objective reaches 0.648 on clean trials (57 of 88).",
+    "runs": ["x12", "x19"],
+    "why_it_matters": "This is the shape of the substrate rather than one rod's defect, so every creature above inherits silent guessing at its base. Two instruments, not one: x12's sibling findings on the same run were retracted for a length gate on the extract task (defect 3, len(t.strip()) < 60), and this creature stands because x19 reproduced the ask rate independently at n=20, 7.1% against x12's 7.0% on the same detector."
+  },
+  "state": {"kind": "OPEN", "part": "frame", "provisional": false}
+}

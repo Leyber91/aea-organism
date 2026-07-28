@@ -1,0 +1,514 @@
+"""hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISSION FIRST.
+
+Until now everything this entity has "done" it did by producing words a human then acted on. That is
+A0-A1 on the ABSTRACTION ladder and it is the single largest jump available on any axis, because a
+tool has a side effect OUTSIDE the model that the model cannot fake. Every other measurement here
+grades text against text; a tool call either fetched the page or it did not.
+
+`io/agent_tools.py` has had working tools since Phase 3 - web_fetch, calc, json_get - and the lab has
+never touched them. This file is not a second copy of those. It is the thing that was missing around
+them: PERMISSION, ENFORCED WHERE THE CALL HAPPENS.
+
+THE DIFFERENCE FROM HANDING A MODEL A TOOL LIST. The common pattern - a connector protocol, a tool
+manifest, an allowlist written into a system prompt - puts the boundary inside the model's context,
+which makes it a SUGGESTION. The model decides whether to respect it, and the model is the untrusted
+component. Here the tool list is advertised to the model and then ignored at execution: `invoke()`
+re-checks the seat, the zone, and the trust ledger before a single byte moves, and refuses with a
+reason. A permission the model can talk its way past is a decoration.
+
+THE PART THAT IS NOT OBVIOUS, AND IT IS THE MOST IMPORTANT LINE IN THIS FILE:
+
+    A READ TOOL IS AN OUTBOUND CHANNEL IF THE MODEL WRITES THE ADDRESS.
+
+`web_fetch` looks read-only. It is not. The URL is composed by the model from whatever is in its
+context, so a seat holding a calendar and an inbox can put any of it into a hostname and the fetch
+carries it out. That is why network tools are bound to the PUBLIC zone only, structurally, and why
+the private sections keep their tools local. The exfiltration path is not the response - it is the
+request.
+
+WHAT IS DECLARED AND PERMANENTLY REFUSED. `send_email` and `spend` are in the registry with NO
+implementation at all. They map to `send_outbound` and `spend_money`, both pinned at ceiling 0 in the
+charter, so the gate refuses them and there is nothing behind the gate to run even if it did not.
+They are declared on purpose: the assistant demos going around right now are built almost entirely
+out of exactly these two - send the mail, adjust the ad spend - and a system that simply lacks them
+looks the same as one that refuses them. This one refuses them, out loud, with the reason.
+
+  python -m aea.kernel.hands              the tool board: what may run, as whom, and why
+  python -m aea.kernel.hands --probe      MEASURE which rods can emit a valid tool call
+  python -m aea.kernel.hands --demo       one real tool call end to end
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import sys
+import time
+import urllib.error
+import urllib.request
+
+from aea.kernel import grid, trust
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
+MEASURED = os.path.join(grid.STATE, "tool_rods.json")
+
+# Zones, most restrictive first. A tool declares the WIDEST zone it may be called from.
+ZONES = ("public", "private", "sensitive")
+
+
+class Refused(PermissionError):
+    """The gate said no. It always says WHY - a refusal with no reason is indistinguishable from a
+    bug, and the operator has to be able to tell those apart at four in the morning."""
+
+
+# ---------------------------------------------------------------------------------------------
+# THE IMPLEMENTATIONS. Deliberately small and boring; the interesting code is the gate below.
+# ---------------------------------------------------------------------------------------------
+
+def _web_fetch(url: str = "") -> str:
+    if not str(url).startswith(("http://", "https://")):
+        return "ERROR: url must be http(s)"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "aea-hands/1"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.read().decode("utf-8", "ignore")[:8000]
+    except Exception as e:
+        return "ERROR: %s" % e
+
+
+def _json_get(url: str = "", key: str = "") -> str:
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "aea-hands/1"})
+        d = json.loads(urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "ignore"))
+        for k in str(key).split("."):
+            d = d[int(k)] if isinstance(d, list) else d[k]
+        return str(d)
+    except Exception as e:
+        return "ERROR: %s" % e
+
+
+def _calc(expression: str = "") -> str:
+    """Arithmetic only, by regex, before eval sees it. A calculator that can import is not a
+    calculator."""
+    if not re.fullmatch(r"[\d\s+\-*/().%]+", expression or ""):
+        return "ERROR: arithmetic only"
+    try:
+        return str(eval(expression, {"__builtins__": {}}, {}))
+    except Exception as e:
+        return "ERROR: %s" % e
+
+
+def _read_state(name: str = "") -> str:
+    """Read one of the entity's OWN state files. Local, no network, so it is the one tool a
+    sensitive-zone seat may hold. Filename only - a path separator is refused rather than resolved,
+    because '..' is how every sandbox escape starts."""
+    if not re.fullmatch(r"[a-z0-9_]+\.json", name or ""):
+        return "ERROR: filename must match [a-z0-9_]+.json, no paths"
+    p = os.path.join(grid.STATE, name)
+    if not os.path.exists(p):
+        return "ERROR: no such state file"
+    return json.dumps(grid.load_json(p, {}))[:4000]
+
+
+# ---------------------------------------------------------------------------------------------
+# THE REGISTRY. Every tool declares what it costs in permission, not just what it does.
+#
+#   capability  which charter capability it runs as. None = pure local computation, nothing leaves
+#               this process, so there is nothing for the ledger to grade.
+#   zones       the zones it may be called FROM. Network tools are public-only; see the docstring.
+#   outbound    does it change something outside this machine. Nothing here is True and nothing
+#               here has an implementation that could be.
+# ---------------------------------------------------------------------------------------------
+
+TOOLS = {
+    "calc": dict(
+        capability=None, zones=ZONES, outbound=False, impl=_calc,
+        desc="Evaluate an arithmetic expression exactly, e.g. '92837 * 4471'.",
+        params={"expression": "string"}, required=["expression"],
+        note="local and pure; the one tool with no permission cost"),
+    "web_fetch": dict(
+        capability="gather_public", zones=("public",), outbound=False, impl=_web_fetch,
+        desc="HTTP GET a URL and return the body text. Use for live public data.",
+        params={"url": "full URL including https://"}, required=["url"],
+        note="PUBLIC ONLY: the model writes the address, so the request itself carries data out"),
+    "json_get": dict(
+        capability="gather_public", zones=("public",), outbound=False, impl=_json_get,
+        desc="Fetch a JSON URL and return ONE field, by dotted path like 'owner.login'.",
+        params={"url": "full URL", "key": "dotted path"}, required=["url", "key"],
+        note="PUBLIC ONLY, same reason as web_fetch; prefer it when one field is wanted"),
+    "read_state": dict(
+        capability="reason_private_local", zones=ZONES, outbound=False, impl=_read_state,
+        desc="Read one of the entity's own state files by filename, e.g. 'heartbeat.json'.",
+        params={"name": "filename like heartbeat.json"}, required=["name"],
+        note="local read, no network, so it is safe in every zone"),
+
+    # DECLARED AND PERMANENTLY REFUSED. No implementation exists. See the module docstring.
+    "send_email": dict(
+        capability="send_outbound", zones=(), outbound=True, impl=None,
+        desc="Send an email. NOT AVAILABLE - the charter pins send_outbound at FORBIDDEN.",
+        params={"to": "string", "body": "string"}, required=["to", "body"],
+        note="the reference assistants are built on this; here it is refused and has no code"),
+    "spend": dict(
+        capability="spend_money", zones=(), outbound=True, impl=None,
+        desc="Spend money, e.g. adjust ad budget. NOT AVAILABLE - spend_money is FORBIDDEN.",
+        params={"amount": "number"}, required=["amount"],
+        note="ceiling 0 in the charter; declared so the refusal is visible rather than absent"),
+}
+
+
+def schema(names) -> list:
+    """The OpenAI-compatible tool list handed to a rod. Advertising is not permission: whatever the
+    model does with this, `invoke` checks again."""
+    out = []
+    for n in names:
+        t = TOOLS[n]
+        out.append({"type": "function", "function": {
+            "name": n, "description": t["desc"],
+            "parameters": {"type": "object", "required": t["required"],
+                           "properties": {k: {"type": "string", "description": str(v)}
+                                          for k, v in t["params"].items()}}}})
+    return out
+
+
+def allowed(name: str, zone: str, allow=None) -> dict:
+    """May this tool run, here, now. Four gates and each one can refuse alone.
+
+    Returns {ok, why}. It never raises, so a caller can ask before committing - `invoke` is the one
+    that raises, because by then the decision has been made.
+    """
+    t = TOOLS.get(name)
+    if not t:
+        return {"ok": False, "why": "no such tool %r" % name}
+    if allow is not None and name not in allow:
+        return {"ok": False, "why": "%s is not in this seat's allowlist" % name}
+    if zone not in (t["zones"] or ()):
+        return {"ok": False, "why": "%s may not be called from the %s zone (allowed: %s)"
+                                    % (name, zone, ", ".join(t["zones"]) or "none")}
+    if t["capability"]:
+        c = trust.check(t["capability"])
+        if c["level"] <= 0:
+            return {"ok": False, "why": "%s runs as %s, which is FORBIDDEN in the charter"
+                                        % (name, t["capability"])}
+        # READING IS NOT ACTING, AND CONFLATING THEM REBUILDS THE EIGHTEEN-DAY DEADLOCK.
+        #
+        # This required WATCHED for every tool. Within an hour of writing it, `gather_public` failed
+        # three times on a rod whose hosted quota had quietly run out, demoted to DRAFT, and could
+        # then no longer call a READ-ONLY tool - so it could not produce the clean run that would
+        # promote it back. Stuck at DRAFT forever, with a working alternative rod available and a
+        # correct diagnosis in hand. That is precisely the metastable failure that pinned
+        # `produce_brief` for eighteen days, reproduced in a day-old capability.
+        #
+        # The charter already draws the line and the gate was ignoring it: DRAFT means "may produce;
+        # a human must approve before anything leaves". A read that changes nothing outside this
+        # machine IS producing. So the requirement follows the tool's `outbound` flag, and nothing
+        # outbound gets easier - those are pinned at ceiling 0 and refused above regardless.
+        need = 2 if t["outbound"] else 1
+        if c["level"] < need:
+            return {"ok": False, "why": "%s runs as %s at %s; %s needs %s or better"
+                                        % (name, t["capability"], c["name"],
+                                           "acting outside this machine" if t["outbound"]
+                                           else "this read", "WATCHED" if need == 2 else "DRAFT")}
+    if t["impl"] is None:
+        return {"ok": False, "why": "%s is declared but has no implementation, deliberately" % name}
+    return {"ok": True, "why": "%s permitted in the %s zone" % (name, zone)}
+
+
+def invoke(name: str, args: dict, zone: str = "public", allow=None) -> str:
+    """Run a tool, or refuse. THE ONLY WAY A TOOL EVER RUNS - there is no path around this check,
+    which is the entire point of the module."""
+    v = allowed(name, zone, allow)
+    if not v["ok"]:
+        raise Refused(v["why"])
+    t = TOOLS[name]
+    kw = {k: args.get(k) for k in t["params"]}
+    out = str(t["impl"](**kw))
+
+    # A TOOL CALL IS A STEP, NOT AN OUTCOME, AND IT IS DELIBERATELY NOT GRADED HERE.
+    #
+    # The first version of this function called trust.record on every tool call. Within one dispatch
+    # that promoted `reason_private_local` from WATCHED to TRUSTED because two files opened - and the
+    # very next line of the same run is `FAIL -> WATCHED`, because the seat never produced an answer.
+    # The capability earned autonomy for the file read and lost it for the job.
+    #
+    # That is criterion contamination: an easy proxy standing in for the outcome, which this lab has
+    # already voided its own experiments over. A model that calls read_state fifty times would grade
+    # out TRUSTED without ever answering anything. The ledger is graded ONCE per run, by the caller
+    # that knows whether the JOB succeeded. What happened at tool level stays attributable through
+    # the trace instead - `calls` and `refused` in run() - which is what attribution is for.
+    return out
+
+
+# ---------------------------------------------------------------------------------------------
+# THE LOOP. A rod, a task, an allowlist, a zone.
+# ---------------------------------------------------------------------------------------------
+
+def _chat(plant: str, model: str, messages: list, tools: list, max_tokens: int = 900) -> dict:
+    cap = grid.PLANTS[plant]
+    url = cap["base"].rstrip("/") + "/chat/completions"
+    headers = {"Content-Type": "application/json", "User-Agent": "aea-hands/1"}
+    if cap.get("auth"):
+        headers["Authorization"] = "Bearer " + (grid.key(cap["auth"]) or "")
+    body = {"model": model, "messages": messages, "max_tokens": max_tokens, "temperature": 0.1}
+    if tools:
+        body["tools"] = tools
+        body["tool_choice"] = "auto"
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers, method="POST")
+    with urllib.request.urlopen(req, timeout=90) as r:
+        raw = json.loads(r.read())
+        try:
+            from aea.lab import pace          # the only module that reads a plant's real limits
+            pace.observe(plant, r.headers, model=model)
+        except Exception:
+            pass
+    ch = (raw.get("choices") or [{}])[0]
+    msg = dict(ch.get("message") or {})
+    # Carry WHY the reply ended. Without it an empty answer and a truncated one look identical, and
+    # they need opposite responses - one is a broken rod, the other is a budget that was too small.
+    msg["_finish"] = ch.get("finish_reason")
+    return msg
+
+
+def run(task: str, rod: str, allow=("calc",), zone: str = "public", max_turns: int = 4,
+        verbose: bool = True) -> dict:
+    """One tool-using exchange. Returns the answer plus the LEDGER OF WHAT IT ACTUALLY TOUCHED.
+
+    The trace is not decoration. A tool call is the only thing in this system with an effect outside
+    the process, so what was called, with what arguments, and what was refused, is the record that
+    makes the run auditable after the fact.
+    """
+    plant, model = rod.split("/", 1)
+    tools = schema(allow)
+    msgs = [{"role": "user", "content":
+             "TASK: %s\nUse a tool when it helps. State the final answer plainly when done." % task}]
+    trace, refused = [], []
+    t0 = time.time()
+    for turn in range(max_turns):
+        try:
+            msg = _chat(plant, model, msgs, tools)
+        except Exception as e:
+            return {"ok": False, "rod": rod, "error": str(e)[:200], "calls": trace,
+                    "refused": refused, "seconds": round(time.time() - t0, 1)}
+        tcs = msg.get("tool_calls")
+        if not tcs:
+            answer = (msg.get("content") or "").strip()
+            if answer:
+                return {"ok": True, "rod": rod, "answer": answer, "calls": trace,
+                        "refused": refused, "turns": turn + 1,
+                        "seconds": round(time.time() - t0, 1)}
+
+            # AN EMPTY REPLY IS NOT A SUCCESSFUL RUN, AND IT USED TO BE REPORTED AS ONE.
+            #
+            # This returned ok=True with answer="" - the caller had to notice the emptiness itself,
+            # and the failure reached the trust ledger with no cause attached. Worse, the two ways to
+            # arrive here need OPPOSITE responses, and `finish_reason` is what tells them apart:
+            #
+            #   length + reasoning present  the rod spent its whole budget thinking and never
+            #                               reached the answer. Not a broken rod - a budget too
+            #                               small, which is exactly `unstick`'s `raise_budget` move.
+            #   anything else               the rod genuinely returned nothing.
+            #
+            # Naming it here is what lets the impasse loop act on it instead of retrying blind.
+            think = (msg.get("reasoning") or msg.get("reasoning_content") or "").strip()
+            if msg.get("_finish") == "length" and think:
+                why = ("spent its whole %d-token budget reasoning and never emitted content "
+                       "(finish_reason=length, %d chars of reasoning)" % (900, len(think)))
+            else:
+                why = "returned no content (finish_reason=%s)" % msg.get("_finish")
+            return {"ok": False, "rod": rod, "answer": "", "error": why, "reasoning_chars": len(think),
+                    "calls": trace, "refused": refused, "turns": turn + 1,
+                    "seconds": round(time.time() - t0, 1)}
+        msgs.append(msg)
+        for tc in tcs:
+            name = (tc.get("function") or {}).get("name", "?")
+            try:
+                args = json.loads((tc.get("function") or {}).get("arguments") or "{}")
+            except Exception:
+                args = {}
+            try:
+                out = invoke(name, args, zone=zone, allow=allow)
+                trace.append({"tool": name, "args": args, "out": out[:120]})
+                if verbose:
+                    print("   turn %d  %s(%s) -> %s"
+                          % (turn + 1, name, json.dumps(args)[:60], out[:80].replace("\n", " ")))
+            except Refused as e:
+                out = "REFUSED: %s" % e
+                refused.append({"tool": name, "args": args, "why": str(e)})
+                if verbose:
+                    print("   turn %d  %s REFUSED: %s" % (turn + 1, name, e))
+            msgs.append({"role": "tool", "tool_call_id": tc.get("id", ""),
+                         "content": str(out)[:2000]})
+    return {"ok": False, "rod": rod, "error": "hit max turns", "calls": trace, "refused": refused,
+            "seconds": round(time.time() - t0, 1)}
+
+
+# ---------------------------------------------------------------------------------------------
+# THE MEASUREMENT. Which rods can actually do this.
+# ---------------------------------------------------------------------------------------------
+
+PROBE_EXPR = "92837 * 4471"
+PROBE_TASK = ("Use the calc tool to compute %s exactly, then state the result. "
+              "Do not compute it yourself." % PROBE_EXPR)
+
+# GROUND TRUTH IS COMPUTED, NEVER TYPED. The first version of this file carried the expected product
+# as a literal and the literal was WRONG by six hundred - every rod that answered correctly would
+# have been recorded as a failure, and the fuel table would have said tool-calling was impossible.
+# An answer key written by the same hand that writes the question is not a key, it is another guess.
+PROBE_ANSWER = _calc(PROBE_EXPR)
+
+
+def probe(rod: str) -> dict:
+    """CAN THIS ROD EMIT A VALID TOOL CALL. A separate capability from generating text, and one this
+    project had never measured: 162 rods in the fuel table, five suites, none of them this.
+
+    Three outcomes worth separating, because they need different responses:
+      unsupported  the endpoint rejects the `tools` parameter outright - never try again
+      no_call      it answered in prose instead of calling - a rod problem, not a plant problem
+      called       a syntactically valid call arrived, with the right name and parseable arguments
+
+    Graded on the ARITHMETIC, not on the prose, because the product of two five-figure numbers is a
+    fact the rod cannot negotiate with. A rod that calls the tool and then ignores its answer has
+    failed in a way a prose grader would score as a pass.
+    """
+    plant, model = rod.split("/", 1)
+    t0 = time.time()
+    msgs = [{"role": "user", "content": PROBE_TASK}]
+    try:
+        msg = _chat(plant, model, msgs, schema(["calc"]), max_tokens=400)
+    except urllib.error.HTTPError as e:
+        body = ""
+        try:
+            body = e.read().decode("utf-8", "ignore")[:200]
+        except Exception:
+            pass
+        # A ROD THAT NEVER ANSWERED HAS NOT FAILED THE TEST. 410 means the endpoint is retired and
+        # 429 means we asked too fast; recording either as "cannot call tools" would put a
+        # transport condition into the fuel table as a capability, which is defect 19 all over
+        # again. They get their own labels and `pass` stays false without the claim.
+        kind = {400: "unsupported", 404: "unsupported", 422: "unsupported",
+                410: "retired", 429: "throttled"}.get(e.code, "error")
+        return {"rod": rod, "plant": plant, "result": kind, "pass": False, "http": e.code,
+                "transport": e.code in (410, 429) or e.code >= 500,
+                "detail": body, "seconds": round(time.time() - t0, 1)}
+    except Exception as e:
+        return {"rod": rod, "plant": plant, "result": "error", "pass": False,
+                "detail": str(e)[:160], "seconds": round(time.time() - t0, 1)}
+
+    tcs = msg.get("tool_calls") or []
+    if not tcs:
+        return {"rod": rod, "plant": plant, "result": "no_call", "pass": False,
+                "detail": (msg.get("content") or "")[:160].replace("\n", " "),
+                "seconds": round(time.time() - t0, 1)}
+
+    tc = tcs[0]
+    name = (tc.get("function") or {}).get("name")
+    try:
+        args = json.loads((tc.get("function") or {}).get("arguments") or "{}")
+    except Exception:
+        return {"rod": rod, "plant": plant, "result": "bad_args", "pass": False,
+                "detail": str((tc.get("function") or {}).get("arguments"))[:120],
+                "seconds": round(time.time() - t0, 1)}
+    if name != "calc":
+        return {"rod": rod, "plant": plant, "result": "wrong_tool", "pass": False,
+                "detail": str(name)[:60], "seconds": round(time.time() - t0, 1)}
+
+    got = _calc(args.get("expression", ""))
+    msgs += [msg, {"role": "tool", "tool_call_id": tc.get("id", ""), "content": got}]
+    final = ""
+    try:
+        final = (_chat(plant, model, msgs, schema(["calc"]), max_tokens=400).get("content") or "")
+    except Exception as e:
+        final = "ERR %s" % e
+    used = PROBE_ANSWER in final.replace(",", "").replace(" ", "")
+    return {"rod": rod, "plant": plant, "result": "called", "pass": bool(used),
+            "expression": args.get("expression", "")[:40], "tool_returned": got[:24],
+            "used_result": used, "detail": final[:120].replace("\n", " "),
+            "seconds": round(time.time() - t0, 1)}
+
+
+def rods_that_call(min_level: str = "pass") -> list:
+    """Rods MEASURED to use a tool, best first. Empty until `--probe` has run, and it says so rather
+    than falling back to a guess."""
+    doc = grid.load_json(MEASURED, {"rods": {}})
+    out = [r for r in doc.get("rods", {}).values()
+           if (r.get("pass") if min_level == "pass" else r.get("result") == "called")]
+    out.sort(key=lambda r: r.get("seconds") or 999)
+    return out
+
+
+def board() -> str:
+    doc = grid.load_json(MEASURED, {"rods": {}})
+    L = ["HANDS - the tools, what they cost in permission, and who may call them", "=" * 96,
+         "%-12s %-22s %-26s %s" % ("tool", "runs as", "zones", "state")]
+    for n, t in TOOLS.items():
+        v = allowed(n, "public")
+        state = "permitted" if v["ok"] else v["why"][:44]
+        L.append("%-12s %-22s %-26s %s"
+                 % (n, t["capability"] or "(none, local)", ", ".join(t["zones"]) or "NONE", state))
+    L.append("")
+    rods = doc.get("rods", {})
+    if not rods:
+        L.append("TOOL-CALLING IS UNMEASURED. 162 rods in the fuel table, five suites tested, and "
+                 "none of them this.")
+        L.append("Run: python -m aea.kernel.hands --probe")
+    else:
+        good = [r for r in rods.values() if r.get("pass")]
+        L.append("measured %d rods: %d use a tool correctly" % (len(rods), len(good)))
+        for r in sorted(good, key=lambda r: r.get("seconds") or 999)[:10]:
+            L.append("   %-52s %-10s %5.1fs" % (r["rod"], r["result"], r.get("seconds") or 0))
+    return "\n".join(L)
+
+
+def _probe_many(rods: list) -> dict:
+    doc = grid.load_json(MEASURED, {"schema": "aea.tool_rods/1", "rods": {}})
+    print("PROBING %d rods for tool-calling. Graded on the arithmetic, not the prose.\n" % len(rods))
+    for i, rod in enumerate(rods, 1):
+        r = probe(rod)
+        if r.get("result") == "throttled":       # one retry, then it stays unmeasured, not failed
+            time.sleep(20)
+            r = probe(rod)
+        doc["rods"][rod] = r
+        mark = "PASS" if r["pass"] else r["result"].upper()
+        print("%2d/%d  %-52s %-12s %5.1fs  %s"
+              % (i, len(rods), rod, mark, r.get("seconds") or 0, str(r.get("detail", ""))[:52]))
+        grid.atomic_save_json(MEASURED, doc)
+    return doc
+
+
+if __name__ == "__main__":
+    if "--probe" in sys.argv:
+        fuels = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                             "lab", "organisms", "fuels.json")
+        d = grid.load_json(fuels, {"rods": {}})
+        pool = [v for v in d["rods"].values()
+                if ((v.get("tested") or {}).get("reach") or {}).get("pass")]
+        pool.sort(key=lambda v: -(v["tested"]["reach"].get("tps") or 0))
+        n = 12
+        for a in sys.argv:
+            if a.startswith("--n="):
+                n = int(a.split("=")[1])
+        _probe_many([v["rod"] for v in pool[:n]])
+        print()
+    elif "--demo" in sys.argv:
+        good = rods_that_call()
+        if not good:
+            print("no rod is MEASURED to call a tool yet; run --probe first")
+            sys.exit(1)
+        rod = good[0]["rod"]
+        print("ROD (measured, fastest that passed): %s\n" % rod)
+        print("1. a real fetch, public zone")
+        r = run("How many stargazers does the GitHub repo ollama/ollama have right now? "
+                "Use json_get on https://api.github.com/repos/ollama/ollama with key "
+                "stargazers_count.", rod, allow=("json_get", "calc"), zone="public")
+        print("   ->", (r.get("answer") or r.get("error") or "")[:200], "\n")
+        print("2. the same seat in the SENSITIVE zone, where the network is not permitted")
+        print("   ", allowed("json_get", "sensitive")["why"])
+        print("   ", allowed("read_state", "sensitive")["why"])
+        print("\n3. what every assistant demo is actually built on")
+        print("   ", allowed("send_email", "public")["why"])
+        print("   ", allowed("spend", "public")["why"])
+        print()
+    print(board())

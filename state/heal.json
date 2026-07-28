@@ -1,0 +1,1160 @@
+{
+ "schema": "aea.heal/1",
+ "at": "2026-07-28 11:12 UTC",
+ "seconds": 7.0,
+ "counts": {
+  "disagreeing-constant": 11,
+  "near-duplicate": 4,
+  "god-module": 55,
+  "swallowed-error": 52,
+  "stub": 1
+ },
+ "candidates": [
+  {
+   "kind": "disagreeing-constant",
+   "weight": 36,
+   "what": "'truth' holds 10 different values across 6 files: 11, 13, 1978, 317, 4",
+   "where": [
+    "aea/lab/x13_L1_read_the_output.py:68 = 11",
+    "aea/lab/x13_L1_read_the_output.py:64 = 13",
+    "aea/lab/x15_L2_the_frame.py:54 = 13",
+    "aea/lab/x14_C75_parser_validation.py:56 = 1978",
+    "aea/lab/x14_C75_parser_validation.py:51 = 317",
+    "aea/lab/tests/test_golden.py:23 = 4",
+    "aea/lab/x18_second_battery.py:77 = 460",
+    "aea/lab/x18_second_battery.py:60 = 5",
+    "aea/lab/x18_second_battery.py:68 = 5",
+    "aea/lab/x15_L2_the_frame.py:60 = 7",
+    "aea/lab/x16_the_organisms.py:49 = 7",
+    "aea/lab/x13_L1_read_the_output.py:72 = 8",
+    "aea/lab/x14_C75_parser_validation.py:47 = 812"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 20,
+   "what": "'TEMP' holds 2 different values across 14 files: 0.0, 0.2",
+   "where": [
+    "aea/lab/x07_self_assessment.py:42 = 0.0",
+    "aea/lab/x07b_self_assessment_hard.py:46 = 0.0",
+    "aea/lab/x16_the_organisms.py:38 = 0.2",
+    "aea/lab/x17_the_lattice.py:48 = 0.2"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 18,
+   "what": "'MAXTOK' holds 4 different values across 6 files: 1200, 300, 320, 900",
+   "where": [
+    "aea/lab/x12_L0_goal_presence.py:53 = 1200",
+    "aea/lab/x13_L1_read_the_output.py:55 = 1200",
+    "aea/lab/x09_hearth_failure.py:47 = 300",
+    "aea/lab/x10_coverage_sweep.py:58 = 320",
+    "aea/lab/x14_C75_parser_validation.py:38 = 900"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "near-duplicate",
+   "weight": 17,
+   "what": "7 functions in 3 files share an identical control-flow shape",
+   "where": [
+    "aea/lab/x22_the_capacity_ladder.py:66 truth_at()",
+    "aea/lab/x23_inheritance.py:64 truth_at()",
+    "aea/lab/x23_inheritance.py:84 truth_from_handed()",
+    "aea/lab/x23_inheritance.py:211 _by_hand()",
+    "aea/lab/x23b_inheritance_across_plants.py:53 truth_at()",
+    "aea/lab/x23b_inheritance_across_plants.py:62 t()",
+    "aea/lab/x23b_inheritance_across_plants.py:196 _by_hand()"
+   ],
+   "why": "the same procedure written more than once drifts apart; this repo carried six model selectors ranking on four different keys before anyone counted them"
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 10,
+   "what": "'START' holds 2 different values across 4 files: 48371, 7",
+   "where": [
+    "aea/lab/x22_the_capacity_ladder.py:44 = 48371",
+    "aea/lab/x23_inheritance.py:43 = 48371",
+    "aea/lab/x06_long_chain.py:40 = 7"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 9,
+   "what": "'TIMEOUT' holds 2 different values across 3 files: 40, 45",
+   "where": [
+    "aea/energy/capability_census.py:24 = 40",
+    "aea/energy/extensive_census.py:22 = 45",
+    "aea/energy/model_fitness.py:42 = 45"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 9,
+   "what": "'LENGTH' holds 2 different values across 3 files: 30, 50",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py:59 = 30",
+    "aea/lab/x08_fuel_crossing.py:47 = 50",
+    "aea/lab/x11_the_council.py:55 = 50"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "god-module",
+   "weight": 9,
+   "what": "aea/lab/harness.py is 983 lines",
+   "where": [
+    "aea/lab/harness.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 8,
+   "what": "'CEILING' holds 2 different values across 2 files: 0.99, 3",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py:378 = 0.99",
+    "aea/kernel/crystal.py:57 = 3"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 8,
+   "what": "'MAX_TOKENS' holds 2 different values across 2 files: 1000, 700",
+   "where": [
+    "aea/lab/x24_the_store_and_the_door.py:91 = 1000",
+    "aea/lab/calibrate.py:80 = 700"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 8,
+   "what": "'HANDOFF_AT' holds 2 different values across 2 files: 15, 25",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py:60 = 15",
+    "aea/lab/x08_fuel_crossing.py:48 = 25"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 8,
+   "what": "'SEED' holds 2 different values across 2 files: 1729, 24",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py:63 = 1729",
+    "aea/lab/x24_the_store_and_the_door.py:92 = 24"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "disagreeing-constant",
+   "weight": 8,
+   "what": "'KEEP_TURNS' holds 2 different values across 2 files: 12, 14",
+   "where": [
+    "aea/organs/converse.py:83 = 12",
+    "aea/organs/talk.py:38 = 14"
+   ],
+   "why": "one name, more than one value - whichever file you happen to read decides what you believe. This is what four disagreeing rate limits looked like."
+  },
+  {
+   "kind": "god-module",
+   "weight": 7,
+   "what": "aea/server/controlroom.py is 719 lines",
+   "where": [
+    "aea/server/controlroom.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "near-duplicate",
+   "weight": 6,
+   "what": "2 functions in 2 files share an identical control-flow shape",
+   "where": [
+    "aea/io/agent_tools.py:20 calc()",
+    "aea/kernel/hands.py:94 _calc()"
+   ],
+   "why": "the same procedure written more than once drifts apart; this repo carried six model selectors ranking on four different keys before anyone counted them"
+  },
+  {
+   "kind": "near-duplicate",
+   "weight": 6,
+   "what": "2 functions in 2 files share an identical control-flow shape",
+   "where": [
+    "aea/io/agent_tools.py:28 json_get()",
+    "aea/kernel/hands.py:83 _json_get()"
+   ],
+   "why": "the same procedure written more than once drifts apart; this repo carried six model selectors ranking on four different keys before anyone counted them"
+  },
+  {
+   "kind": "near-duplicate",
+   "weight": 6,
+   "what": "2 functions in 2 files share an identical control-flow shape",
+   "where": [
+    "aea/lab/x17_the_lattice.py:69 cell()",
+    "aea/lab/x18_second_battery.py:93 cell()"
+   ],
+   "why": "the same procedure written more than once drifts apart; this repo carried six model selectors ranking on four different keys before anyone counted them"
+  },
+  {
+   "kind": "god-module",
+   "weight": 6,
+   "what": "aea/bench/bench_core.py is 693 lines",
+   "where": [
+    "aea/bench/bench_core.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "god-module",
+   "weight": 6,
+   "what": "aea/kernel/grid.py is 657 lines",
+   "where": [
+    "aea/kernel/grid.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "god-module",
+   "weight": 6,
+   "what": "aea/lab/x08b_interpretable_state.py is 630 lines",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "god-module",
+   "weight": 6,
+   "what": "run() is 193 lines",
+   "where": [
+    "aea/lab/x11_the_council.py:275"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 6,
+   "what": "do_GET() is 188 lines",
+   "where": [
+    "aea/server/controlroom.py:309"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 5,
+   "what": "aea/kernel/hands.py is 514 lines",
+   "where": [
+    "aea/kernel/hands.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "god-module",
+   "weight": 5,
+   "what": "render() is 161 lines",
+   "where": [
+    "aea/lab/report.py:212"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 5,
+   "what": "aea/lab/x24_the_store_and_the_door.py is 541 lines",
+   "where": [
+    "aea/lab/x24_the_store_and_the_door.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "god-module",
+   "weight": 5,
+   "what": "aea/organs/converse.py is 531 lines",
+   "where": [
+    "aea/organs/converse.py"
+   ],
+   "why": "every defect found in this repo's largest file was a defect of nobody being able to hold the whole file in their head at once"
+  },
+  {
+   "kind": "god-module",
+   "weight": 5,
+   "what": "main() is 163 lines",
+   "where": [
+    "aea/organs/converse.py:365"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 4,
+   "what": "run() is 135 lines",
+   "where": [
+    "aea/lab/x07b_self_assessment_hard.py:152"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 4,
+   "what": "run() is 130 lines",
+   "where": [
+    "aea/lab/x09_hearth_failure.py:157"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 4,
+   "what": "run() is 121 lines",
+   "where": [
+    "aea/lab/x19_the_unmeasured_pair.py:142"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/energy/capability_census.py:21"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/energy/capacity.py:25"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/energy/energy.py:27"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/energy/extensive_census.py:19"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/energy/gauntlet.py:18"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/energy/gauntlet.py:97"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/energy/model_fitness.py:24"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/io/agent_tools.py:9"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/io/listen.py:19"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/io/notify.py:26"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/io/speak.py:127"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/io/speak.py:207"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/grid.py:201"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/grid.py:167"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/hands.py:54"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/hands.py:265"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/hands.py:385"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/pulse.py:29"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/pulse.py:44"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/trust.py:132"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/lab/harness.py:337"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/lab/pace.py:100"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/loop/aea.py:17"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/loop/live.py:58"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/loop/live.py:143"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/memory/index_codex.py:19"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/mind/hades.py:16"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/mind/orchestrator.py:20"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/mind/pathfinder.py:20"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/mind/relay.py:11"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/mind/swarm.py:17"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/mind/swarm.py:48"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/autonomy.py:38"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/autonomy.py:43"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/autonomy.py:25"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/brief.py:19"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/converse.py:31"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/reflect.py:40"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/reflect.py:58"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/talk.py:32"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/talk.py:100"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/telegram_bridge.py:72"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/server/controlroom.py:61"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/server/controlroom.py:81"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/server/controlroom.py:616"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/server/controlroom.py:339"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 3,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/server/controlroom.py:351"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "god-module",
+   "weight": 3,
+   "what": "call_openai() is 90 lines",
+   "where": [
+    "aea/kernel/grid.py:520"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 3,
+   "what": "call_live() is 110 lines",
+   "where": [
+    "aea/lab/harness.py:284"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 3,
+   "what": "run() is 97 lines",
+   "where": [
+    "aea/lab/x15_L2_the_frame.py:169"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 3,
+   "what": "run() is 107 lines",
+   "where": [
+    "aea/lab/x20_the_critic.py:123"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 3,
+   "what": "reflect_once() is 100 lines",
+   "where": [
+    "aea/organs/reflect.py:90"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 3,
+   "what": "check() is 115 lines",
+   "where": [
+    "aea/tooling/journey_check.py:112"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 3,
+   "what": "html() is 111 lines",
+   "where": [
+    "aea/tooling/xray_view.py:193"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "stub",
+   "weight": 2,
+   "what": "log_message() has an empty body",
+   "where": [
+    "aea/server/controlroom.py:693"
+   ],
+   "why": "a stub that is called returns nothing and reports no error"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "validate_spec() is 88 lines",
+   "where": [
+    "aea/bench/bench_core.py:149"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "_execute() is 76 lines",
+   "where": [
+    "aea/bench/bench_core.py:491"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 71 lines",
+   "where": [
+    "aea/kernel/hands.py:275"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "probe() is 67 lines",
+   "where": [
+    "aea/kernel/hands.py:363"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "dispatch() is 74 lines",
+   "where": [
+    "aea/kernel/seats.py:141"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 83 lines",
+   "where": [
+    "aea/lab/chain.py:63"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "probe_one() is 73 lines",
+   "where": [
+    "aea/lab/fuels.py:93"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "_trial() is 88 lines",
+   "where": [
+    "aea/lab/harness.py:482"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 86 lines",
+   "where": [
+    "aea/lab/harness.py:645"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "inspect() is 63 lines",
+   "where": [
+    "aea/lab/overseer.py:70"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "build() is 61 lines",
+   "where": [
+    "aea/lab/site.py:135"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 80 lines",
+   "where": [
+    "aea/lab/x06b_crossover.py:194"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 63 lines",
+   "where": [
+    "aea/lab/x07_self_assessment.py:136"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 66 lines",
+   "where": [
+    "aea/lab/x08_fuel_crossing.py:127"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "_walk() is 63 lines",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py:264"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "verdict_from() is 81 lines",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py:381"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 79 lines",
+   "where": [
+    "aea/lab/x08b_interpretable_state.py:538"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "analyse() is 71 lines",
+   "where": [
+    "aea/lab/x10_coverage_sweep.py:211"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 67 lines",
+   "where": [
+    "aea/lab/x12_L0_goal_presence.py:147"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 67 lines",
+   "where": [
+    "aea/lab/x13_L1_read_the_output.py:167"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 65 lines",
+   "where": [
+    "aea/lab/x17_the_lattice.py:96"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 61 lines",
+   "where": [
+    "aea/lab/x18_second_battery.py:124"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 82 lines",
+   "where": [
+    "aea/lab/x21_the_carry_battery.py:114"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 77 lines",
+   "where": [
+    "aea/lab/x22_the_capacity_ladder.py:117"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 74 lines",
+   "where": [
+    "aea/lab/x23b_inheritance_across_plants.py:119"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "cell() is 78 lines",
+   "where": [
+    "aea/lab/x24_the_store_and_the_door.py:292"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "run() is 61 lines",
+   "where": [
+    "aea/lab/x24_the_store_and_the_door.py:372"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "report() is 77 lines",
+   "where": [
+    "aea/lab/x24_the_store_and_the_door.py:439"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "score() is 73 lines",
+   "where": [
+    "aea/organs/autonomy.py:32"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "main() is 85 lines",
+   "where": [
+    "aea/organs/brief.py:119"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "capture() is 72 lines",
+   "where": [
+    "aea/organs/converse.py:211"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "main() is 67 lines",
+   "where": [
+    "aea/organs/talk.py:114"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "god-module",
+   "weight": 2,
+   "what": "disagreeing_constants() is 65 lines",
+   "where": [
+    "aea/tooling/heal.py:140"
+   ],
+   "why": "a function longer than a screen hides its own branches"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 1,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/kernel/pulse.py:60"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 1,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/lab/pace.py:146"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 1,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/loop/live.py:155"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 1,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/organs/autonomy.py:27"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  },
+  {
+   "kind": "swallowed-error",
+   "weight": 1,
+   "what": "an exception handler whose whole body is `pass`",
+   "where": [
+    "aea/server/controlroom.py:361"
+   ],
+   "why": "a failure that leaves no trace is indistinguishable from success, which is the one thing an unattended system may never allow"
+  }
+ ]
+}

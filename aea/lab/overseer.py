@@ -37,6 +37,7 @@ Run: python -m aea.lab.overseer          (self-test against the eight real failu
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -172,7 +173,17 @@ class Ledger:
         self.experiment = experiment
         d = os.path.join(grid.STATE, "lab", "runs", experiment)
         os.makedirs(d, exist_ok=True)
+        did = Ledger.design_id(meta)
         prior = Ledger.resume(experiment) if resume else None
+        # A RESUME MUST NOT CROSS A DESIGN. Resume matched on the experiment NAME alone, so editing an
+        # experiment and re-running it silently adopted cells measured under the OLD design and skipped
+        # re-measuring them. Caught live on x24: the file was rewritten from 8 samples of one chain to
+        # 8 distinct chains, and the first cell of the new run was a cell from the old one. The name is
+        # not the identity. The declared design is.
+        if prior is not None and prior.get("design_id") != did:
+            print("  NOT RESUMING %s: the design changed (%s -> %s). Starting a new run; the old "
+                  "one keeps its rows." % (prior.get("run_id"), prior.get("design_id"), did))
+            prior = None
         if prior:
             self.run_id = prior["run_id"]
             self.path = os.path.join(d, "%s.json" % self.run_id)
@@ -182,10 +193,18 @@ class Ledger:
         self.run_id = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
         self.path = os.path.join(d, "%s.json" % self.run_id)
         self.doc = {"id": experiment, "run_id": self.run_id, "status": "running",
+                    "design_id": did,
                     "at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
                     "rows": [], "overseer": {"flagged": 0, "by_flag": {}}, **(meta or {})}
         self.resumed = False
         self._flush()
+
+    @staticmethod
+    def design_id(meta: dict | None) -> str:
+        """The fingerprint of the declared design. Two runs with different ids are not the same
+        experiment and their rows must never mix, however similar the name."""
+        return hashlib.sha1(
+            json.dumps(meta or {}, sort_keys=True, default=str).encode()).hexdigest()[:12]
 
     def has(self, **key) -> bool:
         """Is a row with these field values already on disk? The skip test for a resumed run."""

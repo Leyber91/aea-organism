@@ -1,0 +1,128 @@
+/* THE PROBE - lab evidence.
+   Honours the locked two-ink visual law: void field, structure grey, amber for the FIRED state
+   only - sparse, bright, earned. IBM Plex Mono where present, tabular-nums so numbers never jitter.
+   Single-theme by deliberate commitment, not omission: the void field IS the project's spec. */
+
+:root{
+  --void:#08090a; --panel:#0e1012; --panel-hi:#131619;
+  --rule:#1c1f23; --rule-hi:#2a2f35;
+  --ink:#d8dade; --dim:#8a8f96; --faint:#5c6169;
+  --amber:#ffb000; --amber-dim:#d4a24c; --glow:rgba(255,176,0,.10);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --gap:14px;
+}
+*{box-sizing:border-box}
+html{scrollbar-color:var(--rule-hi) var(--void)}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--mono);font-size:13px;
+  line-height:1.55;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1220px;margin:0 auto;padding:0 20px}
+code{font-family:var(--mono);color:var(--amber-dim);font-size:.94em}
+.dim{color:var(--faint)}
+.fired{color:var(--amber)}
+
+/* ---- header ------------------------------------------------------------------------------- */
+header.top{border-bottom:1px solid var(--rule);padding:36px 0 0;margin-bottom:26px}
+h1{font-family:var(--sans);font-size:25px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px}
+.sub{color:var(--dim);font-size:12px;margin:0 0 18px}
+.meta{display:flex;flex-wrap:wrap;gap:5px 22px;padding:12px 0 14px;color:var(--faint);font-size:11px;
+  border-top:1px solid var(--rule)}
+.meta b{color:var(--dim);font-weight:400}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  background:none;border:1px solid transparent;border-bottom:0;color:var(--faint);
+  padding:9px 15px;cursor:pointer;border-radius:2px 2px 0 0}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected=true]{color:var(--amber);border-color:var(--rule-hi);
+  background:var(--panel);box-shadow:inset 0 2px 0 var(--amber)}
+.tabs button:focus-visible{outline:1px solid var(--amber);outline-offset:1px}
+
+/* ---- sections ----------------------------------------------------------------------------- */
+h2{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--amber-dim);margin:44px 0 4px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+h2:first-child{margin-top:0}
+h3{font-family:var(--sans);font-size:13px;font-weight:600;margin:22px 0 6px;color:var(--ink)}
+p.lede{font-family:var(--sans);color:var(--dim);font-size:13.5px;line-height:1.65;max-width:68ch;
+  margin:14px 0 20px}
+p.lede strong{color:var(--ink);font-weight:600}
+.loading{color:var(--faint);padding:40px 0}
+
+/* ---- experiment cards --------------------------------------------------------------------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:var(--gap)}
+.card{border:1px solid var(--rule);border-radius:2px;background:var(--panel);padding:14px 15px;
+  display:flex;flex-direction:column;gap:9px}
+.card.gap{border-style:dashed;border-color:var(--rule-hi);background:transparent}
+.card h4{margin:0;font-family:var(--mono);font-size:12.5px;font-weight:400;color:var(--ink);
+  word-break:break-word}
+.card .row{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--faint)}
+.card .row b{color:var(--dim);font-weight:400}
+.card .why{font-family:var(--sans);font-size:11.5px;color:var(--faint);line-height:1.5;margin:0}
+.card a.open{font-size:11px;color:var(--amber);text-decoration:none;border-bottom:1px solid
+  rgba(255,176,0,.3);align-self:flex-start;cursor:pointer}
+.card a.open:hover{border-bottom-color:var(--amber)}
+
+/* ---- tags --------------------------------------------------------------------------------- */
+.tag{display:inline-block;padding:1px 7px;border-radius:2px;font-size:10px;letter-spacing:.06em;
+  border:1px solid var(--rule-hi);color:var(--faint);white-space:nowrap}
+.tag.on{border-color:rgba(255,176,0,.42);color:var(--amber);background:var(--glow)}
+.tag.warn{border-color:rgba(212,162,76,.35);color:var(--amber-dim)}
+.tag.off{border-color:var(--rule-hi);color:var(--faint)}
+
+/* ---- tables ------------------------------------------------------------------------------- */
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:2px;background:var(--panel);
+  margin:6px 0 4px}
+table{border-collapse:collapse;width:100%;font-size:12px;min-width:600px}
+th{text-align:left;font-weight:400;color:var(--faint);font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--rule-hi);
+  white-space:nowrap;position:sticky;top:0;background:var(--panel);z-index:1}
+td{padding:8px 12px;border-bottom:1px solid var(--rule);white-space:nowrap;color:var(--dim)}
+tr:last-child td{border-bottom:0}
+td.k{color:var(--ink)}
+.num{text-align:right}
+.bar{display:inline-block;height:3px;background:var(--rule-hi);width:64px;vertical-align:middle;
+  margin-left:8px;position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--amber);display:block}
+
+/* ---- replies ------------------------------------------------------------------------------ */
+details.rep{border:1px solid var(--rule);border-radius:2px;background:var(--panel);margin-bottom:4px}
+details.rep[open]{border-color:var(--rule-hi)}
+summary{cursor:pointer;padding:9px 12px;display:grid;
+  grid-template-columns:auto auto 1fr auto;gap:14px;align-items:center;list-style:none;font-size:11.5px}
+summary::-webkit-details-marker{display:none}
+summary:hover{background:var(--panel-hi)}
+summary:focus-visible{outline:1px solid var(--amber);outline-offset:-1px}
+.sid{color:var(--faint);min-width:150px}
+.spre{color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;
+  opacity:.75}
+.body{padding:2px 12px 13px;border-top:1px solid var(--rule)}
+pre.reply{white-space:pre-wrap;word-break:break-word;background:var(--void);
+  border:1px solid var(--rule);border-radius:2px;padding:11px 13px;margin:12px 0 0;color:var(--ink);
+  font-size:11.5px;line-height:1.6;max-height:330px;overflow:auto}
+.readers{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:2px;margin-top:12px}
+.rd{background:var(--panel);padding:8px 11px}
+.rd .lab{color:var(--faint);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+.rd .val{font-size:14px;margin-top:2px;color:var(--dim)}
+.note{font-family:var(--sans);color:var(--faint);font-size:11.5px;margin-top:11px;max-width:74ch}
+
+/* ---- pipeline. Numbered because it IS an ordered sequence; the number carries information. -- */
+ol.pipe{list-style:none;counter-reset:s;padding:0;margin:20px 0 0}
+ol.pipe li{counter-increment:s;position:relative;padding:0 0 19px 44px;border-left:1px solid var(--rule);
+  margin-left:13px}
+ol.pipe li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.pipe li::before{content:counter(s,decimal-leading-zero);position:absolute;left:-13px;top:-2px;
+  width:26px;height:26px;border:1px solid var(--rule-hi);border-radius:50%;background:var(--void);
+  color:var(--faint);font-size:10px;display:grid;place-items:center}
+ol.pipe li.gate::before{border-color:rgba(255,176,0,.45);color:var(--amber);background:var(--glow)}
+ol.pipe p{margin:0;color:var(--dim);font-size:12px;max-width:74ch;font-family:var(--sans)}
+
+footer{margin-top:60px;padding:18px 20px 70px;border-top:1px solid var(--rule);color:var(--faint);
+  font-size:11px;font-family:var(--sans)}
+footer p{max-width:76ch;margin:0 0 6px}
+
+@media (max-width:660px){
+  summary{grid-template-columns:1fr auto;gap:6px}
+  .spre{display:none}
+  .wrap{padding:0 13px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

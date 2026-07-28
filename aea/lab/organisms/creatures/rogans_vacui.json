@@ -1,0 +1,23 @@
+{
+  "schema": "aea.organism/1",
+  "id": "rogans_vacui",
+  "name": "Rogans vacui",
+  "gloss": "the one asking, of the void",
+  "world": 1,
+  "seat": ["call"],
+  "wiring_note": "The seat is empty on purpose. Nothing is seated at shape, so the objective is absent and the hole is open, and the creature only exists while it stays open. The seam is at the shape stage: seat goal or frame and the behaviour is not improved, it is deleted, because the thing being noticed is gone. Read-stage parts cannot reach it at all, since they act after the reply exists and cannot change a word of it.",
+  "fuel": {
+    "plant": "cerebras",
+    "model": "gpt-oss-120b",
+    "temperature": 0.2,
+    "law": "IV. It is a fuel phenotype with a total split, not a gradient. On the bare condition: gpt-oss-120b 5 of 25, nemotron-3-ultra-550b-a55b 4 of 26, granite4.1:3b 0 of 40, llama-3.1-8b-instant 0 of 36. Two plants ask and two never ask in 76 calls."
+  },
+  "receipt": {
+    "claim": "handed a task with the task removed, it asks what you wanted instead of filling the hole",
+    "measured": "x19 run 20260726T073721Z, 640 calls, n=20 per cell, two tasks: 9 of 127 RETURNED bare trials asked, 7.1%. The denominator is trials that came back, not flag-free ones: only 13 of the 127 are clean, so every rate here is over the returned population and the flag question is handled in the caveat. THE GOAL takes asking to 0 of 135. THE FRAME takes it to 0 of 132. Both together 0 of 130. Plant spread on the bare condition 0.20, twice the band. The same detector on x12 gave 16 of 304 unstated-goal trials.",
+    "runs": ["x12", "x19"],
+    "caveat": "PROVISIONAL at 3.9%. Four of the nine asks carry the reasoning_leak flag and are deliberation rather than a question, so the strict count is 5 of 127. The remaining five carry echoes_prompt only, which is that behaviour's signature rather than its debris. Open until an ask detector runs that excludes leaked reasoning. Two earlier readings of this same run are void and neither number should be quoted: defect 5 scored the last 320 characters of each reply, where asking appears at the start, and saw 1 ask in 511; defect 7 pooled the conditions where asking is impossible by construction and compared top to second, reporting the plant spread as 0.01 where it is 0.20. The stored verdict inside the run record still carries the defect 7 line, 'ASKING IS EVENLY DISTRIBUTED', and it is superseded.",
+    "why_it_matters": "It is the only creature in World 1 that notices a hole rather than filling it, and the only one destroyed by the parts that help everything else. The only way to keep it is to leave the hole open, so it punishes the completionist. Law IV read at the plant level: where you find it tells you what you are standing on."
+  },
+  "state": {"kind": "ADVERSE", "part": "goal+frame", "provisional": true}
+}

@@ -1359,3 +1359,394 @@ cannot be caught by reading. Read `design/W2_HANDOFF.md` first.
 
 Also open: `Rogans vacui` is provisional at 3.9% until an ask detector runs that excludes leaked
 reasoning; Chapter I and II need the `Speciosus` correction folded into their closing arguments.
+
+---
+
+## 2026-07-28 — HANDS AND SEATS: THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF
+
+**DID**
+
+- **`aea/kernel/hands.py`** — the tool layer, with permission enforced where the call happens. Four
+  gates on `invoke()`: seat allowlist, zone, charter capability, implementation exists. Verified live:
+  a rod was advertised `json_get`, told to use it, and **refused twice in the sensitive zone with zero
+  bytes moved**. The tool list handed to the model is advertising; `invoke` decides.
+- **`aea/kernel/seats.py`** — custom subagents. A seat is `capability + zone + MEASURED rod`; drop one
+  and it is a persona. `seat()` refuses to construct rather than fail at dispatch. `dispatch()` is the
+  first thing in the repo that calls `trust.check` **before** the work rather than recording after it.
+- **TOOL-CALLING IS NOW MEASURED** — the sixth suite, and the first that grades a side effect instead
+  of text. 28 rods probed: **8 of 16 hosted, 9 of 12 local**. Ground truth computed, never typed.
+- **Two seats live.** `scout` (public, `gather_public`) returned llama.cpp's real open-issue count
+  through the gate. `keeper` (sensitive, `reason_private_local`, local rod, no network) read the trust
+  ledger and answered correctly about `produce_brief`.
+- **`courier` deliberately attempted and REFUSED** — `send_email` under `send_outbound`, ceiling 0.
+  The refusal is the artifact.
+- **`trust.reset_streak()`** — Law IV enforced rather than quoted: a rod change under a capability
+  clears the promotion streak and holds the level.
+- All 31 frozen golden behaviours still hold.
+
+**THREE DEFECTS FOUND IN MY OWN WORK WITHIN THE HOUR, ALL FIXED**
+
+1. **The answer key was wrong.** The tool-call probe carried the expected product as a literal, wrong
+   by six hundred. Every rod that answered *correctly* would have been scored a failure and the fuel
+   table would have said tool-calling was impossible. Ground truth is now computed by the same
+   deterministic function the tool uses. *An answer key written by the hand that wrote the question is
+   not a key.*
+2. **The privacy boundary tested a proxy.** Zones permitted plant `ollama` for private work because
+   ollama is the local daemon. Ollama now proxies **hosted** models through that daemon, marked only by
+   a name suffix — and `gpt-oss:120b-cloud` was the fastest passing rod, so the selector seated a 120b
+   **cloud** model on the zone that reads this machine's private state. `unstick.is_local()` now tests
+   the rod, fails closed. *Same shape as the invariant that tested for the word "zone".*
+3. **The ledger was graded by the wrong event.** `hands.invoke` recorded trust on every tool call.
+   Within one dispatch that **promoted `reason_private_local` to TRUSTED because two files opened** —
+   and the next line of the same run is `FAIL -> WATCHED`, because the seat never produced an answer.
+   Criterion contamination, live in the ledger. A tool call is a step, not an outcome; the ledger is
+   now graded once per run, by the caller that knows whether the job succeeded. The contaminated
+   history lines were **left in place** — editing the accountability trail would be worse than the bug.
+
+**LOCKED**
+
+- **A read tool is an outbound channel if the model writes the address.** `web_fetch` looks read-only;
+  the URL is composed from context, so the request carries the data out. Network tools are
+  PUBLIC-ONLY, structurally, not by policy.
+- **A permission the model can talk past is a decoration.** The allowlist is re-checked at the call
+  site, never only in the prompt.
+- **A seat refuses to exist rather than degrade.** Unmeasured rod, wrong zone, ungradeable capability
+  — all raise at construction.
+
+**NEXT**
+
+**THE DISCRIMINATOR.** One authority on what may be called, how often, and which rod fits this task.
+It is not missing — it is **triplicated and unused**: `lab/pace.py` (live `x-ratelimit-*` headers, day
+budget, feasibility), `grid.Meter.can_spend` (orchestrator/swarm), `energy/capacity.py`. `seats.pick_rod`
+consults none of them; it sorts by measured latency and stops, which is how the fastest rod in the
+table — which cannot call a tool at all, it emits a JSON blob as prose — would have been seated.
+
+The data for a real one now exists: fleet grades `reach/format/arith/carry/code`, hands grades `tools`,
+unstick owns the zone, pace owns the budget. A task states what it needs; the discriminator intersects
+and returns a rod **or refuses**.
+
+Still open from before: wire `unstick.propose` into the wake (Tier 0 step 3 proposes, nothing applies);
+open alarms into the brief header; the liveness canary; `propose_ceiling`.
+
+### SAME SESSION, LATER — THE DISCRIMINATOR, AND THE LOOP CLOSING ON A REAL FAILURE
+
+**THE AUDIT.** Counted every system touching model budgets or selection: **21 systems, 6 independent
+selectors** (`grid.Router.pick`, `orchestrator.pick`, `energy.ladder/draw`, `swarm.pick_varied`,
+`seats.pick_rod`, `converse.RODS`), none calling another, ranking on **four different keys** —
+cheapest-plant-first, lowest-latency, highest-score, and random-among-the-top-eight. Whichever file
+you call decides the answer.
+
+**Four live numeric conflicts**, worst first:
+- **cerebras `rpd` declared UNLIMITED; the plant's own header says 2400/day.** The meter therefore
+  guards nothing on that wall. Also 150/hour, unguarded.
+- **groq `rpd=1000` plant-wide; `llama-3.1-8b-instant` publishes 14400/day.** And `rpd` is bucketed
+  per PLANT while `rpm` is bucketed per `(plant, model)` — two granularities inside one `can_spend`.
+- **nvidia in-flight enforced as 20 by the meter and 8 by the lab's own semaphore**, against ~25
+  measured. The lab path never calls `can_spend` at all, so `grid_state.json` does not reflect lab runs.
+- cerebras rpm 5 in `grid.py` vs 30 in `state/energy.json` (a file with **no writer in the repo**).
+
+**BUILT**
+
+- **`aea/lab/pace.py` now PERSISTS** to `state/pace_observed.json`. It is the only module that reads a
+  plant's real limits from the plant, and it discarded every one at process exit. Merge-on-write under
+  a file lock, plus an `atexit` flush — without the flush the 5s throttle silently ate every
+  observation after the first, and the conflict report said UNOBSERVED while `pace.render()` had just
+  printed the live number.
+- **`aea/kernel/fit.py` — THE DISCRIMINATOR.** A `Need` states zone, suites, tools, exclusions; `fit()`
+  returns survivors, `why_not()` returns every reject **with the gate it died at**, and nothing
+  matching **raises** instead of returning a near-miss. `conflicts()` compares declared constants
+  against observed headers and **reports, never overwrites** — it caught both groq and cerebras by
+  running, not by reading 21 files.
+- **`seats.pick_rod` now holds NO selection logic** — it delegates. It was the sixth selector; adding a
+  seventh would have made the audit's finding worse.
+
+**THE LOOP CLOSED ON A FAILURE NOBODY STAGED.** `gpt-oss:120b-cloud` passed the tool probe, then began
+returning `finish_reason=stop` with empty content forty minutes later — a hosted quota exhausting as a
+200 rather than a 429. What followed ran on its own: ledger demoted TRUSTED -> WATCHED -> DRAFT, **the
+alarm fired at 3**, `impasse.read` returned STUCK with one repeated cause, `unstick.moves_for` proposed
+`swap_rod` with measured justification, `fit.choose(exclude=...)` picked a working alternative, Law IV
+reset the streak on the rod change, and the seat recovered with a real answer from a real API.
+
+**FOUR MORE DEFECTS, ALL IN CODE WRITTEN THIS SESSION**
+
+1. **`hands.run` reported an empty reply as `ok: True`.** An empty answer is not a successful run, and
+   the cause reached the ledger with nothing attached. It now separates *budget spent reasoning*
+   (`finish_reason=length` with reasoning present — which is `unstick`'s own `raise_budget` move) from
+   *returned nothing*. Default budget raised 500 -> 900 for the same reason.
+2. **`dispatch` recorded the culprit and not the cause.** The note said `seat:X rod:Y` and stopped, so
+   three identical failures had no reason attached: the diagnosis worked and the treatment could not,
+   because a move is chosen by reading the SHAPE of the failure. This is Explicit Loss Notification —
+   the layer that observes the loss must say what kind it was.
+3. **A measurement can go stale and every gate reads a measurement.** `fit` kept selecting the broken
+   rod because the probe said it passed. `Need.exclude` is where the live knowledge — held by the
+   ledger and the impasse loop — re-enters selection.
+4. **THE EIGHTEEN-DAY DEADLOCK, REBUILT AND CAUGHT THE SAME HOUR.** The tool gate required WATCHED for
+   *every* tool. So a capability that failed three times demoted to DRAFT and could then no longer make
+   a **read-only** call — meaning it could never produce the clean run that would promote it back.
+   Pinned forever, with a working rod available and a correct diagnosis in hand. The charter already
+   drew the line and the gate ignored it: **DRAFT means "may produce"**, and a read that changes nothing
+   outside this machine is producing. The requirement now follows the tool's `outbound` flag. Nothing
+   outbound got easier — `send_email` and `spend` are refused at every level, with no implementation.
+
+**LOCKED**
+
+- **Reading is not acting.** Gate a read at DRAFT, an outbound act at WATCHED. Conflating them
+  manufactures a deadlock that looks exactly like a permission working correctly.
+- **A selector must be able to refuse**, and must name the gate each reject died at.
+- **Declared limits and observed limits are reported side by side, never merged.** A header is one
+  moment; a constant carries a dated provenance note. Resolving them is a human decision.
+
+**NEXT**
+
+**Wire `unstick.propose` into the wake.** Every piece now exists and was demonstrated end to end — but
+the swap was executed by hand in a script, not by the loop. That is the last gap in Tier 0.
+
+Then: migrate the remaining five selectors onto `fit` (they still disagree); resolve the four limit
+conflicts by hand now that they are detected automatically; re-probe tool-calling on a schedule, since
+this session proved a rod's capability measurement expires.
+
+### SAME SESSION — FUEL CAPACITY IS NOT A NUMBER
+
+Luis: *"groq have min quotas on tokens for different models at different paces, nvidia you have
+requests per min with no apparent limit more than the context window of the model — each has a
+different fuel capacity."* Correct, and the consequence is that **the schema was wrong**, not just
+the values.
+
+`grid.PLANTS` gives every plant the same three columns (`rpm`/`rpd`/`tpd`) and fills gaps with `None`
+meaning unlimited. It has no way to distinguish *"this plant is not limited on this axis"* from
+*"nobody has looked"* — which is exactly why cerebras read DECLARED UNLIMITED against a real
+2400/day wall. The plants do not share a shape:
+
+| plant | binds on | scope |
+|---|---|---|
+| nvidia | requests/min; no token period cap. Per-call ceiling is the CONTEXT WINDOW | per model |
+| groq | tokens/min AND requests/day, **different numbers per model** | per model |
+| cerebras | req/min 5, /hour 150, /day 2400, plus 30000 tok/min — four walls | per plant, org |
+| ollama | no period limit; binds on CONCURRENCY (one resident model) and WALL CLOCK | per machine |
+
+**BUILT — `fit.capacity(rod)` and `fit.binds(rod, calls, tokens_each)`**
+
+- Every wall carries **unit, SCOPE, and SOURCE**. Unknown is `source="unknown"` and never silently
+  unlimited.
+- **SCOPE is the field nothing in this repo had**, and its absence is a live bug: `Meter._roll`
+  buckets `rpd` per PLANT while `_win` buckets `rpm` per `(plant, model)` inside the same
+  `can_spend`. So groq's per-model 14400/day is charged against a shared 1000.
+- `Need` now carries the **shape of the job** (`calls`, `tokens_each`), and capacity is the last gate:
+  everything above it asks *is this rod capable*, this asks *can this fuel deliver a job of this
+  shape before a wall stops it*.
+
+**`pace.observe` now keys per ROD as well as per plant.** It keyed by plant alone, and groq breaks
+that: `llama-3.1-8b-instant` publishes 14400/day + 6000 tok/min while `llama-3.3-70b-versatile` on the
+same plant publishes 1000/day + 12000 tok/min. Collapsed to one record, the last model to answer
+overwrote the rest and every reader got a confident number **belonging to a different model**. Both
+buckets are kept, because cerebras genuinely is org-scoped; `fit.SCOPES` says which to trust, and a
+per-plant number read where the plant scopes per-model now carries an explicit `warn`.
+
+**THE MEASUREMENT THAT SETTLES IT.** Same five rods, three job shapes, and the binding wall moves:
+
+```
+1 call x 550 tok        every rod ok
+3000 calls x 550 tok    nvidia 1.25h (requests/min) · groq-8b 4.58h (tokens/min)
+                        groq-70b REFUSED (1000/day) · cerebras REFUSED (2400/day)
+                        ollama REFUSED (286h, serialised)
+40 calls x 12000 tok    cerebras 0.27h · groq-70b 0.67h · groq-8b 1.33h · ollama REFUSED (83h)
+```
+
+**The reversal is the proof:** groq-8b beats groq-70b on many-small and LOSES to it on few-large,
+because 6000 vs 12000 tok/min inverts against 14400 vs 1000 per day. **No single scalar ranking can
+produce that** — which is precisely why six selectors each ranking on one number were all wrong, and
+why cerebras (the fastest fuel here at ~2000 tok/s) is unusable for anything that is many small calls.
+
+**LOCKED**
+
+- **Capacity is multi-axis, per-rod, and scoped.** A limit without a scope is another model's number.
+- **Unknown is not unlimited.** Every wall reports its source; absence is an admission.
+- **Rank on deliverability for the job's shape, never on speed.** Fastest fuel and usable fuel are
+  different questions.
+
+31 frozen behaviours still hold; harness/fuels/hands all pass the model through to `pace.observe`.
+
+### SAME SESSION — THE DEEP REVIEW: 35 PROPOSED, 11 REFUTED, 24 CONFIRMED
+
+Seven independent reviewers, one per failure class, each adversarially refuted by a second pass told
+to default to `real=false` when uncertain. Survival by dimension: metrics 5/5, wake 5/5, selection
+5/5, failopen 4/5, state 4/5, deadlock 2/5, privacy 2/5. Deduped, 24 confirmed are 20 distinct.
+
+**THE HEADLINE, AND IT IS ARCHITECTURAL:** `grep` finds **zero references to impasse, unstick or
+crystal anywhere under `aea/loop/` or `aea/organs/`.** The whole notice-stuck / get-unstuck kernel is
+CLI-only. Worse, `loop/live.py:93` returns `AWAKE:brief` on every tick until the brief succeeds, and
+`tick()` advances `last_brief_date` only on success — so a failing brief **starves consolidate and
+reflect for the entire outage** while re-running the byte-identical action. `state/trust_ledger.json`
+is the receipt: twelve entries on 2026-07-21 at half-hour spacing, all identical. That is the
+eighteen-day incident, still present at the loop level.
+
+**FIXED THIS PASS**
+
+| # | defect | file |
+|---|---|---|
+| 1 | **`state/chains.jsonl` recorded private-zone goals VERBATIM and was tracked by git**, absent from .gitignore | `server/controlroom.py:33` |
+| 2 | **`load_json` treated UNREADABLE as CORRUPT** — a Windows sharing violation renamed a VALID store away and returned the permissive default. For the ledger that default rebuilds every capability at charter level. `state/bench_runs.json.corrupt.<ts>` is tracked: it already fired | `kernel/grid.py:73` |
+| 3 | **`trust.check` never applied the CHARTER ceiling** — lowering a ceiling could not revoke anything | `kernel/trust.py:68` |
+| 4 | **`orchestrator.pick` returned `cands[0]` after every candidate failed `can_spend`** — the meter consulted, logged, then overruled | `mind/orchestrator.py:90` |
+| 5 | **`"(grid busy)"` passed the completeness check and graded a CLEAN RUN** — the entity earned promotion for briefs it had not written | `organs/brief.py:167` |
+| 6 | **`speak` gated at WATCHED while being the only writer of its own ledger** — one local audio fault mutes it permanently | `organs/talk.py:137` |
+| 7 | `build_graph` and `export_city` **rewrote tracked repo files at IMPORT**, no `__main__` guard; `export_city` wrote to a RELATIVE path | `tooling/` |
+| 8 | **four experiment modules could not import at all** (`x16` lost `ascending`/`deprived`/`oblique`; x17/x19/x20 import it) — x19's findings are cited as evidence and could not be re-run | `lab/organism.py` |
+| 9 | **`deprived()` returns an empty list by construction** — x16 would report an empty toxic family as "nothing toxic" rather than "nothing tested" | `lab/organism.py` |
+
+On the privacy one: the fourteen rows on disk were **benign** — zero emails, paths, calendar
+references or identifiers. Nothing leaked. The exposure was STRUCTURAL, and it now has two
+independent guards: the writer redacts free text for private/sensitive zones, and the file is
+gitignored and untracked.
+
+`load_json` now has three outcomes because there are three situations: **absent -> default;
+unparseable -> quarantine + default; unreadable -> retry, then RAISE.** A caller must never proceed
+on a default standing in for a file that exists. Verified: a locked file raises and **survives**.
+
+**CONFIRMED AND STILL OPEN, RANKED**
+
+1. **Wire `impasse`/`unstick` into the wake, and stop a failing brief starving the loop.** Two lines
+   in `tick()` plus a `brief_fails` counter. This is the one that makes the rest matter.
+2. **A timed-out or crashed wake records NOTHING**, so the consecutive-failure alarm can never fire
+   for the failure mode most likely to kill it (`loop/live.py:69`).
+3. **The heartbeat write sits OUTSIDE the never-die guard** — one failed save kills the forever-loop
+   (`loop/live.py:171`).
+4. **The brief presents a month-stale private file as "Today"** — a live honesty-law violation in the
+   one unattended artifact (`organs/brief.py:25`). Flagged earlier this session, still unfixed.
+5. **HADES's own outage is recorded as the worker's failure** — `hades=unverified` demotes
+   `produce_brief` (`organs/brief.py:166`). The verifier being down is not the worker being wrong.
+6. **`gather_public` is graded on a substring of the model's prose**, not on whether the fetch
+   happened (`organs/brief.py:168`).
+7. **`seats.dispatch` grades "the model emitted non-empty text" as a clean run** and discards the
+   tool trace that would show whether anything was actually touched (`kernel/seats.py:184`) — my own
+   code, same class as the defect I fixed in `hands.invoke` this morning.
+8. **The brief never calls `trust.check`** — the permission ladder gates nothing it does.
+9. **The word "private" names two different plant sets** — the live selectors let it reach hosted
+   plants (`energy/energy.py:98`); the private-section audit tests the PLANT NAME, so a hosted rod
+   would be certified LOCAL-ONLY (`organs/brief.py:127`). Defect 3's shape, twice more.
+10. **The sacred save can be wiped with no backup and a failed write is reported to the UI as
+    success** (`server/controlroom.py:563`).
+11. `Meter._inflight` is process-local while presented as the rod's global concurrency.
+12. Law IV is enforced on the seats path but not on the wake job.
+
+31 golden behaviours hold; 86 modules import clean; the ledger loads; the sacred save is intact.
+
+### SAME SESSION — XRAY: THE SYSTEM READS ITSELF, AND THE NUMBER IS 13 OF 104
+
+Luis asked for a dashboard, said he did not want to spend weeks on one, and named what he actually
+wants: to see the code, the connections, the dependencies. Built as a DERIVED artifact, not a
+hand-drawn one, in one pass.
+
+**`aea/tooling/xray.py`** — parses every module with `ast` and **never imports** them. That is a
+correctness choice, not a performance one, and it was learned the same day: `build_graph` and
+`export_city` rewrote tracked repo files merely on being imported. An analyser that imports the code
+it studies runs the code it studies. Produces `state/xray.json`: internal import graph, reachability
+from declared entry points, orphans, import-time side effects, which module writes which store, plus
+live ledger/seat/goal/alarm state.
+
+**`aea/tooling/xray_view.py`** — renders it to `web/xray.html`. The visual law is the project's own
+(`E2`/`E8`): void field plus structure grey, amber reserved for the FIRED state only. It maps onto
+this data exactly — **reachable from a wake = lit, everything else = structure** — so the picture
+makes the finding before a number is read. Screenshot-verified twice; the first render collided two
+columns in the 300px rail and those panels now stack.
+
+**THE READING**
+
+```
+104 modules   21,679 lines
+ 13 modules    2,287 lines   reachable from an unattended wake
+ 84 modules   17,511 lines   reachable from NO entry point
+  7 of those are aea.kernel  crystal fit goals hands impasse seats unstick  (2,023 lines)
+```
+
+**The entity is 13 modules.** Everything built today to make it autonomous — 2,023 lines, almost as
+much as the entire running system — is orphaned. `io.agent_tools` and all four `gameapi` modules too.
+This is the same finding the deep review reached by reading, now reproducible in under a second.
+
+Also surfaced without being asked: six modules act at import; three stores have two writers
+(`capability_census.json` has three).
+
+**GUIDANCE GIVEN, and it is the part that matters more than the tool**
+
+- **JSON holding Python code is refused.** It is `eval()` with extra steps and it hands the entity
+  the capability the charter pins at `self_modify_code=1`. The correct shape is the one `unstick`
+  already uses without anyone naming it: `{"move": "swap_rod", "knob": "fuel", "to": X}` — a NAMED
+  operation from a declared registry, with parameters. The JSON says WHICH and WITH WHAT, never HOW.
+  It is also the only version where rollback means anything, because two declarations can be diffed.
+- **OOP vs protocols: mostly neither.** The repo's idiom — module functions, plain dicts, JSON state
+  — is correct and should not be converted. Classes only for real state; `typing.Protocol` only for
+  real polymorphism. The flexible layer must be DATA, not a class hierarchy. Inheritance is the least
+  flexible construct in Python; a registry of named operations is the most.
+- **The dashboard is not a side quest.** `THE_ELEMENTS.md` Tier 2 already lists "WHAT AM I MADE OF
+  RIGHT NOW" as unanswerable. `state/xray.json` is that organ; `web/xray.html` is its human face.
+  Self-modification cannot exist without it — a proposal has to be diffed against a machine-readable
+  description of the current self.
+
+**NEXT** — unchanged and now visible in one number: **wire the seven orphaned kernel modules into
+the wake.** The dashboard's whole left rail is a list of work not done.
+
+Deliberately NOT built: live per-line execution tracing. Weeks of work, answers a question nobody
+asked; static reachability plus live state answers the real one.
+
+### SAME SESSION — SHADOW, SELFCHECK, HEAL: THE SELF-IMPROVEMENT SPINE
+
+**`aea/kernel/shadow.py`** — the entity tests a change to itself without becoming it.
+`git worktree` gives a full isolated checkout in ~1s without duplicating a blob, and the store is
+already content-addressed and diffable, so **the previous self is not something to store — it is a
+commit.** Two rules make it safe rather than suicidal:
+
+1. **A proposal may not author the test that judges it.** `PROTECTED` covers the frozen tests, the
+   ledger, and this file; editing one is an instant rejection. Verified: a proposal that rewrote
+   `test_golden.py` was REFUSED.
+2. **Rollback targets the last PROVEN version.** Known-good is a status a commit EARNS by passing
+   the gate. `mark_known_good` refuses on a dirty tree.
+
+**There is deliberately no `promote()`.** `self_modify_code` is ceiling 1 — a reviewable diff. The
+gap between "the tests passed" and "this is now what I am" is where a human belongs.
+
+**Three defects in it within minutes, all found by running a CONTROL:**
+- The shadow tested `HEAD` while the running self was the working tree — and `mark_known_good`
+  stamped the working tree's verdict onto HEAD's hash. A verdict attached to the wrong tree is not
+  weaker, it is false.
+- `dirty()` used `git diff`, which lists modified TRACKED files — so all nine modules written today
+  and not yet committed were invisible, and the shadow was built without them.
+- Shadows live under `state/`, so the copier tried to copy a shadow into a shadow. Now `state/` is
+  never carried: it is also the ledger, and a candidate must not inherit the running self's record.
+
+**`aea/tooling/selfcheck.py`** — every whole-system invariant in one command, built because the same
+verifications had been retyped by hand nine or ten times this session. *A check that lives in a file
+runs every time; a check that lives in a habit runs when someone remembers.* Checks: structure, state
+intact, no private data, **no absolute paths**, every module imports, 31 frozen behaviours.
+
+**`aea/tooling/heal.py`** — improvement candidates, deterministic, never applied. The line that
+matters: an INVARIANT violated means broken and blocks; a CANDIDATE means nothing is broken and it
+could be better. **Detection is mechanical precisely so that zero candidates is a real answer** — a
+model asked to find improvements always finds some. Five detectors, each earning its place from a
+defect this repo actually paid for. Current: 4 near-duplicates, 11 disagreeing constants, 52
+swallowed errors, 55 god-modules.
+
+**Both detectors were wrong on first run and fixed:** the literal detector reported "the literal 3
+appears in 63 files" (true, meaningless) and now finds only NAMED settings holding MORE THAN ONE
+VALUE — which is exactly what four disagreeing rate limits looked like. The path detector matched the
+`s:` in `https://` and turned 6 real hits into 61 files of noise.
+
+**PATHS ARE NOW ANCHORED.** `grid.HOME` and `grid.external(env_key, ...)` resolve everything outside
+the repo from a declared `.env` key or `~`, and return **None** rather than inventing a path — a
+fabricated corpus path would mine an empty directory and report success over nothing. Six literals
+removed from `consolidate.py`, `index_codex.py`, `memory.py`. Enforced permanently by
+`selfcheck.check_paths`.
+
+**LOCKED**
+
+- **The center of control is not a controller.** Actions declare their own preconditions and effects;
+  selection is a QUERY over declarations, not a decision by a coordinator that must know them all.
+  That is STRIPS/PDDL (1971) and this repo already converged on it three times independently
+  (`hands.TOOLS`, `crystal.applicable` by situation, `fit.Need`). What is missing from all three is
+  preconditions/effects.
+- **The absence of a match is the self-improvement trigger.** "No action's preconditions are
+  satisfiable from this state" is a machine-readable specification of exactly what is missing.
+- **A declaration is a claim.** If the entity authors its own preconditions it can lie, so effects
+  must be verified after the fact — the trust ledger applied to actions.
+
+**NEXT** — unchanged: wire the seven orphaned kernel modules into the wake. Then preconditions and
+effects on the action registry.

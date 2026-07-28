@@ -37,13 +37,22 @@ class Chain:
                    "it, and show that arithmetic. Then give the result on its own final line. Do not "
                    "re-do earlier steps.")
 
-    def __init__(self, rod, form="none", *, start=0, temperature=0.2, max_tokens=800, seat=None):
+    def __init__(self, rod, form="none", *, start=0, temperature=0.2, max_tokens=800, seat=None,
+                 notes=None, method=None):
         """`seat` lets a chain run any assembly, so the ascending series v1..vN can be measured on a
         sequence. Without it the chain seats call + carry only, which is a v2 organism - x21 tested
         World 3's component on a bare call and hand-wrote the shaping the parts were meant to do."""
         assert form in CARRY_FORMS, form
         self.rod, self.form = tuple(rod), form
         self.start, self.temperature, self.max_tokens = start, temperature, max_tokens
+        self.history, self.carried = [], ""
+        # PER-STEP EXTRA TEXT, keyed by 1-based step. Built for carrying a NON-RECOMPUTABLE token: a
+        # probe about a numeric value can always be answered by doing the arithmetic again, so a
+        # value probe cannot separate retrieval from recomputation on its own. A random token can
+        # only be reproduced by having kept it.
+        self.notes = dict(notes or {})
+        if method:
+            self.STEP_METHOD = method
         keys = list(seat) if seat else (["call"] + (["carry"] if form != "none" else []))
         if form != "none" and "carry" not in keys:
             keys.append("carry")
@@ -62,8 +71,16 @@ class Chain:
             task = {"id": "chain", "truth": truth_fn(i + 1),
                     "data": self._body(i, op, value, carried, history),
                     "goal": self.STEP_GOAL, "method": self.STEP_METHOD}
+            # THE HISTORY IS THE CONTAINER for `conversation`, so it goes on the wire. It was built
+            # here and dropped for the whole life of the container (defect 13), which starved the arm
+            # and produced the only "conversation" finding in the project.
+            # keep_full=True OR EVERY READ BELOW IS A TAIL READ. `Organism.run` sets rec["text"]
+            # only under this flag, so `r.get("text") or r.get("raw")` fell through to `raw`, which
+            # fire.py defines as ctx.text[-320:]. read_work() then judged whether the reply showed
+            # its working from the last 320 characters of a reply the frame exists to make longer.
             r = self.org.run(task, temperature=self.temperature, max_tokens=self.max_tokens,
-                             carried=carried if "carry" in self.seat else "")
+                             carried=carried if "carry" in self.seat else "", keep_full=True,
+                             history=history if self.form == "conversation" else None)
             # A carrier quotes what it carries: echoes_prompt is this part's signature, not debris.
             flags = [f for f in r["flags"] if f != "echoes_prompt"]
             if not r["ok"]:
@@ -96,8 +113,19 @@ class Chain:
                                  "declined": rb == "declined",
                                  "repaired": bool(r.get("repaired")),
                                  "read_by": rb,
+                                 # THE WHOLE REPLY, SO A READ CAN BE REVISED AT ZERO COST. The row
+                                 # stored `chars` and no text, so every value here was final: a
+                                 # defect found later in read.py or Carry.extract could not be
+                                 # re-scored off disk and the run had to be re-bought. That is the
+                                 # same mistake as storing text[:400] in the harness, one layer down.
+                                 "text": text,
                                  "tok_out": r.get("tok_out"), "tok_in": r.get("tok_in"),
                                  "chars": r.get("chars"), "carried_chars": len(carried),
+                                 # WHAT THE CONTAINER ACTUALLY WEIGHS. `carried` is empty for
+                                 # `conversation` because its state is messages, not a string, so
+                                 # carried_chars alone prices the largest container at zero.
+                                 "context_chars": len(carried) + sum(len(m["content"])
+                                                                     for m in history),
                                  "flags": flags})
             rec["flags"] += flags
 
@@ -112,7 +140,53 @@ class Chain:
         rec["tok_in"] = sum(s.get("tok_in") or 0 for s in t)
         rec["tok_total"] = rec["tok_out"] + rec["tok_in"]
         rec["carried_max"] = max([s["carried_chars"] for s in t] or [0])
+        rec["context_max"] = max([s["context_chars"] for s in t] or [0])
+        self.history, self.carried = history, carried
         return rec
+
+    # THE PROBE. Retrieval is a different capability from storage, and nothing in this lab has ever
+    # measured it: every metric so far asks whether the CURRENT value survived, never whether an
+    # EARLIER one can be reached. A container holds sixteen exchanges; the question is whether the
+    # organism can produce one of them on request.
+    PROBE = ("Earlier in this task you completed step %d. State the value you gave as the result of "
+             "step %d. Do not recalculate and do not explain. Reply with only that number.")
+
+    def ask(self, question, *, goal="State a thing you were given earlier.", label="probe"):
+        """One question put to the finished organism, forked from its stored state.
+
+        FORKED, NEVER APPENDED. Each question sees exactly the history the chain ended with and
+        nothing else, so N questions are N independent questions rather than a conversation the
+        organism is having with its own answers. That also removes question ORDER as a variable:
+        there is no order, because no question can see another.
+        """
+        task = {"id": label, "truth": None, "data": question, "goal": goal, "method": ""}
+        r = self.org.run(task, temperature=self.temperature, max_tokens=self.max_tokens,
+                         carried=self.carried if "carry" in self.seat else "", keep_full=True,
+                         history=list(self.history) if self.form == "conversation" else None)
+        text = (r.get("text") or "") if r.get("ok") else ""
+        return {"ok": bool(r.get("ok")), "text": text, "last": _last_int(text),
+                "answer": r.get("answer"),
+                "tok_in": r.get("tok_in"), "tok_out": r.get("tok_out")}
+
+    def probe(self, step):
+        """Ask for a value already produced. Forked from the stored history, never appended to it,
+        so three probes are three independent questions rather than a conversation about itself.
+
+        EVERY CONTAINER BRINGS WHAT IT HAS. `checkpoint` and `free` hand over their final carried
+        string and `conversation` hands over the whole history, because the question is not whether
+        the probe is answerable in the abstract - it is whether THIS container put the answer
+        somewhere reachable. A checkpoint holding only the current value should fail, and it should
+        fail holding its real contents rather than holding nothing.
+        """
+        task = {"id": "probe", "truth": None, "data": self.PROBE % (step, step),
+                "goal": "State a value you produced earlier.", "method": ""}
+        r = self.org.run(task, temperature=self.temperature, max_tokens=self.max_tokens,
+                         carried=self.carried if "carry" in self.seat else "", keep_full=True,
+                         history=list(self.history) if self.form == "conversation" else None)
+        text = (r.get("text") or r.get("raw") or "") if r.get("ok") else ""
+        return {"step": step, "ok": bool(r.get("ok")), "text": text,
+                "last": _last_int(text), "answer": r.get("answer"),
+                "tok_in": r.get("tok_in"), "tok_out": r.get("tok_out")}
 
     def _body(self, i, op, value, carried, history):
         """Step 1 states the starting value; that is the TASK, not the carry. After that `none`
@@ -121,6 +195,13 @@ class Chain:
         head = "You are continuing a calculation, one step at a time."
         opening = "The starting value is %s.\n\n" % self.start if i == 0 else ""
         if self.form == "conversation":
-            return "%sStep %d: %s" % (opening, i + 1, op)
+            # THE HEAD BELONGS TO EVERY ARM. It was omitted here entirely, so the conversation arm
+            # was framed differently from the other three in addition to its container - two
+            # variables at once. It goes in the first turn only, because the history carries it
+            # forward from there; that difference IS the container and not a confound.
+            extra = self.notes.get(i + 1, "")
+            return "%s\n\n%sStep %d: %s%s" % (head, opening, i + 1, op, extra) if i == 0 \
+                else "Step %d: %s%s" % (i + 1, op, extra)
         # `carried` is prepended by the Call part, not here, so a seat without `carry` gets nothing.
-        return "%s\n\n%sStep %d: %s%s" % (head, opening, i + 1, op, INSTRUCTION[self.form])
+        return "%s\n\n%sStep %d: %s%s%s" % (head, opening, i + 1, op, self.notes.get(i + 1, ""),
+                                            INSTRUCTION[self.form])

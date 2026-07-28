@@ -1,0 +1,24 @@
+{
+  "schema": "aea.organism/1",
+  "id": "arbiter_vacui",
+  "name": "Arbiter vacui",
+  "gloss": "the judge, of the void",
+  "world": 2,
+  "seat": ["call", "measure", "readout"],
+  "wiring_note": "The seat is defined by what is NOT in it. Both seated parts sit at the judge and read stages above an absent `goal`, and both declare `requires: [call]` only, so nothing in the wiring graph refuses the assembly. That is the seam: the precondition lives one stage below in shape, the catalogue does not encode it, and the composer has no mechanism that can decline to seat a part whose precondition is unmet. The organism runs, returns a value, and the value is about nothing.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "granite4.1:8b",
+    "temperature": 0.2,
+    "law": "IV. Read across the whole x12 bank: 6 rods on 3 plants, ollama qwen3:0.6b / granite4.1:3b / granite4.1:8b, groq llama-3.1-8b-instant / llama-3.3-70b-versatile, cerebras gpt-oss-120b, at 0.2 and 0.7. The behaviour is not one rod's."
+  },
+  "receipt": {
+    "claim": "an instrument seated above a missing goal returns a clean value, and nothing downstream can tell it from an answer",
+    "measured": "goal ABSENT: 50 of 158 clean trials (32%) still emitted a number. Goal AMBIGUOUS: 64 of 146 (44%). The readout fired on 4% of goal-absent trials. Quoted from ANNEX_G_BESTIARY and Chapter II, both citing a re-read of x12 run 20260725T200626Z. The denominators reproduce exactly off the stored run: 158 clean absent trials and 146 clean ambiguous trials.",
+    "runs": ["x12"],
+    "why_it_matters": "Obtemperans habitui is harmed and the harm shows in its score. This one is harmed and its score comes back clean. It cannot be caught by reading a result, only by checking a precondition, and no composer in this project has that verb.",
+    "caveat": "PROVISIONAL, and the reason is a re-read done while writing this file. Splitting the same stored run by task, a digit-presence re-read of the goal-absent tails gives 53 of 75 on `extract` against 3 of 83 on `wordcount`. The `extract` data line is `RUN r-14 - plant=cerebras - model=llama-3.3-70b - 812ms` and carries four numerals; `wordcount` data carries none. So the pooled 32% is carried almost entirely by the one task whose input is numeric, and part of it may be the input reflected back rather than a value invented. That is defect 2's family, an echo counted as an answer, and 212 of the trials in this run are flagged `echoes_prompt`. Note also that this parse is cruder than the source's, which reported 50 and 64 where digit-presence gives 56 and 68. Scoping the denominator to where the effect can occur is check 4 of the instrument law and it has not been run on this receipt. The MECHANISM is untouched by any of it: a part above a hole still runs and still returns.",
+    "window_note": "the re-read scored `rec[\"raw\"]`, the last 300 chars of each reply (x12 stores `text[-300:]`; the longest stored tail in the run is exactly 300, and 339 trials were longer than their window). An emitted value is a BEHAVIOUR and can land anywhere, so a tail-only window can only miss numbers, never invent them. On that axis the figure is a floor."
+  },
+  "state": {"kind": "ADVERSE", "part": "measure+readout above an absent goal", "provisional": true}
+}

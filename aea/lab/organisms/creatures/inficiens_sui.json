@@ -1,0 +1,24 @@
+{
+  "schema": "aea.organism/1",
+  "id": "inficiens_sui",
+  "name": "Inficiens sui",
+  "gloss": "the one infecting, of itself",
+  "world": 3,
+  "seat": ["call", "carry"],
+  "seat_config": {"carry": {"form": "free"}},
+  "wiring_note": "CARRY is the only part whose unit is a SEQUENCE, so its seam is not inside a call at all: it is the boundary between one reply and the next prompt. The free form packs the rod's own trailing note back into the next step, so what crosses that boundary is unvalidated prose rather than a value, and nothing at the read stage stands between them. x21 seated call plus carry only, with the goal and frame text hand-written by the harness instead of by the parts, so this is a v2 organism and not the peak assembly the container would ship inside.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "granite4.1:3b",
+    "temperature": 0.2,
+    "law": "IV. Measured on three rods and it lost on every one. At sixteen steps: ollama/granite4.1:3b 4 of 4 sequences correct on the none arm and 0 of 4 on free, groq/llama-3.1-8b-instant 3 of 3 and 0 of 3, nvidia/nemotron-3-ultra-550b-a55b 1 of 4 and 1 of 4."
+  },
+  "receipt": {
+    "claim": "a self-authored note to the future self does not merely lose information, it injects noise, and the damage compounds with length",
+    "measured": "x21 run 20260726T213959Z, 4 containers x 2 lengths x 3 rods, n=4 sequences per cell, temperature 0.2. Pooled margin against the none arm: -0.167 at four steps and -0.636 at sixteen. Absolute at sixteen steps, sequences ending correct over 12 attempted: free 1, none 8, checkpoint 7, conversation 7. Cost ratio 2.11x and 2.15x in tokens.",
+    "runs": ["x21"],
+    "caveat": "TWO KNOWN INSTRUMENT EXPOSURES, neither of which erases the result and both of which bound it. First, the x21 none arm handed the running value forward, so it was a checkpoint wearing the control's name and every margin quoted against it is void as a margin; the absolute per-arm counts are not. Second, METHOD.md records a live hazard found in the defect 13 pass: Carry.extract for the free form splits on NOTE: and takes the last integer of the head, so a rod that writes trailing prose containing a number without the NOTE: prefix has its value misread. The free instruction explicitly invites trailing prose, so an unknown share of free's failures are the parser's. The finding survives because free is the worst arm in absolute terms against every other container including the one that carries most, but the SIZE of -0.636 is not clean.",
+    "why_it_matters": "the retention gradient does not explain it. Order the containers by how much they keep and the results do not follow, but a rod's own note is far worse than keeping nothing at all. That is the one place in the lab where more state is actively poison."
+  },
+  "state": {"kind": "ADVERSE", "part": "carry:free", "provisional": true}
+}

@@ -51,13 +51,13 @@ class Validation(Part):
         nums = _NUM.findall(t.replace(",", ""))
         bare = re.fullmatch(r"[^\d]{0,24}?(-?\d{1,5})[^\d]{0,24}", t)
         if bare:
-            ctx.answer, ctx.read_by = int(bare.group(1)), "stated"
+            ctx.claim("validation", int(bare.group(1)), "stated")
         elif len(set(nums)) != 1:
             m = re.search(r"(?:answer|result|total|is)\D{0,12}(-?\d{1,5})\s*$", t, re.I)
             if m:
-                ctx.answer, ctx.read_by = int(m.group(1)), "stated"
+                ctx.claim("validation", int(m.group(1)), "stated")
             else:
-                ctx.answer, ctx.read_by, ctx.declined = None, "declined", True
+                ctx.claim("validation", None, "declined", declined=True)
 
 
 class Readout(Part):
@@ -70,8 +70,10 @@ class Readout(Part):
     def run(self, ctx):
         # It defers to a guard's abstention but NOT to the naive stated read, which is the value it
         # exists to correct: work right, mouth wrong.
-        if ctx.declined or ctx.read_by not in (None, "stated"):
-            return
+        # NO GATE. This used to read `if ctx.declined or ctx.read_by not in (None, "stated"):
+        # return`, which was UNREACHABLE: Readout is read.order 1 and Validation read.order 2, so
+        # the abstention it deferred to had not happened yet. The lever now always states what it
+        # found and the precedence decides whether it wins.
         val, dialect = read_work(ctx.text)
         if val is not None:
-            ctx.answer, ctx.read_by = val, "work:" + dialect
+            ctx.claim("readout", val, "work:" + dialect)

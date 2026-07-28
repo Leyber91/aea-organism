@@ -9,7 +9,7 @@ status:       ACTIVE — the lineage audit. WirthForge (2025, Luis's original de
               This chapter is the honest three-column ledger of that claim.
 last-updated: 2026-07-20
 ground truth: MANIFESTO — PORTFOLIO/wirthforge/ (full path: <REDACTED-PATH>/
-              <REDACTED-PATH>/Documents/PORTFOLIO/wirthforge/), core docs cited as
+              OneDrive/Documents/PORTFOLIO/wirthforge/), core docs cited as
               WF:<file>. Note for the record: the folder carries a React/FastAPI demo
               alongside the docs; WIRTHFORGE_COMPLETE.md claims Levels 1-3 "COMPLETE"
               on "Real Ollama integration with elegant fallbacks" — i.e. mocks. The

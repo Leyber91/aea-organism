@@ -26,8 +26,11 @@ STORE = os.path.join(grid.STATE, "luis_memory.json")
 # corpus was silently pruned by Claude Code's 30-day transcript cleanup - 1,570 unmined sessions
 # lost; cleanupPeriodDays now 3650 in settings so it never happens again). Top-level only:
 # subagent/workflow transcripts live deeper and are machine chatter, not Luis.
-PROJECTS_ROOT = "<REDACTED-PATH>/.claude/projects"
-PROJECT = os.path.join(PROJECTS_ROOT, "c--REDACTED-PORTFOLIO")
+# RESOLVED, NOT TYPED. Set CLAUDE_PROJECTS in .env to point elsewhere; otherwise the conventional
+# ~/.claude/projects is used if it exists, and None if it does not - which the caller must handle,
+# because inventing a corpus path would mine an empty directory and report success over nothing.
+PROJECTS_ROOT = grid.external("CLAUDE_PROJECTS", default_under_home=".claude/projects")
+PROJECT = grid.external("CLAUDE_PORTFOLIO_PROJECT") or ""
 MIN_TURN = 24        # ignore trivial turns ("proceed", "go")
 MAX_CHARS = 4200     # cap his voice per session so the local model stays fast + in-context
 

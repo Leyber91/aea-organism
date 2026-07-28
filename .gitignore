@@ -1,6 +1,7 @@
 # Claude Code local session/settings (machine-specific, may hold local context) - never commit.
 # CLAUDE.md itself IS committed on purpose: it is the handoff introduction, it must travel with the repo.
-.claude/
+.claude/*
+!.claude/settings.json
 
 # Never commit secrets or runtime state
 .env
@@ -53,3 +54,15 @@ live.instance
 # --- added 2026-07-24: private third-party conversation records. A transcript of someone
 # who is not Luis must NEVER leave this machine in a commit. Privacy guard, absolute. ---
 state/converse_*.json
+
+# Private text must never be tracked. chains.jsonl records the GOAL of every chain, including
+# private- and sensitive-zone ones; it was tracked until 2026-07-28. The writer now redacts free
+# text for those zones (controlroom.chain_write), and the file itself stays out of git regardless -
+# two independent guards, because a privacy failure is irreversible once pushed.
+state/chains.jsonl
+state/chains.jsonl.1
+
+# Shadows are full checkouts of this repo created under state/ for testing a candidate version.
+# They must never be tracked (recursive) and never carried into another shadow.
+state/shadows/
+state/proposals/

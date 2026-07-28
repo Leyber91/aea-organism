@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE PROBE - lab evidence</title>
+<link rel="stylesheet" href="assets/lab.css">
+</head>
+<body>
+<!--
+  THE SHELL, AND IT IS DELIBERATELY EMPTY.
+
+  Nothing about any experiment is written here. The page reads data/index.json at load and builds
+  itself from what exists on disk, so an experiment that produces evidence tomorrow gets its section
+  tomorrow without a line of this file changing. Baking results into markup is what made the first
+  version a snapshot instead of a system.
+-->
+<header class="top">
+  <div class="wrap">
+    <h1>Lab evidence</h1>
+    <p class="sub">Every run, every reply, and every judgement made about it.</p>
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <div class="meta" id="meta"></div>
+  </div>
+</header>
+
+<main class="wrap" id="main" aria-live="polite">
+  <p class="loading">Reading the archive&hellip;</p>
+</main>
+
+<footer class="wrap">
+  <p>Built from <code>state/lab/runs/</code>. Every value is read from a stored run; an absent
+  measurement renders as a dash and never as a zero. An experiment with no readable evidence keeps
+  its row and states what is missing.</p>
+  <p class="dim">Serve with <code>python -m aea.lab.site --serve</code> then open
+  <code>localhost:7801</code>. Rebuild with <code>python -m aea.lab.site</code>.</p>
+</footer>
+
+<script src="assets/lab.js"></script>
+</body>
+</html>

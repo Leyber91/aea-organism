@@ -53,7 +53,12 @@ from aea.mind import anchor as A
 from aea.mind import fuel
 
 # --- THE FLOORS. Raising these is a decision; lowering one must be argued in the diary. -----------
-MIN_N = 8              # 3 trials cannot separate 2/3 from 3/3
+MIN_N = 10             # RAISED from 8, 2026-07-27. Published measurements put pass@1 standard
+                       # deviation at 5-15 percentage points across seeds on small benchmarks,
+                       # with further swings from batch size and GPU alone. 8 was chosen because
+                       # 3 cannot separate 2/3 from 3/3; 10 is the practical floor the field
+                       # uses, and even at 10 the minimum detectable effect is ~0.44. Cells of
+                       # 3 and 4 - which is what the flagship claims rest on - see nothing.
 MIN_RODS = 3           # law IV: one rod is one organism, not a result
 EFFECT_MIN_DELTA = 3   # of n passes; below this the report says WITHIN NOISE
 DEFAULT_TEMPS = (0.2,)
@@ -240,19 +245,33 @@ _locks: dict = {}
 _locks_guard = threading.Lock()
 
 
-def _rod_gate(plant: str) -> threading.Semaphore:
-    """Bound in-flight requests per PLANT using the measured ceiling in grid.PLANTS.
+def _rod_gate(plant: str, model: str = "") -> threading.Semaphore:
+    """Bound in-flight requests PER ROD, not per plant.
 
     Measured 2026-07-25: NVIDIA accepted ~25 concurrent on one model and rejected the rest inside
     1.8s. We sit well under it - a rejected request is a failure counted against reliability, and
     polluting reliability with self-inflicted 429s would make the rod look worse than it is.
+
+    THE KEY IS (PLANT, MODEL), AND THAT CHANGE IS WORTH MULTIPLES. Measured 2026-07-27: two models
+    on the same groq key report completely independent reset windows - `llama-3.1-8b-instant` at
+    31m and `llama-3.3-70b-versatile` at 6h51m. **The budget is per model.** Gating per PLANT made
+    every rod on a plant queue behind one semaphore of 2, so running two groq rods concurrently was
+    strictly slower than the provider allows, for nothing.
+
+    A production content service solves the same problem by ROTATING models to multiply throughput.
+    That move is forbidden here and the reason is Law IV: the same seat on different fuel is a
+    different organism, so swapping the model mid-run destroys the very thing being measured. What
+    transfers is not the rotation, it is the FACT UNDERNEATH it - the buckets are separate - and
+    that buys throughput at zero cost to the measurement, because nothing about which rod runs
+    which task changes.
     """
+    key = "%s/%s" % (plant, model) if model else plant
     with _locks_guard:
-        if plant not in _locks:
+        if key not in _locks:
             cap = grid.PLANTS.get(plant, {})
             mif = cap.get("max_inflight") or 4
-            _locks[plant] = threading.Semaphore(max(1, min(int(mif) // 2, 8)))
-        return _locks[plant]
+            _locks[key] = threading.Semaphore(max(1, min(int(mif) // 2, 8)))
+        return _locks[key]
 
 
 # --- THE INACTIVITY BUDGET. Slow is not dead, and the difference needs streaming to see. ------------
@@ -305,7 +324,7 @@ def call_live(plant: str, model: str, msgs: list, *, temperature: float = 0.2,
                        "stream_options": {"include_usage": True}}).encode("utf-8")
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     t0 = time.time()
-    text, usage, first_at = "", {}, None
+    text, think, usage, first_at = "", "", {}, None
     try:
         resp = urllib.request.urlopen(req, timeout=first_byte_s)
         sock = getattr(getattr(getattr(resp, "fp", None), "raw", None), "_sock", None)
@@ -328,12 +347,31 @@ def call_live(plant: str, model: str, msgs: list, *, temperature: float = 0.2,
             except Exception:
                 continue
             d = ((obj.get("choices") or [{}])[0] or {}).get("delta") or {}
-            # cerebras streams under `reasoning`, nvidia under `reasoning_content`, most under
-            # `content`. Reading only one field blanks an entire plant's column in silence.
-            text += d.get("content") or d.get("reasoning_content") or d.get("reasoning") or ""
+            # THE TWO STREAMS ARE KEPT APART. cerebras streams under `reasoning`, nvidia under
+            # `reasoning_content`, most under `content`, and reading only one blanks an entire
+            # plant's column in silence - which is why this was an `or` chain. But an `or` chain
+            # CONCATENATES them: on any chunk where content is empty, the model's chain of thought
+            # was appended to the reply. Measured 2026-07-27 across the nvidia fleet, 8 of the 12
+            # fastest rods return a separate reasoning field, and every gpt-oss reply in this
+            # archive opens "The user says..." because of this line. The answer was being read out
+            # of the thinking.
+            text += d.get("content") or ""
+            think += d.get("reasoning_content") or d.get("reasoning") or ""
             if obj.get("usage"):
                 usage = obj["usage"]
-        return dict(ok=True, latency=time.time() - t0, text=text,
+        # THE PLANT JUST TOLD US ITS REMAINING BUDGET. Read it. Pacing by a hand-typed semaphore and
+        # reactive 429 backoff is simultaneously too slow on a plant with capacity and too fast on
+        # one without, and cannot tell which. Measured: cerebras serves 5 requests per MINUTE, which
+        # makes some already-written experiments twenty-hour runs that nothing could warn about.
+        from aea.lab import pace
+        pace.observe(plant, resp.headers, model=model)
+        # A ROD THAT SPEAKS ONLY IN REASONING STILL HAS TO BE READ. Some rods put the whole
+        # answer in the reasoning stream and leave content empty; for those, reasoning IS the
+        # reply. The fallback is explicit and recorded, so `reasoning_only` says which rods needed
+        # it rather than the two streams being silently merged for everyone.
+        reasoning_only = bool(think) and not text.strip()
+        return dict(ok=True, latency=time.time() - t0, text=(text or think),
+                    reasoning=think, reasoning_only=reasoning_only,
                     tokens=usage.get("completion_tokens"),
                     prompt_tokens=usage.get("prompt_tokens"),
                     total_tokens=usage.get("total_tokens"),
@@ -382,7 +420,7 @@ def call_gated(plant: str, model: str, msgs: list, *, temperature: float = 0.2,
     delay = 2.0
     last = {}
     for attempt in range(tries):
-        with _rod_gate(plant):
+        with _rod_gate(plant, model):
             grid.METER.enter(plant, model)
             try:
                 r = _wire(plant, model, msgs, temperature, max_tokens)
@@ -404,7 +442,7 @@ def call_gated(plant: str, model: str, msgs: list, *, temperature: float = 0.2,
 
 
 def _fire(plant: str, model: str, msgs: list, temperature: float, max_tokens: int) -> dict:
-    gate = _rod_gate(plant)
+    gate = _rod_gate(plant, model)
     with gate:
         grid.METER.enter(plant, model)
         t0 = time.time()

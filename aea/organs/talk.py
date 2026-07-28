@@ -134,7 +134,19 @@ def main():
         save_state(state)
         src = f"{r.get('plant')}/{(r.get('model') or '').rsplit('/', 1)[-1]}" if r["ok"] else "none"
         print(f"\n{name} ({src}, {r.get('latency', 0)}s):\n{reply}\n")
-        if not mute and reply and trust.check("speak")["allowed"]:
+        # GATED AT DRAFT, NOT WATCHED, AND THE DIFFERENCE IS PERMANENT MUTENESS.
+        #
+        # This read ["allowed"], which is level >= 2. `trust.record("speak", ...)` on the next line
+        # is the ONLY writer of that ledger key in the whole repo. So one False - the local SAPI
+        # floor failing on a machine with no audio device, or a locked-down PowerShell - demotes
+        # speak from 2 to 1, the gate then refuses, the recorder is never reached again, and the
+        # streak sits at 0 against promote_after=3 forever. The entity goes mute permanently and
+        # only hand-editing state/trust_ledger.json brings it back.
+        #
+        # Same shape as the tool gate fixed in hands.py, and the same fix, for the same reason:
+        # speaking on this machine is not an outbound act, DRAFT already means "may produce", and a
+        # capability must stay able to generate the evidence that promotes it back.
+        if not mute and reply and trust.check("speak")["level"] >= 1:
             spoke = speak.speak(reply)
             trust.record("speak", spoke)
         return reply

@@ -1,0 +1,22 @@
+{
+  "schema": "aea.organism/1",
+  "id": "egens_unius",
+  "name": "Egens unius",
+  "gloss": "the needy one, of a single part",
+  "world": 1,
+  "seat": ["call", "frame"],
+  "wiring_note": "One rung at shape converts it outright and nothing else is needed. The seam is the variant: the frame must name a METHOD. The same seat filled with the manner variant is a different animal entirely and a toxic one, so the part that defines this creature and the part that defines Obtemperans habitui are the same key with different data. It is the commonest creature in the first world and the one that makes the architecture look easy, which is exactly the lesson it will mislead a player into.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "granite4.1:8b",
+    "temperature": 0.2,
+    "law": "IV. Four rods, three plants, three size tiers: ollama/granite4.1:8b, nvidia/meta/llama-3.2-3b-instruct, nvidia/mistralai/mistral-small-4-119b-2603 and groq/llama-3.3-70b-versatile all carry the same total split. Same composition, different fuel, same organism here, which is rare in this lab."
+  },
+  "receipt": {
+    "claim": "fails completely bare and is converted completely by one part, the frame that names a method",
+    "measured": "x10 run 20260725T144021Z, task wordcount-13, n=8, eleven rods, four temperatures: bare 0.00 to fitted 1.00 on granite4.1:8b, llama-3.2-3b, mistral-small-4-119b and llama-3.3-70b, each diagnosed THE FRAME alone. The posture frame moves none of them (0.00 to 0.00).",
+    "runs": ["x10"],
+    "why_it_matters": "A total 0.00 to 1.00 split across four rods and four temperatures does not rest on sampling, which matters because x10's determinism block shows median effective n of 1 or 2 in most cells at low temperature. The earlier design figure of 0.00 to 0.53 was corrected on 2026-07-27; the verified figure is the one above."
+  },
+  "state": {"kind": "OPEN", "part": "frame", "provisional": false}
+}

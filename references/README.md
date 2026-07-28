@@ -28,4 +28,4 @@ folder name is the employer — that path never gets written here).
 No employer/client/internal-system names, no NDA/multi-employment references, no compensation data,
 no absolute filesystem paths, no personal identifiers enter this repo. If any external reference is
 ever *copied* in rather than pointed at, it is privacy-scanned first (the guard that caught
-`data.js` leaking <REDACTED-EMPLOYER>/Amazon/NDA during the AEA_GAME backup).
+`data.js` leaking [employer]/Amazon/NDA during the AEA_GAME backup).

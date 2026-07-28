@@ -1,0 +1,27 @@
+{
+  "schema": "aea.organism/1",
+  "id": "tenens_longitudinis",
+  "name": "Tenens longitudinis",
+  "gloss": "the one holding, of length",
+  "world": 3,
+  "seat": ["call", "carry"],
+  "seat_config": {"carry": {"form": "checkpoint"}},
+  "evolves_from": {"id": "labens_longitudinis", "by": "carry"},
+  "wiring_note": "Same animal as Labens with one stage filled. The carry stage runs last, after the read, and its seam is the join between what the reply says and what the next step is handed: Carry.extract must take the value out of the STATE line rather than the last integer in the text, because the checkpoint form appends the step number after the answer. That is the exact inversion defect 11 caught, where the reader scored the step number as the answer. IMPORTANT, AND IT IS THE WEAKNESS OF THIS FILE: in x06b that seam was not inside the organism. The value was written to and read from an external checkpoint store in aea.mind.checkpoint, so the extraction was ours and perfect, and no in-prompt container was ever under test.",
+  "fuel": {
+    "plant": "nvidia",
+    "model": "nvidia/nvidia-nemotron-nano-9b-v2",
+    "temperature": 0.0,
+    "law": "IV. Same rod, same temperature and same fifty-step chain as Labens longitudinis, which is what makes the pair a comparison rather than two measurements."
+  },
+  "receipt": {
+    "claim": "one step at a time with the running value carried forward, the rod that lost the chain completes it",
+    "measured": "Stepped arm at length 50, temperature 0.0: 4 of 4 completed sequences correct in the first run and 7 of 7 in the rerun, 11 of 11 pooled, against 9 of 16 for one breath on the same rod. Fisher exact p=0.0216. Cost 241 and 399 calls against 8, and 262.8s and 243.1s of wall clock against 53.9s.",
+    "runs": ["x06b_crossover", "x06b_phase_c_rerun"],
+    "caveat": "11/11 is scored over COMPLETED sequences. Sixteen stepped sequences were started and five died mid-chain, four on plant 429s and one on a step that returned no number. Scored over ATTEMPTS the arm is 11/16 against one breath's 9/16, which is inside noise. METHOD defect 10 requires both numbers whenever a treatment can fail to produce a result at all, and the stepped arm makes fifty times the calls, so its exposure to the rate limit is arguably part of its price rather than external to it.",
+    "confound": "The stepped arm changes two things at once. It decomposes the task into single-operation calls AND it carries state, and x06b phase A measured single operations at p_step 1.00, so decomposition alone predicts a high score. This receipt cannot separate the two.",
+    "not_measured": "The carry component ALONE, on a rod that drifts, has never been cleanly measured. x21's no-carry control handed the running value to the baseline so the control contained the treatment; x22 only ever ran checkpoint beneath a critic that was rewriting every step. The checkpoint cell of the World 3 creature map is recorded EMPTY for exactly this reason: the component the world is named for is the component with no clean receipt. Nothing here should be read as filling it.",
+    "why_it_matters": "The rename is the evolution. Labens is the drifting one and Tenens is the holding one, same genitive, opposite participle, and the difference between them is one stage of wiring rather than a larger rod."
+  },
+  "state": {"kind": "OPEN", "part": "carry:checkpoint", "provisional": true}
+}

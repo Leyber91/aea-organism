@@ -8,6 +8,9 @@ boundary-LOCKED to local Ollama (zone=sensitive can only reach local plants), ev
   public sections -> hosted free grid (NVIDIA/Groq, no-train)     |  private section -> LOCAL ONLY
 """
 import json, sys, time, urllib.request
+import os
+import datetime as _dt
+
 from aea.kernel import grid
 from aea.mind import orchestrator
 from aea.mind import hades
@@ -21,7 +24,28 @@ ROOT_GOAL = "Produce Luis's morning brief: what he's actively moving on, one AI 
 # Luis's REAL day, fetched from his Calendar+Gmail into a LOCAL gitignored file. Reasoned over LOCAL-only.
 try:
     PRIV = grid.load_json("private_today.json", {})
-    PRIVATE_BLOCK = ("DATE: " + PRIV.get("date", "today") + "\nCALENDAR:\n- " + "\n- ".join(PRIV.get("calendar", []))
+    # STALE DATA MUST ANNOUNCE ITSELF. This read `PRIV["date"]` and printed it under the heading
+    # "today", so a private file last written on 2026-06-28 was presented to the model, and to Luis,
+    # as the current day - for a month. That is the honesty law's exact failure: not a wrong number,
+    # a real number wearing the wrong label. The file is not refreshed here (that is a separate
+    # organ's job); what changes is that its age is stated, so nothing downstream can mistake it.
+    _pd = PRIV.get("date", "")
+    _today = _dt.datetime.now().strftime("%Y-%m-%d")
+    if _pd and _pd[:10] != _today:
+        # The parens matter: `"..." % x.days * -1` binds the % first and then multiplies the STRING
+        # by -1, which yields "" and silently drops the whole warning. Caught by reading the output.
+        try:
+            _days = (_dt.date.today() - _dt.date.fromisoformat(_pd[:10])).days
+            _age = " (%d DAYS STALE)" % _days
+        except Exception:
+            _age = " (STALE)"
+        _hdr = "DATE OF THIS PRIVATE DATA: %s%s - TODAY IS %s. Do not describe it as today's." \
+               % (_pd, _age, _today)
+    elif not _pd:
+        _hdr = "DATE OF THIS PRIVATE DATA: unknown. Do not describe it as today's."
+    else:
+        _hdr = "DATE: " + _pd
+    PRIVATE_BLOCK = (_hdr + "\nCALENDAR:\n- " + "\n- ".join(PRIV.get("calendar", []))
                      + "\nINBOX SIGNAL:\n- " + "\n- ".join(PRIV.get("inbox_signal", [])))
 except Exception as e:
     PRIV, PRIVATE_BLOCK = {}, f"[no private_today.json: {e}]"
@@ -29,6 +53,34 @@ except Exception as e:
 meter = grid.METER; router = grid.Router(meter); pool = orchestrator.load_pool()
 
 fetch_json = grid.fetch_json   # one home (was duplicated verbatim here and in aea.py)
+
+
+# EVERY STRING THIS FILE SUBSTITUTES FOR A SECTION IT COULD NOT PRODUCE. A placeholder must be
+# declared in one place or the completeness check cannot know about it.
+PLACEHOLDERS = ("(grid busy)", "(no local node)", "(unavailable)", "(none)", "-")
+
+
+def section_ok(t: str) -> bool:
+    """Is this section REAL CONTENT, or something standing where content should be?
+
+    The old check was `all("ERR" not in t[:40] ...)`, and it had two holes that both point the same
+    way - toward reporting a hole as a clean run:
+
+      1 A PLACEHOLDER IS NOT AN ERROR STRING. When no public node was free, `grid_public` returned
+        "(grid busy)". It contains no "ERR", so the brief shipped with an empty section, exited 0,
+        and `trust.record("produce_brief", True)` counted it toward PROMOTION. The entity earned
+        autonomy for briefs it had not written.
+      2 ONLY THE FIRST 40 CHARACTERS WERE READ. An error surfacing mid-section was invisible.
+
+    Under the honesty law an absent value renders as a dash and is never counted as present. This is
+    that law applied to the one artifact that actually gets read.
+    """
+    t = (t or "").strip()
+    if not t or len(t) < 20:
+        return False
+    if "ERR" in t:
+        return False
+    return t.lower() not in {p.lower() for p in PLACEHOLDERS}
 
 
 def grid_public(T, parent, goal, prompt, tier="bulk", depth=1, mx=400):
@@ -46,12 +98,42 @@ def grid_public(T, parent, goal, prompt, tier="bulk", depth=1, mx=400):
 
 def grid_private(T, parent, goal, prompt, depth=3, mx=300, cap="text"):
     """A traced PRIVATE node. zone=sensitive => ZONES boundary allows LOCAL ONLY. depth=3 -> a small FAST
-    local model (qwen3:1.7b) so the private step doesn't cold-load a 9B past the timeout. Returns the plant to PROVE it."""
+    local model (the router picks ollama/granite4.1:3b, the reliable non-thinking instruct)
+    so the private step doesn't cold-load a 9B past the timeout. Returns the plant to PROVE it."""
     node = T.spawn(goal, parent=parent, zone="sensitive", depth=depth)
     T.mark(node, "route", "zone=sensitive -> LOCAL ONLY (ZONES['sensitive']={local}); private data never leaves the machine")
-    r = grid.complete(prompt, capability=cap, zone="sensitive", depth=depth, max_tokens=mx, router=router)
+    # A CRASHED SERVER IS NOT A WRONG ANSWER, AND IT MUST NOT COST A STREAK.
+    #
+    # This capability sat at DRAFT with 34 failures in 40 for eighteen days. Every recorded failure
+    # read `hades=unverified sections_ok=False`, and the stored brief showed why: this section came
+    # back `ERR: llama-server process has terminated: exit status 0xc0000005`. An access violation in
+    # the local server was written into the ledger as the capability failing, which demoted it, and
+    # promotion needs SEVEN consecutive clean runs it could then never assemble.
+    #
+    # The lab's own harness has forbidden this since chapter I - a network failure is not a wrong
+    # answer, and conflating them turns an outage into a capability finding. The entity was doing
+    # exactly that to itself. ollama restarts a crashed llama-server on the next request, so one
+    # retry converts the commonest failure in the record into a slower success.
+    for attempt in range(3):
+        r = grid.complete(prompt, capability=cap, zone="sensitive", depth=depth, max_tokens=mx,
+                          router=router)
+        txt = (r.get("text") or "").strip()
+        if txt:
+            break
+        err = str(r.get("error") or "")
+        # THE TRANSPORT LAYER SAYS SO; THIS LAYER DOES NOT GUESS. The first version of this matched
+        # substrings - "terminated", "0xc0000005", "connection" - which is whack-a-mole against every
+        # provider's error phrasing, forever, and it would have silently stopped working the first
+        # time a plant reworded a message. grid.call_openai now labels the failure at the only layer
+        # that can know what kind it was.
+        transport = bool(r.get("transport"))
+        T.mark(node, "retry", "attempt %d returned nothing (%s): %s"
+               % (attempt + 1, "transport" if transport else "empty", err[:90]))
+        if not transport and attempt >= 1:
+            break
+        time.sleep(2 + 3 * attempt)
     plant, model = r.get("plant"), r.get("model")
-    txt = (r.get("text") or "").strip() or f"ERR: {r.get('error')}"
+    txt = txt or f"ERR: {r.get('error')}"
     T.done(node, txt, model=f"{plant}/{model}")
     return node, txt, plant
 
@@ -108,7 +190,13 @@ def main():
     # ---- HADES signs off LOCALLY (Law 3): the brief holds private data, so its watcher is LOCAL + heterogeneous (no leak) ----
     verdict, who = hades.watch_local(ROOT_GOAL, brief_md, meter, worker_model="granite4.1:3b")
 
-    with open("brief_output.md", "w", encoding="utf-8") as f:
+    # THE ARTIFACT MUST LAND WHERE IT CAN BE FOUND. This was a bare relative path, so the brief
+    # landed in whatever directory the process happened to start in - repo root when run by hand,
+    # somewhere else when run by a scheduler. state/brief_output.md was eighteen days stale while
+    # fresh briefs were being written elsewhere and never read. The repo's own rule: never hardcode
+    # a state path, always resolve through grid.STATE.
+    _out = os.path.join(grid.STATE, "brief_output.md")
+    with open(_out, "w", encoding="utf-8") as f:
         f.write(brief_md + f"\n\n---\n_brief generated on the free grid in {round(time.time()-t0,1)}s; "
                 f"private section local-only ({priv_plant}); HADES: {verdict.get('verdict')}_\n")
 
@@ -121,12 +209,12 @@ def main():
     print(f"  grid exposure    : public sections only; assembly + HADES both LOCAL -> private data never reached the grid")
     print(f"  HADES verdict    : ({who}) on_goal={verdict.get('on_goal')} correct={verdict.get('correct')} "
           f"-> {verdict.get('verdict')}  [{verdict.get('why')}]")
-    print(f"  trace written    : brief_trace.jsonl   |   brief written: brief_output.md")
+    print(f"  trace written    : brief_trace.jsonl   |   brief written: {_out}")
     print(f"  wall time        : {round(time.time()-t0,1)}s on free + local infra")
 
     # ---- TRUST LEDGER (Law 3 extended): every run stamps the ledger; autonomy is earned, never assumed ----
     clean = (verdict.get("verdict") == "accept")
-    sections_ok = all("ERR" not in t[:40] for t in (status_txt, opp_txt, focus_txt))
+    sections_ok = all(section_ok(t) for t in (status_txt, opp_txt, focus_txt))
     trust.record("gather_public", "fetch failed" not in status_txt.lower())
     trust.record("reason_private_local", boundary_ok and "ERR" not in focus_txt[:40])
     t_state = trust.record("produce_brief", clean and sections_ok,

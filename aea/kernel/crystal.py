@@ -1,0 +1,199 @@
+"""crystal.py - A RESOLUTION THAT HELD, BECOMING A PART THE ENTITY KNOWS IT HAS.
+
+WHAT CRYSTALLIZATION IS HERE. Something the system did once, that worked, promoted into a thing it
+can reach for again without re-deriving it. The field calls this library learning or skill induction:
+SOAR chunking 1986, Voyager 2023, SkillWeaver 2025.
+
+AND THE PART EVERYONE GETS WRONG. The 2026 consensus is unambiguous and it is not what people build:
+
+    CREATING THE PART IS EASY. ADMITTING IT IS HARD.
+
+There is measured evidence that growing skill libraries make agents WORSE - skill shadowing, where a
+near-miss part gets selected ahead of the right one and the library's own size degrades it. So this
+file is mostly an ADMISSION GATE and a RETIREMENT rule, and only incidentally a store. A part that
+cannot be demoted is a liability with a nice name.
+
+THE TRIGGER IS AN IMPASSE, NOT A SUCCESS, and SOAR named that in 1986. Do not crystallize because
+something worked - things work all the time. Crystallize because the system was STUCK and got
+unstuck: that is the moment a result is worth keeping forever, because it is the moment re-deriving
+it was expensive. `unstick` produces exactly that record, which is why it had to exist first.
+
+THREE THINGS THE ENTITY MUST BE ABLE TO ANSWER, and they are what make a library different from a
+junk drawer:
+
+    WHAT DO I HAVE          `board()`     the parts, their level, their record
+    DOES ANY OF IT APPLY    `applicable()` indexed by the impasse signature, not by name
+    HOW DO I CARRY IT OUT   `carry_out()`  the part IS an executable move, not a description
+
+The second is the one that matters. A part addressed by name requires the entity to already know what
+it is looking for. A part addressed BY SITUATION answers the question it actually has, which is "I am
+stuck like this - have I been here before".
+
+ADMISSION AND RETIREMENT, both graded by the same ledger the capabilities use:
+
+    seen SEEN_BEFORE times resolving the same impasse   -> admitted at DRAFT
+    PROMOTE_AFTER clean reuses                          -> WATCHED, then TRUSTED
+    any failure on reuse                                -> demoted one level, instantly
+    demoted below DRAFT                                 -> RETIRED, and it is not offered again
+
+  python -m aea.kernel.crystal              the library
+  python -m aea.kernel.crystal --harvest    admit anything the experience record has earned
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import sys
+import time
+
+from aea.kernel import grid, unstick
+
+LIBRARY = os.path.join(grid.STATE, "crystal.json")
+
+SEEN_BEFORE = 2        # distinct times a move must resolve the SAME impasse before admission
+PROMOTE_AFTER = 3      # clean reuses per level
+LEVELS = {0: "RETIRED", 1: "DRAFT", 2: "WATCHED", 3: "TRUSTED"}
+CEILING = 3
+
+
+def _load() -> dict:
+    return grid.load_json(LIBRARY, {"schema": "aea.crystal/1", "parts": {}})
+
+
+def _save(doc: dict):
+    grid.atomic_save_json(LIBRARY, doc)
+
+
+def part_id(signature: str, move: dict) -> str:
+    """A part IS the pairing of a situation and the move that resolved it. Either alone is useless:
+    a move with no situation cannot be selected, and a situation with no move is just a complaint."""
+    blob = json.dumps({"sig": signature, "move": move}, sort_keys=True)
+    return "p_" + hashlib.sha1(blob.encode()).hexdigest()[:10]
+
+
+def name_for(signature: str, move: dict) -> str:
+    """A readable name, so the board can be read by a person. Never used for lookup - lookup is by
+    situation, because the entity does not know the name of the thing it needs."""
+    knob = move.get("knob", "?")
+    sig = (signature or "")[:44].replace("fail -> ", "").strip()
+    return "when [%s] then %s -> %s" % (sig, move.get("move", "?"), move.get("to", "?"))
+
+
+def harvest(min_seen: int = SEEN_BEFORE) -> dict:
+    """Read the experience record and admit anything that has earned it.
+
+    ADMISSION IS DELIBERATELY CONSERVATIVE. A move that resolved an impasse ONCE is a coincidence
+    until it does it again; the literature's failure mode is a library that fills with one-offs and
+    then shadows the parts that work. `min_seen` is the whole gate and raising it is always safe.
+    """
+    exp = grid.load_json(unstick.EXPERIENCE, {"attempts": []})
+    doc = _load()
+    wins = {}
+    for a in exp.get("attempts", []):
+        if not a.get("worked"):
+            continue
+        k = (a["signature"], json.dumps(a["move"], sort_keys=True))
+        wins.setdefault(k, []).append(a)
+
+    admitted = []
+    for (sig, mjson), rows in wins.items():
+        if len(rows) < min_seen:
+            continue
+        move = json.loads(mjson)
+        pid = part_id(sig, move)
+        if pid in doc["parts"]:
+            continue
+        unstick.check_invariants(move)          # a part may not encode a permission change, ever
+        doc["parts"][pid] = {
+            "id": pid, "name": name_for(sig, move), "signature": sig, "move": move,
+            "level": 1, "streak": 0, "uses": 0, "wins": 0, "fails": 0,
+            "admitted": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
+            "evidence": "resolved this impasse %d times before admission" % len(rows)}
+        admitted.append(doc["parts"][pid])
+    _save(doc)
+    return {"admitted": admitted, "library": len(doc["parts"])}
+
+
+def applicable(signature: str, min_level: int = 1) -> list:
+    """THE QUESTION THE ENTITY ACTUALLY HAS: I am stuck like this - have I been here before?
+
+    Matched on the impasse signature, so the lookup key is the SITUATION rather than a name. Retired
+    parts are never offered. Ordered by level then by record, so the most-proven part goes first.
+    """
+    doc = _load()
+    out = [p for p in doc["parts"].values()
+           if p["level"] >= max(1, min_level) and p["signature"] == signature]
+    out.sort(key=lambda p: (-p["level"], -p["wins"], p["fails"]))
+    return out
+
+
+def carry_out(pid: str, apply_fn=None) -> dict:
+    """Execute a part. `apply_fn(move)` does the real work and returns truthy on success.
+
+    WITHOUT `apply_fn` THIS IS A DRY RUN and says so. Nothing here reaches into the world by itself:
+    the part describes a move, the caller owns the doing. That keeps the library inert on its own,
+    which is the correct default for a store that grows without supervision.
+    """
+    doc = _load()
+    p = doc["parts"].get(pid)
+    if not p:
+        raise KeyError(pid)
+    if p["level"] < 1:
+        return {"ok": False, "why": "part is RETIRED and is not offered", "part": p}
+    unstick.check_invariants(p["move"])
+    if apply_fn is None:
+        return {"ok": None, "dry_run": True, "move": p["move"], "part": p,
+                "why": "no apply_fn given; the part describes the move, the caller performs it"}
+    ok = bool(apply_fn(p["move"]))
+    return {"ok": ok, "move": p["move"], "part": record_use(pid, ok)}
+
+
+def record_use(pid: str, worked: bool) -> dict:
+    """Grade a part the way capabilities are graded: slow up, fast down, retire at the floor."""
+    doc = _load()
+    p = doc["parts"][pid]
+    p["uses"] += 1
+    if worked:
+        p["wins"] += 1
+        p["streak"] += 1
+        if p["streak"] >= PROMOTE_AFTER and p["level"] < CEILING:
+            p["level"] += 1
+            p["streak"] = 0
+    else:
+        p["fails"] += 1
+        p["streak"] = 0
+        p["level"] -= 1                      # a part that breaks once is not a part yet
+        if p["level"] < 1:
+            p["level"] = 0                   # RETIRED. Never offered again by applicable().
+            p["retired"] = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())
+    _save(doc)
+    return p
+
+
+def board() -> str:
+    doc = _load()
+    parts = sorted(doc["parts"].values(), key=lambda p: (-p["level"], -p["wins"]))
+    L = ["THE CRYSTAL LIBRARY - resolutions that held, and what they are trusted to do", "=" * 92,
+         "%-9s %-10s %-6s %-6s %s" % ("level", "uses", "wins", "fails", "part")]
+    for p in parts:
+        L.append("%-9s %-10s %-6s %-6s %s"
+                 % ("%d %s" % (p["level"], LEVELS[p["level"]]), p["uses"], p["wins"], p["fails"],
+                    p["name"][:58]))
+    if not parts:
+        L.append("(empty - nothing has resolved the same impasse twice yet)")
+    exp = grid.load_json(unstick.EXPERIENCE, {"attempts": []})
+    L.append("")
+    L.append("experience holds %d attempts; admission needs the same move to resolve the same "
+             "impasse %d times." % (len(exp.get("attempts") or []), SEEN_BEFORE))
+    return "\n".join(L)
+
+
+if __name__ == "__main__":
+    if "--harvest" in sys.argv:
+        r = harvest()
+        print("admitted %d new part(s); library holds %d" % (len(r["admitted"]), r["library"]))
+        for p in r["admitted"]:
+            print("   %s  [%s]" % (p["name"], p["evidence"]))
+        print()
+    print(board())

@@ -1,0 +1,24 @@
+{
+  "schema": "aea.organism/1",
+  "id": "labens_longitudinis",
+  "name": "Labens longitudinis",
+  "gloss": "the slipping one, of length",
+  "world": 3,
+  "seat": ["call"],
+  "seat_note": "The seat is bare and that is faithful to the run. x06b predates the parts system and called the rod directly with the whole chain in one prompt, so the only catalogue component actually present was the call. Nothing shapes, nothing reads, nothing carries.",
+  "wiring_note": "There is no seam inside this creature, and that is the diagnosis. Fifty operations arrive in one prompt and the answer leaves in one reply, so every intermediate value exists only inside the generation that is producing it. The carry stage is empty, which means the organism has no place to put a value between steps and no edge at which a value could be checked. Its failure surface is the breath itself: the length of the reply, never the difficulty of any operation in it.",
+  "fuel": {
+    "plant": "nvidia",
+    "model": "nvidia/nvidia-nemotron-nano-9b-v2",
+    "temperature": 0.0,
+    "law": "IV. Temperature 0.0 was chosen by x06b phase A as this rod's best and it is NOT the 0.2 the product runs at, so this measurement sits off the product's operating point by design. Per-step accuracy was 1.00 at 0.0, 0.2 and 0.7 alike, so the drift is not a temperature effect."
+  },
+  "receipt": {
+    "claim": "it can do every operation and cannot do the sequence: correct at the near end of the chain, gone by the far one",
+    "measured": "Per-step accuracy on isolated single operations, all seven ops and both signs: 25/25 at temperature 0.0, 21/21 at 0.2, 18/18 at 0.7, p_step 1.00 and p^50 1.00. The same rod given the fifty operations in one breath at temperature 0.0 scored 5/8 in the first run and 4/8 in the rerun, 9 of 16 pooled. At length 100 it scored 2/6 and 0/8; at length 200, 3/8 and 2/8.",
+    "runs": ["x06b_crossover", "x06b_phase_c_rerun"],
+    "caveat": "The length-200 cells score above the length-100 cells in both runs, which no drift model predicts. At n=8 per cell that is inside sampling noise, and it is recorded rather than smoothed. One task family, one rod, one temperature.",
+    "why_it_matters": "A rod perfect on the unit of work and half right on fifty of them cannot be diagnosed by asking it a question. The defect is only visible over length, which is what makes it a creature rather than a score."
+  },
+  "state": {"kind": "OPEN", "part": "call", "provisional": false}
+}

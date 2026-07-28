@@ -21,13 +21,22 @@ except Exception: pass
 INDEX = os.path.join(grid.STATE, "codex_index.json")
 CHUNK, OVERLAP, MAX_PER_FILE = 900, 150, 60
 
-ROOTS = [
-    # (label, glob, cap_files)  - the canonical book of him, broad but bounded
-    ("triverse-codex", "<REDACTED-PATH>/Desktop/TRIVERSE/CODEX/**/*.md", 120),
-    ("triverse-core",  "<REDACTED-PATH>/Desktop/TRIVERSE/CORE/**/*.md", 40),
-    ("portfolio",      "<REDACTED-PATH>/<REDACTED-PATH>/Documents/PORTFOLIO/*.md", 30),
-    ("aea-city",       os.path.join(grid.HERE, "*.md"), 20),
-]
+# EVERY CORPUS OUTSIDE THIS REPO IS RESOLVED FROM AN ANCHOR, NEVER TYPED. The three entries below
+# used to be literal paths naming one machine and one user; moved checkout, different account, or a
+# renamed folder and this silently indexed nothing. `grid.external` returns None when a root is not
+# configured and not present, and `_roots()` drops those rather than globbing a fabricated path.
+def _roots() -> list:
+    want = [
+        ("triverse-codex", grid.external("TRIVERSE_ROOT", "CODEX"), "**/*.md", 120),
+        ("triverse-core",  grid.external("TRIVERSE_ROOT", "CORE"), "**/*.md", 40),
+        ("portfolio",      grid.external("PORTFOLIO_ROOT"), "*.md", 30),
+        ("aea-city",       grid.ROOT, "*.md", 20),
+    ]
+    return [(label, os.path.join(base, pat), cap)
+            for label, base, pat, cap in want if base]
+
+
+ROOTS = _roots()
 
 
 def load_index() -> dict:

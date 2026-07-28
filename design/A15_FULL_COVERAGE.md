@@ -16,7 +16,7 @@ book role:    APPENDIX. A8 crosses the game's 29 elements with the game's dimens
               included in the metaphor; what is the point of the entire AEA if not all
               included." This chapter exists so nothing in the framework is silently
               dropped.
-ground truth: CANON — ../../<REDACTED-PATH>/Documents/PORTFOLIO/LBR_DEV/framework/
+ground truth: CANON — ../../OneDrive/Documents/PORTFOLIO/LBR_DEV/framework/
               AEA_WALKTHROUGH.md (cited below as W §n) · ../../.../LBR_DEV/
               LBR_AEA_COMPLETE_BRIEF.md (cited as B §n) · ../AEA_PROOF_PLAN.md (the
               two-taxonomy history, cited as PP). GAME — ../aea_elements.js (the 29) ·

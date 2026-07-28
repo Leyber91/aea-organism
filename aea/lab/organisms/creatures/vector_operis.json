@@ -1,0 +1,22 @@
+{
+  "schema": "aea.organism/1",
+  "id": "vector_operis",
+  "name": "Vector operis",
+  "gloss": "the bearer, of the work",
+  "world": 3,
+  "seat": [],
+  "wiring_note": "NO SEAT, BECAUSE NO PART IN THE CATALOGUE CORRESPONDS TO IT. This creature came out of the images rather than out of a run: the passengers have been in every region 2 and region 3 frame, gripping ribbons, ranked along the long one's back, working across a mantle, and in region 3 they arrive in dozens on a structural animal, so they read as a population rather than an attachment. They are the most-drawn creature in the game and the only one with no entry. A seat is not withheld here for tidiness; there is nothing measured to seat.",
+  "fuel": {
+    "plant": null,
+    "model": null,
+    "temperature": null,
+    "law": "IV. No fuel has ever been seated because this organism has never been run. Naming a plant here would be the invention the law exists to prevent."
+  },
+  "receipt": {
+    "claim": "unwritten. The art shows a species that moves work along the routes between nodes; no experiment has ever measured such a thing",
+    "measured": null,
+    "runs": [],
+    "why_it_matters": "it is listed so the roster's count is honest. The World 3 roster names eight creatures; read off the creature files themselves, five of the eight carry a non-null measured field, Sistens oneris is retracted, this one and Inaccessus sui are unmeasured. It is a candidate for a future run rather than a finding, and it does not enter the annex until something measures it."
+  },
+  "state": {"kind": "UNMEASURED", "part": null, "provisional": true}
+}

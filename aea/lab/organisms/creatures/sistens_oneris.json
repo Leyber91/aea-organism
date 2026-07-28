@@ -1,0 +1,38 @@
+{
+  "schema": "aea.organism/1",
+  "id": "sistens_oneris",
+  "name": "Sistens oneris",
+  "gloss": "the one halting, of the burden",
+  "world": 3,
+  "seat": [
+    "call",
+    "carry"
+  ],
+  "seat_config": {
+    "carry": {
+      "form": "conversation"
+    }
+  },
+  "wiring_note": "THE SEAM IS THE WIRE ITSELF, and that is where this creature came apart. The conversation container's state is messages rather than a packed string, so it has to reach the rod through the request body instead of through the prompt. In x21 it did not: chain.py built the message history and passed it nowhere, Ctx had no field to hold it, and Call always sent exactly one user message. Carry.pack for this form also returns an empty string, so no running value was prepended either. The arm that was believed to carry the most carried nothing.",
+  "fuel": {
+    "plant": "groq",
+    "model": "llama-3.1-8b-instant",
+    "temperature": 0.2,
+    "law": "IV. The void arm ran on three rods: ollama/granite4.1:3b, groq/llama-3.1-8b-instant and nvidia/nemotron-3-ultra-550b-a55b. Fuel is recorded here for completeness; no result from any of them stands."
+  },
+  "receipt": {
+    "claim": "a container that carries everything collapses under the weight of it and stops finishing",
+    "measured": null,
+    "voided_by": "CORRECTED 2026-07-27. Previously attributed to defect 13 (the conversation container never sent). That attribution is false: the stored x21 run fired 2026-07-26 21:39 UTC and chain.py did not exist until 2026-07-27 03:27 UTC, five hours later. x21 imported Chain from organism.py, which sent history + [user] correctly, and the trace proves it independently of any commit - tok_in per step runs 23, 50, 76, 102, 128, 155, 181, 207 on the conversation arm against a flat 42-43 on none. The container was on the wire. The 8 of 12 is four call_failed HTTP failures, two on groq and two on nvidia at ok_rate 0.5, at n=4 per cell. That is defect 10 territory - a container credited or debited for sequences that never finished - and it is an infrastructure artifact, not a capability finding. The retraction stands; its cause did not.",
+    "runs": [
+      "x21"
+    ],
+    "why_it_matters": "the largest instrument defect in the project so far because it did not corrupt a number, it invented an organism. The behaviour may still be real, and x24 was written to re-measure it on the fixed wire with completion and accuracy scored separately, but that run has not completed and nothing may be claimed until it does. Also note carried_chars prices this container at zero by construction, since its state is messages, which is why context_chars now exists.",
+    "also_measured": "x24 2026-07-27, on an implemented container at n=48 per cell: conversation completes and retrieves rather than stalling - token recall 144/144 on granite at L=3 and 239/240 on nvidia/openai/gpt-oss-20b at L=16. Nothing in the new evidence shows a container collapsing under its own weight."
+  },
+  "state": {
+    "kind": "RETRACTED",
+    "part": "carry:conversation",
+    "provisional": true
+  }
+}

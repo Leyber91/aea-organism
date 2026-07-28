@@ -1,0 +1,23 @@
+{
+  "schema": "aea.organism/1",
+  "id": "iterans_sui",
+  "name": "Iterans sui",
+  "gloss": "the one repeating, of itself",
+  "world": 1,
+  "seat": ["call", "frame", "readout"],
+  "wiring_note": "The seat is the one the single stored sighting was taken on, frame at shape and readout at read, and it is a record of where the loop was seen rather than a claim about what produces it. No seam is established. The claim that a frame triggers the collapse has no support at any n, and the readout above it has nothing to recover from a reply that never reaches an answer.",
+  "fuel": {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "temperature": 0.2,
+    "law": "IV. All three sightings in the project are nemotron rods. No other lineage in the lab has produced one, and this rod did not produce one in either x19 run."
+  },
+  "receipt": {
+    "claim": "it comes apart while still speaking, emitting the same fragment until it runs out of room",
+    "measured": null,
+    "voided_by": "defect 4 - the 28 instances the bestiary claimed are detector artifacts. The overseer's 6-repeat degenerate check split on whitespace and fired on markdown table structure and repeated unit strings, on one rod, on the aggregate task, at 7 of 8 per cell, in four subsets including two with no frame seated. Zero of the 28 are loops.",
+    "runs": ["x05", "x10", "x18", "x19"],
+    "why_it_matters": "It did not reproduce. 0 loops in 1,280 attempts across two x19 runs of 640 calls each, on a replacement detector that was self-tested before any call was spent and catches all three real loops while clearing four known structural false positives. Scanning every stored reply in the project for genuine verbatim repetition returns three, one each in x05, x10 and x18, and three is a sighting rather than a distribution. The x18 one, seat call plus frame plus readout, tok_out 23: 'The user isThe needThe|TheTheTheWeThe / TheThe / TheTheTheTheTheThe'. Nothing here supports painting a state, which is why UNMEASURED had to become its own colour: a creature we have not tested may not be painted as one we have."
+  },
+  "state": {"kind": "UNMEASURED", "part": null, "provisional": true}
+}

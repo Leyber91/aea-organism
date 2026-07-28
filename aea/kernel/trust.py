@@ -66,17 +66,73 @@ def _entry(state: dict, cap: str) -> dict:
 
 
 def check(cap: str) -> dict:
-    """May the entity do this right now? Returns {allowed, level, name, why}."""
+    """May the entity do this right now? Returns {allowed, level, name, why}.
+
+    THE CEILING IS APPLIED HERE, AT READ TIME, AND IT WAS NOT BEFORE.
+
+    `record()` caps promotion at the ceiling, so a level can never CLIMB past it. But nothing capped
+    the level on the way OUT, and that leaves the ceiling unenforceable in the one direction that
+    matters: lowering it. Set `send_outbound`'s ceiling to 0 after a level of 2 is already stored -
+    by editing the charter, or by loading a ledger written under an older charter - and every caller
+    keeps being told the capability is allowed. The charter is the human's only lever over what this
+    thing may do, and a lever that cannot revoke is not a lever.
+
+    Clamping at read time makes the charter authoritative on every call, without rewriting the
+    stored history: the ledger keeps saying what was earned, and `check` says what is permitted.
+    Those are different questions and only the second one gates an action.
+    """
     state = _load()
     e = _entry(state, cap)
-    lvl = e["level"]
+    ceiling = CHARTER[cap]["ceiling"]
+    stored = e["level"]
+    lvl = min(stored, ceiling)
+    capped = stored > ceiling
     return {
         "allowed": lvl >= 2,                      # autonomous action needs WATCHED or better
         "draft_only": lvl == 1,
         "level": lvl, "name": LEVEL_NAMES[lvl],
+        "stored_level": stored, "ceiling": ceiling, "capped": capped,
         "why": f"{cap}: level {lvl} ({LEVEL_NAMES[lvl]}), streak {e['streak']}, "
-               f"{e['runs']} runs / {e['fails']} fails; ceiling {CHARTER[cap]['ceiling']}",
+               f"{e['runs']} runs / {e['fails']} fails; ceiling {ceiling}"
+               + (f" - CAPPED from stored level {stored} by the charter" if capped else ""),
     }
+
+
+# WHEN TO SHOUT. Three consecutive failures is the threshold the field converged on for unattended
+# agents; after that, throttle to roughly daily so an alarm never becomes wallpaper.
+ALERT_AT = (3, 10, 24)
+
+
+def _alert(cap: str, e: dict):
+    """Say it out loud. An unattended system that fails quietly is indistinguishable from one that
+    is working, and this project's honesty law makes that specific silence unacceptable.
+
+    THE ALARM IS DURABLE, NOT EPHEMERAL. A print goes to a console nobody is watching at 04:48 UTC,
+    which is the exact hour these failures happen. It lands in a file so the next reader finds it.
+
+    IT DOES NOT PHONE BY DEFAULT, AND THAT IS DELIBERATE. `aea.io.notify.call()` rings Luis's phone
+    and speaks. Waking someone at four in the morning is a decision for him to make once, not for
+    this function to make thirty times. Set TRUST_ALARM_CALL=1 in .env to arm it.
+    """
+    msg = (f"{cap} has failed {e['down']} times in a row and is at "
+           f"{LEVEL_NAMES[e['level']]}. Last: {(e.get('history') or ['-'])[-1]}")
+    path = os.path.join(grid.STATE, "trust_alarms.json")
+    doc = grid.load_json(path, {"alarms": []})
+    doc.setdefault("alarms", []).append({
+        "at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "capability": cap, "consecutive_failures": e["down"],
+        "level": LEVEL_NAMES[e["level"]], "message": msg})
+    doc["alarms"] = doc["alarms"][-100:]
+    doc["open"] = sorted({a["capability"] for a in doc["alarms"][-20:]})
+    grid.atomic_save_json(path, doc)
+    if str(grid.key("TRUST_ALARM_CALL") or "").strip() in ("1", "true", "yes"):
+        try:
+            from aea.io import notify
+            notify.call(f"A E A alarm. {msg}")
+        except Exception:
+            pass
+    pulse.emit("trust", "alarm", msg, ok=False)
+    print(f"  [trust alarm] {msg}")
 
 
 def record(cap: str, ok: bool, note: str = "") -> dict:
@@ -89,6 +145,9 @@ def record(cap: str, ok: bool, note: str = "") -> dict:
         e["runs"] += 1
         stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
         if ok:
+            if e.get("down"):
+                e["history"].append(f"{stamp} recovered after {e['down']} consecutive failures")
+            e["down"] = 0                             # a clean run clears the alarm, not the record
             e["streak"] += 1
             promoted = False
             if e["streak"] >= c["promote_after"] and e["level"] < c["ceiling"]:
@@ -99,12 +158,51 @@ def record(cap: str, ok: bool, note: str = "") -> dict:
         else:
             e["fails"] += 1
             e["streak"] = 0
+            # THE COUNTER'S MIRROR IMAGE, AND IT IS THE ONE THAT SAVES YOU.
+            #
+            # A streak counts consecutive clean runs upward toward promotion. Nothing counted
+            # consecutive FAILURES, so the dominant real-world failure of an unattended system was
+            # invisible here: not a bad decision, but SILENT DEATH. The process is up, the log looks
+            # busy, every wake fails identically for one external reason, and the operator believes
+            # the thing is alive. produce_brief did exactly that for eighteen days and thirty wakes.
+            #
+            # `down` is that number. It arms an alert rather than a demotion, because the demotion
+            # already happened on the line above; what was missing was anyone being told.
+            e["down"] = int(e.get("down") or 0) + 1
             if e["level"] > min(1, c["ceiling"]):     # fast down, but never below DRAFT unless charter says 0
                 e["level"] -= 1
-            e["history"].append(f"{stamp} FAIL -> {LEVEL_NAMES[e['level']]} {note}".strip())
+            e["history"].append(f"{stamp} FAIL x{e['down']} -> {LEVEL_NAMES[e['level']]} {note}".strip())
+            if e["down"] in ALERT_AT or (e["down"] > max(ALERT_AT) and e["down"] % 24 == 0):
+                _alert(cap, e)
         e["history"] = e["history"][-20:]
         _save(state)
         pulse.emit("trust", "record", f"{cap} {'ok' if ok else 'FAIL'} -> {LEVEL_NAMES[e['level']]} streak {e['streak']}", ok=ok)
+    return check(cap)
+
+
+def reset_streak(cap: str, why: str) -> dict:
+    """Clear the progress toward promotion WITHOUT demoting. There is exactly one legitimate reason.
+
+    LAW IV: the same seat on different fuel is a DIFFERENT organism. A streak counts consecutive
+    clean runs, and consecutive only means something if the runs are comparable. Swap the rod under a
+    capability and the six clean runs behind it were performed by something else - carrying them
+    forward would let a capability inherit autonomy earned by a model it no longer uses, which is the
+    exact confound Law IV exists to name.
+
+    The LEVEL is untouched, because nothing failed. Only the claim to be nearly promoted is.
+    """
+    with grid.file_lock(LEDGER):
+        state = _load()
+        e = _entry(state, cap)
+        was = e["streak"]
+        if not was:
+            return check(cap)
+        e["streak"] = 0
+        stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+        e["history"].append(f"{stamp} streak {was} -> 0, level held: {why}")
+        e["history"] = e["history"][-20:]
+        _save(state)
+        pulse.emit("trust", "reset", f"{cap} streak {was} -> 0: {why}", ok=True)
     return check(cap)
 
 

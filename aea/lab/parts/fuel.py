@@ -34,8 +34,13 @@ class ScriptedFuel(Fuel):
 
     def __init__(self, replies, tokens=8):
         self.replies, self.tokens, self.seen = list(replies), tokens, []
+        # THE WHOLE REQUEST, not only its last turn. A container whose state is message history is
+        # invisible to a recorder that keeps one string, which is how defect 13 survived a test file
+        # written to catch exactly this class of fault.
+        self.sent = []
 
     def call(self, rod, messages, *, max_tokens, temperature):
+        self.sent.append([dict(m) for m in messages])
         self.seen.append(messages[-1]["content"])
         text = self.replies[len(self.seen) - 1] if len(self.seen) <= len(self.replies) else ""
         return {"ok": True, "text": text, "tokens": self.tokens,

@@ -39,7 +39,7 @@ FACTS = [
     "Privacy zones: residential = no-train plants safe for private data; industrial = trains-on-data plants for public data only. The orchestrator routes private tasks only to no-train or local nodes.",
     "The swarm ramifies recursively: a deep model (e.g. gpt-oss-120b) reasons at the root, fast Groq models do the leaves; an agent spawns sub-agents when its task decomposes into independent parts or exceeds its tier.",
     "Local stack: Ollama (32 models) + Fooocus SDXL on an RTX 3500 Ada 12GB = assistant tier (7-14B), not frontier; qwen3:8b runs about 27 tokens/sec warm.",
-    "The canonical project lives at <REDACTED-PATH>/dev/aea-city (off OneDrive). LLM7.io was rejected: its free token returns 402 insufficient balance, so it is not actually free.",
+    "The canonical project is this repository, resolved at runtime by walking up to the directory holding design/ or .git - it is never a typed path. LLM7.io was rejected: its free token returns 402 insufficient balance, so it is not actually free.",
     "The biggest risk to the project is that characterization keeps substituting for building - the entity must ship real artifacts, not just be measured and mapped.",
 ]
 

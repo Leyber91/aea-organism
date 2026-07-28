@@ -87,7 +87,14 @@ def pick(pool, tier=None, zone='public', meter=None, exclude=()):
             if not ok:
                 continue
         return n
-    return cands[0] if cands else None
+    # THE METER IS NOT ADVISORY. This used to `return cands[0] if cands else None`, which handed
+    # back the node the budget check had JUST refused - after consulting the meter, logging that it
+    # was consulted, and then overruling it. That is worse than never checking, because the trace
+    # says the guard ran. A rate limit exists to stop a request; a selector that proceeds anyway
+    # converts a wait into a 429, and this repo has already written a 429 into an archive as a
+    # capability result once. None means WAIT, and every caller in the repo already handles None
+    # (brief.py:40, hades.py:40/73, relay.py:35).
+    return None
 
 def call_node(n, prompt, meter, max_tokens=400):
     r = grid.call_openai(n['plant'], n['model'], [{'role': 'user', 'content': prompt}], max_tokens=max_tokens)

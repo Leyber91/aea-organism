@@ -31,8 +31,28 @@ CHAINS_FP = None  # set after HERE
 
 
 def chain_write(rec: dict):
-    """Append one chain/verdict record to chains.jsonl (bounded ~400KB, rotate)."""
+    """Append one chain/verdict record to chains.jsonl (bounded ~400KB, rotate).
+
+    PRIVATE AND SENSITIVE GOALS ARE NOT RECORDED VERBATIM, AND THAT IS NOT OPTIONAL.
+
+    This wrote `goal` in full for every zone, and `state/chains.jsonl` was TRACKED BY GIT and absent
+    from .gitignore. The fourteen rows on disk when this was found were benign test prompts - zero
+    emails, paths, calendar references or identifiers - so nothing leaked. The exposure was
+    STRUCTURAL rather than realised: the next private-zone chain carrying a calendar entry or an
+    inbox line would have been committed verbatim, and the privacy guard in this project is absolute
+    precisely because that failure is irreversible once pushed.
+
+    The shape is kept because the shape is what the trace is FOR - id, zone, verdict, length, why.
+    Only the free text goes, and it is replaced by a stated redaction rather than silently dropped,
+    so a reader can tell "withheld" from "empty". That distinction is the honesty law applied to a
+    log file.
+    """
     try:
+        rec = dict(rec)
+        if rec.get("zone") in ("private", "sensitive"):
+            g = rec.get("goal")
+            if isinstance(g, str) and g:
+                rec["goal"] = "[redacted: %d chars, %s zone]" % (len(g), rec["zone"])
         fp = os.path.join(grid.STATE, "chains.jsonl")
         if os.path.exists(fp) and os.path.getsize(fp) > 400_000:
             os.replace(fp, fp + ".1")
@@ -70,7 +90,12 @@ _talk_lock = threading.Lock()      # one exchange at a time (the workspace broad
 _CTYPES = {".js": "application/javascript", ".css": "text/css", ".png": "image/png",
            ".svg": "image/svg+xml", ".woff2": "font/woff2", ".map": "application/json",
            ".json": "application/json",  # the CONTENT layer: missions/maps authored as DATA (game/data/*)
-           ".ico": "image/x-icon", ".wav": "audio/wav", ".mp3": "audio/mpeg"}
+           ".ico": "image/x-icon", ".wav": "audio/wav", ".mp3": "audio/mpeg",
+           # .html was ABSENT, so every generated page fell through to the dashboard and returned
+           # 200 with the wrong body - the worst shape of failure, because a 404 is visible and a
+           # confident wrong page is not. board.html and xray.html both served 5438 identical bytes.
+           # _static_path already refuses traversal and reads only flat basenames from web/.
+           ".html": "text/html; charset=utf-8"}
 
 
 def tail(path: str, n: int) -> list[str]:

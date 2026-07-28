@@ -6,6 +6,14 @@ import os
 
 STAGES = ("shape", "fire", "read", "repair", "carry", "judge")
 
+# WHICH READ WINS, DECLARED RATHER THAN EMERGENT. This ordering reproduces exactly what the old
+# last-writer-wins code did, verified against the frozen trace - it is written down, not changed.
+# Whether it is the RIGHT ordering is now a separate question that can be asked with an experiment,
+# because it is a config key (`{"read": {"precedence": [...]}}`) instead of an accident of stage
+# order. That separation is the fix: making the seam explicit and re-litigating it are two changes,
+# and doing both at once would have conflated them.
+READ_PRECEDENCE = ("critic", "validation", "readout", "call")
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 CATALOGUE_PATH = os.path.join(os.path.dirname(_HERE), "organisms", "catalogue.json")
 
@@ -14,18 +22,35 @@ class Ctx:
     """The wire. Parts read and write here; nothing is passed between them directly."""
 
     def __init__(self, task, rod, *, temperature=0.2, max_tokens=1200, seat=(), config=None,
-                 fuel=None):
+                 fuel=None, history=None):
         from aea.lab.parts.fuel import DEFAULT
         self.task, self.rod = task, rod
         # FUEL IS SEATED, NOT IMPORTED. Law IV in the code rather than only in the JSON.
         self.fuel = fuel or DEFAULT
         self.temperature, self.max_tokens = temperature, max_tokens
         self.seat, self.config = set(seat), dict(config or {})
+        # PRIOR TURNS, AS REAL MESSAGES. Defect 13: chain.py built a history for the `conversation`
+        # container and passed it nowhere, because there was no field here to pass it to and Call
+        # always sent a single user message. The container that was supposed to carry the most
+        # carried nothing at all, and its published finding is void. A container is not implemented
+        # until the thing it claims to carry arrives in the request.
+        self.history = list(history or [])
         self.prompt = task.get("data", "")
         self.text = ""              # what the call returned
-        self.answer = None          # what a read part extracted
-        self.read_by = None
-        self.declined = False       # a guard refused; ends the read
+        # ONE WRITER PER FIELD. Four parts used to assign ctx.answer directly - Call, Readout,
+        # Validation and Critic - and the last one to run won. So "adding validation subtracts the
+        # recoverable capacity", this lab's flagship result, was a statement about a shared mutable
+        # slot rather than about guarding: on a mute reply, call+readout recovers 4 and
+        # call+readout+validation returns None, because the guard re-reads the raw text from scratch
+        # and clobbers the lever. In experimental terms the treatment was never independently
+        # manipulated, which is construct confounding rather than a finding.
+        #
+        # Now each part claims its OWN key and the winner is decided by a DECLARED precedence. The
+        # seam stops being an accident of ordering and becomes a variable that can be varied - which
+        # is what it always should have been, because the precondition thesis lives in exactly that
+        # interaction.
+        self.reads = {}             # part key -> {value, dialect, declined}
+        self.precedence = tuple((config or {}).get("read", {}).get("precedence") or READ_PRECEDENCE)
         self.verdict = None
         self.flags, self.rec = [], {}
         self.tok_in = self.tok_out = 0
@@ -38,6 +63,37 @@ class Ctx:
 
     def note(self, **kw):
         self.rec.update(kw)
+
+    # --- THE READ CHANNEL. One writer per key, one resolver, precedence declared as data. --------
+
+    def claim(self, key, value, dialect, declined=False):
+        """The only way a part may record a read. A second claim on the same key is a bug, not a
+        later opinion, so it raises rather than overwriting - which is the whole point."""
+        if key in self.reads:
+            raise RuntimeError("%s claimed the read twice; one writer per field" % key)
+        self.reads[key] = {"value": value, "dialect": dialect, "declined": declined}
+
+    def _winner(self):
+        for key in self.precedence:
+            r = self.reads.get(key)
+            if r is not None:
+                return r
+        return None
+
+    @property
+    def answer(self):
+        w = self._winner()
+        return w["value"] if w else None
+
+    @property
+    def read_by(self):
+        w = self._winner()
+        return w["dialect"] if w else None
+
+    @property
+    def declined(self):
+        w = self._winner()
+        return bool(w and w["declined"])
 
 
 class Part:

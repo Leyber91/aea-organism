@@ -1,0 +1,24 @@
+{
+  "schema": "aea.organism/1",
+  "id": "tacitus_operis",
+  "name": "Tacitus operis",
+  "gloss": "the silent one, of the work",
+  "world": 1,
+  "seat": ["call"],
+  "wiring_note": "A bare call, and the whole creature lives in the gap between the read stage and what the reply already contains: the answer is inside the working and nothing is seated at read to take it out. Two different parts close that gap from opposite ends. A method frame at shape prevents the condition, and a readout at read recovers it after the fact for nothing. The bridge creature out of World 1, because the fault is not in what was sent.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "granite4.1:8b",
+    "temperature": 0.2,
+    "law": "IV. All three surviving mute trials are this rod on the wordcount task, one at 0.2 and two at 0.7. No other rod in x13 produced one."
+  },
+  "evolves_to": {"id": "lectus_operis", "by": "readout"},
+  "receipt": {
+    "claim": "the working reaches the right answer and the mouth states a wrong one",
+    "measured": "x13: 3 of 153 clean trials were MUTE, work right and mouth wrong, and the readout recovered every one at zero additional tokens. Stated rate 0.425 to readout rate 0.444.",
+    "runs": ["x13"],
+    "caveat": "THE DEFINING TRAIT IS VOID, and the creature is demoted rather than retracted. defect 3: the 100%, 88% and 52% figures came from a check reading 'cerebras' in t and len(t.strip()) < 60, which failed a stored 256-character reply that ends in the answer twice. Every clean extract trial for that rod ends in 'cerebras'. The mouth was not empty; the gate was too narrow to hear it. The measured line above is a different run on a different instrument and stands on its own. Two percent, not a hundred, so this is a find rather than the striking one.",
+    "why_it_matters": "A method frame does not create this creature, it eliminates the condition outright: mute trials in x15 go 28 of 288 bare, 24 of 288 posture, 0 of 360 fitted. The annex arrow Clausus to Tacitus by FRAME pointed the wrong way and is corrected. This is also the only place in the project where the readout does anything at all, against x18 scoring it inert overall at median +0.04."
+  },
+  "state": {"kind": "OPEN", "part": "readout", "provisional": true}
+}

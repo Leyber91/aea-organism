@@ -326,3 +326,233 @@ now says so too.**
 **The rule.** Any change to a part is a capability change until a frozen trace says otherwise. Run
 the golden test before committing, and when it disagrees, decide whether the code regressed or the
 expectation was wrong - and write down which.
+
+---
+
+### DEFECT 13 · THE CONTAINER THAT WAS NEVER SENT
+
+2026-07-27, found while writing x24, and it is the largest one yet because it did not corrupt a
+number - it invented a creature.
+
+`chain.py` built a message history for the `conversation` carry form:
+
+```python
+if self.form == "conversation":
+    history = history + [{"role": "user", ...}, {"role": "assistant", ...}]
+```
+
+and passed it **nowhere**. `Ctx` had no field for it, and `Call` always sent exactly
+`[{"role": "user", "content": prompt}]`. The container that was supposed to carry the most carried
+nothing at all.
+
+**And it was worse than empty.** `Carry.pack("conversation", ...)` falls through to `return ""`, so no
+running value was prepended either, and `_body` omitted the framing line the other three arms received.
+From step two onward the rod was handed the literal string `Step 7: add 19` with no number to apply it
+to. The arm was not a container under test. It was a **starved control that the experiment believed was
+the richest treatment.**
+
+**WHAT IT COST — AND THIS PARAGRAPH IS ITSELF A CORRECTION, MADE 2026-07-27 AFTER AN AUDIT.**
+
+It first read: *"x21's only finding about `conversation` was that it stops finishing, 8 of 12 against
+92%. That number measures starvation. `Sistens oneris` was written from it. A defect in the wire
+produced a species."* **That attribution is false and the blast radius was drawn backwards.**
+
+The stored x21 run fired at **2026-07-26 21:39 UTC**. `chain.py` did not exist until **2026-07-27
+03:27 UTC**, five hours and forty-eight minutes later; x21 imports `Chain` from `organism.py`, whose
+version did `msgs = history + [{"role": "user", ...}]` and passed the whole list to `call_gated`.
+**The container was implemented and sent when x21 ran.** The trace proves it without reference to any
+commit — on granite at sixteen steps, `tok_in` per step runs 23, 50, 76, 102, 128, 155, 181, 207 on
+the conversation arm and flat 42, 43, 42, 42 on `none`. A context that grows by ~26 tokens a turn is
+a history on the wire.
+
+So defect 13 is real **as a defect in `chain.py`**, introduced by today's refactor and caught before
+it reached a published number. It did **not** cause x21's 8 of 12.
+
+**What that number actually is:** four `call_failed` HTTP failures, two on groq and two on nvidia,
+each at `ok_rate 0.5`, every incomplete record terminating on `{"step": N, "ok": false}`. groq logged
+`call_failed` in all four arms at that length. At n=4 per cell the conversation arm's elevation is
+one or two dropped connections. That is defect 10's territory - a container credited or debited for
+sequences that never finished - not defect 13's.
+
+**`Sistens oneris` is still without a receipt, for a different reason.** Not starvation: infrastructure
+failure at n=4, which is not a capability finding either. The retraction stands; its stated cause was
+wrong and is corrected here, in `sistens_oneris.json`, and in x24's docstring.
+
+**And the lesson under the lesson.** I found a real defect in the code, then reached for the nearest
+published number and assigned it. Nothing checked whether that number's run had ever executed the
+defective path. **A defect's blast radius is a claim like any other and needs its own evidence** - a
+timestamp, a git date, a trace signature. Attributing a finding to the wrong cause is the same error
+as inventing one, and it is more dangerous, because it wears a correction's clothes.
+
+**Why every test stayed green.** `test_golden.py` had chain cases for `none`, `checkpoint` and `free`
+and none for `conversation` - the file written to catch this class of fault covered three of four
+containers and missed the broken one. Worse, the three cases it did have would have passed anyway:
+they read the value back out of the reply, which `ScriptedFuel` supplies regardless of what was sent.
+**A test that only reads the output cannot see an input that never arrived.**
+
+**The fix, in three places.** `Ctx` takes `history`; `Call` sends `ctx.history + [user]`; `Chain`
+passes it for the conversation form. Plus `ScriptedFuel.sent` now records the **whole request** rather
+than its last turn, and `CARRIED_GOLDEN` asserts, per form, how many messages reach the rod and whether
+the running value is among them.
+
+**The rule, and it generalises past this bug.** A container is not implemented until a test asserts
+that **the thing it claims to carry arrives in the request.** Assert on the input, not only on the
+output. Any arm whose treatment is invisible in what goes on the wire is a control wearing a
+treatment's name.
+
+**A live hazard found in the same pass, recorded rather than fixed mid-experiment.** `Carry.extract`
+for the `free` form splits on `NOTE:` and takes the last integer of the head. A rod that writes
+trailing prose containing a number **without** the `NOTE:` prefix loses the value - fed a
+checkpoint-shaped reply ending `step=1`, the free arm reads the value as **1**. The free instruction
+explicitly invites trailing prose, so this is a real exposure in every `free` cell measured so far.
+
+
+---
+
+### DEFECTS 14 TO 18 · WHAT AN ADVERSARIAL AUDIT OF THE INSTRUMENT FOUND
+
+2026-07-27. Twenty candidate defects were raised by readers given four lenses over the instrument
+(the state path, the read path, the denominator, the control). Each was then handed to a separate
+reader whose instruction was to REFUTE it. **Thirteen died. Seven survived.** That ratio is the point:
+most plausible-sounding findings dissolve on reading, and a lab that reports the twenty would have
+been wrong thirteen times.
+
+**14 · EVERY BODY READ WAS A TAIL READ.** `chain.py` did
+`text = r.get("text") or r.get("raw") or ""`. The first branch is **dead**: `Organism.run` sets
+`rec["text"]` only under `keep_full=True` and `Chain` never passed it. So `text` was always `raw`,
+which `fire.py` defines as `ctx.text[-320:]`. `read_work()` therefore judged whether a reply showed
+its working **from the last 320 characters** of a reply the frame exists to make longer. The proof is
+internal: `Readout` calls the same function on the full text, so one trace row could record
+`from_work=True` and `showed_work=False` at once. **FIXED** - `keep_full=True` in both call sites. The
+refuter's correction is kept: this biases the baseline arms of x22 one-directionally downward and does
+not overturn the v3 headline, because the frame arm's replies were the SHORT ones.
+
+**15 · THE `total` DIALECT RETURNS AN ADDEND, SOMETIMES AN OPERAND.** `_TOTAL` matches
+`total|subtotal|sum`, then `\D{0,18}?` non-greedily, then captures the FIRST integer after it.
+Measured, live:
+
+```
+"Total: 48377"                                     -> 48377   correct
+"Sum of 48371 and 6 gives 48377"                   -> 48371   the addend
+"Running value 48371. Total after adding 6: 48377" -> 6       the OPERAND, as the answer
+```
+
+The part exists to recover a right answer out of correct working. On the two commonest ways a rod
+narrates its arithmetic, it recovers a number that was never the answer, and labels it `work:total`.
+
+**16 · THE CHAIN MANUFACTURES A VALUE.** When the reply contains no number,
+`Carry.extract(form, text, fallback)` returns the **fallback, which is the previous step's value**.
+Measured: a reply of *"I cannot determine this."* records `value=48377` (unchanged), `hit=False`,
+`completed=2`. **A refusal is scored as a wrong answer and the sequence counts as complete.** The only
+tell is `on_task=False`, which no report reads. Declining and being wrong are different behaviours and
+the instrument cannot tell them apart.
+
+**17 · x22 COUNTED A ONE-STEP WRECK AS A COMPLETED SEQUENCE.** `done = [r for r in recs if
+r["completed"]]` is a truthiness test, not `== steps`; x21 has the corrected form. Six sequences in
+the recorded run had `0 < completed < 14`, every one flagged `call_failed`. Because capacities are a
+`statistics.mean` of per-chain rates, a chain that died after one step weighed as much as a chain of
+fourteen. Re-derived over full sequences only, v4's `recoverable` falls from **0.535 to 0.381**.
+
+**18 · x23b's GATE RECORDED PERFECT RELIABILITY BY ASSERTION.** Its solo cells call
+`fuel.stamp(..., failures=0)` with the number hardcoded, so every calibration row claims `ok_rate
+1.000` whatever actually happened. A stamp whose value is written by hand is not a measurement.
+
+**THE RULE THIS ADDS, and it is why 15 and 16 did not cost another run.** x24 was stopped mid-flight
+and restarted storing **the full reply text in every trace row**. The row previously stored `chars`
+and no text, so a read defect found afterwards could not be re-scored off disk and the calls had to
+be re-bought. That is the harness's `text[:400]` lesson one layer down. **Store the whole reply. A
+read is a hypothesis, and a run you cannot re-score is a run you have to buy twice.**
+
+
+---
+
+### DEFECT 19 · WE PACED BLIND WHILE EVERY PLANT PUBLISHED ITS EXACT BUDGET
+
+2026-07-27. Measured, live:
+
+```
+groq        x-ratelimit-limit-tokens 6000/min      day cap 14400 requests
+cerebras    x-ratelimit-limit-requests-minute 5    150/hour, 2400/day, 30000 tokens/min
+nvidia      no rate-limit headers published at all
+```
+
+**Cerebras serves FIVE REQUESTS PER MINUTE.** x24's cerebras arm is 4 containers x 48 sequences x 16
+steps = 3072 calls, which is **ten hours** at that rate. Nothing in the lab could say so before
+starting, and the run does not fail cleanly when it hits the wall: `call_gated` burns its five
+retries in backoff, returns not-ok, the sequence is recorded incomplete, and **a rate limit is written
+into the archive as a capability result.** That already happened - the door probe returned n=3 and
+n=2 on cerebras instead of 40 and it was diagnosed as a context ceiling. It was throttling.
+
+**The pacing was blind in both directions.** A hand-typed semaphore of `max_inflight // 2` (which
+resolves to **2** for every plant that declares nothing) plus exponential backoff that only learns
+after a request has already been refused. Too slow on a plant with capacity, too fast on one without,
+and unable to tell which. Meanwhile the plant states the answer in the headers of every response.
+
+`aea/lab/pace.py` reads them. Two mechanisms, and the second matters more:
+
+1. **Pace proactively** from the observed bucket, so the wait happens before the refusal rather than
+   after. A 429 we caused ourselves is currently recorded against the ROD's reliability.
+2. **Refuse an impossible plan before spending anything.** The harness already refuses an experiment
+   with no baseline or with n below the floor; an experiment needing more calls than the plant will
+   serve in a working day is equally unrunnable. `pace.plan()` prices it in the first second.
+
+**Unknown is reported as unknown.** A plant with no observed headers returns `hours=None` and says so,
+rather than defaulting to a comfortable number. nvidia publishes nothing, and that is recorded as a
+gap rather than as permission.
+
+**The rule.** Throughput is a measurement, not a setting. Any pacing constant nobody measured is a
+guess, and a guess that silently converts provider throttling into a capability finding is the same
+defect family as counting an outage as a wrong answer.
+
+
+---
+
+### DEFECT 21 · FOUR PARTS WROTE ONE FIELD AND THE LAST ONE WON
+
+2026-07-27. The flagship result of this lab - *"validation subtracts the recoverable capacity, critic
+subtracts abstention"*, the row that made THE ADDITION LAW a document - was a statement about a
+shared mutable slot.
+
+`Call`, `Readout`, `Validation` and `Critic` all assigned `ctx.answer` directly. Stage and order
+decided who ran last, and last-writer-wins decided the result. Reproduced with no network at all, on
+a mute reply where the working is right and the mouth says 9:
+
+```
+call                      -> 9     stated             the mouth, wrong
+call+readout              -> 4     work:enumerated    RECOVERED
+call+readout+validation   -> None  declined           the recovery is destroyed
+```
+
+`Readout` is `read.order 1`, so it runs FIRST, recovers correctly, and `Validation` at order 2
+re-reads the raw text from scratch and clobbers it. Worse, `Readout`'s own deference line -
+`if ctx.declined or ctx.read_by not in (None, "stated"): return` - was **unreachable**, because the
+abstention it deferred to had not happened yet. And the note recorded elsewhere in this repo had the
+direction backwards, saying validation "handed control down to readout".
+
+**In experimental terms this is CONSTRUCT CONFOUNDING: the treatment was never independently
+manipulated.** Seating the guard changed the guard AND the lever's output channel. That is not a
+weakened finding, it is not a finding.
+
+**THE FIX, AND IT DELIBERATELY CHANGES NOTHING YET.** Each part now `claim()`s its own key; a second
+claim on the same key raises rather than overwriting. The winner is chosen by a **declared
+precedence** (`READ_PRECEDENCE`, overridable per organism as `{"read": {"precedence": [...]}}`) which
+was chosen to reproduce the old behaviour exactly - all 30 frozen behaviours still hold. Making the
+seam explicit and re-litigating it are two different changes and doing both at once would have
+conflated them.
+
+**What that immediately bought.** The seam is now a variable, and varying it flips the result:
+
+```
+precedence critic>validation>readout>call   ->  None   declined          (as shipped)
+precedence critic>readout>validation>call   ->  4      work:enumerated   (recovered)
+```
+
+Same seat, same reply, opposite answers. **The published claim is withdrawn.** What can be said is
+that on this task family the READ PRECEDENCE decides whether a lever's recovery survives a guard,
+and that ordering had never been chosen - it was inherited from two integers in two class bodies.
+
+**AND A MANIPULATION CHECK NOW RUNS ON EVERY PART.** `Organism.run` asserts after each part that it
+wrote only reads it owns, and raises naming the stray keys otherwise. The check costs nothing, it is
+standard practice in every experimental field that manipulates anything, and this lab ran for weeks
+without it while its central claim was an artifact of not having it.
+

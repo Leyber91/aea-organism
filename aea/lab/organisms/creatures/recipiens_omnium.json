@@ -1,0 +1,27 @@
+{
+  "schema": "aea.organism/1",
+  "id": "recipiens_omnium",
+  "name": "Recipiens omnium",
+  "gloss": "the one receiving, of all",
+  "world": 3,
+  "seat": ["call", "goal", "frame", "readout", "carry"],
+  "seat_config": {"carry": {"form": "checkpoint"}},
+  "seat_note": "v4, the peak assembly from x22, plus the declared carry form. The run records the four shaping and reading keys as the seat and applies the checkpoint container through the chain runner; both are listed here because both were present on the wire.",
+  "wiring_note": "The only creature in the project whose seam is not inside itself. Shape, fire, read and carry run in the usual order for the second half of a chain, but the value this organism starts from is not its own: at step six another organism's carry hands its state across, and that handoff arrives at this one's shape stage as a framing line of prompt. The lattice has no edge for it, because every other measurement in the lab is one creature alone. It is also why the animal has no front. Traffic arrives along every arm, and the finding is that it does not matter which one.",
+  "fuel": {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "temperature": 0.2,
+    "law": "IV. Pinned to the only gated receiver whose solo baseline is below ceiling, 0.778, so it is the one arm where a loss could actually have shown. Also measured as receiver on groq/llama-3.1-8b-instant, groq/llama-3.3-70b-versatile and cerebras/gpt-oss-120b, all of which sit at solo 1.00. Givers span ollama, groq, nvidia and cerebras."
+  },
+  "receipt": {
+    "claim": "it continues from state handed to it by a different organism at no measurable cost, and the plant the state came from does not matter",
+    "measured": "x23b, 14 handoff arms over 5 rods and 4 vendors at n=3 with a 0.10 band: mean cost self +0.014 over 4 arms, up_cross_plant +0.008 over 7 arms, down_cross_plant +0.092 over 3 arms, every one inside the band. `inherited`, the first post-handoff step correct given the value it was handed, was 37 of 39 completed sequences and 37 of 42 attempted. x23 before it returned cost +0.000 on all four of its arms.",
+    "runs": ["x23_inheritance", "x23b_inheritance_across_plants"],
+    "caveat": "n=3 in x23b and n=4 in x23 are both below the standing floor MIN_N=8, which METHOD sets precisely because three trials cannot separate 2/3 from 3/3. Three of the four gated receivers sit at solo 1.00, so most arms are measured against a ceiling with no room to lose in. Two arms into the pinned rod read +0.222, which at 18 steps per arm is four steps, and the World 3 roster explicitly declines to claim it.",
+    "voids_in_the_predecessor": "x23's down arm is void on its own terms: the receiver scored 0.00 solo and 0.00 post-handoff, so there was no capability for the handoff to lose. Its weak-to-weak control sits on the same floor. That is the standing rule about measuring an aid on a task nobody can pass, read in reverse. x23b exists because of it and added the gate: solo above 0.50 to be a receiver.",
+    "superseded_attempt": "The first x23b run is kept on disk marked SUPERSEDED with the verdict NO ROD HAS HEADROOM, every receiver failing the second half alone. It is retained rather than deleted, and the numbers above come from the second run only.",
+    "why_it_matters": "It is the only creature-to-creature interaction measured in this project, and it is the mechanism World 3's poison shares: carry is faithful, and faithfulness is not judgement. The same edge that moves a good state across plants at no cost moves a corrupted one just as cleanly."
+  },
+  "state": {"kind": "OPEN", "part": "carry:checkpoint across a handoff", "provisional": true}
+}

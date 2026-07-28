@@ -1,0 +1,24 @@
+{
+  "schema": "aea.organism/1",
+  "id": "servans_erroris",
+  "name": "Servans erroris",
+  "gloss": "the one keeping, of error",
+  "world": 3,
+  "seat": ["call", "goal", "frame", "readout", "validation", "critic", "carry"],
+  "seat_config": {"carry": {"form": "checkpoint"}},
+  "wiring_note": "THE SEAM IS BETWEEN REPAIR AND CARRY, and nothing sits in it. The critic fires at the repair stage and rewrites the answer; carry fires after it and packs whatever came out, into the line the next step is handed. No stage between them judges whether the rewrite was an improvement, so a checkpoint preserves a corruption with exactly the fidelity it preserves a correct value. This is the same mechanism as the world's healthy creature, seated one part deeper.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "granite4.1:3b",
+    "temperature": 0.2,
+    "law": "IV. Also measured on groq/llama-3.1-8b-instant with the same result: revised 0.714 to 1.000, held 0.000 to 0.000, median first miss 1 to 1."
+  },
+  "receipt": {
+    "claim": "with a critic already rewriting every step, adding the checkpoint preserves the rewrite perfectly and the sequence stops holding anything at all",
+    "measured": "x22 run 20260726T235800Z, the calibrated retention chain, 14 steps, n=3 sequences per cell, 2 rods, temperature 0.2. v6 (call+goal+frame+readout+validation+critic, no carry) to v7 (same seat plus carry:checkpoint): revised 0.738 to 1.000, held 0.035 to 0.000, steps hit 3 of 70 to 0 of 70, drift point 1.5 to 1.0, shows_working 0.327 to 0.000. v7's claimed capacity, held, was NOT delivered.",
+    "runs": ["x22"],
+    "caveat": "n=3 sequences per cell on two rods, which is below the standing floor of 8 and is why this is provisional. Final-answer correctness is 0.00 for every arm on this task by design of the calibration, so the discriminating measures are steps-hit and the drift point, never accuracy. The shows_working column runs through the readout dialects, and the golden test later found two pre-existing read defects in exactly that path, so treat 0.327 to 0.000 as weaker than revised and held.",
+    "why_it_matters": "World 3 is named THE REMEMBERER and its lesson is not that memory is good. Memory is faithful, and faithfulness is not judgement. Hand carry a corruption and it will deliver that corruption intact to every step that follows."
+  },
+  "state": {"kind": "ADVERSE", "part": "critic+carry:checkpoint", "provisional": true}
+}

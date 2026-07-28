@@ -1,0 +1,24 @@
+{
+  "schema": "aea.organism/1",
+  "id": "tardus_erroris",
+  "name": "Tardus erroris",
+  "gloss": "the slow one, of error",
+  "world": 2,
+  "seat": ["call", "latency"],
+  "wiring_note": "THE CLOCK requires nothing beneath it and depends on everything above it, which is why it has two edges and one word in the catalogue. It sits at judge order 2 and reads a number the call already produced, so it can be seated first, last or alone. That is the counterexample to C-63, the claim that every layer requires every layer below it: remove every component under latency and latency still reports. It is a channel, not a lever. Its metric is separability and scoring it on accuracy is the category error the catalogue warns about.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "granite4.1:8b",
+    "temperature": 0.2,
+    "law": "IV, and this creature is the sharpest case of it in the project. The same three tasks on groq/llama-3.1-8b-instant give 0.24s right against 0.23s wrong, ratio 0.95, no signal at all. The tell is a property of one rod, so it has to be calibrated per rod or it will be reached for on fuel that does not carry it."
+  },
+  "receipt": {
+    "claim": "its text lies and its clock does not: the error is legible in a channel that costs nothing to read and contains no words",
+    "measured": "ollama/granite4.1:8b, median 1.97s when right against 16.12s when wrong, ratio 8.18, on 16 right and 23 wrong trials. groq/llama-3.1-8b-instant on the same tasks, 0.95. Recomputed from the stored run 20260725T221514Z while writing this file and it reproduces to the digit.",
+    "runs": ["x13"],
+    "why_it_matters": "the first creature in the book legible in a channel other than its words, and the reason the bestiary cannot be organised by what a creature says. A construct can route on a number it already holds, for free.",
+    "caveat": "the run record's own headline is the POOLED ratio, 1.77x over 65 right and 88 wrong trials across all rods, and that figure is confounded by rod identity: it mixes a local rod at seconds with a hosted rod at fractions of a second. The 8.18 is the within-rod figure and the pooled one should not be quoted. Split by temperature the effect holds in both directions but not at one size: 1.70s against 26.59s at 0.2 (n=8 and 12), 3.73s against 10.51s at 0.7 (n=8 and 11). The 8.18 headline pools the two.",
+    "mechanism": "unresolved. The obvious hypothesis is that latency proxies reply length, and it was untestable in that run because the streamed wire had dropped the token counts. `stream_options: {include_usage: true}` fixes the wire; the test has not been re-run."
+  },
+  "state": {"kind": "OPEN", "part": "latency", "provisional": false}
+}

@@ -1,0 +1,436 @@
+<title>XRAY &mdash; what this system is made of</title>
+<style>
+:root{
+  --void:#07080a; --panel:#0c0e12; --line:#191c22; --line2:#23272f;
+  --dim:#5c636e; --mid:#868e99; --text:#c3c8d0;
+  --amber:#ffb000; --amber-dim:#d4a24c; --amber-ghost:rgba(255,176,0,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--text);
+  font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;line-height:1.5;font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{display:grid;grid-template-columns:300px 1fr 340px;gap:1px;background:var(--line);
+  min-height:100vh}
+.col{background:var(--void);overflow-y:auto;max-height:100vh}
+.win{border-bottom:1px solid var(--line)}
+.win>h2{margin:0;padding:9px 12px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);font-weight:400;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:baseline}
+.win>h2 b{color:var(--mid);font-weight:400;letter-spacing:.04em}
+.win .body{padding:10px 12px}
+
+/* the headline reading */
+.verdict{padding:16px 12px 14px}
+.verdict .n{font-size:44px;line-height:.92;letter-spacing:-.03em;color:var(--amber)}
+.verdict .n small{font-size:15px;color:var(--dim);letter-spacing:0}
+.verdict p{margin:8px 0 0;color:var(--mid);max-width:58ch}
+
+/* meters */
+.meter{margin:7px 0}
+.meter .lab{display:flex;justify-content:space-between;color:var(--dim);font-size:11px}
+.meter .lab b{color:var(--text);font-weight:400}
+.bar{height:3px;background:var(--line2);margin-top:4px;position:relative;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--amber-dim)}
+.bar.hot i{background:var(--amber)}
+
+/* the map */
+.map{padding:12px}
+.pkg{margin-bottom:14px}
+.pkg h3{margin:0 0 6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);font-weight:400}
+.cells{display:flex;flex-wrap:wrap;gap:3px}
+.cell{border:1px solid var(--line2);background:var(--panel);color:var(--dim);
+  padding:5px 8px;cursor:pointer;font-size:11px;position:relative;transition:none}
+.cell:hover{border-color:var(--mid);color:var(--text)}
+.cell.lit{border-color:var(--amber);color:var(--amber);background:var(--amber-ghost)}
+.cell.srv{border-color:var(--amber-dim);color:var(--amber-dim)}
+.cell.sel{outline:1px solid var(--text);outline-offset:1px}
+.cell .sz{color:var(--dim);margin-left:7px;font-size:10px}
+.cell.lit .sz{color:var(--amber-dim)}
+
+/* lists */
+table{width:100%;border-collapse:collapse}
+td,th{padding:3px 0;text-align:left;font-weight:400;vertical-align:top}
+th{color:var(--dim);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  border-bottom:1px solid var(--line);padding-bottom:5px}
+td.r{text-align:right;color:var(--mid)}
+td+td{padding-left:10px}
+tr.warn td{color:var(--amber-dim)}
+/* The 300px rail cannot hold two columns of module paths side by side - the first render ran
+   "capability_census.json" straight into its writer with no gap. Narrow panels stack instead. */
+.stack{padding:5px 0;border-bottom:1px solid var(--line)}
+.stack:last-child{border-bottom:0}
+.stack b{display:block;color:var(--text);font-weight:400;word-break:break-word}
+.stack span{display:block;color:var(--amber-dim);font-size:11px;word-break:break-word;
+  padding-left:10px}
+.stack.q b{color:var(--amber-dim)}
+.k{color:var(--dim)}
+.mono{color:var(--mid)}
+.tag{display:inline-block;border:1px solid var(--line2);padding:0 5px;color:var(--dim);
+  font-size:10px;margin:0 3px 3px 0}
+.tag.on{border-color:var(--amber);color:var(--amber)}
+.empty{color:var(--dim);font-style:normal}
+.dash{color:var(--dim)}
+#insp .name{color:var(--amber);font-size:13px;word-break:break-all}
+#insp .head{color:var(--mid);margin:6px 0 10px}
+#insp h4{margin:12px 0 4px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--dim);font-weight:400}
+.linklist span{display:block;color:var(--mid);cursor:pointer;padding:1px 0}
+.linklist span:hover{color:var(--amber)}
+.foot{padding:10px 12px;color:var(--dim);font-size:10px;border-top:1px solid var(--line)}
+.filter{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.filter button{background:none;border:1px solid var(--line2);color:var(--dim);cursor:pointer;
+  padding:3px 8px;font:inherit;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.filter button.on{border-color:var(--amber);color:var(--amber)}
+@media (max-width:1100px){.wrap{grid-template-columns:1fr}.col{max-height:none}}
+
+.stage{position:relative;background:var(--void);overflow:hidden}
+#g{display:block;width:100%;height:100%;cursor:grab}
+#g:active{cursor:grabbing}
+.legend{position:absolute;left:12px;bottom:10px;color:var(--dim);font-size:10px;
+  letter-spacing:.06em;pointer-events:none;line-height:1.7}
+.legend b{color:var(--amber);font-weight:400}
+.legend i{color:var(--amber-dim);font-style:normal}
+.hud{position:absolute;right:12px;top:10px;text-align:right;pointer-events:none}
+.hud .big{font-size:34px;line-height:1;color:var(--amber);letter-spacing:-.02em}
+.hud .sub{color:var(--dim);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.ctl{position:absolute;left:12px;top:10px;display:flex;gap:4px}
+.ctl button{background:rgba(7,8,10,.8);border:1px solid var(--line2);color:var(--dim);
+  cursor:pointer;padding:4px 9px;font:inherit;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase}
+.ctl button:hover{border-color:var(--mid);color:var(--text)}
+.ctl button.on{border-color:var(--amber);color:var(--amber)}
+.tip{position:absolute;pointer-events:none;background:rgba(7,8,10,.94);
+  border:1px solid var(--line2);padding:5px 8px;font-size:11px;color:var(--text);
+  max-width:300px;display:none}
+.tip b{color:var(--amber);font-weight:400}
+.tip span{display:block;color:var(--dim);font-size:10px;margin-top:2px}
+</style>
+<div class="wrap">
+
+  <div class="col">
+    <div class="win"><h2>the reading <b>2026-07-28 13:53 UTC</b></h2>
+      <div class="verdict">
+        <div class="n">15<small> of 110 modules</small></div>
+        <p>reachable from an unattended wake. 88 modules and
+        19,071 lines cannot be reached from any entry point &mdash; including
+        7 in <b>kernel</b>, the package that is supposed to BE the entity.</p>
+      </div>
+      <div class="body">
+        <div class="meter"><div class="lab"><span>reachable from a wake</span><b>15<span class="k">/110</span></b></div><div class="bar hot"><i style="width:13.6%"></i></div></div>
+        <div class="meter"><div class="lab"><span>reachable from the server</span><b>13<span class="k">/110</span></b></div><div class="bar"><i style="width:11.8%"></i></div></div>
+        <div class="meter"><div class="lab"><span>orphaned</span><b>88<span class="k">/110</span></b></div><div class="bar"><i style="width:80.0%"></i></div></div>
+      </div>
+    </div>
+
+    <div class="win"><h2>orphaned kernel <b>7</b></h2>
+      <div class="body"><table>
+        <tr><td>crystal</td><td class="r">199</td></tr><tr><td>fit</td><td class="r">421</td></tr><tr><td>goals</td><td class="r">156</td></tr><tr><td>hands</td><td class="r">514</td></tr><tr><td>laws</td><td class="r">105</td></tr><tr><td>seats</td><td class="r">292</td></tr><tr><td>shadow</td><td class="r">487</td></tr>
+      </table></div>
+    </div>
+
+    <div class="win"><h2>acts at import</h2>
+      <div class="body"><div class="stack q"><b>aea.energy.capability_census</b><span>replace</span></div><div class="stack q"><b>aea.energy.extensive_census</b><span>replace</span></div><div class="stack q"><b>aea.kernel.grid</b><span>makedirs</span></div><div class="stack q"><b>aea.lab.x09_hearth_failure</b><span>replace</span></div><div class="stack q"><b>aea.lab.x12_L0_goal_presence</b><span>replace</span></div><div class="stack q"><b>aea.memory.consolidate</b><span>replace</span></div></div>
+    </div>
+
+    <div class="win"><h2>stores with two writers</h2>
+      <div class="body"><div class="stack q"><b>.json</b><span>aea.kernel.shadow</span><span>aea.memory.consolidate</span><span>aea.tooling.selfcheck</span></div><div class="stack q"><b>capability_census.json</b><span>aea.energy.capability_census</span><span>aea.energy.energy</span><span>aea.energy.extensive_census</span></div><div class="stack q"><b>fuels.json</b><span>aea.kernel.unstick</span><span>aea.lab.fuels</span></div><div class="stack q"><b>model_fitness.json</b><span>aea.energy.energy</span><span>aea.energy.model_fitness</span></div></div>
+    </div>
+  </div>
+
+  <div class="col">
+
+    <div class="stage" id="stage">
+      <canvas id="g"></canvas>
+      <div class="ctl">
+        <button class="on" data-f="all">all</button>
+        <button data-f="wake">the spine</button>
+        <button data-f="orphan">orphaned</button>
+        <button data-a="replay">replay the wave</button>
+        <button data-a="shake">re-settle</button>
+      </div>
+      <div class="hud"><div class="big">15<span style="font-size:15px;color:var(--dim)">
+        /110</span></div><div class="sub">reachable from a wake</div></div>
+      <div class="tip" id="tip"></div>
+      <div class="legend">
+        <b>&#9679; lit</b> = reachability reached it from an entry point &middot;
+        <i>&#9675;</i> = server only &middot; &#9675; grey = nothing reaches it<br>
+        edges are real imports read from the AST &middot; ringed = an open alarm on its capability<br>
+        the wave travels those edges in dependency order. what stays dark is genuinely unreachable.
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="win"><h2>live &mdash; the ledger</h2>
+      <div class="body"><table>
+        <tr><th>capability</th><th class="r">level</th><th class="r">runs</th><th class="r">fails</th></tr>
+        <tr><td>draft_outbound</td><td class="r">DRAFT</td><td class="r">0</td><td class="r">0</td></tr><tr><td>gather_public</td><td class="r">DRAFT</td><td class="r">60</td><td class="r">4</td></tr><tr><td>manage_keys</td><td class="r">FORBIDDEN</td><td class="r">0</td><td class="r">0</td></tr><tr><td>produce_brief</td><td class="r">WATCHED</td><td class="r">48</td><td class="r">34</td></tr><tr><td>reason_private_local</td><td class="r">WATCHED</td><td class="r">54</td><td class="r">36</td></tr><tr><td>self_modify_code</td><td class="r">FORBIDDEN</td><td class="r">0</td><td class="r">0</td></tr><tr><td>send_outbound</td><td class="r">FORBIDDEN</td><td class="r">0</td><td class="r">0</td></tr><tr><td>speak</td><td class="r">WATCHED</td><td class="r">2</td><td class="r">0</td></tr><tr><td>spend_money</td><td class="r">FORBIDDEN</td><td class="r">0</td><td class="r">0</td></tr>
+      </table></div>
+    </div>
+    <div class="win"><h2>seats</h2>
+      <div class="body"><table>
+        <tr><th>id</th><th>zone</th><th class="r">wins</th></tr><tr><td>keeper</td><td class="mono">sensitive</td><td class="r">0/0</td></tr><tr><td>scout</td><td class="mono">public</td><td class="r">1/1</td></tr>
+      </table></div>
+    </div>
+    <div class="win"><h2>state</h2>
+      <div class="body"><table>
+        <tr><td class="k">goals</td><td class="r">1</td></tr>
+        <tr><td class="k">crystal parts</td><td class="r">0</td></tr>
+        <tr><td class="k">experience</td><td class="r">0</td></tr>
+        <tr><td class="k">boots</td><td class="r">6</td></tr>
+        <tr><td class="k">ticks</td><td class="r">109</td></tr>
+        <tr><td class="k">last brief</td><td class="r">2026-07-20</td></tr>
+        <tr class="warn"><td class="k">open alarms</td><td class="r">gather_public, produce_brief</td></tr>
+      </table></div>
+    </div>
+    <div class="win"><h2>inspector</h2>
+      <div class="body" id="insp"><p class="empty">click a module in the map.</p></div>
+    </div>
+  </div>
+</div>
+<script>window.XRAY={"generated": "2026-07-28 13:53 UTC", "counts": {"modules": 110, "reachable_from_wake": 15, "reachable_from_server": 13, "orphaned": 88, "lines": 24158}, "modules": {"aea.bench.bench_core": {"path": "aea/bench/bench_core.py", "lines": 693, "headline": "bench_core.py - THE BENCH HARNESS (P0): compose a construct, run it for real, measure it.", "imports": ["aea.energy.energy", "aea.kernel.grid", "aea.kernel.pulse", "aea.kernel.trust"], "imported_by": ["aea.gameapi.act", "aea.gameapi.read", "aea.lab.x09_hearth_failure", "aea.server.controlroom"], "state": {"reads": [], "writes": ["bench_runs.json", "modules.json"]}, "reachable_from_wake": false, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.energy.capability_census": {"path": "aea/energy/capability_census.py", "lines": 159, "headline": "capability_census.py - REFINE THE CATALOG: not \"does it serve\" but \"how CAPABLE is it\".", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": ["capability_census.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": [{"call": "replace", "line": 46}]}, "aea.energy.capacity": {"path": "aea/energy/capacity.py", "lines": 182, "headline": "capacity.py - THE LIVE CAPACITY GAUGE: how much free power do we ACTUALLY have, right now?", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": ["capacity.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.energy.energy": {"path": "aea/energy/energy.py", "lines": 181, "headline": "energy.py - ONE CONTINUUM: the brain draws models as ENERGY through a single mouth.", "imports": ["aea.kernel.grid", "aea.kernel.pulse"], "imported_by": ["aea.bench.bench_core", "aea.loop.aea", "aea.organs.reflect", "aea.organs.talk", "aea.server.controlroom"], "state": {"reads": [], "writes": ["capability_census.json", "energy_usage.json", "model_fitness.json"]}, "reachable_from_wake": true, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.energy.extensive_census": {"path": "aea/energy/extensive_census.py", "lines": 234, "headline": "extensive_census.py - THE FULL EXAM: every free capability we hold, tested for real.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": ["capability_census.json", "extensive_census.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": [{"call": "replace", "line": 49}]}, "aea.energy.gauntlet": {"path": "aea/energy/gauntlet.py", "lines": 109, "headline": "gauntlet.py - THE GAUNTLET: the integrated entity examined through its own front door.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": ["heartbeat.json", "luis_memory.meta.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.energy.model_fitness": {"path": "aea/energy/model_fitness.py", "lines": 113, "headline": "model_fitness.py - THE ENTITY LEARNS ITS OWN TOOLS.", "imports": ["aea.kernel.grid", "aea.mind.orchestrator"], "imported_by": [], "state": {"reads": [], "writes": ["model_fitness.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.energy.probe": {"path": "aea/energy/probe.py", "lines": 114, "headline": "probe.py - the grid inspector. Measures the REAL capacity of each plant:", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": ["benchmarks.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.gameapi.act": {"path": "aea/gameapi/act.py", "lines": 26, "headline": "aea.gameapi.act - the /game/* POST handlers: allowlisted acts, each a receipt.", "imports": ["aea.bench.bench_core"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.gameapi.honesty": {"path": "aea/gameapi/honesty.py", "lines": 27, "headline": "aea.gameapi.honesty - THE FIREWALL. The single boundary where the honesty law is enforced.", "imports": [], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.gameapi.read": {"path": "aea/gameapi/read.py", "lines": 128, "headline": "aea.gameapi.read - the /game/* GET handlers: pure reads, re-homed to the REAL organ functions.", "imports": ["aea.bench.bench_core", "aea.kernel.grid", "aea.kernel.pulse", "aea.mind.axes", "aea.server.controlroom"], "imported_by": [], "state": {"reads": ["energy_usage.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.gameapi.schema": {"path": "aea/gameapi/schema.py", "lines": 87, "headline": "aea.gameapi.schema - THE BEING AS A STRUCTURE (the world's fog map).", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": ["energy_usage.json", "grid_state.json", "heartbeat.json", "memory.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.io.agent_tools": {"path": "aea/io/agent_tools.py", "lines": 95, "headline": "agent_tools.py - Phase 3: the agent reaches PAST its own weights.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.io.listen": {"path": "aea/io/listen.py", "lines": 139, "headline": "listen.py - the entity's EARS. Offline speech-to-text: Whisper-base (multilingual - English", "imports": ["aea.io.speak", "aea.kernel.grid"], "imported_by": ["aea.organs.converse"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.io.notify": {"path": "aea/io/notify.py", "lines": 36, "headline": "notify.py - the REACH organ: LEYBER reaches Luis by PHONE (CallMeBot text-to-speech call).", "imports": ["aea.kernel.grid", "aea.kernel.pulse"], "imported_by": ["aea.kernel.trust"], "state": {"reads": [], "writes": []}, "reachable_from_wake": true, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.io.speak": {"path": "aea/io/speak.py", "lines": 290, "headline": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):", "imports": ["aea.kernel.grid", "aea.kernel.pulse"], "imported_by": ["aea.io.listen", "aea.organs.converse", "aea.organs.talk", "aea.server.controlroom"], "state": {"reads": [], "writes": ["identity.json"]}, "reachable_from_wake": false, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.kernel.crystal": {"path": "aea/kernel/crystal.py", "lines": 199, "headline": "crystal.py - A RESOLUTION THAT HELD, BECOMING A PART THE ENTITY KNOWS IT HAS.", "imports": ["aea.kernel.grid", "aea.kernel.unstick"], "imported_by": [], "state": {"reads": [], "writes": ["crystal.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.kernel.fit": {"path": "aea/kernel/fit.py", "lines": 421, "headline": "fit.py - ONE PLACE THAT ANSWERS \"WHICH ROD FOR THIS JOB\", AND SAYS WHY NOT FOR ALL THE OTHERS.", "imports": ["aea.kernel.grid", "aea.kernel.unstick", "aea.lab.pace"], "imported_by": ["aea.kernel.seats"], "state": {"reads": ["fuels.json", "tool_rods.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.kernel.goals": {"path": "aea/kernel/goals.py", "lines": 156, "headline": "goals.py - IT CAN BE GIVEN A JOB. The largest missing element until now.", "imports": ["aea.kernel.grid", "aea.kernel.trust"], "imported_by": ["aea.kernel.seats"], "state": {"reads": [], "writes": ["goals.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.kernel.grid": {"path": "aea/kernel/grid.py", "lines": 657, "headline": "grid.py - the AEA entity's power grid (the city's electricity layer).", "imports": [], "imported_by": ["aea.bench.bench_core", "aea.energy.capability_census", "aea.energy.capacity", "aea.energy.energy", "aea.energy.extensive_census", "aea.energy.gauntlet", "aea.energy.model_fitness", "aea.energy.probe", "aea.gameapi.read", "aea.gameapi.schema", "aea.io.agent_tools", "aea.io.listen", "aea.io.notify", "aea.io.speak", "aea.kernel.crystal", "aea.kernel.fit", "aea.kernel.goals", "aea.kernel.hands", "aea.kernel.impasse", "aea.kernel.laws", "aea.kernel.pulse", "aea.kernel.seats", "aea.kernel.shadow", "aea.kernel.tracelog", "aea.kernel.trust", "aea.kernel.unstick", "aea.lab.calibrate", "aea.lab.fleet", "aea.lab.fuels", "aea.lab.harness", "aea.lab.overseer", "aea.lab.pace", "aea.lab.reboot", "aea.lab.report", "aea.lab.rescore", "aea.lab.site", "aea.lab.x06_long_chain", "aea.lab.x06b_crossover", "aea.lab.x07_self_assessment", "aea.lab.x07b_self_assessment_hard", "aea.lab.x08_fuel_crossing", "aea.lab.x08b_interpretable_state", "aea.lab.x09_hearth_failure", "aea.lab.x10_coverage_sweep", "aea.lab.x11_the_council", "aea.loop.aea", "aea.loop.live", "aea.memory.consolidate", "aea.memory.index_codex", "aea.memory.memory", "aea.mind.anchor", "aea.mind.axes", "aea.mind.checkpoint", "aea.mind.fuel", "aea.mind.hades", "aea.mind.orchestrator", "aea.mind.pathfinder", "aea.mind.relay", "aea.mind.swarm", "aea.organs.autonomy", "aea.organs.brief", "aea.organs.converse", "aea.organs.reflect", "aea.organs.talk", "aea.organs.telegram_bridge", "aea.server.controlroom", "aea.tooling.board", "aea.tooling.export_city", "aea.tooling.heal", "aea.tooling.journey_check", "aea.tooling.selfcheck", "aea.tooling.xray", "aea.tooling.xray_view"], "state": {"reads": [], "writes": []}, "reachable_from_wake": true, "reachable_from_server": true, "orphaned": false, "import_time_effects": [{"call": "makedirs", "line": 49}]}, "aea.kernel.hands": {"path": "aea/kernel/hands.py", "lines": 514, "headline": "hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISSION FIRST.", "imports": ["aea.kernel.grid", "aea.kernel.trust", "aea.lab.pace"], "imported_by": ["aea.kernel.seats"], "state": {"reads": [], "writes": ["filename like heartbeat.json", "tool_rods.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.kernel.impasse": {"path": "aea/kernel/impasse.py", "lines": 131, "headline": "impasse.py - THE ENTITY NOTICING IT IS STUCK, AND SAYING WHY.", "imports": ["aea.kernel.grid", "aea.kernel.trust"], "imported_by": ["aea.kernel.unstick", "aea.loop.live"], "state": {"reads": [], "writes": []}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.kernel.laws": {"path": "aea/kernel/laws.py", "lines": 105, "headline": "laws.py - THE LAWS, LOADABLE. One file the entity reads about how to behave, not what to do.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.tooling.board"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.kernel.pulse": {"path": "aea/kernel/pulse.py", "lines": 68, "headline": "pulse.py - the entity's NERVOUS SIGNAL. Every organ emits what it does, as it does it,", "imports": ["aea.kernel.grid"], "imported_by": ["aea.bench.bench_core", "aea.energy.energy", "aea.gameapi.read", "aea.io.notify", "aea.io.speak", "aea.kernel.trust", "aea.loop.live", "aea.memory.consolidate", "aea.memory.index_codex", "aea.organs.reflect", "aea.organs.talk", "aea.organs.telegram_bridge", "aea.server.controlroom"], "state": {"reads": [], "writes": ["events.jsonl"]}, "reachable_from_wake": true, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.kernel.seats": {"path": "aea/kernel/seats.py", "lines": 292, "headline": "seats.py - CUSTOM SUBAGENTS, BUT A SUBAGENT IS NOT A PROMPT.", "imports": ["aea.kernel.fit", "aea.kernel.goals", "aea.kernel.grid", "aea.kernel.hands", "aea.kernel.trust", "aea.kernel.unstick"], "imported_by": [], "state": {"reads": [], "writes": ["seats.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.kernel.shadow": {"path": "aea/kernel/shadow.py", "lines": 487, "headline": "shadow.py - THE ENTITY TESTS A CHANGE TO ITSELF WITHOUT BECOMING IT YET.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": [".json", "known_good.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.kernel.tracelog": {"path": "aea/kernel/tracelog.py", "lines": 87, "headline": "tracelog.py - the trace substrate the whole swarm stands on.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.organs.brief"], "state": {"reads": [], "writes": []}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.kernel.trust": {"path": "aea/kernel/trust.py", "lines": 222, "headline": "trust.py - THE TRUST LEDGER: autonomy is EARNED per capability, never assumed.", "imports": ["aea.io.notify", "aea.kernel.grid", "aea.kernel.pulse"], "imported_by": ["aea.bench.bench_core", "aea.kernel.goals", "aea.kernel.hands", "aea.kernel.impasse", "aea.kernel.seats", "aea.kernel.unstick", "aea.loop.live", "aea.organs.brief", "aea.organs.talk", "aea.server.controlroom", "aea.tooling.board", "aea.tooling.selfcheck"], "state": {"reads": [], "writes": ["trust_ledger.json"]}, "reachable_from_wake": true, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.kernel.unstick": {"path": "aea/kernel/unstick.py", "lines": 310, "headline": "unstick.py - WHEN REPEATING CANNOT HELP, CHANGE SOMETHING. Steps 3 and 4 of five.", "imports": ["aea.kernel.grid", "aea.kernel.impasse", "aea.kernel.trust"], "imported_by": ["aea.kernel.crystal", "aea.kernel.fit", "aea.kernel.seats", "aea.loop.live"], "state": {"reads": [], "writes": ["experience.json", "fuels.json"]}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.lab.calibrate": {"path": "aea/lab/calibrate.py", "lines": 200, "headline": "calibrate.py - THE FAILURE WINDOW. Measure which rods fail which task, BEFORE designing anything.", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.mind.fuel"], "imported_by": ["aea.lab.x07_self_assessment"], "state": {"reads": [], "writes": ["x05_calibrate_latest.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.chain": {"path": "aea/lab/chain.py", "lines": 207, "headline": "A sequence runner. The unit is a CHAIN of steps, not a trial.", "imports": ["aea.lab.organism", "aea.lab.parts.carry", "aea.lab.parts.read"], "imported_by": ["aea.lab.organism", "aea.lab.x23b_inheritance_across_plants", "aea.lab.x24_the_store_and_the_door"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.experiments.x01_generic_frame": {"path": "aea/lab/experiments/x01_generic_frame.py", "lines": 62, "headline": "x01 - DOES A GENERIC FRAME DESTROY A CAPABILITY THE BARE ROD ALREADY HAD?", "imports": ["aea.lab.harness"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.experiments.x02_fitted_frame": {"path": "aea/lab/experiments/x02_fitted_frame.py", "lines": 57, "headline": "x02 - DOES A FITTED FRAME (ONE THAT NAMES THE METHOD) EARN ITS COST?", "imports": ["aea.lab.harness"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.experiments.x03_judge": {"path": "aea/lab/experiments/x03_judge.py", "lines": 58, "headline": "x03 - MUST A JUDGE OVERRULE RATHER THAN ADVISE? (law III)", "imports": ["aea.lab.harness"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.experiments.x04_separation": {"path": "aea/lab/experiments/x04_separation.py", "lines": 60, "headline": "x04 - DOES SELF-CRITICISM REQUIRE A SEPARATE CALL? (law II)", "imports": ["aea.lab.harness"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.fleet": {"path": "aea/lab/fleet.py", "lines": 311, "headline": "fleet.py - TEST EVERY ROD, WITH THE TEST IT CAN ACTUALLY SIT.", "imports": ["aea.kernel.grid", "aea.lab.fuels"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.fuels": {"path": "aea/lab/fuels.py", "lines": 289, "headline": "fuels.py - OUR OWN CATALOGUE OF RODS, AND OUR OWN BENCHMARK OF THEM.", "imports": ["aea.kernel.grid", "aea.lab.pace"], "imported_by": ["aea.lab.fleet"], "state": {"reads": [], "writes": ["fuels.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.grader": {"path": "aea/lab/grader.py", "lines": 162, "headline": "grader.py - AN OUTCOME NO COMPONENT CAN WRITE.", "imports": [], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.harness": {"path": "aea/lab/harness.py", "lines": 983, "headline": "harness.py - THE ONE INSTRUMENT. Every experiment from here on runs through this.", "imports": ["aea.kernel.grid", "aea.lab.pace", "aea.memory.memory", "aea.mind.anchor", "aea.mind.fuel"], "imported_by": ["aea.lab.calibrate", "aea.lab.experiments.x01_generic_frame", "aea.lab.experiments.x02_fitted_frame", "aea.lab.experiments.x03_judge", "aea.lab.experiments.x04_separation", "aea.lab.overseer", "aea.lab.pace", "aea.lab.parts.fuel", "aea.lab.x06_long_chain", "aea.lab.x06b_crossover", "aea.lab.x07_self_assessment", "aea.lab.x07b_self_assessment_hard", "aea.lab.x08_fuel_crossing", "aea.lab.x08b_interpretable_state", "aea.lab.x09_hearth_failure", "aea.lab.x10_coverage_sweep", "aea.lab.x11_the_council", "aea.lab.x12_L0_goal_presence", "aea.lab.x13_L1_read_the_output", "aea.lab.x14_C75_parser_validation", "aea.lab.x15_L2_the_frame"], "state": {"reads": ["INDEX.json"], "writes": ["%s_latest.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.organism": {"path": "aea/lab/organism.py", "lines": 192, "headline": "An assembled AEA. A creature is a seat of parts on pinned fuel, and both live in files.", "imports": ["aea.lab.chain", "aea.lab.parts.carry", "aea.lab.parts.read"], "imported_by": ["aea.lab.chain", "aea.lab.x16_the_organisms", "aea.lab.x17_the_lattice", "aea.lab.x18_second_battery", "aea.lab.x19_the_unmeasured_pair", "aea.lab.x20_the_critic", "aea.lab.x21_the_carry_battery", "aea.lab.x22_the_capacity_ladder", "aea.lab.x23_inheritance"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.overseer": {"path": "aea/lab/overseer.py", "lines": 291, "headline": "overseer.py - IS THIS REPLY AN ANSWER, OR IS IT DEBRIS? The lab watching itself while it runs.", "imports": ["aea.kernel.grid", "aea.lab.harness"], "imported_by": ["aea.lab.parts.fire", "aea.lab.parts.repair", "aea.lab.x12_L0_goal_presence", "aea.lab.x13_L1_read_the_output", "aea.lab.x14_C75_parser_validation", "aea.lab.x15_L2_the_frame", "aea.lab.x16_the_organisms", "aea.lab.x17_the_lattice", "aea.lab.x18_second_battery", "aea.lab.x19_the_unmeasured_pair", "aea.lab.x20_the_critic", "aea.lab.x21_the_carry_battery", "aea.lab.x22_the_capacity_ladder", "aea.lab.x23_inheritance", "aea.lab.x23b_inheritance_across_plants", "aea.lab.x24_the_store_and_the_door"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.pace": {"path": "aea/lab/pace.py", "lines": 345, "headline": "pace.py - THE PLANTS PUBLISH THEIR LIMITS. READ THEM INSTEAD OF GUESSING.", "imports": ["aea.kernel.grid", "aea.lab.harness"], "imported_by": ["aea.kernel.fit", "aea.kernel.hands", "aea.lab.fuels", "aea.lab.harness"], "state": {"reads": [], "writes": ["pace_observed.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.base": {"path": "aea/lab/parts/base.py", "lines": 204, "headline": "The wire and the socket. Everything a part needs, and the contract it implements.", "imports": ["aea.lab.parts.fuel"], "imported_by": ["aea.lab.parts.capacity", "aea.lab.parts.carry", "aea.lab.parts.dna", "aea.lab.parts.fire", "aea.lab.parts.judge", "aea.lab.parts.read", "aea.lab.parts.repair", "aea.lab.parts.shape"], "state": {"reads": [], "writes": ["catalogue.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.capacity": {"path": "aea/lab/parts/capacity.py", "lines": 42, "headline": "Read a run's capacities off its trace, against the definitions sealed in catalogue.json.", "imports": ["aea.lab.parts.base"], "imported_by": ["aea.lab.x22_the_capacity_ladder"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.carry": {"path": "aea/lab/parts/carry.py", "lines": 61, "headline": "State that outlives the call. The only part whose unit is a SEQUENCE rather than a trial:", "imports": ["aea.lab.parts.base"], "imported_by": ["aea.lab.chain", "aea.lab.organism", "aea.lab.x23_inheritance", "aea.lab.x24_the_store_and_the_door"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.dna": {"path": "aea/lab/parts/dna.py", "lines": 57, "headline": "Read a creature's class off its wiring graph. The class is derived, never labelled.", "imports": ["aea.lab.parts.base"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.fire": {"path": "aea/lab/parts/fire.py", "lines": 43, "headline": "The one part every organism contains. Without it there is nothing to read, repair or judge.", "imports": ["aea.lab.overseer", "aea.lab.parts.base", "aea.lab.parts.read"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.fuel": {"path": "aea/lab/parts/fuel.py", "lines": 65, "headline": "FUEL IS A COMPONENT, so it is seated rather than imported.", "imports": ["aea.lab.harness"], "imported_by": ["aea.lab.parts.base"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.judge": {"path": "aea/lab/parts/judge.py", "lines": 27, "headline": "Parts that annotate after the answer exists. Neither changes the answer.", "imports": ["aea.lab.parts.base"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.read": {"path": "aea/lab/parts/read.py", "lines": 79, "headline": "Parts that turn a reply into an answer. Both sit at the READ stage and the ORDER between them", "imports": ["aea.lab.parts.base"], "imported_by": ["aea.lab.chain", "aea.lab.organism", "aea.lab.parts.fire", "aea.lab.parts.repair", "aea.lab.x22_the_capacity_ladder"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.repair": {"path": "aea/lab/parts/repair.py", "lines": 37, "headline": "A second call on the same fuel, looking at the first one's answer. The first stage that costs.", "imports": ["aea.lab.overseer", "aea.lab.parts.base", "aea.lab.parts.read"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.parts.shape": {"path": "aea/lab/parts/shape.py", "lines": 24, "headline": "Parts that build the prompt. They run before anything is sent.", "imports": ["aea.lab.parts.base"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.reboot": {"path": "aea/lab/reboot.py", "lines": 137, "headline": "reboot.py - RE-RUN THE EXPERIMENTS WHOSE EVIDENCE CANNOT BE READ.", "imports": ["aea.kernel.grid", "aea.lab.site"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.report": {"path": "aea/lab/report.py", "lines": 381, "headline": "report.py - THE EVIDENCE, BROWSABLE. Every reply, and every judgement made about it.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.rescore": {"path": "aea/lab/rescore.py", "lines": 207, "headline": "rescore.py - READ A STORED RUN AGAIN, WITH A DIFFERENT READER, FOR NOTHING.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.site": {"path": "aea/lab/site.py", "lines": 213, "headline": "site.py - THE EVIDENCE SITE. Builds web/lab/ from the archive. Data-driven, not baked.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.lab.reboot"], "state": {"reads": ["%s.json"], "writes": ["%s.json", "index.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.stats": {"path": "aea/lab/stats.py", "lines": 183, "headline": "stats.py - THE INTERVAL, computed, instead of THE BAND, declared.", "imports": [], "imported_by": ["aea.lab.x24_the_store_and_the_door"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x06_long_chain": {"path": "aea/lab/x06_long_chain.py", "lines": 223, "headline": "x06 - THE LONG CHAIN. L0 against L5: one breath, or carried state?", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.mind.checkpoint", "aea.mind.fuel"], "imported_by": ["aea.lab.x06b_crossover", "aea.lab.x07b_self_assessment_hard", "aea.lab.x08_fuel_crossing", "aea.lab.x11_the_council"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x06b_crossover": {"path": "aea/lab/x06b_crossover.py", "lines": 280, "headline": "x06b - THE CROSSOVER, done properly. Calibrate the UNIT OF WORK first, then find where L0 breaks.", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.lab.x06_long_chain", "aea.mind.checkpoint", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x07_self_assessment": {"path": "aea/lab/x07_self_assessment.py", "lines": 209, "headline": "x07 - CAN A ROD PREDICT ITS OWN FAILURE? The experiment that decides two rung placements.", "imports": ["aea.kernel.grid", "aea.lab.calibrate", "aea.lab.harness", "aea.mind.fuel"], "imported_by": ["aea.lab.x07b_self_assessment_hard"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x07b_self_assessment_hard": {"path": "aea/lab/x07b_self_assessment_hard.py", "lines": 304, "headline": "x07b - SELF-ASSESSMENT WHERE FAILURE IS ABUNDANT, and whether it is RELATIVE rather than absent.", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.lab.x06_long_chain", "aea.lab.x07_self_assessment", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x08_fuel_crossing": {"path": "aea/lab/x08_fuel_crossing.py", "lines": 199, "headline": "x08 - IF THE FUEL CHANGES, WHAT STAYS? The other half of C-80, and chapter II's title question.", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.lab.x06_long_chain", "aea.mind.checkpoint", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x08b_interpretable_state": {"path": "aea/lab/x08b_interpretable_state.py", "lines": 630, "headline": "x08b - THE HANDOFF WHEN THE STATE IS NOT A NUMBER. What x08 answered in its easiest possible form.", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.mind.checkpoint"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x09_hearth_failure": {"path": "aea/lab/x09_hearth_failure.py", "lines": 305, "headline": "x09 - IS THERE ANYTHING ON THIS BENCH THE PLAYER CAN FAIL? The blocker under the skipped rungs.", "imports": ["aea.bench.bench_core", "aea.kernel.grid", "aea.lab.harness", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": [{"call": "replace", "line": 94}]}, "aea.lab.x10_coverage_sweep": {"path": "aea/lab/x10_coverage_sweep.py", "lines": 312, "headline": "x10 - THE COVERAGE SWEEP. Every size class, four temperatures, three framings, one task.", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x11_the_council": {"path": "aea/lab/x11_the_council.py", "lines": 478, "headline": "x11 - DOES A COUNCIL REACH ABOVE ITS FUEL? Chapter II's third claim, the one never measured.", "imports": ["aea.kernel.grid", "aea.lab.harness", "aea.lab.x06_long_chain", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x12_L0_goal_presence": {"path": "aea/lab/x12_L0_goal_presence.py", "lines": 230, "headline": "x12 - CHAPTER I / LEVEL 0. Does a call need a goal, and can bigger fuel supply one it was not given?", "imports": ["aea.lab.harness", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": ["aea.lab.x19_the_unmeasured_pair"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": [{"call": "replace", "line": 63}]}, "aea.lab.x13_L1_read_the_output": {"path": "aea/lab/x13_L1_read_the_output.py", "lines": 247, "headline": "x13 - CHAPTER II / LEVEL 1. What can be learned from a reply without spending another call?", "imports": ["aea.lab.harness", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x14_C75_parser_validation": {"path": "aea/lab/x14_C75_parser_validation.py", "lines": 186, "headline": "x14 - CLOSING C-75. What is the exchange rate between a parse that guesses and a parse that abstains?", "imports": ["aea.lab.harness", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x15_L2_the_frame": {"path": "aea/lab/x15_L2_the_frame.py", "lines": 282, "headline": "x15 - CHAPTER III / LEVEL 2. The last free lever, and the creature it damages.", "imports": ["aea.lab.harness", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x16_the_organisms": {"path": "aea/lab/x16_the_organisms.py", "lines": 172, "headline": "x16 - RUNNING THE CREATURES. Every version of the AEA, assembled and fired on pinned fuel.", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": ["aea.lab.x17_the_lattice", "aea.lab.x19_the_unmeasured_pair", "aea.lab.x20_the_critic"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x17_the_lattice": {"path": "aea/lab/x17_the_lattice.py", "lines": 175, "headline": "x17 - THE ORDERING LATTICE. Deriving the dependency graph instead of reasoning it.", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.lab.x16_the_organisms", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x18_second_battery": {"path": "aea/lab/x18_second_battery.py", "lines": 210, "headline": "x18 - THE SECOND BATTERY. Does the deck we hold describe the architecture, or describe counting?", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": ["aea.lab.x20_the_critic"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x19_the_unmeasured_pair": {"path": "aea/lab/x19_the_unmeasured_pair.py", "lines": 297, "headline": "x19 - THE UNMEASURED PAIR. The two creatures on the World 1 plate that no part has ever been tried on.", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.lab.x12_L0_goal_presence", "aea.lab.x16_the_organisms", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x20_the_critic": {"path": "aea/lab/x20_the_critic.py", "lines": 242, "headline": "x20 - THE CRITIC. World 2's first assemblable repair part, and the test its whole world rests on.", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.lab.x16_the_organisms", "aea.lab.x18_second_battery", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x21_the_carry_battery": {"path": "aea/lab/x21_the_carry_battery.py", "lines": 213, "headline": "x21 - THE CARRY BATTERY. World 3's three components are three SHAPES of one job, plus a control.", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x22_the_capacity_ladder": {"path": "aea/lab/x22_the_capacity_ladder.py", "lines": 209, "headline": "x22 - THE CAPACITY LADDER. What does each part ENABLE, as the seat grows?", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.lab.parts.capacity", "aea.lab.parts.read", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x23_inheritance": {"path": "aea/lab/x23_inheritance.py", "lines": 226, "headline": "x23 - INHERITANCE. The only creature-to-creature interaction in the project.", "imports": ["aea.lab.organism", "aea.lab.overseer", "aea.lab.parts.carry", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x23b_inheritance_across_plants": {"path": "aea/lab/x23b_inheritance_across_plants.py", "lines": 209, "headline": "x23b - INHERITANCE ACROSS PLANTS, with a calibration gate.", "imports": ["aea.lab.chain", "aea.lab.overseer", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.lab.x24_the_store_and_the_door": {"path": "aea/lab/x24_the_store_and_the_door.py", "lines": 541, "headline": "x24 - THE STORE AND THE DOOR. Keeping a thing and reaching it are two capabilities.", "imports": ["aea.lab.chain", "aea.lab.overseer", "aea.lab.parts.carry", "aea.lab.stats", "aea.mind.fuel"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.loop.aea": {"path": "aea/loop/aea.py", "lines": 134, "headline": "aea.py - THE AEA: a seeded, persistent, always-on entity. NOT a swarm - ONE core mind on a loop,", "imports": ["aea.energy.energy", "aea.kernel.grid", "aea.mind.hades", "aea.mind.orchestrator"], "imported_by": [], "state": {"reads": [], "writes": ["aea_state.json"]}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.loop.live": {"path": "aea/loop/live.py", "lines": 264, "headline": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps.", "imports": ["aea.kernel.grid", "aea.kernel.impasse", "aea.kernel.pulse", "aea.kernel.trust", "aea.kernel.unstick", "aea.memory.consolidate"], "imported_by": [], "state": {"reads": [], "writes": ["heartbeat.json"]}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.memory.consolidate": {"path": "aea/memory/consolidate.py", "lines": 191, "headline": "consolidate.py - MEMORY CONSOLIDATION: episodic transcripts -> semantic memory of Luis.", "imports": ["aea.kernel.grid", "aea.kernel.pulse"], "imported_by": ["aea.loop.live", "aea.memory.index_codex", "aea.organs.talk", "aea.server.controlroom"], "state": {"reads": [], "writes": [".json", ".meta.json", "luis_memory.json"]}, "reachable_from_wake": true, "reachable_from_server": true, "orphaned": false, "import_time_effects": [{"call": "replace", "line": 53}]}, "aea.memory.index_codex": {"path": "aea/memory/index_codex.py", "lines": 119, "headline": "index_codex.py - THE WHOLE BOOK OF LUIS, indexed: his real documents (the TRIVERSE CODEX,", "imports": ["aea.kernel.grid", "aea.kernel.pulse", "aea.memory.consolidate"], "imported_by": ["aea.organs.talk"], "state": {"reads": [], "writes": ["codex_index.json"]}, "reachable_from_wake": false, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.memory.memory": {"path": "aea/memory/memory.py", "lines": 49, "headline": "memory.py - the entity's persistent memory = the backwards channel (seed 10) + A-axis L2.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.lab.harness"], "state": {"reads": [], "writes": ["memory.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.mind.anchor": {"path": "aea/mind/anchor.py", "lines": 300, "headline": "anchor.py - THE COMBINATION CONTRACT: how any subset of modules, in any order, composes into an AEA.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.lab.harness"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.mind.axes": {"path": "aea/mind/axes.py", "lines": 150, "headline": "axes.py - C-11, THE POSITION RECORD: where the entity actually stands in the 5-D growth space.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.gameapi.read"], "state": {"reads": [], "writes": ["axis_levels.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.mind.checkpoint": {"path": "aea/mind/checkpoint.py", "lines": 89, "headline": "checkpoint.py - C-80. THE ONE MUTABLE OBJECT EVERY LAYER READS AND WRITES.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.lab.x06_long_chain", "aea.lab.x06b_crossover", "aea.lab.x08_fuel_crossing", "aea.lab.x08b_interpretable_state"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.mind.fuel": {"path": "aea/mind/fuel.py", "lines": 128, "headline": "fuel.py - THE UNIT SYSTEM. No measurement exists without the fuel it was taken on.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.lab.calibrate", "aea.lab.harness", "aea.lab.x06_long_chain", "aea.lab.x06b_crossover", "aea.lab.x07_self_assessment", "aea.lab.x07b_self_assessment_hard", "aea.lab.x08_fuel_crossing", "aea.lab.x09_hearth_failure", "aea.lab.x10_coverage_sweep", "aea.lab.x11_the_council", "aea.lab.x12_L0_goal_presence", "aea.lab.x13_L1_read_the_output", "aea.lab.x14_C75_parser_validation", "aea.lab.x15_L2_the_frame", "aea.lab.x16_the_organisms", "aea.lab.x17_the_lattice", "aea.lab.x18_second_battery", "aea.lab.x19_the_unmeasured_pair", "aea.lab.x20_the_critic", "aea.lab.x21_the_carry_battery", "aea.lab.x22_the_capacity_ladder", "aea.lab.x23_inheritance", "aea.lab.x23b_inheritance_across_plants", "aea.lab.x24_the_store_and_the_door"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.mind.hades": {"path": "aea/mind/hades.py", "lines": 98, "headline": "hades.py - HADES: the WATCHER over the SEDAH swarm.", "imports": ["aea.kernel.grid", "aea.mind.orchestrator", "aea.mind.swarm"], "imported_by": ["aea.loop.aea", "aea.organs.brief", "aea.organs.reflect"], "state": {"reads": [], "writes": []}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.mind.orchestrator": {"path": "aea/mind/orchestrator.py", "lines": 161, "headline": "orchestrator.py - the AEA orchestrator.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.energy.model_fitness", "aea.loop.aea", "aea.mind.hades", "aea.mind.pathfinder", "aea.mind.relay", "aea.mind.swarm", "aea.organs.brief", "aea.organs.reflect"], "state": {"reads": ["model_fitness.json", "models_report.json"], "writes": []}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.mind.pathfinder": {"path": "aea/mind/pathfinder.py", "lines": 105, "headline": "pathfinder.py - the increase-by-step CRYSTALLIZED PATH algorithm.", "imports": ["aea.kernel.grid", "aea.mind.orchestrator", "aea.mind.swarm"], "imported_by": [], "state": {"reads": [], "writes": ["paths.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.mind.relay": {"path": "aea/mind/relay.py", "lines": 63, "headline": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads", "imports": ["aea.kernel.grid", "aea.mind.orchestrator", "aea.mind.swarm"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.mind.swarm": {"path": "aea/mind/swarm.py", "lines": 99, "headline": "swarm.py - the recursive, self-monitoring swarm. Answers: WHEN does a role spawn a sub-agent?", "imports": ["aea.kernel.grid", "aea.mind.orchestrator"], "imported_by": ["aea.mind.hades", "aea.mind.pathfinder", "aea.mind.relay"], "state": {"reads": [], "writes": []}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.organs.autonomy": {"path": "aea/organs/autonomy.py", "lines": 119, "headline": "autonomy.py - THE LIVE BATTERY: the system tests its OWN autonomy against the principles.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.server.controlroom"], "state": {"reads": ["heartbeat.json", "self.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.organs.brief": {"path": "aea/organs/brief.py", "lines": 229, "headline": "brief.py - THE MORNING BRIEF: the first REAL task the free swarm does for Luis.", "imports": ["aea.kernel.grid", "aea.kernel.tracelog", "aea.kernel.trust", "aea.mind.hades", "aea.mind.orchestrator"], "imported_by": [], "state": {"reads": ["private_today.json"], "writes": []}, "reachable_from_wake": true, "reachable_from_server": false, "orphaned": false, "import_time_effects": []}, "aea.organs.converse": {"path": "aea/organs/converse.py", "lines": 531, "headline": "converse.py - THE COMPANION. A voice-native conversation partner in Spanish: local ears,", "imports": ["aea.io.listen", "aea.io.speak", "aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.organs.reflect": {"path": "aea/organs/reflect.py", "lines": 193, "headline": "reflect.py - t6, THE REFLECTION TICK: the organ that makes the self a loop, not a document.", "imports": ["aea.energy.energy", "aea.kernel.grid", "aea.kernel.pulse", "aea.mind.hades", "aea.mind.orchestrator"], "imported_by": [], "state": {"reads": [], "writes": ["decisions.jsonl", "reflections.jsonl", "self.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.organs.talk": {"path": "aea/organs/talk.py", "lines": 184, "headline": "talk.py - TALK TO IT. The conversational face of the entity: the first interface where", "imports": ["aea.energy.energy", "aea.io.speak", "aea.kernel.grid", "aea.kernel.pulse", "aea.kernel.trust", "aea.memory.consolidate", "aea.memory.index_codex"], "imported_by": ["aea.organs.telegram_bridge", "aea.server.controlroom"], "state": {"reads": ["heartbeat.json", "identity.json", "self.json", "talk_state.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.organs.telegram_bridge": {"path": "aea/organs/telegram_bridge.py", "lines": 90, "headline": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,", "imports": ["aea.kernel.grid", "aea.kernel.pulse", "aea.organs.talk"], "imported_by": ["aea.server.controlroom"], "state": {"reads": ["identity.json", "telegram_state.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.server.controlroom": {"path": "aea/server/controlroom.py", "lines": 724, "headline": "controlroom.py - THE CONTROL ROOM: at any moment, see what the entity is doing.", "imports": ["aea.bench.bench_core", "aea.energy.energy", "aea.io.speak", "aea.kernel.grid", "aea.kernel.pulse", "aea.kernel.trust", "aea.memory.consolidate", "aea.organs.autonomy", "aea.organs.talk", "aea.organs.telegram_bridge"], "imported_by": ["aea.gameapi.read"], "state": {"reads": [".json", "candidates_probe.json", "capability_census.json", "energy_usage.json", "grid_state.json", "heartbeat.json", "identity.json", "journey_save.json", "live_pid.json", "model_fitness.json", "talk_state.json", "trust_ledger.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": true, "orphaned": false, "import_time_effects": []}, "aea.tooling.board": {"path": "aea/tooling/board.py", "lines": 519, "headline": "board.py - THE COMMAND CENTRE. A shell, not a page.", "imports": ["aea.kernel.grid", "aea.kernel.laws", "aea.kernel.trust", "aea.tooling.xray", "aea.tooling.xray_graph"], "imported_by": [], "state": {"reads": ["heartbeat.json", "selfcheck.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.build_graph": {"path": "aea/tooling/build_graph.py", "lines": 145, "headline": "build_graph.py - the master orchestrator graph over subgraphs, for agent handoff.", "imports": [], "imported_by": [], "state": {"reads": [], "writes": ["graph.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.export_city": {"path": "aea/tooling/export_city.py", "lines": 55, "headline": "export_city.py - dump the REAL grid state into city.data.js for the 3D city.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.heal": {"path": "aea/tooling/heal.py", "lines": 342, "headline": "heal.py - DETERMINISTIC DETECTORS THAT LOOK FOR WHAT COULD BE BETTER, NOT FOR WHAT IS BROKEN.", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": [], "writes": ["heal.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.journey_check": {"path": "aea/tooling/journey_check.py", "lines": 281, "headline": "journey_check.py - THE ENFORCEMENT. Are the three ladders the same ladder?", "imports": ["aea.kernel.grid"], "imported_by": [], "state": {"reads": ["modules.json"], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.selfcheck": {"path": "aea/tooling/selfcheck.py", "lines": 231, "headline": "selfcheck.py - EVERY INVARIANT THIS SYSTEM HAS EARNED, IN ONE COMMAND.", "imports": ["aea.kernel.grid", "aea.kernel.trust", "aea.tooling.xray"], "imported_by": [], "state": {"reads": [], "writes": [".json", "selfcheck.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.xray": {"path": "aea/tooling/xray.py", "lines": 381, "headline": "xray.py - WHAT THIS SYSTEM IS MADE OF RIGHT NOW, read from the code rather than from a document.", "imports": ["aea.kernel.grid"], "imported_by": ["aea.tooling.board", "aea.tooling.selfcheck", "aea.tooling.xray_view"], "state": {"reads": [], "writes": ["xray.json"]}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.xray_graph": {"path": "aea/tooling/xray_graph.py", "lines": 240, "headline": "xray_graph.py - THE CODEBASE AS A LIVING GRAPH. Canvas, real edges, honest motion.", "imports": [], "imported_by": ["aea.tooling.board", "aea.tooling.xray_view"], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}, "aea.tooling.xray_view": {"path": "aea/tooling/xray_view.py", "lines": 326, "headline": "xray_view.py - the xray, rendered. GENERATED FROM THE CODE, NEVER HAND-AUTHORED.", "imports": ["aea.kernel.grid", "aea.tooling.xray", "aea.tooling.xray_graph"], "imported_by": [], "state": {"reads": [], "writes": []}, "reachable_from_wake": false, "reachable_from_server": false, "orphaned": true, "import_time_effects": []}}, "entries": {"wake": ["aea.loop.live", "aea.loop.aea", "aea.organs.brief"], "server": ["aea.server.controlroom"]}, "alarmed": []};
+const D = window.XRAY;
+const M = D.modules;
+let filter = 'all', sel = null;
+
+function pkgOf(n){ const p = n.split('.'); return p.length>2 ? p[1] : 'root'; }
+
+function drawMap(){
+  const host = document.getElementById('map'); if(!host) return; host.innerHTML = '';
+  const groups = {};
+  Object.keys(M).sort().forEach(n=>{
+    const m = M[n];
+    if(filter==='wake' && !m.reachable_from_wake) return;
+    if(filter==='orphan' && !m.orphaned) return;
+    if(filter==='effects' && !(m.import_time_effects||[]).length) return;
+    (groups[pkgOf(n)] = groups[pkgOf(n)] || []).push(n);
+  });
+  const order = Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length);
+  if(!order.length){ host.innerHTML = '<p class="empty">nothing matches this filter.</p>'; return; }
+  order.forEach(p=>{
+    const d = document.createElement('div'); d.className='pkg';
+    const lit = groups[p].filter(n=>M[n].reachable_from_wake).length;
+    d.innerHTML = '<h3>'+p+' <span class="k">'+lit+' of '+groups[p].length+' reachable</span></h3>';
+    const c = document.createElement('div'); c.className='cells';
+    groups[p].forEach(n=>{
+      const m = M[n];
+      const b = document.createElement('div');
+      b.className = 'cell' + (m.reachable_from_wake?' lit':(m.reachable_from_server?' srv':''))
+                  + (n===sel?' sel':'');
+      b.innerHTML = n.split('.').slice(2).join('.') + '<span class="sz">'+m.lines+'</span>';
+      b.title = m.headline || n;
+      b.onclick = ()=>{ sel = n; drawMap(); inspect(n); };
+      c.appendChild(b);
+    });
+    d.appendChild(c); host.appendChild(d);
+  });
+}
+
+function inspect(n){
+  const m = M[n], h = document.getElementById('insp');
+  const tags = [];
+  tags.push('<span class="tag'+(m.reachable_from_wake?' on':'')+'">wake</span>');
+  tags.push('<span class="tag'+(m.reachable_from_server?' on':'')+'">server</span>');
+  if(m.orphaned) tags.push('<span class="tag">orphaned</span>');
+  if((m.import_time_effects||[]).length) tags.push('<span class="tag on">acts on import</span>');
+  const list = (arr, empty) => arr && arr.length
+    ? '<div class="linklist">'+arr.map(x=> M[x]
+        ? '<span onclick="sel=\''+x+'\';drawMap();inspect(\''+x+'\')">'+x+'</span>'
+        : '<span class="mono">'+x+'</span>').join('')+'</div>'
+    : '<p class="empty">'+empty+'</p>';
+  h.innerHTML =
+    '<div class="name">'+n+'</div>'+
+    '<div class="head">'+(m.headline||'&mdash;')+'</div>'+
+    tags.join('')+
+    '<h4>path</h4><p class="mono">'+m.path+' &middot; '+m.lines+' lines</p>'+
+    '<h4>imports ('+(m.imports||[]).length+')</h4>'+list(m.imports,'nothing internal')+
+    '<h4>imported by ('+(m.imported_by||[]).length+')</h4>'+
+      list(m.imported_by,'nothing imports this')+
+    '<h4>writes</h4>'+list((m.state||{}).writes,'no state written')+
+    '<h4>reads</h4>'+list((m.state||{}).reads,'no state read');
+}
+
+window.inspect = inspect;
+document.querySelectorAll('.filter button').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('.filter button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); filter = b.dataset.f; if(document.getElementById('map')) drawMap();
+  };
+});
+if(document.getElementById('map')) drawMap();
+
+
+(function(){
+const D = window.XRAY, M = D.modules;
+const cv = document.getElementById('g'), cx = cv.getContext('2d');
+const tip = document.getElementById('tip');
+const ALARMED = new Set(D.alarmed || []);
+
+const names = Object.keys(M);
+const idx = {}; names.forEach((n,i)=>idx[n]=i);
+const N = names.map((n,i)=>{
+  const m = M[n], pkg = n.split('.').length>2 ? n.split('.')[1] : 'root';
+  return {i, n, pkg, m, r: Math.max(3.4, Math.min(15, Math.sqrt(m.lines)/1.9)),
+          x:0, y:0, vx:0, vy:0, lit:0};
+});
+const E = [];
+names.forEach(n=>{ (M[n].imports||[]).forEach(t=>{ if(idx[t]!==undefined) E.push([idx[n], idx[t]]); }); });
+
+// Package centroids on a ring: gives the eye stable regions without forcing a layout.
+const pkgs = [...new Set(N.map(d=>d.pkg))].sort();
+const anchor = {};
+pkgs.forEach((p,k)=>{ const a = (k/pkgs.length)*Math.PI*2;
+  anchor[p] = {x: Math.cos(a)*0.30, y: Math.sin(a)*0.30}; });
+N.forEach(d=>{ const a = anchor[d.pkg];
+  d.x = a.x + (((d.i*2654435761)%1000)/1000 - .5)*0.12;
+  d.y = a.y + (((d.i*40503)%1000)/1000 - .5)*0.12; });
+
+let W=0,H=0,S=1, ox=0, oy=0, zoom=1, settle=1, sel=null, hov=null, mode='all';
+function size(){ const r = cv.parentElement.getBoundingClientRect();
+  W = cv.width = r.width*devicePixelRatio; H = cv.height = r.height*devicePixelRatio;
+  cv.style.width=r.width+'px'; cv.style.height=r.height+'px'; S = Math.min(W,H); }
+size(); addEventListener('resize', ()=>{ size(); settle=1; });
+
+function step(){
+  if(settle < 0.02){ if(!fitted) autofit(); return; }
+  for(let a=0;a<N.length;a++){
+    const p=N[a];
+    for(let b=a+1;b<N.length;b++){
+      const q=N[b]; let dx=q.x-p.x, dy=q.y-p.y; let d2=dx*dx+dy*dy;
+      if(d2<1e-6){ dx=1e-3; d2=1e-6; }
+      if(d2>0.055) continue;
+      const f = 0.0000075/d2, d=Math.sqrt(d2);
+      const fx=f*dx/d, fy=f*dy/d;
+      p.vx-=fx; p.vy-=fy; q.vx+=fx; q.vy+=fy;
+    }
+  }
+  E.forEach(([a,b])=>{ const p=N[a], q=N[b];
+    const dx=q.x-p.x, dy=q.y-p.y, d=Math.hypot(dx,dy)||1e-4, f=(d-0.045)*0.012;
+    const fx=f*dx/d, fy=f*dy/d; p.vx+=fx; p.vy+=fy; q.vx-=fx; q.vy-=fy; });
+  N.forEach(d=>{ const a=anchor[d.pkg];
+    d.vx += (a.x-d.x)*0.060; d.vy += (a.y-d.y)*0.060;
+    d.x += d.vx; d.y += d.vy; d.vx*=0.86; d.vy*=0.86; });
+  settle *= 0.985;
+}
+
+// THE WAVE. Breadth-first over the REAL edges from the wake entry points, so the light spreads
+// exactly as reachability does. Depth = arrival order = what the gate actually computes.
+const depth = {};
+(function(){
+  const roots = (D.entries && D.entries.wake || []).filter(n=>idx[n]!==undefined);
+  let front = roots.map(n=>idx[n]); front.forEach(i=>depth[i]=0);
+  let d=0;
+  while(front.length){ d++; const nx=[];
+    front.forEach(i=>{ (M[names[i]].imports||[]).forEach(t=>{ const j=idx[t];
+      if(j!==undefined && depth[j]===undefined){ depth[j]=d; nx.push(j); } }); });
+    front=nx; }
+})();
+const maxDepth = Math.max(1, ...Object.values(depth));
+let wave = 0, waving = true;
+
+let fitted=false, fit=1, fcx=0, fcy=0;
+function autofit(){
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  N.forEach(d=>{ if(d.x<x0)x0=d.x; if(d.y<y0)y0=d.y; if(d.x>x1)x1=d.x; if(d.y>y1)y1=d.y; });
+  fcx=(x0+x1)/2; fcy=(y0+y1)/2;
+  fit = 0.80 / Math.max(x1-x0, y1-y0, 1e-3);
+  fitted=true;
+}
+function px(d){ return [W/2 + ((d.x-fcx)*fit*zoom + ox)*S, H/2 + ((d.y-fcy)*fit*zoom + oy)*S]; }
+
+function draw(){
+  step();
+  if(waving){ wave += 0.022; if(wave > maxDepth + 2.2){ wave = 0; } }
+  N.forEach(d=>{
+    const dep = depth[d.i];
+    const target = (dep!==undefined && wave >= dep) ? 1 : 0;
+    d.lit += (target - d.lit) * 0.14;
+  });
+
+  cx.clearRect(0,0,W,H);
+  cx.lineWidth = Math.max(1, devicePixelRatio*0.6);
+  E.forEach(([a,b])=>{
+    const p=N[a], q=N[b];
+    if(mode==='wake' && !(p.m.reachable_from_wake && q.m.reachable_from_wake)) return;
+    const l = Math.min(p.lit, q.lit);
+    const [x1,y1]=px(p), [x2,y2]=px(q);
+    cx.strokeStyle = l>0.05 ? 'rgba(255,176,0,'+(0.09+l*0.30)+')' : 'rgba(120,130,145,0.10)';
+    cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke();
+  });
+
+  N.forEach(d=>{
+    if(mode==='wake' && !d.m.reachable_from_wake) return;
+    if(mode==='orphan' && !d.m.orphaned) return;
+    const [x,y]=px(d), r=d.r*devicePixelRatio*Math.sqrt(zoom);
+    const l=d.lit;
+    if(l>0.02){
+      const g=cx.createRadialGradient(x,y,0,x,y,r*4.2);
+      g.addColorStop(0,'rgba(255,176,0,'+(0.30*l)+')'); g.addColorStop(1,'rgba(255,176,0,0)');
+      cx.fillStyle=g; cx.beginPath(); cx.arc(x,y,r*4.2,0,7); cx.fill();
+    }
+    cx.beginPath(); cx.arc(x,y,r,0,7);
+    cx.fillStyle = l>0.02 ? 'rgba(255,176,0,'+(0.30+0.70*l)+')' : 'rgba(28,32,39,1)';
+    cx.fill();
+    cx.strokeStyle = l>0.02 ? 'rgba(255,176,0,.95)'
+                   : (d.m.reachable_from_server ? 'rgba(212,162,76,.55)' : 'rgba(92,99,110,.55)');
+    cx.stroke();
+    if(ALARMED.has(d.n)){
+      cx.beginPath(); cx.arc(x,y,r+4*devicePixelRatio,0,7);
+      cx.strokeStyle='rgba(255,176,0,.75)'; cx.stroke();
+    }
+    const lz=Math.min(1,Math.max(0,(zoom-0.75)/0.7));
+    if(d===sel || d===hov || (d.m.reachable_from_wake && lz>0.05)){
+      cx.globalAlpha = (d===sel||d===hov) ? 1 : lz;
+      cx.fillStyle = l>0.3 ? 'rgba(255,176,0,.95)' : 'rgba(150,158,170,.9)';
+      cx.font = (10*devicePixelRatio)+'px ui-monospace,monospace';
+      cx.fillText(d.n.replace('aea.',''), x + r + 5*devicePixelRatio, y + 3.5*devicePixelRatio);
+      cx.globalAlpha = 1;
+    }
+  });
+  if(settle>=0.02 || waving || hov || drag) requestAnimationFrame(draw);
+  else setTimeout(()=>requestAnimationFrame(draw), 400);
+}
+
+function hit(mx,my){
+  let best=null, bd=1e9;
+  N.forEach(d=>{ const [x,y]=px(d); const q=(x-mx)**2+(y-my)**2;
+    if(q < (d.r*devicePixelRatio*Math.sqrt(zoom*fit*1.5)+8*devicePixelRatio)**2 && q<bd){ bd=q; best=d; } });
+  return best;
+}
+let drag=null;
+cv.addEventListener('mousemove', ev=>{
+  const b=cv.getBoundingClientRect();
+  const mx=(ev.clientX-b.left)*devicePixelRatio, my=(ev.clientY-b.top)*devicePixelRatio;
+  if(drag){ ox += (mx-drag.x)/S/zoom; oy += (my-drag.y)/S/zoom; drag={x:mx,y:my}; return; }
+  hov = hit(mx,my);
+  if(hov){ tip.style.display='block';
+    tip.style.left=(ev.clientX-b.left+14)+'px'; tip.style.top=(ev.clientY-b.top+10)+'px';
+    tip.innerHTML='<b>'+hov.n+'</b>'+hov.m.lines+' lines &middot; '
+      +(hov.m.reachable_from_wake?'reachable from a wake':(hov.m.orphaned?'ORPHANED':'server only'))
+      +'<span>'+(hov.m.headline||'').slice(0,110)+'</span>';
+  } else tip.style.display='none';
+});
+cv.addEventListener('mousedown', ev=>{ const b=cv.getBoundingClientRect();
+  drag={x:(ev.clientX-b.left)*devicePixelRatio, y:(ev.clientY-b.top)*devicePixelRatio}; });
+addEventListener('mouseup', ()=>{ drag=null; });
+cv.addEventListener('click', ev=>{ const b=cv.getBoundingClientRect();
+  const d=hit((ev.clientX-b.left)*devicePixelRatio,(ev.clientY-b.top)*devicePixelRatio);
+  if(d){ sel=d; window.inspect && window.inspect(d.n); } });
+cv.addEventListener('wheel', ev=>{ ev.preventDefault();
+  zoom = Math.max(0.45, Math.min(5, zoom * (ev.deltaY<0?1.12:0.89))); }, {passive:false});
+
+document.querySelectorAll('.ctl button').forEach(b=>{
+  b.onclick=()=>{
+    if(b.dataset.f){ document.querySelectorAll('.ctl button[data-f]').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); mode=b.dataset.f; }
+    else if(b.dataset.a==='replay'){ wave=0; waving=true; }
+    else if(b.dataset.a==='shake'){ settle=1; fitted=false; N.forEach(d=>{ d.vx+=(Math.sin(d.i*7.7))*0.004;
+      d.vy+=(Math.cos(d.i*3.1))*0.004; }); }
+  };
+});
+draw();
+})();
+</script>

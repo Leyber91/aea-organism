@@ -1,0 +1,22 @@
+{
+  "schema": "aea.organism/1",
+  "id": "inaccessus_sui",
+  "name": "Inaccessus sui",
+  "gloss": "the unreachable one, of itself",
+  "world": 3,
+  "seat": ["call", "goal", "frame", "readout", "carry"],
+  "wiring_note": "THE SEAM THIS CREATURE LIVES IN HAS NO PART IN IT. Storing and retrieving are different operations, and the catalogue holds a carry that puts state into the next prompt and nothing at all that reaches back into what was stored. The thing that would ask, the probe at depth k, sits outside the seat entirely, in the experiment rather than in the organism. The seat above is the assembly x24 ARM B declared it would run, not a wiring that has produced a result.",
+  "fuel": {
+    "plant": "ollama",
+    "model": "granite4.1:3b",
+    "temperature": 0.2,
+    "law": "IV. This is the fuel of the one arm that ran before x24 stopped, recorded so the attempt is traceable. It backs no claim. The run declared five rods: ollama/granite4.1:3b, groq/llama-3.1-8b-instant, groq/llama-3.3-70b-versatile, cerebras/gpt-oss-120b, nvidia/openai/gpt-oss-20b."
+  },
+  "receipt": {
+    "claim": "unproven. A node so full that nothing enters or leaves it: state kept perfectly and no way to reach into it",
+    "measured": null,
+    "runs": ["x24"],
+    "why_it_matters": "THE ONLY RETRIEVAL RUN IN THE LAB IS UNFINISHED AND ITS POSITIVE CONTROL FAILED. x24 run 20260727T093916Z is still marked running and holds one row of a planned grid: the none arm on ollama/granite4.1:3b, 8 sequences completed of 8, 32 probes asked, retrieved_own 0 of 32 and retrieved_truth 0 of 32 at depths 2, 8, 14 and 16. The run declared before firing that step 16 is the value just given and that failing it means a broken probe rather than a bad memory. Depth 16 came back 0 of 8. By the experiment's own pre-declared rule the reading is inadmissible, and the arm that produced it carries nothing by construction anyway, so there was no store for a probe to reach. Nothing here says a creature exists. This is the roster entry that was drawn ahead of its evidence and says so, and it is the exact move that produced Auratus gravis, so it stays out of the annex until a completed run with a passing positive control supports it."
+  },
+  "state": {"kind": "UNMEASURED", "part": "retrieval - no part exists", "provisional": true}
+}

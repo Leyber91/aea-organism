@@ -1,0 +1,23 @@
+{
+  "schema": "aea.organism/1",
+  "id": "auratus_gravis",
+  "name": "Auratus gravis",
+  "gloss": "the gilded one, made heavy",
+  "world": 1,
+  "seat": ["call", "frame"],
+  "wiring_note": "The seat is a method frame on a rod that already passed bare, and the claimed seam was the frame itself: a part harming fuel that did not need it. There is no seam. The seam was in our instrument, between the frame's instruction to state the count on the last line and a token cap that cut the reply before that line arrived.",
+  "fuel": {
+    "plant": "nvidia",
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "temperature": 0.2,
+    "law": "IV. x10 swept 0.0, 0.2, 0.7 and 1.0 on this rod; the x15 re-measure ran at 0.2 and 0.7. The creature was never observed on any other fuel."
+  },
+  "receipt": {
+    "claim": "a rod that is correct bare and is broken by a part it did not need",
+    "measured": null,
+    "voided_by": "defect 1 - max_tokens=320. The frame told the rod to write a numbered list and then state the count on the last line, and the cap severed the reply before the last line. 27 of 30 fitted trials were truncated and 0 of 6 bare trials were. The rod obeyed exactly and was scored as damaged.",
+    "runs": ["x10", "x15"],
+    "why_it_matters": "It was measured, receipted, named, entered in an annex and built into a game mechanic before anyone re-read the cap. Everything that rested on it is withdrawn with it: 'a part is a fit rather than a bonus', 'up to fifty-seven points', 'the player who collects parts loses'. The retraction evidence, not a replacement receipt: x15 ran the same rod on the same kind of frame at max_tokens 1200 and got 0.93 bare to 1.00 framed, and no rod in that run lost more than ten points to a fitted frame. What survives is quieter, that a part with an unmet precondition buys nothing rather than costing something. Its successor is Obtemperans habitui, which is worse news because that frame is in the shipped code."
+  },
+  "state": {"kind": "RETRACTED", "part": "frame", "provisional": true}
+}

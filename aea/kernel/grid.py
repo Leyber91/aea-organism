@@ -50,9 +50,44 @@ os.makedirs(STATE, exist_ok=True)
 WEB = os.path.join(ROOT, "web")              # the front-end: html + js + game/ served from here
 
 
+HOME = os.path.expanduser("~")               # resolved, never typed
+
+
 def _state(path: str) -> str:
     """A bare filename -> under STATE/. An already-qualified path -> unchanged."""
     return os.path.join(STATE, path) if os.path.dirname(path) == "" else path
+
+
+def external(env_key: str, *parts, default_under_home: str = None) -> str | None:
+    """A location OUTSIDE this repo, resolved at runtime. NOTHING ABOUT IT IS TYPED IN.
+
+    THE RULE, AND IT IS THE WHOLE POINT: the only path this system knows is its own root, found by
+    walking up. Everything else is expressed relative to an ANCHOR - ROOT for anything inside the
+    repo, HOME or a declared .env key for anything outside it. A literal path in source is a machine
+    the code cannot leave: move the checkout, change the user, run it anywhere else, and it breaks
+    silently because the folder simply is not there.
+
+    Six such literals were found in this repo on 2026-07-28 - a Claude projects directory, three
+    document trees, and a fact string naming the repo's own location. Every one of them named a
+    specific machine and a specific user.
+
+    Resolution order, and it FAILS HONESTLY rather than guessing:
+        1 the .env key, if set                     the deliberate answer
+        2 HOME/<default_under_home>, if it exists  the conventional answer
+        3 None                                     say so; do not invent a path
+
+    Returning None matters. A caller that gets a fabricated path will create an empty directory and
+    report success over nothing, which is the honesty law's exact failure mode in filesystem form.
+    """
+    base = (key(env_key) or "").strip().strip('"').strip("'")
+    if not base and default_under_home:
+        cand = os.path.join(HOME, *default_under_home.split("/"))
+        if os.path.exists(cand):
+            base = cand
+    if not base:
+        return None
+    p = os.path.join(base, *parts) if parts else base
+    return p if os.path.exists(os.path.dirname(p) or p) or not parts else p
 
 
 # --------------------------------------------------------------------------------------
@@ -61,33 +96,84 @@ def _state(path: str) -> str:
 #     file; for an entity whose thesis is "continuity lives in the files", that was the
 #     single worst defect class). All state goes through these three helpers now.
 # --------------------------------------------------------------------------------------
+# WINDOWS RENAMES AND OPENS FAIL TRANSIENTLY, AND THIS SYSTEM RUNS ON WINDOWS FOR WEEKS.
+# A sharing violation (WinError 32/5) lasts milliseconds - another process, or a virus scanner, has
+# the file open. Both helpers below retry before treating it as anything worse.
+_IO_RETRIES = 5
+_IO_BACKOFF = 0.05
+
+
 def atomic_save_json(path: str, data, indent=None):
-    """Write-to-temp then os.replace: a kill mid-write can never leave a truncated store."""
+    """Write-to-temp then os.replace: a kill mid-write can never leave a truncated store.
+
+    THE REPLACE IS RETRIED. `os.replace` raises PermissionError on Windows when anything holds the
+    destination open, and this repo writes the same stores from the wake loop, the control room and
+    the CLI at once. An unretried replace turns a momentary lock into a lost write - and for the
+    trust ledger a lost write is a lost demotion, which is the one direction that must never be lost.
+    """
     path = _state(path)
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=indent)
-    os.replace(tmp, path)
+    last = None
+    for i in range(_IO_RETRIES):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError as e:                  # Windows sharing violation; momentary
+            last = e
+            time.sleep(_IO_BACKOFF * (2 ** i))
+    raise last
+
+
+class StateUnreadable(OSError):
+    """The file exists and could not be read. NOT the same as corrupt, and NOT the same as absent."""
 
 
 def load_json(path: str, default):
-    """Missing file -> default. CORRUPT file -> quarantine it loudly (never let the next
-    save silently cement the loss) and return default."""
+    """Missing file -> default. CORRUPT file -> quarantine and return default. LOCKED file -> RAISE.
+
+    THE DISTINCTION THIS FUNCTION USED TO MISS, AND IT IS A STATE-DESTROYING ONE.
+
+    The old body caught bare `Exception`, so EVERY failure was treated as corruption: the file was
+    RENAMED AWAY and the permissive `default` returned. `PermissionError` from a Windows sharing
+    violation is not corruption - the store is perfectly valid and simply held open by another
+    process for a few milliseconds. For `state/trust_ledger.json` the default is `{}`, and `_entry`
+    then rebuilds every capability at its CHARTER STARTING LEVEL. So one momentary file lock could
+    silently restore autonomy the entity had lost, and erase the accountability history the ledger
+    exists to keep. `state/bench_runs.json.corrupt.<ts>` is tracked in this repo: it already fired.
+
+    Three outcomes now, because there are three situations:
+      absent      -> default. Nothing was lost; there was nothing there.
+      unparseable -> quarantine loudly and return default. The old behaviour, for the case it was
+                     actually written for: JSONDecodeError / UnicodeDecodeError.
+      unreadable  -> retry, then RAISE. A caller must never silently proceed on a default standing
+                     in for a file that exists. Failing loudly is recoverable; a reset ledger is not.
+    """
     path = _state(path)
-    try:
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return default
-    except Exception as e:
+    last = None
+    for i in range(_IO_RETRIES):
         try:
-            q = f"{path}.corrupt.{int(time.time())}"
-            os.replace(path, q)
-            print(f"[grid] WARNING: {os.path.basename(path)} unreadable ({str(e)[:60]}) "
-                  f"-> quarantined to {os.path.basename(q)}; starting from default")
-        except Exception:
-            pass
-        return default
+            with open(path, encoding="utf-8") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return default
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
+            try:
+                q = f"{path}.corrupt.{int(time.time())}"
+                os.replace(path, q)
+                print(f"[grid] WARNING: {os.path.basename(path)} unparseable ({str(e)[:60]}) "
+                      f"-> quarantined to {os.path.basename(q)}; starting from default")
+            except Exception:
+                pass
+            return default
+        except OSError as e:                          # locked, busy, permission - transient
+            last = e
+            time.sleep(_IO_BACKOFF * (2 ** i))
+    raise StateUnreadable(
+        f"{path} exists but could not be read after {_IO_RETRIES} attempts ({last}). Refusing to "
+        f"return the default: for a ledger or a save, a default is not a safe stand-in for a file "
+        f"that is present.")
 
 
 @contextmanager
@@ -485,21 +571,41 @@ def call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.
         payload = json.loads(raw)
         dt = time.time() - t0
         m = (payload.get("choices") or [{}])[0].get("message", {}) or {}
-        text = m.get("content") or m.get("reasoning_content") or ""   # reasoning models put text here
+        # THREE FIELD NAMES, NOT TWO. nvidia uses reasoning_content, cerebras and OLLAMA use
+        # `reasoning`. Reading only the first two returns an empty string from every local
+        # qwen3 model, which becomes `ERR:` in a brief section, which fails sections_ok,
+        # which demotes the capability. Verified 2026-07-28 against ollama qwen3:1.7b:
+        # fields present were [role, reasoning] and content was empty.
+        text = (m.get("content") or m.get("reasoning_content") or m.get("reasoning") or "")
+        # A 200 carrying an error object is the server failing inside a success envelope,
+        # which is how the local llama-server reports its own crash. Labelled here, at the
+        # only place that can see the payload.
+        _srv_err = isinstance(payload.get("error"), dict)
         usage = payload.get("usage", {}) or {}
         toks = usage.get("completion_tokens", 0) or 0
         ptoks = usage.get("prompt_tokens")
         ttoks = usage.get("total_tokens")
-        return dict(ok=True, latency=dt, text=text, tokens=toks,
+        return dict(ok=True, latency=dt, text=text, tokens=toks, transport=_srv_err,
                     prompt_tokens=ptoks, total_tokens=ttoks,
                     tool_calls=(m.get("tool_calls") or None),
                     deprecation=dep, status=200, error=None)
     except urllib.error.HTTPError as e:
+        # THE LAYER THAT KNOWS IS THE LAYER THAT LABELS. A caller downstream cannot tell a crashed
+        # server from a wrong answer by inspecting an error string, and trying to is whack-a-mole
+        # against every provider's phrasing forever. This is the same bug TCP had over wireless
+        # links, where congestion control read a lossy radio as congestion and collapsed; the fix
+        # there was Explicit Loss Notification - the layer that observed the loss says what kind it
+        # was. Everything at or above 500, plus 408 and 429, is the SERVER failing, not the model
+        # answering badly. That single bit is what stops an outage being recorded as incompetence.
         return dict(ok=False, latency=time.time() - t0, text="", tokens=0, prompt_tokens=None,
+                    transport=(e.code >= 500 or e.code in (408, 429)),
                     total_tokens=None, tool_calls=None, deprecation=None, status=e.code,
                     error=(e.read().decode("utf-8", "ignore")[:200] if hasattr(e, "read") else str(e)))
     except Exception as e:
+        # Never reached the peer, or the peer died mid-reply: socket errors, DNS, timeouts, a
+        # llama-server that terminated. Transport by construction - there is no answer to be wrong.
         return dict(ok=False, latency=time.time() - t0, text="", tokens=0, prompt_tokens=None,
+                    transport=True,
                     total_tokens=None, tool_calls=None, deprecation=None, status=0, error=str(e))
 
 

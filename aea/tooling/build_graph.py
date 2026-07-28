@@ -131,8 +131,15 @@ graph = {
     "master": {"root": "THE_PROBE", "edges": master_edges},
     "subgraphs": subgraphs,
 }
-json.dump(graph, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-tot = sum(len(v["nodes"]) for v in subgraphs.values())
-print(f"graph.json: master + {len(subgraphs)} subgraphs, {tot} nodes total -> {OUT}")
-for k, v in subgraphs.items():
-    print(f"  {k:12} {len(v['nodes']):3} nodes  {len(v['edges']):3} edges")
+# THE WRITE IS GUARDED; THE SCAN ABOVE IS NOT, AND THAT IS THE DELIBERATE SPLIT.
+#
+# Every line above builds `graph` in memory and is harmless to run on import. This line REWRITES A
+# TRACKED REPO FILE, and until 2026-07-28 it ran on import too - so merely naming this module from a
+# test sweep or an editor regenerated graph.json. Found by importing all 86 runtime modules rather
+# than by reading them: an import that writes is invisible to code review and obvious to execution.
+if __name__ == "__main__":
+    json.dump(graph, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    tot = sum(len(v["nodes"]) for v in subgraphs.values())
+    print(f"graph.json: master + {len(subgraphs)} subgraphs, {tot} nodes total -> {OUT}")
+    for k, v in subgraphs.items():
+        print(f"  {k:12} {len(v['nodes']):3} nodes  {len(v['edges']):3} edges")
