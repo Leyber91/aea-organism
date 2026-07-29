@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 153,
+    "count": 155,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 153
+    "count": 155
    },
    {
     "src": "THE_PROBE",
@@ -451,6 +451,12 @@
      "purpose": "pathfinder.py - the increase-by-step CRYSTALLIZED PATH algorithm."
     },
     {
+     "id": "persona",
+     "type": "module",
+     "path": "aea/mind/persona.py",
+     "purpose": "persona.py - A PERSISTENT SELF FOR ONE SPEAKER, and the thing that separates four entities from"
+    },
+    {
      "id": "probe",
      "type": "module",
      "path": "aea/energy/probe.py",
@@ -557,6 +563,12 @@
      "type": "module",
      "path": "aea/lab/site.py",
      "purpose": "site.py - THE EVIDENCE SITE. Builds web/lab/ from the archive. Data-driven, not baked."
+    },
+    {
+     "id": "social",
+     "type": "module",
+     "path": "aea/lab/social.py",
+     "purpose": "social.py - MEASURE THE CONVERSATION ON MANY DIMENSIONS AT ONCE."
     },
     {
      "id": "speak",
@@ -1822,6 +1834,11 @@
      "rel": "imports"
     },
     {
+     "src": "party",
+     "dst": "persona",
+     "rel": "imports"
+    },
+    {
      "src": "pathfinder",
      "dst": "grid",
      "rel": "imports"
@@ -1834,6 +1851,11 @@
     {
      "src": "pathfinder",
      "dst": "swarm",
+     "rel": "imports"
+    },
+    {
+     "src": "persona",
+     "dst": "grid",
      "rel": "imports"
     },
     {
@@ -2013,6 +2035,11 @@
     },
     {
      "src": "site",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "social",
      "dst": "grid",
      "rel": "imports"
     },

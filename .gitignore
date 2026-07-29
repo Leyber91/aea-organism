@@ -96,6 +96,9 @@ state/blackbox.json
 state/lab/earbench/
 state/lab/earclips/
 state/lab/party/
+# Persistent selves for the synthetic speakers - runtime state that grows every session, and the
+# whole point is that it is theirs and accumulates rather than being shipped with the code.
+state/personas/
 
 # PIP WHEELS. Thirteen of these landed in the repo root from an offline install and were swept
 # into a commit by `git add -A` - ~10MB of binaries that are not source and that pip can fetch
