@@ -95,3 +95,4 @@ state/blackbox.json
 # earclips/ is generated TTS - not personal, but 100 wav files and regenerable in a minute.
 state/lab/earbench/
 state/lab/earclips/
+state/lab/party/

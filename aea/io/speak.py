@@ -116,15 +116,25 @@ def edge_available() -> bool:
 
 
 def edge_render(text: str, mp3: str, voice: str | None = None, timeout: int = 300,
-                rate: str = "") -> bool:
+                rate: str = "", pitch: str = "") -> bool:
     """Render text to an mp3. IN-PROCESS first - MEASURED 1.56s vs 6.15s for the subprocess path,
     which pays a fresh python startup on every single call. Subprocess stays as the fallback.
 
     `rate` is an edge-tts speed offset like "+25%" or "-20%", empty for normal. Added 2026-07-29
     for `lab/earbench`, which needs a FAST and a SLOW talker to test the endpointer against speaker
-    variation - with one speaking rate the bench measures one speaking rate."""
+    variation - with one speaking rate the bench measures one speaking rate.
+
+    `pitch` is an offset like "+40Hz" or "-35Hz". Added for the multi-speaker party: when four
+    voices overlap, a listener can only follow them if they are SEPARABLE, and pitch separation is
+    one of the few cues that survives being summed into one mono-ish bus alongside stereo position.
+    A cartoon voice and a monster voice are not decoration here - they are the thing that makes
+    overlapping speech legible rather than mush."""
     v = voice or EDGE_VOICE
-    kw = {"rate": rate} if rate else {}
+    kw = {}
+    if rate:
+        kw["rate"] = rate
+    if pitch:
+        kw["pitch"] = pitch
     try:
         import asyncio, edge_tts
         asyncio.run(edge_tts.Communicate(text[:1200], v, **kw).save(mp3))
@@ -137,6 +147,8 @@ def edge_render(text: str, mp3: str, voice: str | None = None, timeout: int = 30
                "--text", text[:1200], "--write-media", mp3]
         if rate:
             cmd += ["--rate", rate]
+        if pitch:
+            cmd += ["--pitch", pitch]
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         return r.returncode == 0 and os.path.exists(mp3) and os.path.getsize(mp3) >= 400
     except Exception:

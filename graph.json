@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 151,
+    "count": 153,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 151
+    "count": 153
    },
    {
     "src": "THE_PROBE",
@@ -397,6 +397,12 @@
      "purpose": "memory.py - the entity's persistent memory = the backwards channel (seed 10) + A-axis L2."
     },
     {
+     "id": "mixer",
+     "type": "module",
+     "path": "aea/io/mixer.py",
+     "purpose": "mixer.py - MANY VOICES, ONE SOUND CARD."
+    },
+    {
      "id": "model_fitness",
      "type": "module",
      "path": "aea/energy/model_fitness.py",
@@ -431,6 +437,12 @@
      "type": "module",
      "path": "aea/lab/pace.py",
      "purpose": "pace.py - THE PLANTS PUBLISH THEIR LIMITS. READ THEM INSTEAD OF GUESSING."
+    },
+    {
+     "id": "party",
+     "type": "module",
+     "path": "aea/lab/party.py",
+     "purpose": "party.py - FOUR VOICES IN ONE ROOM, HAVING AN ACTUAL CONVERSATION."
     },
     {
      "id": "pathfinder",
@@ -1787,6 +1799,26 @@
     {
      "src": "pace",
      "dst": "pace",
+     "rel": "imports"
+    },
+    {
+     "src": "party",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "party",
+     "dst": "mixer",
+     "rel": "imports"
+    },
+    {
+     "src": "party",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "party",
+     "dst": "tiers",
      "rel": "imports"
     },
     {
