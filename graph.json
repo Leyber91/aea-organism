@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 140,
+    "count": 141,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 140
+    "count": 141
    },
    {
     "src": "THE_PROBE",
@@ -455,6 +455,12 @@
      "type": "module",
      "path": "aea/gameapi/schema.py",
      "purpose": "aea.gameapi.schema - THE BEING AS A STRUCTURE (the world's fog map)."
+    },
+    {
+     "id": "scout",
+     "type": "module",
+     "path": "aea/tooling/scout.py",
+     "purpose": "scout.py - SURVEY AN EXTERNAL REPOSITORY WITH RODS, NOT WITH THE OPERATOR'S CONTEXT."
     },
     {
      "id": "seats",
@@ -1580,6 +1586,16 @@
     },
     {
      "src": "schema",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "scout",
+     "dst": "energy",
+     "rel": "imports"
+    },
+    {
+     "src": "scout",
      "dst": "grid",
      "rel": "imports"
     },

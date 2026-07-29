@@ -1,0 +1,773 @@
+{
+ "repo": "NVIDIA/skills",
+ "purpose": "an autonomous entity that must reach the live internet, speak and listen by voice, retrieve over its own documents, call tools safely, and verify a change to itself before adopting it",
+ "units": 343,
+ "batches": 35,
+ "calls": 70,
+ "voided": [
+  [
+   "minimaxai/minimax-m3",
+   "transport: HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "nvidia/nemotron-3-super-120b-a12b",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "transport: HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "nvidia/nemotron-3-ultra-550b-a55b",
+   "transport: HTTP503 {\"error\":{\"message\":\"ResourceExhausted: Worker local total req"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "transport: HTTP429 {\"status\":429,\"title\":\"Too Many Requests\"}"
+  ],
+  [
+   "minimaxai/minimax-m3",
+   "CANARY MISS: __canary_deploy judged 'tool-calling', expected 'none'"
+  ],
+  [
+   "nvidia/nemotron-3-super-120b-a12b",
+   "unparseable: We need to classify each of the 12 items according to purpose: autonom"
+  ]
+ ],
+ "judged": 325,
+ "agreed_relevant": [
+  {
+   "unit": "cupynumeric-migration-readiness",
+   "name": "cupynumeric-migration-readiness",
+   "description": "Pre-migration readiness assessor for porting NumPy to cuPyNumeric. Use BEFORE substantial porting work begins when the user asks whether code will sca",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "verify-change"
+   },
+   "why": "assesses readiness before migrating NumPy code to cuPyNumeric, i.e., gates a change before adoption",
+   "category": "verify-change"
+  },
+  {
+   "unit": "digital-health-clinical-asr-build",
+   "name": "digital-health-clinical-asr-build",
+   "description": "Stage 2 of the Clinical ASR Flywheel. Use when curating clinical terms, tagging IPA, and synthesizing a NeMo manifest. NOT for scoring (use /digital-h",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "voice"
+   },
+   "why": "Clinical ASR build stage for speech-to-text (ASR) manifest creation",
+   "category": "voice"
+  },
+  {
+   "unit": "digital-health-clinical-asr-eval",
+   "name": "digital-health-clinical-asr-eval",
+   "description": "Stage 3 of Clinical ASR Flywheel. Score a NeMo manifest, produce the five-section KER leaderboard (by-ipa_source diagnostic). Not for ASR auth (/riva-",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "voice"
+   },
+   "why": "Clinical ASR evaluation scoring speech-to-text outputs",
+   "category": "voice"
+  },
+  {
+   "unit": "digital-health-clinical-asr-finetune",
+   "name": "digital-health-clinical-asr-finetune",
+   "description": "Stage 4 of the Clinical ASR Flywheel. Use when priority KER is above 0.3 to run stock NeMo SFT on Parakeet TDT v2 and offline cycle N+1 re-eval. NOT f",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "voice"
+   },
+   "why": "Clinical ASR fine-tuning of speech-to-text model (Parakeet TDT)",
+   "category": "voice"
+  },
+  {
+   "unit": "digital-health-clinical-asr-setup",
+   "name": "digital-health-clinical-asr-setup",
+   "description": "Stage 1 of Clinical ASR Flywheel. Use when bootstrapping a cycle: NVCF+MW disclosure, NVIDIA_API_KEY check, deps install, TTS+ASR smoke test.",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "voice"
+   },
+   "why": "Clinical ASR setup including TTS+ASR smoke test for speech in/out",
+   "category": "voice"
+  },
+  {
+   "unit": "doca-structured-tools-contract",
+   "name": "doca-structured-tools-contract",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "tool-calling"
+   },
+   "why": "defines the structured‑tool contract for how agents call tools",
+   "category": "tool-calling"
+  },
+  {
+   "unit": "earth2studio-data-fetch",
+   "name": "earth2studio-data-fetch",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "internet"
+   },
+   "why": "guides fetching live weather/climate data from external APIs, reaching the outside world",
+   "category": "internet"
+  },
+  {
+   "unit": "earth2studio-discover",
+   "name": "earth2studio-discover",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "retrieval"
+   },
+   "why": "helps locate appropriate models, data sources, and examples within the Earth2Studio documentation",
+   "category": "retrieval"
+  },
+  {
+   "unit": "jetson-validate-image",
+   "name": "jetson-validate-image",
+   "description": ">-",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "verify-change"
+   },
+   "why": "validates customized BSP before adoption",
+   "category": "verify-change"
+  },
+  {
+   "unit": "nemo-retriever",
+   "name": "nemo-retriever",
+   "description": "Use when the user wants to search, query, extract, transcribe, describe, quote, filter, or aggregate across documents — PDFs, scanned forms / images (",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "retrieval"
+   },
+   "why": "indexes and vector-searches local documents (PDFs, images, audio, etc.) via LanceDB",
+   "category": "retrieval"
+  },
+  {
+   "unit": "nemo-rl-auto-research",
+   "name": "nemo-rl-auto-research",
+   "description": "Autonomous NeMo-RL research agent workflow for directed hypothesis testing and open-ended discovery. Guides agents through the full experiment lifecyc",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "tool-calling"
+   },
+   "why": "autonomous research agent that orchestrates multi-step experiment runs (wiring RL recipes, launching jobs)",
+   "category": "tool-calling"
+  },
+  {
+   "unit": "nemotron-asr-finetune",
+   "name": "nemotron-asr-finetune",
+   "description": "Orchestration skill for NVIDIA Nemotron Speech (Riva) / NeMo ASR domain and language adaptation. Given a goal like \"improve/fine-tune ASR for my domai",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "voice"
+   },
+   "why": "ASR fine-tuning orchestration for Nemotron Speech / Riva / NeMo (speech-to-text)",
+   "category": "voice"
+  },
+  {
+   "unit": "nemotron-retrieval-recipes",
+   "name": "nemotron-retrieval-recipes",
+   "description": "Use when planning, debugging, tuning, evaluating, exporting, or deploying public Nemotron `embed`/`rerank` retrieval recipes.",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "retrieval"
+   },
+   "why": "concerns embedding/rerank retrieval recipes",
+   "category": "retrieval"
+  },
+  {
+   "unit": "nemotron-speech",
+   "name": "nemotron-speech",
+   "description": "Routes NVIDIA Nemotron Speech (Riva) NIM tasks — deploys, runs, and tests ASR, TTS, and NMT NIMs on build.nvidia.com or self-hosted.",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "voice"
+   },
+   "why": "handles ASR/TTS speech tasks",
+   "category": "voice"
+  },
+  {
+   "unit": "rag-eval",
+   "name": "rag-eval",
+   "description": ">-",
+   "votes": {
+    "minimax-m3": "retrieval"
+   },
+   "why": "Benchmarking and tuning a RAG retrieval/generation pipeline, directly about RAG quality and retrieval evaluati",
+   "category": "retrieval"
+  },
+  {
+   "unit": "vss-search-archive",
+   "name": "vss-search-archive",
+   "description": "Use this skill to run top-level VSS fusion search on archived video, or to ingest video files / RTSP streams for search. Do NOT use for ad-hoc visual ",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "retrieval"
+   },
+   "why": "Runs fusion search over archived video and ingests streams for search — finding content in own video corpus",
+   "category": "retrieval"
+  }
+ ],
+ "split": [
+  {
+   "unit": "aiq-deploy",
+   "name": "aiq-deploy",
+   "description": "|",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "verify-change",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "deploys and verifies a server before handing it off, gating change adoption",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "aiq-research",
+   "name": "aiq-research",
+   "description": "|",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "none",
+    "minimax-m3": "internet"
+   },
+   "why": "Local research server invocation skill, not about agent tool-calling, voice, retrieval, internet, or change ve",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "amc-run-sample-calibration",
+   "name": "amc-run-sample-calibration",
+   "description": "Run end-to-end calibration on the shipped sample dataset (sdg_08_2_sample_data_010926.zip) against a running AMC microservice. Use when user says 'tes",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "none",
+    "minimax-m3": "verify-change"
+   },
+   "why": "Calibration execution skill for sample dataset against AMC microservice",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "deepstream-generate-pipeline",
+   "name": "deepstream-generate-pipeline",
+   "description": "Build DeepStream GStreamer pipelines interactively. Use when the user asks about pipelines for video/image inference, detection, tracking, or streamin",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "retrieval",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "uses BM25 retrieval backend to search over pipeline templates (own documents)",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "doca-dms",
+   "name": "doca-dms",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "verify-change",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "covers destructive ops requiring verification before execution",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "doca-dpa-hl-tracer",
+   "name": "doca-dpa-hl-tracer",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "invokes a CLI tool (doca_dpa_hl_tracer) as agent tool use",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "doca-sha-offload-engine",
+   "name": "doca-sha-offload-engine",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "skill for invoking the SHA offload engine tool",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "doca-socket-relay",
+   "name": "doca-socket-relay",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "skill for invoking the DOCA Socket Relay tool",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "doca-spcx-cc",
+   "name": "doca-spcx-cc",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "skill for invoking the doca_spcx_cc CLI tool",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "doca-telemetry-utils",
+   "name": "doca-telemetry-utils",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "skill for invoking the doca_telemetry_utils CLI tool",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "i4h-workflow-validate",
+   "name": "i4h-workflow-validate",
+   "description": "Validate, evaluate, or run i4h envs. Use for policy/checkpoint rollouts and scripted state-machine smoke runs.",
+   "votes": {
+    "minimax-m3": "none",
+    "nemotron-3-super-120b-a12b": "verify-change"
+   },
+   "why": "Rolls out robotics policies and records episodes for validation; evaluation, not self-change gating.",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "jetson-download-bsp",
+   "name": "jetson-download-bsp",
+   "description": ">-",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "internet",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "Network fetch of BSP images from external source",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "mcore-create-issue",
+   "name": "mcore-create-issue",
+   "description": "Investigate a failing GitHub Actions run or job and create a GitHub issue for the failure.",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "involves calling GitHub API to create an issue",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "mcore-linting-and-formatting",
+   "name": "mcore-linting-and-formatting",
+   "description": "Linting and formatting for Megatron-LM. Covers running autoformat.sh, tools (ruff, black, isort, pylint, mypy), and code style rules.",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "invokes code formatting/linting tools (black, ruff, etc.)",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "mcore-split-pr",
+   "name": "mcore-split-pr",
+   "description": "Split a PR into multiple PRs to reduce the number of required CODEOWNERS reviewer groups.",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "calls GitHub API to split pull requests",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "nemo-mbridge-recipe-recommender",
+   "name": "nemo-mbridge-recipe-recommender",
+   "description": "Recommend and customize Megatron Bridge recipes for a user's model, GPU count, and training goal. Indexes library recipes (pretrain/SFT/PEFT) and perf",
+   "votes": {
+    "minimax-m3": "none",
+    "nemotron-3-super-120b-a12b": "retrieval"
+   },
+   "why": "Recommends Megatron training recipes — model training configuration helper.",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "tao-launch-workflow",
+   "name": "tao-launch-workflow",
+   "description": ">-",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "orchestrates steps to launch a TAO workflow by calling helper skills/tools",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "tao-mine-aoi-images",
+   "name": "tao-mine-aoi-images",
+   "description": "Runs the DEFT embed-then-mine workflow for VCN AOI iterations — embeds the gap-analysis target parquet, embeds a source pool, and mines nearest-neighb",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "retrieval",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "embeds and mines nearest‑neighbour source images, i.e., retrieves similar items from own document pool",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "tao-run-automl-deft-pipeline",
+   "name": "tao-run-automl-deft-pipeline",
+   "description": ">",
+   "votes": {
+    "nemotron-3-super-120b-a12b": "tool-calling",
+    "nemotron-3-ultra-550b-a55b": "none"
+   },
+   "why": "delegates to existing skills to run HPO and DEFT phases, i.e., agent calling tools",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "tao-run-deft-aoi",
+   "name": "tao-run-deft-aoi",
+   "description": ">",
+   "votes": {
+    "nemotron-3-ultra-550b-a55b": "none",
+    "minimax-m3": "verify-change"
+   },
+   "why": "Model improvement loop with deployment gating for PCB inspection, not agent self-change verification",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "vss-ask-video",
+   "name": "vss-ask-video",
+   "description": "Use this skill to ask the VSS agent's video_understanding tool a fresh visual question about a recorded clip. Not for prior tool output, search hits, ",
+   "votes": {
+    "minimax-m3": "none",
+    "nemotron-3-super-120b-a12b": "tool-calling"
+   },
+   "why": "Asking a VLM video_understanding tool about a recorded clip is visual understanding on stored clips, not live ",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "vss-deploy-dense-captioning",
+   "name": "vss-deploy-dense-captioning",
+   "description": "Use this skill when deploying standalone RT-VLM dense captioning or calling its REST API (uploads, captions, streams, chat-completions, Kafka). Not fo",
+   "votes": {
+    "minimax-m3": "none",
+    "nemotron-3-super-120b-a12b": "tool-calling"
+   },
+   "why": "Deploying and exercising RT-VLM dense captioning microservice is service deployment/graphics/video, not in any",
+   "category": "SPLIT"
+  },
+  {
+   "unit": "vss-deploy-detection-tracking-2d",
+   "name": "vss-deploy-detection-tracking-2d",
+   "description": "Use this skill when the user wants to deploy, run, debug, tear down, or call the REST API of the RTVI-CV 2D detection / tracking microservice. Trigger",
+   "votes": {
+    "minimax-m3": "none",
+    "nemotron-3-super-120b-a12b": "tool-calling"
+   },
+   "why": "Deploying and operating an RTVI-CV 2D detection/tracking microservice is computer vision infrastructure deploy",
+   "category": "SPLIT"
+  }
+ ],
+ "panel": [
+  "nvidia/nemotron-3-super-120b-a12b",
+  "nvidia/nemotron-3-ultra-550b-a55b",
+  "minimaxai/minimax-m3"
+ ],
+ "agreed_none": [
+  "marketplace",
+  "README.md",
+  "components.d",
+  "docs",
+  "plugins.d",
+  "plugins",
+  "nvidia-skills",
+  "skills",
+  "accelerated-computing-cudf",
+  "amc-run-video-calibration",
+  "amc-setup-calibration-stack",
+  "cudaq-guide",
+  "cufolio",
+  "cuopt-developer",
+  "cuopt-install",
+  "cuopt-multi-objective-exploration",
+  "cuopt-numerical-optimization-api",
+  "cuopt-numerical-optimization-formulation",
+  "cuopt-routing-api-python",
+  "assets",
+  "cuopt-server-api-python",
+  "cupynumeric-hdf5",
+  "cupynumeric-install",
+  "cupynumeric-parallel-data-load",
+  "dali-dynamic-mode",
+  "data-designer",
+  "deepstream-dev",
+  "deepstream-import-vision-model",
+  "deepstream-profile-pipeline",
+  "tests",
+  "deepstream-sop",
+  "dicom-metadata-extract",
+  "dicom-series-preflight",
+  "dicom-series-to-volume",
+  "doca-aes-gcm",
+  "doca-argp",
+  "doca-argus",
+  "doca-bare-metal-deployment",
+  "doca-bench-extension",
+  "doca-bench",
+  "doca-bf3-deployment",
+  "doca-bf4-deployment",
+  "doca-caps",
+  "doca-collectx-deployment",
+  "doca-comch",
+  "doca-comm-channel-admin",
+  "doca-common",
+  "doca-compress",
+  "doca-container-deployment",
+  "doca-debug",
+  "doca-devemu",
+  "doca-dma",
+  "doca-dpa",
+  "doca-dpdk-bridge",
+  "doca-erasure-coding",
+  "doca-eth",
+  "doca-firefly",
+  "doca-flow-dpa-perf",
+  "doca-flow-dpa-provider",
+  "doca-flow-grpc-server",
+  "doca-flow-perf",
+  "doca-flow-tune",
+  "doca-flow",
+  "doca-gpi",
+  "doca-gpunetio-ib-write-bw",
+  "doca-gpunetio-ib-write-lat",
+  "doca-gpunetio",
+  "doca-setup",
+  "doca-sha",
+  "doca-sta",
+  "doca-telemetry-exporter",
+  "doca-telemetry",
+  "doca-upgrade",
+  "doca-urom-svc",
+  "doca-urom",
+  "doca-verbs",
+  "doca-version",
+  "dynamo-interconnect-check",
+  "dynamo-recipe-runner",
+  "dynamo-router-starter",
+  "dynamo-troubleshoot",
+  "earth2studio-create-datasource",
+  "earth2studio-create-diagnostic",
+  "earth2studio-create-prognostic",
+  "earth2studio-deterministic-forecast",
+  "earth2studio-install",
+  "holoscan-install-conda",
+  "holoscan-install-container",
+  "holoscan-install-debian",
+  "holoscan-install-source",
+  "holoscan-install-wheel",
+  "holoscan-setup",
+  "hsb-app",
+  "hsb-flash",
+  "hsb-setup",
+  "hsb-test",
+  "i4h-catheter-navigation-digital-twin",
+  "i4h-catheter-navigation-e2e",
+  "i4h-catheter-navigation-render-drr",
+  "i4h-catheter-navigation-setup",
+  "i4h-catheter-navigation-smoke",
+  "i4h-catheter-navigation-viewport",
+  "i4h-catheter-navigation",
+  "i4h-lerobot-viz",
+  "i4h-workflow-create",
+  "i4h-workflow-dataset-annotate",
+  "i4h-workflow-dataset-convert",
+  "i4h-workflow-dataset-mimic",
+  "i4h-workflow-dataset-replay",
+  "i4h-workflow-dataset-teleop",
+  "i4h-workflow-e2e",
+  "i4h-workflow-finetune",
+  "i4h-workflow-scene-edit",
+  "i4h-workflow-setup",
+  "i4h-workflow",
+  "jetson-build-source",
+  "jetson-customize-camera",
+  "jetson-customize-clocks",
+  "jetson-customize-fan",
+  "jetson-customize-mgbe",
+  "jetson-customize-nvpmodel",
+  "jetson-customize-pcie",
+  "jetson-customize-pinmux",
+  "jetson-customize-uphy",
+  "jetson-customize-usb",
+  "references",
+  "jetson-diagnostic",
+  "jetson-flash-image",
+  "jetson-generate-kb",
+  "jetson-headless-mode",
+  "jetson-inference-mem-tune",
+  "jetson-init-image",
+  "jetson-init-source",
+  "jetson-init-target",
+  "jetson-link-docs",
+  "jetson-llm-benchmark",
+  "jetson-llm-serve",
+  "jetson-memory-audit",
+  "jetson-optimize-memory",
+  "jetson-package",
+  "jetson-print-bsp-info",
+  "jetson-print-device-info",
+  "jetson-promote-image",
+  "jetson-quick-start",
+  "jetson-set-target",
+  "jetson-speculative-decoding",
+  "launch-nemo-rl",
+  "mcore-run-on-slurm",
+  "mcore-testing",
+  "nemo-automodel-distributed-training",
+  "nemo-automodel-launcher-config",
+  "nemo-automodel-model-onboarding",
+  "nemo-automodel-recipe-development",
+  "nemo-data-designer-plugin",
+  "nemo-evaluator-plugin",
+  "nemo-mbridge-mlm-bridge-training",
+  "nemo-mbridge-multi-node-slurm",
+  "nemo-mbridge-perf-activation-recompute",
+  "nemo-mbridge-perf-cpu-offloading",
+  "nemo-mbridge-perf-cuda-graphs",
+  "nemo-mbridge-perf-expert-parallel-overlap",
+  "nemo-mbridge-perf-hierarchical-context-parallel",
+  "nemo-mbridge-perf-megatron-fsdp",
+  "nemo-mbridge-perf-memory-tuning",
+  "nemo-mbridge-perf-moe-comm-overlap",
+  "nemo-mbridge-perf-moe-dispatcher-selection",
+  "nemo-mbridge-perf-moe-hardware-configs",
+  "nemo-mbridge-perf-moe-long-context",
+  "nemo-mbridge-perf-moe-optimization-workflow",
+  "nemo-mbridge-perf-moe-vlm-training",
+  "nemo-mbridge-perf-parallelism-strategies",
+  "nemo-mbridge-perf-sequence-packing",
+  "nemo-mbridge-perf-tp-dp-comm-overlap",
+  "nemo-mbridge-resiliency",
+  "nemo-relay-debug-runtime-integration",
+  "nemo-relay-get-started",
+  "nemo-relay-install",
+  "nemo-relay-instrument-calls",
+  "nemo-relay-instrument-context-isolation",
+  "nemo-relay-instrument-typed-wrappers",
+  "nemo-relay-migrate-from-flow",
+  "nemo-relay-plugin-adaptive-tuning",
+  "nemo-relay-plugin-build",
+  "nemo-relay-plugin-observability",
+  "nemo-rl-brev-etiquette",
+  "nemo-rl-docs",
+  "nemo-rl-session-memory",
+  "nemoclaw-user-guide",
+  "nemotron-customize",
+  "nemotron-policy-generator",
+  "nv-generate-ct-rflow",
+  "fixtures",
+  "nv-generate-mr-brain-finetune",
+  "nv-generate-mr-brain",
+  "nv-generate-mr",
+  "nv-generate-vae-finetune",
+  "nv-reason-cxr",
+  "nv-segment-ct-finetune",
+  "nv-segment-ct",
+  "nv-segment-ctmr",
+  "nvidia-skill-finder",
+  "omniverse-cad-to-simready",
+  "omniverse-realtime-viewer",
+  "omniverse-usd-performance-tuning",
+  "paidf-anomalygen",
+  "physical-ai-defect-image-generation",
+  "physical-ai-infrastructure-setup-and-resilient-scaling",
+  "physical-ai-neural-reconstruction",
+  "physical-ai-people-attribute-search",
+  "physical-ai-video-data-augmentation",
+  "physicsnemo-discover",
+  "rag-blueprint",
+  "rag-perf",
+  "skill-card-generator",
+  "tao-analyze-changenet-rca",
+  "tao-analyze-gaps-visual-changenet",
+  "tao-analyze-gaps-vlm-bcq",
+  "tao-convert-dataset-format",
+  "tao-finetune-clip",
+  "tao-finetune-cosmos-embed",
+  "tao-finetune-cosmos-reason",
+  "tao-finetune-huggingface-model",
+  "examples",
+  "tao-generate-image-grounding",
+  "tao-generate-referring-expressions",
+  "tao-generate-video-reasoning-annotations",
+  "tao-list-capabilities",
+  "tao-port-huggingface-model",
+  "tao-route-visual-changenet-samples",
+  "tao-run-automl",
+  "tao-run-inference-service",
+  "tao-run-on-brev",
+  "tao-run-on-docker",
+  "tao-run-on-kubernetes",
+  "tao-run-on-local-docker",
+  "tao-run-on-slurm",
+  "tao-run-platform",
+  "tao-setup-nvidia-gpu-host",
+  "tao-train-action-recognition",
+  "tao-train-bevfusion",
+  "tao-train-centerpose",
+  "tao-train-deformable-detr",
+  "tao-train-depth-anything-v2",
+  "tao-train-dino",
+  "tao-train-fast-foundation-stereo",
+  "tao-train-foundation-stereo",
+  "tao-train-grounding-dino",
+  "tao-train-image-classification",
+  "tao-train-mask-auto-encoder",
+  "tao-train-mask-auto-label",
+  "tao-train-mask-grounding-dino",
+  "tao-train-mask2former",
+  "tao-train-metric-learning-recognition",
+  "tao-train-nvdinov2",
+  "tao-train-nvpanoptix3d",
+  "tao-train-ocdnet",
+  "tao-train-ocrnet",
+  "tao-train-oneformer",
+  "tao-train-optical-inspection",
+  "tao-train-pointpillars",
+  "tao-train-pose-classification",
+  "tao-train-reid",
+  "tao-train-rtdetr",
+  "tao-train-segformer",
+  "tao-train-single-step",
+  "tao-train-sparse4d",
+  "tao-train-visual-changenet",
+  "tao-validate-dataset-format",
+  "tilegym-adding-cutile-kernel",
+  "tilegym-converting-cutile-to-julia",
+  "tilegym-converting-cutile-to-triton",
+  "tilegym-cutile-autotuning",
+  "tilegym-cutile-python",
+  "tilegym-improve-cutile-kernel-perf",
+  "tilegym-monkey-patch-kernels-to-transformers",
+  "vss-deploy-detection-tracking-3d",
+  "vss-deploy-profile",
+  "vss-deploy-video-embedding",
+  "vss-generate-video-calibration",
+  "vss-generate-video-report",
+  "vss-manage-alerts",
+  "vss-manage-video-io-storage",
+  "vss-query-analytics",
+  "vss-setup-behavior-analytics",
+  "vss-setup-video-analytics-api",
+  "vss-summarize-video"
+ ]
+}

@@ -244,6 +244,37 @@ def check_paths() -> dict:
             "data": {"hits": hits}}
 
 
+# STORES THAT MUST NEVER BE COMMITTABLE. Not their CONTENT - their IGNORE COVERAGE. Adopted from
+# NVIDIA's aiq-deploy skill, which runs `git check-ignore deploy/.env` BEFORE writing any secret
+# rather than trusting that the rule exists. We scanned content for leaks and never once asserted
+# that the private stores are actually ignored, so an edit to .gitignore would have been invisible
+# until something leaked. A guard that assumes its own precondition is not a guard.
+MUST_IGNORE = (
+    ".env",
+    "state/private_today.json",
+    "state/luis_memory.json",
+    "state/grid_state.json",
+    "state/trust_ledger.json",
+)
+
+
+def check_ignored() -> dict:
+    """Every private store is gitignored, verified with git rather than assumed."""
+    bad = []
+    for rel in MUST_IGNORE:
+        p = os.path.join(ROOT, rel)
+        r = subprocess.run(["git", "check-ignore", "-q", rel], cwd=ROOT,
+                           capture_output=True, text=True)
+        if r.returncode != 0:                       # not ignored
+            tracked = subprocess.run(["git", "ls-files", "--error-unmatch", rel], cwd=ROOT,
+                                     capture_output=True, text=True).returncode == 0
+            bad.append("%s (%s)" % (rel, "TRACKED IN GIT" if tracked
+                                    else "not ignored" + ("" if os.path.exists(p) else ", absent")))
+    return {"check": "private stores are gitignored", "pass": not bad,
+            "detail": "%d stores verified ignored" % len(MUST_IGNORE) if not bad
+                      else "; ".join(bad[:4]), "data": {"unignored": bad}}
+
+
 def check_state() -> dict:
     """The stores the entity cannot run without, and the one that must never be lost."""
     from aea.kernel import trust
@@ -258,7 +289,7 @@ def check_state() -> dict:
     return {"check": "state intact", "pass": ok, "detail": ", ".join(rows)}
 
 
-CHECKS = [("structure", check_structure), ("state", check_state), ("leaks", check_leaks),
+CHECKS = [("structure", check_structure), ("state", check_state), ("leaks", check_leaks), ("ignored", check_ignored),
           ("paths", check_paths),
           ("imports", check_imports), ("frozen", check_frozen), ("house", check_house)]
 SLOW = {"imports", "frozen"}

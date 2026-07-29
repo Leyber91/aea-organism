@@ -19,7 +19,7 @@ can never take down the life.
   python live.py --status                 # print the heartbeat and exit
 """
 from __future__ import annotations
-import json, os, sys, time, subprocess, signal
+import json, os, re, sys, time, subprocess, signal
 from datetime import datetime, timezone
 
 from aea.kernel import grid
@@ -166,6 +166,68 @@ def _notice_and_propose(hb: dict, tail: str):
         log("  (notice/propose failed, loop continues: %s)" % str(e)[:80])
 
 
+VOICE_CFG = "voice_wake.json"        # state/voice_wake.json: {"enabled": bool, "from": 8, "to": 22}
+
+
+def speak_brief(hb: dict) -> bool:
+    """SAY THE BRIEF ALOUD, unprompted. The first thing this entity does with a voice that nobody
+    launched by hand.
+
+    Everything built for the voice until now ran only when a person typed the command, which meant
+    the entity had a mouth and no way to open it. This is the wire: the wake already produces a
+    brief every day, so the moment it succeeds there is something REAL to say - content the system
+    generated as its own work, not a greeting invented to have something to speak.
+
+    THREE GUARDS, and each one is here because speaking into an empty room is worse than silence:
+
+      OPT-IN      off unless state/voice_wake.json says enabled. A machine that starts talking
+                  after an update, in a house, at night, is not a feature.
+      QUIET HOURS a wake ticks around the clock; a person does not. Default 08:00-22:00 local.
+      CONTENT     the brief must actually exist and be long enough to be worth a sentence. An
+                  empty or placeholder brief is spoken as NOTHING, never as "nothing to report" -
+                  law H3, a placeholder is not content.
+
+    Failure is swallowed on purpose: a mute speaker, a busy audio device or a missing file must
+    never take down the forever-loop. The heartbeat records whether it spoke, so a silent day is
+    diagnosable rather than invisible.
+    """
+    try:
+        cfg = grid.load_json(os.path.join(grid.STATE, VOICE_CFG),
+                             {"enabled": False, "from": 8, "to": 22})
+        if not cfg.get("enabled"):
+            return False
+        hour = datetime.now().hour
+        lo, hi = int(cfg.get("from", 8)), int(cfg.get("to", 22))
+        if not (lo <= hour < hi):
+            log(f"  voice: {hour}:00 is outside {lo}-{hi}, staying quiet")
+            return False
+        p = os.path.join(grid.STATE, "brief_output.md")
+        if not os.path.exists(p):
+            return False
+        raw = open(p, encoding="utf-8").read()
+        body = re.sub(r"[#*_`>\-]+", " ", raw)
+        body = re.sub(r"\s+", " ", body).strip()
+        if len(body) < 80:
+            log("  voice: the brief is too thin to be worth saying")
+            return False
+        # TWO SENTENCES, the same bound the conversation organ enforces. MEASURED: 367 characters
+        # is 24 seconds of speech, and a wake that monologues at someone over breakfast is the
+        # dashboard failure in audio form.
+        parts = [s for s in re.split(r"(?<=[.!?])\s+", body) if len(s.strip()) > 15][:2]
+        line = " ".join(parts).strip()[:320]
+        if not line:
+            return False
+        from aea.io import speak as _speak
+        ok = _speak.speak("Morning. " + line, cloud_ok=True)
+        hb["last_spoke"] = now_iso()
+        log(f"  voice: {'spoke' if ok else 'FAILED to speak'} {len(line)} chars of the brief")
+        pulse.emit("voice", "brief", line[:80], ok=bool(ok))
+        return bool(ok)
+    except Exception as e:                 # never let the mouth kill the loop
+        log(f"  voice: skipped ({str(e)[:70]})")
+        return False
+
+
 def tick(hb: dict, demo: bool):
     hb["total_ticks"] += 1
     action, args, tmo = choose_action(hb)
@@ -182,6 +244,7 @@ def tick(hb: dict, demo: bool):
         if ok:
             hb["last_brief_date"] = today()
             hb["brief_fails"] = 0
+            speak_brief(hb)                        # THE ENTITY SPEAKS WITHOUT BEING LAUNCHED
         else:
             hb["brief_fails"] = int(hb.get("brief_fails", 0)) + 1
             _notice_and_propose(hb, tail)

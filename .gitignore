@@ -66,3 +66,18 @@ state/chains.jsonl.1
 # They must never be tracked (recursive) and never carried into another shadow.
 state/shadows/
 state/proposals/
+
+# AUDIO. Added 2026-07-29 while preparing the voice-session commit, after a check showed
+# state/earcheck/ was NOT ignored and held RECORDINGS OF LUIS'S VOICE. His actual voice is the
+# most personal thing this repo has ever touched and it must never leave the machine.
+# The rest are generated artifacts: regenerable, large, and not source.
+state/earcheck/
+state/duet/
+state/outtest/
+state/fillers/
+state/convbench/
+state/_*.mp3
+state/_*.wav
+state/*.mp3
+state/*.wav
+voice/_*.wav

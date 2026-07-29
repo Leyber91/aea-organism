@@ -1,6 +1,6 @@
 {
  "schema": "aea.xray/1",
- "generated": "2026-07-28 22:31 UTC",
+ "generated": "2026-07-29 03:33 UTC",
  "modules": {
   "aea.bench.bench_core": {
    "module": "aea.bench.bench_core",
@@ -309,7 +309,7 @@
    "module": "aea.energy.rodprobe",
    "path": "aea/energy/rodprobe.py",
    "package": "energy",
-   "lines": 215,
+   "lines": 259,
    "headline": "rodprobe.py - ONE HARNESS FOR ASKING A ROD ANYTHING, AND ONE STORE FOR WHAT IT ANSWERED.",
    "imports": [
     "aea.kernel.grid"
@@ -317,19 +317,23 @@
    "import_time_effects": [],
    "state": {
     "reads": [
+     "plant_ceiling.json",
      "rods.json"
     ],
     "writes": [
+     "plant_ceiling.json",
      "rods.json"
     ],
     "declared": [
      "nvidia_catalog.json",
+     "plant_ceiling.json",
      "rods.json"
     ]
    },
    "defs": [
     "ask",
     "body_for",
+    "calibrate",
     "consolidate",
     "facts",
     "load",
@@ -342,7 +346,8 @@
    "orphaned": false,
    "role": "live",
    "imported_by": [
-    "aea.energy.energy"
+    "aea.energy.energy",
+    "aea.tooling.scout"
    ]
   },
   "aea.gameapi.act": {
@@ -517,6 +522,10 @@
    "orphaned": true,
    "role": "unwired",
    "imported_by": [
+    "aea.io.prosody",
+    "aea.lab.battery",
+    "aea.lab.convbench",
+    "aea.lab.duet",
     "aea.organs.converse"
    ]
   },
@@ -547,11 +556,44 @@
     "aea.kernel.trust"
    ]
   },
+  "aea.io.prosody": {
+   "module": "aea.io.prosody",
+   "path": "aea/io/prosody.py",
+   "package": "io",
+   "lines": 231,
+   "headline": "prosody.py - HOW IT WAS SAID, not just what was said. The cheap half of what Moshi does.",
+   "imports": [
+    "aea.io.listen"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "_frames",
+    "annotate",
+    "describe",
+    "f0_track",
+    "measure",
+    "update_baseline"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": [
+    "aea.lab.battery",
+    "aea.lab.duet",
+    "aea.organs.converse"
+   ]
+  },
   "aea.io.speak": {
    "module": "aea.io.speak",
    "path": "aea/io/speak.py",
    "package": "io",
-   "lines": 290,
+   "lines": 667,
    "headline": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):",
    "imports": [
     "aea.kernel.grid",
@@ -570,6 +612,10 @@
    "defs": [
     "_engine",
     "_identity",
+    "_play_interruptible",
+    "_render_chunk",
+    "_trim_silence",
+    "choose_filler",
     "edge_available",
     "edge_render",
     "edge_speak",
@@ -577,19 +623,27 @@
     "kokoro_render",
     "list_voices",
     "main",
+    "maybe_filler",
     "narrate",
     "play_fast",
     "play_mp3",
     "play_wav",
+    "prime_fillers",
     "sapi_speak",
-    "speak"
+    "say_stream",
+    "speak",
+    "split_sentences",
+    "warm"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": true,
    "orphaned": false,
    "role": "live",
    "imported_by": [
     "aea.io.listen",
+    "aea.lab.convbench",
+    "aea.lab.duet",
+    "aea.loop.live",
     "aea.organs.converse",
     "aea.organs.talk",
     "aea.server.controlroom"
@@ -721,12 +775,13 @@
    "module": "aea.kernel.grid",
    "path": "aea/kernel/grid.py",
    "package": "kernel",
-   "lines": 789,
+   "lines": 884,
    "headline": "grid.py - the AEA entity's power grid (the city's electricity layer).",
    "imports": [],
    "import_time_effects": [],
    "state": {
     "reads": [
+     "plant_ceiling.json",
      "rods.json"
     ],
     "writes": [],
@@ -754,6 +809,7 @@
     "load_json",
     "own_params",
     "size_for_depth",
+    "stream_openai",
     "think_off"
    ],
    "reachable_from_wake": true,
@@ -788,7 +844,11 @@
     "aea.kernel.tracelog",
     "aea.kernel.trust",
     "aea.kernel.unstick",
+    "aea.lab.battery",
     "aea.lab.calibrate",
+    "aea.lab.convbench",
+    "aea.lab.crystallize",
+    "aea.lab.duet",
     "aea.lab.experiments.x06_long_chain",
     "aea.lab.experiments.x06b_crossover",
     "aea.lab.experiments.x07_self_assessment",
@@ -814,6 +874,7 @@
     "aea.memory.memory",
     "aea.mind.anchor",
     "aea.mind.axes",
+    "aea.mind.background",
     "aea.mind.checkpoint",
     "aea.mind.fuel",
     "aea.mind.hades",
@@ -821,6 +882,7 @@
     "aea.mind.pathfinder",
     "aea.mind.relay",
     "aea.mind.swarm",
+    "aea.mind.tiers",
     "aea.organs.autonomy",
     "aea.organs.brief",
     "aea.organs.converse",
@@ -832,6 +894,7 @@
     "aea.tooling.export_city",
     "aea.tooling.heal",
     "aea.tooling.journey_check",
+    "aea.tooling.scout",
     "aea.tooling.selfcheck",
     "aea.tooling.xray",
     "aea.tooling.xray_view"
@@ -841,17 +904,20 @@
    "module": "aea.kernel.hands",
    "path": "aea/kernel/hands.py",
    "package": "kernel",
-   "lines": 538,
+   "lines": 802,
    "headline": "hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISSION FIRST.",
    "imports": [
     "aea.kernel.grid",
+    "aea.kernel.laws",
     "aea.kernel.trust",
     "aea.lab.pace"
    ],
    "import_time_effects": [],
    "state": {
     "reads": [
-     "tool_rods.json"
+     "selfcheck.json",
+     "tool_rods.json",
+     "xray.json"
     ],
     "writes": [
      "tool_rods.json"
@@ -865,9 +931,13 @@
     "_calc",
     "_chat",
     "_json_get",
+    "_list_tools",
     "_probe_many",
     "_read_state",
+    "_self_map",
+    "_unwrap_args",
     "_web_fetch",
+    "_web_search",
     "allowed",
     "board",
     "invoke",
@@ -877,12 +947,14 @@
     "schema",
     "unmeasured"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": false,
-   "orphaned": true,
-   "role": "unwired",
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
-    "aea.kernel.seats"
+    "aea.kernel.seats",
+    "aea.organs.brief",
+    "aea.organs.converse"
    ]
   },
   "aea.kernel.impasse": {
@@ -937,11 +1009,12 @@
     "sections",
     "text"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": false,
-   "orphaned": true,
-   "role": "tool",
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
+    "aea.kernel.hands",
     "aea.tooling.board"
    ]
   },
@@ -1035,7 +1108,7 @@
    "module": "aea.kernel.shadow",
    "path": "aea/kernel/shadow.py",
    "package": "kernel",
-   "lines": 487,
+   "lines": 643,
    "headline": "shadow.py - THE ENTITY TESTS A CHANGE TO ITSELF WITHOUT BECOMING IT YET.",
    "imports": [
     "aea.kernel.grid"
@@ -1049,6 +1122,7 @@
      "known_good.json"
     ],
     "declared": [
+     "energy_usage.json",
      "known_good.json"
     ]
    },
@@ -1069,7 +1143,8 @@
     "propose",
     "protected",
     "render",
-    "restore_gate"
+    "restore_gate",
+    "stages"
    ],
    "reachable_from_wake": false,
    "reachable_from_server": false,
@@ -1205,6 +1280,48 @@
     "aea.loop.live"
    ]
   },
+  "aea.lab.battery": {
+   "module": "aea.lab.battery",
+   "path": "aea/lab/battery.py",
+   "package": "lab",
+   "lines": 409,
+   "headline": "battery.py - THE CONVERSATIONAL TEST BATTERY. Many real cases, run in batches, on the record.",
+   "imports": [
+    "aea.io.listen",
+    "aea.io.prosody",
+    "aea.kernel.grid",
+    "aea.lab.convbench",
+    "aea.organs.converse"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [
+     "endpoint.json",
+     "facts.json",
+     "prefilter.json"
+    ],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "_mk_wav",
+    "_report",
+    "_save",
+    "run_audio",
+    "run_fast",
+    "suite_ear",
+    "suite_endpoint",
+    "suite_facts",
+    "suite_prefilter",
+    "suite_prosody",
+    "suite_speech"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": []
+  },
   "aea.lab.calibrate": {
    "module": "aea.lab.calibrate",
    "path": "aea/lab/calibrate.py",
@@ -1269,6 +1386,103 @@
     "aea.lab.experiments.x24_the_store_and_the_door",
     "aea.lab.organism"
    ]
+  },
+  "aea.lab.convbench": {
+   "module": "aea.lab.convbench",
+   "path": "aea/lab/convbench.py",
+   "package": "lab",
+   "lines": 359,
+   "headline": "convbench.py - THE CONVERSATION BENCH. Specific measures for \"does it feel natural\".",
+   "imports": [
+    "aea.io.listen",
+    "aea.io.speak",
+    "aea.kernel.grid",
+    "aea.mind.tiers",
+    "aea.organs.converse"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "_hr",
+    "_mk_wav",
+    "_row",
+    "axis_bargein",
+    "axis_ear",
+    "axis_endpoint",
+    "axis_prosody",
+    "axis_response_gap",
+    "report",
+    "semantic_match",
+    "wer"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": [
+    "aea.lab.battery"
+   ]
+  },
+  "aea.lab.crystallize": {
+   "module": "aea.lab.crystallize",
+   "path": "aea/lab/crystallize.py",
+   "package": "lab",
+   "lines": 198,
+   "headline": "crystallize.py - TURN A BATTERY RUN INTO LESSONS THAT DO NOT HAVE TO BE RE-DERIVED.",
+   "imports": [
+    "aea.kernel.grid"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "_load",
+    "render",
+    "status"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": []
+  },
+  "aea.lab.duet": {
+   "module": "aea.lab.duet",
+   "path": "aea/lab/duet.py",
+   "package": "lab",
+   "lines": 216,
+   "headline": "duet.py - TWO MODELS HOLD A CONVERSATION THROUGH THE LAYER, with no human in the loop.",
+   "imports": [
+    "aea.io.listen",
+    "aea.io.prosody",
+    "aea.io.speak",
+    "aea.kernel.grid",
+    "aea.mind.tiers"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "_words",
+    "fidelity",
+    "one_turn",
+    "run"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": []
   },
   "aea.lab.experiments.x01_generic_frame": {
    "module": "aea.lab.experiments.x01_generic_frame",
@@ -2259,10 +2473,10 @@
     "task",
     "verify_debt"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": false,
-   "orphaned": true,
-   "role": "evidence",
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
     "aea.lab.calibrate",
     "aea.lab.experiments.x01_generic_frame",
@@ -2415,10 +2629,10 @@
     "tokens_per_minute",
     "wait"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": false,
-   "orphaned": true,
-   "role": "evidence",
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
     "aea.kernel.fit",
     "aea.kernel.hands",
@@ -2919,9 +3133,10 @@
    "module": "aea.loop.live",
    "path": "aea/loop/live.py",
    "package": "loop",
-   "lines": 264,
+   "lines": 327,
    "headline": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps.",
    "imports": [
+    "aea.io.speak",
     "aea.kernel.grid",
     "aea.kernel.impasse",
     "aea.kernel.pulse",
@@ -2932,13 +3147,15 @@
    "import_time_effects": [],
    "state": {
     "reads": [
-     "heartbeat.json"
+     "heartbeat.json",
+     "voice_wake.json"
     ],
     "writes": [
      "heartbeat.json"
     ],
     "declared": [
-     "heartbeat.json"
+     "heartbeat.json",
+     "voice_wake.json"
     ]
    },
    "defs": [
@@ -2952,6 +3169,7 @@
     "now_iso",
     "run_script",
     "save_hb",
+    "speak_brief",
     "tick",
     "today"
    ],
@@ -3077,10 +3295,10 @@
     "remember",
     "seed"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": false,
-   "orphaned": true,
-   "role": "evidence",
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
     "aea.lab.harness"
    ]
@@ -3108,10 +3326,10 @@
     "observe",
     "surprises"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": false,
-   "orphaned": true,
-   "role": "evidence",
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
     "aea.lab.harness"
    ]
@@ -3153,6 +3371,33 @@
    "imported_by": [
     "aea.gameapi.read"
    ]
+  },
+  "aea.mind.background": {
+   "module": "aea.mind.background",
+   "path": "aea/mind/background.py",
+   "package": "mind",
+   "lines": 197,
+   "headline": "background.py - THE PART OF THE MIND THAT KEEPS WORKING WHILE THE MOUTH IS BUSY.",
+   "imports": [
+    "aea.kernel.grid",
+    "aea.mind.tiers"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "Thinker",
+    "_clean",
+    "review"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": []
   },
   "aea.mind.checkpoint": {
    "module": "aea.mind.checkpoint",
@@ -3205,10 +3450,10 @@
     "stamp",
     "unstamped"
    ],
-   "reachable_from_wake": false,
+   "reachable_from_wake": true,
    "reachable_from_server": false,
-   "orphaned": true,
-   "role": "evidence",
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
     "aea.lab.calibrate",
     "aea.lab.experiments.x06_long_chain",
@@ -3407,6 +3652,42 @@
     "aea.mind.relay"
    ]
   },
+  "aea.mind.tiers": {
+   "module": "aea.mind.tiers",
+   "path": "aea/mind/tiers.py",
+   "package": "mind",
+   "lines": 188,
+   "headline": "tiers.py - THE TIERED MIND. Different rods own different organs, composed into one voice.",
+   "imports": [
+    "aea.kernel.grid"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [
+     "rods.json",
+     "tool_rods.json"
+    ],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "board",
+    "hold",
+    "ladder",
+    "organ",
+    "refresh_from_store"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": [
+    "aea.lab.convbench",
+    "aea.lab.duet",
+    "aea.mind.background",
+    "aea.organs.converse"
+   ]
+  },
   "aea.organs.autonomy": {
    "module": "aea.organs.autonomy",
    "path": "aea/organs/autonomy.py",
@@ -3442,10 +3723,11 @@
    "module": "aea.organs.brief",
    "path": "aea/organs/brief.py",
    "package": "organs",
-   "lines": 229,
+   "lines": 278,
    "headline": "brief.py - THE MORNING BRIEF: the first REAL task the free swarm does for Luis.",
    "imports": [
     "aea.kernel.grid",
+    "aea.kernel.hands",
     "aea.kernel.tracelog",
     "aea.kernel.trust",
     "aea.mind.hades",
@@ -3475,12 +3757,15 @@
    "module": "aea.organs.converse",
    "path": "aea/organs/converse.py",
    "package": "organs",
-   "lines": 531,
-   "headline": "converse.py - THE COMPANION. A voice-native conversation partner in Spanish: local ears,",
+   "lines": 1280,
+   "headline": "converse.py - THE COMPANION. A voice-native conversation partner in ENGLISH: local ears,",
    "imports": [
     "aea.io.listen",
+    "aea.io.prosody",
     "aea.io.speak",
-    "aea.kernel.grid"
+    "aea.kernel.grid",
+    "aea.kernel.hands",
+    "aea.mind.tiers"
    ],
    "import_time_effects": [],
    "state": {
@@ -3489,10 +3774,14 @@
     "declared": []
    },
    "defs": [
+    "_build_system_es",
+    "_is_question",
     "_strip_think",
+    "act_or_answer",
     "build_system",
     "capture",
     "clean",
+    "is_fact",
     "is_ghost",
     "list_devices",
     "load_store",
@@ -3500,15 +3789,22 @@
     "remember",
     "save_store",
     "say",
+    "speakable",
     "store_path",
     "think",
-    "trim"
+    "think_stream",
+    "tools_for",
+    "trim",
+    "utterance_looks_complete"
    ],
    "reachable_from_wake": false,
    "reachable_from_server": false,
    "orphaned": true,
    "role": "unwired",
-   "imported_by": []
+   "imported_by": [
+    "aea.lab.battery",
+    "aea.lab.convbench"
+   ]
   },
   "aea.organs.reflect": {
    "module": "aea.organs.reflect",
@@ -3860,11 +4156,42 @@
    "role": "tool",
    "imported_by": []
   },
+  "aea.tooling.scout": {
+   "module": "aea.tooling.scout",
+   "path": "aea/tooling/scout.py",
+   "package": "tooling",
+   "lines": 311,
+   "headline": "scout.py - SURVEY AN EXTERNAL REPOSITORY WITH RODS, NOT WITH THE OPERATOR'S CONTEXT.",
+   "imports": [
+    "aea.energy.rodprobe",
+    "aea.kernel.grid"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [],
+    "writes": [],
+    "declared": []
+   },
+   "defs": [
+    "_head",
+    "_render",
+    "gh",
+    "inventory",
+    "judge_batch",
+    "render",
+    "survey"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "tool",
+   "imported_by": []
+  },
   "aea.tooling.selfcheck": {
    "module": "aea.tooling.selfcheck",
    "path": "aea/tooling/selfcheck.py",
    "package": "tooling",
-   "lines": 287,
+   "lines": 335,
    "headline": "selfcheck.py - EVERY INVARIANT THIS SYSTEM HAS EARNED, IN ONE COMMAND.",
    "imports": [
     "aea.kernel.grid",
@@ -3878,6 +4205,7 @@
      "selfcheck.json"
     ],
     "declared": [
+     "private_today.json",
      "selfcheck.json"
     ]
    },
@@ -3887,6 +4215,7 @@
     "_scan",
     "check_frozen",
     "check_house",
+    "check_ignored",
     "check_imports",
     "check_leaks",
     "check_paths",
@@ -4012,19 +4341,19 @@
   "lab": []
  },
  "counts": {
-  "modules": 111,
-  "reachable_from_wake": 16,
+  "modules": 119,
+  "reachable_from_wake": 24,
   "reachable_from_server": 14,
-  "orphaned": 88,
-  "lines": 24806,
+  "orphaned": 89,
+  "lines": 28760,
   "by_role": {
-   "live": 23,
+   "live": 30,
    "tool": 10,
-   "evidence": 43,
+   "evidence": 38,
    "paused": 4,
-   "unwired": 31
+   "unwired": 37
   },
-  "unwired": 31
+  "unwired": 37
  },
  "orphans": [
   "aea.energy.capability_census",
@@ -4039,15 +4368,18 @@
   "aea.gameapi.schema",
   "aea.io.agent_tools",
   "aea.io.listen",
+  "aea.io.prosody",
   "aea.kernel.crystal",
   "aea.kernel.fit",
   "aea.kernel.goals",
-  "aea.kernel.hands",
-  "aea.kernel.laws",
   "aea.kernel.seats",
   "aea.kernel.shadow",
+  "aea.lab.battery",
   "aea.lab.calibrate",
   "aea.lab.chain",
+  "aea.lab.convbench",
+  "aea.lab.crystallize",
+  "aea.lab.duet",
   "aea.lab.experiments.x01_generic_frame",
   "aea.lab.experiments.x02_fitted_frame",
   "aea.lab.experiments.x03_judge",
@@ -4078,10 +4410,8 @@
   "aea.lab.fleet",
   "aea.lab.fuels",
   "aea.lab.grader",
-  "aea.lab.harness",
   "aea.lab.organism",
   "aea.lab.overseer",
-  "aea.lab.pace",
   "aea.lab.parts.base",
   "aea.lab.parts.capacity",
   "aea.lab.parts.carry",
@@ -4097,13 +4427,12 @@
   "aea.lab.rescore",
   "aea.lab.site",
   "aea.lab.stats",
-  "aea.memory.memory",
-  "aea.mind.anchor",
   "aea.mind.axes",
+  "aea.mind.background",
   "aea.mind.checkpoint",
-  "aea.mind.fuel",
   "aea.mind.pathfinder",
   "aea.mind.relay",
+  "aea.mind.tiers",
   "aea.organs.converse",
   "aea.organs.reflect",
   "aea.tooling.board",
@@ -4111,6 +4440,7 @@
   "aea.tooling.export_city",
   "aea.tooling.heal",
   "aea.tooling.journey_check",
+  "aea.tooling.scout",
   "aea.tooling.selfcheck",
   "aea.tooling.xray",
   "aea.tooling.xray_graph",
@@ -4125,12 +4455,16 @@
   "aea.energy.probe",
   "aea.io.agent_tools",
   "aea.io.listen",
+  "aea.io.prosody",
   "aea.kernel.crystal",
   "aea.kernel.fit",
   "aea.kernel.goals",
-  "aea.kernel.hands",
   "aea.kernel.seats",
   "aea.kernel.shadow",
+  "aea.lab.battery",
+  "aea.lab.convbench",
+  "aea.lab.crystallize",
+  "aea.lab.duet",
   "aea.lab.fleet",
   "aea.lab.fuels",
   "aea.lab.grader",
@@ -4144,8 +4478,10 @@
   "aea.lab.rescore",
   "aea.lab.site",
   "aea.mind.axes",
+  "aea.mind.background",
   "aea.mind.pathfinder",
   "aea.mind.relay",
+  "aea.mind.tiers",
   "aea.organs.converse",
   "aea.organs.reflect"
  ],
@@ -4230,13 +4566,23 @@
     "aea.server.controlroom"
    ]
   },
-  "rods.json": {
+  "plant_ceiling.json": {
    "writers": [
     "aea.energy.rodprobe"
    ],
    "readers": [
     "aea.energy.rodprobe",
     "aea.kernel.grid"
+   ]
+  },
+  "rods.json": {
+   "writers": [
+    "aea.energy.rodprobe"
+   ],
+   "readers": [
+    "aea.energy.rodprobe",
+    "aea.kernel.grid",
+    "aea.mind.tiers"
    ]
   },
   "grid_state.json": {
@@ -4288,7 +4634,8 @@
    ],
    "readers": [
     "aea.kernel.fit",
-    "aea.kernel.hands"
+    "aea.kernel.hands",
+    "aea.mind.tiers"
    ]
   },
   "goals.json": {
@@ -4297,6 +4644,23 @@
    ],
    "readers": [
     "aea.kernel.goals"
+   ]
+  },
+  "selfcheck.json": {
+   "writers": [
+    "aea.tooling.selfcheck"
+   ],
+   "readers": [
+    "aea.kernel.hands",
+    "aea.tooling.board"
+   ]
+  },
+  "xray.json": {
+   "writers": [
+    "aea.tooling.xray"
+   ],
+   "readers": [
+    "aea.kernel.hands"
    ]
   },
   "seats.json": {
@@ -4333,6 +4697,24 @@
     "aea.kernel.unstick"
    ]
   },
+  "endpoint.json": {
+   "writers": [],
+   "readers": [
+    "aea.lab.battery"
+   ]
+  },
+  "facts.json": {
+   "writers": [],
+   "readers": [
+    "aea.lab.battery"
+   ]
+  },
+  "prefilter.json": {
+   "writers": [],
+   "readers": [
+    "aea.lab.battery"
+   ]
+  },
   "x05_calibrate_latest.json": {
    "writers": [
     "aea.lab.calibrate"
@@ -4365,6 +4747,12 @@
    ],
    "readers": [
     "aea.loop.aea"
+   ]
+  },
+  "voice_wake.json": {
+   "writers": [],
+   "readers": [
+    "aea.loop.live"
    ]
   },
   ".meta.json": {
@@ -4464,14 +4852,6 @@
     "aea.server.controlroom"
    ]
   },
-  "selfcheck.json": {
-   "writers": [
-    "aea.tooling.selfcheck"
-   ],
-   "readers": [
-    "aea.tooling.board"
-   ]
-  },
   "graph.json": {
    "writers": [
     "aea.tooling.build_graph"
@@ -4483,34 +4863,28 @@
     "aea.tooling.heal"
    ],
    "readers": []
-  },
-  "xray.json": {
-   "writers": [
-    "aea.tooling.xray"
-   ],
-   "readers": []
   }
  },
  "live": {
   "capabilities": {
    "gather_public": {
     "level": 1,
-    "streak": 1,
-    "runs": 60,
+    "streak": 3,
+    "runs": 62,
     "fails": 4,
     "down": 0
    },
    "reason_private_local": {
     "level": 2,
-    "streak": 1,
-    "runs": 54,
+    "streak": 3,
+    "runs": 56,
     "fails": 36,
     "down": 0
    },
    "produce_brief": {
     "level": 2,
-    "streak": 1,
-    "runs": 48,
+    "streak": 3,
+    "runs": 50,
     "fails": 34,
     "down": 0
    },

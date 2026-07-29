@@ -131,6 +131,17 @@ operating rules' field-lessons layer, the PORTFOLIO project rules, `LUIS_FILTER`
   read deadline at all, so a peer that stops sending without closing blocks forever. *Paid for:* two
   experiments sat 28 and 64 minutes on one second of CPU each, produced nothing, and were killed.
   Use ~300s per read, which is five times the worst latency ever measured here.
+- **Every recorded failure has FOUR parts, and the fourth is the one that stops recurrence.** The
+  rule, the failure that paid for it, **how it should have been built**, and **why the knowledge
+  that would have prevented it was present and not applied**. Parts 1-3 make the next attempt
+  cheaper; only part 4 stops the same mistake arriving in a new costume, because almost nothing here
+  fails from not knowing. *Named by Luis, 2026-07-29,* across two messages while `scout.py` failed:
+  first "add how you would have done it, so the next path starts from a silhouette", then "why you
+  got to this point and didn't avoid it before - that is crucial". The honest answer that time: the
+  author had quoted law B2 in that file's own docstring, had built the control because of M4, and
+  had written D18 the day before. The knowledge was applied to the schema and not to the six-word
+  category list, because **attention follows effort rather than risk** (law M9). Deliberately
+  re-read the cheap part.
 - **The SECOND time you write it, extract it. Not the tenth.** W1 governs your own process, and the
   trigger is repetition, not volume. *Paid for:* sixteen scratchpad probes in one session, each
   re-implementing the same untimed POST, the same reasoning/content parse, the same per-model

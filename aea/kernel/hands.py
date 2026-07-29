@@ -91,6 +91,206 @@ def _json_get(url: str = "", key: str = "") -> str:
         return "ERROR: %s" % e
 
 
+_UA_BROWSER = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+               "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
+
+
+def _web_search(query: str = "", n: str = "5") -> str:
+    """FIND an address, where `web_fetch` can only follow one it was already given.
+
+    This is the gap that made the entity unable to reach the world: every outbound path required a
+    URL that something else had to supply, so it could read the internet only where a human had
+    already pointed. MEASURED 2026-07-29 across six free endpoints - `lite.duckduckgo.com` returned
+    HTTP 200 in 1.14s with ~10 results and no key; DDG's Instant Answer API, searx.be and mojeek
+    all returned 200 with ZERO parseable results for the same query, which is why this is not
+    pointed at them.
+
+    IT IS AN OUTBOUND CHANNEL AND IT IS THE STRONGEST ONE HERE (law B3). `web_fetch` carries data
+    out in a hostname the model composed; this carries it out in a QUERY STRING the model wrote
+    freely, in prose, which is a far wider pipe. Public zone only, same as the rest, and the caller
+    prints the exact query before it goes.
+    """
+    q = (query or "").strip()
+    if not q:
+        return "ERROR: empty query"
+    try:
+        k = max(1, min(10, int(str(n) or 5)))
+    except Exception:
+        k = 5
+    url = "https://lite.duckduckgo.com/lite/?q=" + urllib.parse.quote(q)
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": _UA_BROWSER,
+                                                   "Accept-Language": "en-US,en;q=0.9"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            html = r.read().decode("utf-8", "ignore")
+    except Exception as e:
+        return "ERROR: %s" % e
+    # DDG lite wraps every hit in <a class="result-link" href="...">title</a> and puts the snippet
+    # in the following <td class="result-snippet">. Parsed with a regex ON PURPOSE: the alternative
+    # is a parser dependency for one page shape, and the failure mode here is ZERO results, which
+    # is visible, rather than a wrong result, which is not.
+    # QUOTE-AGNOSTIC ON PURPOSE. The first version demanded class="result-link" and DDG lite writes
+    # class='result-link' in SINGLE quotes, so it parsed zero results from a perfectly good 23KB
+    # page. The probe that "verified" the endpoint had counted `result-link` as a bare substring,
+    # which matched, so the endpoint looked confirmed while the parser was broken - two instruments
+    # disagreeing about the same bytes. Anchored on rel="nofollow" + href, which is the stable part.
+    hits = re.findall(r'<a[^>]*rel=["\']nofollow["\'][^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>',
+                      html, re.S)
+    snips = re.findall(r'<td[^>]*class=["\']result-snippet["\'][^>]*>(.*?)</td>', html, re.S)
+
+    def txt(s):
+        s = re.sub(r"<[^>]+>", " ", s or "")
+        s = (s.replace("&amp;", "&").replace("&#x27;", "'").replace("&quot;", '"')
+              .replace("&lt;", "<").replace("&gt;", ">").replace("&nbsp;", " "))
+        return re.sub(r"\s+", " ", s).strip()
+
+    if not hits:
+        return "NO RESULTS (the page returned %d bytes but nothing parsed)" % len(html)
+    out = []
+    for i, (href, title) in enumerate(hits[:k]):
+        u = urllib.parse.unquote(re.sub(r"^.*?uddg=", "", href).split("&")[0]) if "uddg=" in href else href
+        line = "%d. %s\n   %s" % (i + 1, txt(title), u[:160])
+        if i < len(snips):
+            line += "\n   %s" % txt(snips[i])[:220]
+        out.append(line)
+    return "\n".join(out)[:4000]
+
+
+def _list_tools(_unused: str = "", _zone: str = "public", _allow=None) -> str:
+    """THE ENTITY READS ITS OWN HANDS. What it can do, what it may do here, and what is refused.
+
+    Luis, 2026-07-29: it should "recognize its tools ... not only generate the tools, but also
+    improve them, know how to use them, and be aware of them." Awareness is the first rung and it
+    is the one that was missing: the tool list existed only in the schema handed to a rod for a
+    single call, so the entity could USE a tool and could never ANSWER A QUESTION ABOUT one.
+
+    Derived from the registry, never written twice (law S1: derive the map, never draw it). A tool
+    added to TOOLS appears here with no edit, so this cannot go stale the way a hand-kept list does.
+    """
+    # ANSWERED FOR THIS SEAT, NOT FOR THE REGISTRY. MEASURED 2026-07-29: with availability computed
+    # against a hardcoded "public" zone, an offline seat holding only calc/read_state/list_tools
+    # told a person it could "fetch live public web pages ... and even search the web". Every one
+    # of those is REFUSED there. Describing a power you do not have is the same failure as
+    # reporting a number you did not measure - the honesty law does not stop at numbers.
+    # SPEECH-SHAPED. MEASURED 2026-07-29: given `calc(expression) - Evaluate an arithmetic...`
+    # the rod read the SIGNATURE out loud - "using calc(expression), read my own state files with
+    # read state(name)". A person does not want the function name; they want the capability. So
+    # the plain-English half is what leaves this function, and the signatures stay out of it.
+    PLAIN = {
+        "calc": "do exact arithmetic",
+        "read_state": "read my own state files",
+        "list_tools": "tell you what I can do",
+        "self_map": "tell you how I am built, my laws, and whether my checks are passing",
+        "web_search": "search the web",
+        "web_fetch": "read a web page",
+        "json_get": "pull one field out of a JSON endpoint",
+        "send_email": "send email",
+        "spend": "spend money",
+    }
+    have, cannot = [], []
+    for n, t in TOOLS.items():
+        v = allowed(n, _zone, _allow)
+        say = PLAIN.get(n, t["desc"].split(".")[0].lower())
+        (have if v["ok"] else cannot).append(say)
+    out = []
+    if have:
+        out.append("Right now I can: " + ", ".join(have) + ".")
+    else:
+        out.append("Right now I hold no tools at all.")
+    if cannot:
+        out.append("I cannot, here: " + ", ".join(cannot)
+                   + " - either this seat does not carry them or the charter forbids them.")
+    return " ".join(out)[:1200]
+
+
+def _self_map(topic: str = "") -> str:
+    """THE ENTITY ANSWERS ABOUT ITSELF - the seam between the companion and the architecture.
+
+    Luis, 2026-07-29: "how do we chat with the autonomous entity architecture with a model
+    sufficient enough that we can recognize the whole thing and not being very slow."
+
+    The slow answer is to load the map into every turn: 116 modules, 48 laws, a trust ledger and a
+    diary is tens of thousands of tokens on a greeting. The fast answer is RETRIEVAL AS A TOOL -
+    the model carries none of it and fetches the one section a question actually needs. A normal
+    chat turn pays zero, because the deterministic pre-filter never offers this tool.
+
+    Everything here is DERIVED from stores the system already maintains (law S1: derive the map,
+    never draw it). Nothing is a hand-written description that could drift from the code.
+    """
+    t = (topic or "").strip().lower()
+    L = []
+    xr = grid.load_json(os.path.join(grid.STATE, "xray.json"), {})
+    sc = grid.load_json(os.path.join(grid.STATE, "selfcheck.json"), {})
+
+    def want(*keys):
+        return (not t) or any(k in t for k in keys)
+
+    if want("module", "made", "structure", "code", "big", "size", "what are you"):
+        # READ THE STORE'S REAL KEYS. The first version guessed `reachable` and `orphaned` as
+        # top-level fields; the store actually carries `counts`, `orphans` and `unwired`, so every
+        # number rendered as a dash. The dash was honest (law H1) and useless - and it is the third
+        # time this session that a guessed field name produced an empty finding. LOOK AT THE STORE.
+        # SPEECH-SHAPED, NOT A DATA DUMP. MEASURED 2026-07-29: handed a structured blob, a rod
+        # either ignored it ("I don't think in terms of modules like separate boxes") or read the
+        # scaffolding aloud ("Here are the measured facts... H1: Yes, every number I surface").
+        # A fact that cannot be SAID will not be said. One sentence, real numbers, no labels.
+        c = xr.get("counts") or {}
+        L.append("I am %s Python modules, about %s lines of code. %s of them are reachable from "
+                 "an autonomous wake; %s are orphaned, meaning nothing imports them from any "
+                 "entry point, so no wake can reach them."
+                 % (len(xr.get("modules") or {}), f"{c.get('lines', 0):,}",
+                    c.get("reachable_from_wake", "-"), len(xr.get("orphans") or [])))
+    if want("law", "rule", "principle"):
+        try:
+            from aea.kernel import laws as _laws
+            txt = _laws.text() if hasattr(_laws, "text") else ""
+        except Exception:
+            txt = ""
+        if not txt:
+            p = os.path.join(grid.ROOT, "design", "THE_LAWS.md")
+            txt = open(p, encoding="utf-8").read() if os.path.exists(p) else ""
+        heads = re.findall(r"^\*\*([A-Z]\d+)\.\s*([^*]{0,90})", txt, re.M)
+        # A handful, said plainly. Reading 48 law titles aloud is not an answer, it is a recital -
+        # and a rod given the full list read the identifiers out ("H1: Yes, every number...").
+        pick = [b.strip().rstrip(".") for _, b in heads[:4]]
+        L.append("I am bound by %d laws, each one earned by a real failure that cost us something. "
+                 "The load-bearing ones: %s." % (len(heads), "; ".join(p.lower() for p in pick)))
+    if want("capab", "trust", "allowed", "autonomy", "permission"):
+        try:
+            led = trust.ledger() if hasattr(trust, "ledger") else {}
+        except Exception:
+            led = {}
+        if led:
+            L.append("CAPABILITIES: " + ", ".join(
+                "%s=%s" % (k, (v.get("name") if isinstance(v, dict) else v))
+                for k, v in list(led.items())[:12]))
+    if want("check", "invariant", "health", "working", "broken"):
+        rows = sc.get("checks") or []
+        if rows:
+            L.append("INVARIANTS (last run %s, overall pass=%s): " % (sc.get("at"), sc.get("pass"))
+                     + "; ".join("%s=%s" % (r.get("name"), r.get("ok", r.get("status")))
+                                 for r in rows if isinstance(r, dict))[:700])
+    if not L:
+        L.append("I can tell you about my STRUCTURE (modules, what is reachable), my LAWS, my "
+                 "CAPABILITIES and trust levels, or my INVARIANTS. Ask for one of those.")
+    # LAW H2: STALE DATA MUST ANNOUNCE ITS AGE. `xray.json` is a snapshot, not a live read, and a
+    # real number under the wrong label is the honesty law's hardest failure to see - it was worth
+    # 111 modules against a true 116 the moment code was added tonight. Refresh with
+    # `python -m aea.tooling.xray`; until then the age rides along with the claim.
+    gen = xr.get("generated")
+    if gen and any(k in " ".join(L) for k in ("modules", "orphaned")):
+        try:
+            import datetime
+            age = (datetime.datetime.utcnow()
+                   - datetime.datetime.strptime(gen[:16], "%Y-%m-%d %H:%M")).total_seconds() / 3600
+            if age > 2:
+                L.append("(that structure count was measured %.0f hours ago, so it is a snapshot "
+                         "rather than this second)" % age)
+        except Exception:
+            pass
+    return "\n".join(L)[:3500]
+
+
 def _calc(expression: str = "") -> str:
     """Arithmetic only, by regex, before eval sees it. A calculator that can import is not a
     calculator."""
@@ -145,6 +345,29 @@ TOOLS = {
         desc="Read one of the entity's own state files by filename, e.g. 'heartbeat.json'.",
         params={"name": "filename like heartbeat.json"}, required=["name"],
         note="local read, no network, so it is safe in every zone"),
+    "web_search": dict(
+        capability="gather_public", zones=("public",), outbound=False, impl=_web_search,
+        desc="Search the web and return ranked titles, URLs and snippets. Use this to FIND a "
+             "source when you do not already have its address, then web_fetch to read it.",
+        params={"query": "what to search for, in plain words", "n": "how many results, 1-10"},
+        required=["query"],
+        note="PUBLIC ONLY. The widest outbound channel here: the model writes a free-text query, "
+             "so anything in its context can leave in the query string (law B3)"),
+    "self_map": dict(
+        capability="reason_private_local", zones=ZONES, outbound=False, impl=_self_map,
+        desc="Answer about YOURSELF - your structure (modules, what is reachable, what is "
+             "orphaned), your laws, your capabilities and trust levels, or your invariants. "
+             "Pass a topic like 'structure', 'laws', 'capabilities' or 'invariants'.",
+        params={"topic": "structure | laws | capabilities | invariants"}, required=[],
+        note="local read of stores the system already maintains; the seam that lets a person talk "
+             "TO the architecture instead of to a companion that happens to run beside it"),
+    "list_tools": dict(
+        capability=None, zones=ZONES, outbound=False, impl=_list_tools, wants_context=True,
+        desc="List your own tools: what you can actually do in this seat right now, and what is "
+             "refused here and why. Use it whenever asked what you can do.",
+        params={"_unused": "ignored"}, required=[],
+        note="pure local introspection, derived from the registry so it cannot go stale, and "
+             "answered for THIS seat so it cannot claim a power the gate would refuse"),
 
     # DECLARED AND PERMANENTLY REFUSED. No implementation exists. See the module docstring.
     "send_email": dict(
@@ -217,6 +440,41 @@ def allowed(name: str, zone: str, allow=None) -> dict:
     return {"ok": True, "why": "%s permitted in the %s zone" % (name, zone)}
 
 
+def _unwrap_args(args, t: dict) -> dict:
+    """Normalise the ARGUMENT SHAPES rods actually emit, at the one boundary that sees them all.
+
+    MEASURED 2026-07-29: a rod called `self_map` with `{"properties": {"topic": "laws"}}` - it
+    echoed the JSON-SCHEMA wrapper back instead of filling it in. Every parameter then read as
+    None, the tool ran with an empty topic, and the caller got a plausible answer to a question
+    nobody asked. Silent, because a tool that receives None still returns something.
+
+    Three shapes, all seen or trivially likely: the schema wrapper, a JSON string instead of an
+    object, and a bare value for a single-parameter tool. Fixed HERE rather than in each tool,
+    because the defect is in the boundary and would otherwise be re-fixed once per tool forever.
+    """
+    if isinstance(args, str):
+        try:
+            args = json.loads(args)
+        except Exception:
+            keys = [k for k in t["params"] if not k.startswith("_")]
+            return {keys[0]: args} if len(keys) == 1 else {}
+    if not isinstance(args, dict):
+        return {}
+    # a rod that echoed the schema: {"properties": {...}} or {"arguments": {...}}
+    for wrapper in ("properties", "arguments", "parameters", "input", "args"):
+        inner = args.get(wrapper)
+        if isinstance(inner, dict) and not (set(args) & set(t["params"])):
+            args = inner
+            break
+    # {"topic": {"value": "laws"}} - a value object where a scalar belongs
+    out = {}
+    for k, v in args.items():
+        if isinstance(v, dict) and len(v) == 1 and next(iter(v)) in ("value", "type", "default"):
+            v = next(iter(v.values()))
+        out[k] = v
+    return out
+
+
 def invoke(name: str, args: dict, zone: str = "public", allow=None) -> str:
     """Run a tool, or refuse. THE ONLY WAY A TOOL EVER RUNS - there is no path around this check,
     which is the entire point of the module."""
@@ -224,7 +482,13 @@ def invoke(name: str, args: dict, zone: str = "public", allow=None) -> str:
     if not v["ok"]:
         raise Refused(v["why"])
     t = TOOLS[name]
+    args = _unwrap_args(args, t)
     kw = {k: args.get(k) for k in t["params"]}
+    if t.get("wants_context"):
+        # A tool that reports on THIS SEAT has to be told which seat it is in. Only tools that
+        # declare `wants_context` receive it, so the default stays: a tool sees its arguments and
+        # nothing about the caller.
+        kw["_zone"], kw["_allow"] = zone, allow
     out = str(t["impl"](**kw))
 
     # A TOOL CALL IS A STEP, NOT AN OUTCOME, AND IT IS DELIBERATELY NOT GRADED HERE.

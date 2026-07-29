@@ -753,6 +753,89 @@ def call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.
                     total_tokens=None, tool_calls=None, deprecation=None, status=0, error=str(e))
 
 
+def stream_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.2, timeout=60,
+                  receipt: dict | None = None):
+    """Same call as `call_openai`, but YIELD the answer in pieces as the rod emits them.
+
+    WHY THIS EXISTS, measured 2026-07-29: a spoken turn cannot start until the mind has finished
+    thinking, so the person waits the FULL generation before hearing a syllable. Measured on the
+    conversation path that is 1.49s of silence on a 550B rod, on top of a 1.15s endpointer. With
+    deltas, the first sentence is usually complete after ~0.5s and can be sent to the voice while
+    the rest is still being written. The wait stops being the whole reply and becomes the first
+    clause of it.
+
+    Yields CONTENT deltas only. A reasoning rod's `reasoning_content` is deliberately dropped:
+    D13 recorded a rod spending its whole budget in the reasoning field and returning empty
+    content, and speaking a rod's private deliberation aloud would be the same defect wearing a
+    different coat. If nothing but reasoning ever arrives, the caller sees zero deltas and an
+    `ok` receipt with empty text - which is a non-answer, and must fall through the ladder.
+
+    `receipt` is filled IN PLACE (ok/latency/text/tokens/status/error/transport) because a
+    generator cannot return a value the caller can reach. Same error labelling as `call_openai`:
+    >=500, 408 and 429 are the SERVER failing, not the model answering badly.
+
+    Metering is the CALLER's job here, exactly as it is for `call_openai` - `complete()` is the
+    layer that records spend, and this function stays a pure transport so the two cannot disagree.
+    """
+    rec = receipt if receipt is not None else {}
+    rec.update(ok=False, latency=0.0, text="", tokens=0, prompt_tokens=None, total_tokens=None,
+               status=0, error=None, transport=False, plant=plant, model=model, ttfb=None)
+    cap = PLANTS[plant]
+    url = cap["base"].rstrip("/") + "/chat/completions"
+    headers = {"Content-Type": "application/json", "Accept": "text/event-stream",
+               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) aea-grid/0.1"}
+    if cap["auth"]:
+        k = key(cap["auth"])
+        if not k:
+            rec.update(error=f"no key {cap['auth']}")
+            return
+        headers["Authorization"] = f"Bearer {k}"
+    elif cap.get("anon"):
+        headers["Authorization"] = f"Bearer {cap['anon']}"
+    payload_out = {"model": model, "messages": messages, "max_tokens": max_tokens,
+                   "temperature": temperature, "stream": True,
+                   "stream_options": {"include_usage": True}}
+    body = json.dumps(payload_out).encode("utf-8")
+    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+    t0 = time.time()
+    parts: list[str] = []
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            rec["status"] = 200
+            for raw in r:                              # urllib yields lines as the socket fills
+                line = raw.decode("utf-8", "replace").strip()
+                if not line or line.startswith(":") or not line.startswith("data:"):
+                    continue
+                data = line[5:].strip()
+                if data == "[DONE]":
+                    break
+                try:
+                    obj = json.loads(data)
+                except ValueError:
+                    continue                           # a half-line is not an error, it is a frame
+                u = obj.get("usage") or {}
+                if u:                                  # the final usage frame, when the plant sends one
+                    rec["tokens"] = u.get("completion_tokens", rec["tokens"]) or rec["tokens"]
+                    rec["prompt_tokens"] = u.get("prompt_tokens", rec["prompt_tokens"])
+                    rec["total_tokens"] = u.get("total_tokens", rec["total_tokens"])
+                for ch in (obj.get("choices") or []):
+                    piece = ((ch.get("delta") or {}).get("content")
+                             or (ch.get("message") or {}).get("content") or "")
+                    if piece:
+                        if rec["ttfb"] is None:
+                            rec["ttfb"] = round(time.time() - t0, 3)
+                        parts.append(piece)
+                        yield piece
+        rec.update(ok=True, text="".join(parts), latency=time.time() - t0)
+    except urllib.error.HTTPError as e:
+        rec.update(latency=time.time() - t0, status=e.code, text="".join(parts),
+                   transport=(e.code >= 500 or e.code in (408, 429)),
+                   error=(e.read().decode("utf-8", "ignore")[:200] if hasattr(e, "read") else str(e)))
+    except Exception as e:
+        rec.update(latency=time.time() - t0, status=0, text="".join(parts),
+                   transport=True, error=str(e))
+
+
 def complete(prompt: str, capability="reasoning", zone="private", depth=0,
              max_tokens=256, router: Router | None = None) -> dict:
     """The entity's front door: route by capability+zone+depth, draw metered power, return text."""
