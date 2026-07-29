@@ -1916,3 +1916,72 @@ went 15 -> 16, the first module connected in a long time.**
 3. **Re-read the 59 unread model cards across six rotated readers.** The delegation design is sound -
    one page my regex could not read was read by a rod and confirmed by a 200 - and I destroyed the run
    by putting 8 sustained workers on a single reader.
+
+---
+
+## 2026-07-29 (evening) - THE VOICE, MEASURED AND REPAIRED
+
+### DID
+
+Ran the first live session with **both sides of the boundary recorded** - his audio beside the
+transcript (the black box, his Gargantua idea). 35 turns. Then fixed every defect it exposed and
+built the instrument that lets the next one be found without him in the room.
+
+**The five faults, all found by measurement, none visible in the code:**
+
+| | measured | after |
+|---|---|---|
+| fabricated tool calls | 1 real call in 35 turns; receipts invented and spoken aloud | real receipt, `TOOL calc(415 * 987) -> 409605` -> "409605" |
+| dead air before thinking | 23/35 turns hit the 9s cap, median 4.1s of empty room | dead tail **0.32s** median, worst 1.97s |
+| reply length | every reply exactly 2 sentences; a story stored 43 chars | **1,076 chars**, 5 chunks, 85s of speech |
+| the vocative tic | 30 of 32 replies opened "Luis, <exclamation>!" | stripped at the decoder, with a finite-verb guard |
+| false self-description | "cloud-based, cannot access your machine" while holding `read_state` | states both halves: remote rod + local program |
+
+**Built:** `aea/lab/earbench.py` - three modes, and **loopback plays known speech through the
+speakers and captures it through the real microphone through the real `capture()`**. The ear and
+the endpointer can now be tested at any hour with nobody present. It reproduced the historical
+"what are your laws" -> "Where you lost" failure unattended on its first run.
+
+**Added:** `doubt()` - confidence from decode INSTABILITY, since sherpa returns no logprobs
+(verified against the installed signature). The semantic endpoint already decodes the growing
+buffer several times a turn; where whisper is sure each decode extends the last, where it is
+guessing it rewrites what it had committed. Above `DOUBT_ASK` the machine now ASKS instead of
+answering a sentence nobody said.
+
+**Research:** 60 agents on conversation theory, every cited claim handed to an independent refuter.
+`diary/RESEARCH_CONVERSATION.md` - ranked changes R0-R13, a numbers table tagged
+DOC/LOCAL/INF/VENDOR, and seven things this CPU-only machine cannot do, named once. It read the
+live tree and caught a defect I had missed twice: a system-prompt paragraph teaching the model to
+read prosody notes that had not been sent for hours.
+
+**Verified:** battery **282/283** (was 174 cases, now 283 - `honesty` 89, `doubt` 14, `budget` 6 are
+new), selfcheck **ALL INVARIANTS HOLD**, loopback median WER 0%.
+
+### LOCKED
+
+- **Arithmetic is computed, never delegated.** Whether 415 x 987 needs a calculator is not a
+  judgement call. Extract by regex, compute, inject as fact - the prefetch rule was always drawn on
+  COST, and local-and-free covered this from the start.
+- **The doubt signal is decode instability**, not a model confidence number. There isn't one.
+- **`earbench --loopback` is the ear's regression test.** No ear change ships without it.
+- **Emotion labels stay refused**, prosody stays out of the prompt, and now so does every sentence
+  that merely mentions it.
+
+### NEXT
+
+1. **R0 - the FTO ledger.** Measure the gap the LISTENER hears: last user speech frame -> first
+   sample played, seven marks, one JSONL row a turn. Every stage is timed separately today, which is
+   exactly how 4.1s of dead room hid between a 0.3s ear and a 0.5s mouth.
+2. **R2 - arm barge-in.** The whole mechanism exists and nothing sets the stop event. Needs the
+   self-echo gate FIRST: 60s of the machine talking to itself with the mic open, zero self-triggers,
+   before the interrupt is enabled at all.
+3. **R3 - the filler as a delay signal.** Gate at 700ms predicted wait, two-key selection, a
+   prolongation ladder capped at 2, and a `promise_kept` metric that disables fillers below 0.9.
+   This is Luis's "it sounds like one bit".
+4. **The render mystery is still open.** 0.54s on the bench, 1.5-6.0s live. Five hypotheses dead
+   with controls (whisper load, worker thread, open InputStream, 100Hz poll, during playback). Next
+   step is timing INSIDE the live process, not another bench. Do not guess it.
+5. **Two ear failures survive** at good SNR with a clean voice - "what are your laws", "what are you
+   not able to do". First real evidence pointing at the recogniser rather than the signal. Test
+   whisper-small against `earbench --loopback` before buying it; the harness makes that a 20-minute
+   question now instead of a download and a hope.

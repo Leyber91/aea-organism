@@ -85,3 +85,13 @@ voice/_*.wav
 # The black box: audio + transcript pairs for measuring the ear from INSIDE. Luis's voice.
 state/blackbox/
 state/blackbox.json
+
+# earbench. THE SAME LEAK AS state/earcheck/, IN A NEW PLACE, one session later - and it is worth
+# recording why it recurred rather than just closing it. `--corpus` mode reads the black-box
+# recordings and writes what it HEARD into corpus.json, so the output is a transcript of his real
+# speech even though the module never touches a microphone. The privacy check was applied to the
+# thing that RECORDS and not to the thing that READS the recording; a derived artifact inherits the
+# sensitivity of its source, and derived artifacts are where that gets forgotten.
+# earclips/ is generated TTS - not personal, but 100 wav files and regenerable in a minute.
+state/lab/earbench/
+state/lab/earclips/

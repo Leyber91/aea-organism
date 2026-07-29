@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 141,
+    "count": 151,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 141
+    "count": 151
    },
    {
     "src": "THE_PROBE",
@@ -103,16 +103,34 @@
      "purpose": "axes.py - C-11, THE POSITION RECORD: where the entity actually stands in the 5-D growth space."
     },
     {
+     "id": "background",
+     "type": "module",
+     "path": "aea/mind/background.py",
+     "purpose": "background.py - THE PART OF THE MIND THAT KEEPS WORKING WHILE THE MOUTH IS BUSY."
+    },
+    {
      "id": "base",
      "type": "module",
      "path": "aea/lab/parts/base.py",
      "purpose": "The wire and the socket. Everything a part needs, and the contract it implements."
     },
     {
+     "id": "battery",
+     "type": "module",
+     "path": "aea/lab/battery.py",
+     "purpose": "battery.py - THE CONVERSATIONAL TEST BATTERY. Many real cases, run in batches, on the record."
+    },
+    {
      "id": "bench_core",
      "type": "module",
      "path": "aea/bench/bench_core.py",
      "purpose": "bench_core.py - THE BENCH HARNESS (P0): compose a construct, run it for real, measure it."
+    },
+    {
+     "id": "blackbox",
+     "type": "module",
+     "path": "aea/io/blackbox.py",
+     "purpose": "blackbox.py - KEEP BOTH SIDES OF EVERY TURN: the audio, and what the machine made of it."
     },
     {
      "id": "board",
@@ -181,10 +199,16 @@
      "purpose": "controlroom.py - THE CONTROL ROOM: at any moment, see what the entity is doing."
     },
     {
+     "id": "convbench",
+     "type": "module",
+     "path": "aea/lab/convbench.py",
+     "purpose": "convbench.py - THE CONVERSATION BENCH. Specific measures for \"does it feel natural\"."
+    },
+    {
      "id": "converse",
      "type": "module",
      "path": "aea/organs/converse.py",
-     "purpose": "converse.py - THE COMPANION. A voice-native conversation partner in Spanish: local ears,"
+     "purpose": "converse.py - THE COMPANION. A voice-native conversation partner in ENGLISH: local ears,"
     },
     {
      "id": "crystal",
@@ -193,10 +217,34 @@
      "purpose": "crystal.py - A RESOLUTION THAT HELD, BECOMING A PART THE ENTITY KNOWS IT HAS."
     },
     {
+     "id": "crystallize",
+     "type": "module",
+     "path": "aea/lab/crystallize.py",
+     "purpose": "crystallize.py - TURN A BATTERY RUN INTO LESSONS THAT DO NOT HAVE TO BE RE-DERIVED."
+    },
+    {
      "id": "dna",
      "type": "module",
      "path": "aea/lab/parts/dna.py",
      "purpose": "Read a creature's class off its wiring graph. The class is derived, never labelled."
+    },
+    {
+     "id": "duet",
+     "type": "module",
+     "path": "aea/lab/duet.py",
+     "purpose": "duet.py - TWO MODELS HOLD A CONVERSATION THROUGH THE LAYER, with no human in the loop."
+    },
+    {
+     "id": "earbench",
+     "type": "module",
+     "path": "aea/lab/earbench.py",
+     "purpose": "earbench - TEST THE EAR AND THE ENDPOINTER WITHOUT A PERSON IN THE ROOM."
+    },
+    {
+     "id": "earcheck",
+     "type": "module",
+     "path": "aea/io/earcheck.py",
+     "purpose": "earcheck.py - WHY IS IT HEARING ME BADLY. Separates the mic, the room, and the model."
     },
     {
      "id": "energy",
@@ -397,6 +445,12 @@
      "purpose": "probe.py - the grid inspector. Measures the REAL capacity of each plant:"
     },
     {
+     "id": "prosody",
+     "type": "module",
+     "path": "aea/io/prosody.py",
+     "purpose": "prosody.py - HOW IT WAS SAID, not just what was said. The cheap half of what Moshi does."
+    },
+    {
      "id": "pulse",
      "type": "module",
      "path": "aea/kernel/pulse.py",
@@ -533,6 +587,12 @@
      "type": "module",
      "path": "aea/lab/tests/test_pipeline.py",
      "purpose": "test_pipeline.py - THE SELF-MODIFICATION LADDER, TESTED ON CHANGES DESIGNED TO GET THROUGH."
+    },
+    {
+     "id": "tiers",
+     "type": "module",
+     "path": "aea/mind/tiers.py",
+     "purpose": "tiers.py - THE TIERED MIND. Different rods own different organs, composed into one voice."
     },
     {
      "id": "tracelog",
@@ -940,8 +1000,93 @@
      "rel": "imports"
     },
     {
+     "src": "background",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "background",
+     "dst": "tiers",
+     "rel": "imports"
+    },
+    {
      "src": "base",
      "dst": "fuel",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "convbench",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "prosody",
      "rel": "imports"
     },
     {
@@ -962,6 +1107,16 @@
     {
      "src": "bench_core",
      "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "blackbox",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "blackbox",
+     "dst": "earcheck",
      "rel": "imports"
     },
     {
@@ -1135,8 +1290,58 @@
      "rel": "imports"
     },
     {
+     "src": "convbench",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "convbench",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "convbench",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "convbench",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "convbench",
+     "dst": "tiers",
+     "rel": "imports"
+    },
+    {
+     "src": "convbench",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "convbench",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "convbench",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
      "src": "converse",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "converse",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "converse",
+     "dst": "blackbox",
      "rel": "imports"
     },
     {
@@ -1146,7 +1351,17 @@
     },
     {
      "src": "converse",
+     "dst": "prosody",
+     "rel": "imports"
+    },
+    {
+     "src": "converse",
      "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "converse",
+     "dst": "tiers",
      "rel": "imports"
     },
     {
@@ -1160,8 +1375,93 @@
      "rel": "imports"
     },
     {
+     "src": "crystallize",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "dna",
      "dst": "base",
+     "rel": "imports"
+    },
+    {
+     "src": "duet",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "duet",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "duet",
+     "dst": "prosody",
+     "rel": "imports"
+    },
+    {
+     "src": "duet",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "duet",
+     "dst": "tiers",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "earcheck",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "earcheck",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "earcheck",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "earcheck",
+     "dst": "convbench",
      "rel": "imports"
     },
     {
@@ -1286,6 +1586,11 @@
     },
     {
      "src": "hands",
+     "dst": "laws",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
      "dst": "pace",
      "rel": "imports"
     },
@@ -1400,6 +1705,11 @@
      "rel": "imports"
     },
     {
+     "src": "live",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
      "src": "memory",
      "dst": "grid",
      "rel": "imports"
@@ -1487,6 +1797,11 @@
     {
      "src": "probe",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "prosody",
+     "dst": "listen",
      "rel": "imports"
     },
     {
@@ -1666,6 +1981,16 @@
     },
     {
      "src": "speak",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "speak",
+     "dst": "tiers",
+     "rel": "imports"
+    },
+    {
+     "src": "speak",
      "dst": "pulse",
      "rel": "imports"
     },
@@ -1762,6 +2087,11 @@
     {
      "src": "test_pipeline",
      "dst": "shadow",
+     "rel": "imports"
+    },
+    {
+     "src": "tiers",
+     "dst": "grid",
      "rel": "imports"
     },
     {

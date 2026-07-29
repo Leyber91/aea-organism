@@ -115,21 +115,29 @@ def edge_available() -> bool:
         return False
 
 
-def edge_render(text: str, mp3: str, voice: str | None = None, timeout: int = 300) -> bool:
+def edge_render(text: str, mp3: str, voice: str | None = None, timeout: int = 300,
+                rate: str = "") -> bool:
     """Render text to an mp3. IN-PROCESS first - MEASURED 1.56s vs 6.15s for the subprocess path,
-    which pays a fresh python startup on every single call. Subprocess stays as the fallback."""
+    which pays a fresh python startup on every single call. Subprocess stays as the fallback.
+
+    `rate` is an edge-tts speed offset like "+25%" or "-20%", empty for normal. Added 2026-07-29
+    for `lab/earbench`, which needs a FAST and a SLOW talker to test the endpointer against speaker
+    variation - with one speaking rate the bench measures one speaking rate."""
     v = voice or EDGE_VOICE
+    kw = {"rate": rate} if rate else {}
     try:
         import asyncio, edge_tts
-        asyncio.run(edge_tts.Communicate(text[:1200], v).save(mp3))
+        asyncio.run(edge_tts.Communicate(text[:1200], v, **kw).save(mp3))
         if os.path.exists(mp3) and os.path.getsize(mp3) >= 400:
             return True
     except Exception:
         pass                                      # a running loop / network blip -> subprocess
     try:
-        r = subprocess.run([sys.executable, "-m", "edge_tts", "--voice", v,
-                            "--text", text[:1200], "--write-media", mp3],
-                           capture_output=True, text=True, timeout=timeout)
+        cmd = [sys.executable, "-m", "edge_tts", "--voice", v,
+               "--text", text[:1200], "--write-media", mp3]
+        if rate:
+            cmd += ["--rate", rate]
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         return r.returncode == 0 and os.path.exists(mp3) and os.path.getsize(mp3) >= 400
     except Exception:
         return False
@@ -311,7 +319,8 @@ def say_stream(pieces, voice: str | None = None, stop=None, mute: bool = False,
                 else:
                     rec["filler_s"] = round(
                         rec.get("filler_s", 0.0)
-                        + maybe_filler(filler, filler_n + fills, stop, said=filler_text), 3)
+                        + maybe_filler(filler, filler_n + fills, stop, said=filler_text,
+                                       log=rec.setdefault("fillers", [])), 3)
                     fills += 1
                     rec["fills"] = fills
                     continue
@@ -588,8 +597,16 @@ def choose_filler(kind: str, said: str = "") -> str:
     return pick
 
 
-def maybe_filler(kind: str = "think", n: int = 0, stop=None, said: str = "") -> float:
-    """Play ONE cached thinking sound TRUE OF THE CURRENT STATE. Seconds spent, 0.0 if none."""
+def maybe_filler(kind: str = "think", n: int = 0, stop=None, said: str = "",
+                 log: list = None) -> float:
+    """Play ONE cached thinking sound TRUE OF THE CURRENT STATE. Seconds spent, 0.0 if none.
+
+    `log` collects WHICH sound played and for how long. Added 2026-07-29 because Luis said the
+    thinking sounds were "one bit, it doesn't sound very human" and NOTHING in the receipt could
+    confirm or deny it - the turn line reported a total and never a name, so there was no way to
+    tell 73 varied sounds from the same one played 73 times. An unmeasurable complaint cannot be
+    fixed, and the pool being large was an assumption about the code rather than an observation of
+    the run (law M2: instrument the thing you are wrong about)."""
     p = choose_filler(kind, said)
     if not p:
         return 0.0
@@ -597,7 +614,10 @@ def maybe_filler(kind: str = "think", n: int = 0, stop=None, said: str = "") -> 
     w = p.replace(".mp3", ".wav")            # the trimmed copy, when one exists
     t0 = time.time()
     _play_interruptible(w if os.path.exists(w) else p, stop or threading.Event())
-    return round(time.time() - t0, 3)
+    el = round(time.time() - t0, 3)
+    if log is not None:
+        log.append(f"{kind}/{os.path.basename(p).rsplit('_', 1)[-1].replace('.mp3','')} {el}s")
+    return el
 
 
 def warm(voice: str | None = None) -> float:

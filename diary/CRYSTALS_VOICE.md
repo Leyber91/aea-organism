@@ -104,3 +104,68 @@
 - **Paid for by.** Offered `self_map`, a rod declined to call it and invented 'I'm built using a transformer... around a dozen components' about its own structure - the exact fabrication the tool exists to prevent.
 - **How it should have been built.** Detect the question deterministically, call the tool, and inject the result as fact. Offering a tool is a hope; the model may decline into invention.
 - **Why the knowledge was present and not applied.** Tool-calling was treated as the general mechanism for getting facts, when for free local reads there is no decision worth delegating.
+
+---
+
+# THE SECOND SESSION - 2026-07-29 evening
+
+*Eight more, from the 35-turn black-box run and the fixes it forced. The pattern across all eight:
+**not one is a wrong function.** Every one lives in a seam - a value computed and never read, a flag
+set and never cleared, a paragraph pointing at data that stopped arriving, two correct rules
+composing into a false sentence. Unit tests do not see seams. Only a whole turn does.*
+
+## C-V9 - A narrated tool call is a fabricated receipt
+
+- **Rule.** A sentence shaped like a measurement, produced by no measurement, is worse than a wrong answer: it carries provenance it has not earned, and the record teaches it forward.
+- **Paid for by.** 35 live turns, ONE real tool call. "calls calculator tool Tool Response (verbalized): The result of 415 multiplied by 987 is 409,605" - spoken aloud, nothing ran. Asked afterwards what it used, it named a tool that does not exist.
+- **How it should have been built.** Never delegate a settled question to a model. The pre-filter already matched `calc` with certainty; extract the expression by regex and COMPUTE it, then inject the result as a measured fact.
+- **Why the knowledge was present and not applied.** The prefetch mechanism existed for exactly this, built two hours earlier against exactly this failure mode. `calc` was excluded because it needs an argument, and needing an argument felt like needing a model. It needed a regex. The specific case was judged on its surface difficulty instead of against the principle that already covered it.
+
+## C-V10 - A latch inside a loop outlives its evidence
+
+- **Rule.** If the thing a flag judged can change, the flag must be re-armed when it does. And every wait needs a hard ceiling measured against something that cannot drift.
+- **Paid for by.** `probed = True`, set at the first pause and never cleared. 23 of 35 turns ran to the 9-second cap; real speech ended at a median of 4.9s, so 4.1s of empty room was appended to each. The fallback could not fire either - the gate had tracked down to 1.5x a very quiet floor, under the room itself.
+- **How it should have been built.** Re-arm on resumed speech, plus a `SILENCE_CEILING` measured against an ABSOLUTE level. A self-referential threshold cannot detect its own drift. Loopback after: dead tail 4.1s -> 0.32s median, worst 1.97s.
+- **Why the knowledge was present and not applied.** The comment on that line justified the latch with a cost that was never measured - "transcribing every 30ms frame would put whisper in a hot loop" - a real concern about a design nobody proposed. The choice was framed as once-versus-every-frame, and once-per-pause was never considered. A well-argued comment is the best hiding place a bug has.
+
+## C-V11 - A value computed and never read is one never computed
+
+- **Rule.** Test the WIRING, not the function. "Does reply_budget return 14" passed for its whole life while nothing read the 14.
+- **Paid for by.** Luis asked for adaptive length in plain words. `reply_budget()` returned (700, 1600, 14) for a story; both call sites passed the constant `MAX_SENTENCES = 2`. A story stored 43 characters. After wiring: 1,076 characters, 5 chunks, 85 seconds of speech.
+- **How it should have been built.** An end-to-end assertion through `speakable`, which is now `suite_budget`.
+- **Why the knowledge was present and not applied.** The budget function was the interesting part, so it got the docstring and the reasoning; the call site was two characters. Attention follows effort rather than risk (law M9) - the second time that exact law was paid for in two days. The cheapest part of all is the argument you did not change.
+
+## C-V12 - Two correct rules can compose into a false sentence
+
+- **Rule.** A guard that is right in isolation can be wrong in combination, and no test of either guard will show it. Only a whole turn will.
+- **Paid for by.** `TOOL calc(415 * 987) -> 409605` followed by "Since I don't have a mathematical calculation tool at my disposal for this specific turn...". The arithmetic prefetch removed `calc` from the offer, which emptied the schema, which tripped the brand-new no-tools guard. The honesty fix talked the rod out of using a real receipt.
+- **How it should have been built.** Condition on `not schema AND not facts`, with a positive counterpart when facts exist - and keep it TERSE. A system message that DESCRIBES a situation invites commentary on the situation; one that gives an instruction gets obeyed.
+- **Why the knowledge was present and not applied.** The battery tests every guard against its own corpus and both guards passed theirs. No test ran a real turn through a real rod, because model calls are slow and non-deterministic and so felt like the wrong place for a test. It is the only place this class of defect exists. `--once` now runs after every guard change.
+
+## C-V13 - Prompt text is not inert when its data is gone
+
+- **Rule.** Removing a capability means removing everything that points at it. Text describing a signal that never arrives still names the subject, and a named subject is something the model will find a way to talk about.
+- **Paid for by.** The prosody annotation was cut from the speaking rod and the poisoned history filtered, and the system prompt still carried a full paragraph teaching the model how to read prosody notes - for notes that had not been sent in hours. Very likely the third and final reason it kept commenting on how he sounded.
+- **How it should have been built.** When the annotation was cut, grep for every reference to it, not for its call site.
+- **Why the knowledge was present and not applied.** The cut was made in `act_or_answer`; the paragraph lives in `main`, 400 lines away, appended to a string rather than passed as an argument. The dependency was invisible because it ran through text. Found by the conversation-theory research pass reading the live tree - not by me, while editing that same function twice.
+
+## C-V14 - A correction that states half a truth produces the other error
+
+- **Rule.** When a false belief has two parts, correcting one part does not yield the truth. It yields the opposite fabrication.
+- **Paid for by.** "I'm a remote, cloud-based AI, I can't access your machine" was corrected with "you are a program running on his computer" - and it then said "I don't rely on external servers or cloud services; my operations are self-contained within your system." Equally false; the rod really is remote.
+- **How it should have been built.** State both halves in one sentence so there is no half to drop. After: "I'm a bit of both, actually. The thinking happens on a remote NVIDIA server, but there's also a local program running right here on your computer."
+- **Why the knowledge was present and not applied.** The observed defect was one-sided, so the correction was written to be its opposite rather than to be complete. A fix aimed at a symptom inherits the symptom's shape.
+
+## C-V15 - A detector that fires on the truth teaches you to ignore it
+
+- **Rule.** State-dependent claims need state-dependent detectors, judged where the state is visible.
+- **Paid for by.** The honesty guard flagged "I don't retain any prior knowledge about you" as a defect during a `--no-store` verification run, where the store really was empty and the sentence was the correct answer.
+- **How it should have been built.** Split. "I am cloud-based" is unconditionally false while this program is running. "I do not remember you" moved to `_MEMORY_DENIAL` and is judged in `turn()` against how many facts and stored turns actually exist.
+- **Why the knowledge was present and not applied.** Both sentences came from the same paragraph of the same transcript, from the same wrong self-image, so they were recorded as one defect. Two symptoms of one cause can still need two detectors, because a detector tests a sentence and not a cause.
+
+## C-V16 - Ask what would have to be true of the INSTRUMENT, before touching the subject
+
+- **Rule.** The harness is a hypothesis too, and it is the one nobody tests.
+- **Paid for by.** Twice in one hour. (1) The first loopback run showed three clips losing their opening words with a NEGATIVE tail - textbook too-short pre-roll, and the obvious next move was raising `PREROLL`. The harness started playback before `capture()` had opened its input stream; the clip was playing to a microphone that was not yet open. A 1.2s lead-in recovered every word and took median WER from 15.5% to 0%. It would have been a fix to a defect that does not exist. (2) The privacy grep for a leaked absolute path reported CLEAN on a dirty file, because a shell heredoc ate the backslashes - the repo's own recorded law, broken twice while acting on the repo's own recorded law.
+- **How it should have been built.** Write the check to a real file and run the file. Put a control on a harness result before believing it.
+- **Why the knowledge was present and not applied.** Both laws were already written down, one of them by me the day before. Knowledge applied to the subject under test is not automatically applied to the thing doing the testing - and the instrument is where attention is lowest precisely because it is not the interesting part.
