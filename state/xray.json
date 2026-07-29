@@ -1,6 +1,6 @@
 {
  "schema": "aea.xray/1",
- "generated": "2026-07-29 03:33 UTC",
+ "generated": "2026-07-29 11:58 UTC",
  "modules": {
   "aea.bench.bench_core": {
    "module": "aea.bench.bench_core",
@@ -490,6 +490,77 @@
    "role": "unwired",
    "imported_by": []
   },
+  "aea.io.blackbox": {
+   "module": "aea.io.blackbox",
+   "path": "aea/io/blackbox.py",
+   "package": "io",
+   "lines": 162,
+   "headline": "blackbox.py - KEEP BOTH SIDES OF EVERY TURN: the audio, and what the machine made of it.",
+   "imports": [
+    "aea.io.earcheck",
+    "aea.kernel.grid"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [
+     "blackbox.json"
+    ],
+    "writes": [
+     "blackbox.json"
+    ],
+    "declared": [
+     "index.jsonl"
+    ]
+   },
+   "defs": [
+    "enabled",
+    "keep",
+    "report",
+    "rows",
+    "signal_stats"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": [
+    "aea.organs.converse"
+   ]
+  },
+  "aea.io.earcheck": {
+   "module": "aea.io.earcheck",
+   "path": "aea/io/earcheck.py",
+   "package": "io",
+   "lines": 276,
+   "headline": "earcheck.py - WHY IS IT HEARING ME BADLY. Separates the mic, the room, and the model.",
+   "imports": [
+    "aea.io.listen",
+    "aea.io.speak",
+    "aea.kernel.grid",
+    "aea.lab.convbench"
+   ],
+   "import_time_effects": [],
+   "state": {
+    "reads": [],
+    "writes": [
+     "result.json"
+    ],
+    "declared": []
+   },
+   "defs": [
+    "_stats",
+    "_wait_and_record",
+    "run",
+    "verdict"
+   ],
+   "reachable_from_wake": false,
+   "reachable_from_server": false,
+   "orphaned": true,
+   "role": "unwired",
+   "imported_by": [
+    "aea.io.blackbox"
+   ]
+  },
   "aea.io.listen": {
    "module": "aea.io.listen",
    "path": "aea/io/listen.py",
@@ -522,6 +593,7 @@
    "orphaned": true,
    "role": "unwired",
    "imported_by": [
+    "aea.io.earcheck",
     "aea.io.prosody",
     "aea.lab.battery",
     "aea.lab.convbench",
@@ -560,7 +632,7 @@
    "module": "aea.io.prosody",
    "path": "aea/io/prosody.py",
    "package": "io",
-   "lines": 231,
+   "lines": 286,
    "headline": "prosody.py - HOW IT WAS SAID, not just what was said. The cheap half of what Moshi does.",
    "imports": [
     "aea.io.listen"
@@ -577,6 +649,7 @@
     "describe",
     "f0_track",
     "measure",
+    "notice",
     "update_baseline"
    ],
    "reachable_from_wake": false,
@@ -593,11 +666,12 @@
    "module": "aea.io.speak",
    "path": "aea/io/speak.py",
    "package": "io",
-   "lines": 667,
+   "lines": 776,
    "headline": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):",
    "imports": [
     "aea.kernel.grid",
-    "aea.kernel.pulse"
+    "aea.kernel.pulse",
+    "aea.mind.tiers"
    ],
    "import_time_effects": [],
    "state": {
@@ -619,6 +693,7 @@
     "edge_available",
     "edge_render",
     "edge_speak",
+    "grow_fillers",
     "kokoro_available",
     "kokoro_render",
     "list_voices",
@@ -640,6 +715,7 @@
    "orphaned": false,
    "role": "live",
    "imported_by": [
+    "aea.io.earcheck",
     "aea.io.listen",
     "aea.lab.convbench",
     "aea.lab.duet",
@@ -829,6 +905,8 @@
     "aea.gameapi.read",
     "aea.gameapi.schema",
     "aea.io.agent_tools",
+    "aea.io.blackbox",
+    "aea.io.earcheck",
     "aea.io.listen",
     "aea.io.notify",
     "aea.io.speak",
@@ -1284,7 +1362,7 @@
    "module": "aea.lab.battery",
    "path": "aea/lab/battery.py",
    "package": "lab",
-   "lines": 409,
+   "lines": 452,
    "headline": "battery.py - THE CONVERSATIONAL TEST BATTERY. Many real cases, run in batches, on the record.",
    "imports": [
     "aea.io.listen",
@@ -1296,6 +1374,7 @@
    "import_time_effects": [],
    "state": {
     "reads": [
+     "attribution.json",
      "endpoint.json",
      "facts.json",
      "prefilter.json"
@@ -1309,6 +1388,7 @@
     "_save",
     "run_audio",
     "run_fast",
+    "suite_attribution",
     "suite_ear",
     "suite_endpoint",
     "suite_facts",
@@ -1424,6 +1504,7 @@
    "orphaned": true,
    "role": "unwired",
    "imported_by": [
+    "aea.io.earcheck",
     "aea.lab.battery"
    ]
   },
@@ -1431,7 +1512,7 @@
    "module": "aea.lab.crystallize",
    "path": "aea/lab/crystallize.py",
    "package": "lab",
-   "lines": 198,
+   "lines": 252,
    "headline": "crystallize.py - TURN A BATTERY RUN INTO LESSONS THAT DO NOT HAVE TO BE RE-DERIVED.",
    "imports": [
     "aea.kernel.grid"
@@ -3677,11 +3758,12 @@
     "organ",
     "refresh_from_store"
    ],
-   "reachable_from_wake": false,
-   "reachable_from_server": false,
-   "orphaned": true,
-   "role": "unwired",
+   "reachable_from_wake": true,
+   "reachable_from_server": true,
+   "orphaned": false,
+   "role": "live",
    "imported_by": [
+    "aea.io.speak",
     "aea.lab.convbench",
     "aea.lab.duet",
     "aea.mind.background",
@@ -3757,9 +3839,10 @@
    "module": "aea.organs.converse",
    "path": "aea/organs/converse.py",
    "package": "organs",
-   "lines": 1280,
+   "lines": 1561,
    "headline": "converse.py - THE COMPANION. A voice-native conversation partner in ENGLISH: local ears,",
    "imports": [
+    "aea.io.blackbox",
     "aea.io.listen",
     "aea.io.prosody",
     "aea.io.speak",
@@ -3787,10 +3870,12 @@
     "load_store",
     "main",
     "remember",
+    "reply_budget",
     "save_store",
     "say",
     "speakable",
     "store_path",
+    "strip_attribution",
     "think",
     "think_stream",
     "tools_for",
@@ -4341,19 +4426,19 @@
   "lab": []
  },
  "counts": {
-  "modules": 119,
-  "reachable_from_wake": 24,
-  "reachable_from_server": 14,
-  "orphaned": 89,
-  "lines": 28760,
+  "modules": 121,
+  "reachable_from_wake": 25,
+  "reachable_from_server": 15,
+  "orphaned": 90,
+  "lines": 29740,
   "by_role": {
-   "live": 30,
+   "live": 31,
    "tool": 10,
    "evidence": 38,
    "paused": 4,
-   "unwired": 37
+   "unwired": 38
   },
-  "unwired": 37
+  "unwired": 38
  },
  "orphans": [
   "aea.energy.capability_census",
@@ -4367,6 +4452,8 @@
   "aea.gameapi.read",
   "aea.gameapi.schema",
   "aea.io.agent_tools",
+  "aea.io.blackbox",
+  "aea.io.earcheck",
   "aea.io.listen",
   "aea.io.prosody",
   "aea.kernel.crystal",
@@ -4432,7 +4519,6 @@
   "aea.mind.checkpoint",
   "aea.mind.pathfinder",
   "aea.mind.relay",
-  "aea.mind.tiers",
   "aea.organs.converse",
   "aea.organs.reflect",
   "aea.tooling.board",
@@ -4454,6 +4540,8 @@
   "aea.energy.model_fitness",
   "aea.energy.probe",
   "aea.io.agent_tools",
+  "aea.io.blackbox",
+  "aea.io.earcheck",
   "aea.io.listen",
   "aea.io.prosody",
   "aea.kernel.crystal",
@@ -4481,7 +4569,6 @@
   "aea.mind.background",
   "aea.mind.pathfinder",
   "aea.mind.relay",
-  "aea.mind.tiers",
   "aea.organs.converse",
   "aea.organs.reflect"
  ],
@@ -4601,6 +4688,20 @@
     "aea.memory.memory"
    ]
   },
+  "blackbox.json": {
+   "writers": [
+    "aea.io.blackbox"
+   ],
+   "readers": [
+    "aea.io.blackbox"
+   ]
+  },
+  "result.json": {
+   "writers": [
+    "aea.io.earcheck"
+   ],
+   "readers": []
+  },
   "identity.json": {
    "writers": [],
    "readers": [
@@ -4695,6 +4796,12 @@
    ],
    "readers": [
     "aea.kernel.unstick"
+   ]
+  },
+  "attribution.json": {
+   "writers": [],
+   "readers": [
+    "aea.lab.battery"
    ]
   },
   "endpoint.json": {

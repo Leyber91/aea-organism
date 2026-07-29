@@ -81,3 +81,7 @@ state/_*.wav
 state/*.mp3
 state/*.wav
 voice/_*.wav
+
+# The black box: audio + transcript pairs for measuring the ear from INSIDE. Luis's voice.
+state/blackbox/
+state/blackbox.json

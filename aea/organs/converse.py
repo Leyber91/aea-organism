@@ -36,7 +36,7 @@ from __future__ import annotations
 import json, os, re, sys, threading, time
 
 from aea.kernel import grid, hands
-from aea.io import listen, prosody, speak
+from aea.io import blackbox, listen, prosody, speak
 from aea.mind import tiers
 
 try: sys.stdout.reconfigure(encoding="utf-8")
@@ -1535,6 +1535,11 @@ def main() -> None:
                     since_notice[0] = 0 if notice_kind else since_notice[0] + 1
                     if notice_kind:
                         print(f"        [noticed: {notice_kind} -> it will ASK, not diagnose]")
+                    # BOTH SIDES OF THE BOUNDARY. Off by default; when on, the audio is kept
+                    # beside the transcript so the ear can be judged from inside instead of
+                    # inferred from its output - which was wrong every time tonight.
+                    blackbox.keep(samples, SR, said, blackbox.signal_stats(samples, SR),
+                                  _pm, {"early": bool(early), "notice": notice_kind})
                 except Exception:
                     heard, notice_kind = "", ""   # a broken prosody read must never cost a turn
         except (EOFError, KeyboardInterrupt):

@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-07-29 11:54 UTC",
- "seconds": 13.0,
+ "at": "2026-07-29 11:58 UTC",
+ "seconds": 12.6,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "120 modules, 25 reachable from a wake, 89 orphaned, 0 act at import",
+   "detail": "121 modules, 25 reachable from a wake, 90 orphaned, 0 act at import",
    "data": {
-    "modules": 120,
+    "modules": 121,
     "wake": 25,
     "orphans": [
      "aea.energy.capability_census",
@@ -23,6 +23,7 @@
      "aea.gameapi.read",
      "aea.gameapi.schema",
      "aea.io.agent_tools",
+     "aea.io.blackbox",
      "aea.io.earcheck",
      "aea.io.listen",
      "aea.io.prosody",
