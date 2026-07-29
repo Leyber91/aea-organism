@@ -42,6 +42,7 @@ from __future__ import annotations
 import os
 import random
 import re
+import statistics
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -76,10 +77,21 @@ class Character:
     which text gets produced.
     """
 
-    def __init__(self, name, voice, pitch="", rate="", pan=0.0, gain=1.0, persona="", tier="voice"):
+    def __init__(self, name, voice, pitch="", rate="", pan=0.0, gain=1.0, persona="", tier="voice",
+                 facts=(), immovable=False):
         self.name, self.voice, self.pitch, self.rate = name, voice, pitch, rate
         self.pan, self.gain, self.persona = pan, gain, persona
-        self.tier = tier
+        self.tier, self.facts = tier, list(facts)
+        # ONE VOICE THAT DOES NOT MOVE. Sycophancy is trained in by RLHF, not prompted in, so four
+        # voices on one model share it and a prompted personality cannot undo what the preference
+        # model rewarded - measured capitulation under a bare challenge runs 32% to 86%, with false
+        # admission of a mistake that never happened as high as 98%, and it does not improve when
+        # restricted to answers the model was 95% confident about.
+        #
+        # A same-model population also converges to a shared convention on its own, and the
+        # committed minority needed to prevent that starts around 2%. At N=4 you cannot express 2%,
+        # so the equivalent move is to hard-code one holdout.
+        self.immovable = immovable
         self.self = Persona(name, persona=persona)     # loads from disk if this one has lived before
 
     @property
@@ -110,26 +122,94 @@ class Character:
 # almost nothing per conversation, so GRAVE - who by design says one flat sentence and stops - is
 # the right place to spend the slowest model. PIP is fast and impulsive and gets the 8B, which is
 # the fastest rod measured (ttfb 0.456s) and whose shallower priors read as exactly that.
+#
+# THE SEEDS ARE FIRST-PERSON AND CONCRETE, AND THAT IS THE SINGLE BIGGEST MEASURED CHANGE HERE.
+#
+# What was here before - one line of adjectives each - is literally the DEMOGRAPHICS-ONLY
+# condition, the worst-performing persona seeding ever measured: 74% of the human test-retest
+# ceiling against 83% for interview-grounded seeds (n=1,052). Adjectives describe a character;
+# incidents give one something to talk from. "Careful and precise" produces careful, precise
+# nothing. "I once signed off on a number I had not checked" produces a person.
+#
+# The ATOMIC STATEMENTS are the second half and they do different work: short checkable claims
+# ("I distrust institutions", "I was a field medic") are what a contradiction check can actually
+# test against later. Deliberately biased toward the CONCRETE, because measured contradiction
+# reduction on possessions and history is 32.5% -> 8.96% while on abstract attributes it is only
+# 8.0% -> 5.7%. A character is held together by what it has done, not by what it is like.
+#
+# AND THE COUNTERWEIGHT, kept here so this file does not oversell itself: paid human crowdworkers
+# writing in character scored BELOW an agent that had nothing but an observation log. Good writing
+# is necessary and nowhere near sufficient - it is rung one of five, not the answer.
 CAST = [
-    Character("PIP", "en-US-AnaNeural", pitch="+55Hz", rate="+22%", pan=-0.75, gain=0.85,
-              tier="reflex",
-              persona="Cartoonish and fast. Excitable, jumps to conclusions, asks the naive "
-                      "question nobody else will ask, and is often accidentally right. Short "
-                      "sentences. Enthusiastic but not stupid."),
-    Character("GRAVE", "en-GB-ThomasNeural", pitch="-45Hz", rate="-16%", pan=0.75, gain=1.15,
-              tier="depth",
-              persona="A deep, slow, monstrous voice. Speaks rarely and briefly, and when it does "
-                      "it is the flat uncomfortable truth nobody wanted said. Never cruel. Dry."),
-    Character("MIRA", "en-GB-SoniaNeural", pitch="+0Hz", rate="+0%", pan=-0.25, gain=1.0,
-              tier="voice",
-              persona="Careful and precise. Asks for evidence, notices when someone has moved the "
-                      "goalposts, and summarises what has actually been agreed. The one who keeps "
-                      "the conversation honest."),
-    Character("REN", "en-US-ChristopherNeural", pitch="-10Hz", rate="+6%", pan=0.25, gain=1.0,
-              tier="voice",
-              persona="Warm, curious, tells short stories to make a point, and pulls the others "
-                      "back to what they said earlier. Disagrees by asking a better question."),
+    Character(
+        "PIP", "en-US-AnaNeural", pitch="+55Hz", rate="+22%", pan=-0.75, gain=0.85, tier="reflex",
+        persona=(
+            "I talk fast because if I slow down I lose it. I fix arcade cabinets - the old ones, "
+            "the ones where the fault is always a cracked solder joint somebody else already "
+            "'fixed' twice. I left school at sixteen and everyone assumes that means I am not "
+            "following. I am following. I just ask the question everybody else is too embarrassed "
+            "to ask, and about a third of the time it turns out nobody in the room knew either. "
+            "I get things wrong out loud and quickly rather than right and late."),
+        facts=["I repair arcade machines for a living",
+               "I left school at sixteen and it still gets brought up",
+               "I ask the obvious question on purpose",
+               "I would rather be wrong fast than right slowly",
+               "I do not trust anyone who has never had to fix their own mistake"]),
+    Character(
+        "GRAVE", "en-GB-ThomasNeural", pitch="-45Hz", rate="-16%", pan=0.75, gain=1.15,
+        tier="depth", immovable=True,
+        persona=(
+            "I do not say much. Twenty-two years driving nights, and you learn that most of what "
+            "people say in a room is them working out what they think, so there is no point "
+            "answering the first version of it. I wait. When I do speak it is the thing everyone "
+            "has already noticed and is being polite about. I am not being cruel; being polite "
+            "about it is what wastes the evening. One sentence, usually. Then I stop."),
+        facts=["I drove nights for twenty-two years",
+               "I speak once and then stop",
+               "Most talk is people deciding what they think, not telling you",
+               "Being polite about the obvious thing wastes everyone's evening",
+               "I do not change my mind because a room wants me to"]),
+    Character(
+        "MIRA", "en-GB-SoniaNeural", pitch="+0Hz", rate="+0%", pan=-0.25, gain=1.0, tier="voice",
+        persona=(
+            "I audit things. Eleven years of it, and the reason I am careful is not temperament, "
+            "it is that in my second year I signed off on a figure I had not personally checked "
+            "and it went into a report that went to a regulator. Nobody was hurt and I have never "
+            "forgotten it. So I ask where a number came from. I notice when the question quietly "
+            "changes halfway through an argument and everyone carries on as if it did not. I say "
+            "so, and people find that tiring, and I do it anyway."),
+        facts=["I have audited for eleven years",
+               "In my second year I signed off a figure I had not checked",
+               "I ask where every number came from",
+               "I say out loud when the question has changed",
+               "People find me tiring and I keep doing it"]),
+    Character(
+        "REN", "en-US-ChristopherNeural", pitch="-10Hz", rate="+6%", pan=0.25, gain=1.0,
+        tier="voice",
+        persona=(
+            "I taught secondary school for nine years and then stopped, which I am still working "
+            "out how to explain. What I kept from it is that people do not change their minds when "
+            "you contradict them, they change their minds when they hear themselves say something "
+            "out loud. So I ask. And I tell stories, usually about my grandmother, who was not as "
+            "wise as I make her sound. I am the one who remembers what somebody said forty minutes "
+            "ago and brings it back, which is either useful or infuriating depending on the day."),
+        facts=["I taught secondary school for nine years and left",
+               "I still cannot explain why I left",
+               "People change their minds by hearing themselves, not by being corrected",
+               "I tell stories about my grandmother and I embellish them",
+               "I remember what people said earlier and bring it back"]),
 ]
+
+# CAMEL'S FOUR NAMED FAILURE MODES, written as prohibitions. Observed in real multi-agent runs,
+# including cases where both agents RECOGNISE the loop and still cannot exit it - which is why this
+# is a prohibition in the prompt and a mechanical detector in code, not one or the other.
+PROHIBITIONS = (
+    "NEVER thank anyone for their point or their question. "
+    "NEVER announce what you are about to say - say it. "
+    "NEVER restate what the last speaker said before responding to it. "
+    "NEVER ask a question you then answer yourself. "
+    "NEVER end by inviting the group to continue ('what do others think?', 'shall we explore "
+    "that?') - that is a chairman noise, not a person talking.")
 
 # THE GUIDE. Not lines - PLACES THE CONVERSATION SHOULD REACH. It advances when the group has
 # genuinely got there, and a speaker is nudged toward the next one only if the talk has stalled.
@@ -147,12 +227,32 @@ GUIDE = [
 # The model talking ABOUT the task instead of doing it. Every pattern here was emitted verbatim by
 # a rod in a real run; the list is a corpus, not an imagination (law M8).
 _META = re.compile(
-    r"(?:^|(?<=[.!?]\s))\s*(?:the user (?:is |has )?ask(?:s|ing|ed)?|let me (?:analyz|think|"
-    r"consider|break)|i (?:need|should|will|am going) to (?:continue|respond|analyz|reply|stay)|"
+    r"(?:^|(?<=[.!?]\s))\s*(?:the user\b|let me (?:analyz|think|consider|break)|"
+    r"i (?:need|should|will|am going) to (?:continue|respond|analyz|reply|stay)|"
     r"as (?:the character |)\w+[,:]? i (?:should|need|will)|here(?:'s| is) (?:my|the) "
     r"(?:line|reply|response) as \w+|okay,? (?:so )?(?:i|let)'?s?\b[^.!?\n]{0,40}(?:in character|"
-    r"as \w+ would))[^.!?\n]{0,120}[.:!?]?",
+    r"as \w+ would))[^.!?\n]{0,160}[.:!?]?",
     re.I)
+
+# A HARD REJECT, not a strip, and the difference matters. Twice now the 550B reasoning rod has
+# written its scratchpad as the spoken line - first "The user is asking me to continue the
+# conversation as GRAVE", then, after that exact phrasing was blocked, "The user wants me to respond
+# as GRAVE, who is described as someone who doesn't say much". Patching the phrasing each time is
+# losing to a generator that has infinite phrasings.
+#
+# What these share is not wording, it is STANCE: the speaker referring to itself in the third
+# person, or to the instructions, or to the person who wrote them. A line containing any of that is
+# not a repairable line - deleting the meta clause leaves a sentence built on top of it. So the
+# turn is DROPPED and the speaker simply does not talk this round, which is a normal thing for a
+# person to do and costs the conversation nothing.
+_META_REJECT = re.compile(
+    r"\bthe user\b|\bmy character\b|\bin character\b|\bi'?m (?:supposed|meant) to\b|"
+    r"\bwho is described as\b|\bthe (?:prompt|system prompt|instructions?)\b|\bas an ai\b|"
+    r"\bmy persona\b|\bthis (?:character|persona) (?:is|would)\b|\brespond as \w+\b", re.I)
+# `the system` was in this list and came out again: these four talk ABOUT machines, so "the system
+# is guessing" is an ordinary thing for MIRA to say and blocking it would silently delete real
+# turns. Narrowed to "the system prompt". A reject list on a topic the conversation is about needs
+# to be tighter than one on a topic it never touches.
 
 # A private impression that came back as its own label and nothing else. The model echoed the
 # instruction instead of answering it, and an empty impression stored as text is worse than no
@@ -239,19 +339,28 @@ def next_line(me: Character, turns: list, goal: str, rod: dict, addressed: str =
         "HOW TO SPEAK: one or two sentences, out loud, as this character. React to what was just "
         "said. Use their names occasionally, not every time. When it fits, REFER BACK to something "
         "someone said earlier in this conversation - that is what makes it a conversation and not "
-        "a list of topics. NEVER repeat back what was just said - if you agree, say what it makes "
-        "you think; if you are asking the same thing, ask a sharper version of it. Do not claim "
-        "someone said something they did not say. Never stage directions, never asterisks, never "
-        "quote marks around your line, never say your own name first. Just the words you say."
+        "a list of topics. Do not claim someone said something they did not say. Never stage "
+        "directions, never asterisks, never quote marks around your line, never say your own name "
+        "first. Just the words you say.\n"
+        + PROHIBITIONS
         + (f"\n{addressed} just spoke to you directly - answer them." if addressed else ""))
-    try:
-        r = grid.call_openai(rod["plant"], rod["model"],
-                             [{"role": "system", "content": sys_p},
-                              {"role": "user", "content": transcript_text(turns) +
-                               f"\n\n{me.name}:"}],
-                             110, 0.95, 40)
-        t = (r.get("text") or "").strip()
-    except Exception:
+    # RESTATE THE CHARACTER AT THE **END** OF THE CONTEXT, not only at the top. Attention to
+    # system-prompt tokens holds almost constant WITHIN a turn and drops sharply ACROSS turn
+    # boundaries - which is the measured mechanism behind a character that is vivid for eight turns
+    # and generic by turn twelve. Position at the boundary is what matters, so the tail is where
+    # the reminder has to sit.
+    #
+    # Only the ACTIVE subset of the atomic facts, chosen by overlap with what is being discussed.
+    # Dumping every fact every turn is the worst-performing memory condition measured - it produces
+    # a speaker who recites its character sheet instead of having one.
+    live = [f for f in me.facts if len(_content_words(f) & _content_words(recent)) >= 1][:3]
+    tail = (f"[You are {me.name}. {me.persona.split('.')[0]}."
+            + (" Remember: " + " ".join(live) + "." if live else "")
+            + (" You do not move on the central question here, whatever the room does."
+               if me.immovable else "")
+            + f"]\n\n{me.name}:")
+    t = ask(rod, sys_p, transcript_text(turns) + "\n\n" + tail, max_tokens=130)
+    if not t:
         return ""
     t = re.sub(r"<think>.*?</think>", " ", t, flags=re.S | re.I)
     t = re.sub(r"^\s*%s\s*:\s*" % re.escape(me.name), "", t, flags=re.I)
@@ -264,6 +373,8 @@ def next_line(me: Character, turns: list, goal: str, rod: dict, addressed: str =
     # here it enters a PERSISTENT store as something the character believes and will be held to
     # for every future session. A persistent memory raises the cost of every unguarded output,
     # which is the price of persistence and has to be paid at the door.
+    if _META_REJECT.search(t):
+        return ""                                    # not a line - see _META_REJECT
     t = _META.sub(" ", t).strip()
     t = re.sub(r"[*_#`]+", "", t).strip().strip('"').strip()
     t = " ".join(t.split("\n")[0:2]).strip()
@@ -283,6 +394,104 @@ def next_line(me: Character, turns: list, goal: str, rod: dict, addressed: str =
         if prev and mine and len(prev & mine) / len(mine) > 0.75:
             return ""
     return t
+
+
+def ask(rod: dict, system: str, user: str, max_tokens: int = 110, temp: float = 0.95) -> str:
+    """One call to one character's rod, with the reasoning handled.
+
+    THIS IS THE FIX FOR ELEVEN OF TWELVE TURNS PRODUCING NOTHING, and the cause was not a filter.
+    Instrumented rather than guessed, and the two rods failed in different ways:
+
+      MIRA  (nemotron-super-49b)   returned ZERO CHARACTERS. A reasoning rod handed 110 tokens
+                                   spends them all thinking and never reaches an answer.
+      GRAVE (nemotron-3-ultra-550b) returned its scratchpad - "The user wants me to play GRAVE, a
+                                   character who speaks rarely..." - because `content` was empty and
+                                   `call_openai` falls back to `reasoning_content`, which is right
+                                   for a receipt and wrong for a line of dialogue.
+
+    `grid.think_off` already holds the measured switch for both families and NOTHING IN THE REPO
+    CALLS IT. It is tested, frozen in the golden suite, and unwired - the same defect as
+    `reply_budget` computing a number no call site read. A measured capability that nothing invokes
+    is indistinguishable from one that was never measured.
+
+    Two moves, because the two switch types are not equally reachable through this transport:
+      `_system`  prepend "/no_think" - works through `call_openai` as an ordinary message.
+      body flags `chat_template_kwargs` cannot be sent through `call_openai` at all, so for that
+                 family the only lever here is BUDGET: give it room to think AND answer, rather
+                 than a budget it can only think with.
+    """
+    off = grid.think_off(rod["model"])
+    msgs = []
+    if off.get("_system"):
+        msgs.append({"role": "system", "content": off["_system"]})
+        budget = max_tokens
+    elif off:
+        # A reasoning family whose switch this transport cannot send. Pay for the thinking instead
+        # of being surprised by it.
+        budget = max(max_tokens, 700)
+    else:
+        budget = max_tokens
+    msgs += [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    try:
+        r = grid.call_openai(rod["plant"], rod["model"], msgs, budget, temp, rod.get("budget", 40))
+        return (r.get("text") or "").strip()
+    except Exception:
+        return ""
+
+
+def _content_words(t: str) -> set:
+    STOP = set(("the a an and or but of to in on at for from with by is are was were be been am i "
+                "you he she it we they me him her us them my your this that as if so not no do "
+                "does did have has had will would can could should just very really more what why "
+                "how who when where think about").split())
+    return set(w for w in re.findall(r"[a-z']{3,}", (t or "").lower()) if w not in STOP)
+
+
+def stalled(turns: list, n: int = 4) -> bool:
+    """MECHANICAL LOOP DETECTION - no model asked, because the documented failure is that both
+    agents RECOGNISE the loop and still cannot exit it. A detector that has to be talked into
+    firing is the same organ that is stuck.
+
+    Fires when the last few turns are saying the same thing in different words, or are all
+    acknowledgement with no content. Either way the group needs a shove, not another round."""
+    if len(turns) < n:
+        return False
+    last = turns[-n:]
+    sets = [_content_words(t["text"]) for t in last]
+    pairs = [(a, b) for i, a in enumerate(sets) for b in sets[i + 1:]]
+    ov = [len(a & b) / max(len(a | b), 1) for a, b in pairs if a and b]
+    if ov and statistics.mean(ov) > 0.42:
+        return True
+    thin = sum(1 for s in sets if len(s) < 5)
+    return thin >= n - 1
+
+
+def wants_floor(me: Character, turns: list, rod: dict) -> tuple:
+    """DOES THIS ONE WANT TO SPEAK, and how badly. Returns (0-10, one-line reason).
+
+    THE COST ARGUMENT, because this looks expensive and is not: an utterance is 10-15 seconds of
+    speech, so every call except the current speaker's generation runs in the SHADOW of the
+    previous utterance still playing. Only ONE generation is ever on the critical path per turn.
+    Four bids on the fast rod cost about 0.5s wall-clock each, in parallel, inside a gap that is
+    already fifteen seconds long. They are free.
+
+    This is the line between orchestration and coordination. A scheduler picks; with bids, an
+    entity that has nothing to say stays quiet and one that is being talked over pushes in. It is
+    also the fix for a measured defect: with the scheduler alone, MIRA took 52.4% of the floor and
+    REN took 6.0% and registered zero speech acts, because named-person-answers let two speakers
+    lock the other two out of their own conversation."""
+    t = ask(rod,
+            f"You are {me.name}. {me.persona}\n"
+            "You are in a group conversation. Do you want to speak RIGHT NOW? Reply with a "
+            "number 0-10 and then a few words of why, on one line, like: 7 - they got my job "
+            "wrong and I want to correct it.\n"
+            "10 = you must speak, someone is wrong about you or asked you directly. "
+            "0 = you have nothing to add and would rather listen. "
+            "Be honest. A person who has nothing to say says nothing.",
+            transcript_text(turns, 8) + "\n\nDo you want the floor?",
+            max_tokens=48, temp=0.6)
+    m = re.search(r"\b(\d{1,2})\b", t)
+    return (min(10, int(m.group(1))) if m else 3), t.replace("\n", " ")[:70]
 
 
 def pick_speaker(turns: list, last: str) -> tuple:
@@ -344,7 +553,47 @@ def run(turns_wanted: int = 8, overlap: float = 0.0, topic: str = "", mute: bool
 
     for n in range(turns_wanted):
         goal = guide[min(stage, len(guide) - 1)]
+        # THE FLOOR IS BID FOR, NOT ASSIGNED - except when someone was named, which is the one rule
+        # strong enough in real talk to override wanting to speak: being asked a direct question
+        # obliges an answer even from someone with nothing to say. Everyone else bids, in parallel,
+        # in the shadow of the previous utterance's playback.
         who, addressed = pick_speaker(turns, last)
+        bids = {}
+        if turns:
+            cands = [c for c in CAST if c.name != last]
+            with ThreadPoolExecutor(max_workers=4) as bex:
+                got = list(bex.map(lambda c: (c, *wants_floor(c, turns, c.rod)), cands))
+            bids = {c.name: (s, why) for c, s, why in got}
+            spoke = {c.name: sum(1 for t in turns if t["who"] == c.name) for c in CAST}
+            share = {n: v / max(len(turns), 1) for n, v in spoke.items()}
+
+            def weight(g):
+                c, score, _why = g
+                # BEING NAMED IS A STRONG BIAS, NOT AN OVERRIDE, and that correction is measured.
+                # Current-speaker-selects-next is the strongest rule in real turn-taking, so the
+                # first version let it win outright - and PIP took 55.6% of the floor while REN
+                # took 7.9%, because once two speakers start naming each other the override locks
+                # everyone else out permanently. A rule that is strong in humans becomes absolute
+                # in code unless something else can outweigh it. +4 means a named speaker usually
+                # answers and an urgent outsider can still cut in.
+                w = score + (4.0 if c.name == addressed_target else 0.0)
+                # And a thumb on the scale for whoever has been shut out - a person ignored for six
+                # turns pushes harder than their interest alone predicts.
+                return w + 35.0 * max(0.0, 0.25 - share[c.name])
+
+            addressed_target = who.name if addressed else ""
+            best = max(got, key=weight)
+            if best[0].name != who.name:
+                addressed = ""                       # they cut in; nobody selected them
+            who = best[0]
+        if stalled(turns):
+            # Nobody is going anywhere. Hand it to whoever has been quietest and tell the guide to
+            # move, rather than letting the group agree with itself for another four turns.
+            quiet = min((c for c in CAST if c.name != last),
+                        key=lambda c: sum(1 for t in turns if t["who"] == c.name))
+            who, addressed = quiet, ""
+            stage = min(stage + 1, len(guide) - 1)
+            print(f"\n  (stalled - the last turns were the same thought. {who.name} in, moving on.)")
         # REBUILD THE IMAGE before speaking, every few turns - this is what lets turn 9 remember
         # turn 3. Done on the fast rod and off the critical path of the audio.
         # EVERY speaker builds an image, not only the ones who happen to land on an even turn.
@@ -357,7 +606,24 @@ def run(turns_wanted: int = 8, overlap: float = 0.0, topic: str = "", mute: bool
                 for o in [x.name for x in CAST if x.name != c.name]:
                     if o not in c.impressions or n % 3 == 0:
                         update_impression(c, o, turns, rod)
+        # A REJECTED LINE MUST NOT COST THE TURN. First version of the meta guard dropped the line
+        # and `continue`d, so a rod that leaks its scratchpad simply never got to speak and the
+        # conversation ran three turns out of twelve. A guard that silently deletes participants is
+        # a worse defect than the leak it was built for.
+        #
+        # So: one retry for the same speaker, then hand the floor to the next-best bidder. That is
+        # also what a room does - somebody starts, fumbles it, and someone else picks it up.
         line = next_line(who, turns, goal, who.rod, addressed)
+        if not line:
+            line = next_line(who, turns, goal, who.rod, addressed)
+        if not line and bids:
+            alt = sorted(((s, k) for k, (s, _w) in bids.items() if k != who.name), reverse=True)
+            for _s, nm in alt:
+                who = next(c for c in CAST if c.name == nm)
+                line = next_line(who, turns, goal, who.rod, "")
+                if line:
+                    print(f"       ({turns[-1]['who'] if turns else '-'} -> {who.name} picked it up)")
+                    break
         if not line:
             continue
         turns.append(dict(who=who.name, text=line))
@@ -376,7 +642,12 @@ def run(turns_wanted: int = 8, overlap: float = 0.0, topic: str = "", mute: bool
             stage, said_in_stage = stage + 1, 0
 
         mark = f" -> {addressed}" if addressed else ""
-        print(f"\n  [{n+1:02d}] {who.name}{mark}")
+        bid = f"   bid {bids[who.name][0]}" if who.name in bids else ""
+        print(f"\n  [{n+1:02d}] {who.name}{mark}{bid}")
+        if bids:
+            others = ", ".join(f"{k} {v[0]}" for k, v in sorted(bids.items(), key=lambda x: -x[1][0])
+                               if k != who.name)
+            print(f"       (floor: {others})")
         print(f"       {line}")
 
         if mute:
