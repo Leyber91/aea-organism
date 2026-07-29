@@ -96,3 +96,10 @@ state/blackbox.json
 state/lab/earbench/
 state/lab/earclips/
 state/lab/party/
+
+# PIP WHEELS. Thirteen of these landed in the repo root from an offline install and were swept
+# into a commit by `git add -A` - ~10MB of binaries that are not source and that pip can fetch
+# again. `git add -A` is convenient and it is exactly how things nobody chose end up tracked;
+# the privacy scan looks for secrets and had no opinion about build artifacts.
+*.whl
+*.tar.gz
