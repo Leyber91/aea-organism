@@ -1967,8 +1967,46 @@ new), selfcheck **ALL INVARIANTS HOLD**, loopback median WER 0%.
 - **Emotion labels stay refused**, prosody stays out of the prompt, and now so does every sentence
   that merely mentions it.
 
+### DID (later the same evening - the two-sided test, and what it broke open)
+
+Luis, watching the loopback: *"You're only expressing when he's saying something, and then it's like
+he is reading a list instead of having a conversation on the other side."* Correct, and the gap was
+real - twenty isolated clips can score well and prove nothing about a conversation.
+
+Built **`earbench --duet`**: a whole conversation out loud, both voices synthetic, nobody in the
+room. A second TTS voice plays the person, a small rod writes that person's next line FROM THE
+MACHINE'S REPLY, and the machine side is **the real `converse` program driven as a subprocess** -
+never a re-implementation, because every defect this session lived in a seam a re-implementation
+would skip.
+
+It found four things in six turns that twenty clips could not:
+
+- **`MAX_UTTER = 9.0` truncated every real sentence.** Every duet turn reported "9.0s of audio";
+  conversational sentences run 12-16s. The rod was answering half a question, and the truncation
+  destabilised the decodes enough to trip the repair prompt on a turn heard correctly. Raised to
+  20s (whisper refuses over 30s). **Duet WER: 43% -> 2% median.**
+- **Replies were THIRTY SECONDS long.** `budget 5s/430c` produced 30.5s and 31.6s of speech on
+  consecutive turns. 430 characters IS 29 seconds at the measured 15 chars/s - the cap did exactly
+  what it said and what it said was wrong. `reply_budget` is now written in SECONDS (6/14/70) with
+  the conversion visible, because nobody converts characters into half a minute in their head.
+- A false cut appeared and was fixed: the semantic probe could only ever end a turn SOONER, so a
+  verdict of "he is mid-sentence" changed nothing and he was cut off anyway. `HANGOVER_DANGLING`.
+- Two harness defects of my own - a parser scoring the receipt bracket as spoken words (80% WER on
+  a perfect turn), and an echo detector firing on a four-word artifact.
+
+**Also settled, and it closes a whole line of inquiry:** the noise sweep against his OWN room noise
+gives median WER **0.0% at every SNR from 30 dB to 6 dB**. His live SNR ran 17.5-31.7. The room
+cannot explain a single mishearing, so the two survivors are lexical and whisper-small is finally a
+motivated experiment instead of a guess.
+
+Full map: **`diary/RECAP_VOICE_2026-07-29.md`** - the products, every constant that moved and why,
+and the honest list of what I got wrong (six of eight were the instrument, not the subject).
+
 ### NEXT
 
+0. **Re-measure the duet with the new second-based budgets.** Highest value, and untested: 6s/14s/70s
+   should take time-to-reply from a 42s median to something conversational. No sound test has been
+   run since the recalibration.
 1. **R0 - the FTO ledger.** Measure the gap the LISTENER hears: last user speech frame -> first
    sample played, seven marks, one JSONL row a turn. Every stage is timed separately today, which is
    exactly how 4.1s of dead room hid between a 0.3s ear and a 0.5s mouth.

@@ -91,6 +91,32 @@ HANGOVER_FAST = 0.45                   # SEMANTIC ENDPOINTING (2026-07-29). A fi
                                        # a GPU this machine does not have (torch is CPU-only,
                                        # cuda_available=False), so this is the honest CPU version
                                        # of the same idea: decide on MEANING, not only on silence.
+HANGOVER_DANGLING = 2.4                # THE HANGOVER WHEN THE SEMANTIC PROBE SAID "STILL GOING".
+                                       # The probe could only ever make a turn end SOONER; a
+                                       # verdict of "this sentence is not finished" changed
+                                       # nothing, so a mid-sentence breath longer than the flat
+                                       # 1.15s cut him off anyway - and the verdict that would have
+                                       # prevented it had already been computed and thrown away.
+                                       #
+                                       # MEASURED: lifting the hold gate off the room (HOLD_REF)
+                                       # took the semantic endpoint from 4 of 20 to 14 of 20, and
+                                       # immediately produced the first FALSE CUT of the session -
+                                       # "so what I want and this is the important part is for you
+                                       # to" ended 2.0s early as "So what I want is". Silence
+                                       # accumulating properly is what the fix was FOR, and it
+                                       # exposed that only one side of the decision was wired.
+                                       #
+                                       # A false cut is unrecoverable and a late take is only a
+                                       # wait, so the asymmetry is deliberate: certainty that he is
+                                       # mid-sentence buys him more than twice the grace.
+HOLD_REF = 0.04                        # the hold gate may never sit below this fraction of THIS
+                                       # utterance's loudest frame (-24 dB). Conservative, because
+                                       # this is the gate that can cut a person off mid-word: a
+                                       # quiet fricative can run 25 dB under a vowel, and a false
+                                       # cut is unrecoverable while a late take is only a wait.
+CEIL_REF = 0.12                        # the silence ceiling's reference, -18 dB from peak. May be
+                                       # more aggressive than HOLD_REF because crossing it does not
+                                       # end the turn on its own - it only starts a 1.6s clock.
 SILENCE_CEILING = 1.6                  # A HARD CEILING ON SILENCE, MEASURED AGAINST AN ABSOLUTE
                                        # LEVEL RATHER THAN THE ADAPTIVE GATE. This is the backstop
                                        # for the failure that cost 4.1s a turn: `cont` tracks the
@@ -123,7 +149,32 @@ HANGOVER = 1.15                        # seconds of silence that end a turn. 0.7
                                        # TTS perfectly, int8 and fp32 identical. The ear was never
                                        # the problem; the endpointer and the room are.
 MIN_SPEECH = 0.35                      # shorter than this is a cough, not a sentence
-MAX_UTTER = 9.0                        # hard cut. LOWERED from 15: when the room is loud enough to
+MAX_UTTER = 20.0                       # HARD CUT, and it is back UP because what it was defending
+                                       # against is now handled properly. It was lowered to 9.0
+                                       # when a room loud enough to hold the turn open meant the
+                                       # capture ran to the cap and the whole window was noise -
+                                       # a real problem, and 9s bounded the damage of it.
+                                       #
+                                       # But bounding damage is not fixing a cause, and the cause
+                                       # is fixed now: the hold gate is anchored to this
+                                       # utterance's own speech (HOLD_REF) and SILENCE_CEILING
+                                       # closes the turn against a reference that cannot drift. The
+                                       # cap no longer has to be the safety net.
+                                       #
+                                       # MEASURED by the DUET, which is the only mode that speaks
+                                       # real sentences: EVERY SINGLE TURN reported "9.0s of
+                                       # audio". Ordinary conversational sentences run 12-16
+                                       # seconds, so the ear was being handed the first nine
+                                       # seconds of a thought and the rod was answering half a
+                                       # question - and the truncation ALSO destabilised the
+                                       # decodes enough to trip the repair prompt on a turn that
+                                       # had been heard correctly. One wrong constant, three
+                                       # symptoms, and twenty isolated short clips could never
+                                       # have shown any of them.
+                                       #
+                                       # 20s, not more: whisper refuses waveforms over 30s, and
+                                       # duet measured a rod emitting 32.5s of speech in one reply.
+
                                        # hold the turn open, the capture runs to this cap and the
                                        # whole window is noise - 9s bounds the damage (15s of room
                                        # tone reliably transcribes to one wrong word).
@@ -144,6 +195,13 @@ PREROLL = 16                           # ~480ms kept BEFORE the trigger. Speech 
                                        # the gate always fires mid-word; without this the first
                                        # syllables are lost and whisper only sees a fragment.
 
+SPEAK_RATE = 15.0                      # characters per second of synthesised speech, MEASURED on
+                                       # this voice. Every length budget in this module is written
+                                       # in SECONDS and multiplied by this, because a person
+                                       # waiting experiences seconds and nobody can convert 430
+                                       # characters into half a minute in their head - which is
+                                       # exactly the mistake that shipped. Keep the conversion
+                                       # visible at every call site rather than pre-multiplying.
 MAX_SPOKEN_CHARS = 190                 # ~13s worst case at the measured ~15 chars/s. Was 320, and
                                        # REAL bound: duet measured a rod emitting 30.6s of speech
                                        # inside two sentences, past whisper's own 30s ceiling.
@@ -1003,9 +1061,13 @@ def capture(device: int | None = None, verbose: bool = True, lang: str = LANG,
         peak, last_report = 0.0, time.time()
         probed, early = False, None            # re-armed every time he starts talking again
         last_probe = 0.0                       # so repeated probes cannot stack inside one pause
+        dangling = False                       # did the last probe judge him MID-SENTENCE
         since_loud = 0.0                       # silence measured against an ABSOLUTE speech level,
                                                # not the drifting gate. See SILENCE_CEILING.
         probes: list = []                      # every partial decode, for the doubt signal below
+        loud_peak = 0.0                        # the loudest frame of THIS utterance - the one
+                                               # reference in the loop that cannot drift with the
+                                               # room. See HOLD_REF / CEIL_REF.
         while True:
             b, _of = stream.read(BLOCK)
             mono = b[:, 0]
@@ -1031,13 +1093,38 @@ def capture(device: int | None = None, verbose: bool = True, lang: str = LANG,
                 if verbose and time.time() - last_report > 6.0:
                     print(f"  (nothing yet - peak {peak:.4f} vs gate {thr:.4f})", flush=True)
                     peak, last_report = 0.0, time.time()
-            # SPEECH-LEVEL SILENCE, tracked against an absolute reference that room noise cannot
-            # sustain, in parallel with the gate-relative `silent_for`. See SILENCE_CEILING.
-            if rms >= max(thr, floor * 3.0):
+            # THE REFERENCE IS THIS UTTERANCE'S OWN SPEECH, NOT THE ROOM.
+            #
+            # The first version of this used `floor * 3.0` and it FAILED THE SAME WAY the gate it
+            # was built to backstop fails - because it was derived from the same drifting floor.
+            # MEASURED, 20-clip loopback: the semantic endpoint fired on only 4 of 20 and the word
+            # "why" held the turn open for 8.2 seconds, straight past a 1.6s ceiling. As a run goes
+            # on, `floor` tracks down, so `floor * 3` tracks down with it until ordinary room peaks
+            # clear it and `since_loud` can never accumulate either.
+            #
+            # A threshold derived from the room cannot be a check on the room. The one reference
+            # that does not drift is THE SPEECH ITSELF: `loud_peak` is the loudest frame of this
+            # utterance, and normal speech sits 25-45 dB above room tone, so a fraction of it lands
+            # cleanly between the two no matter what the floor is doing. It re-calibrates per
+            # utterance, which is exactly the right granularity - his level swings 25x BETWEEN
+            # utterances and very little inside one.
+            if speaking:
+                loud_peak = max(loud_peak, rms)
+            if rms >= max(FLOOR_MIN, loud_peak * CEIL_REF):
                 since_loud = 0.0
             else:
                 since_loud += dt
-            if rms >= (cont if speaking else thr):
+            # THE HOLD GATE IS LIFTED OFF THE ROOM BY THE SPEECH THAT OPENED IT. Hysteresis exists
+            # so a quiet fricative does not end a sentence - so it is set relative to the ROOM, and
+            # when the room estimate drifts under the actual room, the gate goes with it and the
+            # turn can never close. Anchoring it ALSO to a fraction of this utterance's own peak
+            # gives it a floor that room noise cannot reach. HOLD_REF is deliberately well below
+            # CEIL_REF (-24 dB vs -18 dB from peak): a false cut truncates a person mid-thought and
+            # is unrecoverable, while a late take just makes them wait, so the gate that can cut
+            # gets the conservative constant and the ceiling that only bounds damage gets the
+            # aggressive one.
+            hold = max(cont, loud_peak * HOLD_REF) if speaking else thr
+            if rms >= hold:
                 hot += 1
                 if not speaking and hot >= 2:              # debounce: 2 frames, not one click
                     speaking = True
@@ -1051,6 +1138,7 @@ def capture(device: int | None = None, verbose: bool = True, lang: str = LANG,
                     probed = False              # HE STARTED TALKING AGAIN: the last probe judged a
                                                 # DIFFERENT, shorter utterance, so its verdict is
                                                 # spent. Re-arm. See the block below.
+                    dangling = False            # and so is its dangling verdict
             else:
                 hot = 0
                 if speaking:
@@ -1090,13 +1178,15 @@ def capture(device: int | None = None, verbose: bool = True, lang: str = LANG,
                                 print(f"  (endpoint {round(time.time()-tp0,2)}s: "
                                       f"{'COMPLETE' if done else 'still going'} - {partial[:52]!r})",
                                       flush=True)
+                            dangling = not done          # remembered, not discarded: see
+                                                         # HANGOVER_DANGLING
                             if done:
                                 early = partial
                                 break
                         except Exception:
                             pass            # the check is an OPTIMISATION; its failure must never
                                             # cost a turn, so it falls back to the full hangover
-                    if silent_for >= HANGOVER:
+                    if silent_for >= (HANGOVER_DANGLING if dangling else HANGOVER):
                         break
                     # THE BACKSTOP. Fires only when the adaptive gate has drifted under the room
                     # and `silent_for` therefore cannot climb - the exact state that produced 23
@@ -1332,15 +1422,34 @@ def reply_budget(user_text: str) -> tuple:
       a real question             room to answer it properly
       anything else               conversational, because most turns are
 
-    At the measured ~15 chars/s: 190 chars is ~13s, 420 is ~28s, 900 is ~60s.
+    THE BUDGETS ARE SET IN SECONDS OF SPEECH AND CONVERTED, because seconds are what a person
+    waiting actually experiences and characters are not. Written as characters, the numbers looked
+    conversational and were not:
+
+        MEASURED by the duet, 2026-07-29 - the first test where the machine held a real two-sided
+        conversation out loud. `budget 5s/430c` produced THIRTY POINT FIVE and THIRTY-ONE POINT SIX
+        SECONDS of speech on consecutive turns, and time-to-reply ran to a median of 42s and a
+        worst of 93s. Nothing was broken: 430 characters IS 29 seconds at the measured ~15 chars/s.
+        The cap was doing exactly what it said and what it said was wrong.
+
+    A unit of talk that runs half a minute is a monologue whatever the sentence count says. So the
+    ladder is now expressed the way it is felt, and the conversions are visible:
+
+        chat       6s    a remark gets a remark back
+        question  14s    long enough to answer properly, short enough to hand the turn back
+        depth     70s    a story is allowed to be a story - and only when depth was ASKED for
+
+    Sentence counts stay as the polite bound and seconds are the real one, which is the same
+    ordering `speakable` already uses between MAX_SPOKEN_CHARS and max_sentences.
     """
     t = (user_text or "").strip()
     words = len(re.findall(r"[a-zA-Z']+", t))
+    sec = lambda s: int(s * SPEAK_RATE)
     if _WANTS_DEPTH.search(t):
-        return (700, 1600, 14)               # a story, an explanation - as long as it needs
+        return (700, sec(70), 14)            # a story, an explanation - as long as it needs
     if t.endswith("?") or words >= 12:
-        return (200, 430, 5)                 # a real question deserves a real answer
-    return (90, 190, 2)                      # ordinary conversational back-and-forth
+        return (200, sec(14), 5)             # a real question deserves a real answer
+    return (90, sec(6), 2)                   # ordinary conversational back-and-forth
 
 
 def tools_for(text: str, allow: tuple) -> tuple:
@@ -1917,7 +2026,12 @@ def main() -> None:
             with open(logpath, "a", encoding="utf-8") as f:
                 f.write(f"{time.strftime('%H:%M')} {name or 'them'}: {said}\n"
                         f"{time.strftime('%H:%M')} machine: {reply}\n")
-        print(f"      [{src} | first audio {v['ttfa']}s | {v['chunks']} chunks "
+        # `first audio Nones` was printed on a failed turn - ttfa is None when nothing played, and
+        # formatting it straight produced a receipt that read like a measurement of "None seconds".
+        # A receipt line is the one place a placeholder must never look like a number (honesty law:
+        # an absent value is a dash, never a guess).
+        print(f"      [{src} | first audio {v['ttfa'] if v['ttfa'] is not None else '-'}s"
+              f" | {v['chunks']} chunks "
               f"render {v['render']}s speech {v['play']}s"
               + (f" | budget {sent_budget}s/{char_budget}c" if sent_budget != 2 else "")
               + (" | CUT OFF" if v.get("interrupted") else "")

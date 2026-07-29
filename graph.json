@@ -1441,6 +1441,16 @@
     },
     {
      "src": "earbench",
+     "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
+     "dst": "tiers",
+     "rel": "imports"
+    },
+    {
+     "src": "earbench",
      "dst": "listen",
      "rel": "imports"
     },

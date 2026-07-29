@@ -24,6 +24,14 @@ MODEL, the SIGNAL, or the PIPELINE.
               two in the morning. Everything the 35-turn live run measured, this measures without
               him.
 
+  --duet      A WHOLE CONVERSATION, both voices, out loud, nobody in the room. A second TTS voice
+              plays the person and a small rod writes what that person says next FROM THE MACHINE'S
+              REPLY, so it is a conversation and not a list being read at a wall. The machine side
+              is the real `converse` program driven as a subprocess - never a re-implementation of
+              a turn, because every defect found this session lived in the seams between the parts
+              a re-implementation would skip. This is the only mode that can see turn-taking,
+              context, reply fit, and whether the machine answers its own voice.
+
   --noise     mix known speech with REAL ROOM NOISE lifted from his own recordings, at a swept SNR.
               The 2026-07-29 post-mortem found his level swinging 25x; this asks what that costs in
               words rather than assuming.
@@ -418,6 +426,191 @@ def run_noise(snrs=(30, 24, 18, 12, 6)) -> dict:
     return dict(mode="noise", rows=rows)
 
 
+def run_duet(device: int | None = None, turns: int = 8, opener: str = "",
+             person_voice: str = "en-GB-SoniaNeural") -> dict:
+    """A WHOLE TWO-SIDED CONVERSATION, out loud, through the speakers and the microphone, with
+    nobody in the room.
+
+    Luis, 2026-07-29: "I need it to express both voices. You're only expressing when he's saying
+    something, and then it's like he is reading a list instead of having a conversation on the
+    other side." And again: "before I say both sides, it's meaningless - you need to simulate the
+    voice, so it can be shared."
+
+    He is right and the gap was real. `--loopback` plays a phrase, measures the transcript, plays
+    the next phrase. Nothing ever REPLIES. So it tests the ear and the endpointer and cannot test
+    the thing they exist for: whether a turn hands over, whether the answer fits what was asked,
+    whether context survives, whether the machine's own voice comes back through the microphone and
+    is answered as speech. Twenty isolated utterances score well and prove nothing about a
+    conversation.
+
+    HOW IT WORKS, and the design decision that matters most: this drives THE REAL PROGRAM as a
+    SUBPROCESS - `python -m aea.organs.converse` - rather than re-assembling a turn out of its
+    parts. A harness that rebuilds the loop tests the harness's idea of the loop, and the defects
+    this session actually found lived in the seams BETWEEN the parts (a flag never cleared, a
+    budget never read, two guards composing into a false sentence). Re-implementing the turn is
+    precisely the move that hides all three.
+
+      the PERSON side   a second TTS voice, deliberately different from the machine's, so the
+                        transcript can never confuse who said what
+      the PERSON mind   a small rod writes each follow-up FROM WHAT THE MACHINE JUST SAID, so it
+                        is a conversation rather than a script being read at a wall
+      the MACHINE side  the real binary, real ear, real rods, real tools, real voice
+      measured          time to reply, reply length, whether it answered the question asked,
+                        every HONESTY flag it prints, and self-triggering on its own voice
+
+    WHAT THIS CANNOT TELL YOU. Two TTS voices in one room is not two people: no overlap, no
+    interruption, no Lombard effect, and the person's voice is cleaner than any person. It tests
+    the LOOP honestly and the acoustics optimistically. Stated here so no result from it is ever
+    read as "it holds up a conversation with a human".
+    """
+    import subprocess
+    import numpy as np
+    import sounddevice as sd
+    import soundfile as sf
+    from aea.io import speak
+    from aea.mind import tiers
+
+    os.makedirs(OUT, exist_ok=True)
+    tmp = os.path.join(OUT, "_person.wav")
+
+    def person_says(text: str) -> float:
+        """Speak the person's line into the room. Returns seconds of audio played."""
+        mp3 = tmp.replace(".wav", ".mp3")
+        if not speak.edge_render(text, mp3, voice=person_voice):
+            return 0.0
+        x, sr = _read_any(mp3)
+        lead = np.zeros(int(0.35 * sr), dtype="float32")
+        sd.play(np.concatenate([lead, x]), sr)
+        sd.wait()
+        return len(x) / sr
+
+    OPENERS = ["Hey, are you actually running on my machine right now?",
+               "So tell me what you can really do."]
+    line = opener or OPENERS[0]
+
+    proc = subprocess.Popen(
+        [sys.executable, "-u", "-m", "aea.organs.converse", "--name", "tester", "--no-store"],
+        cwd=str(grid.ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, encoding="utf-8", errors="replace", bufsize=1)
+
+    import queue as _q
+    import threading as _t
+    lines: _q.Queue = _q.Queue()
+
+    def pump():
+        for ln in proc.stdout:
+            lines.put(ln.rstrip("\n"))
+        lines.put(None)
+
+    _t.Thread(target=pump, daemon=True).start()
+
+    def wait_for(pred, budget: float):
+        """Collect stdout until `pred` matches a line or the budget runs out."""
+        got, t0 = [], time.time()
+        while time.time() - t0 < budget:
+            try:
+                ln = lines.get(timeout=0.4)
+            except _q.Empty:
+                continue
+            if ln is None:
+                return got, None
+            got.append(ln)
+            if pred(ln):
+                return got, ln
+        return got, None
+
+    print(f"\n{'='*96}")
+    print(f"DUET - a real conversation, out loud, both sides synthetic, nobody in the room")
+    print(f"  person : {person_voice}      machine: the real `converse` program (subprocess)")
+    print(f"{'='*96}")
+    boot, _ = wait_for(lambda l: "(listening" in l, 120)
+    for b in boot:
+        if b.strip().startswith(("mind", "voice", "ears", "ready", "history")):
+            print(f"  | {b.strip()}")
+
+    rows, echo_hits = [], 0
+    talker = tiers.organ("reflex")
+    for n in range(turns):
+        print(f"\n  --- turn {n+1} ---")
+        print(f"  PERSON  > {line}")
+        t0 = time.time()
+        spoke = person_says(line)
+        got, hit = wait_for(lambda l: l.strip().startswith("IT >"), 90)
+        reply = (hit or "").strip()[4:].strip() if hit else ""
+        # STRIP THE RECEIPT OFF THE TRANSCRIPT. The `YOU >` line carries a trailing bracket -
+        # "[9.0s of audio, heard in 0.5s]" - and scoring it as spoken words put WER at 80% on a
+        # turn the ear got PERFECT. Third instrument defect of the session, and the same shape as
+        # the other two: the harness was believed before it was checked.
+        heard = next((l.split(">", 1)[1].strip() for l in got if l.strip().startswith("YOU >")), "")
+        heard = re.sub(r"\s*\[[^\]]*\]\s*$", "", heard).strip()
+        flags = [l.strip() for l in got if "HONESTY" in l or "repair:" in l]
+        meta = next((l for l in got if "first audio" in l), "")
+        # DID IT ANSWER ITSELF? The machine's reply goes out of the same speakers into the same
+        # microphone. Half-duplex closes the mic while it talks, so a hit here means the tail
+        # leaked - and this is the measurement that gates arming barge-in at all.
+        # THE MINIMUM LENGTH IS NOT OPTIONAL. Without it this fired on "Ah, yes, me, yeah." - a
+        # four-word whisper artifact that happened to share "yes" and "me" with a 300-character
+        # reply, scoring 0.5 overlap and getting reported as an ECHO LEAK that gates barge-in.
+        # A set-intersection ratio over a handful of words is mostly noise, and a detector that
+        # cries leak on room tone is worse than none because the next real leak gets ignored.
+        if reply and len(norm(heard)) >= 5 and _overlap(heard, reply) > 0.5:
+            echo_hits += 1
+        e, nn, rt = wer(line, heard) if heard else (0, 0, 1.0)
+        rows.append(dict(said=line, heard=heard, reply=reply, wer=round(rt, 3),
+                         seconds=round(time.time() - t0 - spoke, 2), flags=flags, meta=meta))
+        print(f"  heard   > {heard!r}   [WER {rt:.0%}]")
+        print(f"  MACHINE > {reply[:150]}")
+        if meta:
+            print(f"  {meta.strip()[:120]}")
+        for f in flags:
+            print(f"  {f}")
+        if not reply:
+            print("  (no reply - the machine went quiet, ending the duet)")
+            break
+        # The person's NEXT line, written from what the machine just said. This is what makes it a
+        # conversation instead of a list, which is the whole point of the mode.
+        try:
+            r = grid.call_openai(
+                talker["plant"], talker["model"],
+                [{"role": "system", "content":
+                  "You are a person talking OUT LOUD to a machine, testing whether it holds a "
+                  "conversation. Write ONLY your next spoken line: one or two sentences, casual, "
+                  "no stage directions, no quotes. React to what it just said - agree, push back, "
+                  "ask it to do something concrete, or change the subject. Occasionally ask it to "
+                  "compute something, to tell you a short story, or what tools it has."},
+                 {"role": "user", "content": f"It just said: {reply}\n\nYour next line:"}],
+                90, 0.9, 30)
+            nxt = re.sub(r'^["\']|["\']$', "", (r.get("text") or "").strip().split("\n")[0])
+            line = nxt or "Okay, and what else?"
+        except Exception:
+            line = "Okay, and what else?"
+
+    try:
+        proc.stdin and proc.stdin.close()
+    except Exception:
+        pass
+    proc.terminate()
+
+    said = [r for r in rows if r["heard"]]
+    print(f"\n  {len(rows)} turns, machine replied on {sum(1 for r in rows if r['reply'])}")
+    if said:
+        print(f"  it heard the person   median WER {statistics.median([r['wer'] for r in said]):.0%}")
+        print(f"  time to its reply     median {statistics.median([r['seconds'] for r in said]):.1f}s"
+              f"   worst {max(r['seconds'] for r in said):.1f}s")
+    print(f"  answered its OWN voice  {echo_hits}/{len(rows)}"
+          + ("   <- ECHO LEAK: barge-in cannot be armed until this is 0" if echo_hits else "   (clean)"))
+    allflags = [f for r in rows for f in r["flags"]]
+    print(f"  honesty flags raised    {len(allflags)}")
+    for f in allflags[:6]:
+        print(f"    {f}")
+    return dict(mode="duet", rows=rows, echo_hits=echo_hits)
+
+
+def _overlap(a: str, b: str) -> float:
+    wa, wb = set(norm(a)), set(norm(b))
+    return len(wa & wb) / max(len(wa), 1)
+
+
 def _save(res: dict) -> str:
     if not res:
         return ""
@@ -451,6 +644,8 @@ if __name__ == "__main__":
         ran.append(_save(run_noise()))
     if "--loopback" in a or "--all" in a:
         ran.append(_save(run_loopback(device=dev, n=n)))
+    if "--duet" in a or "--all" in a:
+        ran.append(_save(run_duet(device=dev, turns=n or 8)))
     if not ran and not any(x in a for x in ("--render",)):
         print(__doc__)
     for p in ran:
