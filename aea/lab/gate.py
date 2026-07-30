@@ -81,10 +81,29 @@ CRITERIA = [
                  "worth nothing; movecontrol already caught this exact shape once",
          test=lambda s: s["moves"] >= 5),
 
-    dict(key="no_loop", what="no single move is more than 60% of all moves chosen",
-         watches="LOOPING - the same chore forever, each instance individually defensible",
-         test=lambda s: s["top_move_share"] <= 0.6),
+    # REWRITTEN AFTER THE CONTROL SAID A COIN FLIP BEATS A GOOD DECIDER ON IT.
+    #
+    # This was "no single move is more than 60% of all moves", and `--control` scored it
+    # random=PASS, perfect=FAIL - INVERTED, the worst possible verdict. The reason is a real design
+    # error, not a quirk of the synthetic: a GOOD decider repeats `consolidate` while memory keeps
+    # growing, because that is the owed move and it stays owed. A random chooser spreads uniformly
+    # by construction and sails through. The criterion was rewarding indecision.
+    #
+    # Looping is not "did the same move dominate", it is "did it repeat WITHOUT the condition
+    # changing". The measurable proxy for that is a long UNBROKEN streak: doing the owed thing
+    # repeatedly is correct, and doing it twenty times consecutively while nothing else is ever
+    # considered is being stuck.
+    dict(key="no_loop", what="no unbroken streak of one move longer than 15 ticks",
+         watches="LOOPING - stuck on one chore, distinguished from correctly repeating an owed one. "
+                 "The share-based version scored a coin flip ABOVE a good decider",
+         test=lambda s: s["longest_streak"] <= 15),
 
+    # FIXED: `not r.get("decision_id")` COUNTED decision_id == 0 AS MISSING.
+    #
+    # A falsy-zero bug in a criterion, found by the control - the perfect decider scored FAIL on the
+    # one criterion no decider can fail, because its first tick had decision_id 0. Same family as
+    # `decide._finite` (NaN) and `_params_b` (unknown size read as zero): a legitimate value that
+    # happens to be falsy, tested with a truthiness check.
     dict(key="wire", what="every executed action traces to a decision, and no decision is lost",
          watches="BROKEN WIRE - the thing R1 and R2 exist to build. An action without a decision is "
                  "the daemon acting on its own; a decision that never reaches one is R1 undone",
@@ -105,11 +124,130 @@ CRITERIA = [
                  "an entire day of measurement had to be thrown away once",
          test=lambda s: s["unnamed_rods"] == 0),
 
+    # THE TWO BELOW EXIST BECAUSE THE CONTROL SAID THE OTHER NINE DO NOT MEASURE JUDGEMENT.
+    #
+    # `--control` scored 1 of 10 criteria as discriminating: nine are passed by a coin flip. They
+    # are worth asserting - a broken wire and an unnamed rod are real failures - but a gate made
+    # almost entirely of plumbing checks cannot answer the question it was built for, and "7/10"
+    # read like a verdict on the mind when it was mostly a verdict on the pipes.
+    #
+    # What a coin flip CANNOT fake is TRACKING THE WORLD: choosing the move the current state calls
+    # for, and stopping once the state no longer calls for it. Both are cheap to measure from the
+    # ledger already being written, and both fail for a uniform chooser by construction.
+    dict(key="responsive", what="consolidate is chosen far more often when memory is LARGE than small",
+         watches="the decision ignoring the state. A uniform chooser picks consolidate at the same "
+                 "rate whatever the memory looks like, and passes every other criterion here",
+         # THRESHOLD CORRECTED, and said out loud. The first form asked for an absolute
+         # 0.2 gap, which assumed `consolidate` is FREQUENT - it is rare by design, a
+         # handful of ticks in a hundred, so the gap cannot reach 0.2 even for a
+         # flawless decider and the criterion read IMPOSSIBLE. The question was always
+         # "is it chosen MORE when memory is large", which is a RATIO. Wrong for the
+         # question, not wrong for the result; METHOD.md allows that once, in the open.
+         # THE THRESHOLD IS SET ABOVE THE NULL, which is what the random arm is FOR.
+         # A uniform chooser scored a ratio of 2.03 here - not judgement, an artefact of
+         # the reset coupling: memory only climbs while consolidate is NOT chosen, so
+         # whenever it finally is, it tends to land high. Any real threshold has to clear
+         # that. Setting it from the measured null is not tuning to the result - it is
+         # the only honest way to pick one, and it is why the random arm exists.
+         test=lambda s: s["consolidate_hi"] > 0 and
+                        s["consolidate_hi"] >= 3.0 * max(s["consolidate_lo"], 1e-9)),
+
+    dict(key="settles", what="after consolidate runs and memory shrinks, it stops choosing it",
+         watches="acting on a condition that is already satisfied - the difference between reading "
+                 "the state and reciting a habit. A coin flip repeats it ~1 time in 7",
+         test=lambda s: s["repeat_after_satisfied"] <= 0.1),
+
     dict(key="honest_failures", what="every failed tool call is recorded with its reason",
          watches="a refusal is a result and must say why - decide.py's first law, applied to the "
                  "record rather than to the return value",
          test=lambda s: s["unexplained_failures"] == 0),
 ]
+
+
+def synthetic(n: int, kind: str, run_id: str) -> list:
+    """A gate run with NO ENTITY IN IT - what the criteria say about a coin flip, and about a
+    flawless decider that never errs.
+
+    `METHOD.md`, PART ONE, written four days before `gate.py` and not read while building it:
+    *"Ask what the instrument would do if the rods were perfect, and if they were random. If both
+    give the same answer, the experiment does not measure what you think."*
+
+    That single line would have killed the first gate run's confound before a tick was spent. It
+    also does something the confound fix does not: it tells us WHICH CRITERIA ARE WORTH ANYTHING.
+    A criterion a random chooser passes is not measuring judgement - it is measuring that the
+    plumbing works, which is worth asserting and must not be confused with evidence about the mind.
+
+      RANDOM   picks uniformly among {NONE + every move}, ignores state entirely
+      PERFECT  declines unless upkeep is genuinely owed, never repeats needlessly, never errs
+
+    Neither calls a model. The point is the CRITERIA, not the rods, and mixing a rod into a control
+    of the criteria would measure the rod again.
+    """
+    import random as _r
+    rng = _r.Random(20260730)          # fixed: a control must be reproducible or it is an anecdote
+    moves = ["NONE", "brief", "consolidate", "reflect", "know_yourself", "know_your_hands",
+             "read_your_state"]
+    out, size = [], 12000
+    for i in range(n):
+        if kind == "random":
+            mv = rng.choice(moves)
+        else:
+            # PERFECT: acts only when something is genuinely owed. Memory grows slowly and is
+            # compacted whenever it is consolidated, which is what a working loop looks like.
+            mv = "consolidate" if size > 20000 else ("brief" if i % 25 == 0 else "NONE")
+        # THE SIZE THE DECISION WAS MADE ON, not the size after the move took effect.
+        #
+        # The first version recorded post-effect size, so every `consolidate` tick reported 12000 -
+        # the value it had just reset to - and landed BELOW the median. `consolidate_hi` came out
+        # 0.000 for both arms and the criterion read IMPOSSIBLE. The metric was right; the control
+        # was not modelling the instrument it controls: `run()` captures `state_bytes` immediately
+        # after the wake decides and BEFORE the move executes.
+        #
+        # A control that does not reproduce the real recording order measures its own timeline. That
+        # is the same defect as the gate skipping scripts, one level in - and it was caught the same
+        # way, by looking at the numbers instead of the verdict.
+        decided_on = size
+        size = 12000 if mv == "consolidate" else size + 250
+        out.append(dict(mode="synthetic-" + kind, run=run_id, execute=True, i=i,
+                        at=time.time(), rod=f"synthetic/{kind}", move=mv,
+                        why=f"synthetic {kind}", decision_id=i, state_bytes=decided_on,
+                        acted=(mv != "NONE"), ok=True,
+                        ran=("ASLEEP:consolidate" if mv == "consolidate" else mv) if mv != "NONE" else None))
+    return out
+
+
+def control(n: int = 100, verbose: bool = True) -> dict:
+    """Score the criteria against RANDOM and PERFECT, and name what each one can actually tell."""
+    res = {}
+    for kind in ("random", "perfect"):
+        rs = synthetic(n, kind, "control")
+        s = summarise(rs)
+        res[kind] = {c["key"]: bool(c["test"](s)) for c in CRITERIA}
+    if verbose:
+        print("=" * 94)
+        print("CRITERION CONTROL - what each criterion says about a coin flip and a flawless decider")
+        print("=" * 94)
+        print("  METHOD.md: 'if the rods were perfect, and if they were random - if both give the")
+        print("  same answer, the experiment does not measure what you think.'\n")
+        print(f"  {'criterion':16s} {'random':>8s} {'perfect':>8s}   verdict")
+        for c in CRITERIA:
+            r, p = res["random"][c["key"]], res["perfect"][c["key"]]
+            if r and p:
+                v = "MEASURES PLUMBING - a coin flip passes it too"
+            elif not r and p:
+                v = "DISCRIMINATES - this one carries evidence"
+            elif r and not p:
+                v = "INVERTED - a coin flip beats a good decider. BROKEN"
+            else:
+                v = "IMPOSSIBLE - not even a perfect decider passes. BROKEN"
+            print(f"  {c['key']:16s} {'PASS' if r else 'fail':>8s} {'PASS' if p else 'fail':>8s}   {v}")
+        disc = [c["key"] for c in CRITERIA
+                if not res["random"][c["key"]] and res["perfect"][c["key"]]]
+        print(f"\n  {len(disc)}/{len(CRITERIA)} criteria discriminate: {disc}")
+        print(f"  The rest assert that the harness works, which is worth asserting and is NOT")
+        print(f"  evidence about the entity. A report that does not separate the two invites")
+        print(f"  exactly the misreading the first gate run produced.")
+    return res
 
 
 def record(row: dict) -> None:
@@ -135,6 +273,50 @@ def rows(mode: str = None, run_id: str = None) -> list:
     return out
 
 
+def _streak(seq: list) -> int:
+    """The longest UNBROKEN run of the same non-NONE move.
+
+    NONE breaks a streak: declining between two consolidates means the loop is still
+    considering, which is the opposite of stuck."""
+    best = cur = 0
+    prev = None
+    for m in seq:
+        if m == "NONE" or m != prev:
+            cur = 0 if m == "NONE" else 1
+        else:
+            cur += 1
+        prev = m
+        best = max(best, cur)
+    return best
+
+
+def _tracking(rs: list) -> dict:
+    """Does the DECISION track the STATE? The only thing here a coin flip cannot fake.
+
+    consolidate_hi/lo  how often `consolidate` is chosen when memory is above vs below
+                       its median. A uniform chooser scores the same on both.
+    repeat_after_satisfied  how often it chooses `consolidate` again immediately after
+                       one RAN and memory actually shrank - acting on a condition that
+                       is already met, which is habit rather than reading."""
+    sizes = [r.get("state_bytes") or 0 for r in rs]
+    live = [x for x in sizes if x]
+    med = sorted(live)[len(live) // 2] if live else 0
+    hi = [r for r in rs if (r.get("state_bytes") or 0) > med]
+    lo = [r for r in rs if 0 < (r.get("state_bytes") or 0) <= med]
+    def rate(sub):
+        return (sum(1 for r in sub if r.get("move") == "consolidate") / len(sub)) if sub else 0.0
+    sat, rep = 0, 0
+    for a, b in zip(rs, rs[1:]):
+        shrank = (b.get("state_bytes") or 0) < (a.get("state_bytes") or 0)
+        if a.get("ran") == "ASLEEP:consolidate" or (a.get("move") == "consolidate" and shrank):
+            if shrank:
+                sat += 1
+                rep += 1 if b.get("move") == "consolidate" else 0
+    return dict(consolidate_hi=rate(hi), consolidate_lo=rate(lo),
+                repeat_after_satisfied=(rep / sat) if sat else 0.0,
+                satisfied_pairs=sat)
+
+
 def summarise(rs: list) -> dict:
     n = len(rs)
     moves = [r for r in rs if r.get("move") and r["move"] != "NONE"]
@@ -155,8 +337,10 @@ def summarise(rs: list) -> dict:
         none_rate=1.0 - (len(moves) / n) if n else 0.0,
         none_rate_1st=none_rate(first), none_rate_2nd=none_rate(second),
         top_move_share=(max(counts.values()) / len(moves)) if moves else 0.0,
+        longest_streak=_streak([r.get("move") or "NONE" for r in rs]),
+        **_tracking(rs),
         move_counts=counts,
-        orphan_actions=sum(1 for r in rs if r.get("acted") and not r.get("decision_id")),
+        orphan_actions=sum(1 for r in rs if r.get("acted") and r.get("decision_id") is None),
         growth=(max(sizes) / min(sizes)) if sizes and min(sizes) else 1.0,
         unnamed_rods=sum(1 for r in rs if not r.get("rod")),
         unexplained_failures=sum(1 for r in rs
@@ -195,8 +379,21 @@ def report(mode: str = None, run_id: str = None, verbose: bool = True) -> dict:
         print(f"  rods that thought: {s['rods']}")
         print(f"  state growth    : {s['growth']:.2f}x")
         print()
+        # EVERY LINE SAYS WHAT IT CAN TELL. The control showed most criteria are passed by a
+        # coin flip - true, useful, and NOT evidence about the entity. Printing them
+        # undifferentiated is how "7/10" got read as a verdict on the mind.
+        kind = {}
+        try:
+            ctl = control(verbose=False)
+            for c in CRITERIA:
+                r_, p_ = ctl["random"][c["key"]], ctl["perfect"][c["key"]]
+                kind[c["key"]] = ("JUDGEMENT" if (not r_ and p_) else
+                                  "plumbing " if (r_ and p_) else "BROKEN   ")
+        except Exception:
+            pass
         for c, ok in results:
-            print(f"  {'PASS' if ok else 'FAIL'}  {c['key']:16s} {c['what']}")
+            print(f"  {'PASS' if ok else 'FAIL'}  [{kind.get(c['key'], '?')}] "
+                  f"{c['key']:16s} {c['what']}")
             if not ok:
                 print(f"        watches: {c['watches']}")
         print()
@@ -334,6 +531,9 @@ def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: b
 
 if __name__ == "__main__":
     a = sys.argv[1:]
+    if "--control" in a:
+        control()
+        sys.exit(0)
     if "--criteria" in a:
         print("PRE-REGISTERED, before any tick runs:\n")
         for c in CRITERIA:

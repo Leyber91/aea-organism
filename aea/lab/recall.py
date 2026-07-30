@@ -61,10 +61,24 @@ except Exception:
 ROOT = str(grid.ROOT)
 CACHE = os.path.join(str(grid.STATE), "lab", "recall_vectors.json")
 
+# THE METHOD DOC WAS MISSING FROM ITS OWN RETRIEVAL, which is how `gate.py` got built without it.
+#
+# `aea/lab/METHOD.md` is 33KB of experiment craft - "PART ONE: DESIGNING AN EXPERIMENT" and "THE
+# INSTRUMENT LAW, added after seven defects in one day". It contains, in one line, the check that
+# would have caught the gate confound before a single tick ran: *"ask what the instrument would do
+# if the rods were perfect, and if they were random. If both give the same answer, the experiment
+# does not measure what you think."*
+#
+# I ran `recall` before designing that experiment - the boot step I had just added - and it could
+# not return METHOD.md, because METHOD.md was not indexed. The retrieval tool built to stop lessons
+# being missed was blind to the single document most likely to prevent the next one. A corpus that
+# omits the manual is not a retrieval failure, it is a corpus failure, and it is invisible from
+# inside the benchmark because no gate case pointed there.
 SOURCES = [
     ("diary/DISCOVERIES.md", re.compile(r"^## (D\d+[^\n]*)$", re.M)),
     ("diary/SESSION_LOG.md", re.compile(r"^## (\d{4}-\d{2}-\d{2}[^\n]*)$", re.M)),
     ("CLAUDE.md", re.compile(r"^## (\d+ · [^\n]*)$", re.M)),
+    ("aea/lab/METHOD.md", re.compile(r"^#{2,3} ([^\n]+)$", re.M)),
 ]
 
 _STOP = set("""the a an and or of to is are was were be been in on at by for with that this it its

@@ -1498,3 +1498,77 @@ below where they were watching.
 **THE SHAPE, for the seventh time today: the instrument was the broken part.** The difference is
 that this time the pre-registered criteria caught it in 94 minutes instead of a day, and named the
 mechanism themselves.
+
+## D42 · The gate was 9/10 plumbing, and METHOD.md had the check that would have said so (2026-07-30)
+
+Luis: *"we need to check better when we build what we're actually testing... do we think there's more
+errors to be measured? Are we using the right measure, the right technique? Is it going to measure
+that?"*
+
+**THE DISCIPLINE ALREADY EXISTED AND I DID NOT READ IT.** `aea/lab/METHOD.md`, 33KB, written four
+days earlier, contains "PART ONE: DESIGNING AN EXPERIMENT" and "THE INSTRUMENT LAW - added after
+seven defects in one day". One line in it kills the entire first gate run before a tick is spent:
+
+> *"Ask what the instrument would do if the rods were perfect, and if they were random. If both give
+> the same answer, the experiment does not measure what you think."*
+
+If the entity had been PERFECT, my gate would still have shown restraint collapsing - memory grew
+either way, because the harness skipped `consolidate`. Perfect and random give the same answer. The
+experiment did not measure what I thought, and one sentence I had not read says exactly that.
+
+**AND `recall` COULD NOT SURFACE IT, because METHOD.md was not in its sources.** I ran the retrieval
+tool before designing the experiment - the boot step added an hour earlier - and it returned D20 and
+D40 and could not return the manual, because the corpus indexed the diary and CLAUDE.md and not the
+lab's own method document. **A corpus that omits the manual is not a retrieval failure, it is a
+corpus failure, and it is invisible from inside the benchmark** because no gate case pointed there.
+Fixed: METHOD.md is indexed.
+
+**WHAT THE CHECK FOUND WHEN FINALLY RUN.** `gate --control` scores every criterion against a coin
+flip and a flawless decider. First run: **1 of 10 criteria discriminated.**
+
+| criterion | random | perfect | verdict |
+|---|---|---|---|
+| `no_loop` | PASS | **fail** | **INVERTED - a coin flip beats a good decider** |
+| `wire` | fail | **fail** | **IMPOSSIBLE - not even perfect passes** |
+| 7 others | PASS | PASS | plumbing |
+
+Two were genuinely broken, both real bugs:
+
+- **`wire`** used `not r.get("decision_id")`, so **`decision_id == 0` read as missing** - a
+  falsy-zero bug, the same family as `decide._finite` (NaN) and `_params_b` (unknown size as zero).
+- **`no_loop`** capped one move at 60% of all moves, and a GOOD decider repeats `consolidate` while
+  memory keeps growing because that is the owed move and it stays owed. A uniform chooser spreads by
+  construction and sailed through. **The criterion was rewarding indecision.** Rewritten as a longest
+  UNBROKEN STREAK: repeating the owed thing is correct, doing it twenty times consecutively while
+  nothing else is ever weighed is being stuck.
+
+**THEN THE REAL PROBLEM: nine of ten criteria were PLUMBING.** True, worth asserting, and NOT
+evidence about the entity - so "7/10" read as a verdict on the mind when it was mostly a verdict on
+the pipes. What a coin flip cannot fake is TRACKING THE WORLD, so two criteria were added:
+
+    responsive   consolidate chosen far more when memory is LARGE than small
+    settles      after consolidate runs and memory shrinks, it stops choosing it
+
+**Both broke on their first control run, and both breakages were in the CONTROL:**
+
+1. The synthetic recorded `state_bytes` AFTER the move took effect, so every consolidate reported
+   the size it had just reset to and landed below the median - `consolidate_hi` came out 0.000 for
+   both arms. The real `run()` records size at DECISION time. **A control that does not reproduce
+   the instrument's recording order measures its own timeline.**
+2. The `responsive` threshold asked for an absolute 0.2 gap, which assumed consolidate is FREQUENT;
+   it is rare by design, so the gap cannot reach 0.2 even for a flawless decider. Wrong for the
+   QUESTION, not for the result - corrected to a ratio, in the open, as METHOD.md requires.
+
+Then the random arm scored a ratio of **2.03** - not judgement, an artefact of the reset coupling
+(memory only climbs while consolidate is NOT chosen, so when it finally is, it tends to land high).
+The threshold is set at 3.0, **above the measured null**. That is not tuning to the result; it is
+the only honest way to pick a threshold, and it is what the random arm is for.
+
+**RESULT: 3 of 12 criteria now discriminate** (`restraint`, `responsive`, `settles`) and every report
+line is labelled `JUDGEMENT` or `plumbing`, so the two can never be summed into a single misleading
+score again.
+
+**THE ANSWER TO "ARE THERE MORE ERRORS TO BE MEASURED": yes, there were four more, and the check
+that finds them is one line in a document this repo already had.** The instrument law holds at every
+level - it held for the rods, then for the census, then for the gate, and then for the control of
+the gate.
