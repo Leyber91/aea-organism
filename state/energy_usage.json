@@ -8,13 +8,13 @@
   "last": "2026-07-11 12:50"
  },
  "nvidia/mistralai/mistral-small-4-119b-2603": {
-  "calls": 123,
+  "calls": 124,
   "ok": 120,
-  "fail": 3,
-  "consec_fail": 3,
+  "fail": 4,
+  "consec_fail": 4,
   "ema_latency": 1.0,
-  "last": "2026-07-28 23:10",
-  "cooled_at": 1785280220.8674119
+  "last": "2026-07-30 03:31",
+  "cooled_at": 1785382281.8641415
  },
  "nvidia/mistralai/mistral-large-3-675b-instruct-2512": {
   "calls": 32,
@@ -59,11 +59,11 @@
   "last": "2026-07-24 21:36"
  },
  "groq/llama-3.3-70b-versatile": {
-  "calls": 7,
-  "ok": 7,
+  "calls": 8,
+  "ok": 8,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 0.2,
-  "last": "2026-07-28 23:18"
+  "ema_latency": 0.8,
+  "last": "2026-07-30 03:31"
  }
 }

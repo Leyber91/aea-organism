@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 157,
+    "count": 159,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 157
+    "count": 159
    },
    {
     "src": "THE_PROBE",
@@ -227,6 +227,12 @@
      "type": "module",
      "path": "aea/lab/crystallize.py",
      "purpose": "crystallize.py - TURN A BATTERY RUN INTO LESSONS THAT DO NOT HAVE TO BE RE-DERIVED."
+    },
+    {
+     "id": "decide",
+     "type": "module",
+     "path": "aea/kernel/decide.py",
+     "purpose": "decide.py - THE WIRE FROM THE LOOP THAT THINKS TO THE LOOP THAT ACTS."
     },
     {
      "id": "dna",
@@ -617,6 +623,12 @@
      "type": "module",
      "path": "aea/lab/tests/test_pipeline.py",
      "purpose": "test_pipeline.py - THE SELF-MODIFICATION LADDER, TESTED ON CHANGES DESIGNED TO GET THROUGH."
+    },
+    {
+     "id": "test_wire_live",
+     "type": "module",
+     "path": "aea/lab/tests/test_wire_live.py",
+     "purpose": "test_wire_live - PROVE THE WIRE INSIDE THE DAEMON, not only in isolation."
     },
     {
      "id": "tiers",
@@ -1107,6 +1119,16 @@
     },
     {
      "src": "battery",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
      "dst": "listen",
      "rel": "imports"
     },
@@ -1426,6 +1448,11 @@
      "rel": "imports"
     },
     {
+     "src": "decide",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "dna",
      "dst": "base",
      "rel": "imports"
@@ -1738,6 +1765,11 @@
     {
      "src": "live",
      "dst": "pulse",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "decide",
      "rel": "imports"
     },
     {
@@ -2198,6 +2230,16 @@
     {
      "src": "test_pipeline",
      "dst": "shadow",
+     "rel": "imports"
+    },
+    {
+     "src": "test_wire_live",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "test_wire_live",
+     "dst": "live",
      "rel": "imports"
     },
     {

@@ -24,6 +24,7 @@ from datetime import datetime, timezone
 
 from aea.kernel import grid
 from aea.kernel import pulse  # durable persistence + the nervous signal (the brain view watches)
+from aea.kernel import decide  # the wire from the loop that THINKS to this one, which ACTS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(grid.STATE)              # repo root (grid.STATE = ROOT/state); cwd for '-m aea.*' subprocess runs
@@ -104,6 +105,26 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     the definition of stuck. After BRIEF_GIVE_UP the loop stops paying for it and does the work it can
     still do. The brief is retried on the next calendar day, or immediately once a move is applied.
     """
+    # THE WAKE GETS FIRST REFUSAL. R1 of the wiring ladder, and the smallest possible version of it:
+    # the deliberating loop may REORDER the actions this loop already performs, and may not add one.
+    # `decide.KNOWN` is the whole surface and it holds exactly the three below. No capability
+    # ceiling is touched, so this wire is reversible by deleting seven lines.
+    #
+    # Until today `aea/loop/aea.py` decided an action every tick and NOTHING READ IT. This is the
+    # line that makes the deliberation load-bearing.
+    #
+    # The ladder underneath is NOT legacy and must not be removed. It is the correct default for an
+    # entity with no better idea, and it already encodes a measured failure: a brief that failed for
+    # an external reason re-ran byte-identically forty-eight times a day and starved every branch
+    # below it, with twelve identical trust-ledger entries as the receipt.
+    cand, why = decide.choose()
+    hb["last_wake_why"] = why                      # visible in --status either way
+    if cand:
+        log(f"  {decide.explain(cand, why)}")
+        pulse.emit("wake", "chose", f"{cand['action']} :: {why}")
+        return cand["action"], cand["argv"], cand["timeout"]
+    pulse.emit("wake", "no-decision", why, ok=True)   # ok=True: declining is not a fault
+
     stuck = int(hb.get("brief_fails", 0)) >= BRIEF_GIVE_UP
     if hb.get("last_brief_date") != today() and not stuck:
         return "AWAKE:brief", ["-m", "aea.organs.brief"], 240
@@ -234,7 +255,16 @@ def tick(hb: dict, demo: bool):
     if demo and action.startswith("AWAKE"):        # keep the demo cheap: skip the 60s brief, do a memory slice
         action, args, tmo = "ASLEEP:consolidate(demo)", ["-m", "aea.memory.consolidate", "--limit", "1"], 300
     if not args:
-        log(f"tick {hb['total_ticks']}  IDLE (corpus fully consolidated; nothing owed) - resting")
+        # A REST MUST BE AS VISIBLE AS AN ACT, and until now it was not: this branch logged to a
+        # file and returned, while every acting branch emitted to the bus. An observer watching
+        # events could not tell a resting entity from a dead one - which is the exact failure the
+        # decide module is built around, already present here.
+        #
+        # It matters more the further up the ladder we go: a deviation-triggered loop rests most of
+        # the time, so silence becomes the normal case and a crash hides inside it perfectly.
+        why = hb.get("last_wake_why") or "corpus fully consolidated; nothing owed"
+        log(f"tick {hb['total_ticks']}  RESTING - {why}")
+        pulse.emit("life", "rest", f"#{hb['total_ticks']} {why}", ok=True)
         return
     log(f"tick {hb['total_ticks']}  {action}  -> running {' '.join(args)}")
     pulse.emit("life", "tick", f"#{hb['total_ticks']} {action}")
