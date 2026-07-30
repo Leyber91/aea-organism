@@ -97,7 +97,29 @@ def understand(model: str, prompt: str, plant: str = "nvidia", max_tokens: int =
     return out
 
 
-def recall(model: str, texts, plant: str = "nvidia", kind: str = "query") -> list:
+# RECALL IS LOCAL BY DEFAULT, AND THAT IS A PRIVACY DECISION BEFORE IT IS A PERFORMANCE ONE.
+#
+# Luis: "are you sure we don't have more access besides modality? explore all types of access
+# before entering more." He was right, and the access survey found what modality alone could not:
+# ollama serves `mxbai-embed-large` LOCALLY.
+#
+# The defect that had already shipped: `recall` defaulted to nvidia, so embedding a memory sent it
+# off this machine. `persona.py` stores memories about real people - his partner, his debt, his
+# working hours - and every one of them would have gone to a hosted endpoint on a metered quota,
+# for an operation the machine performs itself. `grid.PLANTS` has said `ollama: privacy="local"`
+# the entire time and nothing consulted it. Dimension 3 of access existed in the code and had no
+# reader.
+#
+# AND THE LOCAL MODEL IS BETTER AT THE JOB, which was not the argument for it and is the reason it
+# is not a compromise. Same question, same four memories, same correct ranking:
+#     LOCAL   0.613 / 0.585 / 0.403 / 0.385   spread 0.228
+#     NETWORK 0.368 / 0.308 / 0.290 / 0.271   spread 0.097
+# 2.3x the discrimination, which is what a retrieval threshold actually needs. It loses only on
+# latency - 5.9s against 0.6s - for an operation that runs in the background and is not waited on.
+LOCAL_EMBED = ("ollama", "mxbai-embed-large:latest")
+
+
+def recall(model: str = "", texts=None, plant: str = "", kind: str = "query") -> list:
     """RECALL - text in, VECTORS out. The sense the entity most needs and does not have.
 
     `persona._relevance` and `decide` both admit in their own docstrings that matching is LEXICAL,
@@ -107,15 +129,24 @@ def recall(model: str, texts, plant: str = "nvidia", kind: str = "query") -> lis
     `kind` is NVIDIA's asymmetric-embedding flag: a stored passage and a live query are embedded
     DIFFERENTLY by these models, and using the wrong one silently degrades every comparison. It is
     a required field here rather than an optional one for exactly that reason."""
+    if not plant and not model:
+        plant, model = LOCAL_EMBED          # private, unmetered, offline, and sharper. See above.
+    plant = plant or "nvidia"
     if isinstance(texts, str):
         texts = [texts]
     if not texts or not all(isinstance(t, str) and t.strip() for t in texts):
         raise Bad("recall needs at least one non-empty string")
     if kind not in ("query", "passage"):
         raise Bad("kind must be 'query' or 'passage' - see the note on asymmetric embedding")
-    d = _post(plant, "/embeddings",
-              {"model": model, "input": list(texts), "input_type": kind,
-               "encoding_format": "float", "truncate": "END"})
+    body = {"model": model, "input": list(texts)}
+    if plant != "ollama":
+        # ASYMMETRIC EMBEDDING IS AN NVIDIA CONVENTION, NOT A UNIVERSAL ONE. These models embed a
+        # stored passage differently from a live query, and sending the wrong one silently degrades
+        # every comparison. ollama's endpoint does not accept the field at all and 400s on it - so
+        # the parameter belongs to the plant, not to the modality, which is dimension 2 of access
+        # showing up inside a single function.
+        body.update({"input_type": kind, "encoding_format": "float", "truncate": "END"})
+    d = _post(plant, "/embeddings", body)
     try:
         vecs = [row["embedding"] for row in d["data"]]
     except Exception as e:
