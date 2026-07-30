@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 159,
+    "count": 160,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 159
+    "count": 160
    },
    {
     "src": "THE_PROBE",
@@ -479,6 +479,12 @@
      "type": "module",
      "path": "aea/io/prosody.py",
      "purpose": "prosody.py - HOW IT WAS SAID, not just what was said. The cheap half of what Moshi does."
+    },
+    {
+     "id": "protocol",
+     "type": "module",
+     "path": "aea/lab/protocol.py",
+     "purpose": "protocol.py - THE TOOL PROTOCOL BATTERY. Every angle we can test without a network."
     },
     {
      "id": "pulse",
@@ -1115,6 +1121,11 @@
     {
      "src": "battery",
      "dst": "converse",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "protocol",
      "rel": "imports"
     },
     {
@@ -1955,6 +1966,16 @@
     {
      "src": "prosody",
      "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "protocol",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "protocol",
+     "dst": "trust",
      "rel": "imports"
     },
     {

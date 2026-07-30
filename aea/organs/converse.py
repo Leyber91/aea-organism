@@ -1626,7 +1626,11 @@ def act_or_answer(user_text: str, turns: list, system: str, allow: tuple, zone: 
     if expr:
         try:
             out = hands.invoke("calc", {"expression": expr}, zone=zone, allow=allow)
-            facts.append(f"calc({expr}) ->\n{out}")
+            # FENCED, because this string is about to be injected into a prompt as fact. `calc` is
+            # the safest possible case - local, pure, arithmetic - and it is fenced anyway, because
+            # a rule applied only where it feels necessary is a rule that will be forgotten where
+            # it is. See hands.fence.
+            facts.append(hands.fence("calc", f"calc({expr}) -> {out}"))
             receipt.setdefault("calls", []).append({"tool": "calc", "args": {"expression": expr},
                                                     "out": out[:200]})
             print(f"      TOOL calc({expr}) -> {out[:80]}", flush=True)

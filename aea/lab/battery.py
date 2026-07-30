@@ -645,6 +645,16 @@ WIRE_INJECT = [
 ]
 
 
+def suite_protocol() -> list:
+    """THE TOOL PROTOCOL, 212 cases, in its own module because it is a protocol and not a helper.
+    Registry integrity, schema conformance, the full zone matrix, allowlists, the forbidden tools,
+    30 argument attacks against two tools, argument type violations, the output fence,
+    determinism, and refusal quality. See `aea/lab/protocol.py`."""
+    from aea.lab import protocol
+    return [dict(case=f"{r['section']}/{r['case']}", got=r["got"], ok=r["ok"], err=r["err"])
+            for r in protocol.run(verbose=False)["rows"]]
+
+
 def suite_tools() -> list:
     """R2a: the wake may name a tool; it may not write an argument."""
     import tempfile
@@ -807,7 +817,7 @@ def suite_wiring() -> list:
 
 
 FAST_SUITES = {"endpoint": suite_endpoint, "prefilter": suite_prefilter, "doubt": suite_doubt,
-               "wiring": suite_wiring, "tools": suite_tools,
+               "wiring": suite_wiring, "tools": suite_tools, "protocol": suite_protocol,
                "speech": suite_speech, "facts": suite_facts,
                "attribution": suite_attribution, "honesty": suite_honesty,
                "budget": suite_budget}
