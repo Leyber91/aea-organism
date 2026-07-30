@@ -897,3 +897,51 @@ limits", and never fanned out across the 27 living rods that had their own separ
 councils (including the R2c refusal, whose seats may have been cut off mid-argument), and the
 movecontrol runs. A result produced by a truncated mind is not a weaker result, it is a different
 experiment.
+
+## D30 · The council was seated from a table measured for SPEECH LATENCY, and the module says so about itself (2026-07-30)
+
+Two findings from re-running the R2c council with the length cap removed. The first corrects a claim
+I made an hour earlier.
+
+**THE CAP WAS NOT BINDING, and I asserted that it was.** I wrote that `RUNAWAY = 4000` meant "a seat
+truncated mid-argument is still scored and still counted toward a 2/3 consensus", as though it were
+happening. Measured, capped vs uncapped seat lengths in characters:
+
+| seat | capped | uncapped |
+|---|---|---|
+| BUILDER | 1926 | 1565 |
+| SKEPTIC | 1971 | 2595 |
+| USER | 2822 | 2160 |
+| HISTORIAN | 1887 | **901** |
+
+The longest seat was about 700 tokens against a 4000 ceiling, and HISTORIAN got SHORTER without the
+cap. Removing it was still correct - it *could* bind on a longer question, and there is nothing to
+buy by keeping it - but it was not the defect here, and the verdict was never truncation-affected.
+**The R2c REFUSAL stands, and now for a good reason rather than an assumed one.**
+
+**WHAT THE ROD RECORDING ACTUALLY EXPOSED.** The moment transcripts named their rods:
+
+    BUILDER    tier=reflex   nvidia/meta/llama-3.1-8b-instruct        <- an 8b
+    SKEPTIC    tier=voice    nvidia/llama-3.3-nemotron-super-49b-v1
+    USER       tier=voice    nvidia/llama-3.3-nemotron-super-49b-v1
+    HISTORIAN  tier=depth    nvidia/nemotron-3-ultra-550b-a55b
+
+The BUILDER seat - whose entire job is to attack feasibility - was arguing on an **8b**, and the
+transcript shows what that produces: *"I don't know what kind of daemon it is"*, *"I don't know how
+it would scale"*. Not a position; a shrug, counted toward a 2/3 agreement.
+
+**WHY:** seats drew from `tiers.ORGANS`, and every assignment in that table is a measurement of
+SPOKEN-TURN LATENCY - `reflex` exists because 0.456s to first token feels natural in speech and
+1.803s does not. A council runs for minutes with nobody waiting to hear it, so time-to-first-token
+buys exactly nothing, and it was being paid for with the seat's ability to think.
+
+**AND `tiers.py` SAYS SO ABOUT ITSELF**, in its own docstring, in capitals: *"WHAT THIS IS NOT. It
+is not a council."* The module warned against this precise use and the use happened anyway. That is
+D26 in the direction nobody checks - not a lesson that failed to travel outward, but a warning
+sitting at the destination that the caller never read.
+
+**FIXED:** council seats now draw distinct rods off the repaired frontier ladder, deepest first -
+550b / 128b / 120b instead of 550b / 49b / 8b. Diversity is preserved (a same-model population
+converges on a shared convention, measured, and not fixable by prompting) and the floor rises,
+because the ladder now holds many capable rods. There is no cost to any of it: the plant bills
+neither tokens nor requests.

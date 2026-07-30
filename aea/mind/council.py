@@ -62,13 +62,48 @@ RUNAWAY = 4000                  # the only cap: a loop guard, never a length con
                                 # answer with money nobody was spending.
 
 
+def _seat_rod(tier: str) -> dict:
+    """A CAPABLE, DISTINCT rod for a council seat - not a latency-tuned conversational organ.
+
+    THE DEFECT, exposed the moment transcripts started recording their rods (2026-07-30). Seats drew
+    from `tiers.ORGANS`, and every assignment in that table was measured for SPOKEN-TURN LATENCY -
+    `reflex` exists because 0.456s to first token feels natural in speech and 1.803s does not. So
+    the BUILDER seat, whose whole job is to attack feasibility, argued on `meta/llama-3.1-8b`, and
+    the transcript shows exactly what an 8b produces when asked to hold a position: "I don't know
+    what kind of daemon it is", "I don't know how it would scale". That is not a position, it is a
+    shrug, and it was being counted toward a 2/3 agreement.
+
+    `tiers.py` SAYS SO IN ITS OWN DOCSTRING - *"WHAT THIS IS NOT. It is not a council."* The module
+    warned against this exact use and the use happened anyway: D26 again, in the direction nobody
+    checks, where the warning is present and the caller never reads it.
+
+    A council runs for minutes and nobody is waiting to hear it, so time to first token buys
+    nothing. What a council needs is what `tiers.ORGANS` was never selecting for: seats that can
+    each hold an argument, and seats that DIFFER - a same-model population converges on a shared
+    convention, measured, and not fixable by prompting.
+
+    So: distinct rods off the repaired frontier ladder, deepest first, one per tier name. Diversity
+    is preserved because the ladder holds many capable rods; the floor rises because every one of
+    them is capable. The `budget` field is kept for callers that still read it, and is a LATENCY
+    hint only - nothing here caps tokens (D29)."""
+    from aea.energy import energy
+    rods = [r for r in energy.ladder("frontier", "private", order="depth")
+            if grid.PLANTS.get(r[0], {}).get("privacy") != "local"]
+    if not rods:                                    # every hosted plant down -> the local floor
+        return dict(tiers.LOCAL)
+    order = ["depth", "voice", "reflex"]            # deepest seat first, then distinct rods after it
+    i = order.index(tier) if tier in order else len(order) - 1
+    plant, model = rods[min(i, len(rods) - 1)]
+    return dict(plant=plant, model=model, budget=(12 if i == 0 else 9 if i == 1 else 6))
+
+
 class Seat:
     def __init__(self, name, tier, seed, held=False):
         self.name, self.tier, self.seed, self.held = name, tier, seed, held
 
     @property
     def rod(self):
-        r = tiers.organ(self.tier)
+        r = _seat_rod(self.tier)
         # WHICH MIND SPOKE IS PART OF THE VERDICT, AND IT WAS NOT BEING WRITTEN DOWN.
         #
         # Every transcript recorded the seat's TIER and never its ROD. A tier is a request; the rod
