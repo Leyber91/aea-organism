@@ -1,0 +1,33 @@
+{"at": "2026-07-30 07:25:05", "suite": "endpoint", "n": 72, "passed": 71, "failures": [{"case": "I am not sure about that", "err": "late_take", "got": "False"}]}
+{"at": "2026-07-30 07:25:05", "suite": "prefilter", "n": 37, "passed": 37, "failures": []}
+{"at": "2026-07-30 07:25:05", "suite": "doubt", "n": 14, "passed": 14, "failures": []}
+{"at": "2026-07-30 07:25:05", "suite": "wiring", "n": 44, "passed": 44, "failures": []}
+{"at": "2026-07-30 07:25:05", "suite": "tools", "n": 30, "passed": 30, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "protocol", "n": 212, "passed": 212, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "speech", "n": 15, "passed": 15, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "facts", "n": 23, "passed": 23, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "attribution", "n": 27, "passed": 27, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "honesty", "n": 89, "passed": 89, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "budget", "n": 6, "passed": 6, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "endpoint", "n": 72, "passed": 71, "failures": [{"case": "I am not sure about that", "err": "late_take", "got": "False"}]}
+{"at": "2026-07-30 07:25:06", "suite": "prefilter", "n": 37, "passed": 37, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "doubt", "n": 14, "passed": 14, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "wiring", "n": 44, "passed": 44, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "tools", "n": 30, "passed": 30, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "protocol", "n": 212, "passed": 212, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "speech", "n": 15, "passed": 15, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "facts", "n": 23, "passed": 23, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "attribution", "n": 27, "passed": 27, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "honesty", "n": 89, "passed": 89, "failures": []}
+{"at": "2026-07-30 07:25:06", "suite": "budget", "n": 6, "passed": 6, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "endpoint", "n": 72, "passed": 71, "failures": [{"case": "I am not sure about that", "err": "late_take", "got": "False"}]}
+{"at": "2026-07-30 07:26:54", "suite": "prefilter", "n": 37, "passed": 37, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "doubt", "n": 14, "passed": 14, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "wiring", "n": 44, "passed": 44, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "tools", "n": 30, "passed": 30, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "protocol", "n": 212, "passed": 212, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "speech", "n": 15, "passed": 15, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "facts", "n": 23, "passed": 23, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "attribution", "n": 27, "passed": 27, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "honesty", "n": 89, "passed": 89, "failures": []}
+{"at": "2026-07-30 07:26:54", "suite": "budget", "n": 6, "passed": 6, "failures": []}

@@ -41,11 +41,42 @@ except Exception:
 OUT = os.path.join(str(grid.STATE), "lab", "battery")
 
 
+HISTORY = os.path.join(OUT, "history.jsonl")
+
+
 def _save(name: str, rows: list, meta: dict) -> str:
+    """Write the latest run AND append it to a history that is never overwritten.
+
+    Luis, 2026-07-30: "every test we do is information that we should store."
+
+    He is right, and until this line every test run this project has ever done was destroyed by the
+    next one. `{suite}.json` was written and rewritten; there was no record that a case had EVER
+    failed, only whether it fails now. That is the third instance of the same defect - the council
+    wrote `last.json`, the party wrote `party.json`, and the battery wrote `{suite}.json`. Three
+    separate places where the interesting half was thrown away and the regenerable half was kept.
+
+    WHY IT MATTERS MORE HERE THAN ANYWHERE ELSE, and this is the part worth understanding: a green
+    suite tells you the state of the code. A HISTORY of green and red tells you which lessons this
+    project keeps having to re-learn - which is the one question a body of 72 recorded lessons
+    cannot currently answer about itself. A test that has failed three times on three different
+    days is a lesson that has not landed, and no amount of writing it down more clearly will change
+    that. Without the history, every regression looks like a first offence.
+
+    One line per suite per run. Failures carry their case so a recurrence is traceable to the exact
+    assertion, not just the suite."""
     os.makedirs(OUT, exist_ok=True)
     p = os.path.join(OUT, f"{name}.json")
-    grid.atomic_save_json(p, {"suite": name, "at": time.strftime("%Y-%m-%d %H:%M"),
-                              "meta": meta, "rows": rows})
+    stamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    grid.atomic_save_json(p, {"suite": name, "at": stamp, "meta": meta, "rows": rows})
+    try:
+        bad = [dict(case=str(r.get("case"))[:120], err=r.get("err", ""),
+                    got=str(r.get("got"))[:80]) for r in rows if not r.get("ok")]
+        with open(HISTORY, "a", encoding="utf-8") as f:
+            f.write(json.dumps(dict(at=stamp, suite=name, n=len(rows),
+                                    passed=sum(1 for r in rows if r.get("ok")),
+                                    failures=bad), ensure_ascii=False) + "\n")
+    except Exception:
+        pass                                  # a history that fails to write must not fail a run
     return p
 
 

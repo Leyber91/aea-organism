@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-07-30 04:59 UTC",
- "seconds": 14.5,
+ "at": "2026-07-30 05:27 UTC",
+ "seconds": 16.7,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "134 modules, 26 reachable from a wake, 102 orphaned, 0 act at import",
+   "detail": "135 modules, 26 reachable from a wake, 103 orphaned, 0 act at import",
    "data": {
-    "modules": 134,
+    "modules": 135,
     "wake": 26,
     "orphans": [
      "aea.energy.capability_census",
@@ -87,6 +87,7 @@
      "aea.lab.party",
      "aea.lab.protocol",
      "aea.lab.reboot",
+     "aea.lab.recurrence",
      "aea.lab.report",
      "aea.lab.rescore",
      "aea.lab.site",

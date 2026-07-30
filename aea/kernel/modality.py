@@ -221,7 +221,16 @@ def judge(model: str, text: str, plant: str = "nvidia", labels=("safe", "unsafe"
     classified - and 'unparseable' is returned as exactly that rather than defaulting to safe,
     because a guard that fails open is not a guard."""
     out = understand(model, text, plant=plant, max_tokens=32).strip().lower()
-    hit = [l for l in labels if l.lower() in out]
+    # WORD BOUNDARIES, NOT SUBSTRINGS. "safe" is a substring of "unsafe", so a model answering
+    # {"user safety": "unsafe"} matched BOTH labels, len(hit) was 2, and a correct UNSAFE verdict
+    # was recorded as unparseable. Measured on the first real guard run - the model got it right
+    # and my parser threw the answer away.
+    #
+    # This is the same class as every other proxy failure in this repo: `in` is a cheap stand-in
+    # for "names this label", and it is wrong exactly where one label contains another - which is
+    # the most common shape a safe/unsafe pair takes.
+    import re as _re
+    hit = [l for l in labels if _re.search(r"(?<![a-z])%s(?![a-z])" % _re.escape(l.lower()), out)]
     if len(hit) != 1:
         return dict(label=None, raw=out[:120],
                     why=f"answer did not name exactly one of {list(labels)}")

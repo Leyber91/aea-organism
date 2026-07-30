@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 164,
+    "count": 165,
     "source": "aea/tooling/access.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 164
+    "count": 165
    },
    {
     "src": "THE_PROBE",
@@ -515,6 +515,12 @@
      "type": "module",
      "path": "aea/lab/reboot.py",
      "purpose": "reboot.py - RE-RUN THE EXPERIMENTS WHOSE EVIDENCE CANNOT BE READ."
+    },
+    {
+     "id": "recurrence",
+     "type": "module",
+     "path": "aea/lab/recurrence.py",
+     "purpose": "recurrence.py - WHICH LESSONS KEEP COMING BACK."
     },
     {
      "id": "reflect",
@@ -2030,6 +2036,11 @@
     {
      "src": "reboot",
      "dst": "site",
+     "rel": "imports"
+    },
+    {
+     "src": "recurrence",
+     "dst": "grid",
      "rel": "imports"
     },
     {
