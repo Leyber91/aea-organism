@@ -1839,6 +1839,16 @@
      "rel": "imports"
     },
     {
+     "src": "party",
+     "dst": "social",
+     "rel": "imports"
+    },
+    {
+     "src": "party",
+     "dst": "persona",
+     "rel": "imports"
+    },
+    {
      "src": "pathfinder",
      "dst": "grid",
      "rel": "imports"

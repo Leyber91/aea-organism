@@ -147,6 +147,23 @@ class Mixer:
 
     def __init__(self, device=None, sr: int = SR, channels: int = CHANNELS, block: int = BLOCK):
         import sounddevice as sd
+        # AN INPUT DEVICE INDEX IS NOT AN OUTPUT DEVICE INDEX, and PortAudio says so in a way
+        # nobody can act on: passing the V3 cam microphone here raised "Invalid number of channels
+        # [PaErrorCode -9998]", which names the symptom and not the mistake. Every other tool in
+        # this repo takes `--device` meaning the MIC, so handing that same number to a speaker is
+        # the obvious error and deserves an obvious message.
+        if device is not None:
+            try:
+                info = sd.query_devices(device)
+                if int(info.get("max_output_channels", 0)) < 1:
+                    raise ValueError(
+                        f"device {device} ({info.get('name', '?').strip()}) has no output channels "
+                        f"- that is a microphone. The mixer needs a SPEAKER; omit --device to use "
+                        f"the default output.")
+            except ValueError:
+                raise
+            except Exception:
+                pass                                  # unknown index: let PortAudio have its say
         self.sr, self.channels, self.block = sr, channels, block
         self._incoming: queue.Queue = queue.Queue()
         self._live: list = []

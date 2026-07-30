@@ -280,6 +280,58 @@ def report(turns: list, extra: dict = None) -> str:
     return "\n".join(L)
 
 
+def compare(runs: list, labels: list = None) -> str:
+    """AGGREGATE ACROSS RUNS, because one run is an anecdote with a decimal point.
+
+    THIS IS THE MOST IMPORTANT FUNCTION IN THE FILE and it exists because of a defect in how I have
+    been reporting, not a defect in the code. Every figure quoted so far - convergence +0.010 then
+    -0.030, gini 0.399 then 0.361 - was ONE run against ONE other run, on different topics, with
+    different sampling. A conversation is stochastic at every level: which speaker bids highest,
+    what the guide surfaces, what a 0.95-temperature rod happens to say. Two single runs can differ
+    by more than any change I make to the system.
+
+    So: N runs per condition, and a change counts only when it moves a metric further than the
+    spread of the metric under no change at all. The spread IS the instrument's noise floor, and
+    until it is known, every comparison is a coin flip narrated as a result.
+
+    Reports mean and full range. Deliberately NOT a p-value: at N=5 on a metric whose distribution
+    nobody has characterised, a significance test would be a more confident-sounding version of the
+    same guess.
+    """
+    labels = labels or [f"run {i+1}" for i in range(len(runs))]
+    metrics = []
+    for turns in runs:
+        d, s, f = distinctiveness(turns), structure(turns), flow(turns)
+        metrics.append(dict(
+            turns=len(turns), separation=d.get("separation", 0), convergence=d.get("convergence", 0),
+            length_spread=d.get("length_spread", 0), gini=s["gini"],
+            speakers=len(set(t["who"] for t in turns)), silent=len(s["silent"]),
+            recall=f["recall_turns"] / max(len(turns), 1),
+            recall_depth=f["recall_depth_mean"], drift=f["topic_drift"],
+            questions=f["questions"] / max(len(turns), 1),
+            disagreements=f["disagreements"] / max(len(turns), 1),
+        ))
+    keys = list(metrics[0])
+    L = ["=" * 92, f"ACROSS {len(runs)} RUNS - mean, and the spread that any real change must beat",
+         "=" * 92, f"  {'metric':16s} {'mean':>8s} {'min':>8s} {'max':>8s} {'spread':>8s}   per run"]
+    out = {}
+    for k in keys:
+        vs = [m[k] for m in metrics]
+        mean = statistics.mean(vs)
+        spread = max(vs) - min(vs)
+        out[k] = dict(mean=round(mean, 3), min=min(vs), max=max(vs), spread=round(spread, 3),
+                      values=vs)
+        L.append(f"  {k:16s} {mean:8.3f} {min(vs):8.3f} {max(vs):8.3f} {spread:8.3f}   "
+                 + " ".join(f"{v:.2f}" for v in vs))
+    L.append("")
+    L.append("  READ IT LIKE THIS: a change to the system is REAL only if it moves the mean by more")
+    L.append("  than the spread above. Anything smaller is this instrument's own noise, and calling")
+    L.append("  it an improvement is how a project convinces itself it is getting better.")
+    grid.atomic_save_json(os.path.join(str(grid.STATE), "lab", "party", "compare.json"),
+                          dict(n=len(runs), metrics=out))
+    return "\n".join(L)
+
+
 def analyse(path: str = "") -> dict:
     p = path or os.path.join(str(grid.STATE), "lab", "party", "party.json")
     d = grid.load_json(p, {})

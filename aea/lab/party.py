@@ -60,6 +60,11 @@ except Exception:
 
 OUT = os.path.join(str(grid.STATE), "lab", "party")
 
+RUNAWAY = 4000             # the ONLY cap, and it is a loop guard rather than a length control.
+                           # High enough that no rod has ever been shaped by it, low enough that a
+                           # model stuck in a repetition loop stops. See `ask` for why every other
+                           # reason to cap turned out not to apply.
+
 
 class Character:
     """A speaker: a voice, a place in the room, a way of thinking, a ROD, and a persistent self.
@@ -363,7 +368,11 @@ def next_line(me: Character, turns: list, goal: str, rod: dict, addressed: str =
     if not t:
         return ""
     t = re.sub(r"<think>.*?</think>", " ", t, flags=re.S | re.I)
-    t = re.sub(r"^\s*%s\s*:\s*" % re.escape(me.name), "", t, flags=re.I)
+    # THE COLON IS OPTIONAL AND THAT COST A SPOKEN LINE. The prompt ends with "MIRA:" as the cue,
+    # and the rod sometimes echoes the cue WITHOUT its punctuation - "MIRA Ah, Ren, you've landed
+    # us on more solid ground" went out of the speakers with the speaker announcing itself. A strip
+    # keyed to the exact shape of the cue misses every near-miss of that shape.
+    t = re.sub(r"^\s*%s\s*[:,\-]?\s+" % re.escape(me.name), "", t, flags=re.I)
     # META-REASONING LEAK. MEASURED on the first persistent run, from the 550B rod, SPOKEN as
     # GRAVE's line and then stored by `commit()` as a belief GRAVE now holds:
     #     "The user is asking me to continue the conversation as GRAVE. Let me analyze the
@@ -420,17 +429,47 @@ def ask(rod: dict, system: str, user: str, max_tokens: int = 110, temp: float = 
                  family the only lever here is BUDGET: give it room to think AND answer, rather
                  than a budget it can only think with.
     """
+    # MAX_TOKENS BOUNDS GENERATION. IT MUST NOT BE USED TO BOUND SPEECH.
+    #
+    # Luis, 2026-07-30: "why we have such a low thinking budget? we should have it way higher."
+    # He is right, and for the reason this repo has already paid for twice. I set 130 because I
+    # wanted short spoken lines - bounding the thing I care about (seconds of speech) with a proxy
+    # that is not it (tokens generated). Law B2, and the exact shape of the MAX_SENTENCES defect:
+    # the cap did what it said, and what it said was the wrong quantity.
+    #
+    # Two different failures, and the first is the sneakier:
+    #   a plain rod     gets cut off mid-word when a sentence runs long. MEASURED: 2 of 10 turns in
+    #                   one run, 0 of 11 in the next - intermittent, so it will not appear in
+    #                   whichever run you happen to inspect.
+    #   a reasoning rod spends the whole budget thinking and returns NOTHING. Already written into
+    #                   grid.py: "a reasoning rod handed 256 tokens spends them thinking and never
+    #                   reaches an answer... Every fitness score, census and tool probe in this repo
+    #                   was taken through that filter."
+    #
+    # Generation is now generous; SPEECH is bounded downstream where it belongs, by the sentence and
+    # character trim that already exists. Thinking is cheap - hosted tokens, inside a gap that is
+    # already ten seconds of somebody else talking. Not finishing a thought is not cheap.
+    # THE ONLY HONEST REASON TO CAP AT ALL IS RUNAWAY, so that is the only thing the cap does.
+    #
+    # Luis, pushing further: "we shouldn't limit tokens, why do we do it?" The question is right and
+    # the answer, once the reasons are actually listed, is that none of them apply here:
+    #   COST      hosted tokens, and the four of them speak for ten seconds a turn. Not the
+    #             constraint anybody thought it was.
+    #   LATENCY   the reply is STREAMED and speech starts at the first sentence, so a longer
+    #             generation does not delay the first syllable. And every one of these calls except
+    #             the speaker's own runs while somebody else is still talking.
+    #   LENGTH    bounded downstream, by the sentence and character trim, in seconds of speech -
+    #             which is the quantity anybody actually experiences.
+    # What is left is a guard against a rod that loops forever, and that guard belongs at a level
+    # too high to shape the output. 130 shaped the output. 4000 cannot.
+    #
+    # Tokens beyond what gets spoken are not waste, they are the thinking. Cutting them is not
+    # saving anything; it is buying a worse answer with money nobody was spending.
     off = grid.think_off(rod["model"])
     msgs = []
     if off.get("_system"):
         msgs.append({"role": "system", "content": off["_system"]})
-        budget = max_tokens
-    elif off:
-        # A reasoning family whose switch this transport cannot send. Pay for the thinking instead
-        # of being surprised by it.
-        budget = max(max_tokens, 700)
-    else:
-        budget = max_tokens
+    budget = max(max_tokens, RUNAWAY)
     msgs += [{"role": "system", "content": system}, {"role": "user", "content": user}]
     try:
         r = grid.call_openai(rod["plant"], rod["model"], msgs, budget, temp, rod.get("budget", 40))
@@ -728,6 +767,26 @@ if __name__ == "__main__":
     def arg(f, d=None):
         return a[a.index(f) + 1] if f in a and a.index(f) + 1 < len(a) else d
 
-    run(turns_wanted=int(arg("--turns", 8)), overlap=float(arg("--overlap", 0.0)),
-        topic=arg("--topic", "") or "", mute="--mute" in a,
-        device=(int(arg("--device")) if arg("--device") else None))
+    reps = int(arg("--runs", 1))
+    if reps > 1:
+        # N RUNS, DIFFERENT SEEDS, ONE COMPARISON. See social.compare for why this is not optional:
+        # until the spread between identical conditions is known, no single-run difference can be
+        # told from noise. Personas are wiped between runs so each starts from the same place -
+        # otherwise run 2 is a different experiment from run 1 by construction.
+        from aea.lab import social
+        from aea.mind import persona as _p
+        got = []
+        for i in range(reps):
+            _p.wipe()
+            print(f"\n{'#' * 98}\n# RUN {i+1}/{reps}\n{'#' * 98}")
+            r = run(turns_wanted=int(arg("--turns", 8)), overlap=float(arg("--overlap", 0.0)),
+                    topic=arg("--topic", "") or "", mute="--mute" in a,
+                    device=(int(arg("--device")) if arg("--device") else None), seed=7 + i * 13)
+            if r.get("turns"):
+                got.append(r["turns"])
+        if got:
+            print("\n" + social.compare(got))
+    else:
+        run(turns_wanted=int(arg("--turns", 8)), overlap=float(arg("--overlap", 0.0)),
+            topic=arg("--topic", "") or "", mute="--mute" in a,
+            device=(int(arg("--device")) if arg("--device") else None))
