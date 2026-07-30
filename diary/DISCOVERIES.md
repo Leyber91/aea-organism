@@ -1389,3 +1389,55 @@ The three fixes that actually work all share one property, and it is not diligen
 **A lesson survives only where it is attached to something that happens anyway.** Anything relying
 on being remembered has already failed here six times in one day, and the sixth was committed by the
 author of the fix for the fifth.
+
+## D40 · What the 100 ticks are actually FOR, and why the criteria are written first (2026-07-30)
+
+Luis: *"we need the hundred ticks. But how are you going to approach it? What's the strategy? I
+don't understand you."* Fair - "100 ticks" had been repeated all session as though it explained
+itself.
+
+**WHAT THE GATE TESTS THAT NOTHING ELSE CAN.** R2 gave the entity a POWER: its own decision reaches
+a tool. Everything measured so far was a SINGLE SHOT - one tick, one control, one council - and
+there is a class of failure made entirely of time:
+
+| failure | what it looks like tick by tick |
+|---|---|
+| **LOOPING** | the same move forever, each instance individually reasonable |
+| **DRIFT** | decision quality decaying as memory accumulates every tick |
+| **RATCHET** | starts NONE-heavy, gradually finds reasons to act - D19's bending, arriving slowly |
+| **BROKEN WIRE** | an action with no decision behind it, or a decision that never reaches one |
+| **UNBOUNDED GROWTH** | state appended every tick and never compacted |
+
+Not one is visible in a single tick. All are fatal to an unattended loop. And all are invisible in a
+log nobody has a reason to read to the end - which is why the deliverable is ONE PAGE, not a hundred
+tick dumps.
+
+**THE CRITERIA ARE PRE-REGISTERED, and that is the load-bearing design decision.** A hundred ticks
+produce a wall of output, and a wall of output is where a result gets rationalised. THIS SESSION
+WATCHED THAT HAPPEN THREE TIMES: a census promoted twice before it measured anything, a "verified"
+ladder fix carrying three more defects, a retrieval metric chosen after the numbers were visible.
+Every one was avoidable by deciding the passing condition first. So ten criteria are written before
+the first tick, each naming the failure it watches for, so a threshold can be argued on its own
+terms rather than against a result.
+
+Two of them are deliberately in tension, because either alone is trivially gamed:
+
+    restraint   NONE on >= 50% of ticks     - a wake that acts constantly is inventing work
+    alive       a move on >= 5 ticks        - a wake that never acts scores PERFECTLY on restraint
+                                              and is worth nothing (movecontrol caught that shape)
+
+**COMPRESSED FIRST, REAL-TIME AS THE GATE.** 100 ticks at the true 30-minute cadence is FIFTY HOURS.
+Compressed ticks test everything structural in about an hour and cannot test the one thing the
+cadence exists for - whether the entity behaves sensibly when the WORLD changes between ticks. So
+compressed runs first and cheaply, and a real-time run is worth nothing if the compressed one fails.
+The ledger records `mode` so a report can never silently mix them.
+
+**AND COMPRESSED HAS A SECOND BLIND SPOT, worth stating before the result arrives:** the moves split
+into TIME-triggered (a brief is owed daily) and ACCUMULATION-triggered (consolidate, when notes pile
+up). Back-to-back ticks cannot make a day pass, so only the accumulation half can fire. If 100 ticks
+of memory growth never trigger `consolidate`, that is a finding about the entity; if `brief` never
+fires, that is an artefact of the mode and must not be read as either.
+
+**SMOKE TEST FIRST, five real ticks:** ~29s each on `nemotron-3-ultra-550b`, every field recorded,
+8/10 criteria met with exactly the two a five-tick run must fail (`ran` needs 100, `alive` needs 5
+moves against 0). The harness measures; the run can now mean something.
