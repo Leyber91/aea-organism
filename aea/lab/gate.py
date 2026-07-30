@@ -118,7 +118,7 @@ def record(row: dict) -> None:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
-def rows(mode: str = None) -> list:
+def rows(mode: str = None, run_id: str = None) -> list:
     if not os.path.exists(LEDGER):
         return []
     out = []
@@ -127,8 +127,11 @@ def rows(mode: str = None) -> list:
             r = json.loads(ln)
         except Exception:
             continue
-        if mode is None or r.get("mode") == mode:
-            out.append(r)
+        if mode is not None and r.get("mode") != mode:
+            continue
+        if run_id is not None and r.get("run") != run_id:
+            continue
+        out.append(r)
     return out
 
 
@@ -159,11 +162,13 @@ def summarise(rs: list) -> dict:
         unexplained_failures=sum(1 for r in rs
                                  if r.get("acted") and r.get("ok") is False and not r.get("error")),
         rods=sorted({r.get("rod") for r in rs if r.get("rod")}),
+        executed=sum(1 for r in rs if r.get("ran")),
+        skipped=sum(1 for r in rs if r.get("would_run")),
     )
 
 
-def report(mode: str = None, verbose: bool = True) -> dict:
-    rs = rows(mode)
+def report(mode: str = None, run_id: str = None, verbose: bool = True) -> dict:
+    rs = rows(mode, run_id)
     if not rs:
         if verbose:
             print("no ledger yet - run `python -m aea.lab.gate --run 100` first")
@@ -180,7 +185,9 @@ def report(mode: str = None, verbose: bool = True) -> dict:
 
     if verbose:
         print("=" * 94)
-        print(f"THE R2 GATE - {s['ticks']} ticks" + (f"  [{mode}]" if mode else "  [all modes]"))
+        print(f"THE R2 GATE - {s['ticks']} ticks  [{mode or 'all modes'}"
+              + (f" run={run_id}]" if run_id else "]")
+              + ("  scripts EXECUTED" if s.get("executed") else "  scripts NOT executed"))
         print("=" * 94)
         print(f"  declined (NONE) : {s['none_rate']:.0%}    first half {s['none_rate_1st']:.0%}"
               f" -> second half {s['none_rate_2nd']:.0%}")
@@ -193,6 +200,21 @@ def report(mode: str = None, verbose: bool = True) -> dict:
             if not ok:
                 print(f"        watches: {c['watches']}")
         print()
+        # A RUN THAT DECLINED THE ENTITY'S MOVES CANNOT JUDGE ITS RESTRAINT.
+        #
+        # The first gate run failed `restraint`, `no_drift` and `bounded`, and all three were
+        # downstream of ONE harness decision: scripts were recorded as `would_run` and skipped, so
+        # `consolidate` - the move that compacts memory - never ran. State went 12.8KB -> 61.3KB,
+        # NONE went 100% -> 0%, correlation **-0.85**. The entity asked to consolidate TWENTY-FIVE
+        # TIMES, diagnosing exactly what ailed it, and was refused every time. Three criteria
+        # reported facts about my harness in the entity's name.
+        #
+        # So the report says so itself now, above the score, rather than leaving it to whoever
+        # remembers. A skipped move is not a neutral omission - it removes the loop's only brake.
+        if s.get("skipped"):
+            print(f"  !! CONFOUNDED: {s['skipped']} chosen move(s) were NOT executed. `restraint`, "
+                  f"`no_drift` and `bounded` measure the harness, not the entity - memory grows with "
+                  f"nothing to compact it. Re-run without --no-exec before reading those three.")
         print(f"  {passed}/{len(CRITERIA)} criteria met")
         if passed == len(CRITERIA):
             print("  >>> GATE PASSED on this run. The compressed run proves structure; the "
@@ -203,7 +225,8 @@ def report(mode: str = None, verbose: bool = True) -> dict:
     return dict(ok=passed == len(CRITERIA), passed=passed, total=len(CRITERIA), summary=s)
 
 
-def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: bool = True) -> dict:
+def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: bool = True,
+        execute: bool = True, run_id: str = None) -> dict:
     """Run the REAL wake and the REAL decision wire, recording one row per tick.
 
     Nothing is simulated: `aea.loop.aea.tick` is the wake, `decide.choose` is the same function the
@@ -213,12 +236,17 @@ def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: b
     from aea.loop import aea as wake
     from aea.kernel import decide, hands
 
+    # EVERY RUN IS ITS OWN RUN, and the first one proved why. A 5-tick smoke test and a 100-tick
+    # gate both wrote `mode="compressed"`, so the report summed them and announced "105 ticks" -
+    # a smoke run silently folded into the result it was meant to precede. Runs are now keyed.
+    run_id = run_id or time.strftime("%Y%m%dT%H%M%S")
     seed_txt = open(os.path.join(str(grid.STATE), "aea_seed.md"), encoding="utf-8").read()
     state_path = wake.STATE_PATH
     started = time.time()
     for i in range(n):
         t0 = time.time()
-        row = dict(mode=mode, i=i, at=time.time(), at_iso=time.strftime("%Y-%m-%d %H:%M:%S"))
+        row = dict(mode=mode, run=run_id, execute=execute, i=i, at=time.time(),
+                   at_iso=time.strftime("%Y-%m-%d %H:%M:%S"))
         try:
             st = wake.load_state()
             out, who, verdict, vwho, _reason = wake.tick(seed_txt, st)
@@ -245,10 +273,52 @@ def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: b
                     row.update(acted=True, ok=True, result=str(res)[:200])
                 except Exception as e:
                     row.update(acted=True, ok=False, error=f"{type(e).__name__}: {str(e)[:140]}")
+            elif execute:
+                # THE SCRIPT RUNS, AND THE FIRST GATE RUN PROVED WHY IT MUST.
+                #
+                # This branch used to record `would_run` and skip, on the reasoning that the gate
+                # measures the DECISION path and `live.py` already owns process handling. That
+                # reasoning was wrong in a way only 100 ticks could show: `consolidate` is the move
+                # that COMPACTS MEMORY, and memory is an input to the very next decision. Declining
+                # to run it did not hold the loop still - it removed the loop's only brake.
+                #
+                # MEASURED over the first run: NONE fell 100% -> 0% monotonically while state grew
+                # 12.8KB -> 61.3KB, correlation **-0.85**. The entity chose `consolidate` TWENTY-FIVE
+                # TIMES - correctly diagnosing the exact condition it was suffering from - and the
+                # harness refused every one. Two criteria failed, both downstream of that refusal,
+                # and neither was a fact about the entity. The instrument was the broken part again.
+                argv = [sys.executable] + list(cand["argv"])
+                t1 = time.time()
+                try:
+                    import subprocess
+                    p = subprocess.run(argv, cwd=str(grid.ROOT), capture_output=True, text=True,
+                                       timeout=cand.get("timeout", 300))
+                    # A FAILURE ALWAYS CARRIES A REASON, even when the process gave none.
+                    #
+                    # `brief` exits 1 when HADES refuses its output - correct and deliberate, from
+                    # its own comment: "a brief full of ERR holes exited 0, live.py stamped it done
+                    # for the day and never retried - the heartbeat lie". It fails HONESTLY and
+                    # writes nothing to stderr, so `(p.stderr or "")[-160:]` was the empty string,
+                    # which is falsy, which the `honest_failures` criterion correctly counted as an
+                    # unexplained failure. The criterion caught its author's own code on its second
+                    # run, which is the only reason it is worth having.
+                    #
+                    # So: stderr if there is any, else the last line of stdout that says something,
+                    # else the exit code itself. Never empty. `decide.py`'s first law - a refusal is
+                    # a result and it must say why - applied to a subprocess.
+                    tail = (p.stderr or "").strip()[-160:]
+                    if not tail:
+                        lines = [l.strip() for l in (p.stdout or "").splitlines() if l.strip()]
+                        tail = (lines[-1][-160:] if lines else "") or f"exit {p.returncode}, no output"
+                    row.update(acted=True, ok=(p.returncode == 0), ran=cand["action"],
+                               secs=round(time.time() - t1, 1),
+                               result=(p.stdout or "")[-200:],
+                               error=None if p.returncode == 0 else f"exit {p.returncode}: {tail}")
+                except Exception as e:
+                    row.update(acted=True, ok=False, ran=cand["action"],
+                               secs=round(time.time() - t1, 1),
+                               error=f"{type(e).__name__}: {str(e)[:140]}")
             else:
-                # A SCRIPT IS NOT RUN HERE. The gate measures the DECISION path; spawning
-                # subprocesses a hundred times would be measuring the daemon's process handling,
-                # which `live.py` already owns and R0 already proved.
                 row.update(acted=False, would_run=cand["action"])
         record(row)
         if verbose:
@@ -259,7 +329,7 @@ def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: b
             time.sleep(sleep_s)
     if verbose:
         print(f"\n  {n} ticks in {round((time.time()-started)/60, 1)} min -> {LEDGER}")
-    return report(mode=mode, verbose=verbose)
+    return report(mode=mode, run_id=run_id, verbose=verbose)
 
 
 if __name__ == "__main__":
@@ -272,7 +342,11 @@ if __name__ == "__main__":
         sys.exit(0)
     if "--report" in a:
         m = next((x.split("=")[1] for x in a if x.startswith("--mode=")), None)
-        sys.exit(0 if report(mode=m)["ok"] else 1)
+        rid = next((x.split("=")[1] for x in a if x.startswith("--run-id=")), None)
+        if "--latest" in a and not rid:
+            allr = [r.get("run") for r in rows() if r.get("run")]
+            rid = allr[-1] if allr else None
+        sys.exit(0 if report(mode=m, run_id=rid)["ok"] else 1)
     if "--run" in a:
         n = next((int(x.split("=")[1]) for x in a if x.startswith("--run=")), 0)
         if not n:
@@ -280,7 +354,7 @@ if __name__ == "__main__":
             n = int(a[i + 1]) if i + 1 < len(a) and a[i + 1].isdigit() else 100
         live = "--realtime" in a
         r = run(n, mode="realtime" if live else "compressed",
-                sleep_s=1800.0 if live else 0.0)
+                sleep_s=1800.0 if live else 0.0, execute="--no-exec" not in a)
         sys.exit(0 if r["ok"] else 1)
     print(__doc__.strip().splitlines()[0])
     print("\n  --criteria   what counts as passing, decided before the run")

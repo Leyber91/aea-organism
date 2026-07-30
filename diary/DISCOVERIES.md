@@ -1441,3 +1441,60 @@ fires, that is an artefact of the mode and must not be read as either.
 **SMOKE TEST FIRST, five real ticks:** ~29s each on `nemotron-3-ultra-550b`, every field recorded,
 8/10 criteria met with exactly the two a five-tick run must fail (`ran` needs 100, `alive` needs 5
 moves against 0). The harness measures; the run can now mean something.
+
+## D41 · The first gate run measured MY HARNESS, and the entity had been asking for the fix 25 times (2026-07-30)
+
+100 ticks, 94 minutes, real wake and real decision wire. **7 of 10 criteria met**, failing exactly
+three of the shapes the criteria were pre-registered to watch: `restraint`, `no_drift`, `bounded`.
+
+It read like a finding about the entity. It was a finding about me.
+
+**THE RATCHET, and it is textbook:**
+
+| ticks | NONE% | state |
+|---|---|---|
+| 0-9 | **100%** | 12.8 KB |
+| 30-39 | 20% | 29.9 KB |
+| 60-69 | 20% | 43.8 KB |
+| 90-99 | **0%** | 57.8 KB |
+
+Restraint collapses monotonically as the prompt grows. **correlation(state size, NONE rate) =
+-0.85.** The wake read an ever-longer list of its own past and found ever more to do.
+
+**AND THE CAUSE WAS A LINE I WROTE.** The harness recorded a chosen script as `would_run` and
+skipped it, on the reasoning that the gate measures the DECISION path while `live.py` owns process
+handling. That reasoning is wrong in a way only a hundred ticks can show: **`consolidate` is the
+move that COMPACTS MEMORY, and memory is an input to the very next decision.** Declining to run it
+did not hold the loop still - it removed the loop's only brake.
+
+**72 of 73 chosen moves were never carried out. The entity chose `consolidate` TWENTY-FIVE TIMES** -
+correctly diagnosing the exact condition it was suffering from - and was refused every one. Then
+three criteria reported the consequence in its name.
+
+**THE POSITIVE FINDING BURIED IN THE FAILURE:** the wake's judgement was RIGHT. Given a growing
+memory it asked for consolidation, repeatedly, unprompted. That is the discrimination `movecontrol`
+could not establish in isolation, demonstrated over time by a run that was scoring it as a failure.
+
+**FIXED, and the four-tick check: state growth 6.47x -> 1.03x** with scripts executing. Two
+instrument defects went with it:
+
+1. **Runs merged.** A 5-tick smoke test and the 100-tick gate both wrote `mode="compressed"`, so the
+   report summed them and announced "105 ticks" - a smoke run silently folded into the result it was
+   meant to precede. Runs are keyed now.
+2. **A failure with no reason.** `brief` exits 1 when HADES refuses its output - correct and
+   deliberate, from its own comment: *"a brief full of ERR holes exited 0, live.py stamped it done
+   for the day and never retried - the heartbeat lie."* It fails HONESTLY and writes nothing to
+   stderr, so my `error` field was the empty string and `honest_failures` counted it as
+   unexplained. **The criterion caught its author's code on its second run**, which is the only
+   reason it is worth having. A failure now always carries a reason: stderr, else the last real line
+   of stdout, else the exit code.
+
+**AND THE REPORT NOW REFUSES TO BE READ WRONG.** If any move was skipped it prints, above the score:
+*"CONFOUNDED - `restraint`, `no_drift` and `bounded` measure the harness, not the entity."* The
+confound was invisible in the first run's one page, which is precisely how a wall of output gets
+rationalised - the thing the pre-registered criteria were supposed to prevent, defeated one layer
+below where they were watching.
+
+**THE SHAPE, for the seventh time today: the instrument was the broken part.** The difference is
+that this time the pre-registered criteria caught it in 94 minutes instead of a day, and named the
+mechanism themselves.
