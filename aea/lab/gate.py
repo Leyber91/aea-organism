@@ -250,6 +250,160 @@ def control(n: int = 100, verbose: bool = True) -> dict:
     return res
 
 
+# =================================================================================================
+# TRIPWIRES - fired DURING a run, not after it.
+#
+# Luis, 2026-07-31: *"instead of waiting on a hundred ticks, you have to constantly monitor what's
+# going on. So in case that we did something wrong with the programming, you can act."*
+#
+# THE COST OF NOT HAVING THESE, measured: the first gate run spent NINETY-FOUR MINUTES before its
+# confound was visible - and the confound (`consolidate` chosen, never executed) was already true at
+# TICK 2. A whole run, and the hour of analysis after it, to find something the second row of the
+# ledger stated outright.
+#
+# THEY ARE A DIFFERENT INSTRUMENT FROM `CRITERIA`, and conflating the two is why they did not exist.
+# A criterion asks "did this run PASS", is judged once, at the end, against a pre-registered
+# threshold. A tripwire asks "is this run still VALID", is judged continuously, and fires on
+# conditions that mean the experiment is broken rather than the subject is failing. A run can trip
+# every wire and still satisfy every criterion, which is exactly what happened.
+#
+# `after` is the tick count before a wire may fire at all: an experiment that alarms in its first
+# three ticks trains its operator to ignore it, which is D18's corollary aimed at a monitor.
+TRIPWIRES = [
+    dict(key="no_execution", after=6,
+         what="moves are being chosen and nothing is executing",
+         why="the harness is recording intent and skipping the act - the loop has no brake, and "
+             "every downstream number becomes a fact about the harness. THIS WAS RUN ONE, visible "
+             "at tick 2, found after 94 minutes",
+         act="kill the run; check the execute branch",
+         test=lambda s: s["moves"] >= 3 and s["executed"] == 0),
+
+    dict(key="state_runaway", after=20,
+         what="state more than doubled with no consolidation ever succeeding",
+         why="the prompt is growing without limit, which changes the wake's input every tick and "
+             "silently rewrites what is being measured",
+         act="kill; check that consolidate runs and actually compacts",
+         test=lambda s: s["growth"] > 2.0 and s["consolidates_ran"] == 0),
+
+    dict(key="rod_collapse", after=10,
+         what="the recent ticks are all on a local floor rod",
+         why="the ladder has fallen and the entity is thinking with a 7b. Restraint survives that "
+             "fall and discrimination does not (D21), so the run measures the fallback",
+         act="kill; check plant health and rate limits before spending more ticks",
+         test=lambda s: bool(s["recent_rods"]) and all(r.startswith("ollama/") for r in s["recent_rods"])),
+
+    dict(key="stuck", after=12,
+         what="the same move ten times in an unbroken row",
+         why="looping, and every further tick is the same tick",
+         act="let it run only if the condition genuinely persists; otherwise kill and inspect",
+         test=lambda s: s["longest_streak"] >= 10),
+
+    dict(key="all_failing", after=8,
+         what="every executed action has failed",
+         why="the entity is acting into a wall - measuring the failure of the tools, not the "
+             "judgement that chose them",
+         act="kill; read the first error rather than the hundredth",
+         test=lambda s: s["executed"] >= 4 and s["exec_ok"] == 0),
+
+    dict(key="silent", after=4,
+         what="a tick decided nothing and said nothing",
+         why="a null result indistinguishable from a real one - the failure shape that has cost the "
+             "most in this project",
+         act="kill immediately; a silent tick means the wire is broken, not that nothing was owed",
+         test=lambda s: s["silent"] > 0),
+
+    # ADDED MID-RUN, because monitoring found what the wires did not.
+    #
+    # At tick 72 the watch showed "executed 45 (21 ok)" - a 53% failure rate that NO wire caught,
+    # because `all_failing` demands 100%. Looking at the breakdown: **23 of 24 `brief` runs failed**,
+    # every one identically, `produce_brief -> level 1 (DRAFT), streak 0, 52 runs / 36 fails`.
+    #
+    # The entity chose `brief` twenty-four times, it failed twenty-three, and it chose it again. The
+    # trust ledger KNOWS - thirty-six failures on record - and `decide` never reads it. That is R3
+    # ("the OUTCOME is remembered, not the intention") demonstrated live, as a defect, by a run that
+    # was measuring something else entirely.
+    #
+    # A wire that only fires at 100% is a wire for a dead system. The interesting failure is the one
+    # that leaves just enough working to look alive.
+    dict(key="repeat_failure", after=12,
+         what="one action has failed at least 6 times and is still being chosen",
+         why="the decision has no feedback from the outcome - the entity is repeating something the "
+             "record already says does not work. Nothing here reads the trust ledger back into the "
+             "choice, which is exactly the R3 gap",
+         act="let the run finish - it is still valid - but the finding is about the WIRE from "
+             "outcome to decision, not about this action",
+         test=lambda s: s["worst_action_fails"] >= 6),
+
+    dict(key="flatline", after=25,
+         what="only one distinct outcome across the whole run so far",
+         why="either the wake is dead or the harness is feeding it the same input every tick; both "
+             "make the remaining ticks worthless",
+         act="kill; a run with one outcome has one data point, not twenty-five",
+         test=lambda s: s["distinct_outcomes"] <= 1),
+]
+
+
+def watch(run_id: str = None, verbose: bool = True) -> dict:
+    """Is the run still VALID? Read the ledger as it grows and fire on anything structural.
+
+    Safe to call at any moment, including mid-run - it only reads the append-only ledger, so it can
+    never disturb the thing it is watching."""
+    rs = rows(run_id=run_id) if run_id else rows()
+    if not rs:
+        if verbose:
+            print("no ledger rows yet")
+        return dict(ticks=0, tripped=[])
+    if not run_id:                                # default to the newest keyed run
+        keyed = [r for r in rs if r.get("run")]
+        if keyed:
+            run_id = keyed[-1]["run"]
+            rs = [r for r in rs if r.get("run") == run_id]
+    s = summarise(rs)
+    recent = rs[-10:]
+    s["executed"] = sum(1 for r in rs if r.get("ran"))
+    s["exec_ok"] = sum(1 for r in rs if r.get("ran") and r.get("ok"))
+    s["consolidates_ran"] = sum(1 for r in rs if r.get("ran") == "ASLEEP:consolidate" and r.get("ok"))
+    s["recent_rods"] = [r.get("rod") or "" for r in recent if r.get("rod")]
+    s["distinct_outcomes"] = len({r.get("move") or "NONE" for r in rs})
+    fails = {}
+    for r in rs:
+        if r.get("ran") and r.get("ok") is False:
+            fails[r["ran"]] = fails.get(r["ran"], 0) + 1
+    s["action_fails"] = fails
+    s["worst_action_fails"] = max(fails.values()) if fails else 0
+
+    tripped = []
+    for w in TRIPWIRES:
+        if s["ticks"] < w["after"]:
+            continue
+        try:
+            if w["test"](s):
+                tripped.append(w)
+        except Exception:
+            pass
+
+    if verbose:
+        print(f"WATCH  run={run_id}  tick {s['ticks']}")
+        print(f"  NONE {s['none_rate']:.0%}  (1st half {s['none_rate_1st']:.0%} -> "
+              f"2nd {s['none_rate_2nd']:.0%})   moves {s['moves']}   executed {s['executed']} "
+              f"({s['exec_ok']} ok)")
+        print(f"  growth {s['growth']:.2f}x   longest streak {s['longest_streak']}   "
+              f"distinct outcomes {s['distinct_outcomes']}")
+        print(f"  rods {sorted(set(s['recent_rods']))}")
+        if s.get('action_fails'):
+            print(f"  failures by action: {s['action_fails']}")
+        armed = [w["key"] for w in TRIPWIRES if s["ticks"] >= w["after"]]
+        print(f"  wires armed: {len(armed)}/{len(TRIPWIRES)}  {armed}")
+        if tripped:
+            for w in tripped:
+                print(f"\n  !! TRIPPED [{w['key']}] {w['what']}")
+                print(f"     why: {w['why']}")
+                print(f"     act: {w['act']}")
+        else:
+            print("  no tripwire fired - the run is still measuring what it set out to")
+    return dict(ticks=s["ticks"], run=run_id, tripped=[w["key"] for w in tripped], summary=s)
+
+
 def record(row: dict) -> None:
     os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
     with open(LEDGER, "a", encoding="utf-8") as f:
@@ -531,6 +685,10 @@ def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: b
 
 if __name__ == "__main__":
     a = sys.argv[1:]
+    if "--watch" in a:
+        rid = next((x.split("=")[1] for x in a if x.startswith("--run-id=")), None)
+        r = watch(run_id=rid)
+        sys.exit(2 if r["tripped"] else 0)
     if "--control" in a:
         control()
         sys.exit(0)

@@ -57,12 +57,12 @@
   "cooled_at": 1784725408.0140953
  },
  "ollama/qwen2.5:7b": {
-  "calls": 313,
-  "ok": 313,
+  "calls": 370,
+  "ok": 370,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 7.6,
-  "last": "2026-07-30 21:23"
+  "ema_latency": 10.2,
+  "last": "2026-07-30 22:23"
  },
  "groq/llama-3.3-70b-versatile": {
   "calls": 62,
@@ -660,12 +660,12 @@
   "retired_why": "410 at reap"
  },
  "nvidia/nvidia/nemotron-3-ultra-550b-a55b": {
-  "calls": 122,
-  "ok": 116,
-  "fail": 6,
+  "calls": 179,
+  "ok": 165,
+  "fail": 14,
   "consec_fail": 0,
-  "ema_latency": 44.0,
-  "last": "2026-07-30 21:24"
+  "ema_latency": 39.6,
+  "last": "2026-07-30 22:25"
  },
  "groq/qwen/qwen3-32b": {
   "calls": 0,
@@ -677,21 +677,21 @@
   "retired_why": "404 at reap"
  },
  "nvidia/nvidia/ising-calibration-1.5-31b": {
-  "calls": 10,
+  "calls": 14,
   "ok": 0,
-  "fail": 10,
-  "consec_fail": 10,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-07-30 21:17",
-  "cooled_at": 1785446278.1737914
+  "last": "2026-07-30 22:19",
+  "cooled_at": 1785449949.9285245
  },
  "nvidia/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning": {
-  "calls": 3,
-  "ok": 2,
+  "calls": 14,
+  "ok": 13,
   "fail": 1,
   "consec_fail": 0,
-  "ema_latency": 14.5,
-  "last": "2026-07-30 21:09"
+  "ema_latency": 6.1,
+  "last": "2026-07-30 22:21"
  },
  "groq/qwen/qwen3.6-27b": {
   "calls": 1,
@@ -710,21 +710,21 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/nvidia/nemotron-3-super-120b-a12b": {
-  "calls": 17,
-  "ok": 15,
+  "calls": 25,
+  "ok": 23,
   "fail": 2,
   "consec_fail": 0,
-  "ema_latency": 30.8,
-  "last": "2026-07-30 20:21"
+  "ema_latency": 29.8,
+  "last": "2026-07-30 22:22"
  },
  "nvidia/nvidia/nvidia-nemotron-nano-9b-v2": {
-  "calls": 10,
+  "calls": 14,
   "ok": 0,
-  "fail": 10,
-  "consec_fail": 10,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-07-30 21:17",
-  "cooled_at": 1785446278.6804445
+  "last": "2026-07-30 22:19",
+  "cooled_at": 1785449950.546595
  },
  "nvidia/meta/llama-3.1-70b-instruct": {
   "calls": 2,
@@ -767,22 +767,22 @@
   "last": "2026-07-30 18:00"
  },
  "groq/llama-3.1-8b-instant": {
-  "calls": 10,
+  "calls": 14,
   "ok": 0,
-  "fail": 10,
-  "consec_fail": 10,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-07-30 21:17",
-  "cooled_at": 1785446279.0046651
+  "last": "2026-07-30 22:19",
+  "cooled_at": 1785449951.006591
  },
  "groq/allam-2-7b": {
-  "calls": 10,
+  "calls": 14,
   "ok": 0,
-  "fail": 10,
-  "consec_fail": 10,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-07-30 21:17",
-  "cooled_at": 1785446279.3583603
+  "last": "2026-07-30 22:19",
+  "cooled_at": 1785449951.3405795
  },
  "nvidia/poolside/laguna-xs-2.1": {
   "calls": 1,
@@ -801,31 +801,31 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/meta/llama-3.2-1b-instruct": {
-  "calls": 10,
+  "calls": 14,
   "ok": 0,
-  "fail": 10,
-  "consec_fail": 10,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-07-30 21:17",
-  "cooled_at": 1785446279.9197803
+  "last": "2026-07-30 22:19",
+  "cooled_at": 1785449951.9448168
  },
  "groq/openai/gpt-oss-120b": {
-  "calls": 10,
+  "calls": 14,
   "ok": 0,
-  "fail": 10,
-  "consec_fail": 10,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-07-30 21:18",
-  "cooled_at": 1785446280.2594304
+  "last": "2026-07-30 22:19",
+  "cooled_at": 1785449952.3085146
  },
  "nvidia/meta/llama-3.1-8b-instruct": {
-  "calls": 10,
+  "calls": 14,
   "ok": 0,
-  "fail": 10,
-  "consec_fail": 10,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-07-30 21:18",
-  "cooled_at": 1785446281.1774118
+  "last": "2026-07-30 22:19",
+  "cooled_at": 1785449953.264682
  },
  "nvidia/minimaxai/minimax-m3": {
   "calls": 1,

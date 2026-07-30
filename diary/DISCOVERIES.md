@@ -1572,3 +1572,56 @@ score again.
 that finds them is one line in a document this repo already had.** The instrument law holds at every
 level - it held for the rods, then for the census, then for the gate, and then for the control of
 the gate.
+
+## D43 · Monitor DURING, not after - and the first watch found the R3 gap live (2026-07-31)
+
+Luis: *"instead of waiting on a hundred ticks, you have to constantly monitor what's going on. So in
+case that we did something wrong with the programming, you can act."*
+
+**THE COST OF NOT HAVING THIS, already paid: the first gate run spent NINETY-FOUR MINUTES before its
+confound surfaced - and the confound was already true at TICK 2.** Scripts chosen, zero executed, on
+the second row of the ledger. A whole run and an hour of analysis to find something the experiment
+had stated about itself immediately.
+
+**TRIPWIRES ARE A DIFFERENT INSTRUMENT FROM CRITERIA, and conflating them is why they did not exist:**
+
+| | CRITERIA | TRIPWIRES |
+|---|---|---|
+| asks | did this run PASS | is this run still VALID |
+| judged | once, at the end | continuously, mid-run |
+| fires on | the subject failing | **the experiment being broken** |
+
+A run can trip every wire and still satisfy every criterion. That is exactly what run one did. Each
+wire carries an `after` tick count before it may fire at all - a monitor that alarms in its first
+three ticks trains its operator to ignore it, which is D18's corollary aimed at the watchdog.
+
+**AND THE FIRST WATCH IMMEDIATELY FOUND SOMETHING NO WIRE WAS WATCHING FOR.** At tick 72 the summary
+line read *executed 45 (21 ok)* - a **53% failure rate that nothing caught**, because `all_failing`
+demands 100%. The breakdown:
+
+    AWAKE:brief          FAIL 23      ok 1
+    ASLEEP:consolidate   ok   15
+    REFLECT:self         ok    5      FAIL 1
+
+**23 of 24 briefs failed, every one identically:**
+`exit 1: trust ledger: produce_brief -> level 1 (DRAFT), streak 0, 52 runs / 36 fails`
+
+**The entity chose `brief` twenty-four times, it failed twenty-three, and it chose it again.** The
+trust ledger KNOWS - thirty-six failures on record, the capability pinned at DRAFT - and `decide`
+never reads it. Nothing carries an outcome back into the next choice.
+
+**That is R3 - "the OUTCOME is remembered, not the intention" - demonstrated live, as a defect, by a
+run that was measuring something else entirely.** It was invisible to every single-shot instrument
+built so far, because one tick choosing `brief` is correct: a brief IS owed. Only the twenty-fourth
+identical failure makes it a finding, and only a monitor reading mid-run makes it visible before the
+end.
+
+**A WIRE THAT ONLY FIRES AT 100% IS A WIRE FOR A DEAD SYSTEM.** The interesting failure is the one
+that leaves just enough working to look alive - 21 of 46 succeeded, the loop kept beating, no
+criterion complained. `repeat_failure` was added mid-run and trips at six repeats of one failing
+action.
+
+**THE RUN WAS NOT KILLED, and that is the judgement the wire itself records:** it is still valid for
+what it set out to measure. The finding is about the WIRE FROM OUTCOME TO DECISION, not about
+`brief` and not about this run. Acting on a monitor does not always mean stopping - it means knowing
+early enough that stopping is a choice.
