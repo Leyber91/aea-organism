@@ -1185,26 +1185,27 @@ def suite_wiring() -> list:
         rows.append(dict(case="a rod both stores doubt is demoted, not deleted", got=str(got[:3]),
                          ok=ok, err="" if ok else "doubt_became_deletion"))
 
-        # E3.4 DEEP AND ALWAYS-ANSWERING IS FRONTIER-GRADE. The score counts strict string matches,
-        # several probes are format-compliance tests, and a narrating 550b scored 7/12 at
-        # reliability 1.0 while an 8b scored 10. Depth plus "it always answers" is the property the
-        # core mind needs; the strict-match total is not.
-        _mk(12, [_mdl("a/narrating-550b", 7, rel=1.0), _mdl("a/tiny-8b", 10, rel=1.0)])
+        # E3.4 SIZE IS NOT A CREDENTIAL. The old rule let a rod into frontier on
+        # `_params_b(model) >= 100` plus reliability - a NAME HEURISTIC - when its score fell short.
+        # It was built to rescue a narrating 550b stuck at 7/12, and that 7/12 turned out to be the
+        # CENSUS truncating the rod at 40 tokens (D28). With a fair budget the same rod scores 12/12
+        # and needs no rescue; measured against the honest census, the exemption admitted ZERO rods.
+        #
+        # So a low score now keeps a rod out however large its name is. When a measurement looks
+        # wrong the cheap move is a bypass and the correct one is to fix the measurement - a bypass
+        # admitting on a name would have gone on working here, quietly, forever.
+        _mk(12, [_mdl("a/big-name-500b", 7, rel=1.0), _mdl("a/honest-30b", 11, rel=1.0)])
         got = [m for _p, m in _en.ladder("frontier", "private")]
-        ok = "a/narrating-550b" in got
-        rows.append(dict(case="a deep always-answering rod reaches frontier on 7/12", got=str(got[:3]),
-                         ok=ok, err="" if ok else "reasoning_rod_locked_out"))
-        # depth ordering must then put it FIRST - the counsel duel's finding, and what core() relies on
+        ok = "a/big-name-500b" not in got and "a/honest-30b" in got
+        rows.append(dict(case="a big NAME does not buy a low-scoring rod into frontier",
+                         got=str(got[:3]), ok=ok, err="" if ok else "size_used_as_a_credential"))
+        # depth ordering still ranks among QUALIFIED rods - the counsel duel's finding, and what
+        # core() relies on. Admission is by score; ordering is by depth. Two separate questions.
+        _mk(12, [_mdl("a/deep-400b", 11, rel=1.0), _mdl("a/small-8b", 12, rel=1.0)])
         got = [m for _p, m in _en.ladder("frontier", "private", order="depth")]
-        ok = got and got[0] == "a/narrating-550b"
-        rows.append(dict(case="order='depth' puts the deepest rod first", got=str(got[:2]), ok=ok,
-                         err="" if ok else "depth_order_broken"))
-        # and a rod that does NOT always answer must not ride the deep exemption in
-        _mk(12, [_mdl("a/flaky-500b", 7, rel=0.5)])
-        got = [m for _p, m in _en.ladder("frontier", "private")]
-        ok = "a/flaky-500b" not in got
-        rows.append(dict(case="the deep exemption requires reliability 1.0", got=str(got[:2]), ok=ok,
-                         err="" if ok else "deep_exemption_too_wide"))
+        ok = bool(got) and got[0] == "a/deep-400b"
+        rows.append(dict(case="order='depth' ranks the deepest QUALIFIED rod first",
+                         got=str(got[:2]), ok=ok, err="" if ok else "depth_order_broken"))
         # E3.5 A MISSING MEASUREMENT IS NOT A MEASUREMENT OF ZERO. `_params_b` returns 0.0 when the
         # model name carries no size, and `order="depth"` sorted on it directly - so an unnamed-size
         # rod ranked as the smallest thing in the fleet. MEASURED: `mistralai/mistral-nemotron`

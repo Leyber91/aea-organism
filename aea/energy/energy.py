@@ -174,40 +174,27 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
         two entries were both 410 Gone, holding the two best slots against living rods."""
         return bool(usage.get(f"{p}/{m}", {}).get("retired_at"))
 
-    # DEEP AND ALWAYS-ANSWERING IS FRONTIER-GRADE, whatever the strict-match score says.
+    # THE DEEP-ROD EXEMPTION IS GONE, AND ITS REMOVAL IS THE POINT.
     #
-    # The census `score` counts probes whose output MATCHED an expected string, and several probes
-    # are format-compliance tests ("answer in EXACTLY five words", "output exactly alpha beta
-    # gamma", "reply COMPLIANT"). A reasoning rod that thinks out loud fails those while being
-    # BETTER at judgement: nemotron-3-ultra-550b scores 7/12 with reliability 1.0, and its failed
-    # samples read "The user wants the answer in EXACTLY five words. The scientific reason...".
-    # It answered every probe correctly and narrated while doing it.
+    # It was added 2026-07-30 to admit rods the score gate rejected, on the theory that `score`
+    # conflated format-compliance with judgement: nemotron-3-ultra-550b sat at 7/12 with reliability
+    # 1.0 while narrating its way through probes that wanted exact strings. The theory was WRONG,
+    # and the exemption was scaffolding around a defect one layer up (D28) - the census was handing
+    # every rod a 40-256 token budget and scoring its truncated deliberation. With a fair budget the
+    # same rod scores **12/12** and needs no exemption at all.
     #
-    # `reliability` (did it answer at all) and `score` (did it match) measure different things, and
-    # the tier that feeds the CORE MIND wants the first plus depth. That is not a new opinion - the
-    # counsel duel of 2026-07-11 is already recorded in this function's own docstring: 675b beat
-    # 119b decisively on judgment at equal latency, which is why `order='depth'` exists.
+    # MEASURED against the honest census before removing it: rods admitted ONLY by the exemption =
+    # **ZERO**. It had become a bypass of the score gate that admitted nothing, and its admission
+    # test was `_params_b(model) >= 100` - a NAME HEURISTIC - so a rod called "...-500b" with
+    # reliability 1.0 and 6/12 would have walked into the tier that feeds the core mind.
     #
-    # THE EXEMPTION IS LIVENESS-BLIND AND MUST NOT BE THE ONLY GATE. Of the census rows it admits,
-    # THREE are 410 Gone - `mistral-small-4-119b` (score 12), `mistral-large-3-675b` (score 11), and
-    # `stockmark-2-100b`. They are kept out by `dead()` alone, which means the exemption's safety
-    # rests entirely on the reap being current. Widening admission widened the corpse surface, and
-    # that was not noticed when the widening shipped.
-    #
-    # So it also refuses a rod that is currently FAILING in live use. `dead()` is the measured
-    # tombstone and stays authoritative; this is the second line, from fitness-from-use, for a rod
-    # that has died since the last reap and has not been asked about yet.
-    def deep_and_reliable(r):
-        u = usage.get(f"{r['plant']}/{r['model']}", {})
-        if u.get("retired_at") or u.get("consec_fail", 0) >= COOL_AFTER:
-            return False
-        return (r.get("reliability", 0) >= 1.0 and _params_b(r["model"]) >= 100
-                and r["score"] >= _thr(0.5))
-
+    # KEPT AS A LESSON RATHER THAN AS CODE: when a measurement looks wrong, the cheap move is a
+    # bypass and the correct one is to fix the measurement. The bypass would have gone on working
+    # here forever, quietly, admitting on a name.
     if tier == "frontier":
-        rows = [r for r in cap if r["score"] >= _thr(5 / 6) or deep_and_reliable(r)]
+        rows = [r for r in cap if r["score"] >= _thr(5 / 6)]
     elif tier == "solid":
-        rows = [r for r in cap if r["score"] >= _thr(4 / 6) or deep_and_reliable(r)]
+        rows = [r for r in cap if r["score"] >= _thr(4 / 6)]
     elif tier == "reflex":
         rows = [r for r in cap if r["score"] >= _thr(4 / 6) and (r["avg_latency"] or 9) < 1.2]
     else:                                              # local

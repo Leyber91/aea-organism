@@ -1085,3 +1085,46 @@ the rest of today, in the smallest possible place.
 INTERROGATED from the stored record instead of re-run, and the three failure modes that have cost
 the most this session - truncation, prefill mistaken for slowness, and reasoning mistaken for a
 non-answer - each become a field rather than an investigation.
+
+## D34 · The honest census: the 550b is 12/12, and the exemption built to rescue it admitted nothing (measured 2026-07-30)
+
+The first census run in this repo's history that measures rods rather than the harness around them:
+every call streamed, no invented token ceiling, a 60s INACTIVITY budget, and concurrency taken from
+the meter's measured ceiling of 4 instead of a hand-typed 14.
+
+**THE CONTENTION CHECK, which gated the promote:**
+
+| rod | sequential | earlier parallel run | now | failure modes |
+|---|---|---|---|---|
+| `nemotron-3-ultra-550b-a55b` | 11/12 | 8/12 `ERR503` | **12/12** | **none** |
+| `nemotron-3-super-120b-a12b` | 12/12 | 9/12 `TIMEOUT` | **12/12** | **none** |
+| `meta/llama-3.1-70b-instruct` | 11/12 | 9/12 `RATE` | **11/12** | **none** |
+
+All three at or above their sequential numbers with no failures at all. The frontier tier went from
+**one living rod** this morning to **17**, with zero corpses in it.
+
+**THE ENTITY'S DESIGNED CORE SCORES 12/12** - a perfect rod that the ladder recorded as 7/12 and
+could not select, for a day, because the exam handed it forty tokens.
+
+**AND THE EXEMPTION CAME BACK OUT.** `deep_and_reliable` was added this morning to admit rods the
+score gate rejected, on the theory that `score` conflated format-compliance with judgement. The
+theory was wrong: the 7/12 was truncation, not narration. Measured against the honest census, rods
+admitted **only** by the exemption: **zero**. It had become a bypass of the score gate that admitted
+nothing - and its admission test was `_params_b(model) >= 100`, a NAME HEURISTIC, so a rod called
+`...-500b` with reliability 1.0 and 6/12 could have walked into the tier that feeds the core mind.
+
+Removed, and the battery now asserts the opposite: **a big name does not buy a low-scoring rod into
+frontier.** Admission is by score; ordering is by depth. Two separate questions that the exemption
+had quietly merged.
+
+**THE TRANSFERABLE MOVE:** when a measurement looks wrong, the cheap fix is a bypass and the correct
+one is to repair the measurement. The bypass would have worked here forever - silently, admitting on
+a name, and never firing - because nothing tests a rescue path that has nothing left to rescue. Any
+exemption should be re-asked against its own evidence the moment the thing it routed around is
+fixed.
+
+**THE GUARD EARNED ITSELF TOO.** `--promote` refused the first attempt: *23 rods absent, 21
+tombstoned, 2 unexplained* - `groq/llama-4-scout-17b` and `groq/qwen3-32b`. Asking groq's own
+`/models` confirmed both are genuinely delisted, so the fix was to RECORD that (`--reap groq`) and
+promote cleanly at 23/23 explained, rather than to `--force` past it. A guard that names what it
+does not understand is worth more than one that just counts.
