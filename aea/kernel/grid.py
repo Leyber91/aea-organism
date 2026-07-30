@@ -422,6 +422,27 @@ def _rod_facts(model: str) -> dict:
     return (doc.get("rods") or {}).get(model) or {}
 
 
+def is_retired(plant: str, model: str) -> bool:
+    """Has this rod been MEASURED dead? One predicate, tombstone only, for every selector.
+
+    THE FOURTH COPY IS WHY THIS LIVES HERE. `energy.ladder` learned to skip tombstoned rods (D22),
+    and a cross-tree sweep then found the same blindness in two more selectors that had never been
+    touched: `orchestrator.load_pool` - which the verifier called "energy.ladder() rewritten without
+    the fix" - and `controlroom`'s status panel, a hand-copied `_cooling` with the permanent branch
+    deleted. Each had grown its own liveness rule and each expired.
+
+    IT IS IN `grid`, NOT `energy`, DELIBERATELY. Every selector already imports `grid`; `mind/`
+    imports no `energy/` today and pointing it there for a one-line predicate would invert the
+    dependency direction for nothing. `energy_usage.json` already resolves through `grid.STATE`.
+
+    AND IT IS TOMBSTONE-ONLY, WHICH `energy._cooling` IS NOT. That function returns True for a
+    retirement AND for a fifteen-minute cooldown, so promoting it would let a transient throttle
+    delete a rod from a pool the way a withdrawal must. A permanent fact and a temporary one need
+    different answers - conflating them is the defect in the other direction."""
+    e = (load_json(os.path.join(STATE, "energy_usage.json"), {}) or {}).get(f"{plant}/{model}")
+    return bool(isinstance(e, dict) and e.get("retired_at"))
+
+
 def own_params(model: str) -> dict:
     """The owner's published temperature/top_p/max_tokens for this model, or {} if nothing was
     published. Returns {} rather than a house default, so a caller can tell the difference between
@@ -812,7 +833,21 @@ def _merge_tool_calls(acc, deltas):
 
 
 def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=None, timeout=60,
-                tools=None):
+                tools=None, schema=None, seed=None):
+    # `schema` AND `seed` - two capabilities the endpoints have always accepted and we never sent.
+    #
+    # MEASURED 2026-07-30 across all four plants: `seed` accepted everywhere and genuinely
+    # deterministic (llama-3.1-70b and groq returned byte-identical output three times at
+    # temperature 1.0); `response_format: json_schema` accepted on nvidia and ollama.
+    #
+    # `seed` turns a standing unknown into a decidable question: `movecontrol` found 3 of 9 cells
+    # flipping on identical input and nothing could separate sampling noise from genuine prompt
+    # ambiguity. Under a fixed seed, noise disappears and ambiguity does not.
+    #
+    # `schema` removes a whole failure class. `aea/loop/aea.py` `structure()` exists ONLY because
+    # the core could not be trusted to emit clean JSON, and it was the wake's single unladdered
+    # dependency - it 429'd on 21 of 27 samples in the frontier run (D29). A rod that can be handed
+    # a schema does not need a second model to tidy up after it.
     # `max_tokens=None` MEANS "AS MUCH AS THIS ROD WILL GIVE", NOT 256.
     #
     # Luis, 2026-07-30: "thinking budget shouldn't be cut off. You have to let it think as much as
@@ -918,6 +953,13 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
     # that half an invoice is not an honest economy - so silently losing it to a transport change
     # would be the same class of defect as the census measuring its own harness.
     payload_out["stream_options"] = {"include_usage": True}
+    if seed is not None:
+        payload_out["seed"] = int(seed)
+    if schema is not None:
+        payload_out["response_format"] = (
+            schema if isinstance(schema, dict) and "type" in schema
+            else {"type": "json_schema",
+                  "json_schema": {"name": "out", "strict": True, "schema": schema}})
     if tools:
         payload_out["tools"] = tools          # the schema rides on EVERY call, used or not - the tax
     body = json.dumps(payload_out).encode("utf-8")

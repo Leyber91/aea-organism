@@ -1399,6 +1399,47 @@ def suite_wiring() -> list:
                      got=str(list(leaky)[:2]) if leaky else "clean", ok=ok,
                      err="" if ok else "retrieval_benchmark_measures_matching"))
 
+    # J - THE TOMBSTONE HOLDS IN EVERY SELECTOR, not just the one it was learned in.
+    #
+    # `ladder` learned this (D22) and a cross-tree sweep then found the same blindness in two more
+    # selectors nobody had touched: `orchestrator.load_pool` - "energy.ladder() rewritten without
+    # the fix", 7 of 27 candidates answering 410/404 with one at rank 1 - and controlroom's status
+    # panel, which rendered a 410'd rod as "128 calls, 94% ok", the healthiest-looking thing on the
+    # page. E3.2 asserts it for the ladder; these are the twins, added because a property proven in
+    # one selector and unasserted in the others is how this recurred six times.
+    from aea.mind import orchestrator as _orc
+    pool = _orc.load_pool()
+    dead_in_pool = [f"{n['plant']}/{n['model']}" for n in pool
+                    if grid.is_retired(n["plant"], n["model"])]
+    ok = not dead_in_pool
+    rows.append(dict(case="orchestrator.load_pool excludes tombstoned rods",
+                     got=f"{len(pool)} nodes, {len(dead_in_pool)} dead", ok=ok,
+                     err="" if ok else "corpse_in_the_orchestrator_pool"))
+    # ...and the pool must not be emptied by the filter - a gate that starves every tier is its own
+    # outage. Measured before shipping: bulk 32, deep 2, reflex 3, local 1.
+    tiers_left = {t: len([n for n in pool if _orc.tier_of(n) == t])
+                  for t in ("bulk", "deep", "reflex", "local")}
+    ok = all(v > 0 for v in tiers_left.values())
+    rows.append(dict(case="no tier is starved by the liveness filter", got=str(tiers_left), ok=ok,
+                     err="" if ok else "filter_emptied_a_tier"))
+    # `is_retired` is TOMBSTONE-ONLY - it must not fire on a rod that is merely cooling, or a
+    # transient throttle would delete a rod the way a withdrawal does.
+    import tempfile as _tf
+    _u = os.path.join(_tf.mkdtemp(prefix="tomb_"), "energy_usage.json")
+    open(_u, "w", encoding="utf-8").write(json.dumps({
+        "p/cooling-not-dead": {"consec_fail": 99, "cooled_at": time.time()},
+        "p/really-dead": {"retired_at": time.time(), "retired_why": "410"}}))
+    _real_state = grid.STATE
+    try:
+        grid.STATE = os.path.dirname(_u)
+        ok = (grid.is_retired("p", "really-dead") and not grid.is_retired("p", "cooling-not-dead"))
+        rows.append(dict(case="is_retired fires on a tombstone, not on a cooldown",
+                         got=f"dead={grid.is_retired('p', 'really-dead')} "
+                             f"cooling={grid.is_retired('p', 'cooling-not-dead')}", ok=ok,
+                         err="" if ok else "cooldown_treated_as_death"))
+    finally:
+        grid.STATE = _real_state
+
     # F - the known table itself is well-formed. A malformed argv here would reach subprocess.
     from aea.kernel.decide import KNOWN
     for name, (action, argv, tmo) in KNOWN.items():

@@ -1233,3 +1233,58 @@ it is not solved. Recorded as a number rather than a claim.
 **AND THE EMBEDDER WAS ITSELF AN ORPHAN CAPABILITY** - `modality.LOCAL_EMBED` has been sitting in
 this repo, local and unmetered, never used for the retrieval problem it exists for. Which is the
 other half of the day's finding, and the subject of D37.
+
+## D37 · The same tombstone blindness in two more selectors, and a panel calling a corpse healthy (found by the sweep, 2026-07-30)
+
+The ten-shape transfer sweep - "where else is this true?", asked of every recorded lesson by agents
+and adversarially refuted - returned the D22 shape in two selectors nobody had touched.
+
+**1. `orchestrator.load_pool` - "energy.ladder() rewritten without the fix."** Seven of twenty-seven
+public candidates answer 410 or 404, **one of them at bulk rank 1**, and in the `exclude=used`
+fan-out paths that corpse is hit deterministically on the second subtask. Its only liveness gate was
+`model_fitness` reliability - and that store certifies **four of the seven withdrawn rods at
+reliability 1.0**.
+
+**The docstring claimed the check it never performed.** It promised a node "measured unfit
+(timeouts, empty-texts, **gone-404**) is EXCLUDED". Gone-404 was never tested at all. That false
+guarantee is the more dangerous half and is exactly why nobody looked here when `ladder` was fixed
+for this two hours earlier - it answered the question that would have found the bug.
+
+**And the failure was MISFILED.** `trust.record('produce_brief', False)` demoted the entity's own
+capability for what was a supplier withdrawal, so the ledger blamed competence for someone else's
+decommissioning - and `impasse.py`, which exists to break exactly that kind of stall, cannot, because
+the recorded cause is wrong.
+
+**2. `controlroom.py:138` - the honesty law breached at the file's own contract.** A hand-copy of
+`energy._cooling` with the permanent branch deleted, and `3`/`900` hardcoded so it could never
+inherit a fix. Four of the ten rods on the panel carry a tombstone; all four rendered blank. The
+worst cell read **"mistral-small-4-119b - 128 calls, 94% ok, ema 4.5s"** - the most-drawn hosted rod
+on the page, presenting as the healthiest thing on the fleet, beside a file saying
+`retired_why: "410 at reap"`. `dracarys` is worse in kind: 5 calls, **0 ok**, still blank, because
+its cooldown had expired into looking idle.
+
+Line 6 of that file says *"Nothing simulated - every number is read from the same files the entity
+itself writes."* The NUMBER was read from the file; the STATUS was computed by a rule that could not
+see what the file said. **And the operator who would have caught a withdrawn endpoint sitting at
+frontier rank 0 for two days was looking at this panel.**
+
+**THE FIX, and the verifier corrected the proposal on three points before it was built:**
+
+- **`grid.is_retired(plant, model)`** - one predicate, in `grid` and not `energy`, because every
+  selector already imports `grid` while `mind/` imports no `energy/`; pointing it there for a
+  one-line check would invert the dependency direction for nothing.
+- **Tombstone-only, and this is the correction that mattered.** Promoting `energy._cooling` would
+  have been wrong: it returns True for a retirement AND for a fifteen-minute cooldown, so a
+  transient throttle would delete a rod from a pool the way a withdrawal must. A permanent fact and
+  a temporary one need different answers.
+- **Dead before unfit.** The tombstone runs BEFORE the fitness branch, so a dated snapshot can never
+  certify a corpse as healthy again.
+
+Measured after: pool 38 nodes, **0 tombstoned**, no tier starved (bulk 32, deep 2, reflex 3,
+local 1). Battery 420/420, with the twin assertions the verifier demanded *"or the transfer fails a
+seventh time"*.
+
+**THE COUNT, which is the finding.** This one lesson - *a permanent condition must be recorded
+permanently* - was learned once and then had to be re-applied in FOUR separate selectors, each of
+which had grown its own liveness rule and each of which expired. It was never a memory problem. Not
+one of those four could be reached from the site where the lesson was written.

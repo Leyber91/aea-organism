@@ -31,12 +31,31 @@ def is_general(model):
     return not SPECIAL_PURPOSE.search(model)
 
 def load_pool():
-    """Every ONLINE, measured-good node, with its affordances - filtered by LIVED fitness.
-    model_fitness.json (the fitness sweep) overrides the static battery: a hosted node measured
-    unfit (timeouts, empty-texts, gone-404) is EXCLUDED - the entity refuses tools it knows break.
+    """Every ONLINE, LIVING, measured-good node, with its affordances.
+
+    TWO FILTERS, AND THEY ANSWER DIFFERENT QUESTIONS. `grid.is_retired` asks whether the endpoint
+    still EXISTS - measured from the endpoint itself, permanent, and it runs first. `model_fitness`
+    then asks how WELL a living rod performs - a dated snapshot, and only ever a demotion.
+
+    THE DOCSTRING USED TO CLAIM THE FIRST AND NEVER DO IT. It said a node "measured unfit (timeouts,
+    empty-texts, **gone-404**) is EXCLUDED", and gone-404 was never checked at all: the only gate
+    was `model_fitness` reliability, and MEASURED 2026-07-30 that store certifies four of the seven
+    withdrawn rods in this pool at reliability 1.0. Seven of twenty-seven public candidates answered
+    410 or 404, one of them at bulk rank 1, and in the `exclude=used` fan-out paths that corpse is
+    hit deterministically on the second subtask.
+
+    The false claim was the dangerous half, and it is why nobody looked here when `energy.ladder`
+    was fixed for exactly this two hours earlier - a verifier called this function "energy.ladder()
+    rewritten without the fix". A docstring that guarantees something it does not perform is worse
+    than silence, because it answers the question that would have found the bug.
+
+    Worse still, the failure was MISFILED: `trust.record('produce_brief', False)` demoted the
+    entity's own capability for what was a supplier withdrawal, so the ledger blamed competence for
+    someone else's decommissioning.
+
     (Local ollama nodes are kept regardless: they are the privacy floor; their quirks are handled
-    at the call site.) Proof this matters: qwen3-next-80b scored 4/4 in the static battery, then
-    timed out in production and shipped a hole in the brief; the fitness sweep caught it at 0.00."""
+    at the call site.) Proof the fitness half matters: qwen3-next-80b scored 4/4 in the static
+    battery, then timed out in production and shipped a hole in the brief; the sweep caught it."""
     rows = grid.load_json(os.path.join(grid.STATE, 'models_report.json'), [])
     fit = {}
     for r in grid.load_json(os.path.join(grid.STATE, 'model_fitness.json'), {}).get('nodes', []):
@@ -45,6 +64,11 @@ def load_pool():
     for r in rows:
         plant, model = r['plant'], r['model']
         if plant not in grid.PLANTS:
+            continue
+        # DEAD BEFORE UNFIT. A tombstone is measured from the endpoint and is permanent; a fitness
+        # row is a dated snapshot and only ever demotes. Checking existence first means a stale
+        # sweep can never certify a corpse as healthy, which is exactly what it was doing.
+        if grid.is_retired(plant, model):
             continue
         cap = grid.PLANTS[plant]
         online = (cap['auth'] is None) or bool(grid.key(cap['auth'])) or bool(cap.get('anon'))

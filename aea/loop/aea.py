@@ -114,6 +114,27 @@ def move_from(reasoning: str) -> str:
 def structure(reasoning):
     """Phase 2 = the FORMATTER tool: a cheap strict-JSON model turns the core's free reasoning into 4 clean
     fields (guaranteed parseable). The big model thinks; this formalizes. Self-contained, never raises."""
+    # THE LADDER FIRST, WITH A SCHEMA. This function was the wake's ONE unladdered dependency: a
+    # hardcoded groq call, so when groq rate-limited it died to `move: NONE` with an empty action -
+    # 21 of 27 samples in the frontier run (D29). It existed only because the core was assumed
+    # unable to emit clean JSON, and that assumption was never tested. MEASURED 2026-07-30:
+    # `response_format: json_schema` is accepted on nvidia and ollama. So the rod that already did
+    # the thinking is handed the shape and asked for it directly, down the full ladder.
+    #
+    # The groq path stays below as the fallback rather than the default - it works, it is fast, and
+    # a second opinion on formatting costs nothing when the first one is already home.
+    try:
+        r = energy.draw("Turn this reasoning by Luis's entity into the five fields, quoting his "
+                        "ACTUAL projects and priorities - no placeholders, no meta-commentary. "
+                        "`move` is the name after the final MOVE: line, or the exact string NONE "
+                        "if absent.\n\nREASONING:\n" + reasoning[:2800],
+                        tier="solid", zone="private", schema=STRUCT_SCHEMA, timeout=90)
+        if r.get("ok"):
+            got = json.loads(r["text"])
+            if isinstance(got, dict) and got.get("matters_now"):
+                return got
+    except Exception:
+        pass                                  # fall through to the formatter below
     try:
         k = grid.key("GROQ_API_KEY")
         body = json.dumps({"model": "openai/gpt-oss-120b", "temperature": 0, "max_tokens": 1200,

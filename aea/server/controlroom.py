@@ -135,7 +135,29 @@ def state() -> dict:
     rods = sorted(({"rod": k, **v} for k, v in usage.items()),
                   key=lambda r: -r.get("calls", 0))[:10]
     for r in rods:
-        r["cooling"] = r.get("consec_fail", 0) >= 3 and (now - r.get("cooled_at", 0)) < 900
+        # RETIRED IS NOT COOLING, AND THIS PANEL SAID NEITHER.
+        #
+        # This line was a hand-copy of `energy._cooling` with the permanent branch deleted, and with
+        # 3/900 hardcoded so it could not inherit a fix even if the constants moved. MEASURED
+        # 2026-07-30: four of the ten rods rendered here carry a `retired_at` tombstone and every
+        # one showed blank. The worst cell read "mistral-small-4-119b - 128 calls, 94% ok, ema 4.5s"
+        # - the most-drawn hosted rod on the page, presenting as the healthiest thing on the fleet,
+        # while the file beside it says `retired_why: "410 at reap"`. `dracarys` is worse in kind:
+        # 5 calls, 0 ok, still blank, because its cooldown window had expired into looking idle.
+        #
+        # That is this file's own contract broken at line 6 - "nothing simulated, every number is
+        # read from the same files the entity itself writes". The NUMBER was read from the file; the
+        # STATUS was computed by a rule that could not see what the file said. And the operator who
+        # would have caught a withdrawn endpoint sitting at frontier rank 0 for two days was looking
+        # at this panel.
+        #
+        # Read from the tombstone, do not recompute it. Two states, because they mean two different
+        # things to whoever is reading: a cooling rod comes back, a retired one does not.
+        r["retired"] = bool(r.get("retired_at"))
+        r["retired_why"] = r.get("retired_why", "")
+        r["cooling"] = (not r["retired"]
+                        and r.get("consec_fail", 0) >= energy_mod.COOL_AFTER
+                        and (now - r.get("cooled_at", 0)) < energy_mod.COOL_SECONDS)
 
     caps = {}
     for c_name, cdef in trust.CHARTER.items():

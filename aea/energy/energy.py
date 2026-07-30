@@ -266,7 +266,8 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
 
 def draw(prompt: str, tier: str = "solid", zone: str = "private", mx: int | None = None,
          temp: float | None = None, timeout: int = 60, system: str | None = None,
-         order: str | None = None) -> dict:
+         order: str | None = None, schema: dict | None = None,
+         seed: int | None = None) -> dict:
     """THE MOUTH. Burn the best live rod; on failure fall down the ladder; never raise.
     Returns dict(ok, text, plant, model, latency, tried).
 
@@ -305,8 +306,11 @@ def draw(prompt: str, tier: str = "solid", zone: str = "private", mx: int | None
         ok_spend, _, why = _meter.can_spend(plant, model)
         if not ok_spend:
             tried.append(f"{plant}/{model}:{why}"); continue
+        # `schema` and `seed` travel the LADDER. Handing a schema to draw() is what lets the
+        # wake structure its own output instead of paying a second, unladdered model to do it.
         r = grid.call_openai(plant, model, msgs, max_tokens=use_mx, temperature=use_temp,
-                             timeout=(180 if plant == "ollama" else timeout))
+                             timeout=(180 if plant == "ollama" else timeout),
+                             schema=schema, seed=seed)
         text = (r.get("text") or "").strip()
         good = bool(r["ok"] and text)                  # EMPTY = failure (the silent-killer lesson)
         if r.get("status") == 410:
