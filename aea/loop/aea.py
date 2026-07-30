@@ -128,7 +128,14 @@ def structure(reasoning):
                         "ACTUAL projects and priorities - no placeholders, no meta-commentary. "
                         "`move` is the name after the final MOVE: line, or the exact string NONE "
                         "if absent.\n\nREASONING:\n" + reasoning[:2800],
-                        tier="solid", zone="private", schema=STRUCT_SCHEMA, timeout=90)
+                        # REFLEX, NOT SOLID. Measured: the first version asked the `solid` tier and
+                        # took **682 SECONDS** - a deep reasoning rod deliberated its way through a
+                        # JSON schema, against groq's two seconds for the same job. The capability
+                        # was fine and the ROUTING was wrong: this is formatting, not judgement.
+                        # The thinking already happened in phase 1; phase 2 only shapes it, and
+                        # sending shape-work to the deepest rod is the mirror of the mistake that
+                        # put the council's debating seat on an 8b.
+                        tier="reflex", zone="private", schema=STRUCT_SCHEMA, timeout=60)
         if r.get("ok"):
             got = json.loads(r["text"])
             if isinstance(got, dict) and got.get("matters_now"):

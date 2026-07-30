@@ -1288,3 +1288,53 @@ seventh time"*.
 permanently* - was learned once and then had to be re-applied in FOUR separate selectors, each of
 which had grown its own liveness rule and each of which expired. It was never a memory problem. Not
 one of those four could be reached from the site where the lesson was written.
+
+## D38 · Two capabilities wired, and both corrected me on the way in (measured 2026-07-30)
+
+`seed` and `response_format: json_schema` - two of the thirteen parameters the endpoints have always
+accepted and this repo never sent (D37's orphan-capability class). Wiring them produced two findings
+neither of which was the one expected.
+
+**1. `structure()` NO LONGER NEEDS GROQ - and my first routing was ten minutes wrong.**
+
+That function was the wake's single unladdered dependency: a hardcoded groq call that died to
+`move: NONE` with an empty action when groq rate-limited, on 21 of 27 samples in the frontier run
+(D29). It existed only because the core was ASSUMED unable to emit clean JSON, and the assumption
+was never tested. It can:
+
+| routing | time | result |
+|---|---|---|
+| `tier="solid"` (first attempt) | **682.2s** | correct, and unusable |
+| `tier="reflex"` | **18.9s** | correct |
+| the old hardcoded groq call | ~2s | correct, and unladdered |
+
+Eleven minutes, because a deep reasoning rod deliberated its way through a JSON schema. **The
+capability was fine and the ROUTING was wrong.** Phase 1 already did the thinking; phase 2 only
+shapes it, and sending shape-work to the deepest rod is the exact mirror of the mistake that put the
+council's debating seat on an 8b (D30). Same error, opposite direction: **match the rod to the SHAPE
+of the job, not to its importance.** Groq stays as the fast fallback; the ladder is now the default,
+so a rate-limited plant no longer silences the wake.
+
+**2. `seed` DOES NOT BIND THE ENTITY'S CORE, and that limits the plan I built on it.**
+
+Measured, three runs at `seed=11`, temperature unchanged:
+
+    meta/llama-3.1-70b-instruct    'Lion.' 'Lion.' 'Lion.'          DETERMINISTIC
+    groq/llama-3.3-70b-versatile   'Lion.' 'Lion.' 'Lion.'          DETERMINISTIC
+    nemotron-3-ultra-550b-a55b     three different answers          NOT
+
+**Determinism is per-rod, not per-parameter.** The endpoint accepts `seed` on every plant - a 200
+means the field was allowed, never that it bound anything - and the MoE core does not honour it,
+plausibly because expert routing depends on how the batch was assembled server-side.
+
+So the plan to settle the R2a instability with a seed is only available on rods that actually bind.
+That is still useful - the SAME corpus can be run on `llama-3.1-70b` where noise is eliminated by
+construction, and any cell still flipping there is genuine prompt ambiguity - but it cannot be run
+on the core the wake actually uses. **The question is now answerable on a proxy rod and remains open
+on the real one.** Recorded as a limit rather than quietly dropped.
+
+**AND THE SHAPE OF BOTH FINDINGS IS THE SAME:** a 200 says the parameter was ACCEPTED. Whether it
+DID anything is a separate measurement, and the repo's own law says so - *ask the live thing, never
+the description of it*. I checked acceptance for thirteen parameters in one sweep and effect for
+only one of them; the other twelve are accepted-but-unverified until each is measured the way these
+two were.

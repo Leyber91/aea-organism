@@ -57,12 +57,12 @@
   "cooled_at": 1784725408.0140953
  },
  "ollama/qwen2.5:7b": {
-  "calls": 187,
-  "ok": 187,
+  "calls": 188,
+  "ok": 188,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 5.5,
-  "last": "2026-07-30 06:45"
+  "ema_latency": 6.9,
+  "last": "2026-07-30 18:14"
  },
  "groq/llama-3.3-70b-versatile": {
   "calls": 62,
@@ -677,12 +677,12 @@
   "retired_why": "404 at reap"
  },
  "nvidia/nvidia/ising-calibration-1.5-31b": {
-  "calls": 1,
+  "calls": 2,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 2,
+  "consec_fail": 2,
   "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "last": "2026-07-30 18:14"
  },
  "nvidia/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning": {
   "calls": 1,
@@ -717,12 +717,12 @@
   "last": "2026-07-30 18:12"
  },
  "nvidia/nvidia/nvidia-nemotron-nano-9b-v2": {
-  "calls": 1,
+  "calls": 2,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 2,
+  "consec_fail": 2,
   "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "last": "2026-07-30 18:14"
  },
  "nvidia/meta/llama-3.1-70b-instruct": {
   "calls": 2,
@@ -765,20 +765,20 @@
   "last": "2026-07-30 18:00"
  },
  "groq/llama-3.1-8b-instant": {
-  "calls": 1,
+  "calls": 2,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 2,
+  "consec_fail": 2,
   "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "last": "2026-07-30 18:14"
  },
  "groq/allam-2-7b": {
-  "calls": 1,
+  "calls": 2,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 2,
+  "consec_fail": 2,
   "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "last": "2026-07-30 18:14"
  },
  "nvidia/poolside/laguna-xs-2.1": {
   "calls": 1,
@@ -797,28 +797,28 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/meta/llama-3.2-1b-instruct": {
-  "calls": 1,
+  "calls": 2,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 2,
+  "consec_fail": 2,
   "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "last": "2026-07-30 18:14"
  },
  "groq/openai/gpt-oss-120b": {
-  "calls": 1,
+  "calls": 2,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 2,
+  "consec_fail": 2,
   "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "last": "2026-07-30 18:14"
  },
  "nvidia/meta/llama-3.1-8b-instruct": {
-  "calls": 1,
+  "calls": 2,
   "ok": 0,
-  "fail": 1,
-  "consec_fail": 1,
+  "fail": 2,
+  "consec_fail": 2,
   "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "last": "2026-07-30 18:14"
  },
  "nvidia/minimaxai/minimax-m3": {
   "calls": 1,
