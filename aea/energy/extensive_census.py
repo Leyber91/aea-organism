@@ -241,6 +241,28 @@ def promote(force: bool = False):
               f"Promoting would remove {have - incoming} rods from selection.\n"
               f"Re-run the exam, or pass --force if the shrink is intended.")
         return
+    # THE BATTERY SIZE IS PART OF THE CONTRACT, AND THIS IS WHERE IT BROKE.
+    #
+    # `energy.ladder` computes its tier thresholds from `len(census["battery"])`. This function
+    # writes that field. So promoting an exam with a different number of probes silently retunes
+    # every tier in the entity - and it retunes them HARDER, because more probes means a higher
+    # absolute bar at the same intended ratio.
+    #
+    # MEASURED 2026-07-30: `capability_census.py` defines SIX probes and `ladder`'s threshold was
+    # written as `mx - 1` to mean the documented "5/6". This exam has TWELVE. One promotion moved
+    # the frontier bar from 83% to 92% and left `frontier/private` with a single living rod, so
+    # every rate limit dropped the entity onto a local 7B. Nothing announced it, because both halves
+    # were individually correct and nobody owned the seam.
+    #
+    # The guard above already refuses a promotion that would drop RODS. Dropping TIERS is the same
+    # class of harm and was unguarded (law B1, fail closed - applied to one field of two).
+    old_b, new_b = len(live.get("battery") or []), len(rep.get("battery") or [])
+    if old_b and new_b != old_b and not force:
+        print(f"REFUSED: this exam has {new_b} probes, the live ladder was scored on {old_b}.\n"
+              f"  `energy.ladder` derives every tier threshold from the battery SIZE, so promoting "
+              f"this would silently retune frontier/solid/reflex for the whole entity.\n"
+              f"  Check the tier ratios in energy.ladder first, then pass --force.")
+        return
     grid.atomic_save_json(live_path,
                           {"generated": rep["generated"], "battery": rep["battery"],
                            "source": "aea.energy.extensive_census",   # who wrote the live ladder

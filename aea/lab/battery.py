@@ -1113,6 +1113,101 @@ def suite_wiring() -> list:
     finally:
         _en.USAGE = _real_usage
 
+    # E3 - THE LADDER. Four defects stacked here hid 94 rods behind one reachable rod (D24). Each
+    # gets an assertion, because every one of them was individually reasonable and the harm only
+    # appeared where two correct halves met. Run against synthetic censuses in a temp dir.
+    _rc, _rf, _ru = _en.CAPABILITY, _en.FITNESS, _en.USAGE
+
+    def _mk(nprobes, models, fitness=None, usage=None):
+        c = os.path.join(tmp, f"cap{nprobes}_{len(models)}.json")
+        grid_atomic = json.dumps({"battery": [{"id": f"p{i}"} for i in range(nprobes)],
+                                  "models": models})
+        open(c, "w", encoding="utf-8").write(grid_atomic)
+        f = os.path.join(tmp, "fit.json")
+        open(f, "w", encoding="utf-8").write(json.dumps({"nodes": fitness or []}))
+        u = os.path.join(tmp, "use.json")
+        open(u, "w", encoding="utf-8").write(json.dumps(usage or {}))
+        _en.CAPABILITY, _en.FITNESS, _en.USAGE = c, f, u
+
+    def _mdl(model, score, rel=1.0, lat=1.0, plant="nvidia"):
+        return dict(plant=plant, model=model, score=score, reliability=rel, avg_latency=lat)
+
+    try:
+        # E3.1 THE THRESHOLD IS A RATIO. The same rod at the same PROPORTION of the battery must
+        # qualify whether the exam has 6 probes or 12. Written as a count (`mx - 1`), growing the
+        # exam from 6 to 12 moved the bar from 83% to 92% and emptied the tier.
+        rods6 = [_mdl("a/five-of-six", 5), _mdl("a/four-of-six", 4)]
+        _mk(6, rods6)
+        got6 = [m for _p, m in _en.ladder("frontier", "private")]
+        rods12 = [_mdl("a/ten-of-twelve", 10), _mdl("a/eight-of-twelve", 8)]
+        _mk(12, rods12)
+        got12 = [m for _p, m in _en.ladder("frontier", "private")]
+        ok = ("a/five-of-six" in got6) and ("a/ten-of-twelve" in got12)
+        rows.append(dict(case="frontier threshold is a RATIO, not a count",
+                         got=f"6-probe:{'5/6 in' if 'a/five-of-six' in got6 else '5/6 OUT'} "
+                             f"12-probe:{'10/12 in' if 'a/ten-of-twelve' in got12 else '10/12 OUT'}",
+                         ok=ok, err="" if ok else "growing_the_exam_shrinks_the_ladder"))
+
+        # E3.2 A TOMBSTONED ROD NEVER APPEARS. The dead kept the scores they earned while alive, so
+        # a corpse sorted to the FRONT of the tier - both top frontier entries were 410 Gone.
+        _mk(12, [_mdl("a/dead-but-perfect", 12), _mdl("a/live-and-good", 11)],
+            usage={"nvidia/a/dead-but-perfect": {"retired_at": 1.0, "consec_fail": 0}})
+        got = [m for _p, m in _en.ladder("frontier", "private")]
+        ok = "a/dead-but-perfect" not in got and "a/live-and-good" in got
+        rows.append(dict(case="a tombstoned rod is absent from the ladder", got=str(got[:2]), ok=ok,
+                         err="" if ok else "corpse_outranks_the_living"))
+
+        # E3.3 WHEN TWO STORES DISAGREE, THE NEWER AND LARGER ONE WINS.
+        #
+        # The real case: `meta/llama-3.1-70b-instruct` scores 11/12 with reliability 1.0 in the
+        # 12-probe census and carries a sub-1.0 entry in the older, smaller `model_fitness` sweep.
+        # The old rule deleted it outright, costing the fleet its joint-best scorer. So a census
+        # reliability of 1.0 OVERRIDES a stale sweep - full trust, normal rank.
+        #
+        # (This assertion was written the other way first, expecting demotion, and failed. The test
+        # was wrong, not the code: demoting a rod the current exam says is perfect would re-import
+        # the same staleness the fix removes, one notch softer. Recorded because a test bent to
+        # match a wrong expectation is how a fix quietly becomes the bug it replaced.)
+        _mk(12, [_mdl("a/census-says-fine", 12, rel=1.0), _mdl("a/trusted", 11)],
+            fitness=[dict(plant="nvidia", model="a/census-says-fine", reliability=0.5, avg_latency=1.0)])
+        got = [m for _p, m in _en.ladder("frontier", "private")]
+        ok = got[:1] == ["a/census-says-fine"]
+        rows.append(dict(case="a fresh census overrides a stale fitness sweep", got=str(got[:3]),
+                         ok=ok, err="" if ok else "stale_sweep_still_wins"))
+
+        # ...and when BOTH stores doubt it, it is demoted to the back - never deleted, because only
+        # measured death (a tombstone) may remove a rod from the fleet.
+        _mk(12, [_mdl("a/doubted", 12, rel=0.5), _mdl("a/trusted", 11, rel=1.0)],
+            fitness=[dict(plant="nvidia", model="a/doubted", reliability=0.5, avg_latency=1.0)])
+        got = [m for _p, m in _en.ladder("frontier", "private")]
+        ok = ("a/doubted" in got and "a/trusted" in got
+              and got.index("a/trusted") < got.index("a/doubted"))
+        rows.append(dict(case="a rod both stores doubt is demoted, not deleted", got=str(got[:3]),
+                         ok=ok, err="" if ok else "doubt_became_deletion"))
+
+        # E3.4 DEEP AND ALWAYS-ANSWERING IS FRONTIER-GRADE. The score counts strict string matches,
+        # several probes are format-compliance tests, and a narrating 550b scored 7/12 at
+        # reliability 1.0 while an 8b scored 10. Depth plus "it always answers" is the property the
+        # core mind needs; the strict-match total is not.
+        _mk(12, [_mdl("a/narrating-550b", 7, rel=1.0), _mdl("a/tiny-8b", 10, rel=1.0)])
+        got = [m for _p, m in _en.ladder("frontier", "private")]
+        ok = "a/narrating-550b" in got
+        rows.append(dict(case="a deep always-answering rod reaches frontier on 7/12", got=str(got[:3]),
+                         ok=ok, err="" if ok else "reasoning_rod_locked_out"))
+        # depth ordering must then put it FIRST - the counsel duel's finding, and what core() relies on
+        got = [m for _p, m in _en.ladder("frontier", "private", order="depth")]
+        ok = got and got[0] == "a/narrating-550b"
+        rows.append(dict(case="order='depth' puts the deepest rod first", got=str(got[:2]), ok=ok,
+                         err="" if ok else "depth_order_broken"))
+        # and a rod that does NOT always answer must not ride the deep exemption in
+        _mk(12, [_mdl("a/flaky-500b", 7, rel=0.5)])
+        got = [m for _p, m in _en.ladder("frontier", "private")]
+        ok = "a/flaky-500b" not in got
+        rows.append(dict(case="the deep exemption requires reliability 1.0", got=str(got[:2]), ok=ok,
+                         err="" if ok else "deep_exemption_too_wide"))
+    finally:
+        _en.CAPABILITY, _en.FITNESS, _en.USAGE = _rc, _rf, _ru
+
     # F - the known table itself is well-formed. A malformed argv here would reach subprocess.
     from aea.kernel.decide import KNOWN
     for name, (action, argv, tmo) in KNOWN.items():
