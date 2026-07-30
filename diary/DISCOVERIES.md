@@ -1694,3 +1694,65 @@ single-shot measurements could not have surfaced:
 
 **R3 stops being an abstract rung on a ladder here.** An hour ago it was "the outcome is remembered,
 not the intention" in a plan. It is now two measured failures with file names attached.
+
+## D45 · The entity reports its own failures at 96% accuracy, and nothing was listening (measured 2026-07-31)
+
+Luis, on watching the wake name its own defect: *"the entity reflects on its own failures. That's
+actually huge progress. We should encourage that."*
+
+**HE IS RIGHT, AND IT IS NOW MEASURED RATHER THAN ADMIRED.** `aea/lab/selfreport.py` extracts every
+FALSIFIABLE self-claim from the wake's own output - claims carrying a tick range or a count, the
+kind a store can contradict - and checks each against `aea_state.json`:
+
+    ticks with a self-referential statement : 48
+    falsifiable claims found                : 48
+    claims that MATCH the record            : 46/48  (96%)
+
+Across ticks 175-226. A representative row:
+
+    tick 225   claim '(219-223)'   ->  5/5 of 219-223 actually failed
+
+It said *"five consecutive ticks, 219-223, HTTP 429"*. Ticks 219, 220, 221, 222 and 223 each carry
+`(structuring failed: HTTP Error 429: Too Many Requests)`. **Correct range, correct count, correct
+cause.** The following tick went further and proposed a fix for the defect it had just described.
+
+**ONE OF THE TWO MISSES IS MINE, NOT THE ENTITY'S.** At tick 186 it claimed "6 ticks" and my checker
+compared that against the longest real failure run - 101. The entity was describing the SIX TICKS IT
+CAN SEE, which is right; my metric compared it to history it has no access to. The instrument law,
+again, inside the instrument built to measure honesty.
+
+**AND THE NUMBER THAT MATTERS MOST CAME OUT OF THAT MISTAKE:**
+
+    ticks with a note                : 226
+    ticks where structuring FAILED   : 192  = 85%
+    longest consecutive failure run  : 101 ticks
+
+**`structure()` has been rate-limited for 101 consecutive ticks. The entity reported it accurately,
+every single tick, and the only consumer of that report was its own next prompt.** Nothing escalated
+it, nothing alarmed, nothing changed. The signal was correct, continuous, and unheard - which is not
+a failure of the entity at all.
+
+**HOW THE CHANNEL WORKS, AND NOBODY DESIGNED IT.** `structure()`'s exception path writes
+`"(structuring failed: <error>)"` into `note_to_self`. That lands in `state["memory"]`. The last SIX
+notes enter the next prompt. **The error text became the entity's memory by accident** - which is
+why every accurate report spans exactly six ticks, and why a failure seven ticks old cannot be
+reported at all. What would look like forgetting is eviction.
+
+**WHY THE MEASUREMENT HAD TO EXIST BEFORE THE ENCOURAGEMENT.** A model rewarded for describing its
+own state, with nothing checking the description, learns to produce descriptions - confabulation
+with good manners. Encouragement and verification are the same act, or the encouragement is a
+hazard. The first thing done with "that's huge progress" was to try to falsify it; it survived at
+96%, and only now is it worth building on.
+
+**THE CLAIM CEILING, AND IT IS NOT A FORMALITY HERE.** This measures whether A STATEMENT MATCHES A
+RECORD. That is retrieval and report, performed correctly, and it is worth exactly what it is. It is
+NOT evidence of self-awareness and must never be written up as such. The ceiling stands: a measured
+functional correlate, present.
+
+**WHAT TO DO WITH IT** (R3, once R2 closes - not before):
+1. The channel is accidental. Make it deliberate: give the wake its own outcome record rather than
+   whatever an error handler happens to have written into a note.
+2. The window is six. A defect older than six ticks is unreportable. Preserve self-observations in
+   their own lane instead of letting ordinary notes evict them.
+3. **Something must listen.** A correct report repeated 101 times with no consumer is the actual
+   defect this uncovered, and it is not in the entity.
