@@ -169,8 +169,20 @@ def probe(plant, model, pid, mx, prompt, check, gap=0.0):
         out = ("RATE" if r.get("status") == 429 else
                "TIMEOUT" if "timed out" in err.lower() else f"ERR{r.get('status')}")
         return dict(id=pid, outcome=out, passed=False, latency=round(r.get("latency", 0), 1))
+    # THE TELEMETRY IS KEPT, because a score without it cannot be diagnosed.
+    #
+    # Until every call streamed, a probe produced one number - pass/fail - and a latency, and when a
+    # rod scored badly there was no way to ask WHY from the record. D28 is the whole argument: the
+    # 550b's 7/12 needed a targeted re-score and a control to explain, and `truncated=True` on those
+    # rows would have said it outright. `reason_share` separates a weak rod from a deliberating one;
+    # `ttfb` separates queue time from generation; `deltas` shows whether anything arrived at all
+    # before a failure, so TIMEOUT stops meaning both "dead peer" and "still working".
+    tel = r.get("telemetry") or {}
     return dict(id=pid, outcome=("EMPTY" if not text else "ok"), passed=bool(text and check(text)),
-                latency=round(r["latency"], 1), sample=text[:70].replace("\n", " "))
+                latency=round(r["latency"], 1), sample=text[:70].replace("\n", " "),
+                ttfb=tel.get("ttfb"), ttfc=tel.get("ttfc"), deltas=tel.get("deltas"),
+                reason_share=tel.get("reason_share"), truncated=tel.get("truncated"),
+                finish=tel.get("finish_reason"), worst_gap=tel.get("worst_gap"))
 
 
 def exam(plant, model, gap=0.0):

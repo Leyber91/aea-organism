@@ -679,43 +679,119 @@ def _read_stream(r):
     unstreamed rather than guess - a provider that ignores `stream: true` answers with ordinary
     JSON, and mistaking that for an empty stream would record a healthy rod as silent.
     """
-    ctype = (r.headers.get("Content-Type") or "").lower()
-    if "event-stream" not in ctype:
+    # DETECT THE STREAM FROM THE BYTES, NOT FROM THE HEADER.
+    #
+    # This checked `Content-Type` for "event-stream" and returned "not a stream" otherwise, which
+    # silently demoted OLLAMA to the unstreamed path - measured: every telemetry field came back
+    # None for `qwen2.5:7b` while a raw probe against the same endpoint had read 272 deltas from it
+    # minutes earlier. The local floor lost its inactivity semantics to a header string.
+    #
+    # A header is the server's DESCRIPTION of the body; the first line is the body. Same law as
+    # everywhere else today - ask the live thing - and it costs one readline. Providers that stream
+    # perfectly well while labelling it `application/x-ndjson`, `text/plain` or nothing at all now
+    # work, and a genuine non-stream is still detected because its first bytes are `{`.
+    first = b""
+    try:
+        first = r.readline()
+    except Exception:
         return None, None
+    if not first.lstrip().startswith(b"data:"):
+        # Not SSE. Hand the whole body back as ordinary JSON so the caller does not re-request it.
+        try:
+            rest = first + r.read()
+            payload = json.loads(rest.decode("utf-8"))
+        except Exception:
+            return None, None
+        m = (payload.get("choices") or [{}])[0].get("message", {}) or {}
+        return payload, m
     content, reasoning, tool_calls = [], [], None
     usage, finish = {}, None
-    for raw in r:                                  # each iteration is one blocking read = one clock reset
-        line = raw.decode("utf-8", "ignore").strip()
-        if not line.startswith("data:"):
-            continue
-        chunk = line[5:].strip()
-        if chunk == "[DONE]":
-            break
-        try:
-            d = json.loads(chunk)
-        except Exception:
-            continue
-        if isinstance(d.get("error"), dict):       # a 200 carrying an error object
-            return dict(error=d["error"], choices=[]), {}
-        if d.get("usage"):
-            usage = d["usage"]
-        ch = (d.get("choices") or [{}])[0]
-        finish = ch.get("finish_reason") or finish
-        delta = ch.get("delta") or {}
-        if delta.get("content"):
-            content.append(delta["content"])
-        # read for liveness, keep out of the answer - see the note above
-        if delta.get("reasoning_content") or delta.get("reasoning"):
-            reasoning.append(delta.get("reasoning_content") or delta.get("reasoning"))
-        if delta.get("tool_calls"):
-            tool_calls = _merge_tool_calls(tool_calls, delta["tool_calls"])
+    # STREAM TELEMETRY - the data a single blocking read threw away.
+    #
+    # A non-streamed call yields one number, total latency, and every question worth asking about a
+    # rod is invisible inside it. Each field below answers something this project has already paid
+    # to learn the hard way:
+    #   ttfb            queue/prefill vs generation speed. The 550b's 10.7s prefill was
+    #                   indistinguishable from "a slow rod" and got it ranked as one.
+    #   reason_chars    D13 ("a rod spending its whole budget in the reasoning field and returning
+    #                   empty content") was INFERRED from an empty answer. Now it is measured.
+    #   finish_reason   `length` says outright that a budget truncated the answer. D28 - the census
+    #                   scoring the 550b's cut-off deliberation - took a re-score plus a control to
+    #                   establish, and this one field would have stated it.
+    #   deltas/gaps     a mid-generation stall is invisible in a total; here it is a number.
+    #   partial output  a stream that dies still leaves what arrived, so "dead peer" and "still
+    #                   working when we gave up" stop being the same observation.
+    t0 = time.time()
+    tel = dict(ttfb=None, ttfc=None, deltas=0, reason_deltas=0, reason_chars=0,
+               content_chars=0, worst_gap=0.0, stalled=False)
+    last = None
+    stream_err = None
+    # THE PARTIAL IS KEPT WHEN THE STREAM DIES. Without this the timeout exception propagates and
+    # everything that arrived is thrown away, so "the peer was never there" and "the peer was
+    # working and we gave up" produce the identical record - which is the exact conflation this
+    # whole rung keeps paying for. `deltas > 0` on a stalled read says the rod WAS alive; `deltas
+    # == 0` says nothing ever came. Different diagnoses, different fixes.
+    try:
+        for raw in r:                              # each iteration is one blocking read = one clock reset
+            line = raw.decode("utf-8", "ignore").strip()
+            if not line.startswith("data:"):
+                continue
+            chunk = line[5:].strip()
+            if chunk == "[DONE]":
+                break
+            try:
+                d = json.loads(chunk)
+            except Exception:
+                continue
+            if isinstance(d.get("error"), dict):   # a 200 carrying an error object
+                return dict(error=d["error"], choices=[], telemetry=tel), {}
+            if d.get("usage"):
+                usage = d["usage"]
+            ch = (d.get("choices") or [{}])[0]
+            finish = ch.get("finish_reason") or finish
+            delta = ch.get("delta") or {}
+            c = delta.get("content") or ""
+            rc = delta.get("reasoning_content") or delta.get("reasoning") or ""
+            if c or rc:
+                now = time.time()
+                if tel["ttfb"] is None:
+                    tel["ttfb"] = round(now - t0, 3)
+                if last is not None:
+                    tel["worst_gap"] = max(tel["worst_gap"], round(now - last, 3))
+                last = now
+                tel["deltas"] += 1
+            if c:
+                if tel["ttfc"] is None:
+                    tel["ttfc"] = round(time.time() - t0, 3)
+                content.append(c)
+                tel["content_chars"] += len(c)
+            # read for liveness, keep out of the answer - see the note above
+            if rc:
+                reasoning.append(rc)
+                tel["reason_deltas"] += 1
+                tel["reason_chars"] += len(rc)
+            if delta.get("tool_calls"):
+                tool_calls = _merge_tool_calls(tool_calls, delta["tool_calls"])
+    except Exception as e:
+        # The inactivity budget fired, or the peer vanished. Keep what arrived and SAY SO.
+        stream_err = f"{type(e).__name__}: {str(e)[:60]}"
+        tel["stalled"] = True
     text = "".join(content)
+    tel["stream_error"] = stream_err
+    # THE SHARE OF THE ANSWER SPENT THINKING. A rod at 0.95 here is not weak, it is deliberating -
+    # and it is the difference between a bad rod and a mis-budgeted one, which is exactly the
+    # distinction D28 cost a day to make.
+    tot = tel["reason_chars"] + tel["content_chars"]
+    tel["reason_share"] = round(tel["reason_chars"] / tot, 3) if tot else None
+    tel["finish_reason"] = finish
+    tel["truncated"] = (finish == "length")
     # ONLY IF NOTHING ELSE CAME does reasoning stand in for the answer, matching the unstreamed
     # path's long-standing fallback (three field names, not two - ollama and cerebras use
     # `reasoning`). A rod that returned pure deliberation is still a non-answer and must fall
     # through the ladder, and it does, because the ladder tests for empty TEXT.
     msg = {"content": text or "".join(reasoning), "tool_calls": tool_calls}
-    return dict(choices=[{"message": msg, "finish_reason": finish}], usage=usage), msg
+    return dict(choices=[{"message": msg, "finish_reason": finish}], usage=usage,
+                telemetry=tel), msg
 
 
 def _merge_tool_calls(acc, deltas):
@@ -879,6 +955,7 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
         return dict(ok=True, latency=dt, text=text, tokens=toks, transport=_srv_err,
                     prompt_tokens=ptoks, total_tokens=ttoks,
                     tool_calls=(m.get("tool_calls") or None),
+                    telemetry=(payload.get("telemetry") or {}),   # {} on the unstreamed fallback
                     deprecation=dep, status=200, error=None)
     except urllib.error.HTTPError as e:
         # A PROVIDER THAT REJECTS THE STREAM FLAGS IS NOT A FAILING ROD. Some endpoints 400 on

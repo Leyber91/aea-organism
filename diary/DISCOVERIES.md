@@ -1037,3 +1037,51 @@ measuring the harness, not the thing.
 
 Endpoints that reject the stream flags get ONE unstreamed retry rather than being recorded as
 failing rods - a transport condition stored as a capability is defect 19, again.
+
+## D33 · A single blocking read threw away every question worth asking about a rod (2026-07-30)
+
+Luis: *"without the streaming, we're losing a lot of data. Do we need to revise some of the tests to
+get better insights and better adjustments?"* Yes - and the losses were not hypothetical. Every
+anomaly chased today had its explanation inside the response and outside the record.
+
+| signal a non-streamed call discards | what it answers | what it cost |
+|---|---|---|
+| **time to first delta** | queue/prefill vs generation speed | the 550b's 19s prefill was indistinguishable from "a slow rod" and got it ranked as one |
+| **`finish_reason`** | truncated-by-budget vs genuinely finished | **D28 took a targeted re-score plus a control to establish; `finish=length` states it outright** |
+| **reasoning vs content split** | is this rod weak, or deliberating? | D13's "whole budget in the reasoning field" was INFERRED from an empty answer |
+| **inter-delta gaps** | mid-generation stalls and throttling | invisible inside a total latency |
+| **partial output on failure** | dead peer vs still-working-when-we-gave-up | TIMEOUT meant both, and the record could not tell them apart |
+
+**MEASURED, once the transport carried it:**
+
+    rod                                  ttfb    ttfc  deltas  reason%  worst gap  finish
+    nemotron-3-ultra-550b-a55b         19.257  21.017      60      71%      0.239    stop
+    nemotron-3-super-120b-a12b          0.079   0.618      27      79%      0.029    stop
+    meta/llama-3.1-70b-instruct          0.17    0.17     147       0%      1.030    stop
+    groq/llama-3.3-70b-versatile        0.004   0.004     148       0%      0.016    stop
+
+Two rods spend **71% and 79% of their output thinking**. That is not a defect and it is not weakness
+- it is the property that made a 40-token budget catastrophic for them and harmless for the two rods
+at 0%. The ladder has never been able to see it. And re-running the D28 case with `max_tokens=40`
+now returns `truncated=True, finish=length, reason_share=0.5` with the text
+`'The user is asking the classic "bat and ball" riddle...'` - **the deliberation the census scored
+as the rod's answer for a day, labelled as truncated in one boolean.**
+
+**PARTIAL OUTPUT IS NOW KEPT WHEN A STREAM DIES.** The timeout exception used to propagate and
+discard everything that had arrived, so "the peer was never there" and "the peer was working and we
+gave up" produced identical records. `deltas > 0` with `stalled=True` says the rod WAS alive.
+Different diagnoses, different fixes, and the distinction is free once the bytes are read as they
+arrive.
+
+**AND A HEADER WAS DEMOTING THE LOCAL FLOOR.** Stream detection tested `Content-Type` for
+"event-stream", so OLLAMA silently took the unstreamed path - every telemetry field None, while a
+raw probe against the same endpoint had read 272 deltas from it minutes earlier. A header is the
+server's DESCRIPTION of the body; the first line IS the body. Detection now reads the bytes, which
+costs one `readline` and works for any provider that streams under a different label. Same law as
+the rest of today, in the smallest possible place.
+
+**WHAT THIS CHANGES ABOUT THE TESTS, concretely:** the census now records `ttfb`, `ttfc`, `deltas`,
+`reason_share`, `truncated`, `finish` and `worst_gap` per probe. A rod that scores badly can now be
+INTERROGATED from the stored record instead of re-run, and the three failure modes that have cost
+the most this session - truncation, prefill mistaken for slowness, and reasoning mistaken for a
+non-answer - each become a field rather than an investigation.
