@@ -761,3 +761,40 @@ recording, which OTHER module has the same shape - and to check, not assume.
 
 Cheap and specific: when a lesson lands, grep for its shape. "Which other module produces a verdict
 without naming its source?" would have found `council.py` in one search, on the same morning.
+
+## D27 · "Verified with a real draw" verified ONE property, and the fix had three defects left (2026-07-30)
+
+The ladder repair (D24) was committed, pushed, and reported as *"fixed and verified with a real
+draw"*. The draw was real and it proved exactly one thing: the 550b is reachable. Three defects
+survived it, all found afterwards by an adversarial re-read whose brief was to REFUTE the fix.
+
+1. **A missing measurement was read as a measurement of zero.** `_params_b` returns 0.0 when a model
+   name carries no size, and `order="depth"` sorted on it directly - so an unknown size ranked as
+   the smallest thing in the fleet. `mistralai/mistral-nemotron` (score 10, reliability 1.0, 0.8s)
+   sat BELOW `ollama/granite4.1:8b`. `core()` had been pointed at that ordering in the same commit,
+   so the entity's deliberation was ranking strong hosted rods under local 8b models on the strength
+   of a naming convention. Same shape as `decide._finite` and `movecontrol`'s DEAD gate, missed in a
+   third place on the same day.
+2. **The deep exemption is liveness-blind and had become the widest door.** It admits on census
+   score, and THREE of the rows it admits are 410 Gone. Only `dead()` keeps them out, so widening
+   admission widened the corpse surface and made the whole thing rest on the reap being current.
+3. **An invariant the code asserted in a comment had quietly become false.** "the floor: always
+   alive, always last" - but a local rod that scores well enters on merit, so `ollama/phi4:latest`
+   sat at frontier rank 3, ahead of hosted rods. Nobody wrote that rule; it was a by-product of
+   ranking on score, and the comment went on claiming otherwise.
+
+**FIXED AND RE-VERIFIED against the named cases:** `mistral-nemotron` rank 6 -> 3; `floor-last` true
+in every tier and ordering; zero corpses in frontier or solid, default or depth; the real draw still
+lands on the 550b. Five new assertions (wiring 145 -> 150).
+
+**THE LESSON, and it is about the word "verified".** One real draw checked ONE property and was
+reported as confirming the fix. A verification is only as wide as the property it tests, and a fix
+that changes four things needs four checks - or an adversary whose job is to find the fifth. The
+cheap habit that would have caught all three: after changing a ranking, print the ranking and read
+it, rather than asking it a single yes/no question.
+
+**AND THE ADVERSARY EARNED ITS COST.** It also caught that its own upstream diagnosis was describing
+a file that had been rewritten while it was reading - it checked `git log` and said so. Its verdict
+on the proposed alternative fix was that it was *strictly worse than what shipped*, because it left
+two 410 corpses in the ladder. A refutation pass that only ever confirms is theatre; this one
+overturned its own side.

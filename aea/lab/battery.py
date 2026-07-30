@@ -1205,6 +1205,44 @@ def suite_wiring() -> list:
         ok = "a/flaky-500b" not in got
         rows.append(dict(case="the deep exemption requires reliability 1.0", got=str(got[:2]), ok=ok,
                          err="" if ok else "deep_exemption_too_wide"))
+        # E3.5 A MISSING MEASUREMENT IS NOT A MEASUREMENT OF ZERO. `_params_b` returns 0.0 when the
+        # model name carries no size, and `order="depth"` sorted on it directly - so an unnamed-size
+        # rod ranked as the smallest thing in the fleet. MEASURED: `mistralai/mistral-nemotron`
+        # (score 10, reliability 1.0, 0.8s) sat BELOW `ollama/granite4.1:8b`, and `core()` had just
+        # been pointed at this ordering. Found by an adversarial re-read of a fix already committed
+        # and reported as verified.
+        _mk(12, [_mdl("a/big-400b", 11), _mdl("a/sizeless-strong", 11), _mdl("a/small-8b", 11)])
+        got = [m for _p, m in _en.ladder("frontier", "private", order="depth")]
+        ok = "a/sizeless-strong" in got and got.index("a/sizeless-strong") < got.index("a/small-8b")
+        rows.append(dict(case="a sizeless rod is not ranked as the smallest", got=str(got[:4]),
+                         ok=ok, err="" if ok else "unknown_size_read_as_zero"))
+        ok = got and got[0] == "a/big-400b"
+        rows.append(dict(case="a known-deep rod still outranks the unknown", got=str(got[:2]),
+                         ok=ok, err="" if ok else "median_substitution_too_strong"))
+
+        # E3.6 THE LOCAL FLOOR IS LAST, ENFORCED NOT ASSERTED. A local rod that scores well entered
+        # the tier on merit and outranked hosted rods, while the comment beside the code claimed
+        # "always last". A local rod is the SURVIVAL floor, not a competitor for the best thinking.
+        _mk(12, [_mdl("hosted-mid", 10, plant="nvidia"), _mdl("phi4:latest", 12, plant="ollama")])
+        for od in (None, "depth"):
+            L = _en.ladder("frontier", "private", order=od)
+            loc = [i for i, (p, _m) in enumerate(L) if grid.PLANTS.get(p, {}).get("privacy") == "local"]
+            host = [i for i, (p, _m) in enumerate(L) if grid.PLANTS.get(p, {}).get("privacy") != "local"]
+            ok = not loc or not host or min(loc) > max(host)
+            rows.append(dict(case=f"local rods sort after hosted ones (order={od})",
+                             got=f"local at {loc[:3]}, hosted at {host[:3]}", ok=ok,
+                             err="" if ok else "floor_outranks_hosted"))
+
+        # E3.7 THE DEEP EXEMPTION IS LIVENESS-BLIND, SO IT MUST NOT BE THE ONLY GATE. It admits rods
+        # on census score alone, and three of the rows it admits are 410 Gone - kept out by the
+        # tombstone alone. A rod that has started failing since the last reap must not ride in on
+        # depth either.
+        _mk(12, [_mdl("a/deep-but-failing-500b", 7, rel=1.0)],
+            usage={"nvidia/a/deep-but-failing-500b": {"consec_fail": _en.COOL_AFTER}})
+        got = [m for _p, m in _en.ladder("frontier", "private")]
+        ok = "a/deep-but-failing-500b" not in got
+        rows.append(dict(case="the deep exemption refuses a currently-failing rod", got=str(got[:2]),
+                         ok=ok, err="" if ok else "exemption_admits_a_dying_rod"))
     finally:
         _en.CAPABILITY, _en.FITNESS, _en.USAGE = _rc, _rf, _ru
 

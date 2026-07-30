@@ -107,10 +107,36 @@ def _cooling(plant, model):
 
 
 def _params_b(model: str) -> float:
-    """Parameter-count heuristic from the model name (675b > 119b > 8b). MoE active counts ignored."""
+    """Parameter-count heuristic from the model name (675b > 119b > 8b). MoE active counts ignored.
+
+    RETURNS 0.0 WHEN THE NAME CARRIES NO SIZE, which is not the same statement as "this model has
+    zero parameters" - and every caller that sorts on it reads the second. See `_depth_key`."""
     import re
     sizes = [float(m) for m in re.findall(r"(\d+(?:\.\d+)?)b", model.lower())]
     return max(sizes) if sizes else 0.0
+
+
+def _depth_key(rows: list):
+    """A depth sort that does not punish a rod for having no digits in its name.
+
+    THE DEFECT, found by an adversarial re-read of the fix that shipped an hour earlier and was
+    reported as verified. `order="depth"` sorted on `-_params_b(model)`, and `_params_b` returns
+    0.0 for any name without a size in it. Unknown size therefore sorted as SMALLEST-POSSIBLE.
+    MEASURED: `mistralai/mistral-nemotron` (score 10, reliability 1.0, 0.8s) landed at frontier
+    rank 6, BELOW `ollama/granite4.1:8b`; `minimaxai/minimax-m3` (score 9) and `ollama/phi4:latest`
+    (score 10) had the same problem. `aea/loop/aea.py` `core()` had just been pointed at this
+    ordering, so the entity's deliberation was ranking strong hosted rods under local 8b models on
+    the strength of a naming convention.
+
+    A missing measurement is not a measurement of zero - the same shape as the NaN guard in
+    `decide._finite` and the `DEAD` gate in `movecontrol`. An unknown here is given the MEDIAN of
+    the sizes we do know, so it sorts among its peers rather than beneath everything: the honest
+    statement is "no information", and the least-wrong stand-in for no information is typical.
+    """
+    known = sorted(s for s in (_params_b(r["model"]) for r in rows) if s > 0)
+    mid = known[len(known) // 2] if known else 0.0
+    return lambda r: (-(_params_b(r["model"]) or mid), -r["score"],
+                      r["avg_latency"] if r["avg_latency"] is not None else 9)
 
 
 def ladder(tier: str = "frontier", zone: str = "private", order: str | None = None) -> list[tuple[str, str]]:
@@ -161,7 +187,20 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
     # the tier that feeds the CORE MIND wants the first plus depth. That is not a new opinion - the
     # counsel duel of 2026-07-11 is already recorded in this function's own docstring: 675b beat
     # 119b decisively on judgment at equal latency, which is why `order='depth'` exists.
+    #
+    # THE EXEMPTION IS LIVENESS-BLIND AND MUST NOT BE THE ONLY GATE. Of the census rows it admits,
+    # THREE are 410 Gone - `mistral-small-4-119b` (score 12), `mistral-large-3-675b` (score 11), and
+    # `stockmark-2-100b`. They are kept out by `dead()` alone, which means the exemption's safety
+    # rests entirely on the reap being current. Widening admission widened the corpse surface, and
+    # that was not noticed when the widening shipped.
+    #
+    # So it also refuses a rod that is currently FAILING in live use. `dead()` is the measured
+    # tombstone and stays authoritative; this is the second line, from fitness-from-use, for a rod
+    # that has died since the last reap and has not been asked about yet.
     def deep_and_reliable(r):
+        u = usage.get(f"{r['plant']}/{r['model']}", {})
+        if u.get("retired_at") or u.get("consec_fail", 0) >= COOL_AFTER:
+            return False
         return (r.get("reliability", 0) >= 1.0 and _params_b(r["model"]) >= 100
                 and r["score"] >= _thr(0.5))
 
@@ -174,8 +213,7 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
     else:                                              # local
         rows = []
     if order == "depth":
-        rows.sort(key=lambda r: (-_params_b(r["model"]), -r["score"],
-                                 r["avg_latency"] if r["avg_latency"] is not None else 9))
+        rows.sort(key=_depth_key(rows))
     else:
         rows.sort(key=lambda r: (-r["score"], r["avg_latency"] if r["avg_latency"] is not None else 9))
     # EXCLUSION IS FOR THE DEAD; UNRELIABILITY ONLY DEMOTES.
@@ -206,7 +244,20 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
         for (p, m), f in sorted(fit.items(), key=lambda kv: kv[1].get("avg_latency") or 9):
             if f["reliability"] == 1.0 and zone_ok(p) and not dead(p, m):
                 rods.append((p, m))
-    for p, m in LOCAL_FLOOR:                           # the floor: always alive, always last
+    # THE FLOOR IS ALWAYS LAST, AND IT IS NOW ENFORCED RATHER THAN ASSERTED.
+    #
+    # This comment used to read "the floor: always alive, always last" and had become false: a LOCAL
+    # rod that scores well enters the tier on merit through the census, so `ollama/phi4:latest`
+    # (score 10) sat at frontier rank 3, ahead of hosted rods. Nobody wrote that rule; it was a
+    # by-product of ranking on score alone, and the comment kept claiming otherwise.
+    #
+    # The rule is worth keeping and worth being true: a local rod is the SURVIVAL floor, reached
+    # when the hosted plants are gone, not a competitor for the entity's best thinking. The
+    # exception is a zone where local is all that is permitted - `sensitive` - and there this
+    # partition leaves the ordering untouched because every rod in it is local anyway.
+    local_last = [r for r in rods if grid.PLANTS.get(r[0], {}).get("privacy") == "local"]
+    rods = [r for r in rods if r not in local_last] + local_last
+    for p, m in LOCAL_FLOOR:                           # the named floor, after everything else
         if zone_ok(p) and (p, m) not in rods:
             rods.append((p, m))
     return rods
