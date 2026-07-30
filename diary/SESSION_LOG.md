@@ -2104,3 +2104,58 @@ disables the ladder, so a measurement is reproducible instead of hostage to whic
    it match).
 5. Still open from before, untouched today: the render mystery (0.54s bench vs 1.5-6.0s live, five
    hypotheses dead), and the echo gate that is written and never tested.
+
+## 2026-07-30 (cont.) - THE ENTITY HAD 94 RODS AND COULD REACH ONE
+
+Luis, after watching a session of measurement answered by a local 7B: *"I saw that you're using
+local models, but you can use any of the NVIDIA models. They work, and it's been proven they work."*
+
+### DID
+
+**Probed the fleet instead of reading about it.** 24 deepest NVIDIA models, direct: **6 live**.
+`nemotron-3-ultra-550b` answers in **1.0s** - the rod `aea/loop/aea.py`'s own docstring names as the
+core ("Luis's pick: nemotron-550b"). It had never been drawn.
+
+**Four defects stacked on `energy.ladder`** (full account in D24):
+1. `score >= mx - 1` where the docstring meant a RATIO. Battery grew 6 -> 12 probes, so the bar went
+   83% -> 92% by itself. Growing the exam shrank the ladder.
+2. The scorer counts strict string matches, several of them format-compliance probes, so a
+   narrating 550b scores 7/12 while an 8b phi4 scores 10 and outranks it.
+3. `ladder()` never checked the tombstone - the dead kept the scores they earned alive, so corpses
+   sorted FIRST. Both top frontier entries were 410 Gone.
+4. A stale `model_fitness` sweep absolutely excluded `meta/llama-3.1-70b-instruct`, which is 11/12
+   and reliability 1.0 in the newer census.
+
+Net: `frontier/private` held **one living rod**. Every rate limit dropped the entity to a 7B.
+
+**`python -m aea.energy.energy --reap nvidia`** - asks every census rod whether it is still there and
+tombstones the 404/410s (never a 429 or 5xx - that is a transport condition, and recording it as
+deadness is the mistake `hands.unmeasured` exists to undo). **67 of 94 tombstoned.**
+
+**Fixed and verified with a real draw:** frontier/private 6 rods (2 corpses, 1 living) -> **10 rods,
+no corpses**; `core()` now draws `order="depth"`; a live `core()` call returns
+`nvidia/nvidia/nemotron-3-ultra-550b-a55b`. Battery 388/388.
+
+### LOCKED
+
+- **Thresholds over a battery are RATIOS, never counts.** A count silently retunes itself whenever
+  the battery changes size, and it retunes in the harmful direction.
+- **`reliability` and `score` measure different things.** Did-it-answer and did-it-match are not one
+  number, and the tier feeding the core mind ranks on the first plus depth.
+- **Exclusion is for measured death; doubt only demotes.** A stale sweep may sort a rod to the back
+  of its tier; it may not delete it from the fleet.
+- **The ladder is a description. Probe the fleet.** Reported "blocked on rate limits" while holding
+  100+ proven rods, with my own instrument printing `NO VERDICT - answered by the LOCAL FLOOR`. A
+  correct diagnosis does not imply the right next action.
+
+### NEXT
+
+1. **The frontier control run** on `nvidia/nemotron-3-ultra-550b-a55b` - in flight.
+2. **R2c, redefined by the council as a split dispatcher** (D23). Wake emits a structured intent
+   from a constrained vocabulary; a component that never saw untrusted text builds the request.
+   Gate: a canary in the prompt never appears in any outbound byte, ACROSS MULTIPLE CYCLES.
+3. **Re-run the councils that mattered.** The R2c verdict and every HADES judgement of the last day
+   were taken with the frontier tier one rod deep. The R2c conclusion looks robust on its
+   reasoning, but it was not decided by the fleet it should have been.
+4. **The scorer itself is still wrong for reasoning rods** - it marks a correct narrated answer as
+   failed. `deep_and_reliable` routes around it; nothing has fixed it.
