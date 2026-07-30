@@ -798,3 +798,56 @@ a file that had been rewritten while it was reading - it checked `git log` and s
 on the proposed alternative fix was that it was *strictly worse than what shipped*, because it left
 two 410 corpses in the ladder. A refutation pass that only ever confirms is theatre; this one
 overturned its own side.
+
+## D28 · The census measured our harness, not the rods - and the 550b was an 11/12 recorded as 7/12 (measured 2026-07-30)
+
+D24 said the scorer "penalises reasoning rods because they narrate". That was wrong, and the truth
+is worse.
+
+`extensive_census.probe` sent `max_tokens=mx` where `mx` is the BATTERY ITEM'S own budget - 40
+tokens for `instruct`, 60 for `brevity` - with no thinking switch. A rod that deliberates spends
+that entire budget on its preamble and never begins the answer. MEASURED on
+`nemotron-3-ultra-550b`: `finish_reason: "length"`, `completion_tokens 40/40`, and the same
+188-character deliberation present in BOTH `content` and `reasoning_content`. **Its private
+thinking was scored as its answer, probe after probe.**
+
+The guard meant to prevent exactly this - stripping `<think>...</think>` - is a **no-op** for that
+family, which emits no such tags. A guard aimed at one vendor's convention and never checked against
+the rod in front of it.
+
+**RE-SCORED with the owner's published budget and the thinking switch, WITH A CONTROL:**
+
+| rod | stored 2026-07-11 | re-scored | change |
+|---|---|---|---|
+| `nemotron-3-ultra-550b-a55b` | 7/12 | **11/12** | +4 |
+| `nemotron-3-super-120b-a12b` | 9/12 | **12/12** | +3 |
+| `meta/llama-3.1-70b-instruct` (CONTROL, does not deliberate) | 11/12 | 11/12 | **0** |
+
+The control did not move. Only the deliberating rods jumped, which is the signature the hypothesis
+predicted and the reason this is a measurement rather than a hope. **The entity's designed core is
+an 11/12 rod that the ladder could not select because we handed it forty tokens.**
+
+**BOTH REMEDIES ALREADY EXISTED AND NEITHER WAS CALLED.** `grid.own_params` publishes 16384 tokens
+for that rod; `grid.think_off` carries the `nemotron-3-` switch. And `energy.draw`'s own docstring
+had already written the conclusion out in full: *"Every fitness score in this repo was taken through
+that filter, so the ladder has been ranking rods on our defaults rather than on the rods."* The
+knowledge sat in the function that READS the store and never reached the one that WRITES it - D26 a
+fourth time, and the most expensive instance, because it corrupted every number the ladder ranks on.
+
+**CONSEQUENCE:** `deep_and_reliable` was invented to route around a weakness the rods did not have.
+It stays as a safety net for genuinely mis-scored rods, but the 550b and the 120b now qualify on
+merit. The whole fleet is being re-scored.
+
+**AND THE GUARDS WERE ON THE WRONG DOOR.** `extensive_census.promote` refused any promotion with
+fewer rods than the live file - correct in spirit, and a trap in practice, because rods DIE: 46
+stored rows already carried ERR404, the provider had delisted ~26 ids, and a reap tombstoned 67. So
+the guard refused every honest exam while letting the corpses stay. It now CLASSIFIES each missing
+rod: gone-because-tombstoned is expected and allowed, anything unexplained still fails closed with
+the names printed. Meanwhile `capability_census.py` wrote the SAME live file with a SIX-probe
+battery and no guard at all - the safer-looking command was the dangerous one. Now guarded too.
+
+**SIX STORES KNOW ABOUT DEADNESS AND NONE SPEAK TO EACH OTHER:** `tool_rods.json` (hands),
+`capability_census.json` (46 ERR404 rows), `energy_usage.json` (the only one `draw` consults),
+`rods.json` (whose guard is dead code for vendor-prefixed ids), `aea/mind/fuel.py`'s hardcoded
+`WITHDRAWN` dict - which has listed `mistral-large-3-675b: "410 Gone"` **in source since
+2026-07-25**, five days before the ladder started burning it - and `aea/lab/organisms/fuels.json`.

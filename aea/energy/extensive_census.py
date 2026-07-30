@@ -76,17 +76,76 @@ def _schema_ok(t):
             and isinstance(o.get("skills"), list) and len(o["skills"]) == 3
             and all(isinstance(s, str) for s in o["skills"]))
 
+def _REASONS(model: str) -> bool:
+    """Families that deliberate before answering, even with no switch to turn it off.
+
+    Kept as a name-shape list rather than a measurement because the census is where the measurement
+    would come from - the chicken-and-egg is real, and the failure of guessing wrong here is only
+    that a rod gets a larger token budget than it needed."""
+    m = model.lower()
+    return any(s in m for s in ("nemotron", "reason", "think", "-r1", "qwq", "o1", "o3", "deepseek"))
+
+
 def _extract_ok(t):
     o = _json_blob(t)
     return (isinstance(o, list) and sorted(o) == ["maria.lopez@example.org", "ops-desk@supplier.io"])
 
 
 def probe(plant, model, pid, mx, prompt, check, gap=0.0):
-    r = grid.call_openai(plant, model, [{"role": "user", "content": prompt}],
-                         max_tokens=mx, temperature=0, timeout=TIMEOUT if plant != "ollama" else 180)
+    """One probe, scored on the ROD'S ANSWER rather than on our budget.
+
+    THE DEFECT, measured 2026-07-30 and the root cause of the whole fleet being mis-ranked.
+    This function sent `max_tokens=mx` where `mx` is the battery item's own tiny budget - 40 tokens
+    for `instruct`, 60 for `brevity` - with no thinking switch. A reasoning rod spends that entire
+    budget on its preamble and never begins the answer. MEASURED on nemotron-3-ultra-550b:
+    `finish_reason: "length"`, `completion_tokens 40/40`, and the same 188-character deliberation
+    present in BOTH `content` and `reasoning_content`. Its private thinking was scored as its answer,
+    on probe after probe, and the rod went into the census at 7/12.
+
+    That score is why `energy.ladder` could not select the entity's DESIGNED CORE. The ranking was
+    never measuring the rods; it was measuring what our defaults did to them.
+
+    The guard that was supposed to prevent this - stripping `<think>...</think>` - is a NO-OP for
+    this family, which emits no such tags. A guard aimed at one vendor's convention, never checked
+    against the rod in front of it.
+
+    BOTH REMEDIES ALREADY EXISTED IN `grid` AND NEITHER WAS CALLED HERE:
+      `grid.own_params`  the owner's published max_tokens (16384 for the 550b) and temperature
+      `grid.think_off`   the per-family switch that turns deliberation off where it can be
+
+    And `energy.draw`'s own docstring had already stated the conclusion outright - *"Every fitness
+    score in this repo was taken through that filter, so the ladder has been ranking rods on our
+    defaults rather than on the rods."* The knowledge sat in the function that READS the store and
+    never reached the one that WRITES it: D26, a fourth time, and the most expensive instance,
+    because it corrupted every number the ladder ranks on.
+
+    The battery's budget is kept as a FLOOR, not a ceiling: a probe that wants 40 tokens of answer
+    still gets its intent, but a rod that must think first is given room to finish thinking.
+    """
+    pub = grid.own_params(model)
+    off = grid.think_off(model) or {}
+    # Enough room to think AND answer. Capped at the owner's published ceiling so a rod is never
+    # asked for more than it will give.
+    room = max(mx, min(int(pub.get("max_tokens", 4096)), 4096)) if off or _REASONS(model) else mx
+    msgs = []
+    if off.get("_system"):
+        msgs.append({"role": "system", "content": off["_system"]})
+    msgs.append({"role": "user", "content": prompt})
+    extra = {k: v for k, v in off.items() if not k.startswith("_")}
+    try:
+        r = grid.call_openai(plant, model, msgs, max_tokens=room, temperature=0,
+                             timeout=TIMEOUT if plant != "ollama" else 180, **extra)
+    except TypeError:
+        # `call_openai` may not accept this family's switch as a kwarg; the budget still applies.
+        r = grid.call_openai(plant, model, msgs, max_tokens=room, temperature=0,
+                            timeout=TIMEOUT if plant != "ollama" else 180)
     if gap: time.sleep(gap)
     text = (r.get("text") or "").strip()
-    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()   # thinking models
+    # STRIP DELIBERATION IN EVERY SHAPE IT ARRIVES IN, not just one vendor's tags. `<think>` was the
+    # only form handled and nemotron-3 uses none of it; a rod that narrates its reasoning before the
+    # answer was scored on the narration.
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+    text = re.sub(r"^\s*(?:okay|alright|so|hmm)\b[^\n]*\n+", "", text, flags=re.I).strip()
     if not r["ok"]:
         err = r.get("error") or ""
         out = ("RATE" if r.get("status") == 429 else
@@ -236,11 +295,36 @@ def promote(force: bool = False):
     live_path = os.path.join(grid.STATE, "capability_census.json")
     live = grid.load_json(live_path, {}) or {}
     have, incoming = len(live.get("models") or []), len(rep["models"])
-    if incoming < have and not force:
-        print(f"REFUSED: the exam has {incoming} models, the live ladder has {have}. "
-              f"Promoting would remove {have - incoming} rods from selection.\n"
-              f"Re-run the exam, or pass --force if the shrink is intended.")
-        return
+    # A SHRINK IS ONLY SUSPICIOUS WHEN IT IS UNEXPLAINED.
+    #
+    # The original guard refused any promotion with fewer rods than the live file, which was right
+    # in spirit and became a trap: rods DIE. 46 stored rows already carried ERR404, the provider's
+    # own catalogue had shrunk by ~26 ids, and 67 were tombstoned by a reap - so an honest exam now
+    # returns far fewer rods than the stale file, and this guard refused every honest exam while
+    # letting the corpses stay. A guard that blocks the fix and permits the rot is worse than none.
+    #
+    # So each missing rod is CLASSIFIED. Gone-because-measured-dead (a tombstone) or
+    # gone-because-the-provider-delisted-it is expected and allowed. Anything else is unexplained,
+    # and unexplained shrinkage still fails closed with the names printed - law B1, kept, but aimed
+    # at the thing it was actually for.
+    live_ids = {f"{m.get('plant')}/{m.get('model')}" for m in (live.get("models") or [])}
+    new_ids = {f"{m.get('plant')}/{m.get('model')}" for m in rep["models"]}
+    missing = sorted(live_ids - new_ids)
+    if missing:
+        usage = grid.load_json(os.path.join(grid.STATE, "energy_usage.json"), {})
+        tomb = {k for k, e in usage.items() if isinstance(e, dict) and e.get("retired_at")}
+        explained = [r for r in missing if r in tomb]
+        unexplained = [r for r in missing if r not in tomb]
+        print(f"  {len(missing)} rod(s) absent from this exam: {len(explained)} tombstoned, "
+              f"{len(unexplained)} unexplained")
+        if unexplained and not force:
+            print(f"REFUSED: {len(unexplained)} rod(s) vanished without being measured dead.\n  "
+                  + "\n  ".join(unexplained[:12])
+                  + ("\n  ..." if len(unexplained) > 12 else "")
+                  + f"\nThey may have been skipped by a rate limit rather than delisted. Re-run the "
+                    f"exam, run `python -m aea.energy.energy --reap` to tombstone the truly dead, "
+                    f"or pass --force.")
+            return
     # THE BATTERY SIZE IS PART OF THE CONTRACT, AND THIS IS WHERE IT BROKE.
     #
     # `energy.ladder` computes its tier thresholds from `len(census["battery"])`. This function

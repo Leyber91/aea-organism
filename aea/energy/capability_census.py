@@ -129,7 +129,28 @@ def run(plants):
             r = f.result(); rows.append(r)
     rows.sort(key=lambda r: (-r["score"], r["avg_latency"] if r["avg_latency"] else 99))
     report = {"generated": grid._today() + " " + time.strftime("%H:%M UTC", time.gmtime()),
-              "battery": [b["id"] for b in BATTERY], "specialists": specialists, "models": rows}
+              "battery": [b["id"] for b in BATTERY], "specialists": specialists,
+              "source": "aea.energy.capability_census", "models": rows}
+    # TWO WRITERS, ONE FILE, INCOMPATIBLE SCALES - and only the other one was guarded.
+    #
+    # `energy.ladder` derives every tier threshold from `len(census["battery"])`. This module's
+    # battery has SIX probes; `extensive_census` has TWELVE and owns the live file today (its
+    # `source` field says so). Writing here unguarded would silently re-scale frontier from >=10 to
+    # >=5 and admit most of the fleet, including 46 rows that already carry ERR404.
+    #
+    # `extensive_census.promote` grew a shrink guard and later a battery-size guard; this path had
+    # neither, so the safer-looking command was the dangerous one. Same lesson as D26: the guard was
+    # built where the defect was found and not where the same defect also lived.
+    prev = grid.load_json(OUT, {}) or {}
+    prev_b = len(prev.get("battery") or [])
+    if prev_b and prev_b != len(BATTERY) and "--force" not in sys.argv:
+        print(f"REFUSED: the live ladder was scored on {prev_b} probes ({prev.get('source', '?')}) "
+              f"and this sweep has {len(BATTERY)}.\n"
+              f"  energy.ladder derives every tier threshold from the battery SIZE, so writing this "
+              f"would retune frontier/solid/reflex for the whole entity.\n"
+              f"  Prefer: python -m aea.energy.extensive_census && ... --promote\n"
+              f"  Or pass --force if replacing the scale is intended.")
+        return
     grid.atomic_save_json(OUT, report, indent=2)   # readers (energy.ladder per draw) must never see a torn file
     print(f"swept {len(rows)} chat models in {round(time.time()-t0,1)}s -> {OUT}\n")
     rank(report)
