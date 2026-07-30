@@ -106,6 +106,20 @@ def _cooling(plant, model):
     return (time.time() - e.get("cooled_at", 0)) < COOL_SECONDS
 
 
+def _thr_for(mx: int, ratio: float) -> int:
+    """The tier threshold for a battery of `mx` probes at `ratio` - THE one definition.
+
+    Module-level, and public-ish, because it had TWO copies. `ladder()` computed it inline and
+    `extensive_census.rank()` printed its tier labels from `score >= mx - 1` - the count form D24
+    was written about, still standing in the module that PRINTS the ranking. The moment one was
+    fixed the two disagreed, so the report called rods FRONTIER by a rule the ladder did not use.
+    Found by `aea/lab/transfer.py` on its first real run.
+
+    A printed ranking that disagrees with the live ladder is worse than no ranking, because it is
+    believed."""
+    return max(1, round(mx * ratio))
+
+
 def _params_b(model: str) -> float:
     """Parameter-count heuristic from the model name (675b > 119b > 8b). MoE active counts ignored.
 
@@ -158,7 +172,7 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
     # A count-based threshold is a proxy for "good enough"; the ratio is the thing meant. Law B2,
     # and the most expensive instance of it in this repo so far.
     def _thr(ratio):
-        return max(1, round(mx * ratio))
+        return _thr_for(mx, ratio)
 
     fit = {(n["plant"], n["model"]): n for n in _load(FITNESS, {}).get("nodes", [])}
     usage = _usage()

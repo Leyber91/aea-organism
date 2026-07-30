@@ -1128,3 +1128,58 @@ tombstoned, 2 unexplained* - `groq/llama-4-scout-17b` and `groq/qwen3-32b`. Aski
 `/models` confirmed both are genuinely delisted, so the fix was to RECORD that (`--reap groq`) and
 promote cleanly at 23/23 explained, rather than to `--force` past it. A guard that names what it
 does not understand is worth more than one that just counts.
+
+## D35 · The transfer failure has a mechanism now, and it caught four more instances on its first run (built 2026-07-30)
+
+Luis, on the pattern named five times in one day: *"Then fix it."*
+
+**THE DIAGNOSIS.** `battery.py` asserts BEHAVIOUR AT A SITE - given this input, this function returns
+that. It is the right tool and it structurally cannot see this class, because the defect is never in
+the site the lesson was written for. It is in the OTHER site, the one nobody realised was relevant,
+and **you cannot write a test case for a place you have not thought of.** So the fix is a different
+KIND of assertion: a property held ACROSS THE TREE. Not "does `ladder` use a ratio" but "does
+anything, anywhere, gate quality on a count where a ratio is meant".
+
+**`aea/lab/transfer.py`** - five shapes, each derived from a lesson that had already failed to
+travel: count-vs-ratio (D24), expiring-only-retry (D22), verdict-scope warnings (D30), null
+indistinguishable from real (D19/D21), invented ceilings (D29). It runs inside the battery, so the
+question is asked every run rather than when someone remembers to.
+
+**IT CAUGHT ITSELF FIRST, WHICH IS THE DESIGN.** `verify_detectors()` shows every detector the case
+it MUST catch, and the module refuses to report if any misses. On the very first run **two of five
+detectors failed their own controls**:
+
+  - `\bCOOL_\b` never matched: `_` is a word character, so there is no boundary between `COOL_` and
+    `AFTER`. That detector would have reported a clean sheet forever.
+  - `from aea.mind import tiers` was read as importing the package `aea.mind`, so the ONE import
+    shape it existed to catch was the one it could not see.
+
+Without controls, both would have shipped green and meaningless - which is D18 exactly, in the file
+written about D18.
+
+**WHAT IT FOUND, all real, none of which I had looked for:**
+
+1. `extensive_census.rank()` gated its tier LABELS on `score >= mx - 1` and `mx - 3` - the exact
+   D24 count-vs-ratio defect, still standing in the module that PRINTS the ranking. The report had
+   been calling rods FRONTIER by a different rule than the ladder admits them by, and the two
+   drifted the moment one was fixed. Now one definition, `energy._thr_for`.
+2. `council.design()` - the roster DESIGNER - still drew from the latency-tuned organ table after
+   the seats were reseated. Reseating the seats and leaving the thing that DECIDES WHO ARGUES on a
+   conversational rod is half a fix, and the half nobody would have noticed.
+3. `mind/background.py` uses those organs correctly (thinking during a spoken turn, where latency
+   IS the constraint) - ruled on once and recorded, not silenced.
+4. `grid.py`'s 429 bucket cools by design and should; permanence lives one layer up.
+
+**THE TWO DESIGN RULES THAT KEEP IT FROM ROTTING:**
+
+- **Blocking vs advisory.** `silent-default` (28) and `invented-ceiling` (64) match sites that are
+  often fine - a spoken reply SHOULD be short, a liveness ping SHOULD ask for 8 tokens. They report;
+  the three high-confidence shapes block. D18's corollary, applied to this file rather than by it:
+  *a permanently failing check disables every check that shares its verdict.*
+- **Reviewed once, then silent.** `ACK` records a per-shape, per-site judgement with its reason. A
+  checker that re-asks a settled question trains its reader to skip it - but a NEW importer of a
+  module carrying a warning still surfaces, which is the entire point.
+
+**AND IT READS CODE, NOT ITS OWN PROSE.** The first version matched the word "cooldown" anywhere, so
+a comment explaining someone else's cooldown counted as owning one. A text detector that reads
+documentation ABOUT a shape as evidence OF the shape is the purest form of measuring the instrument.

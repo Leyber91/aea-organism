@@ -1345,6 +1345,33 @@ def suite_wiring() -> list:
                      got=f"{len(got['fetched'])} fetched", ok=ok,
                      err="" if ok else "untrusted_text_unfenced"))
 
+    # H - TRANSFER: does every lesson still hold EVERYWHERE, not just where it was learned?
+    #
+    # The battery asserts behaviour AT A SITE, which is the right thing and cannot see this class:
+    # the defect is never in the site the lesson was written for, it is in the other site nobody
+    # realised was relevant, and you cannot write a case for a place you have not thought of.
+    # `aea/lab/transfer.py` asserts properties ACROSS THE TREE, and it runs here so the question
+    # "where else is this true?" is asked on every battery rather than when someone remembers.
+    #
+    # Its detectors are verified against their own controls FIRST; a broken detector fails here
+    # rather than reporting a clean sheet for the wrong reason (D18).
+    from aea.lab import transfer as _tr
+    broken = _tr.verify_detectors()
+    ok = not broken
+    rows.append(dict(case="every transfer detector catches its own control",
+                     got=f"{len(_tr.DETECTORS)} detectors" if ok else str(broken[:2]), ok=ok,
+                     err="" if ok else "detector_cannot_catch_its_control"))
+    if ok:
+        res = _tr.run(verbose=False)
+        blocking = [f for f in res["findings"] if f.get("blocking")]
+        ok2 = not blocking
+        rows.append(dict(case="no blocking transfer violations in the tree",
+                         got=f"{len(blocking)} blocking, {len(res['findings']) - len(blocking)} advisory",
+                         ok=ok2, err="" if ok2 else "lesson_not_applied_elsewhere"))
+        for f in blocking[:6]:
+            rows.append(dict(case=f"transfer[{f['shape']}] {f['file']}:{f['line']}",
+                             got=f["snippet"][:60], ok=False, err="transfer_violation"))
+
     # F - the known table itself is well-formed. A malformed argv here would reach subprocess.
     from aea.kernel.decide import KNOWN
     for name, (action, argv, tmo) in KNOWN.items():

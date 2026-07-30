@@ -326,7 +326,12 @@ def design(problem: str, extra: int = 1, verbose: bool = True) -> list:
             "what they bring that the other three cannot")
     lines = "\n".join("  %s: %s" % (r, REQUIRED.get(r, OPEN)) for r in want)
     user = f"THE PROBLEM:\n{problem}\n\nROLES TO FILL (exactly these, in this order):\n{lines}"
-    raw = ask(tiers.organ("voice"), sysm, user, temp=0.8)
+    # THE ROSTER DESIGNER IS JUDGEMENT WORK TOO, and it was the last thing here still drawing from
+    # the latency-tuned organ table. Reseating the SEATS (D30) and leaving the thing that DESIGNS
+    # them on a conversational rod is half a fix: this call decides who argues and what each seat is
+    # for, which is the most consequential single judgement in the whole run. Found by
+    # `aea/lab/transfer.py` after the seat fix, which is the point of asking the question twice.
+    raw = ask(_seat_rod("depth"), sysm, user, temp=0.8)
     seats, spec = [], None
     try:
         m = re.search(r"\{.*\}", raw, re.S)

@@ -312,13 +312,26 @@ def rank(report=None):
     report = report or grid.load_json(OUT, {})
     rows = report.get("models", [])
     mx = len(report.get("battery", [])) or 12
+    # THE LABELS COME FROM THE LADDER'S OWN RULE, NOT A SECOND COPY OF IT.
+    #
+    # These lines read `score >= mx - 1` / `mx - 3` - the exact defect D24 recorded in
+    # `energy.ladder`, still living here in the module that PRINTS the ranking. So the report has
+    # been calling rods "FRONTIER" by a different rule than the ladder actually admits them by, and
+    # the two drifted apart the moment one was fixed. Found by `aea/lab/transfer.py` on its first
+    # real run, which is precisely the class of defect it was built for: the lesson was learned, the
+    # fix was applied at the site it was found, and nobody asked where else the shape lived.
+    #
+    # One definition now. If the tiers move, this report moves with them - a printed ranking that
+    # disagrees with the live ladder is worse than no ranking, because it is believed.
+    from aea.energy.energy import _thr_for
+    fr, so = _thr_for(mx, 5 / 6), _thr_for(mx, 4 / 6)
     print(f"\nTHE REFINED ARSENAL (score /{mx}; battery: {','.join(report.get('battery', []))})\n" + "=" * 84)
     for r in rows[:25]:
         fm = " " + ",".join(r["failure_modes"]) if r["failure_modes"] else ""
-        tier = "FRONTIER" if r["score"] >= mx - 1 else ("solid" if r["score"] >= mx - 3 else "weak")
+        tier = "FRONTIER" if r["score"] >= fr else ("solid" if r["score"] >= so else "weak")
         print(f"  {r['score']:>2}/{mx}  {str(r['avg_latency'])+'s':>7}  [{tier:8}] {r['plant']}/{r['model'][:50]}{fm}")
-    frontier = [r for r in rows if r["score"] >= mx - 1]
-    print(f"\n  FRONTIER (>= {mx-1}/{mx}): {len(frontier)} rods")
+    frontier = [r for r in rows if r["score"] >= fr]
+    print(f"\n  FRONTIER (>= {fr}/{mx}, the ladder's own ratio): {len(frontier)} rods")
 
 
 def promote(force: bool = False):
