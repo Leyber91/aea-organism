@@ -308,6 +308,66 @@ def d_scope_violation(rel, src, tree, warnings=None):
 # `silent-default` and `invented-ceiling` match dozens of sites, many of them fine (a spoken reply
 # SHOULD be short; a liveness ping SHOULD ask for 8 tokens). Letting those fail the run would train
 # everyone to ignore the run. They report; the two high-confidence shapes block.
+def d_orphan_capability(rel, src, tree, defined=None, used=None):
+    """Something BUILT and never CALLED - the shape nothing fails on.
+
+    Luis, 2026-07-30: *"you didn't call it before, but you call it now. What else are we not
+    calling?"* Every large find of that day was a capability already present and never invoked:
+    `top_p` published by the owners and never sent, `think_off` written and never called,
+    `own_params` tabled and never read, `stream` available since the first commit. NONE of them ever
+    failed, because nothing fails when you decline to use something - which is exactly why no test
+    could see them and why they survived for weeks.
+
+    This repo already counts orphan MODULES (xray: 17 of 130 reachable). This is the same question
+    one level finer: a public function or table defined in `aea/` and referenced nowhere else in
+    `aea/`. Advisory by nature - a genuine entry point has no in-tree caller either - so it is a
+    LIST TO READ, not a gate. The value is that the list exists at all; before this, the only way to
+    notice an unused capability was to trip over the problem it would have solved."""
+    if defined is None or used is None:
+        return []
+    hits = []
+    for name, ln in defined.get(rel, {}).items():
+        if name in used:
+            continue
+        hits.append((rel, ln, _line(src, ln),
+                     f"{name} is defined here and referenced nowhere else in the tree - built and "
+                     f"never called, which is the one defect that never announces itself"))
+    return hits
+
+
+def _defined_and_used():
+    """Every module-level name defined in the tree, and every name referenced anywhere in it."""
+    defined, used = {}, set()
+    for rel, path in _py_files():
+        src = _src(path)
+        try:
+            tree = ast.parse(src)
+        except SyntaxError:
+            continue
+        d = {}
+        for n in tree.body:
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and not n.name.startswith("_"):
+                d[n.name] = n.lineno
+            elif isinstance(n, ast.Assign):
+                for t in n.targets:
+                    if isinstance(t, ast.Name) and t.id.isupper() and len(t.id) > 3:
+                        d[t.id] = n.lineno
+        defined[rel] = d
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Name):
+                used.add(n.id)
+            elif isinstance(n, ast.Attribute):
+                used.add(n.attr)
+            elif isinstance(n, ast.Str) if hasattr(ast, "Str") else False:
+                pass
+        # a name can also be reached by string (getattr, a registry, a CLI arg)
+        for m in re.finditer(r"[\"']([A-Za-z_][A-Za-z0-9_]{3,})[\"']", src):
+            used.add(m.group(1))
+    # a definition referenced only inside its OWN module is still an orphan to the tree, so the
+    # per-file pass above deliberately unions across everything and the caller subtracts.
+    return defined, used
+
+
 DETECTORS = [
     ("count-threshold", d_count_threshold, "D24 - growing the exam shrank the ladder", True,
      "def f(cap, battery):\n    mx = len(battery)\n    return [r for r in cap if r['score'] >= mx - 1]\n"),

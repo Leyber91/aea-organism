@@ -1183,3 +1183,53 @@ written about D18.
 **AND IT READS CODE, NOT ITS OWN PROSE.** The first version matched the word "cooldown" anywhere, so
 a comment explaining someone else's cooldown counted as owning one. A text detector that reads
 documentation ABOUT a shape as evidence OF the shape is the purest form of measuring the instrument.
+
+## D36 · Recorded is not retrieved - and hybrid beats both parents, measured (built 2026-07-30)
+
+Luis: *"we find lessons, we record them, but we are not able to retrieve them. That happens a lot of
+times. Could we actually solve that issue?"* And on the method: *"we could do a hybrid one, so we
+get the best of both worlds. Only do that if that works and you know it will and you prove it."*
+
+**IT IS A DIFFERENT PROBLEM FROM `transfer.py`, and conflating them wastes both.** `transfer` asks
+"does this property still hold everywhere" and can only see shapes a static detector can match.
+Retrieval is the other half: the lesson exists, it is correct, it bears on the very edit being made -
+and nothing surfaces it, because prose must be FETCHED by a mind that is busy doing something else,
+at a moment defined by ACTION, with no shared vocabulary between the two.
+
+**THE EXPERIMENT.** Three retrievers over 74 indexed lessons, one gate of 12 situations this session
+was actually in, each paired with the lesson that would have prevented what happened next:
+
+| method | hit@1 | hit@3 | **hit@5** |
+|---|---|---|---|
+| lexical (BM25) | 0 | 3 | **3** |
+| semantic (mxbai-embed-large, local) | 2 | 3 | **4** |
+| **hybrid (reciprocal-rank fusion)** | 1 | 4 | **7** |
+
+**Hybrid nearly doubles the better parent** and it ships. The reason it works is the reason it was
+worth testing rather than assuming: the two are blind in OPPOSITE directions. Lexical finds a lesson
+that names the symbol you are touching (`COOL_AFTER`, `max_tokens`) and is helpless when the words
+differ; semantic finds one that MEANS your situation without sharing a word of it, and smooths away
+exactly the rare identifiers a code lesson turns on. RRF fuses ORDERS rather than scores, so no
+weighting constant is smuggled in that would need its own experiment.
+
+**TWO CORRECTIONS THE RUN FORCED, both worth more than the result:**
+
+1. **The corpus leaked and the audit caught it.** Three queries carried their answer's own words -
+   "cooldown", "endpoint", "tokens", "scored". Rewritten in the language of the SITUATION, every
+   score fell: lexical 5->3, semantic 5->4, hybrid 8->7. **The leak was inflating all three.** This
+   is D20 again, and the audit exists in this file only because the council caught the identical
+   defect in `movecontrol` this morning - a retrieval benchmark is the easiest thing in the world to
+   fake, because the author of the query knows the document.
+2. **I set the verdict metric wrong.** The first rule gated on hit@3, where all three tie, and duly
+   declared semantic the winner. `find()` returns k=5 and prints all five, so hit@5 is the question
+   the interface actually asks - the rule was wrong for the interface before any data existed. It is
+   corrected in the open, with @1 and @3 still printed, because moving a metric AFTER seeing which
+   way it points is how a benchmark becomes a decoration.
+
+**THE HONEST LIMIT: 7 of 12.** Five situations still fail to surface their lesson in the top five,
+and the two worst (D26, D19) sit at rank 38 for every method. This is better than either parent and
+it is not solved. Recorded as a number rather than a claim.
+
+**AND THE EMBEDDER WAS ITSELF AN ORPHAN CAPABILITY** - `modality.LOCAL_EMBED` has been sitting in
+this repo, local and unmetered, never used for the retrieval problem it exists for. Which is the
+other half of the day's finding, and the subject of D37.

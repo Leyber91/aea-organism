@@ -1372,6 +1372,33 @@ def suite_wiring() -> list:
             rows.append(dict(case=f"transfer[{f['shape']}] {f['file']}:{f['line']}",
                              got=f["snippet"][:60], ok=False, err="transfer_violation"))
 
+    # I - RETRIEVAL. `transfer` catches lessons a static detector can see; `recall` is the fallback
+    # for the ones only prose can hold - the lesson exists, it bears on this very edit, and nothing
+    # surfaces it. The EXPENSIVE half (embedding the corpus, scoring the gate) stays out of the fast
+    # battery and lives in `python -m aea.lab.recall --evaluate`; what runs here is the cheap half
+    # that would silently rot: the corpus still parses, every gate case still points at a lesson
+    # that exists, and no query has leaked its answer's vocabulary into itself.
+    from aea.lab import recall as _rc
+    ls = _rc.lessons()
+    ok = len(ls) >= 40
+    rows.append(dict(case="the lesson corpus parses", got=f"{len(ls)} lessons indexed", ok=ok,
+                     err="" if ok else "corpus_stopped_parsing"))
+    ids = {d["id"] for d in ls}
+    missing = sorted({t for _q, t in _rc.GATE} - ids)
+    ok = not missing
+    rows.append(dict(case="every gate case points at a lesson that exists",
+                     got=str(missing) if missing else f"{len(_rc.GATE)} cases", ok=ok,
+                     err="" if ok else "gate_targets_a_deleted_lesson"))
+    by_id = {}
+    for d in ls:
+        by_id.setdefault(d["id"], d)
+    leaky = {q[:34]: sorted(_rc._leak(q, by_id[t]["text"][:1500]))
+             for q, t in _rc.GATE if t in by_id and _rc._leak(q, by_id[t]["text"][:1500])}
+    ok = not leaky
+    rows.append(dict(case="no gate query leaks its own answer's vocabulary",
+                     got=str(list(leaky)[:2]) if leaky else "clean", ok=ok,
+                     err="" if ok else "retrieval_benchmark_measures_matching"))
+
     # F - the known table itself is well-formed. A malformed argv here would reach subprocess.
     from aea.kernel.decide import KNOWN
     for name, (action, argv, tmo) in KNOWN.items():
