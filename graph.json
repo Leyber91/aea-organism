@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 161,
+    "count": 162,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 161
+    "count": 162
    },
    {
     "src": "THE_PROBE",
@@ -413,6 +413,12 @@
      "type": "module",
      "path": "aea/io/mixer.py",
      "purpose": "mixer.py - MANY VOICES, ONE SOUND CARD."
+    },
+    {
+     "id": "modality",
+     "type": "module",
+     "path": "aea/kernel/modality.py",
+     "purpose": "modality.py - ONE PROTOCOL PER KIND OF MODEL, instead of one protocol for all of them."
     },
     {
      "id": "model_fitness",
@@ -1831,6 +1837,11 @@
     },
     {
      "src": "memory",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "modality",
      "dst": "grid",
      "rel": "imports"
     },
