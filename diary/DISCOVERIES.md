@@ -1625,3 +1625,72 @@ action.
 what it set out to measure. The finding is about the WIRE FROM OUTCOME TO DECISION, not about
 `brief` and not about this run. Acting on a monitor does not always mean stopping - it means knowing
 early enough that stopping is a choice.
+
+## D44 · THE R2 GATE, 100 ticks executed: 10/12, and the two failures are the only two that matter (2026-07-31)
+
+The first honest run - real wake, real decision wire, scripts actually executing, run-keyed,
+scored against criteria fixed before it started and labelled JUDGEMENT or plumbing.
+
+**GATE NOT PASSED. 10 of 12. Every plumbing criterion passed; two of three JUDGEMENT criteria
+failed.** That is the right shape for a result: the harness is sound and the entity is what is
+being measured.
+
+**WHAT THE EXECUTION FIX BOUGHT - the ratchet is gone:**
+
+| | run 1 (scripts skipped) | run 2 (executing) |
+|---|---|---|
+| NONE first half -> second | **50% -> 11%** | **24% -> 32%** |
+| state growth | 6.47x | 1.71x |
+| `no_drift` | FAIL | **PASS** |
+
+Restraint now RISES across the run. D41's diagnosis is confirmed: the ratchet was the harness.
+
+**FAILURE 1 - `restraint`, 28% NONE against a 50% threshold. Partly the artefact I pre-registered,
+and it still fails without it.** In compressed time no day passes, so a `brief` is owed forever:
+chosen 34 times, **failed 33 times**. Excluding brief entirely the rate is 42% - closer, still under.
+The confound is real and it does not excuse the result.
+
+**FAILURE 2 - `responsive`, and this one is unconfounded and damning:**
+
+    consolidate chosen when memory ABOVE median : 0.245
+    consolidate chosen when memory BELOW median : 0.255
+    ratio 0.96          (threshold 3.0; a COIN FLIP scored 2.03)
+
+**The entity scores worse than random at matching the move to the state.** It chooses `consolidate`
+at the same rate whether memory is large or small. Compression cannot explain this - memory grows in
+either mode. The decision does not track the thing it claims to be about.
+
+**AND `settles` PASSED VACUOUSLY - 0 satisfied pairs.** It passed because there was no case to test,
+which is the failure I called out earlier in this same session in a different file ("a test that
+passes by not running is worse than no test") and then shipped again here. So the honest count is
+**ZERO of three judgement criteria genuinely passed.**
+
+**WHY THERE WERE NO PAIRS, and it is the deepest finding of the run: `consolidate` DOES NOT COMPACT
+THE WAKE'S STATE.** It ran 25 times, succeeded, and the state file grew 1.71x throughout.
+`aea/memory/consolidate.py` writes `luis_memory.json` - the semantic memory of Luis, a different
+store entirely. The wake's `aea_state.json` memory list, the thing that actually lengthens its
+prompt every tick, **is touched by nothing.**
+
+So the chain is:
+
+    the prompt grows every tick
+      -> the entity notices and chooses `consolidate`, 25 times, correctly
+        -> consolidate succeeds, on a DIFFERENT STORE
+          -> the prompt keeps growing
+            -> nothing reports the mismatch, because no outcome feeds back (the R3 gap, D43)
+
+**The remedy the entity reaches for does not address the disease, and it cannot find that out.**
+That also explains `responsive`: if consolidating never changes memory size, there is no signal in
+the state for the wake to track, and a criterion asking it to track one is asking for something the
+world does not offer.
+
+**WHAT THIS GATE ACTUALLY DELIVERED.** Not a pass. Three concrete, mechanical defects that a hundred
+single-shot measurements could not have surfaced:
+
+1. `consolidate` compacts the wrong store - the growth has no remedy wired to it
+2. nothing carries an outcome back to a decision - `brief` failed 33 of 34 and was chosen again
+3. `settles` cannot be evaluated until (1) is fixed, so one of the three judgement criteria is
+   currently unmeasurable rather than passing
+
+**R3 stops being an abstract rung on a ladder here.** An hour ago it was "the outcome is remembered,
+not the intention" in a plan. It is now two measured failures with file names attached.
