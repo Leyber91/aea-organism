@@ -2023,3 +2023,84 @@ and the honest list of what I got wrong (six of eight were the instrument, not t
    not able to do". First real evidence pointing at the recogniser rather than the signal. Test
    whisper-small against `earbench --loopback` before buying it; the harness makes that a 20-minute
    question now instead of a download and a hope.
+
+## 2026-07-30 - R2: THE WAKE LEARNED TO NAME A MOVE, AND THE CONTROL WAS WRONG FOUR TIMES
+
+### DID
+
+**R1 follow-up closed.** Decisions now stamp themselves (`at` + `at_iso`). `decide.latest()` prefers
+the stamp over file mtime, refuses stamps from the future as clock disagreement, and falls back to
+mtime for decisions written before the wake could stamp. Two decisions in one run are now
+distinguishable - measured 07:39:18 vs 07:39:26.
+
+**R2a - the wake chooses a move.** Three versions, each fixing the last and introducing its mirror:
+- v1 named the six moves inside the action prompt -> 2/2 live ticks bent a real priority into a
+  chore, HADES independently returned `redo`.
+- v2 split `action` (free, about Luis) from `move` (closed enum, may be NONE) -> 0/4 bent, 4/4 NONE,
+  HADES accepted all four. The **control** then returned 0/4 on states where a move was plainly
+  owed. It had stopped choosing.
+- v3 gives every move its CONDITION (`decide.WHEN`), derived into the prompt, with a test asserting
+  every move has one. Control: 4/4 correct, 3/4 chose the owed move. Live: actions stayed about him
+  (revenue, the offer, shipping), moves 2 NONE + 1 brief.
+
+**The formatter is off the decision path.** `structure()` was the only unladdered call in the wake -
+one rate-limited plant produced 27 consecutive decisions with an empty action and `move: NONE`,
+indistinguishable from healthy rests. `move_from()` now reads the `MOVE:` line by regex from the
+core's own text. No model, no rate limit, no invented move.
+
+**R2b - the first free-text argument.** `calc` is wired. The safety claim is structural, not a
+judgement about likelihood: its charset admits NO LETTERS, so an instruction, a hostname or a key is
+not *representable* in a legal argument - which matters because `sense()` puts live Hacker News
+headlines into the wake's context every tick. Proven end to end: decision -> `decide.choose` ->
+`hands.invoke` -> correct arithmetic, with egress still refused by the ZONE in the same call.
+
+**`aea/lab/movecontrol.py`** - the discrimination control, promoted out of the scratchpad on its
+second writing. Paraphrase / distractor / boundary / quiet groups, k-sample rates, a printed noise
+floor, a corpus-leak audit that runs BEFORE scoring, and gates that refuse a verdict when the core
+died or when the run fell to the local rod.
+
+**THE FRONTIER LADDER'S TOP ROD WAS A CORPSE.** `nvidia/mistralai/mistral-small-4-119b-2603` sits at
+position 0 of the frontier ladder and answers **410 Gone**. Every wake tick, every council seat and
+every HADES verdict opened a connection to a withdrawn endpoint, waited, failed and fell through.
+The cooldown could never fix it - `COOL_SECONDS` expires by design so the rod "gets another chance",
+which is right for a throttle and wrong for Gone. `energy._retire()` now tombstones a 410; verified
+live, the next draw skips it without opening a connection. The repo already knew this: `hands.probe`
+maps 410 to `retired` and `unmeasured()` excludes it as *"Gone is permanent"* - the reasoning lived
+in the tool-calling probe and never reached the module that burns the rods. See D22.
+
+**`python -m aea.lab.battery <suite>`** runs one suite by name; an unknown name exits 2 instead of
+silently reporting `0/0`. **`movecontrol --rod=<plant/model>`** pins the core to one rod and
+disables the ladder, so a measurement is reproducible instead of hostage to whichever rod answers.
+
+**Battery: wiring 51 -> 133, protocol 222, tools 30. 382/382 on the fast suites touched.**
+
+### LOCKED
+
+- **The move is read deterministically, never by a model.** A sampler must not sit between a
+  decision and its execution; when it fails it fails to NONE, and a silently-not-deciding entity
+  looks exactly like a resting one.
+- **Every move carries its condition.** A capability the model cannot tell apart from the others is
+  unreachable however correctly it is wired. Enforced by test.
+- **A verdict about judgement names the rod that produced it.** A run spanning two rods gets NO
+  verdict rather than an average across two different minds.
+- **A control corpus is audited for vocabulary leak before it is scored**, and every cell is
+  sampled k times. n=1 against a sampler is not a measurement.
+- **The allow-list in `live.tick` is derived from the decision tables**, so wiring a tool cannot
+  produce a wake that chooses it and a daemon that refuses it.
+- **A permanent condition is recorded permanently.** Any retry policy whose backoff expires cannot
+  express "never again", so a system with only cooldowns re-attempts every corpse it owns.
+
+### NEXT
+
+1. **Re-run `python -m aea.lab.movecontrol --k=3` on a FRONTIER rod.** Every run after the first two
+   fell to `ollama/qwen2.5:7b`, which answers NONE to everything, and the instrument correctly
+   refuses a verdict. Last frontier data: distractors 4/4, paraphrase 2/3. This is the gate on
+   calling R2a measured rather than built.
+2. **R2c - egress.** `web_search` / `web_fetch` fail the two structural tests `calc` passes: the
+   argument is free prose and the tool reaches the network. Needs argument provenance designed, not
+   assumed, plus a spend budget. Do not wire it the way calc was wired.
+3. **The R2 gate: 100 ticks, then Luis reads the ledger.** Zero ticks so far.
+4. R3 - the OUTCOME is remembered, not the intention: the stored unit is (predicted, returned, did
+   it match).
+5. Still open from before, untouched today: the render mystery (0.54s bench vs 1.5-6.0s live, five
+   hypotheses dead), and the echo gate that is written and never tested.

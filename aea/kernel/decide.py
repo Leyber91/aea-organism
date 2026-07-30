@@ -94,6 +94,75 @@ KNOWN = {
 STATE_READABLE = ("heartbeat.json", "trust_ledger.json", "aea_state.json", "grid_state.json")
 SELF_TOPICS = ("structure", "laws", "capabilities", "invariants")
 
+# WHAT EACH MOVE IS FOR, AND WHEN IT IS OWED - the half the wake was missing.
+#
+# MEASURED 2026-07-30 by a control run. Given a state with forty undistilled memory notes and an
+# explicit note saying so, the wake answered NONE. It was not being lazy and the pipeline was not
+# broken: the core emitted `MOVE: NONE` and the formatter extracted it faithfully. The wake was
+# choosing BLIND. `_moves()` printed `consolidate (runs ASLEEP:consolidate)` - a name and an opcode
+# - and nothing anywhere said that consolidate is what you run when notes pile up. NONE is the
+# correct answer to a menu you cannot read.
+#
+# The lesson generalises past this table: DERIVING the list from the source of truth guaranteed the
+# names could not drift, and I read that guarantee as "the wake now knows its moves". Names are not
+# knowledge. A capability the model cannot tell apart from the others is not reachable, however
+# correctly it is wired - which is the same defect as an orphan module, one layer up.
+#
+# Keyed by move name across BOTH tables, and `test_wiring` asserts total coverage, because a move
+# with no `when` silently becomes the one the wake never picks.
+# THE THREE INTROSPECTIVE MOVES MUST NAME DIFFERENT ACTS, not three shades of "look at yourself".
+# Measured by the control: given "Luis asked what you are able to DO and you had no answer", the
+# wake chose `reflect`. Reasonable, and wrong - it was asked for a LIST it does not have, not a
+# JUDGEMENT of its past. The three had been described as examining behaviour / knowing structure /
+# knowing tools, which are one act at three targets. They are now written as three verbs a reader
+# can tell apart: JUDGE what you did, LOOK UP how you are built, LIST what you can call.
+WHEN = {
+    "brief":           "Luis is owed a digest of what happened - no brief lately, or the world shifted",
+    "consolidate":     "raw memory notes have piled up undistilled; this indexes and compresses them",
+    "reflect":         "JUDGE your own recent decisions against your laws - about past behaviour, "
+                       "never about looking something up",
+    "know_yourself":   "LOOK UP how you are built (structure, laws, invariants) because you need a "
+                       "fact about yourself you do not have",
+    "know_your_hands": "LIST the tools available to call, because someone needs that list and you "
+                       "cannot produce it",
+    "read_your_state": "read the live contents of one of your own state files right now",
+    "calc": "you need an exact arithmetic result - write it as `MOVE: calc <expression>`",
+}
+
+# =================================================================================================
+# R2b - THE FIRST MOVE THAT CARRIES A STRING THE WAKE WROTE.
+#
+# R2a's guarantee was absolute and deliberately so: every argument comes from a closed enum, so no
+# text the wake composed could reach a tool. This breaks that guarantee for exactly one tool, and
+# the justification has to be structural rather than a judgement about likelihood - because the
+# threat is not hypothetical. `aea/loop/aea.py` `sense()` puts live Hacker News headlines into the
+# wake's prompt every tick. That is untrusted text sitting in the context of the thing composing the
+# argument, which is the documented top failure of every agent of this shape.
+#
+# WHY `calc` IS SAFE HERE, AND IT IS NOT "BECAUSE IT IS LOCAL":
+#
+#   the charset   `_calc` admits `[\d\s+\-*().%]` and nothing else. NO LETTERS. An instruction, a
+#                 hostname, a filename, an API key - none of them are REPRESENTABLE in a string
+#                 that survives that filter. Injection is not unlikely here, it is impossible to
+#                 express, and that is a different and much stronger claim.
+#   no egress     outbound=False, no network in the impl. Even a hostile expression has nowhere to
+#                 send a result.
+#   no capability `capability=None` in the registry - the one tool with no permission cost.
+#   the bomb      the only real attack was resource exhaustion (`9**9**9` never returns and raises
+#                 nothing, so the tick guard cannot catch it). Measured, then bounded in `_calc`.
+#
+# All four have to hold for a tool to enter this table. `web_search` fails the first two and is why
+# R2c needs an egress budget rather than another entry here.
+#
+# THE CHARSET CHECK BELOW IS A COURTESY, NOT THE ENFORCEMENT. `hands._calc` re-checks everything and
+# is the authority; this one exists so the refusal appears in the decision log with a reason
+# attached instead of surfacing as a tool error two modules downstream. It is deliberately looser
+# than the real one so the two cannot drift into disagreeing about what is legal.
+FREE_ARG = {
+    "calc": dict(tool="calc", arg="expression", action="LOOK:calc",
+                 ok=re.compile(r"^[\d\s+\-*/().%]{1,120}$")),
+}
+
 TOOL_KNOWN = {
     "know_yourself":   dict(tool="self_map",   arg="topic", enum=SELF_TOPICS,   default="structure",
                             action="LOOK:self_map"),
@@ -173,14 +242,24 @@ def latest(path: str = None, now: float = None) -> tuple:
     if not isinstance(last, dict):
         return None, "the last decision is not an object"
 
-    # AGE. The wake does not stamp its decisions, so the file's mtime is the only clock available.
-    # Using it is honest but weak - it dates the WRITE, not the THOUGHT - and if two decisions are
-    # written in one run they share a timestamp. Recorded as a known limit rather than hidden: the
-    # right fix is for the wake to stamp each decision, and that belongs in the wake.
-    try:
-        age = now - os.path.getmtime(path)
-    except Exception:
-        age = 0.0
+    # AGE, FROM THE DECISION'S OWN STAMP WHEN IT HAS ONE. The wake now records `at` per decision,
+    # which dates the THOUGHT; mtime dates the WRITE, and two decisions written in one run shared a
+    # timestamp so the older was as "fresh" as the newer. The fallback stays for decisions written
+    # before the wake learned to stamp - dropping it would make every historical decision
+    # unreadable, and a migration that silently discards the past is worse than a weaker clock.
+    stamped = last.get("at")
+    if _finite(stamped) and stamped > 0:
+        age = now - float(stamped)
+        # A stamp from the FUTURE means a clock disagreement, not a fresh decision. Treating it as
+        # fresh would let a bad clock bypass the staleness gate entirely.
+        if age < -60:
+            return None, f"decision is stamped {int(-age)}s in the future - clock disagreement"
+        age = max(age, 0.0)
+    else:
+        try:
+            age = now - os.path.getmtime(path)
+        except Exception:
+            age = 0.0
     if not _finite(age):
         return None, "decision age is not a finite number"
     if age > MAX_AGE_S:
@@ -196,6 +275,75 @@ def parse(decision: dict, known: dict = None) -> tuple:
     known = KNOWN if known is None else known
     if not isinstance(decision, dict):
         return None, "decision is not an object"
+
+    # ============================================================================================
+    # THE EXPLICIT MOVE COMES FIRST, AND WHEN IT IS PRESENT IT IS THE WHOLE ANSWER.
+    #
+    # Everything below this block is inference: regexes reading prose the wake wrote for a human,
+    # guessing at intent. That was the only option while the wake had one action field. It now
+    # writes `move` - a name copied from a printed list, or NONE - so the common path stops being a
+    # guess and becomes a lookup.
+    #
+    # WHY THE FIELD EXISTS AT ALL, measured 2026-07-30. Naming the six moves inside the action
+    # prompt worked mechanically and corrupted the deliberation: both ticks bent a real priority
+    # ("close a sale for the diagnostic offer") into an available chore ("run a brief"), and HADES
+    # flagged the second independently - `redo - does not surface Luis's real priorities; it adds a
+    # new action`. The council had predicted exactly this. One field cannot hold both a priority and
+    # a chore, because the model resolves the conflict toward the thing it can finish.
+    #
+    # An explicit NONE is therefore a FIRST-CLASS RESULT, not a failure to match, and it is expected
+    # to be the majority verdict. A wake that answers NONE ninety times in a hundred is working.
+    if "move" in decision:
+        raw = str(decision.get("move") or "").strip()
+        # Tolerate the shapes a formatter produces around a bare name - `MOVE: brief`, `"brief"`,
+        # `know your hands` - then match against the closed table. Tolerant on FORM, exact on NAME.
+        key = re.sub(r"^\s*move\s*[:\-]\s*", "", raw, flags=re.I)
+        key = re.sub(r"[^a-z0-9]+", "_", key.strip().strip("`\"'").lower()).strip("_")
+        if not key or key in ("none", "no", "nothing", "no_move", "n_a", "na", "null"):
+            return None, "the wake chose NONE - no mechanical move is needed this tick"
+        if key in TOOL_KNOWN:
+            spec = TOOL_KNOWN[key]
+            # THE DEFAULT ARGUMENT, ALWAYS. The wake picks the tool by name and nothing else; it
+            # cannot steer the argument here, so the R2a guarantee (no wake-written string reaches a
+            # tool) holds by construction rather than by filtering.
+            args = {spec["arg"]: spec["default"]} if spec["arg"] else {}
+            return dict(kind="tool", name=key, tool=spec["tool"], args=args,
+                        action=spec["action"], age_s=decision.get("_age_s")), ""
+        if key in known:
+            action, argv, tmo = known[key]
+            if not argv or not isinstance(argv, list) or not all(isinstance(x, str) for x in argv):
+                return None, f"known action {key!r} has a malformed argv"
+            if not _finite(tmo) or tmo <= 0:
+                return None, f"known action {key!r} has a non-finite timeout"
+            return dict(kind="script", name=key, action=action, argv=list(argv), timeout=int(tmo),
+                        age_s=decision.get("_age_s")), ""
+
+        # R2b: A MOVE THAT CARRIES AN ARGUMENT. Tried only AFTER every whole-string match has
+        # failed, because the names are matched on the FULL normalised move and splitting first
+        # would break every multi-word name - `know your hands` would parse as the move `know` with
+        # the argument `your hands`, which is a refusal with a confusing reason attached.
+        head, _sep, rest = raw.strip().partition(" ")
+        hkey = re.sub(r"[^a-z0-9]+", "_", head.strip().strip("`\"'").lower()).strip("_")
+        if hkey in FREE_ARG:
+            spec = FREE_ARG[hkey]
+            arg = rest.strip().strip("`\"'")
+            if not arg:
+                return None, f"move {hkey!r} needs an argument and none was given"
+            if not spec["ok"].match(arg):
+                # The refusal quotes the argument so the log shows WHAT was rejected. Truncated,
+                # because the whole point is that this string came from an untrusted context.
+                return None, (f"the {hkey!r} argument {arg[:40]!r} is not permitted here - "
+                              f"arithmetic characters only, no letters")
+            return dict(kind="tool", name=hkey, tool=spec["tool"], args={spec["arg"]: arg},
+                        action=spec["action"], age_s=decision.get("_age_s")), ""
+        # NAMED SOMETHING THAT DOES NOT EXIST -> REFUSE AND SAY SO. Falling through to the prose
+        # regexes would hide the drift: the wake would be proposing a move the table no longer has
+        # and the log would show some *other* action running, which is the exact failure `_moves()`
+        # was derived from the table to prevent.
+        return None, (f"the wake named move {raw[:40]!r}, which is not one of "
+                      f"{sorted(list(TOOL_KNOWN) + list(known) + list(FREE_ARG))}")
+    # ============================================================================================
+    # NO `move` FIELD -> a decision written before the wake learned to choose. Inference below.
     # ONLY THE `action` FIELD, AND ONLY ITS OPENING - and this is the correction that matters most
     # in this module.
     #

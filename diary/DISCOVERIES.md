@@ -490,3 +490,116 @@ broken.
 
 **COROLLARY, paid for the same day.** A permanently failing check disables every check that shares
 its verdict. Style and safety must never share a line: one is advisory and reports, the other blocks.
+
+## D19 · The wake could not choose, then chose everything, then chose nothing - and each fix was correct (built + measured 2026-07-30)
+
+**THE RUNG.** R2: the loop that thinks writes a decision, the loop that acts reads it. R1 built the
+wire. This is the day the wake learned to name a move the daemon can actually run - and it took
+three versions, because every version fixed the previous failure and introduced its mirror image.
+
+**V1 - THE CHORE ATE THE PRIORITY.** The six runnable moves were listed inside the prompt that asks
+for "one concrete action for today". Measured over 2 live ticks: BOTH bent a real priority ("close a
+sale for the diagnostic offer") into an available chore ("run a brief"). HADES flagged it
+independently - *redo, does not surface Luis's real priorities; it adds a new action*. One field
+cannot carry a priority and a chore at once: the model resolves the conflict toward the thing it can
+finish.
+
+**V2 - IT STOPPED CHOOSING.** Split into two fields, `action` free and about him, `move` a closed
+enum. Four live ticks: 0/4 bent, 4/4 NONE, HADES accepted all four. That looked like success and was
+not. The control - the same wake against states where a move was plainly owed - returned 0/4,
+including a memory of forty undistilled notes. **"Always NONE" and "weighs each move and correctly
+declines" produce identical logs.** Without the control the change would have shipped.
+
+**V3 - THE MENU HAD NO DISHES.** The core emitted `MOVE: NONE` and the formatter extracted it
+faithfully; neither half was broken. The list printed to the wake read `consolidate (runs
+ASLEEP:consolidate)` - a NAME and an OPCODE, with no statement anywhere of what consolidate does or
+when it is owed. **NONE is the correct answer to a menu you cannot read.** The list had been DERIVED
+from the execution table so names could not drift, and that derivation was mistaken for the wake
+knowing its moves. Names are not knowledge. Each move now carries its condition; a test asserts every
+move has one, because a move with no description is the move that is never chosen.
+
+**THE GENERAL FORM, and it is the one worth carrying:** a capability the model cannot tell apart from
+the others is unreachable however correctly it is wired. That is D5's reachability blocker one layer
+up - not an orphan module, an orphan *option*.
+
+## D20 · Four instrument defects in one control, and the fourth was the repo's own law
+
+The control built to judge the wake was wrong four times before it measured anything. Each is a
+distinct class and all four are cheap to repeat.
+
+1. **THE CORPUS LEAKED.** The "owed" states and the move descriptions shared an author and nearly
+   the same words - *"40 undistilled notes"* against *"raw memory notes have piled up undistilled"*.
+   It scored 4/4 and measured string overlap. Named by the council's adversary seat in one line.
+   Fixed with three groups: PARAPHRASE (condition true, disjoint vocabulary), DISTRACTOR (the
+   condition's own words, and it is NOT owed), QUIET (true and never named). The distractors carry
+   the verdict; they are the only ones a matcher cannot fake.
+2. **THE DISTRACTORS WERE UNDER-SPECIFIED.** Each shut ONE of six doors and said nothing about the
+   other five, so "the self-map is current" left the brief unmentioned, and an unmentioned brief
+   reads as an overdue one. The wake answered `brief` and was scored wrong for a defensible answer.
+   A distractor is only a distractor when every other door is shut.
+3. **ONE SAMPLE PER CELL.** The same input answered `consolidate` and then `brief` on consecutive
+   runs with nothing changed between them. Four verdicts had already been drawn - and three written
+   into code comments as measured fact - from n=1 against a sampler at default temperature.
+4. **A DEAD CORE SCORED AS A DECISION.** `core()` returns empty when every rod fails and
+   `structure()` falls back to `move: NONE` by design, so a rate-limited run produced NINE PERFECT
+   NONEs and the verdict read "DEAD - never chooses a move" about an experiment where the wake never
+   ran. The rod line then read `ollama/qwen2.5:7b`: the ladder had fallen to the local floor exactly
+   as designed, and a 7B answers NONE to everything.
+
+**WHY IT RECURRED, which is the part that stops it.** The repo already carries the law - `social.py`
+compares against run-to-run spread, D15 is titled *n=8 was n=1*, D18 counted ten instrument defects
+and named the invariant *every detector ships with a case it must catch*. All of it was applied to
+the four-voice work and none of it to this control, one week later, by the same author. The
+expensive part here was designing the adversarial corpus, so that got the care; the sample count was
+one integer, so it got none - and the sample count was where the whole result lived. **Attention
+follows effort, not risk.** Deliberately re-read the cheap part.
+
+## D21 · The ladder keeps the heartbeat alive and cannot keep the judgement alive
+
+Two failures of the same shape, found while chasing the one above.
+
+**THE UNLADDERED CALL.** `structure()` calls groq directly - it is the ONLY part of the wake with no
+fallback behind it. The core falls through the whole energy ladder to a local rod; the formatter just
+dies, and its except-path returns an empty action with `move: NONE`. One rate-limited plant produced
+27 consecutive decisions that were byte-identical to healthy rests. Fixed by removing the model from
+that path entirely: `move_from()` reads the `MOVE:` line out of the core's own text with a regex. A
+model was being asked to copy a word off a line it could already see - a sampler in a mapping that
+must be deterministic (law W2), and one that can be rate-limited, for nothing.
+
+**THE FLOOR HAS NO JUDGEMENT.** When the ladder falls to `ollama/qwen2.5:7b`, the wake answers NONE
+to every state including the plainly-owed ones. The heartbeat survives - that is what the ladder is
+for and it works. What does not survive is the deciding, and nothing was reporting it. **An
+unattended entity on the floor rod is indistinguishable in its log from a healthy one that keeps
+resting.** Any verdict about judgement must name the rod that produced it, and a run spanning two
+rods gets no verdict at all rather than an average across two different minds.
+
+**THE PATTERN ACROSS ALL THREE DISCOVERIES:** the failure that costs most is not the loud one. It is
+the one whose output is identical to health - NONE that means broken, a rest that means dead, a
+green that means unmeasured. Every gate on this rung now exists to make a null result *say so*.
+
+## D22 · The frontier ladder's top rod was a corpse, and the repo already knew (found 2026-07-30)
+
+`nvidia/mistralai/mistral-small-4-119b-2603` sits at **position 0 of the frontier ladder** and
+answers **410 Gone**. Every frontier draw - which is every wake tick, every council seat, every
+HADES verdict - opened a connection to a withdrawn endpoint, waited, failed, and fell through to the
+next rod. Forever.
+
+The cooldown could not fix it and was never going to: `COOL_SECONDS` expires **by design**, so the
+rod "gets another chance". That is correct for a throttle, a blip or a 5xx, and wrong for an
+endpoint that has been withdrawn. Gone needs a tombstone, not a timer.
+
+**THE PART THAT MAKES THIS D18 AGAIN.** The knowledge was already in the repo, written down, in
+prose, by the same author. `hands.probe` maps 410 to `retired`; `hands.unmeasured` explicitly
+excludes 410 with the comment *"Gone is permanent and re-probing a retired endpoint forever is the
+same wasted wake as U4"*. That reasoning lived in the module that measures TOOL-CALLING and never
+reached the module that BURNS THE RODS - two files apart, one concept, and no link between them. The
+census (a description) said the model exists; the endpoint (the live thing) said it does not, and
+the law says which one wins.
+
+Found only because a control was pinned to a specific rod and forced to report WHY a sample died.
+The ladder had been hiding it perfectly - falling through is what a ladder is for, so the failure
+presented as "the entity is running on ollama today" rather than as a dead rod at the top.
+
+**THE INVARIANT:** a permanent condition must be recorded permanently. Any retry policy whose
+backoff can expire is, by construction, unable to express "never again" - so a system with only
+cooldowns will re-attempt every corpse it owns until someone reads the `tried` list.

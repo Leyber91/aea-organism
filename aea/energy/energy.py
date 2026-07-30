@@ -69,10 +69,39 @@ def _record_use(plant, model, ok, latency):
     _save_usage(u)
 
 
+def _retire(plant, model, why="410 Gone"):
+    """A tombstone, which is the one case a cooldown cannot express.
+
+    MEASURED 2026-07-30: `nvidia/mistralai/mistral-small-4-119b-2603` sits at position 0 of the
+    frontier ladder and answers 410 Gone. Every frontier draw - every wake tick - opened a
+    connection to a retired endpoint, waited, failed, and fell through, forever. The cooldown does
+    not help: it expires by design so the rod "gets another chance", which is right for a throttle
+    or a blip and wrong for an endpoint that has been withdrawn.
+
+    The repo already knew this. `hands.probe` maps 410 to `retired` and `hands.unmeasured` excludes
+    it with the comment *Gone is permanent and re-probing a retired endpoint forever is the same
+    wasted wake as U4*. That knowledge lived in the tool-calling probe and never reached the ladder
+    that burns the rods - the census says the model exists, the endpoint says it does not, and law
+    "ask the live thing, never the description of it" decides which one wins."""
+    u = _usage()
+    k = f"{plant}/{model}"
+    e = u.get(k, {"calls": 0, "ok": 0, "fail": 0, "consec_fail": 0, "ema_latency": None})
+    e["retired_at"] = time.time()
+    e["retired_why"] = why
+    u[k] = e
+    _save_usage(u)
+
+
 def _cooling(plant, model):
-    """Cooldown, not tombstone: after COOL_SECONDS the rod gets another chance; a success clears it."""
+    """Cooldown, not tombstone: after COOL_SECONDS the rod gets another chance; a success clears it.
+
+    EXCEPT for a rod that answered Gone. That one is skipped permanently - see `_retire`."""
     e = _usage().get(f"{plant}/{model}")
-    if not e or e["consec_fail"] < COOL_AFTER:
+    if not e:
+        return False
+    if e.get("retired_at"):
+        return True
+    if e["consec_fail"] < COOL_AFTER:
         return False
     return (time.time() - e.get("cooled_at", 0)) < COOL_SECONDS
 
@@ -162,6 +191,14 @@ def draw(prompt: str, tier: str = "solid", zone: str = "private", mx: int | None
                              timeout=(180 if plant == "ollama" else timeout))
         text = (r.get("text") or "").strip()
         good = bool(r["ok"] and text)                  # EMPTY = failure (the silent-killer lesson)
+        if r.get("status") == 410:
+            # GONE IS PERMANENT. Not a cooldown - a tombstone, or the ladder re-opens a withdrawn
+            # endpoint on every tick for the life of the entity.
+            _retire(plant, model)
+            tried.append(f"{plant}/{model}:410-retired")
+            pulse.emit("energy", "retired", f"{plant}/{model.rsplit('/',1)[-1]} answered 410 Gone "
+                       f"- tombstoned, the ladder will not try it again", ok=False)
+            continue
         if r.get("status") == 429:
             _meter.mark_throttled(plant, model)        # rate-limit = the METER's problem, not the rod's
         else:                                          # fitness only judges the rod's own behaviour

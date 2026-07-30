@@ -293,13 +293,41 @@ def _self_map(topic: str = "") -> str:
 
 def _calc(expression: str = "") -> str:
     """Arithmetic only, by regex, before eval sees it. A calculator that can import is not a
-    calculator."""
-    if not re.fullmatch(r"[\d\s+\-*/().%]+", expression or ""):
+    calculator.
+
+    AND ARITHMETIC ALONE IS NOT SAFE, WHICH IS THE PART THE ALLOWLIST DOES NOT COVER. The regex
+    admits no letters, so every name-based escape is blocked - no imports, no attribute access, no
+    builtins. That much held. But `*` is on the list and `**` is just two of them, and an
+    exponent tower is pure arithmetic by this regex and a resource bomb by any other measure.
+
+    MEASURED, before free-text expressions were wired into the unattended loop:
+        9**9**9      DID NOT FINISH IN 6s
+        9**9**9**9   DID NOT FINISH IN 6s
+    In a conversation that is one bad turn. In the loop it is the entire entity stopped - and it
+    stops in the worst possible way, because `live.tick` guards against an EXCEPTION and this
+    raises none. The process is busy, not broken, so the heartbeat simply stalls and every watchdog
+    that looks for a crash sees nothing wrong.
+
+    The bound is on the EXPONENT, not on the expression length: `9`*4000 evaluates instantly and is
+    harmless, so a length cap would refuse the safe case and miss the dangerous one."""
+    e = (expression or "").strip()
+    if not re.fullmatch(r"[\d\s+\-*/().%]+", e):
         return "ERROR: arithmetic only"
+    if len(e) > 400:
+        return "ERROR: expression too long"
+    # No towers at all: a**b**c is where the growth becomes unbounded in one step.
+    if re.search(r"\*\*[^*]*\*\*", e):
+        return "ERROR: stacked exponents are refused (resource bomb)"
+    for base, exp in re.findall(r"(\d+(?:\.\d+)?)\s*\*\*\s*(\d+(?:\.\d+)?)", e):
+        try:
+            if float(exp) > 64 or (float(base) > 1 and float(base) ** float(exp) > 1e60):
+                return "ERROR: exponent too large (max 64, and the result must fit)"
+        except (ValueError, OverflowError):
+            return "ERROR: exponent too large"
     try:
-        return str(eval(expression, {"__builtins__": {}}, {}))
-    except Exception as e:
-        return "ERROR: %s" % e
+        return str(eval(e, {"__builtins__": {}}, {}))
+    except Exception as ex:
+        return "ERROR: %s" % ex
 
 
 def _read_state(name: str = "") -> str:

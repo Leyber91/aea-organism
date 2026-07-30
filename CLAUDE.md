@@ -25,7 +25,7 @@ changes is when the *methodology* or the *repo shape* genuinely changes.
 
 1. **`graph.json`** — the master orchestrator graph. Enter at root `THE_PROBE`, follow one `contains`
    edge into the subgraph you need (`code` / `plan` / `discoveries` / `references`), pull that node +
-   its edges. Never re-scan the tree; that's what burns tokens. Refresh: `python aea/build_graph.py`.
+   its edges. Never re-scan the tree; that's what burns tokens. Refresh: `python -m aea.tooling.build_graph`.
 2. **`diary/SESSION_LOG.md`** — the latest entry: current state, what's `LOCKED` (do not re-litigate),
    and the exact `NEXT` task. Build from `NEXT`; don't re-decide what's under `LOCKED`.
 3. **`diary/DISCOVERIES.md`** — *why* the plan is what it is (D1–D8 + the shortest path). Inherit the
@@ -199,7 +199,7 @@ operating rules' field-lessons layer, the PORTFOLIO project rules, `LUIS_FILTER`
 1. Append one entry to **`diary/SESSION_LOG.md`**: `DID` / `LOCKED` (only if a new lock landed) / `NEXT`.
    This is the single source of "current state." (This file, `CLAUDE.md`, stays as-is.)
 2. If the repo *shape* changed (files added/moved, endpoints, new design docs, new discovery), run
-   `python aea/build_graph.py` so the graph stays true. Add a durable finding to `diary/DISCOVERIES.md`.
+   `python -m aea.tooling.build_graph` so the graph stays true. Add a durable finding to `diary/DISCOVERIES.md`.
 3. Commit only when Luis asks. Privacy-scan the diff first (no employer paths / secrets). Never `--force`
    or skip hooks unless told.
 

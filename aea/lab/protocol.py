@@ -45,6 +45,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import time
 
 from aea.kernel import hands, trust
 
@@ -267,6 +268,37 @@ def _rows():
        "fence_escapable")
     ck("output", "the fence names which tool produced the data",
        "name=read_state" in hands.fence("read_state", "x"), "", "fence_anonymous")
+
+    # ---------------------------------------------------------------- 8b RESOURCE BOMBS
+    # ARITHMETIC-ONLY IS NOT THE SAME AS SAFE. `calc`'s allowlist admits no letters, so every
+    # name-based escape is blocked - and `*` is on the list, so `**` is too. MEASURED: 9**9**9 did
+    # not finish in 6 seconds. In the unattended loop that is the entity stopped, and stopped in
+    # the worst way: live.tick guards against an EXCEPTION and this raises none, so the process is
+    # busy rather than broken and every watchdog looking for a crash sees nothing.
+    #
+    # Each case must return in well under a second - the assertion is the CLOCK, not the value.
+    for label, expr, want_err in (
+            ("plain multiply",      "415 * 987",        False),
+            ("small power",         "2**16",            False),
+            ("float arithmetic",    "2.5 * 4",          False),
+            ("modulo",              "17 % 5",           False),
+            ("long but harmless",   "9" * 300 + "*2",   False),
+            ("EXPONENT BOMB",       "9**9**9",          True),
+            ("TOWER",               "9**9**9**9",       True),
+            ("big single exponent", "9**9999",          True),
+            ("spaced tower",        "9 ** 9 ** 9",      True),
+            ("over length",         "1+" * 300 + "1",   True)):
+        t0 = time.time()
+        try:
+            out = hands.invoke("calc", {"expression": expr}, "sensitive", ("calc",))
+            el = time.time() - t0
+            errored = out.startswith("ERROR")
+            fast = el < 1.0
+            ok = fast and (errored == want_err)
+            ck("bombs", f"calc {label} ({el:.2f}s)", ok, out[:34],
+               "hung_or_wrong" if not fast else "wrong_verdict")
+        except Exception as e:
+            ck("bombs", f"calc {label}", False, f"{type(e).__name__}", "raised")
 
     # ---------------------------------------------------------------- 9 DETERMINISM
     for name, args in (("calc", {"expression": "415 * 987"}),

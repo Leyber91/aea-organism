@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 165,
+    "count": 166,
     "source": "aea/tooling/access.py"
    },
    "plan": {
@@ -19,7 +19,7 @@
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 19,
+    "count": 22,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 165
+    "count": 166
    },
    {
     "src": "THE_PROBE",
@@ -53,7 +53,7 @@
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 19
+    "count": 22
    },
    {
     "src": "THE_PROBE",
@@ -431,6 +431,12 @@
      "type": "module",
      "path": "aea/energy/model_fitness.py",
      "purpose": "model_fitness.py - THE ENTITY LEARNS ITS OWN TOOLS."
+    },
+    {
+     "id": "movecontrol",
+     "type": "module",
+     "path": "aea/lab/movecontrol.py",
+     "purpose": "movecontrol.py - DOES THE WAKE JUDGE ITS MOVES, OR MATCH STRINGS AGAINST THEM?"
     },
     {
      "id": "notify",
@@ -1059,6 +1065,16 @@
      "rel": "imports"
     },
     {
+     "src": "aea",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
      "src": "agent_tools",
      "dst": "grid",
      "rel": "imports"
@@ -1180,6 +1196,21 @@
     },
     {
      "src": "battery",
+     "dst": "aea",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "live",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
      "dst": "decide",
      "rel": "imports"
     },
@@ -1201,6 +1232,11 @@
     {
      "src": "battery",
      "dst": "prosody",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "hands",
      "rel": "imports"
     },
     {
@@ -1876,6 +1912,21 @@
     {
      "src": "model_fitness",
      "dst": "orchestrator",
+     "rel": "imports"
+    },
+    {
+     "src": "movecontrol",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "movecontrol",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "movecontrol",
+     "dst": "aea",
      "rel": "imports"
     },
     {
@@ -3695,6 +3746,24 @@
      "id": "D18",
      "type": "discovery",
      "title": "D18 · The instrument is wrong more often than the model (counted 2026-07-28)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D19",
+     "type": "discovery",
+     "title": "D19 · The wake could not choose, then chose everything, then chose nothing - and each fix was correct (built + measured 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D20",
+     "type": "discovery",
+     "title": "D20 · Four instrument defects in one control, and the fourth was the repo's own law",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D21",
+     "type": "discovery",
+     "title": "D21 · The ladder keeps the heartbeat alive and cannot keep the judgement alive",
      "path": "diary/DISCOVERIES.md"
     }
    ],

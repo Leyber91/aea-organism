@@ -271,8 +271,15 @@ def tick(hb: dict, demo: bool):
         from aea.kernel import hands
         t0 = time.time()
         try:
-            out = hands.invoke(pend["tool"], pend["args"], zone="sensitive",
-                               allow=("self_map", "list_tools", "read_state"))
+            # THE ALLOW-LIST IS DERIVED FROM THE DECISION TABLES, NOT TYPED HERE. A hand-kept copy
+            # is the failure `_moves()` was built to prevent, one layer further out: wiring a tool
+            # into `decide` while forgetting this tuple produces a wake that chooses correctly and
+            # a daemon that refuses it, and the log reads as a permission problem rather than a
+            # missing line. `zone="sensitive"` still gates the network tools out structurally, so
+            # deriving the list widens nothing that the zone does not already permit.
+            allow = tuple({s["tool"] for s in decide.TOOL_KNOWN.values()}
+                          | {s["tool"] for s in decide.FREE_ARG.values()})
+            out = hands.invoke(pend["tool"], pend["args"], zone="sensitive", allow=allow)
             ok, tail = True, str(out)[:300]
         except hands.Refused as e:
             ok, tail = False, f"REFUSED: {str(e)[:140]}"

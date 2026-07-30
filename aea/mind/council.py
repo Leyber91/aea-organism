@@ -373,11 +373,28 @@ def convene(question: str, rounds: int = 2, seats: list = None, verbose: bool = 
         # opinions while the report still said four. A silent seat is not an abstention - nobody
         # decided to abstain - and a council that loses a member without saying so is reporting a
         # narrower range than it had.
+        # THE RETRY FALLS BACK TO A FASTER ROD, AND THAT MATTERS MORE THAN IT LOOKS.
+        #
+        # MEASURED: the adversary sits on `depth` (550b) because it has the hardest job. That rod
+        # also times out most often - and so THE HARSHEST SEAT IS THE ONE THAT GOES MISSING FIRST.
+        # A council that loses its adversary to latency does not degrade evenly; it degrades into
+        # agreement, and reports a verdict that reads as consensus rather than as an incomplete
+        # room. That happened on this very change: two seats answered, both broadly approving, and
+        # the seat whose job was to kill it was silent.
+        #
+        # So a retry does not just try again - it tries somewhere the answer can actually arrive.
         missing = [n for n, t in got if not t]
         if missing:
+            def _retry(n):
+                s = next(x for x in seats if x.name == n)
+                slow = s.tier
+                s.tier = "voice" if slow == "depth" else slow   # temporary demotion, restored below
+                try:
+                    return (n, one(s, prior))
+                finally:
+                    s.tier = slow
             with ThreadPoolExecutor(max_workers=len(missing)) as ex:
-                retry = dict(ex.map(
-                    lambda n: (n, one(next(s for s in seats if s.name == n), prior)), missing))
+                retry = dict(ex.map(_retry, missing))
             got = [(n, t or retry.get(n, "")) for n, t in got]
             still = [n for n, t in got if not t]
             if still and verbose:
