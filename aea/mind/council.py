@@ -68,7 +68,22 @@ class Seat:
 
     @property
     def rod(self):
-        return tiers.organ(self.tier)
+        r = tiers.organ(self.tier)
+        # WHICH MIND SPOKE IS PART OF THE VERDICT, AND IT WAS NOT BEING WRITTEN DOWN.
+        #
+        # Every transcript recorded the seat's TIER and never its ROD. A tier is a request; the rod
+        # is what answered. MEASURED 2026-07-30: `energy.ladder` had collapsed to one living rod, so
+        # for a full day any seat could have been answered by a local 7B and the transcript would
+        # look identical to one decided by a 550b. A four-seat council unanimously refused an
+        # architecture proposal that morning and there is no way, from its own record, to say what
+        # refused it.
+        #
+        # This is the movecontrol lesson - "a verdict names the rod that produced it, and mixed rods
+        # get no verdict" - which was found, fixed and written into a lab instrument that same day
+        # while the council, whose whole output IS verdicts, went on not recording it. The lesson
+        # was applied where it was discovered and nowhere else.
+        self.last_rod = f"{r.get('plant')}/{r.get('model')}" if isinstance(r, dict) else str(r)
+        return r
 
 
 # THE SEATS. First-person and concrete, for the reason in the header - "be sceptical" produces
@@ -463,8 +478,19 @@ def convene(question: str, rounds: int = 2, seats: list = None, verbose: bool = 
     os.makedirs(RUNS, exist_ok=True)
     stamp = time.strftime("%Y%m%dT%H%M%S")
     path = os.path.join(RUNS, f"{stamp}.json")
+    # THE ROD GOES IN THE TRANSCRIPT, and a council answered by more than one mind says so at the
+    # top. A verdict is only as good as what produced it, and until now the record could not tell a
+    # 550b from a 7b.
+    used = sorted({getattr(s, "last_rod", "") for s in seats if getattr(s, "last_rod", "")})
+    res["rods"] = used
+    if len(used) > 1:
+        res["rod_note"] = (f"MIXED: {len(used)} different rods answered this council ({used}). "
+                           f"Seats decided by different minds are not weighed against each other.")
+    elif not used:
+        res["rod_note"] = "NO ROD RECORDED - every seat failed to draw, or none was asked."
     grid.atomic_save_json(path, dict(at=time.strftime("%Y-%m-%d %H:%M:%S"), stamp=stamp,
                                      seats=[dict(name=s.name, tier=s.tier, held=s.held,
+                                                 rod=getattr(s, "last_rod", ""),
                                                  seed=s.seed) for s in seats], **res))
     grid.atomic_save_json(os.path.join(OUT, "last.json"),
                           dict(at=time.strftime("%Y-%m-%d %H:%M:%S"), stamp=stamp, **res))

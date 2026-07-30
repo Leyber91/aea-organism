@@ -1208,6 +1208,30 @@ def suite_wiring() -> list:
     finally:
         _en.CAPABILITY, _en.FITNESS, _en.USAGE = _rc, _rf, _ru
 
+    # E4 - A COUNCIL VERDICT NAMES THE ROD THAT PRODUCED IT. Transcripts recorded the seat's TIER
+    # and never its ROD. A tier is a request; the rod is what answered. While `energy.ladder` was
+    # collapsed to one living rod, any seat could have been a local 7B and the transcript would look
+    # identical to one decided by a 550b - including the four-seat council that unanimously refused
+    # an architecture proposal that morning. This is the movecontrol lesson ("a verdict names the
+    # rod, mixed rods get no verdict"), which was found and fixed in a lab instrument the same day
+    # while the module whose entire output IS verdicts went on not recording it.
+    from aea.mind import council as _c
+    try:
+        seat = _c.Seat("PROBE", "voice", "seed", held=False)
+        before = getattr(seat, "last_rod", None)
+        r = seat.rod
+        after = getattr(seat, "last_rod", "")
+        ok = before is None and isinstance(after, str) and "/" in after
+        rows.append(dict(case="a seat records the rod it drew", got=after or "(none)", ok=ok,
+                         err="" if ok else "verdict_does_not_name_its_mind"))
+        ok = isinstance(r, dict) and r.get("model") and after.endswith(str(r.get("model")))
+        rows.append(dict(case="the recorded rod matches the one handed to ask()",
+                         got=f"{after} vs {(r or {}).get('model')}", ok=ok,
+                         err="" if ok else "recorded_rod_is_not_the_used_rod"))
+    except Exception as e:
+        rows.append(dict(case="a seat records the rod it drew", got=f"RAISED {type(e).__name__}: {str(e)[:40]}",
+                         ok=False, err="raised"))
+
     # F - the known table itself is well-formed. A malformed argv here would reach subprocess.
     from aea.kernel.decide import KNOWN
     for name, (action, argv, tmo) in KNOWN.items():

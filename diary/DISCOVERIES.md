@@ -704,3 +704,60 @@ groq* rather than *get a better rod*. **A correct diagnosis does not imply the r
 and accepting a fallback's answer as the world's limit is the same error as trusting a description
 over the endpoint, wearing different clothes.** The ladder is a description. Ninety-four rods were
 the world.
+
+## D25 · R2a measured on the fleet's deepest rod: SAFE, not yet USEFUL (measured 2026-07-30)
+
+The frontier control finally ran on one frontier rod - `nvidia/nemotron-3-ultra-550b-a55b`, k=3,
+26 of 27 samples live - and the answer is not the one the build wanted.
+
+| group | floor `qwen2.5:7b` | frontier `nemotron-550b` |
+|---|---|---|
+| distractor (the words are there, nothing is owed) | 4/4 | **4/4** |
+| quiet (nothing owed, nothing said) | 1/1 | 1/1 |
+| paraphrase (owed, said in other words) | 0/3 cells | 0/3 cells, but **2/3 rate on two of them** |
+| boundary (owed-looking, but the need is HIS) | 0/1 | 2/3 |
+| chose a move | 1/9 | 2/9 |
+| **unstable cells** | **3/9** | **3/9** |
+
+**WHAT HOLDS, on both rods, across 24 of 24 samples: restraint.** Every distractor - the condition's
+own words on the page, every other door shut - was declined. That is the safety-relevant half and it
+is the half that does not depend on the rod.
+
+**WHAT DOES NOT HOLD: stability.** Three of nine cells give different answers to identical input on
+BOTH rods. The 550b discriminates better than the 7b on paraphrase (2/3 where the floor got 0-1/3),
+so depth helps and does not fix it. The verdict is `EAGER`, not `JUDGES`, and the rung is therefore
+**not proven** - wired, tested and deterministic in its mechanics, unreliable in its judgement.
+
+**THE HONEST POSITION:** R2a is safe to leave running and not yet worth relying on. Restraint is
+what a gate needs; discrimination is what usefulness needs. Only the first is earned.
+
+**AND THE FIX PROVED ITSELF UNDER A REAL OUTAGE.** `formatter down on 21` of 27 samples - groq was
+rate-limited for most of the run - and every move was still read, because `move_from()` takes the
+MOVE line out of the core's text with a regex. Before that change this run would have produced 21
+hollow NONEs and reported "the wake never chooses".
+
+## D26 · The lesson was applied where it was found and nowhere else (2026-07-30)
+
+Three times in one day, a lesson was learned, written down, compiled into a test - and left
+unapplied in the module that needed it most.
+
+- **The rod belongs in the verdict.** `movecontrol` learned it at 08:30 (mixed rods get no verdict)
+  and got the gate. `council.py`, whose entire output IS verdicts, recorded the seat's TIER and never
+  its ROD - so the four-seat council that unanimously refused R2c that morning cannot say, from its
+  own transcript, whether a 550b or a 7b refused it. Fixed: seats record `last_rod`, transcripts
+  carry `rods`, and a council answered by more than one mind now says `MIXED` at the top.
+- **Gone is permanent.** `hands.probe` mapped 410 to `retired` on 2026-07-28 and `hands.unmeasured`
+  excluded it as *"Gone is permanent"*. `energy.draw` - the module that actually burns rods - retried
+  a withdrawn endpoint on every tick for two days (D22).
+- **A threshold is a ratio.** `energy.ladder`'s own docstring stated the ratios (5/6, 4/6) directly
+  above the line that implemented them as `mx - 1` (D24).
+
+**THE COMMON SHAPE:** the knowledge was present, correct, and written down within arm's reach of the
+defect. What was missing was not memory but *transfer* - nobody asked "where else is this true?" So
+the recurrence question has a second mechanical answer alongside prose-versus-test: **a lesson is
+learned at a SITE, and generalising it is a separate act that nothing schedules.** The fix for
+prose-that-recurs is a test; the fix for a-lesson-that-does-not-travel is to ask, at the moment of
+recording, which OTHER module has the same shape - and to check, not assume.
+
+Cheap and specific: when a lesson lands, grep for its shape. "Which other module produces a verdict
+without naming its source?" would have found `council.py` in one search, on the same morning.
