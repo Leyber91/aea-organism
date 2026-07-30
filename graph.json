@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 155,
+    "count": 156,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 155
+    "count": 156
    },
    {
     "src": "THE_PROBE",
@@ -209,6 +209,12 @@
      "type": "module",
      "path": "aea/organs/converse.py",
      "purpose": "converse.py - THE COMPANION. A voice-native conversation partner in ENGLISH: local ears,"
+    },
+    {
+     "id": "council",
+     "type": "module",
+     "path": "aea/mind/council.py",
+     "purpose": "council.py - SEVERAL OPINIONS ON ONE QUESTION, AND THE DISAGREEMENT KEPT INTACT."
     },
     {
      "id": "crystal",
@@ -1389,6 +1395,16 @@
      "rel": "imports"
     },
     {
+     "src": "council",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "council",
+     "dst": "tiers",
+     "rel": "imports"
+    },
+    {
      "src": "crystal",
      "dst": "grid",
      "rel": "imports"
@@ -1836,6 +1852,16 @@
     {
      "src": "party",
      "dst": "persona",
+     "rel": "imports"
+    },
+    {
+     "src": "party",
+     "dst": "listen",
+     "rel": "imports"
+    },
+    {
+     "src": "party",
+     "dst": "converse",
      "rel": "imports"
     },
     {

@@ -106,3 +106,4 @@ state/personas/
 # the privacy scan looks for secrets and had no opinion about build artifacts.
 *.whl
 *.tar.gz
+state/council/

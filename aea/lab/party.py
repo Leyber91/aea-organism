@@ -60,6 +60,11 @@ except Exception:
 
 OUT = os.path.join(str(grid.STATE), "lab", "party")
 
+GUESTS: list = []          # real people in the room this session. Set by `run`; read by the
+                           # prompt builder so the four know who else is here and can speak to them
+                           # by name. Empty means the room is all synthetic.
+LANG = "en"                # the language everyone in the room is speaking
+
 RUNAWAY = 4000             # the ONLY cap, and it is a loop guard rather than a length control.
                            # High enough that no rod has ever been shaped by it, low enough that a
                            # model stuck in a repetition loop stops. See `ask` for why every other
@@ -205,6 +210,77 @@ CAST = [
                "I remember what people said earlier and bring it back"]),
 ]
 
+#
+# THE SPANISH ROOM. Same four people, same seeds translated - not four different characters who
+# happen to speak Spanish. The voices were taken from edge-tts's own list (45 Spanish voices, es-ES
+# has Ximena, Alvaro and Elvira) rather than remembered, and the pitch and rate offsets carry over
+# because the separation they buy is acoustic and does not care what language it is.
+#
+# WHY es-ES AND es-MX ARE MIXED ON PURPOSE: four voices from one locale sound like four settings of
+# one voice. Regional difference is free separation, and it is the kind a listener uses without
+# being told to.
+CAST_ES = [
+    Character(
+        "PIP", "es-MX-DaliaNeural", pitch="+55Hz", rate="+22%", pan=-0.75, gain=0.85, tier="reflex",
+        persona=(
+            "Hablo rapido porque si voy despacio se me escapa. Arreglo maquinas recreativas, las "
+            "viejas, esas donde la falla siempre es una soldadura rota que otro ya 'arreglo' dos "
+            "veces. Deje la escuela a los dieciseis y todo el mundo asume que eso significa que no "
+            "estoy siguiendo la conversacion. La estoy siguiendo. Solo hago la pregunta que a los "
+            "demas les da verguenza hacer, y como un tercio de las veces resulta que nadie en la "
+            "sala lo sabia tampoco."),
+        facts=["Arreglo maquinas recreativas", "Deje la escuela a los dieciseis",
+               "Hago la pregunta obvia a proposito",
+               "Prefiero equivocarme rapido que acertar tarde"]),
+    Character(
+        "GRAVE", "es-ES-AlvaroNeural", pitch="-45Hz", rate="-16%", pan=0.75, gain=1.15,
+        tier="depth", immovable=True,
+        persona=(
+            "No hablo mucho. Veintidos anos conduciendo de noche, y aprendes que casi todo lo que "
+            "la gente dice en una sala es que estan averiguando lo que piensan, asi que no tiene "
+            "sentido contestar a la primera version. Espero. Cuando hablo es la cosa que todos ya "
+            "notaron y estan siendo educados al respecto. No es crueldad; ser educado con lo "
+            "evidente es lo que gasta la noche. Una frase, normalmente. Y ya."),
+        facts=["Conduje de noche veintidos anos", "Hablo una vez y me callo",
+               "Ser educado con lo evidente gasta la noche",
+               "No cambio de opinion porque la sala lo quiera"]),
+    Character(
+        "MIRA", "es-ES-ElviraNeural", pitch="+0Hz", rate="+0%", pan=-0.25, gain=1.0, tier="voice",
+        persona=(
+            "Yo audito. Once anos, y soy cuidadosa no por caracter sino porque en mi segundo ano "
+            "firme una cifra que no habia comprobado personalmente y acabo en un informe que fue a "
+            "un regulador. Nadie salio danado y no se me ha olvidado nunca. Asi que pregunto de "
+            "donde sale cada numero. Y noto cuando la pregunta cambia a mitad de una discusion y "
+            "todos siguen como si nada. Lo digo, y a la gente le resulta cansado, y lo sigo "
+            "haciendo."),
+        facts=["Llevo once anos auditando",
+               "En mi segundo ano firme una cifra que no habia comprobado",
+               "Pregunto de donde sale cada numero",
+               "Digo en voz alta cuando la pregunta ha cambiado"]),
+    Character(
+        "REN", "es-AR-TomasNeural", pitch="-10Hz", rate="+6%", pan=0.25, gain=1.0, tier="voice",
+        persona=(
+            "Di clases en secundaria nueve anos y despues lo deje, cosa que todavia no se explicar "
+            "bien. Lo que me quedo de eso es que la gente no cambia de idea cuando la contradices, "
+            "cambia de idea cuando se oye a si misma decir algo en voz alta. Asi que pregunto. Y "
+            "cuento historias, casi siempre de mi abuela, que no era tan sabia como yo la hago "
+            "parecer. Soy el que se acuerda de lo que alguien dijo hace cuarenta minutos y lo "
+            "trae de vuelta."),
+        facts=["Di clases nueve anos y lo deje",
+               "Todavia no se explicar por que lo deje",
+               "La gente cambia de idea oyendose, no siendo corregida",
+               "Me acuerdo de lo que dijeron antes y lo traigo de vuelta"]),
+]
+
+# EVERY LANGUAGE-DEPENDENT STRING IN ONE PLACE, so a third language is a dict entry and not a
+# rewrite. The prohibitions have to be translated too - a rule the model reads in a different
+# language from the one it is speaking is a rule it half-applies.
+LANGS = {
+    "en": dict(cast=lambda: CAST, whisper="en"),
+    "es": dict(cast=lambda: CAST_ES, whisper="es"),
+}
+
+
 # CAMEL'S FOUR NAMED FAILURE MODES, written as prohibitions. Observed in real multi-agent runs,
 # including cases where both agents RECOGNISE the loop and still cannot exit it - which is why this
 # is a prohibition in the prompt and a mechanical detector in code, not one or the other.
@@ -215,6 +291,78 @@ PROHIBITIONS = (
     "NEVER ask a question you then answer yourself. "
     "NEVER end by inviting the group to continue ('what do others think?', 'shall we explore "
     "that?') - that is a chairman noise, not a person talking.")
+
+PROHIBITIONS_ES = (
+    "NUNCA des las gracias a nadie por su comentario o su pregunta. "
+    "NUNCA anuncies lo que vas a decir - dilo. "
+    "NUNCA repitas lo que acaba de decir el anterior antes de responderle. "
+    "NUNCA hagas una pregunta que despues contestas tu mismo. "
+    "NUNCA termines invitando al grupo a seguir ('que opinais?', 'lo exploramos?') - eso es ruido "
+    "de moderador, no una persona hablando.")
+
+# THE GUEST. A real person in the room, with a seat at the floor rather than a microphone pointed
+# at a demo. Luis, 2026-07-30: "my boyfriend Angelo is in the room, can they talk to him in
+# Spanish. And lets include an external actor."
+#
+# WHAT MAKES HIM AN ACTOR RATHER THAN AN AUDIENCE, and it is three things:
+#   he can be ADDRESSED    the four are told he is one of the people here, by name
+#   he can INTERRUPT       the mic opens in the gap after every turn, so he takes the floor by
+#                          speaking rather than by being called on
+#   he is REMEMBERED       the four form impressions of him and keep them, exactly as they do of
+#                          each other. He is in their stores after tonight.
+#
+# HALF-DUPLEX IS NOT OPTIONAL HERE. Four voices are coming out of the same speakers the microphone
+# is listening to, so the mic opens only in the gap when the bus is silent - which is why `--listen`
+# forces overlap off. Barge-in over a synthetic speaker needs echo cancellation and does not exist
+# yet; saying so is better than shipping a room that shouts at itself.
+class Guest:
+    """A person. No rod, no persona to generate from - they speak for themselves."""
+
+    def __init__(self, name: str):
+        self.name = name
+        self.self = Persona(name)
+        self.pan, self.gain, self.tier = 0.0, 1.0, ""
+        self.persona, self.facts, self.immovable = "", [], False
+
+
+# THE HAIL - HOW EACH ONE CALLS SOMEONE WHO HAS NOT SPOKEN YET.
+#
+# Luis: "they need to call Angelo like each of them is intervening... like they want to meet
+# Angelo. They can do psss psss, or hey Angelo, or no te oimos."
+#
+# THIS IS THE INTENT MECHANISM, and it is the one thing the single unambiguous prior success
+# actually ran on: CICERO chose an intent OUTSIDE the model and every utterance had to serve it.
+# Until now these four had no goal at all beyond a topic to drift toward, which is why they could
+# talk beautifully and go nowhere. Wanting something from a specific person is the smallest
+# possible version of that, and it is the right one to start with because the person is real and
+# will not cooperate on cue.
+#
+# WRITTEN PER CHARACTER, NOT GENERATED, and that is deliberate. A hail is two words at a moment
+# when nothing is happening; a model call to produce it would cost more than the silence it fills,
+# and the cartoon going "psss psss" is exactly the kind of line a rod smooths into "Hello Angelo,
+# are you there?". These are the character, at its loudest, in the smallest space.
+HAILS_ES = {
+    "PIP":   ["psss psss... Angelo!", "Angelo! Ey, Angelo!", "Angelo, te estamos oyendo? Nada?",
+              "Oye, Angelo, di algo, lo que sea"],
+    "GRAVE": ["Angelo.", "Sigue ahi.", "No ha dicho nada todavia."],
+    "MIRA":  ["Angelo, no te oimos.", "Angelo, si estas ahi, prueba otra vez.",
+              "A ver, Angelo - una palabra y sabemos que el microfono va."],
+    "REN":   ["Angelo, cuentanos algo, hombre.", "Angelo? Que tal si empiezas tu.",
+              "Angelo, en serio, di algo, que llevamos rato hablando solos."],
+}
+HAILS_EN = {
+    "PIP":   ["psss psss... Angelo!", "Angelo! Hey, Angelo!", "Angelo, can you hear us? Nothing?"],
+    "GRAVE": ["Angelo.", "Still there.", "He has not said anything yet."],
+    "MIRA":  ["Angelo, we cannot hear you.", "Angelo, if you are there, try again."],
+    "REN":   ["Angelo, say something, will you?", "Angelo? How about you start."],
+}
+
+
+def hail(who, guest_name: str, n: int) -> str:
+    """The line this character uses to call the guest in. Varies by turn so it is not a tic."""
+    table = HAILS_ES if LANG == "es" else HAILS_EN
+    opts = table.get(who.name) or [f"{guest_name}?"]
+    return opts[n % len(opts)].replace("Angelo", guest_name)
 
 # THE GUIDE. Not lines - PLACES THE CONVERSATION SHOULD REACH. It advances when the group has
 # genuinely got there, and a speaker is nudged toward the next one only if the talk has stalled.
@@ -281,6 +429,16 @@ def _render_and_load(who: Character, line: str, idx: int) -> tuple:
     return (x, sr)
 
 
+GUIDE_ES = [
+    "conoceros un poco - quien es quien, como es cada uno",
+    "alguien saca el tema de una maquina que habla, y que significaria eso de verdad",
+    "desacuerdo: una maquina que suena como si entendiera, entiende de verdad",
+    "alguien se acuerda de algo que dijo otro ANTES y lo usa en su contra, o a su favor",
+    "que convenceria a cada uno, en concreto - que nombren una prueba",
+    "aterrizar en algun sitio: que piensan ahora y en que siguen sin estar de acuerdo",
+]
+
+
 def transcript_text(turns: list, last: int = 24) -> str:
     return "\n".join(f"{t['who']}: {t['text']}" for t in turns[-last:])
 
@@ -326,17 +484,47 @@ def update_impression(me: Character, other: str, turns: list, rod: dict) -> str:
 
 def next_line(me: Character, turns: list, goal: str, rod: dict, addressed: str = "") -> str:
     """Write what ME says next. From the conversation, never from a script."""
-    others = [c.name for c in CAST if c.name != me.name]
+    others = [c.name for c in CAST if c.name != me.name] + list(GUESTS)
     # EVERYTHING THIS SPEAKER BRINGS TO THE TURN, from its own store: what it thinks of the others,
     # what it has already committed to, and the few older memories worth reaching for. Keyed on the
     # last thing said, so retrieval is about THIS moment rather than a dump of the whole record.
     recent = turns[-1]["text"] if turns else goal
     brief = me.self.brief(others, query=recent)
+    # A REAL PERSON IN THE ROOM IS NAMED AS ONE, not left as another string in a list. They cannot
+    # be prompted, they will say something nobody planned for, and the four have to treat them as
+    # the one participant whose next line is genuinely unknown.
+    real = (("\nHAY UNA PERSONA REAL AQUI: %s. No es un personaje - es alguien de verdad, en la "
+             "habitacion, escuchando por un microfono. Hablale directamente, por su nombre, "
+             "preguntale cosas y espera de verdad su respuesta. No hables de el en tercera persona "
+             "estando delante." if LANG == "es" else
+             "\nTHERE IS A REAL PERSON HERE: %s. Not a character - an actual person in the room, "
+             "listening through a microphone. Talk TO them, by name, ask them things and actually "
+             "wait for the answer. Do not talk about them in the third person while they are "
+             "standing there.") % ", ".join(GUESTS)) if GUESTS else ""
+    if LANG == "es":
+        sys_p = (
+            f"Eres {me.name}, una de las personas que estan hablando EN VOZ ALTA en una "
+            f"habitacion.\n"
+            f"QUIEN ERES: {me.persona}\n"
+            f"LOS DEMAS: {', '.join(others)}\n"
+            + (brief + "\n" if brief else "") + real + "\n"
+            + f"HACIA DONDE INTENTA IR LA CONVERSACION: {goal}\n"
+            "Eso es una DIRECCION, no un guion. No lo anuncies, no lo resumas y no lo fuerces.\n"
+            "COMO HABLAR: una o dos frases, en voz alta, como este personaje. Reacciona a lo que "
+            "se acaba de decir. Usa sus nombres de vez en cuando, no siempre. Cuando encaje, "
+            "VUELVE sobre algo que alguien dijo antes en esta conversacion - eso es lo que la hace "
+            "una conversacion y no una lista de temas. No digas que alguien dijo algo que no dijo. "
+            "Nunca acotaciones, nunca asteriscos, nunca comillas alrededor de tu frase, nunca "
+            "digas tu propio nombre primero. Solo las palabras que dices.\n"
+            "HABLA SIEMPRE EN ESPANOL.\n" + PROHIBITIONS_ES
+            + (f"\n{addressed} te acaba de hablar directamente - contestale." if addressed else ""))
+        t = ask(rod, sys_p, transcript_text(turns) + "\n\n" + _tail(me, recent), max_tokens=130)
+        return clean_line(t, me, turns)
     sys_p = (
         f"You are {me.name}, one of four people talking OUT LOUD in a room.\n"
         f"WHO YOU ARE: {me.persona}\n"
         f"THE OTHERS: {', '.join(others)}\n"
-        + (brief + "\n" if brief else "")
+        + (brief + "\n" if brief else "") + real + "\n"
         + f"WHERE THE CONVERSATION IS TRYING TO GET: {goal}\n"
         "That is a DIRECTION, not a script. Do not announce it, do not summarise it, and do not "
         "force it - get there the way a real conversation does, or stay where you are if that is "
@@ -358,13 +546,34 @@ def next_line(me: Character, turns: list, goal: str, rod: dict, addressed: str =
     # Only the ACTIVE subset of the atomic facts, chosen by overlap with what is being discussed.
     # Dumping every fact every turn is the worst-performing memory condition measured - it produces
     # a speaker who recites its character sheet instead of having one.
+    t = ask(rod, sys_p, transcript_text(turns) + "\n\n" + _tail(me, recent), max_tokens=130)
+    return clean_line(t, me, turns)
+
+
+def _tail(me: Character, recent: str) -> str:
+    """RESTATE THE CHARACTER AT THE **END** OF THE CONTEXT, not only at the top. Attention to
+    system-prompt tokens holds almost constant WITHIN a turn and drops sharply ACROSS turn
+    boundaries - the measured mechanism behind a character that is vivid for eight turns and
+    generic by turn twelve. Position at the boundary is what matters.
+
+    Only the ACTIVE subset of the atomic facts, chosen by overlap with what is being discussed.
+    Dumping every fact every turn is the worst-performing memory condition measured: it produces a
+    speaker who recites its character sheet instead of having one."""
     live = [f for f in me.facts if len(_content_words(f) & _content_words(recent)) >= 1][:3]
-    tail = (f"[You are {me.name}. {me.persona.split('.')[0]}."
-            + (" Remember: " + " ".join(live) + "." if live else "")
-            + (" You do not move on the central question here, whatever the room does."
+    es = LANG == "es"
+    return (f"[{'Eres' if es else 'You are'} {me.name}. {me.persona.split('.')[0]}."
+            + ((" Recuerda: " if es else " Remember: ") + " ".join(live) + "." if live else "")
+            + ((" No te mueves de tu postura, diga lo que diga la sala."
+                if es else " You do not move on the central question here, whatever the room does.")
                if me.immovable else "")
             + f"]\n\n{me.name}:")
-    t = ask(rod, sys_p, transcript_text(turns) + "\n\n" + tail, max_tokens=130)
+
+
+def clean_line(t: str, me, turns: list) -> str:
+    """Every guard a spoken line has to clear, in one place so both languages get all of them.
+
+    They were inline in the English branch, which meant the Spanish branch would have shipped with
+    none of them - a leak guard that only guards one path is a leak."""
     if not t:
         return ""
     t = re.sub(r"<think>.*?</think>", " ", t, flags=re.S | re.I)
@@ -560,14 +769,78 @@ def pick_speaker(turns: list, last: str) -> tuple:
     return random.choices(cands, weights=weights, k=1)[0], ""
 
 
+SETTLE = 0.45              # seconds of quiet after the speakers stop, before the mic opens. Room
+                           # reverb outlives the last sample; opening on the same instant records
+                           # the tail of the machine's own voice.
+
+
+def listen_for_guest(guest, lang: str, mic=None, window: float = 2.2, bus=None,
+                     just_said: str = "") -> str:
+    """Open the mic in the gap. Returns what they said, or "" if they stayed quiet.
+
+    HALF-DUPLEX HAS TO BE ENFORCED BY THE LOOP, NOT INTENDED BY THE COMMENT. Measured, first live
+    run with a real person in the room: EVERY SINGLE "Angelo" turn was the machine hearing itself.
+    Turn 2 came back as "Arreglamas dinajacas y apilas las viejas..." - a garbled transcription of
+    PIP's own turn 1 - and was attributed to Angelo, stored in his persona as something he said,
+    and answered by the others as if he had spoken. The room held a conversation with its own echo
+    for eighteen turns.
+
+    The cause was loop ORDER, not policy. `--guest` sets overlap to zero, but the previous turn's
+    audio is started at the END of an iteration and only waited on at the START of the next one, so
+    the mic opened while the speakers were still going. Two guards now, because one is not enough:
+
+      WAIT     the bus must be silent, plus SETTLE for the room's reverb tail
+      COMPARE  and even then, reject what comes back if it is mostly the words we just spoke -
+               reverb, a hard surface, or a speaker close to the mic will beat any timing rule, and
+               an echo answered as speech is the worst failure this loop can have (D13, one layer
+               out: an unlabelled signal becomes a fabricated utterance, and here it becomes a
+               fabricated PERSON).
+
+    `window` is how long to wait for them to START, not how long they may talk - once speech is
+    detected the real endpointer runs and they can take as long as they need."""
+    try:
+        from aea.io import listen as _l
+        from aea.organs import converse as C
+        if bus is not None:
+            bus.wait(timeout=90)                     # nobody speaks over the guest's turn
+            time.sleep(SETTLE)
+        samples, early, _probes = C.capture(device=mic, verbose=False, lang=lang, wait=window)
+        if samples is None:
+            return ""
+        said = (early or _l.transcribe_samples(samples, C.SR, lang)).strip()
+        if C.is_ghost(said):
+            return ""
+        if just_said:
+            mine, theirs = _content_words(said), _content_words(just_said)
+            if mine and len(mine & theirs) / len(mine) > 0.45:
+                print(f"       (echo rejected: heard our own last line back)")
+                return ""
+        return said
+    except Exception:
+        return ""
+
+
 def run(turns_wanted: int = 8, overlap: float = 0.0, topic: str = "", mute: bool = False,
-        device=None, seed: int = 7) -> dict:
+        device=None, seed: int = 7, lang: str = "en", guest: str = "", mic=None) -> dict:
     random.seed(seed)
     os.makedirs(OUT, exist_ok=True)
+    global CAST
+    CAST = LANGS.get(lang, LANGS["en"])["cast"]()
+    whisper_lang = LANGS.get(lang, LANGS["en"])["whisper"]
     rod = tiers.organ("reflex")
-    guide = list(GUIDE)
+    guide = list(GUIDE_ES if lang == "es" else GUIDE)
     if topic:
         guide.insert(2, topic)
+    global GUESTS, LANG
+    LANG = lang
+    who_guest = Guest(guest) if guest else None
+    GUESTS = [guest] if guest else []
+    if who_guest:
+        # A REAL PERSON MEANS THE MICROPHONE IS OPEN AND THE SPEAKERS ARE LIVE. Overlap goes off:
+        # the mic would hear the four talking and answer them as if they were him. Barge-in over a
+        # synthetic voice needs echo cancellation, which does not exist here yet.
+        overlap = 0.0
+        who_guest.self.open_session()
     bus = None if mute else mx.Mixer(device=device).start()
     pool = ThreadPoolExecutor(max_workers=4)
     for c in CAST:
@@ -591,7 +864,34 @@ def run(turns_wanted: int = 8, overlap: float = 0.0, topic: str = "", mute: bool
     t_start = time.time()
 
     for n in range(turns_wanted):
+        # THE GUEST GETS FIRST REFUSAL ON EVERY GAP. Checked before the bids, because a person in
+        # the room does not queue behind four machines - if he starts talking, that IS the next
+        # turn, and the four have to deal with it.
+        if who_guest and not mute:
+            heard = listen_for_guest(who_guest, whisper_lang, mic, bus=bus,
+                                     just_said=turns[-1]["text"] if turns else "")
+            if heard:
+                turns.append(dict(who=who_guest.name, text=heard))
+                who_guest.self.remember(heard, kind="said")
+                for c in CAST:
+                    c.self.remember(heard, kind="heard", about=who_guest.name)
+                last = who_guest.name
+                print(f"\n  [{n+1:02d}] {who_guest.name}  (real)")
+                print(f"       {heard}")
+                continue
         goal = guide[min(stage, len(guide) - 1)]
+        # HAS THE REAL PERSON SAID ANYTHING YET, AND HOW LONG AGO. Everything about wanting to meet
+        # him keys off this: while he is silent the room is trying to reach him, and once he speaks
+        # it becomes an ordinary conversation that he is in.
+        if who_guest:
+            since = next((i for i, t in enumerate(reversed(turns))
+                          if t["who"] == who_guest.name), None)
+            silent_for = len(turns) if since is None else since
+            goal = ((f"conocer a {who_guest.name}, que esta aqui y todavia no ha hablado - "
+                     f"llamadle, sacadle una palabra" if LANG == "es" else
+                     f"meet {who_guest.name}, who is here and has not spoken yet - call out to "
+                     f"them, get a word out of them")
+                    if silent_for >= 2 else goal)
         # THE FLOOR IS BID FOR, NOT ASSIGNED - except when someone was named, which is the one rule
         # strong enough in real talk to override wanting to speak: being asked a direct question
         # obliges an answer even from someone with nothing to say. Everyone else bids, in parallel,
@@ -652,7 +952,16 @@ def run(turns_wanted: int = 8, overlap: float = 0.0, topic: str = "", mute: bool
         #
         # So: one retry for the same speaker, then hand the floor to the next-best bidder. That is
         # also what a room does - somebody starts, fumbles it, and someone else picks it up.
-        line = next_line(who, turns, goal, who.rod, addressed)
+        # THE HAIL SHORT-CIRCUITS THE ROD. When the guest has been quiet for a while, the next
+        # speaker just CALLS him - two words, in character, instantly. Asking a model to produce
+        # "psss psss" costs a second and a half and comes back as "Hello Angelo, are you there?",
+        # which is a chatbot noticing a user rather than a person trying to get someone's
+        # attention. Every third turn, so it is an attempt rather than a chant.
+        line = ""
+        if who_guest and silent_for >= 2 and n % 3 == 0:
+            line = hail(who, who_guest.name, n)
+        if not line:
+            line = next_line(who, turns, goal, who.rod, addressed)
         if not line:
             line = next_line(who, turns, goal, who.rod, addressed)
         if not line and bids:
@@ -789,4 +1098,6 @@ if __name__ == "__main__":
     else:
         run(turns_wanted=int(arg("--turns", 8)), overlap=float(arg("--overlap", 0.0)),
             topic=arg("--topic", "") or "", mute="--mute" in a,
-            device=(int(arg("--device")) if arg("--device") else None))
+            device=(int(arg("--device")) if arg("--device") else None),
+            lang=arg("--lang", "en") or "en", guest=arg("--guest", "") or "",
+            mic=(int(arg("--mic")) if arg("--mic") else None))
