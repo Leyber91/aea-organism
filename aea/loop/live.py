@@ -122,7 +122,15 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     if cand:
         log(f"  {decide.explain(cand, why)}")
         pulse.emit("wake", "chose", f"{cand['action']} :: {why}")
+        if cand.get("kind") == "tool":
+            # R2a. A TOOL IS NOT A SUBPROCESS, so it does not go down the argv path. It is stashed
+            # for `tick` to invoke through `hands`, which re-checks seat, zone and ledger at the
+            # call site - the gate is on the invoke, not on this decision.
+            hb["_pending_tool"] = dict(tool=cand["tool"], args=cand["args"])
+            return cand["action"], [], 0
+        hb.pop("_pending_tool", None)
         return cand["action"], cand["argv"], cand["timeout"]
+    hb.pop("_pending_tool", None)
     pulse.emit("wake", "no-decision", why, ok=True)   # ok=True: declining is not a fault
 
     stuck = int(hb.get("brief_fails", 0)) >= BRIEF_GIVE_UP
@@ -254,6 +262,31 @@ def tick(hb: dict, demo: bool):
     action, args, tmo = choose_action(hb)
     if demo and action.startswith("AWAKE"):        # keep the demo cheap: skip the 60s brief, do a memory slice
         action, args, tmo = "ASLEEP:consolidate(demo)", ["-m", "aea.memory.consolidate", "--limit", "1"], 300
+    # R2a - THE TOOL PATH. Separate from the script path because the gate is different: `run_script`
+    # spawns a subprocess with an argv we control entirely, while `hands.invoke` re-checks the seat,
+    # the zone and the trust ledger before a byte moves. The result is recorded exactly as loudly as
+    # a script run, and a REFUSAL is recorded too - a gate that fires silently teaches nobody.
+    pend = hb.pop("_pending_tool", None)
+    if pend:
+        from aea.kernel import hands
+        t0 = time.time()
+        try:
+            out = hands.invoke(pend["tool"], pend["args"], zone="sensitive",
+                               allow=("self_map", "list_tools", "read_state"))
+            ok, tail = True, str(out)[:300]
+        except hands.Refused as e:
+            ok, tail = False, f"REFUSED: {str(e)[:140]}"
+        except Exception as e:
+            ok, tail = False, f"{type(e).__name__}: {str(e)[:140]}"
+        el = round(time.time() - t0, 2)
+        pulse.emit("life", "tool", f"#{hb['total_ticks']} {action} {pend['args']} "
+                                   f"{'ok' if ok else 'FAIL'} {el}s", ok=ok)
+        hb["history"] = (hb.get("history", [])
+                         + [f"{now_iso()} {action} {'ok' if ok else 'FAIL'} :: {tail[:80]}"])[-30:]
+        log(f"tick {hb['total_ticks']}  {action} {pend['args']}  "
+            f"{'ok' if ok else 'FAIL'} ({el}s)  {tail[:90]}")
+        return
+
     if not args:
         # A REST MUST BE AS VISIBLE AS AN ACT, and until now it was not: this branch logged to a
         # file and returned, while every acting branch emitted to the bus. An observer watching

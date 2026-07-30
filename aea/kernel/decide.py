@@ -67,6 +67,52 @@ KNOWN = {
     "reflect":     ("REFLECT:self",          ["-m", "aea.organs.reflect", "--once"], 240),
 }
 
+# ================================================================================================
+# R2a - THE DECISION MAY NAME A TOOL, AND NO STRING IT WROTE REACHES A TOOL ARGUMENT.
+#
+# THE THREAT, stated plainly, because it decides the whole shape of this rung. `aea/loop/aea.py`
+# `sense()` fetches Hacker News headlines and puts them in the wake's prompt. That is UNTRUSTED
+# TEXT sitting in the context of the thing that writes the decision. `hands.py` names the danger on
+# its own `web_search` entry: "the model writes a free-text query, so anything in its context can
+# leave in the query string (law B3)".
+#
+# So an unattended wake that can compose tool arguments is a prompt-injection channel with a
+# network egress on the end of it. Not hypothetically - that is the documented top failure of every
+# shipped agent of this shape, and the reason a university will not allow one on a managed device.
+#
+# THE RULE AT THIS RUNG: every argument comes from a CLOSED ENUMERATION in this file. The wake
+# chooses WHICH tool and WHICH enum member. It cannot write a URL, a query, or an expression.
+# Worst case under full injection: the entity reads one of its own state files.
+#
+# What is deliberately NOT here, and each for its own reason:
+#   web_search / web_fetch / json_get   free-text argument, public zone, real egress. R2b, with
+#                                       argument provenance designed rather than assumed.
+#   calc                                local and pure, but the expression is free text; it is the
+#                                       natural first R2b case precisely because it cannot leave.
+#   send_email / spend                  impl=None and zones=() in hands.py. Structurally absent,
+#                                       not merely unlisted - there is no code to reach.
+STATE_READABLE = ("heartbeat.json", "trust_ledger.json", "aea_state.json", "grid_state.json")
+SELF_TOPICS = ("structure", "laws", "capabilities", "invariants")
+
+TOOL_KNOWN = {
+    "know_yourself":   dict(tool="self_map",   arg="topic", enum=SELF_TOPICS,   default="structure",
+                            action="LOOK:self_map"),
+    "know_your_hands": dict(tool="list_tools",  arg=None,    enum=(),            default=None,
+                            action="LOOK:list_tools"),
+    "read_your_state": dict(tool="read_state", arg="name",  enum=STATE_READABLE, default="heartbeat.json",
+                            action="LOOK:read_state"),
+}
+
+# Which words in the opening of an action select which tool. Same closed-vocabulary discipline as
+# _HINTS, and matched in the same six-word window for the same reason.
+_TOOL_HINTS = (
+    (re.compile(r"\b(inspect|examine|check|inventory)\b.{0,24}\b(self|structure|architecture|"
+                r"module|law|invariant|capabilit\w*)\b", re.I), "know_yourself"),
+    (re.compile(r"\b(what|which)\b.{0,16}\b(tools?|hands?|can i do)\b", re.I), "know_your_hands"),
+    (re.compile(r"\b(read|open|look at)\b.{0,20}\b(state|heartbeat|ledger|trust)\b", re.I),
+     "read_your_state"),
+)
+
 # The wake writes prose. These are the shapes it actually produces, mapped to the table above.
 # Deliberately a closed vocabulary over a corpus rather than a model call (law W2): the mapping has
 # to be deterministic, or the same decision could execute differently on two runs and nothing in
@@ -180,6 +226,26 @@ def parse(decision: dict, known: dict = None) -> tuple:
         return None, "decision action has no words"
     text = " ".join(words[:HINT_WINDOW])
 
+    # R2a: A TOOL IS TRIED FIRST, because looking is cheaper than running a script and because a
+    # tool call is the narrower thing to permit. Arguments are picked from the enum by the same
+    # six-word window; anything the wake wrote that is not an exact enum member is discarded and
+    # the default stands. NO STRING FROM THE DECISION IS EVER PASSED THROUGH.
+    tool_hits = [n for pat, n in _TOOL_HINTS if pat.search(text)]
+    if len(set(tool_hits)) == 1:
+        spec = TOOL_KNOWN[tool_hits[0]]
+        args = {}
+        if spec["arg"]:
+            low = text.lower()
+            picked = [v for v in spec["enum"] if v.split(".")[0].lower() in low]
+            # exactly one enum member named, or the default. Two named is not a choice.
+            args = {spec["arg"]: picked[0] if len(picked) == 1 else spec["default"]}
+            if args[spec["arg"]] not in spec["enum"]:
+                return None, f"argument {args[spec['arg']]!r} is not in the closed enum"
+        return dict(kind="tool", name=tool_hits[0], tool=spec["tool"], args=args,
+                    action=spec["action"], age_s=decision.get("_age_s")), ""
+    if len(set(tool_hits)) > 1:
+        return None, f"decision is ambiguous between tools - matches {sorted(set(tool_hits))}"
+
     hits = [name for pat, name in _HINTS if pat.search(text) and name in known]
     if not hits:
         return None, f"nothing in the decision maps to a known action ({sorted(known)})"
@@ -195,7 +261,7 @@ def parse(decision: dict, known: dict = None) -> tuple:
         return None, f"known action {name!r} has a malformed argv"
     if not _finite(tmo) or tmo <= 0:
         return None, f"known action {name!r} has a non-finite timeout"
-    return dict(name=name, action=action, argv=list(argv), timeout=int(tmo),
+    return dict(kind="script", name=name, action=action, argv=list(argv), timeout=int(tmo),
                 age_s=decision.get("_age_s")), ""
 
 

@@ -1124,6 +1124,16 @@
     },
     {
      "src": "battery",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
      "dst": "decide",
      "rel": "imports"
     },
@@ -1795,6 +1805,11 @@
     {
      "src": "live",
      "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "hands",
      "rel": "imports"
     },
     {
