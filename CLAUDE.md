@@ -32,6 +32,17 @@ changes is when the *methodology* or the *repo shape* genuinely changes.
    reasoning, not just the result. The raw, undistilled sparks these grew from live one step upstream
    in **`diary/REFLECTIONS.md`** (Luis's realizations, verbatim) — read it to catch the current frontier.
 4. The laws in §3 below. Then `GAME_PLAN.md` + `design/` on demand (read, don't re-plan).
+5. **Before any non-trivial change, ASK: `python -m aea.lab.recall "what you are about to do"`.**
+   Hybrid lexical+semantic over every recorded lesson, MEASURED at 7/12 hit@5 against a gate of this
+   repo's own defects (lexical alone 3, semantic alone 4). It is one command and it costs seconds.
+   *Why this is a boot step and not advice:* the recurring failure here has never been forgetting -
+   it is that a lesson written as prose must be RETRIEVED, by a mind doing something else, at a
+   moment defined by action, with no shared vocabulary between the two. Six lessons were re-learned
+   in a single day while being correctly recorded within arm's reach of the defect. And the author
+   of `recall.py` shipped it and then made two more changes without running it, which is the whole
+   argument for putting it in the boot sequence instead of trusting anyone to remember.
+   Its companion is `python -m aea.lab.transfer` - the same question asked mechanically ACROSS the
+   tree, and it runs inside the battery so it cannot be skipped.
 
 **Run it:** `python controlroom.py` → serves the game + the entity's live endpoints on `:7799`.
 

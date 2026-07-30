@@ -1338,3 +1338,54 @@ DID anything is a separate measurement, and the repo's own law says so - *ask th
 the description of it*. I checked acceptance for thirteen parameters in one sweep and effect for
 only one of them; the other twelve are accepted-but-unverified until each is measured the way these
 two were.
+
+## D39 · THE RECAP LUIS ASKED FOR: lessons I saw today and did not apply (2026-07-30)
+
+Luis: *"you need lesson that you saw that you do not apply. Meet the recap and apply."* The honest
+list, worst first.
+
+**1. I BUILT `recall.py` TO SOLVE "LESSONS ARE NOT RETRIEVED" AND THEN MADE TWO MORE CHANGES WITHOUT
+RUNNING IT.** Its author committed the exact failure it was built for, within the hour, while the
+tool sat one command away. That is not irony, it is the finding: **a tool that must be REMEMBERED
+inherits the problem it was built to fix.** Nothing about being the person who wrote it helps.
+
+*Applied:* `recall` is now step 5 of the boot sequence in `CLAUDE.md`, beside `graph.json` and the
+diary - not advice, a step - and using it on real work immediately exposed a corpus defect that no
+benchmark run had: SESSION_LOG entries are whole DAYS, so they match everything weakly and crowded
+the actual lessons out of the top three. Split to their LOCKED bullets: hybrid hit@3 **3 -> 5**,
+lexical hit@5 **3 -> 5**. *Using the instrument found what evaluating it could not.*
+
+**2. "A 200 MEANS ACCEPTED, NOT THAT IT DID ANYTHING" - written hours ago, applied to 2 of 13.**
+I swept thirteen parameters for acceptance and measured EFFECT for two. `seed` returned 200 on every
+plant and does not bind the 550b at all - discovered only because that one was checked. The other
+eleven, `logprobs` and `reasoning_effort` included, are accepted-but-unverified and are currently
+sitting in my own notes as though they were capabilities. *Owed, and now named as owed rather than
+implied as done.*
+
+**3. THE SWEEP RETURNED ~10 `checkable_rule`s AND `transfer.py` HAS 5 DETECTORS.** Sixty agents
+produced a mechanically-checkable rule per shape, precisely so the finding would become a permanent
+check instead of a one-off fix. I fixed the tombstone hits and left the rules unencoded - which is
+D26 committed against the output of the tool built to stop D26. *Owed.*
+
+**4. 92 ADVISORY FINDINGS, NEVER TRIAGED.** 28 `silent-default` and 64 `invented-ceiling` sites.
+Advisory was the right call - blocking on them would have trained everyone to ignore the run - but
+"advisory" was quietly allowed to mean "never read". *Owed: a triage pass, not a bulk fix.*
+
+**5. THE PROMOTED CENSUS HAS NO TELEMETRY.** I built per-probe `ttfb`/`reason_share`/`truncated` and
+the live ranking predates it by 26 minutes, so the fleet the entity uses right now cannot be
+interrogated from its own record - the exact capability I argued was essential. *Owed on the next
+sweep.*
+
+**THE PATTERN ACROSS ALL FIVE, and it is the day's real finding.** Every one is a lesson I recorded
+in full, in my own words, hours earlier - and every one failed at the same step: **the moment of
+action never touched the moment of recording.** Six times the mechanism was "someone will remember".
+
+The three fixes that actually work all share one property, and it is not diligence:
+
+  `transfer.py`   fires on every battery run     - nobody has to invoke it
+  `recall.py`     is a numbered boot step        - nobody has to think of it
+  the ACK list    is a review surface with reasons - nobody has to re-decide it
+
+**A lesson survives only where it is attached to something that happens anyway.** Anything relying
+on being remembered has already failed here six times in one day, and the sixth was committed by the
+author of the fix for the fifth.

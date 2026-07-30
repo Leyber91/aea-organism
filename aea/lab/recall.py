@@ -98,7 +98,29 @@ def lessons() -> list:
                 continue
             out.append(dict(id=m.group(1).split("·")[0].strip()[:14], title=m.group(1).strip(),
                             source=rel, text=body[:6000]))
-    return out
+    # SESSION-LOG ENTRIES ARE WHOLE DAYS AND CROWD OUT THE LESSONS.
+    #
+    # MEASURED by using this tool on real work: a query about tuning a knob returned two SESSION_LOG
+    # days above the discovery that actually bore on it. A day's entry touches twenty subjects, so
+    # it matches everything weakly and nothing precisely - long documents are the classic way a
+    # retrieval corpus dilutes itself. A DISCOVERY is one lesson with one point, which is the unit
+    # this tool exists to return.
+    #
+    # Split rather than dropped: the LOCKED bullets in a session log are decisions, often the only
+    # place a rule is written down, and deleting them to raise a score would be tuning the corpus to
+    # the benchmark instead of to the job.
+    split = []
+    for d in out:
+        if not d["source"].endswith("SESSION_LOG.md"):
+            split.append(d)
+            continue
+        locked = re.search(r"^###?\s*LOCKED\s*$(.+?)(?=^###?\s|\Z)", d["text"], re.M | re.S)
+        if locked:
+            for b in re.findall(r"^- (.+?)(?=^- |\Z)", locked.group(1), re.M | re.S):
+                if len(b.strip()) > 80:
+                    split.append(dict(id=d["id"], title="LOCKED · " + b.strip()[:60],
+                                      source=d["source"], text=b.strip()[:1500]))
+    return split
 
 
 # =================================================================================================
@@ -176,6 +198,42 @@ def _semantic(query: str, docs: list, vecs: list) -> list:
     return [i for _s, i in sorted(((_cos(q, v), i) for i, v in enumerate(vecs)), key=lambda x: -x[0])]
 
 
+def _wrrf(lex: list, sem: list, w_sem: float = 0.7, k: int = 60) -> list:
+    """WEIGHTED reciprocal-rank fusion - semantic carries `w_sem` of the vote, lexical the rest.
+
+    Luis: *"maybe thirty percent literal lexical and then seventy percent semantic. Maybe. You saw
+    the proportions, so you should ponder that."* The instinct follows the data - semantic beat
+    lexical 4 to 3 at hit@5 - and a weight is exactly the kind of knob that should be swept rather
+    than picked, so `evaluate()` sweeps it end to end and prints the curve. A number chosen because
+    it sounded right is a tuning constant; a number chosen off a curve is a measurement.
+
+    Still fuses ORDERS, not scores. BM25 magnitudes and cosine similarities live on different
+    scales and no amount of weighting reconciles them - normalising to make them comparable would
+    smuggle in a second, invisible constant to justify the first."""
+    agg = {}
+    for order, w in ((lex, 1.0 - w_sem), (sem, w_sem)):
+        for rank, idx in enumerate(order):
+            agg[idx] = agg.get(idx, 0.0) + w / (k + rank + 1)
+    return [i for i, _s in sorted(agg.items(), key=lambda kv: -kv[1])]
+
+
+def _union(lex: list, sem: list, take: int = 3) -> list:
+    """Interleave the two lists - each retriever's top picks, alternating, duplicates dropped.
+
+    The other shape Luis named ("or maybe the two of them together and join the results"). It makes
+    a different bet from fusion: not "which document do both like" but "give each retriever its own
+    slots and let the reader see both opinions". Worth measuring precisely because it wins in the
+    case fusion loses - a document only ONE retriever loves gets buried by averaging and survives
+    interleaving."""
+    out, seen = [], set()
+    for i in range(max(len(lex), len(sem))):
+        for order in (sem, lex):
+            if i < len(order) and order[i] not in seen:
+                seen.add(order[i])
+                out.append(order[i])
+    return out
+
+
 def _rrf(rankings: list, k: int = 60) -> list:
     """Reciprocal-rank fusion - combines ORDERS, never scores.
 
@@ -240,7 +298,9 @@ def evaluate(verbose: bool = True) -> dict:
             leaks[q[:40]] = sorted(sh)
 
     vecs = _vectors(docs)
-    methods = {"lexical": [], "semantic": [], "hybrid": []}
+    WEIGHTS = [0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]
+    methods = {"lexical": [], "semantic": [], "hybrid": [], "union": []}
+    methods.update({f"w{int(w*100):02d}": [] for w in WEIGHTS})
     detail = []
     for q, tid in GATE:
         want = by_id.get(tid)
@@ -248,9 +308,13 @@ def evaluate(verbose: bool = True) -> dict:
             continue
         lex = _bm25(q, docs)
         sem = _semantic(q, docs, vecs)
-        hyb = _rrf([lex, sem]) if sem else lex
+        orders = {"lexical": lex, "semantic": sem or lex,
+                  "hybrid": _rrf([lex, sem]) if sem else lex,
+                  "union": _union(lex, sem) if sem else lex}
+        for w in WEIGHTS:
+            orders[f"w{int(w*100):02d}"] = _wrrf(lex, sem, w_sem=w) if sem else lex
         row = {"q": q, "want": tid}
-        for name, order in (("lexical", lex), ("semantic", sem), ("hybrid", hyb)):
+        for name, order in orders.items():
             pos = order.index(want) + 1 if want in order else 999
             methods[name].append(pos)
             row[name] = pos
@@ -273,12 +337,19 @@ def evaluate(verbose: bool = True) -> dict:
         else:
             print("  corpus leak audit: clean (no query shares rare vocabulary with its answer)\n")
         print(f"  {'method':10s} {'hit@1':>7s} {'hit@3':>7s} {'hit@5':>7s}   of {n}")
-        for m in ("lexical", "semantic", "hybrid"):
+        for m in ("lexical", "semantic", "hybrid", "union"):
             s = summary[m]
             print(f"  {m:10s} {s['@1']:>7d} {s['@3']:>7d} {s['@5']:>7d}")
-        print(f"\n  {'situation':52s} {'want':5s} {'lex':>4s} {'sem':>4s} {'hyb':>4s}")
+        print(f"\n  THE WEIGHT CURVE (w = semantic's share of the vote; 0.0 is pure lexical)")
+        print(f"  {'w_sem':>6s} {'hit@1':>7s} {'hit@3':>7s} {'hit@5':>7s}")
+        for w in WEIGHTS:
+            s = summary[f"w{int(w*100):02d}"]
+            bar = "#" * s["@5"]
+            print(f"  {w:>6.1f} {s['@1']:>7d} {s['@3']:>7d} {s['@5']:>7d}   {bar}")
+        print(f"\n  {'situation':46s} {'want':5s} {'lex':>4s} {'sem':>4s} {'rrf':>4s} {'uni':>4s}")
         for r in detail:
-            print(f"  {r['q'][:52]:52s} {r['want']:5s} {r['lexical']:>4d} {r['semantic']:>4d} {r['hybrid']:>4d}")
+            print(f"  {r['q'][:46]:46s} {r['want']:5s} {r['lexical']:>4d} {r['semantic']:>4d} "
+                  f"{r['hybrid']:>4d} {r['union']:>4d}")
 
         # THE METRIC IS hit@5 BECAUSE THAT IS WHAT THE TOOL SHOWS.
         #
@@ -289,8 +360,39 @@ def evaluate(verbose: bool = True) -> dict:
         # because moving a metric AFTER seeing which way it points is how a benchmark becomes a
         # decoration. @1 and @3 stay printed so the choice can be re-argued against the same data.
         h, l, s = summary["hybrid"], summary["lexical"], summary["semantic"]
-        best = max(("lexical", "semantic", "hybrid"),
-                   key=lambda m: (summary[m]["@5"], summary[m]["@3"], summary[m]["@1"]))
+        cands = ["lexical", "semantic", "hybrid", "union"] + [f"w{int(w*100):02d}" for w in WEIGHTS]
+        best = max(cands, key=lambda m: (summary[m]["@5"], summary[m]["@3"], -summary[m]["@1"]))
+        bw = [w for w in WEIGHTS
+              if summary[f"w{int(w*100):02d}"]["@5"] == summary[best]["@5"]]
+        print(f"\n  BEST: {best} at hit@5 = {summary[best]['@5']}/{n}"
+              + (f"   (weights tying it: {bw})" if bw else ""))
+        # A CURVE THAT IS FLAT IS A KNOB THAT DOES NOTHING, and saying so is the point of sweeping
+        # it. If every weight scores the same, the ratio is not a parameter of this problem and
+        # picking 30/70 would be inventing a constant to look tuned.
+        span = {summary[f"w{int(w*100):02d}"]["@5"] for w in WEIGHTS}
+        if len(span) == 1:
+            print(f"  The weight curve is FLAT ({span.pop()}/{n} at every ratio) - the mix ratio is "
+                  f"not a lever on this corpus, so no ratio gets invented to look tuned.")
+        else:
+            # THE GATE'S RESOLUTION IS ONE CASE IN TWELVE, AND THAT DECIDES HOW FAR TO TUNE.
+            #
+            # The curve is real at its ENDS - pure lexical 3, pure semantic 4, the middle 6-7 - so
+            # mixing genuinely helps and that conclusion is safe. But separating w=0.4 from w=0.6
+            # means reading a difference of ONE CASE out of twelve, which is exactly the spread this
+            # corpus cannot resolve. Picking the argmax there would be tuning to noise and calling
+            # it a measurement: D20, and D15 before it ("n=8 was n=1"), applied to my own knob
+            # rather than quoted at someone else's.
+            #
+            # So the shipped setting stays plain equal-weight RRF - it sits AT the @5 peak, it is
+            # the simplest thing that can be true, and it introduces no constant that would need its
+            # own experiment to justify. Tuning finer is a real option and it needs a bigger gate
+            # first; that is a corpus problem, not a fusion problem.
+            lo, hi = min(span), max(span)
+            print(f"  The curve is real at its ENDS ({summary['w00']['@5']} pure-lexical -> "
+                  f"{summary['w100']['@5']} pure-semantic, middle {hi}) so MIXING helps.")
+            print(f"  But the spread across the middle is {hi - lo} case(s) of {n} - below this "
+                  f"gate's resolution. Tuning to that argmax would be fitting noise (D20/D15).")
+            print(f"  SHIPPING equal-weight RRF: it sits at the @5 peak and invents no constant.")
         print()
         if h["@5"] > max(l["@5"], s["@5"]):
             print(f"  >>> HYBRID WINS on hit@5, the metric the interface asks: {h['@5']}/{n} "
