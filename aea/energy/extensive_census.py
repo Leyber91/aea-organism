@@ -19,7 +19,13 @@ try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
 OUT = os.path.join(grid.STATE, "extensive_census.json")
-TIMEOUT = 45
+# A GENEROUS INACTIVITY BUDGET, NOT A DEADLINE. 45s was sized for probes capped at 40-260 tokens.
+# With the caps gone (D29) a rod may legitimately emit 16384 tokens of reasoning before its answer,
+# and 45s cut those off and recorded TIMEOUT - a SLOW rod scored as an UNRELIABLE one, which is the
+# same class of error as counting an outage as a wrong answer. The repo's own rule for exactly this:
+# ~300s per read, about five times the worst latency ever measured here. urllib applies it per
+# blocking socket operation, so a rod that is still sending never trips it.
+TIMEOUT = 300
 
 NON_CHAT = re.compile(r"(ocr|image|vision|-vl\b|diffusion|edit|embed|rerank|guard|safety|nemoguard|gliner|pii|"
                       r"riva|parakeet|canary|whisper|tts|asr|reranking|nvclip|clip|paddle|nv-embed|"
@@ -244,7 +250,22 @@ def run():
     print("=" * 84)
 
     def hosted_lane():
-        with ThreadPoolExecutor(max_workers=14) as ex:
+        # CONCURRENCY FROM THE MEASUREMENT, NOT FROM A LITERAL.
+        #
+        # `max_workers=14` was hand-typed while `grid.METER.ceiling("nvidia")` returns 4 - measured
+        # 2026-07-29, "clean at 4, three of eight throttled at 8". The meter already knew and the
+        # census never asked. That mismatch was survivable while every probe was capped at 40-260
+        # tokens and returned in under a second; the moment rods were allowed to think (D29), each
+        # call ran for minutes and fourteen of them at once turned the exam into a contention test.
+        #
+        # MEASURED, first uncapped full sweep: nemotron-3-ultra-550b scored 8/12 with ERR503,
+        # nemotron-3-super-120b 9/12 with TIMEOUT, meta/llama-3.1-70b 9/12 with RATE - while the
+        # SAME three rods, probed sequentially minutes earlier, scored 11, 12 and 11 with no
+        # failures at all. The sweep was measuring queueing, and it penalised exactly the deep rods
+        # the ladder exists to find. Same defect as D28 in a new costume: the harness, not the rod.
+        cap = min([c for c in (grid.METER.ceiling(p) for p in {p for p, _m in hosted}) if c] or [4])
+        print(f"  hosted lane: {cap} concurrent (measured ceiling), {len(hosted)} rods")
+        with ThreadPoolExecutor(max_workers=cap) as ex:
             for f in as_completed([ex.submit(exam, p, m) for p, m in hosted]):
                 add(f.result())
     def zai_lane():                                          # 1-concurrent plant: fully serial

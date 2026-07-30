@@ -945,3 +945,49 @@ sitting at the destination that the caller never read.
 converges on a shared convention, measured, and not fixable by prompting) and the floor rises,
 because the ladder now holds many capable rods. There is no cost to any of it: the plant bills
 neither tokens nor requests.
+
+## D31 · Removing the cap turned the census into a contention test, and the capable council changed nothing but the reasoning (2026-07-30)
+
+**THE COUNCIL, RE-RUN TWICE.** Same question, three configurations. The verdict never moved: unanimous
+REFUSE, split dispatcher. What moved was the quality of the argument.
+
+| | seats | what BUILDER contributed |
+|---|---|---|
+| capped, latency-tiered | 550b / 49b / 49b / **8b** | *"I don't know what kind of daemon it is"* |
+| uncapped, latency-tiered | same | *"I don't know how it would scale"* |
+| uncapped, **capable** | 550b / 128b / 120b | covert channels: *"timing, subdomain choice, or encoded values"* |
+
+On capable seats HISTORIAN brought prior art none of the earlier runs had - *"the 2023 autonomous
+agent wave (AutoGPT, BabyAGI, AgentGPT) all wired untrusted context to network egress and were
+ABANDONED, not failed"* - plus **multi-turn incremental exfiltration** (*"each loop adds a
+fragment"*) and a sharper property (*"an allowlist of fixed templates OR A CONTEXT-FREE GRAMMAR"*).
+USER independently named the canary test.
+
+**THE LESSON: a weak council can reach the right verdict for thin reasons, and the verdict alone
+does not show it.** Three runs agreed; only one of them earned the agreement. If the decision had
+been marginal rather than obvious, the 8b seat would have carried the same weight toward 2/3.
+
+**AND THE UNCAPPED CENSUS MUST NOT BE PROMOTED.** First full sweep after removing the token ceilings:
+
+| rod | targeted re-score (sequential) | full parallel sweep | failure |
+|---|---|---|---|
+| `nemotron-3-ultra-550b` | 11/12, rel 0.92 | **8/12, rel 0.67** | ERR503 |
+| `nemotron-3-super-120b` | 12/12, rel 1.00 | **9/12, rel 0.83** | TIMEOUT |
+| `meta/llama-3.1-70b` | 11/12, rel 1.00 | **9/12, rel 0.83** | RATE |
+
+Same rods, minutes apart, three failure modes that are all queueing. Two harness constants that were
+harmless while probes were capped became decisive the moment rods could think:
+
+  `TIMEOUT = 45`      sized for 40-260 token replies; a rod emitting 16384 tokens is cut off and
+                      recorded TIMEOUT - a SLOW rod scored as an UNRELIABLE one.
+  `max_workers=14`    while `grid.METER.ceiling("nvidia")` returns **4**, measured 2026-07-29
+                      ("clean at 4, three of eight throttled at 8"). The meter knew; the census
+                      never asked.
+
+The new top five was 31b, 27b, 30b, 30b, 9b - small rods win a contention test by finishing first.
+**Promoting it would have ranked the fleet on latency-under-load and buried the deep rods a second
+time, by a different mechanism.** Fixed to 300s and the measured ceiling; re-running.
+
+**THE SHAPE, a sixth time:** every one of these numbers was correct for the system that existed when
+it was written, and became wrong when something upstream changed. Nothing announces that. A constant
+tuned against an assumption should name the assumption, so the day it stops holding is visible.
