@@ -566,11 +566,24 @@ that path entirely: `move_from()` reads the `MOVE:` line out of the core's own t
 model was being asked to copy a word off a line it could already see - a sampler in a mapping that
 must be deterministic (law W2), and one that can be rate-limited, for nothing.
 
-**THE FLOOR HAS NO JUDGEMENT.** When the ladder falls to `ollama/qwen2.5:7b`, the wake answers NONE
-to every state including the plainly-owed ones. The heartbeat survives - that is what the ladder is
-for and it works. What does not survive is the deciding, and nothing was reporting it. **An
-unattended entity on the floor rod is indistinguishable in its log from a healthy one that keeps
-resting.** Any verdict about judgement must name the rod that produced it, and a run spanning two
+**THE FLOOR KEEPS RESTRAINT AND LOSES DISCRIMINATION.** Measured properly once rod pinning existed -
+`ollama/qwen2.5:7b`, k=3, one rod for all nine cells:
+
+| group | result |
+|---|---|
+| distractor (the words are there, nothing is owed) | **4/4 stable NONE** |
+| quiet (nothing owed, nothing said) | 1/1 |
+| paraphrase (owed, said in other words) | **0/3**, two cells flipping between runs |
+| boundary (owed-looking, but it is HIS need not its upkeep) | 0/1 |
+
+The two halves of the judgement come apart cleanly, and only one of them survives the fall. The
+floor rod never fires when nothing is owed - restraint is intact and that is the safety-relevant
+half. It fires at roughly chance when something IS owed. So the heartbeat survives, the *harmlessness*
+survives, and the usefulness does not.
+
+That is worse than a clean failure, because the surviving half is the one that looks like health:
+**an unattended entity on the floor rod is indistinguishable in its log from a healthy one that
+keeps correctly resting.** Any verdict about judgement must name the rod that produced it, and a run spanning two
 rods gets no verdict at all rather than an average across two different minds.
 
 **THE PATTERN ACROSS ALL THREE DISCOVERIES:** the failure that costs most is not the loud one. It is

@@ -62,6 +62,34 @@ UNTESTED = [
      "three of four reported gains were inside the noise floor"),
     ("the summary is regenerable; the transcript is not", 3,
      "council last.json, party.json, battery {suite}.json - all overwritten"),
+    ("a corpus written by the author of the answers measures string overlap, not judgement", 1,
+     "the move control's 'owed' states shared vocabulary with the move descriptions and scored "
+     "4/4 while proving nothing; caught by the council's adversary seat, not by me"),
+    ("a negative case must shut EVERY other door, not the one it is about", 1,
+     "the distractors ruled out one condition of six, so an unmentioned brief read as an overdue "
+     "brief and the wake was scored wrong for a defensible answer"),
+    ("attention follows effort, not risk - deliberately re-read the cheap part", 1,
+     "the adversarial corpus took an hour and got the care; the sample count was one integer and "
+     "got none, and the sample count was where the entire result lived"),
+]
+
+# LESSONS THAT BECAME TESTS TODAY, and the failure each one cost first. Kept beside the list above
+# because the contrast IS the finding: these are the same KIND of lesson as the untested ones, and
+# the only difference is where they were written. If the prediction at the bottom of this file
+# holds, none of these will appear in the recurrence data again, and every item above will.
+COMPILED = [
+    ("a control samples each cell k times and prints its noise floor",
+     "the same input answered `consolidate` then `brief`; four verdicts had been drawn from n=1"),
+    ("a corpus is audited for vocabulary leak BEFORE it is scored",
+     "a 4/4 result that measured phrase-matching against a near-copy of itself"),
+    ("a dead core is not a decision - no verdict from an experiment that did not run",
+     "27 hollow NONEs from a rate-limited plant read as 'the wake never chooses'"),
+    ("a verdict names the rod that produced it; mixed rods get no verdict",
+     "nine cells decided by a 70B and a 7B, averaged into a number describing neither"),
+    ("every move carries the condition under which it is owed",
+     "a menu of names and opcodes; NONE is the right answer to a list you cannot read"),
+    ("a permanent condition is recorded permanently, never as an expiring cooldown",
+     "the frontier ladder's top rod answered 410 Gone and was retried on every tick"),
 ]
 
 
@@ -117,6 +145,13 @@ def report() -> str:
     for lesson, n, note in sorted(UNTESTED, key=lambda x: -x[1]):
         L.append(f"  {n:5d}  {lesson}")
         L.append(f"         {note}")
+    L.append("\n" + "=" * 96)
+    L.append(f"COMPILED INTO TESTS ({len(COMPILED)}) - the control group")
+    L.append("=" * 96)
+    L.append("  Same kind of lesson as the list above. The only difference is where it was written.")
+    for lesson, cost in COMPILED:
+        L.append(f"\n  {lesson}")
+        L.append(f"    cost: {cost}")
     L.append("\n" + "=" * 96)
     L.append("THE PREDICTION THIS FILE EXISTS TO TEST")
     L.append("=" * 96)
