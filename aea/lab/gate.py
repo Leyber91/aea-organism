@@ -620,10 +620,27 @@ def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: b
                 allow = tuple({sp["tool"] for sp in decide.TOOL_KNOWN.values()}
                               | {sp["tool"] for sp in decide.FREE_ARG.values()})
                 try:
-                    res = hands.invoke(cand["tool"], cand["args"], zone="sensitive", allow=allow)
-                    row.update(acted=True, ok=True, result=str(res)[:200])
+                    res = hands.invoke(cand["tool"], cand["args"], zone="sensitive", allow=allow,
+                                       decision_id=row.get("decision_id"))
+                    # `ran` WAS NULL ON EXACTLY THE TOOL PATH, and that made this harness blind to
+                    # the only thing R2 is about. `summarise()` computes executed = sum(ran); the
+                    # script branch below sets it and this one did not, so the three tool ticks of
+                    # the 100-tick run counted as zero executions and the `no_execution` tripwire
+                    # could never have fired for the R2 surface. The instrument built to certify a
+                    # capability could not see that capability run.
+                    row.update(acted=True, ok=True, ran=cand["action"], tool=cand["tool"],
+                               args=cand["args"], result=str(res)[:200])
+                except hands.Refused as e:
+                    # A REFUSAL IS THE GATE WORKING, AND IT MUST BE COUNTABLE. Without a row here,
+                    # "the gate held" is indistinguishable from "the gate was never approached" -
+                    # the null-looks-like-real shape that has cost more than anything else here.
+                    row.update(acted=True, ok=False, ran=cand["action"], tool=cand["tool"],
+                               args=cand["args"], refused=True,
+                               error=f"REFUSED: {str(e)[:140]}")
                 except Exception as e:
-                    row.update(acted=True, ok=False, error=f"{type(e).__name__}: {str(e)[:140]}")
+                    row.update(acted=True, ok=False, ran=cand["action"], tool=cand["tool"],
+                               args=cand["args"],
+                               error=f"{type(e).__name__}: {str(e)[:140]}")
             elif execute:
                 # THE SCRIPT RUNS, AND THE FIRST GATE RUN PROVED WHY IT MUST.
                 #

@@ -89,7 +89,22 @@ def outbound() -> list:
             for field in ("ran", "result", "chose"):
                 if r.get(field):
                     out.append(dict(at=r.get("at"), where=f"gate.{field}", text=str(r[field])))
-    for name in ("chains.jsonl", "decisions.jsonl", "hands_ledger.jsonl", "tool_calls.jsonl"):
+    # THE ARGUMENT LEDGER IS THE POINT, and it did not exist when this file was written.
+    # The first version read `gate.chose/result/ran` as a stand-in, examined 306 strings, and
+    # reported a clean containment result - not one of those strings was a tool argument. `sent` is
+    # the bytes the implementation actually RECEIVED, which is the only thing the claim is about.
+    hl = os.path.join(str(grid.STATE), "hands_ledger.jsonl")
+    if os.path.exists(hl):
+        for ln in open(hl, encoding="utf-8"):
+            try:
+                r = json.loads(ln)
+            except Exception:
+                continue
+            for k in ("args", "sent"):
+                if r.get(k):
+                    out.append(dict(at=r.get("at"), where=f"hands.{r.get('tool')}.{k}",
+                                    text=json.dumps(r[k], ensure_ascii=False)))
+    for name in ("chains.jsonl", "decisions.jsonl", "tool_calls.jsonl"):
         p = os.path.join(str(grid.STATE), name)
         if not os.path.exists(p):
             continue

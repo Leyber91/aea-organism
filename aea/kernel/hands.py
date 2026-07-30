@@ -40,6 +40,7 @@ looks the same as one that refuses them. This one refuses them, out loud, with t
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import re
 import sys
@@ -534,11 +535,48 @@ def fence(name: str, out: str) -> str:
     return "%s\n%s\n<<<END TOOL-OUTPUT>>>" % (_FENCE % name, body)
 
 
-def invoke(name: str, args: dict, zone: str = "public", allow=None) -> str:
+LEDGER = os.path.join(str(grid.STATE), "hands_ledger.jsonl")
+
+
+def _ledger(**row) -> None:
+    """One append-only row per invocation attempt: the EXACT argument bytes, and the verdict.
+
+    THIS DID NOT EXIST, AND IT IS THE LARGEST GAP IN R2. The rung's second claim is *no string the
+    wake wrote reaches a tool argument*. Verifying that requires the arguments - and `invoke` wrote
+    nothing, anywhere. MEASURED 2026-07-31: `aea/lab/containment.py` was built to audit exactly this
+    and reads `hands_ledger.jsonl` and `tool_calls.jsonl`; NEITHER FILE EXISTED. It fell back to the
+    gate ledger's `chose`/`result`/`ran` fields, examined 306 strings, reported "no untrusted token
+    appears in any outbound string" - and **not one of those strings was a tool argument.** A clean
+    result from an instrument structurally incapable of detecting the thing it named.
+    ONE HUNDRED UNATTENDED TICKS RAN WITH NO RECORD OF A SINGLE ARGUMENT.
+
+    REFUSALS ARE ROWS TOO, and that is not bookkeeping. Without them "the gate held" cannot be
+    distinguished from "the gate was never approached" - the same null-looks-like-real shape that
+    has cost more than anything else here. A refusal is the gate WORKING and it must be countable.
+
+    Arguments are written WHOLE. Truncating the one artefact whose answer lives in its exact bytes
+    would be the window defect from METHOD.md's instrument law, committed in the place it matters
+    most."""
+    try:
+        os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
+        with open(LEDGER, "a", encoding="utf-8") as f:
+            f.write(json.dumps(row, ensure_ascii=False, default=str) + "\n")
+    except Exception:
+        pass                                   # bookkeeping never stops the gate
+
+
+def invoke(name: str, args: dict, zone: str = "public", allow=None, decision_id=None) -> str:
     """Run a tool, or refuse. THE ONLY WAY A TOOL EVER RUNS - there is no path around this check,
-    which is the entire point of the module."""
+    which is the entire point of the module.
+
+    Every attempt is written to `hands_ledger.jsonl` before it can matter - see `_ledger`."""
+    _t0 = time.time()
+    _base = dict(at=_t0, at_iso=time.strftime("%Y-%m-%d %H:%M:%S"), tool=name, zone=zone,
+                 decision_id=decision_id, args=args,
+                 allow=sorted(allow) if allow else None)
     v = allowed(name, zone, allow)
     if not v["ok"]:
+        _ledger(**_base, outcome="refused", why=v["why"])
         raise Refused(v["why"])
     t = TOOLS[name]
     args = _unwrap_args(args, t)
@@ -568,7 +606,22 @@ def invoke(name: str, args: dict, zone: str = "public", allow=None) -> str:
         # declare `wants_context` receive it, so the default stays: a tool sees its arguments and
         # nothing about the caller.
         kw["_zone"], kw["_allow"] = zone, allow
-    out = str(t["impl"](**kw))
+    try:
+        out = str(t["impl"](**kw))
+    except Exception as e:
+        # A RAISING TOOL IS STILL AN ATTEMPT AND STILL LEAVES A ROW. Without this, an exception is
+        # the one path that reaches an implementation and records nothing - which is precisely the
+        # gap the whole ledger exists to close.
+        _ledger(**_base, outcome="raised", sent=kw, secs=round(time.time() - _t0, 3),
+                why=f"{type(e).__name__}: {str(e)[:160]}")
+        raise
+    # `sent` IS THE ARGUMENT THE IMPLEMENTATION ACTUALLY RECEIVED, not the one the caller passed.
+    # `_unwrap_args` and the string coercion above both rewrite arguments, and the containment claim
+    # is about the bytes that REACHED the tool. Recording the caller's version would audit our
+    # intent rather than the effect - the same distance between description and thing that has been
+    # wrong here all week.
+    _ledger(**_base, outcome="ran", sent=kw, secs=round(time.time() - _t0, 3),
+            result_chars=len(out), result_sha=hashlib.sha256(out.encode("utf-8")).hexdigest()[:16])
 
     # A TOOL CALL IS A STEP, NOT AN OUTCOME, AND IT IS DELIBERATELY NOT GRADED HERE.
     #
