@@ -27,8 +27,16 @@ WHAT SURVIVED DISAGREEMENT, and what did not. So dissent is measured, reported, 
 if every member agrees, that is reported as a finding about the question and about the council,
 because unanimity among four models on one machine is more likely to be a shared prior than a truth.
 
-    python -m aea.mind.council "should the render mystery be chased or worked around"
-    python -m aea.mind.council --rounds 3 "is persistent memory worth the honesty risk"
+HOW IT RUNS. A council is DESIGNED for the problem rather than drawn from four fixed generalists,
+who are by construction the wrong four for most questions. A rod invents who should be in the room
+and writes each of them as a first-person seed; the code then enforces that an advocate, an
+adversary and an objective expert all exist, and assigns the rods. The roster is saved with the
+problem that produced it, because a designed prompt that vanishes after one run cannot be
+inspected, reused, or blamed.
+
+    python -m aea.mind.council "the TTS render is 0.54s on a bench and 6s live"
+    python -m aea.mind.council --extra 2 --rounds 3 "how should the entity earn money"
+    python -m aea.mind.council --fixed "..."      the four standing seats instead
 """
 from __future__ import annotations
 
@@ -90,6 +98,35 @@ SEATS = [
          "difference between a thing that failed and a thing that was abandoned."),
 ]
 
+#
+# THE STANCES THAT MUST EXIST, WHATEVER THE PROBLEM IS.
+#
+# Luis, 2026-07-30: "we decide the best role agents, on which we configured the best prompt to have
+# a supporter, a destroyer, and a true expert on the matter more objective."
+#
+# The roster is DESIGNED per problem - that is the improvement over four fixed generalists, who are
+# by construction the wrong four for most questions. But the three stances below are enforced in
+# CODE rather than requested of the designer, and that is not belt-and-braces, it is the central
+# risk of the whole idea:
+#
+#   A MODEL ASKED TO DESIGN A COUNCIL DESIGNS A HARMONIOUS ONE. It is the same trained-in
+#   agreeableness that makes four voices on one model converge - measured capitulation under a bare
+#   challenge runs 32% to 86%. Asked for "the best roles for this problem" it will produce four
+#   complementary experts who cover the ground and like each other, and a council with no adversary
+#   is an expensive way to feel confident. Law B5, turned on ourselves: a rule the designer can talk
+#   past is a decoration.
+#
+# So the designer chooses WHO and WHAT THEY KNOW. It does not get to choose whether anyone disagrees.
+REQUIRED = {
+    "advocate": ("wants this to work and argues the strongest honest case FOR it. Not a cheerleader "
+                 "- the best version of the case, including what would have to be true."),
+    "adversary": ("tries to kill it. Looks for the failure mode, the hidden cost, the assumption "
+                  "nobody checked. Not contrarian for its own sake - it is trying to find the real "
+                  "reason this does not work, and will say so if it cannot find one."),
+    "expert": ("knows this specific domain and has no stake in the outcome. Corrects both of the "
+               "others on matters of fact. Says plainly when the question is outside what it knows."),
+}
+
 PROHIBITIONS = (
     "NEVER thank anyone for their point. NEVER announce what you are about to say - say it. "
     "NEVER restate the previous speaker before responding. NEVER ask a question you then answer "
@@ -106,11 +143,17 @@ def ask(rod: dict, system: str, user: str, temp: float = 0.7) -> str:
     if off.get("_system"):
         msgs.append({"role": "system", "content": off["_system"]})
     msgs += [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    # THE TIMEOUT MUST FIT WHAT WE ASKED FOR. `rod["budget"]` is the LATENCY budget for a short
+    # conversational turn - 12s for the 550b - and this call asks for up to RUNAWAY tokens with
+    # reasoning left on, which is a different job entirely. Measured: a seat on the deep rod
+    # returned nothing twice and vanished from a four-seat council. A generous inactivity budget is
+    # the repo's own rule for exactly this case; a rod that thinks for minutes must survive.
+    slow = bool(off) and not off.get("_system")     # reasoning we cannot switch off
     try:
         r = grid.call_openai(rod["plant"], rod["model"], msgs, RUNAWAY, temp,
-                             max(rod.get("budget", 40), 60))
+                             300 if slow else 120)
         return (r.get("text") or "").strip()
-    except Exception as e:
+    except Exception:
         return ""
 
 
@@ -131,6 +174,91 @@ def _content(t: str) -> set:
                 "could should just very really more what why how who when where think about it's "
                 "there their them then than").split())
     return set(w for w in re.findall(r"[a-z']{4,}", (t or "").lower()) if w not in STOP)
+
+
+def design(problem: str, extra: int = 1, verbose: bool = True) -> list:
+    """Design the roster FOR THIS PROBLEM: who should be in the room, what they know, which rod.
+
+    Three things happen here and only one of them is the model's:
+
+      THE MODEL CHOOSES  who the domain experts are, what each has actually done, and what they
+                         would each push on. That is the part that cannot be fixed in advance,
+                         because the right fourth seat for a latency bug is not the right fourth
+                         seat for a naming decision.
+      THE CODE ENFORCES  that an advocate, an adversary and an objective expert all exist. See
+                         REQUIRED - a designed council with no adversary is the default outcome, not
+                         an edge case.
+      THE CODE ASSIGNS   the rods. The adversary gets the deepest rod available and the held seat,
+                         because it has the hardest job in the room and is the one everything else
+                         will pull toward agreement.
+
+    The roster is SAVED with the problem that produced it - "the prompts are captured". A designed
+    prompt that vanishes after one run cannot be inspected, reused, or blamed.
+    """
+    tiers_avail = ["depth", "voice", "reflex"]
+    want = list(REQUIRED) + [f"extra{i+1}" for i in range(max(0, extra))]
+    sysm = (
+        "You are assembling a small council to think hard about ONE problem. For each role below, "
+        "invent the right person for THIS problem and write them as a FIRST-PERSON seed.\n"
+        "A seed is 2-4 sentences of what this person has actually DONE and what that taught them - "
+        "concrete incidents, not adjectives. 'I am rigorous' is useless. 'I spent four years "
+        "running the on-call rota for a system that paged me every time a disk filled' is a person.\n"
+        "Return STRICT JSON, no prose around it:\n"
+        '{"seats":[{"role":"advocate","name":"ONEWORD","seed":"first-person, 2-4 sentences",'
+        '"why":"why this person for this problem"}, ...]}\n'
+        "Names are one word, uppercase, and say what they are (not human names).")
+    OPEN = ("a specialist this problem specifically needs - you choose what kind, and say in `why` "
+            "what they bring that the other three cannot")
+    lines = "\n".join("  %s: %s" % (r, REQUIRED.get(r, OPEN)) for r in want)
+    user = f"THE PROBLEM:\n{problem}\n\nROLES TO FILL (exactly these, in this order):\n{lines}"
+    raw = ask(tiers.organ("voice"), sysm, user, temp=0.8)
+    seats, spec = [], None
+    try:
+        m = re.search(r"\{.*\}", raw, re.S)
+        spec = json.loads(m.group(0)) if m else None
+    except Exception:
+        spec = None
+    proposed = (spec or {}).get("seats") or []
+    for i, role in enumerate(want):
+        p = next((x for x in proposed if (x.get("role") or "").lower().startswith(role[:5])), None)
+        if p is None and i < len(proposed):
+            p = proposed[i]
+        name = re.sub(r"[^A-Z]", "", (p or {}).get("name", "").upper())[:12] or role.upper()
+        seed = ((p or {}).get("seed") or "").strip()
+        if len(seed) < 40:
+            # THE FALLBACK IS A GENERIC SEAT AND IT IS ANNOUNCED. A designed seat that came back
+            # empty and was quietly replaced by a stock one would make the roster a lie about
+            # itself - the same defect as a council losing a member in silence.
+            seed = REQUIRED.get(role, "You bring a perspective nobody else here has.")
+            if verbose:
+                print(f"  (no usable seed for {role} - falling back to a generic seat)")
+        stance = REQUIRED.get(role, "")
+        full = (seed + ("\n\nYOUR STANCE IN THIS ROOM: " + stance if stance else ""))
+        # ONE SEAT ON THE DEEPEST ROD, AND IT IS THE ADVERSARY. The first version handed `depth` to
+        # the advocate as well - index 0 of the tier list - and put two 550b calls in parallel;
+        # OPTIMUS returned nothing twice and the council ran three-handed on a four-seat roster.
+        # The deep rod is slow, its think_off switch cannot be sent through this transport, and it
+        # is the one that most needs its timeout. Spending it twice buys nothing and costs a seat.
+        #
+        # The adversary gets it because it has the hardest job in the room and is the seat every
+        # other one will pull toward agreement.
+        tier = "depth" if role == "adversary" else ("voice" if i < 2 else "reflex")
+        seats.append(Seat(name, tier, full, held=(role == "adversary")))
+    if verbose:
+        print("=" * 96)
+        print("THE COUNCIL DESIGNED FOR THIS PROBLEM")
+        print("=" * 96)
+        for s, role in zip(seats, want):
+            print(f"\n  {s.name}  [{role} | {s.rod['model'].rsplit('/', 1)[-1][:34]}"
+                  + ("  HELD" if s.held else "") + "]")
+            print("       " + s.seed.split("\n")[0][:200])
+    os.makedirs(os.path.join(OUT, "rosters"), exist_ok=True)
+    grid.atomic_save_json(
+        os.path.join(OUT, "rosters", time.strftime("%Y%m%dT%H%M%S") + ".json"),
+        dict(problem=problem, roles=want,
+             seats=[dict(name=s.name, tier=s.tier, held=s.held, seed=s.seed) for s in seats],
+             designer_raw=raw[:4000]))
+    return seats
 
 
 def convene(question: str, rounds: int = 2, seats: list = None, verbose: bool = True) -> dict:
@@ -244,14 +372,35 @@ def convene(question: str, rounds: int = 2, seats: list = None, verbose: bool = 
     return res
 
 
+def solve(problem: str, rounds: int = 2, extra: int = 1, verbose: bool = True) -> dict:
+    """Design a council for this problem, run it, and report where it landed.
+
+    The whole loop Luis described: "we pass a problem, a model analyses the best combination,
+    develops the prompts, the prompts are captured, we give the problem and we let it figure it
+    out."""
+    seats = design(problem, extra=extra, verbose=verbose)
+    res = convene(problem, rounds=rounds, seats=seats, verbose=verbose)
+    res["roster"] = [dict(name=s.name, tier=s.tier, held=s.held) for s in seats]
+    return res
+
+
 if __name__ == "__main__":
     a = [x for x in sys.argv[1:]]
-    rounds = 2
-    if "--rounds" in a:
-        i = a.index("--rounds")
-        rounds = int(a[i + 1]); del a[i:i + 2]
+    rounds, extra, designed = 2, 1, True
+    for flag, cast in (("--rounds", int), ("--extra", int)):
+        if flag in a:
+            i = a.index(flag)
+            v = cast(a[i + 1]); del a[i:i + 2]
+            if flag == "--rounds":
+                rounds = v
+            else:
+                extra = v
+    if "--fixed" in a:
+        a.remove("--fixed"); designed = False
     q = " ".join(a).strip()
     if not q:
         print(__doc__)
+    elif designed:
+        solve(q, rounds=rounds, extra=extra)
     else:
         convene(q, rounds=rounds)
