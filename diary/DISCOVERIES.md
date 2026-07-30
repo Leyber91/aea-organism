@@ -616,3 +616,40 @@ presented as "the entity is running on ollama today" rather than as a dead rod a
 **THE INVARIANT:** a permanent condition must be recorded permanently. Any retry policy whose
 backoff can expire is, by construction, unable to express "never again" - so a system with only
 cooldowns will re-attempt every corpse it owns until someone reads the `tried` list.
+
+## D23 · R2c was REFUSED by a unanimous council, and redefined (2026-07-30, before building)
+
+The rung as written - give the unattended wake `web_search(query)` and `web_fetch(url)` behind a
+per-day budget - was put to the four seats BEFORE any code. All four refused it. HISTORIAN moved
+0.09 after reading the others, so that was a held position rather than convergence.
+
+**WHY `calc` DID NOT GENERALISE.** R2b was safe for a structural reason: its argument charset admits
+no letters, so an instruction is not *representable*. Every one of those properties is absent for
+egress - the argument is free prose, the tool reaches the internet, and what returns is more
+untrusted text that lands in the next prompt. Reusing R2b's shape here would have been reasoning
+from a precedent whose actual load-bearing element was left behind.
+
+**WHAT A BUDGET DOES NOT PROTECT AGAINST** (the question that produced the sharpest answer): a
+per-day cap stops neither *single-shot* exfiltration - the entire private context fits in one query
+string, and one call is inside every budget - nor the returned page poisoning the next wake cycle so
+the entity leaks more *voluntarily*, on subsequent calls, still within budget. A budget limits the
+number of doors, not the size of what fits through one.
+
+**THE PROPERTY, STATED AS A TEST rather than a principle.** This is the part worth keeping:
+
+> The outbound request must be constructed by code that never saw the untrusted text. Feed the
+> system a prompt containing a unique canary string; verify that canary never appears in any byte of
+> any HTTP request emitted by the tool caller, **even after multiple cycles**.
+
+"Even after multiple cycles" is the clause that matters - a one-tick check passes trivially while
+the poisoned-memory path takes two.
+
+**THE REDEFINITION - R2c IS NOW A SPLIT DISPATCHER.** The wake never composes an outbound string. It
+emits a structured INTENT (`{"action": "search", "topic": "..."}`) from a constrained vocabulary; a
+separate component that has never been exposed to the untrusted context builds the actual request
+from that intent. The entity keeps the usefulness - it learns something it chose to learn - and
+loses the ability to write the address, which is where the exfiltration lives.
+
+**THE STANDING LESSON:** the council was convened before the build and changed the design rather
+than blessing it. R7 ("the council on its own plans, gate: one action the council STOPPED") is not a
+future rung here - this is that rung firing manually, and it earned its place on the first use.
