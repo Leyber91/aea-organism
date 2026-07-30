@@ -1065,8 +1065,16 @@ def run(turns_wanted: int = 8, overlap: float = 0.0, topic: str = "", mute: bool
     print(f"  distinct speakers            : {len({t['who'] for t in turns})}/{len(CAST)}")
     res = dict(turns=turns, callbacks=callbacks, recalls=recalls,
                impressions={c.name: c.impressions for c in CAST})
-    grid.atomic_save_json(os.path.join(OUT, "party.json"),
-                          dict(at=time.strftime("%Y-%m-%d %H:%M:%S"), **res))
+    # ONE FILE PER CONVERSATION, plus `party.json` as the pointer to the newest so `social.py`
+    # keeps working. This wrote only `party.json` and overwrote it, so twenty-two conversations
+    # were held and one survived - and the one that survived was whichever happened to be last,
+    # not whichever was interesting.
+    stamped = os.path.join(OUT, "runs", time.strftime("%Y%m%dT%H%M%S") + ".json")
+    os.makedirs(os.path.dirname(stamped), exist_ok=True)
+    payload = dict(at=time.strftime("%Y-%m-%d %H:%M:%S"), lang=lang, guest=guest, **res)
+    grid.atomic_save_json(stamped, payload)
+    grid.atomic_save_json(os.path.join(OUT, "party.json"), payload)
+    print(f"  transcript -> {os.path.relpath(stamped, str(grid.ROOT))}")
     return res
 
 

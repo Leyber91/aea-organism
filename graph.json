@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 156,
+    "count": 157,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 156
+    "count": 157
    },
    {
     "src": "THE_PROBE",
@@ -629,6 +629,12 @@
      "type": "module",
      "path": "aea/kernel/tracelog.py",
      "purpose": "tracelog.py - the trace substrate the whole swarm stands on."
+    },
+    {
+     "id": "transcripts",
+     "type": "module",
+     "path": "aea/tooling/transcripts.py",
+     "purpose": "transcripts.py - READ BACK EVERY COUNCIL AND EVERY CONVERSATION THIS MACHINE HAS HELD."
     },
     {
      "id": "trust",
@@ -2201,6 +2207,11 @@
     },
     {
      "src": "tracelog",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "transcripts",
      "dst": "grid",
      "rel": "imports"
     },

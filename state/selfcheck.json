@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-07-30 01:07 UTC",
- "seconds": 16.6,
+ "at": "2026-07-30 01:13 UTC",
+ "seconds": 15.6,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "127 modules, 25 reachable from a wake, 96 orphaned, 0 act at import",
+   "detail": "128 modules, 25 reachable from a wake, 97 orphaned, 0 act at import",
    "data": {
-    "modules": 127,
+    "modules": 128,
     "wake": 25,
     "orphans": [
      "aea.energy.capability_census",
@@ -105,6 +105,7 @@
      "aea.tooling.journey_check",
      "aea.tooling.scout",
      "aea.tooling.selfcheck",
+     "aea.tooling.transcripts",
      "aea.tooling.xray",
      "aea.tooling.xray_graph",
      "aea.tooling.xray_view"

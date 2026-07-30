@@ -56,6 +56,7 @@ except Exception:
     pass
 
 OUT = os.path.join(str(grid.STATE), "council")
+RUNS = os.path.join(OUT, "runs")           # one file per council, never overwritten
 RUNAWAY = 4000                  # the only cap: a loop guard, never a length control. Tokens beyond
                                 # what gets used are the thinking, and cutting them buys a worse
                                 # answer with money nobody was spending.
@@ -366,9 +367,26 @@ def convene(question: str, rounds: int = 2, seats: list = None, verbose: bool = 
                 print(f"  >>> {top} abandoned its round-1 position almost entirely. That is either")
                 print(f"      a good argument or a soft seat; read its round 1 and decide which.")
         print(f"  {res['seconds']}s")
-    os.makedirs(OUT, exist_ok=True)
+    # EVERY RUN KEPT, NOT JUST THE LAST ONE. This wrote `last.json` and overwrote it, which means
+    # every council held before this line was destroyed by the next one - including the run whose
+    # adversary said "nobody checked if the variance actually helps", which is now the only copy
+    # because it happens to be quoted in a commit message.
+    #
+    # A council is an argument, and an argument is worth more than its conclusion: the value is in
+    # WHICH position moved and why, and that is only visible in the transcript. Keeping only the
+    # summary would have kept exactly the part that can be regenerated and thrown away the part
+    # that cannot.
+    os.makedirs(RUNS, exist_ok=True)
+    stamp = time.strftime("%Y%m%dT%H%M%S")
+    path = os.path.join(RUNS, f"{stamp}.json")
+    grid.atomic_save_json(path, dict(at=time.strftime("%Y-%m-%d %H:%M:%S"), stamp=stamp,
+                                     seats=[dict(name=s.name, tier=s.tier, held=s.held,
+                                                 seed=s.seed) for s in seats], **res))
     grid.atomic_save_json(os.path.join(OUT, "last.json"),
-                          dict(at=time.strftime("%Y-%m-%d %H:%M:%S"), **res))
+                          dict(at=time.strftime("%Y-%m-%d %H:%M:%S"), stamp=stamp, **res))
+    res["path"] = path
+    if verbose:
+        print(f"  transcript -> {os.path.relpath(path, str(grid.ROOT))}")
     return res
 
 
