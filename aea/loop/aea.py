@@ -240,6 +240,37 @@ def tick(seed, state):
         "important thing for him right now; what changed vs your memory; one concrete action for today; one thing to "
         "remember next tick; and LAST, on its own final line, `MOVE: <name>` or `MOVE: NONE`. "
         "Reason it through in prose - do NOT output JSON.")
+    # THE UNTRUSTED INPUT IS RECORDED VERBATIM, AND THAT IS THE EVIDENCE R2 WAS MISSING.
+    #
+    # Luis, 2026-07-31: *"everything needs to be recorded, we don't limit that - we just understand
+    # if a harsh tone is needed sometimes."*
+    #
+    # `sense()` puts live Hacker News headlines into this prompt every tick. That is third-party
+    # text sitting in the context of the thing composing decisions, and R2's whole containment claim
+    # is that no string the wake wrote reaches a tool argument. Across a hundred unattended ticks
+    # that text was present at every single decision AND WAS RECORDED NOWHERE - not in the gate
+    # ledger, not in `aea_state.json`, not in any store. So the claim could not be checked against
+    # real data, and a leak would have left no trace to find.
+    #
+    # Recorded WHOLE, not truncated and not filtered. A sanitised record cannot answer the question
+    # the record exists for, which is "did any of THIS appear in THAT". Truncating it would be the
+    # window defect from METHOD.md's instrument law, applied to the one artefact where the answer
+    # lives in the exact bytes.
+    #
+    # ONLY THE PUBLIC HALF. The seed - who Luis is - is private and constant, so it is identified by
+    # hash rather than copied; the privacy guard is absolute and the untrusted input is public data
+    # by definition, which is precisely why it is the half worth keeping.
+    import hashlib
+    _sensed = dict(at=time.time(), tick=state["tick"], world=world,
+                   seed_sha=hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16],
+                   prompt_chars=len(prompt),
+                   prompt_sha=hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16])
+    try:
+        with open(os.path.join(grid.STATE, "sensed.jsonl"), "a", encoding="utf-8") as _f:
+            _f.write(json.dumps(_sensed, ensure_ascii=False) + "\n")
+    except Exception:
+        pass                                  # never let bookkeeping stop the loop
+
     reasoning, who = core(prompt)            # phase 1: the MIND reasons freely, to its own ceiling
     out = structure(reasoning)              # phase 2: the FORMATTER tool makes it structured
     # PHASE 3: THE MOVE IS TAKEN FROM THE CORE'S OWN TEXT, NOT FROM THE FORMATTER'S COPY OF IT.
