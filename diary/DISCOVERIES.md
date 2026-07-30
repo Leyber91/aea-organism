@@ -851,3 +851,49 @@ battery and no guard at all - the safer-looking command was the dangerous one. N
 `rods.json` (whose guard is dead code for vendor-prefixed ids), `aea/mind/fuel.py`'s hardcoded
 `WITHDRAWN` dict - which has listed `mistral-large-3-675b: "410 Gone"` **in source since
 2026-07-25**, five days before the ladder started burning it - and `aea/lab/organisms/fuels.json`.
+
+## D29 · Every token ceiling in this repo was invented, and the diagnosis had been sitting two hundred lines above the defect for two days (2026-07-30)
+
+Luis: *"NVIDIA doesn't charge for tokens. It doesn't charge for requests. It doesn't charge for
+anything. You have forty requests per minute, per model, as long as you have the context window the
+model supports. So I don't know why you're doing this."* And on the harm: *"thinking budget
+shouldn't be cut off. You have to let it think as much as it needs. If not you're cutting ideas
+short, you're cutting consensus short. It's like someone is talking and you just suddenly shut him
+up."*
+
+**THE SURVEY: 97 suspicious budget sites across 51 files.** The load-bearing ones:
+
+| site | was | harm |
+|---|---|---|
+| `grid.call_openai(max_tokens=256)` | the system-wide DEFAULT | every call site that passes nothing |
+| `energy.draw` | `min(pub.get("max_tokens", 500), 4096)` | unlisted rods got 500; the 550b's published 16384 capped to 4096 |
+| `aea/loop/aea.py core()` | 800 default, `tick` passed 1400 | the entity's own deliberation, cut at ~1/10 of its ceiling, every tick |
+| `council.ask` | `RUNAWAY = 4000` | a seat truncated mid-argument is still scored and still counted toward a 2/3 consensus |
+| `extensive_census.probe` | 40-260 per probe (D28) | scored the truncation |
+
+**THE PART THAT MAKES THIS D26 A FIFTH TIME.** The comment directly above `grid.OWN_PARAMS`, written
+2026-07-28, states the whole finding: *"`call_openai` sends temperature=0.2 and max_tokens=256 to
+every rod... a reasoning rod handed 256 tokens spends them thinking and never reaches an answer...
+**Every** fitness score, census and tool probe in this repo was taken through that filter."* The
+table of published values was added. **The default that actually decides was never touched.** The
+diagnosis sat two hundred lines above the defect, in the same file, for two days, while every
+measurement kept going through it. Writing a lesson down next to the code is not the same as
+applying it to the code.
+
+**THE FIX, in resolution order, most-specific first:** an explicit argument wins; else the owner's
+published ceiling; else **the field is omitted entirely** so the provider applies the model's own
+maximum. That last branch matters - a "generous default" is still a number we made up, and one too
+large earns a 400 from rods with small windows. Sending nothing says the true thing: no opinion, use
+yours. `top_p` is now sent too; the owners publish 0.7-1.0 and we had never sent it at all.
+
+**WHAT WAS NOT WRONG, checked rather than assumed:** the Meter is per-model keyed (`f"{plant}:{model}"`
+for both the rpm window and in-flight slots), and its own comment records the measurement that
+proves Luis's point: *50 concurrent requests at ONE rod gave 25x200 and 25x429 while three OTHER
+models answered 200 in the same second; 78 requests went through in under 7s (~670/min)*. The
+accounting was already right. What was wrong was me: I hit groq's limit, reported "blocked on rate
+limits", and never fanned out across the 27 living rods that had their own separate budgets.
+
+**CONSEQUENCE: every measurement taken through the filter has to be re-run** - the census, the
+councils (including the R2c refusal, whose seats may have been cut off mid-argument), and the
+movecontrol runs. A result produced by a truncated mind is not a weaker result, it is a different
+experiment.

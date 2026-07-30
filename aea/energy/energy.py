@@ -285,8 +285,20 @@ def draw(prompt: str, tier: str = "solid", zone: str = "private", mx: int | None
             # measured as not served. Trying it again burns a slot in the ladder to learn nothing.
             tried.append(f"{plant}/{model}:not-served"); continue
         pub = grid.own_params(model)
-        use_mx = mx if mx is not None else int(min(pub.get("max_tokens", 500), 4096))
-        use_temp = temp if temp is not None else pub.get("temperature", 0.2)
+        # NO INVENTED CEILING. This line used to read
+        #     int(min(pub.get("max_tokens", 500), 4096))
+        # which did two harmful things at once: it defaulted an unlisted rod to FIVE HUNDRED tokens,
+        # and it capped a listed one at 4096 even when its owner published 16384 or 20480. So the
+        # entity's deepest rods were cut off at a quarter of what they will give, and the docstring
+        # right below already said the ladder "has been ranking rods on our defaults rather than on
+        # the rods".
+        #
+        # There is nothing to save. NVIDIA bills neither tokens nor requests; the only real limits
+        # are 40 req/min PER MODEL (the Meter's job, not this line's) and the rod's own window. So
+        # `None` travels down to `call_openai`, which sends the published ceiling or omits the field
+        # and lets the provider apply the model's own maximum.
+        use_mx = mx                                  # None -> the rod's own ceiling
+        use_temp = temp                              # None -> the owner's published temperature
         if _cooling(plant, model):
             tried.append(f"{plant}/{model}:cooling"); continue
         ok_spend, _, why = _meter.can_spend(plant, model)

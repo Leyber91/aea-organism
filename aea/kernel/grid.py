@@ -661,8 +661,37 @@ class Router:
 # --------------------------------------------------------------------------------------
 # 4. The client - actually draw the power (OpenAI-compatible plants). Always metered.
 # --------------------------------------------------------------------------------------
-def call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.2, timeout=60,
+def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=None, timeout=60,
                 tools=None):
+    # `max_tokens=None` MEANS "AS MUCH AS THIS ROD WILL GIVE", NOT 256.
+    #
+    # Luis, 2026-07-30: "thinking budget shouldn't be cut off. You have to let it think as much as
+    # it needs. If not, you're cutting ideas short, you're cutting consensus short. It's like
+    # someone is talking and you just suddenly shut him up." And on the economics: NVIDIA charges
+    # nothing per token and nothing per request - the only real limits are 40 req/min PER MODEL and
+    # the context window the rod itself supports. Every token ceiling below that was invented here.
+    #
+    # THE COMMENT ABOVE `OWN_PARAMS` HAS SAID THIS SINCE 2026-07-28: "call_openai sends
+    # temperature=0.2 and max_tokens=256 to every rod... a reasoning rod handed 256 tokens spends
+    # them thinking and never reaches an answer... EVERY fitness score, census and tool probe in
+    # this repo was taken through that filter." The table of published values was added. The default
+    # that actually decides was not touched, so the diagnosis sat two hundred lines above the defect
+    # for two days while every measurement kept going through it. D26, a fifth time - and this is
+    # the instance that corrupted the most.
+    #
+    # RESOLUTION ORDER, most-specific first:
+    #   an explicit argument            the caller knows something we do not - always wins
+    #   the owner's published ceiling   OWN_PARAMS, lifted from the model's own example
+    #   OMIT THE FIELD ENTIRELY         we do not know this rod's ceiling, so we do not invent one;
+    #                                   the provider then applies the model's own maximum
+    # The last branch is the important one. A "generous default" is still a number we made up, and
+    # a made-up number that is too LARGE gets a 400 from rods with small windows. Sending nothing
+    # says the true thing: we have no opinion, use yours.
+    pub = own_params(model)
+    if max_tokens is None:
+        max_tokens = pub.get("max_tokens")          # may stay None -> field omitted below
+    if temperature is None:
+        temperature = pub.get("temperature", 0.2)
     # TIMEOUT IS AN INACTIVITY BUDGET, NOT A DEADLINE, AND `None` MEANS AWAIT THE RESPONSE.
     # Luis, 2026-07-25: "for any model, experimenting and waiting for a response, more than setting
     # timeouts, should be async await for the response... otherwise on chain of tasks it might fail
@@ -701,8 +730,11 @@ def call_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.
         headers["Authorization"] = f"Bearer {k}"
     elif cap.get("anon"):
         headers["Authorization"] = f"Bearer {cap['anon']}"   # keyless-with-placeholder-token (LLM7 'unused')
-    payload_out = {"model": model, "messages": messages,
-                   "max_tokens": max_tokens, "temperature": temperature}
+    payload_out = {"model": model, "messages": messages, "temperature": temperature}
+    if max_tokens is not None:                # omitted entirely when unknown - see the note above
+        payload_out["max_tokens"] = int(max_tokens)
+    if pub.get("top_p") is not None:          # the owners publish 0.7-1.0 and we never sent it
+        payload_out["top_p"] = pub["top_p"]
     if tools:
         payload_out["tools"] = tools          # the schema rides on EVERY call, used or not - the tax
     body = json.dumps(payload_out).encode("utf-8")

@@ -28,7 +28,18 @@ pool = orchestrator.load_pool()
 # THE CORE draws ENERGY, it does not name fuel (Luis's continuum law): energy.draw reads the live
 # capability census + fitness + meter and burns the best frontier rod available right now, falling
 # down the ladder on failure - all the way to the local floor, so the heartbeat never stops.
-def core(prompt, max_tokens=800):
+def core(prompt, max_tokens=None):
+    """The wake's own thinking, with NO ceiling we invented.
+
+    `max_tokens` defaulted to 800 and `tick` passed 1400. The 550b publishes 16384 and emits its
+    deliberation before its answer, so the wake was being stopped roughly a tenth of the way into
+    its own reasoning, every tick, and then scored on the fragment - the same defect D28 found in
+    the census, in the loop that IS the entity's thinking rather than a measurement of it.
+
+    Luis, 2026-07-30: "you're cutting ideas short, you're cutting consensus short... it's like
+    someone is talking and you just suddenly shut him up." Nothing is bought by the cut: the plant
+    bills neither tokens nor requests, and the rate limit is per-model and per-minute, which a
+    longer answer does not touch."""
     # order="depth" - THE CORE WANTS THE BIGGEST MIND, not the best strict-match scorer.
     #
     # The census `score` counts probes whose output matched an expected string, and several of them
@@ -201,7 +212,7 @@ def tick(seed, state):
         "important thing for him right now; what changed vs your memory; one concrete action for today; one thing to "
         "remember next tick; and LAST, on its own final line, `MOVE: <name>` or `MOVE: NONE`. "
         "Reason it through in prose - do NOT output JSON.")
-    reasoning, who = core(prompt, 1400)     # phase 1: the MIND reasons freely
+    reasoning, who = core(prompt)            # phase 1: the MIND reasons freely, to its own ceiling
     out = structure(reasoning)              # phase 2: the FORMATTER tool makes it structured
     # PHASE 3: THE MOVE IS TAKEN FROM THE CORE'S OWN TEXT, NOT FROM THE FORMATTER'S COPY OF IT.
     # This overrides whatever `structure` returned - deliberately, and in both directions. The

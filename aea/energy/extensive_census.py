@@ -122,11 +122,18 @@ def probe(plant, model, pid, mx, prompt, check, gap=0.0):
     The battery's budget is kept as a FLOOR, not a ceiling: a probe that wants 40 tokens of answer
     still gets its intent, but a rod that must think first is given room to finish thinking.
     """
-    pub = grid.own_params(model)
     off = grid.think_off(model) or {}
-    # Enough room to think AND answer. Capped at the owner's published ceiling so a rod is never
-    # asked for more than it will give.
-    room = max(mx, min(int(pub.get("max_tokens", 4096)), 4096)) if off or _REASONS(model) else mx
+    # NO BUDGET AT ALL - `None` means the rod's own ceiling, resolved in `call_openai`.
+    #
+    # The first version of this fix still carried two inventions of mine: a 4096 cap I made up (the
+    # 550b publishes 16384) and a `_REASONS(model)` NAME GUESS, so any deliberating rod whose name
+    # I failed to anticipate still got 40 tokens and was still scored on a truncation. Guessing
+    # which rods think is the same error one level down - the census exists to MEASURE rods, and it
+    # cannot do that through a filter built out of assumptions about them.
+    #
+    # Luis: "you're cutting ideas short... it's like someone is talking and you just suddenly shut
+    # him up." A census that shuts rods up is measuring the gag.
+    room = None
     msgs = []
     if off.get("_system"):
         msgs.append({"role": "system", "content": off["_system"]})

@@ -221,7 +221,16 @@ def ask(rod: dict, system: str, user: str, temp: float = 0.7) -> str:
     # the repo's own rule for exactly this case; a rod that thinks for minutes must survive.
     slow = bool(off) and not off.get("_system")     # reasoning we cannot switch off
     try:
-        r = grid.call_openai(rod["plant"], rod["model"], msgs, RUNAWAY, temp,
+        # NO LENGTH CAP ON A SEAT'S ARGUMENT. RUNAWAY was 4000 and described itself as "a loop
+        # guard, never a length control" - but a seat on the 550b, which publishes 16384 and thinks
+        # before it speaks, was reaching that ceiling mid-argument. A truncated seat still gets
+        # scored, quoted and counted toward a 2/3 agreement, so the council could reach consensus on
+        # arguments nobody finished making.
+        #
+        # Luis named the harm precisely: "you're cutting consensus short... it's like someone is
+        # talking and you just suddenly shut him up." `None` lets each rod run to its own published
+        # ceiling; the real guards here are the inactivity timeout below and the round count.
+        r = grid.call_openai(rod["plant"], rod["model"], msgs, None, temp,
                              300 if slow else 120)
         return (r.get("text") or "").strip()
     except Exception:
