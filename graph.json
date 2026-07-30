@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 162,
+    "count": 163,
     "source": "aea/gameapi/act.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 162
+    "count": 163
    },
    {
     "src": "THE_PROBE",
@@ -653,6 +653,12 @@
      "type": "module",
      "path": "aea/mind/tiers.py",
      "purpose": "tiers.py - THE TIERED MIND. Different rods own different organs, composed into one voice."
+    },
+    {
+     "id": "toolkinds",
+     "type": "module",
+     "path": "aea/kernel/toolkinds.py",
+     "purpose": "toolkinds.py - THE GRID. What a tool IS, on the two axes that actually matter."
     },
     {
      "id": "tracelog",
