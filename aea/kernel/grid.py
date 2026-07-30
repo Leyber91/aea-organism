@@ -661,6 +661,80 @@ class Router:
 # --------------------------------------------------------------------------------------
 # 4. The client - actually draw the power (OpenAI-compatible plants). Always metered.
 # --------------------------------------------------------------------------------------
+def _read_stream(r):
+    """Assemble an SSE completion, returning (payload_like, message) or (None, None) if not a stream.
+
+    EVERY DELTA RESETS THE SOCKET'S READ CLOCK, which is the whole point: `urlopen(timeout=N)`
+    applies N per blocking read, so with a stream N is an INACTIVITY budget and without one it is a
+    total deadline. Nothing here keeps its own clock - the semantics come from the transport, and a
+    clock we maintained ourselves would be one more thing to get wrong.
+
+    Reasoning deltas are READ so they count as liveness, and DISCARDED so they never reach a caller
+    as if they were the answer. Both halves matter: the 550b emits reasoning for 13s before its
+    first content token, so ignoring the channel makes a working rod look dead; and D13 recorded a
+    rod whose whole budget went into reasoning while `content` stayed empty, so treating reasoning
+    AS content turns a non-answer into a plausible one.
+
+    Returns (None, None) when the response is not an event stream, so the caller can retry
+    unstreamed rather than guess - a provider that ignores `stream: true` answers with ordinary
+    JSON, and mistaking that for an empty stream would record a healthy rod as silent.
+    """
+    ctype = (r.headers.get("Content-Type") or "").lower()
+    if "event-stream" not in ctype:
+        return None, None
+    content, reasoning, tool_calls = [], [], None
+    usage, finish = {}, None
+    for raw in r:                                  # each iteration is one blocking read = one clock reset
+        line = raw.decode("utf-8", "ignore").strip()
+        if not line.startswith("data:"):
+            continue
+        chunk = line[5:].strip()
+        if chunk == "[DONE]":
+            break
+        try:
+            d = json.loads(chunk)
+        except Exception:
+            continue
+        if isinstance(d.get("error"), dict):       # a 200 carrying an error object
+            return dict(error=d["error"], choices=[]), {}
+        if d.get("usage"):
+            usage = d["usage"]
+        ch = (d.get("choices") or [{}])[0]
+        finish = ch.get("finish_reason") or finish
+        delta = ch.get("delta") or {}
+        if delta.get("content"):
+            content.append(delta["content"])
+        # read for liveness, keep out of the answer - see the note above
+        if delta.get("reasoning_content") or delta.get("reasoning"):
+            reasoning.append(delta.get("reasoning_content") or delta.get("reasoning"))
+        if delta.get("tool_calls"):
+            tool_calls = _merge_tool_calls(tool_calls, delta["tool_calls"])
+    text = "".join(content)
+    # ONLY IF NOTHING ELSE CAME does reasoning stand in for the answer, matching the unstreamed
+    # path's long-standing fallback (three field names, not two - ollama and cerebras use
+    # `reasoning`). A rod that returned pure deliberation is still a non-answer and must fall
+    # through the ladder, and it does, because the ladder tests for empty TEXT.
+    msg = {"content": text or "".join(reasoning), "tool_calls": tool_calls}
+    return dict(choices=[{"message": msg, "finish_reason": finish}], usage=usage), msg
+
+
+def _merge_tool_calls(acc, deltas):
+    """Tool calls arrive in fragments across deltas: index, then name, then argument slices."""
+    acc = list(acc or [])
+    for d in deltas:
+        i = d.get("index", 0)
+        while len(acc) <= i:
+            acc.append({"id": "", "type": "function", "function": {"name": "", "arguments": ""}})
+        if d.get("id"):
+            acc[i]["id"] = d["id"]
+        fn = d.get("function") or {}
+        if fn.get("name"):
+            acc[i]["function"]["name"] = fn["name"]
+        if fn.get("arguments"):
+            acc[i]["function"]["arguments"] += fn["arguments"]
+    return acc
+
+
 def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=None, timeout=60,
                 tools=None):
     # `max_tokens=None` MEANS "AS MUCH AS THIS ROD WILL GIVE", NOT 256.
@@ -735,6 +809,39 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
         payload_out["max_tokens"] = int(max_tokens)
     if pub.get("top_p") is not None:          # the owners publish 0.7-1.0 and we never sent it
         payload_out["top_p"] = pub["top_p"]
+    # EVERY RESPONSE IS STREAMED, SO `timeout` BECOMES A REAL INACTIVITY BUDGET.
+    #
+    # Luis, 2026-07-30: "all our responses are the streaming kind, so we know in real time that the
+    # model is actually thinking. One minute with stream on means dead."
+    #
+    # THE TWO HALVES ARE ONE DESIGN, and neither works without the other. A NON-streaming call sends
+    # nothing until the whole completion is finished, so the socket is idle for the entire
+    # generation - "inactive" and "still thinking" are the same observation, and any budget short
+    # enough to catch a dead peer also kills a rod mid-thought. That is the corner this code was in:
+    # TIMEOUT=45 killed reasoning rods, and raising it to 300 only meant a dead peer held a slot for
+    # five minutes. Streaming separates the two, so a rod may think for as long as it likes while a
+    # genuinely dead peer is noticed in a minute.
+    #
+    # urllib applies `timeout` PER BLOCKING SOCKET READ. With a stream, each delta is a read, so the
+    # inactivity semantics come out of the transport for free - no clock to keep, nothing to get
+    # wrong. Without a stream the same parameter silently means total time. One flag changes what
+    # the number means.
+    #
+    # MEASURED across nvidia, groq and ollama before switching: worst inter-delta gap on ANY rod
+    # 0.65s, max p95 0.048s. A 60s budget is ~92x the worst gap observed.
+    #
+    # LIVENESS COUNTS ANY DELTA, INCLUDING REASONING WE THROW AWAY. `stream_openai` drops
+    # `reasoning_content` on purpose (D13 - never speak a rod's private deliberation aloud), which
+    # is right for a voice and fatal for a timeout: nemotron-3-ultra-550b emitted SIXTY reasoning
+    # deltas before its first content token at 13.0s. Judged on content alone it looked silent the
+    # whole time. Here both channels are read; only content is kept.
+    payload_out["stream"] = True
+    # ASK FOR THE BILL. A stream omits `usage` unless it is requested, and MEASURED on the switch:
+    # nvidia and ollama returned tokens=0 on every streamed call while groq still reported. Token
+    # accounting feeds the Meter and the cost record, and "THE FULL BILL" note below is explicit
+    # that half an invoice is not an honest economy - so silently losing it to a transport change
+    # would be the same class of defect as the census measuring its own harness.
+    payload_out["stream_options"] = {"include_usage": True}
     if tools:
         payload_out["tools"] = tools          # the schema rides on EVERY call, used or not - the tax
     body = json.dumps(payload_out).encode("utf-8")
@@ -742,11 +849,19 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
     t0 = time.time()
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            raw = r.read().decode("utf-8")
             dep = r.headers.get("Deprecation")     # the rod's announced death, when the plant says so
-        payload = json.loads(raw)
+            payload, m = _read_stream(r)
         dt = time.time() - t0
-        m = (payload.get("choices") or [{}])[0].get("message", {}) or {}
+        if payload is None:                        # this endpoint will not stream - fall back once
+            payload_out.pop("stream", None)
+            req = urllib.request.Request(url, data=json.dumps(payload_out).encode("utf-8"),
+                                         headers=headers, method="POST")
+            t0 = time.time()
+            with urllib.request.urlopen(req, timeout=max(timeout, 300)) as r:
+                dep = r.headers.get("Deprecation")
+                payload = json.loads(r.read().decode("utf-8"))
+            dt = time.time() - t0
+            m = (payload.get("choices") or [{}])[0].get("message", {}) or {}
         # THREE FIELD NAMES, NOT TWO. nvidia uses reasoning_content, cerebras and OLLAMA use
         # `reasoning`. Reading only the first two returns an empty string from every local
         # qwen3 model, which becomes `ERR:` in a brief section, which fails sections_ok,
@@ -766,6 +881,32 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
                     tool_calls=(m.get("tool_calls") or None),
                     deprecation=dep, status=200, error=None)
     except urllib.error.HTTPError as e:
+        # A PROVIDER THAT REJECTS THE STREAM FLAGS IS NOT A FAILING ROD. Some endpoints 400 on
+        # `stream_options` (or on `stream` itself) rather than ignoring it, and recording that as
+        # the model answering badly is defect 19 again - a transport condition stored as a
+        # capability. One retry with the flags removed, then the normal labelling applies.
+        if e.code in (400, 422) and payload_out.get("stream"):
+            for k in ("stream", "stream_options"):
+                payload_out.pop(k, None)
+            try:
+                req2 = urllib.request.Request(url, data=json.dumps(payload_out).encode("utf-8"),
+                                              headers=headers, method="POST")
+                t0 = time.time()
+                with urllib.request.urlopen(req2, timeout=max(timeout, 300)) as r2:
+                    dep = r2.headers.get("Deprecation")
+                    payload = json.loads(r2.read().decode("utf-8"))
+                m = (payload.get("choices") or [{}])[0].get("message", {}) or {}
+                text = (m.get("content") or m.get("reasoning_content") or m.get("reasoning") or "")
+                usage = payload.get("usage", {}) or {}
+                return dict(ok=True, latency=time.time() - t0, text=text,
+                            tokens=usage.get("completion_tokens", 0) or 0,
+                            transport=isinstance(payload.get("error"), dict),
+                            prompt_tokens=usage.get("prompt_tokens"),
+                            total_tokens=usage.get("total_tokens"),
+                            tool_calls=(m.get("tool_calls") or None),
+                            deprecation=dep, status=200, error=None)
+            except Exception:
+                pass                              # fall through to the normal error labelling
         # THE LAYER THAT KNOWS IS THE LAYER THAT LABELS. A caller downstream cannot tell a crashed
         # server from a wrong answer by inspecting an error string, and trying to is whack-a-mole
         # against every provider's phrasing forever. This is the same bug TCP had over wireless

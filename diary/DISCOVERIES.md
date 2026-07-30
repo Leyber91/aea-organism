@@ -991,3 +991,49 @@ time, by a different mechanism.** Fixed to 300s and the measured ceiling; re-run
 **THE SHAPE, a sixth time:** every one of these numbers was correct for the system that existed when
 it was written, and became wrong when something upstream changed. Nothing announces that. A constant
 tuned against an assumption should name the assumption, so the day it stops holding is visible.
+
+## D32 · Streaming is what makes "think as long as you like, but die in a minute" expressible (measured 2026-07-30)
+
+Luis: *"it should be more like if there's a one minute inactivity, but I think that we can set the
+output to a stream. I don't know if that's possible for all the models and all the modalities and
+all the types of providers."* Then, once it was measured: *"all our responses are the streaming
+kind, so we know in real time that the model is actually thinking. One minute with stream on means
+dead."*
+
+**WHY THE TWO HALVES ARE ONE DESIGN, and neither works alone.** A NON-streaming HTTP call sends
+nothing until the completion is finished, so the socket is idle for the whole generation: *inactive*
+and *still thinking* are the same observation. Any budget short enough to catch a dead peer also
+kills a rod mid-thought. That is the corner this code was in all day - `TIMEOUT=45` killed reasoning
+rods (D31), and raising it to 300 only meant a dead peer held a worker for five minutes. Streaming
+separates the two, and nothing else does.
+
+**AND THE MECHANISM IS FREE.** `urlopen(timeout=N)` applies N **per blocking socket read**. With a
+stream each delta is a read, so N becomes an inactivity budget with no clock to keep and nothing to
+get wrong. Without a stream the identical parameter silently means total time. One flag changes what
+the number means, which is why the old constant was so easy to mis-tune.
+
+**MEASURED BEFORE SWITCHING** - the answer to "is that possible for all providers":
+
+| | result |
+|---|---|
+| streaming works | **nvidia, groq, ollama** - 6/7 rods (the cerebras miss was a 404 on the model id, not a refusal to stream) |
+| worst inter-delta gap, any rod | **0.65s** |
+| max p95 gap | 0.048s |
+| 60s budget vs worst gap | **~92x margin** |
+| reasoning rods streaming `reasoning_content` | 3/3 |
+
+**THE TRAP, found by reading before writing.** `grid.stream_openai` yields CONTENT deltas only and
+drops `reasoning_content` deliberately - right for speech (D13: never say a rod's private
+deliberation aloud), fatal for a timeout. `nemotron-3-ultra-550b` emitted **60 reasoning deltas
+before its first content token at 13.0s**. Judged on content alone it looks silent that whole time,
+so a content-only inactivity budget would kill the deepest rod in the fleet first. **Liveness counts
+ANY delta; the answer keeps only content.** Both halves are needed and they are different halves.
+
+**WHAT ALMOST WENT MISSING.** The first streamed run reported `tokens=0` on nvidia and ollama while
+groq still reported: a stream omits `usage` unless asked. `stream_options: {"include_usage": true}`
+restores it on every plant. This file's own note says half an invoice is not an honest economy, and
+losing token accounting to a transport change would have been the census defect one layer down -
+measuring the harness, not the thing.
+
+Endpoints that reject the stream flags get ONE unstreamed retry rather than being recorded as
+failing rods - a transport condition stored as a capability is defect 19, again.

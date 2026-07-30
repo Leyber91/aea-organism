@@ -19,13 +19,18 @@ try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 
 OUT = os.path.join(grid.STATE, "extensive_census.json")
-# A GENEROUS INACTIVITY BUDGET, NOT A DEADLINE. 45s was sized for probes capped at 40-260 tokens.
-# With the caps gone (D29) a rod may legitimately emit 16384 tokens of reasoning before its answer,
-# and 45s cut those off and recorded TIMEOUT - a SLOW rod scored as an UNRELIABLE one, which is the
-# same class of error as counting an outage as a wrong answer. The repo's own rule for exactly this:
-# ~300s per read, about five times the worst latency ever measured here. urllib applies it per
-# blocking socket operation, so a rod that is still sending never trips it.
-TIMEOUT = 300
+# AN INACTIVITY BUDGET, AND IT IS ONLY MEANINGFUL BECAUSE EVERY CALL NOW STREAMS.
+#
+# 45s was sized for probes capped at 40-260 tokens and cut reasoning rods off mid-thought, recording
+# TIMEOUT - a SLOW rod scored as an UNRELIABLE one. Raising it to 300 fixed that and bought a new
+# problem: without a stream the socket is silent for the whole generation, so 300 was a total
+# deadline and a genuinely dead peer held a worker for five minutes.
+#
+# With `stream: true` on every call (grid.call_openai), each delta is a blocking read and urllib
+# applies this value PER READ - so it is now what Luis asked for: a rod may think for as long as it
+# likes, and a minute of true silence means dead. MEASURED before switching, across nvidia, groq and
+# ollama: worst inter-delta gap on any rod 0.65s, max p95 0.048s. 60s is ~92x the worst observed.
+TIMEOUT = 60
 
 NON_CHAT = re.compile(r"(ocr|image|vision|-vl\b|diffusion|edit|embed|rerank|guard|safety|nemoguard|gliner|pii|"
                       r"riva|parakeet|canary|whisper|tts|asr|reranking|nvclip|clip|paddle|nv-embed|"
