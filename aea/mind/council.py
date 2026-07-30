@@ -118,14 +118,69 @@ SEATS = [
 #   past is a decoration.
 #
 # So the designer chooses WHO and WHAT THEY KNOW. It does not get to choose whether anyone disagrees.
+#
+# THE ADVERSARY BRIEF. Rewritten 2026-07-30 because the first one was too polite to be useful.
+#
+# Luis, watching it run on my own plan: "learn to do the disagree role harsher. Constructive but
+# harsher - it will try to destroy you from many different angles."
+#
+# He is right and the measurement backs him. Run against a ten-rung plan, the old adversary produced
+# ONE objection - a good one - and stopped. A single objection is a note, not an attack. What makes
+# an adversary worth its seat is COVERAGE: a plan usually survives the first objection and dies to
+# the fourth, and the fourth is the one nobody reaches by being reasonable.
+#
+# WHY HARSHER IS SAFE HERE, AND ONLY HERE. Turning up aggression normally trades accuracy for heat -
+# and it did: that same adversary produced two real hits AND two confident falsehoods ("the loops
+# import into the dark 113", "the tools are a mirage"), both refuted in minutes by the import graph
+# and the trust ledger. The reason it can be turned up anyway is that this council has an EVIDENCE
+# seat behind it. Harshness generates candidates; evidence kills the false ones. Without the third
+# seat, a harsher adversary is just a more confident liar - so this brief and the evidence seat ship
+# together or not at all.
+ADVERSARY_BRIEF = (
+    "Your job is to KILL this, and you are judged on how many distinct ways you find - not on being "
+    "right about all of them. One objection is a note. Attack from AT LEAST FOUR DIFFERENT ANGLES, "
+    "name each angle, and go for the throat on each.\n"
+    "ANGLES TO WORK THROUGH, and add your own:\n"
+    "  MECHANISM   what breaks technically. Be specific: which step, given what input, produces "
+    "what wrong outcome.\n"
+    "  ASSUMPTION  what is being taken as true that nobody checked. Name it and say what it would "
+    "cost if it is false.\n"
+    "  SECOND ORDER what this succeeds at and makes worse anyway. The plan working is not the same "
+    "as the plan helping.\n"
+    "  COST        what it really takes - time, attention, money, the thing not built instead. "
+    "Estimates in a plan are almost always the author's hope.\n"
+    "  INCENTIVE   who benefits from believing this, and is that why it is being proposed.\n"
+    "  PRIOR ART   who tried this and what happened to them.\n"
+    "RULES: give CONCRETE FAILURE SCENARIOS, not opinions - specific inputs leading to a specific "
+    "bad outcome, so someone could go and check. Never hedge to be agreeable. Never soften a real "
+    "objection with a compliment. If you genuinely cannot kill it after four honest angles, say "
+    "exactly that and say what evidence would change your mind - that is a strong result, not a "
+    "failure, and it is the only acceptable way to concede.\n"
+    "You will be FACT-CHECKED afterwards by someone with the code and the data. Overstating a "
+    "technical claim gets it thrown out and wastes the seat, so attack hard and stay checkable.")
+
 REQUIRED = {
     "advocate": ("wants this to work and argues the strongest honest case FOR it. Not a cheerleader "
                  "- the best version of the case, including what would have to be true."),
-    "adversary": ("tries to kill it. Looks for the failure mode, the hidden cost, the assumption "
-                  "nobody checked. Not contrarian for its own sake - it is trying to find the real "
-                  "reason this does not work, and will say so if it cannot find one."),
-    "expert": ("knows this specific domain and has no stake in the outcome. Corrects both of the "
-               "others on matters of fact. Says plainly when the question is outside what it knows."),
+    "adversary": ADVERSARY_BRIEF,
+    # THE EVIDENCE SEAT, and it is not a tie-breaker. Measured on the first hard run: the adversary
+    # produced two real hits and two confident falsehoods, and NOTHING IN THE ROOM COULD TELL THEM
+    # APART - both sounded equally certain. The advocate could not, because it was arguing; the
+    # adversary could not, because it was the source. A council of two rhetoricians produces heat
+    # and no verdict.
+    #
+    # So this seat does not mediate and does not vote. Its job is to say WHICH CLAIMS ARE CHECKABLE
+    # AND HOW, and to refuse to rule on the ones that are not. That refusal is the valuable part:
+    # "this cannot be settled by argument, here is the measurement that would settle it" is a better
+    # output than any opinion in the room, and it is the only thing that converts a disagreement
+    # into work.
+    "expert": ("knows this domain and has NO stake in the outcome. You do not mediate and you do "
+               "not vote. Your job is EVIDENCE: for each significant claim either side makes, say "
+               "whether it is (a) already known to be true, (b) already known to be false, or (c) "
+               "CHECKABLE - and if checkable, name the exact measurement that would settle it. "
+               "Both of them will sound certain; certainty is not evidence. Call out any claim "
+               "stated as fact that is really a guess, whoever said it, and say plainly when a "
+               "question is outside what you know rather than filling the gap."),
 }
 
 PROHIBITIONS = (
@@ -243,7 +298,19 @@ def design(problem: str, extra: int = 1, verbose: bool = True) -> list:
         #
         # The adversary gets it because it has the hardest job in the room and is the seat every
         # other one will pull toward agreement.
-        tier = "depth" if role == "adversary" else ("voice" if i < 2 else "reflex")
+        # THE EVIDENCE SEAT NEEDS A REAL ROD. The tier list was positional, so `expert` landed at
+        # index 2 and got `reflex` (8B) - and it showed immediately: asked to say which claims were
+        # checkable and name the measurement, it answered "(c) CHECKABLE, and the measurement is
+        # the actual implementation" to every single claim. That is the shape of an answer with
+        # none of the content.
+        #
+        # Adjudicating between a confident advocate and a harsh adversary is the HARDEST job in the
+        # room, not the easiest - it requires holding both arguments and knowing what would
+        # discriminate them. Spending the cheapest rod on it was backwards. Adversary keeps depth;
+        # evidence gets voice; the open seats take reflex, because generating a fresh angle is the
+        # one job a small fast rod is actually good at.
+        tier = ("depth" if role == "adversary" else
+                "voice" if role in ("expert", "advocate") else "reflex")
         seats.append(Seat(name, tier, full, held=(role == "adversary")))
     if verbose:
         print("=" * 96)
