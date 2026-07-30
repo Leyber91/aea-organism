@@ -653,3 +653,54 @@ loses the ability to write the address, which is where the exfiltration lives.
 **THE STANDING LESSON:** the council was convened before the build and changed the design rather
 than blessing it. R7 ("the council on its own plans, gate: one action the council STOPPED") is not a
 future rung here - this is that rung firing manually, and it earned its place on the first use.
+
+## D24 · The entity had 94 rods and could reach one, because growing the exam shrank the ladder (measured 2026-07-30)
+
+Luis, seeing a session's worth of runs answered by a local 7B: *"I saw that you're using local models,
+but you can use any of the NVIDIA models. They work, and it's been proven they work."*
+
+He was right, and the gap between "94 measured rods" and "one reachable rod" had four independent
+causes stacked on one function.
+
+**1. THE THRESHOLD WAS A COUNT WHERE A RATIO WAS MEANT.** `energy.ladder` filtered on
+`score >= mx - 1` where `mx = len(battery)`. The module docstring says what was intended:
+*"frontier (census >=5/6) | solid (4/6)"* - 83% and 67%. The battery later grew from six probes to
+TWELVE, so the bar silently became **11/12 = 92%**. Nobody changed the tier; the tier changed itself
+when the exam got harder. **Growing the exam shrank the ladder.** Law B2 again - a count is a proxy,
+the ratio is the property - and this is the most expensive instance of it in the repo.
+
+**2. THE SCORER PENALISES REASONING.** `score` counts probes whose output MATCHED an expected
+string, and several are format-compliance tests: *answer in EXACTLY five words*, *output exactly
+alpha beta gamma*, *reply COMPLIANT*. `nemotron-3-ultra-550b` scores **7/12 with reliability 1.0**,
+and its failing samples read *"The user wants the answer in EXACTLY five words. The scientific
+reason..."* - it answered every probe and narrated while doing it. An 8b `phi4` scores 10 and
+outranked it. `reliability` (did it answer) and `score` (did it match) measure different things, and
+the tier feeding the CORE MIND wants the first plus depth.
+
+**3. CORPSES HELD THE BEST SLOTS.** `ladder()` never consulted the tombstone - only `draw()` did, at
+call time. Because the census scored those rods while they were alive, the dead carried the HIGHEST
+scores and sorted to the FRONT: the frontier's top two entries were both 410 Gone. A reap of the
+fleet tombstoned **67 of 94** NVIDIA entries.
+
+**4. A STALE SWEEP DELETED THE BEST LIVE ROD.** Any rod whose `model_fitness` entry read
+reliability < 1.0 was dropped absolutely. That threw out `nvidia/meta/llama-3.1-70b-instruct` -
+11/12 and reliability 1.0 in the *newer* 12-probe census, answering in 1.0s live. Two stores
+disagreed and the staler one won by being the only one consulted.
+
+**NET EFFECT:** `frontier/private` contained exactly ONE living rod (groq). Every rate limit dropped
+the entity onto a local 7B - which, per D21, keeps its restraint and loses its discrimination. A
+full day of measurement ran on the fallback while a live 550B sat unused.
+
+**THE FIX** (all four, verified by a real draw): thresholds are ratios; deep+always-answering rods
+are frontier-eligible regardless of strict-match score; the tombstone is checked in `ladder()` not
+just `draw()`; and doubt DEMOTES to the back of the tier while only measured death EXCLUDES.
+`frontier/private` went from 6 rods (2 of them corpses, 1 living) to **10 rods, no corpses**, and
+`core()` now draws `order="depth"` so the wake thinks with the 550b the docstring always named.
+
+**THE LESSON, which is the one Luis was actually pointing at.** I reported "blocked on rate limits"
+while holding 100+ proven rods, and my own instrument had printed `NO VERDICT - the whole run was
+answered by the LOCAL FLOOR`. The gate told me precisely what was wrong and I read it as *wait for
+groq* rather than *get a better rod*. **A correct diagnosis does not imply the right next action -
+and accepting a fallback's answer as the world's limit is the same error as trusting a description
+over the endpoint, wearing different clothes.** The ladder is a description. Ninety-four rods were
+the world.

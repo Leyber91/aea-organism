@@ -29,7 +29,20 @@ pool = orchestrator.load_pool()
 # capability census + fitness + meter and burns the best frontier rod available right now, falling
 # down the ladder on failure - all the way to the local floor, so the heartbeat never stops.
 def core(prompt, max_tokens=800):
-    r = energy.draw(prompt, tier="frontier", zone="private", mx=max_tokens, timeout=90)
+    # order="depth" - THE CORE WANTS THE BIGGEST MIND, not the best strict-match scorer.
+    #
+    # The census `score` counts probes whose output matched an expected string, and several of them
+    # test FORMAT COMPLIANCE ("answer in exactly five words", "output exactly alpha beta gamma").
+    # A reasoning rod that narrates fails those while being better at the judgement this loop
+    # actually does: nemotron-3-ultra-550b scores 7/12 with reliability 1.0, and an 8b phi4 scores
+    # 10. Ranking by score alone put an 8b ahead of a 550b for the entity's core deliberation.
+    #
+    # This is not a new preference. This module's own docstring names the pick ("a single big FREE
+    # model - Luis's pick: nemotron-550b"), and `energy.ladder` records the counsel duel of
+    # 2026-07-11: 675b beat 119b decisively on judgment at equal latency, which is why the `depth`
+    # ordering exists at all. It existed, it was correct, and nothing passed it.
+    r = energy.draw(prompt, tier="frontier", zone="private", mx=max_tokens, timeout=90,
+                    order="depth")
     if r["ok"]:
         return r["text"], f"{r['plant']}/{r['model']}"
     return "", f"none (all rods failed: {r['tried'][-3:]})"

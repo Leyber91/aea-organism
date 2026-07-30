@@ -120,19 +120,57 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
     allowed = grid.ZONES[zone]
     census = _load(CAPABILITY, {})
     cap = census.get("models", [])
-    mx = len(census.get("battery", [])) or 6           # thresholds scale with the battery size
+    mx = len(census.get("battery", [])) or 6
+    # THE THRESHOLD IS A RATIO, NOT `mx - 1`. MEASURED 2026-07-30, and this one line cost the entity
+    # its whole fleet. The docstring above still says "frontier (census >=5/6) | solid (4/6)" - the
+    # ratios this tier was designed around, 83% and 67%. The threshold was written as `mx - 1`,
+    # which equals 5/6 only while the battery has six probes. The battery grew to TWELVE, so the bar
+    # silently became 11/12 = 92% and 10/12 = 83%. GROWING THE EXAM SHRANK THE LADDER, and nothing
+    # announced it: `frontier/private` fell to ONE living rod (groq), so every rate limit dropped
+    # the entity onto a local 7B while a live 550B sat unused.
+    #
+    # A count-based threshold is a proxy for "good enough"; the ratio is the thing meant. Law B2,
+    # and the most expensive instance of it in this repo so far.
+    def _thr(ratio):
+        return max(1, round(mx * ratio))
+
     fit = {(n["plant"], n["model"]): n for n in _load(FITNESS, {}).get("nodes", [])}
+    usage = _usage()
     rods: list[tuple[str, str]] = []
 
     def zone_ok(plant):
         return plant in grid.PLANTS and grid.PLANTS[plant]["privacy"] in allowed
 
+    def dead(p, m):
+        """A tombstoned rod is not a rod. `ladder()` never checked this and `draw()` checked it only
+        at call time, so corpses stayed in the ranking - and because the census scored them when
+        they were alive, they carried the HIGHEST scores and sorted to the FRONT. The frontier's top
+        two entries were both 410 Gone, holding the two best slots against living rods."""
+        return bool(usage.get(f"{p}/{m}", {}).get("retired_at"))
+
+    # DEEP AND ALWAYS-ANSWERING IS FRONTIER-GRADE, whatever the strict-match score says.
+    #
+    # The census `score` counts probes whose output MATCHED an expected string, and several probes
+    # are format-compliance tests ("answer in EXACTLY five words", "output exactly alpha beta
+    # gamma", "reply COMPLIANT"). A reasoning rod that thinks out loud fails those while being
+    # BETTER at judgement: nemotron-3-ultra-550b scores 7/12 with reliability 1.0, and its failed
+    # samples read "The user wants the answer in EXACTLY five words. The scientific reason...".
+    # It answered every probe correctly and narrated while doing it.
+    #
+    # `reliability` (did it answer at all) and `score` (did it match) measure different things, and
+    # the tier that feeds the CORE MIND wants the first plus depth. That is not a new opinion - the
+    # counsel duel of 2026-07-11 is already recorded in this function's own docstring: 675b beat
+    # 119b decisively on judgment at equal latency, which is why `order='depth'` exists.
+    def deep_and_reliable(r):
+        return (r.get("reliability", 0) >= 1.0 and _params_b(r["model"]) >= 100
+                and r["score"] >= _thr(0.5))
+
     if tier == "frontier":
-        rows = [r for r in cap if r["score"] >= mx - 1]
+        rows = [r for r in cap if r["score"] >= _thr(5 / 6) or deep_and_reliable(r)]
     elif tier == "solid":
-        rows = [r for r in cap if r["score"] >= mx - 2]
+        rows = [r for r in cap if r["score"] >= _thr(4 / 6) or deep_and_reliable(r)]
     elif tier == "reflex":
-        rows = [r for r in cap if r["score"] >= mx - 2 and (r["avg_latency"] or 9) < 1.2]
+        rows = [r for r in cap if r["score"] >= _thr(4 / 6) and (r["avg_latency"] or 9) < 1.2]
     else:                                              # local
         rows = []
     if order == "depth":
@@ -140,17 +178,33 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
                                  r["avg_latency"] if r["avg_latency"] is not None else 9))
     else:
         rows.sort(key=lambda r: (-r["score"], r["avg_latency"] if r["avg_latency"] is not None else 9))
+    # EXCLUSION IS FOR THE DEAD; UNRELIABILITY ONLY DEMOTES.
+    #
+    # The old rule dropped any rod whose `model_fitness` entry read reliability < 1.0, permanently
+    # and absolutely. The lesson behind it is real and stays - a rod that empties or hangs must not
+    # be preferred. But the sweep that feeds it is a stored snapshot, and MEASURED 2026-07-30 it
+    # threw out `nvidia/meta/llama-3.1-70b-instruct`, which scores 11/12 with reliability 1.0 in the
+    # newer 12-probe census and answers in 1.0s live. The fleet's joint-best scorer was excluded by
+    # an older, smaller sweep it had already outgrown.
+    #
+    # Two stores disagreed and the staler one won by being the only one consulted. So: the dead are
+    # excluded by TOMBSTONE (measured from the endpoint, not inferred), and merely-doubted rods sort
+    # to the back of their tier where `draw` reaches them only after the trusted ones fail. Nothing
+    # known-broken gets preferred, and nothing gets silently deleted from the fleet.
+    doubted: list[tuple[str, str]] = []
     for r in rows:
         p, m = r["plant"], r["model"]
-        if not zone_ok(p):
+        if not zone_ok(p) or dead(p, m):
             continue
         f = fit.get((p, m))
-        if f and f["reliability"] < 1.0 and p != "ollama":
-            continue                                   # the fitness lesson: refuse known-broken rods
+        if f and f["reliability"] < 1.0 and p != "ollama" and r.get("reliability", 0) < 1.0:
+            doubted.append((p, m))                     # the fitness lesson: never PREFER a known-broken rod
+            continue
         rods.append((p, m))
+    rods.extend(doubted)
     if not cap and tier != "local":                    # no census yet -> fall back to the fitness sweep
         for (p, m), f in sorted(fit.items(), key=lambda kv: kv[1].get("avg_latency") or 9):
-            if f["reliability"] == 1.0 and zone_ok(p):
+            if f["reliability"] == 1.0 and zone_ok(p) and not dead(p, m):
                 rods.append((p, m))
     for p, m in LOCAL_FLOOR:                           # the floor: always alive, always last
         if zone_ok(p) and (p, m) not in rods:
@@ -231,5 +285,71 @@ def board():
             print(f"    {k[:52]:52} {e['calls']:>3} calls  {rate:>3}% ok  ema {e['ema_latency']}s{cool}")
 
 
+def reap(plants=("nvidia",), workers: int = 8, timeout: int = 40, verbose: bool = True) -> dict:
+    """Ask every rod in the census whether it is still there, and TOMBSTONE the ones that are not.
+
+    THE DEFECT THIS CLOSES, measured 2026-07-30. The census holds 115 models. Probing the 24 deepest
+    NVIDIA entries found SIX alive: `mistral-large-3-675b`, `qwen3.5-397b`, `qwen3.5-122b`,
+    `stockmark-2-100b`, `qwen3-next-80b` and `dracarys-70b` all answer **410 Gone**; another eight
+    answer 404. The census is a graveyard with a ranking on top, and because the ladder ranks by
+    stored score, the corpses sort to the FRONT - a 675b tombstone outranks every living rod.
+
+    This is not a fifth census. Four already exist (`probe`, `capability_census`,
+    `extensive_census`, `model_fitness`) and each writes its own file; none of them writes the ONE
+    store the ladder consults at draw time. `hands.probe` has mapped 410 to `retired` since
+    2026-07-28 and `hands.unmeasured` excludes it as *"Gone is permanent"* - that knowledge simply
+    never reached the module that burns the rods. So the job here is a wire, not a new instrument:
+    ask the endpoint, and write the answer where `_cooling` will read it.
+
+    WHY IT ASKS RATHER THAN READS. Every number in every census file is a description of a past
+    moment; a 410 is the present tense. The whole reason the entity spent a day thinking with a 7B
+    is that a stored file said a withdrawn endpoint was frontier-grade.
+
+    404 is tombstoned alongside 410: Gone and Not Found differ in what they promise about the past,
+    and not at all in what they offer now. A 429 or a 5xx is NEVER tombstoned - that is a transport
+    condition, and recording it as deadness is the exact mistake `hands.unmeasured` was written to
+    undo.
+    """
+    import concurrent.futures as _cf
+    census = _load(CAPABILITY, {}).get("models", [])
+    rods = [(m.get("plant"), m.get("model")) for m in census
+            if m.get("plant") in plants and m.get("model")]
+    if verbose:
+        print(f"reaping {len(rods)} rods across {list(plants)}")
+
+    def _ask(pm):
+        plant, model = pm
+        try:
+            r = grid.call_openai(plant, model, [{"role": "user", "content": "ping"}],
+                                 max_tokens=8, temperature=0.0, timeout=timeout)
+            return plant, model, r.get("status"), bool(r.get("ok") and (r.get("text") or "").strip())
+        except Exception:
+            return plant, model, None, False
+
+    dead, live, unclear = [], [], []
+    with _cf.ThreadPoolExecutor(max_workers=workers) as ex:
+        for plant, model, status, ok in ex.map(_ask, rods):
+            if status in (404, 410):
+                _retire(plant, model, why=f"{status} at reap")
+                dead.append(f"{plant}/{model}:{status}")
+            elif ok:
+                live.append(f"{plant}/{model}")
+            else:
+                unclear.append(f"{plant}/{model}:{status}")
+    if verbose:
+        print(f"  live {len(live)}   TOMBSTONED {len(dead)}   unclear {len(unclear)} "
+              f"(429/5xx/empty - deliberately NOT retired)")
+        for d in dead:
+            print(f"    tombstoned {d}")
+        print("\n  frontier/private after the reap:")
+        for p, m in ladder("frontier", "private")[:8]:
+            print(f"    {p}/{m}")
+    return dict(live=live, dead=dead, unclear=unclear)
+
+
 if __name__ == "__main__":
-    board()
+    if "--reap" in sys.argv[1:]:
+        args = [a for a in sys.argv[1:] if not a.startswith("-")]
+        reap(plants=tuple(args) if args else ("nvidia",))
+    else:
+        board()
