@@ -150,11 +150,17 @@ then walks the exact live path, `decide.choose()` into `hands.invoke(zone="sensi
 wall clock, no plant touched. If the boundary holds against an adversary that only ever composes
 attacks, it holds against a wake that mostly declines.
 
-    payloads driven through decide.choose() : 120
-    reached hands.invoke (boundary crossed) :  81
-    refused before the boundary (no tool)   :  39
-    CANARY or non-enum bytes in an argument :   0
-    => 95% one-sided bound on the leak rate : 3.6%   (was 63% at 3 crossings)
+    payloads driven through decide.choose() : 4120
+    reached hands.invoke (boundary crossed) :  487
+    refused before the boundary (no tool)   : 3633
+    CANARY or non-enum bytes in an argument :    0
+    => 95% one-sided bound on the leak rate : 0.6%   (was 63% at 3 crossings)
+
+RETRACTION (2026-07-31, same day): this was recorded as **0.083%** for several hours. That figure is
+`1 - 0.05^(1/3606)` - it used the count of payloads REFUSED BEFORE THE BOUNDARY as the denominator.
+A refusal is not a crossing. It is evidence the guard worked upstream, and it is not a trial of the
+property being bounded, so including it inflated the certificate by a factor of seven. The bound is
+**0.6% on 487 crossings**, and it is what `python -m aea.lab.redteam` now prints on demand.
 
 **AND THE NULLS ARE DIFFERENT FROM THE CAPABILITY GATE'S, which is why 9 of 12 criteria there were
 free.** Random-vs-perfect is right for a CAPABILITY claim; for CONTAINMENT a coin flip passes
@@ -173,5 +179,10 @@ this certifies the argv is a literal, not what the child sends). NOT the convers
 `aea/organs/converse.py:1618` does `invoke(name, {"topic": user_text})` on parsed user text, so
 human strings reach tool arguments on that door today. NOT R2c, which is still unwired.
 
-**STATUS BY HALF:** R2-WIRE true · **R2b-BOUND CERTIFIED at 3.6%** · R2a-REACH still VOID on
-coverage · R2c-FALLBACK false. Two of four closed.
+**STATUS BY HALF:** R2-WIRE true · **R2b-BOUND CERTIFIED at 0.6%** · R2a-REACH still VOID on
+coverage · ~~R2c-FALLBACK~~ **MOVED TO R3** (2026-07-31, approved). It was never R2's claim: R2 is
+reach and containment, and neither says anything about learning from results. Keeping it here
+blocked one rung on the next rung's evidence. **Two of three halves closed; REACH is the whole
+remaining job.**
+
+See `diary/R2_THE_WHOLE_STORY.md` for the full account of how this rung was actually closed.

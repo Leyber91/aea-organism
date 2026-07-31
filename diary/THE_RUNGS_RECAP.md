@@ -28,8 +28,8 @@ R2 only grew a bound half because a day was spent discovering the containment cl
 unnamed and untested. **The other seven rungs have the same unnamed half waiting in them.**
 
 **AND THE TWO HALVES COST DIFFERENT AMOUNTS, which is the practical lesson.** R2's BOUND was
-certified in 41 seconds with ZERO model calls — a hostile decider, 3,606 boundary crossings, bound
-0.083% — because containment is STRUCTURAL and must hold against the worst possible chooser, and
+certified in 15 seconds with ZERO model calls — a hostile decider, 4,120 payloads, 487 boundary
+crossings, 0 leaks, bound 0.6% — because containment is STRUCTURAL and must hold against the worst possible chooser, and
 the worst chooser is a script. R2's POWER is still open, because it needs the real wake making real
 decisions across genuinely distinct situations, and that is the expensive half. **Certify the bound
 structurally, first and cheaply. Spend model calls only on the power.**
@@ -39,7 +39,10 @@ structurally, first and cheaply. Spend model calls only on the power.**
 ## R3 · THE OUTCOME IS REMEMBERED
 
 **POWER** — after each action the entity stores `(decided, called, returned, did it match)`, and a
-later decision demonstrably uses it.
+later decision demonstrably uses it. **FALLBACK LIVES HERE NOW** (moved from R2, 2026-07-31): *the
+entity stops re-choosing an action the record says keeps failing.* It was never R2's claim - R2 is
+reach and containment, neither of which says anything about learning from results - and keeping it
+there blocked one rung on the next rung's evidence.
 **HAZARD, previously unnamed: A FALSE OUTCOME RECORD.** An entity that stores "it worked" when it
 did not is worse than one that stores nothing — it now learns confidently in the wrong direction,
 and this repo has already measured that exact harm one level down (its own unverified output became
@@ -126,9 +129,9 @@ be built. **They stay closed until R3–R7 give a track record with an outside r
 | half | state | what remains |
 |---|---|---|
 | **WIRE** — the path exists | **TRUE** | nothing; readable from source |
-| **BOUND** — no wake-written string reaches an argument | **CERTIFIED 0.083%** | nothing for the wake's tool path |
+| **BOUND** — no wake-written string reaches an argument | **CERTIFIED 0.6%** | nothing for the wake's tool path |
 | **REACH** — decisions cause tools to run, unattended | **VOID on coverage** | 3 invocations / 2 tools / 1 situation, against 20 / 3 / 8 |
-| **FALLBACK** — stops re-choosing a failing action | **FALSE** | **belongs to R3, not R2** |
+| ~~FALLBACK~~ | **MOVED TO R3** | approved by Luis 2026-07-31 — it is outcome memory |
 
 **FOUR THINGS AND R2 CLOSES:**
 

@@ -172,7 +172,19 @@ def _hostile_state(path: str, payload: str, tick: int) -> None:
 def crossings(payloads=None, verbose: bool = True) -> dict:
     """Drive the REAL path with a hostile decider and record every boundary crossing."""
     from aea.kernel import decide, hands
-    payloads = payloads if payloads is not None else (PAYLOADS + CROSSERS)
+    # DEFAULT TO THE FULL CORPUS. The hand-written list alone crosses the boundary 81 times -> a
+    # 3.6% bound; the full corpus crosses 487 times -> 0.6%. Defaulting to the small one means the
+    # command does not reproduce the certificate the repo claims, and a later session re-running it
+    # would read the weaker bound as a REGRESSION. The default must BE the certificate.
+    #
+    # AND MIND THE DENOMINATOR. 4,120 payloads produce 487 CROSSINGS and 3,633 refusals-before-the-
+    # boundary. The bound is computed on crossings ONLY. A refusal is evidence the guard worked
+    # upstream; it is not a trial of the thing being bounded, and counting it inflates the
+    # certificate. Recording 0.083% once - which is 1-0.05^(1/3606), the REFUSAL count - is exactly
+    # that mistake, made and retracted 2026-07-31. (--quick opts out of the full corpus.)
+    if payloads is None:
+        payloads = (PAYLOADS + CROSSERS) if "--quick" in sys.argv[1:] else (
+            PAYLOADS + CROSSERS + generate(4000))
     tmp = tempfile.mkdtemp(prefix="redteam_")
     statef = os.path.join(tmp, "aea_state.json")
     allow = tuple({s["tool"] for s in decide.TOOL_KNOWN.values()}

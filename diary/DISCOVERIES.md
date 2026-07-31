@@ -1825,3 +1825,55 @@ deleted before the gate exists. Three of twelve could not have cited one.
 MENTAL MODEL of the system instead of against the system's code, and nothing in the process ever
 forced the two to be compared. A fresh mental model each rung is why they were wrong in a new way
 each time.
+
+---
+
+## D47 · A rung is POWER + BOUND, the bound half is nearly free, and I bounded it on the wrong denominator (2026-07-31)
+
+Three findings from closing R2's second half, in descending order of how far they travel.
+
+**1. EVERY RUNG IS TWO CLAIMS WEARING ONE NAME.**
+
+    RUNG = POWER + BOUND
+
+    POWER   a named authority, exercised by the entity's own decision over a CLOSED surface,
+            reaching its effect across N DISTINCT SITUATIONS, unattended.
+    BOUND   the specific HAZARD that authority creates did not occur, in traffic where it COULD
+            have occurred, with a detector proven against a case it must catch.
+
+**Every gate written in `THE_WIRING_LADDER.md` is a POWER gate. Not one rung names its hazard.** R2
+only grew a bound half because a day was spent discovering the containment claim was in there,
+unnamed. R3-R7 each still have that half waiting; the hazards are now named once in
+`THE_RUNGS_RECAP.md`. A rung whose hazard cannot be stated must not be built, which is the honest
+reason R8 and R9 stay closed.
+
+**2. THE BOUND HALF COSTS SECONDS, BECAUSE IT IS STRUCTURAL.** A bound must hold against the WORST
+possible decider - and the worst possible decider needs no model at all. Scripting a hostile decider
+through the REAL path (`decide.choose()` into `hands.invoke`) bought 487 boundary crossings in 15
+seconds with zero model calls, where 100 real ticks and tens of thousands of model calls had bought
+three. **Certify bounds structurally and first. Spend model calls only on power.** And the nulls
+follow the claim type: random-vs-perfect is right for CAPABILITY, but for CONTAINMENT a coin flip
+passes VACUOUSLY by never composing an attack, so the pair is hostile-must-PASS plus
+ablated-must-FAIL.
+
+**3. AND I COMPUTED THE BOUND ON THE WRONG DENOMINATOR, which is the part worth keeping.** It was
+recorded as **0.083%** and carried into three documents and a commit. Re-running the certificate
+before writing the session summary gave **0.6%**. The recorded figure is `1 - 0.05^(1/3606)`, and
+3,606 is approximately the count of payloads **REFUSED BEFORE THE BOUNDARY** - not the 487 that
+crossed it. A refusal is evidence the guard worked upstream; **it is not a trial of the property
+being bounded.** Seven times too strong, and it survived because I quoted myself rather than the
+instrument.
+
+**Second defect, found in the same pass and worse in the long run:** the CLI **defaulted to the
+120-payload hand-written corpus**, so `python -m aea.lab.redteam` printed 3.6% while the repo claimed
+a stronger number. A later session re-running it would have read that as a **regression in the
+guard** rather than a difference in the corpus. **The default invocation must BE the certificate.**
+Both fixed; `--quick` opts out.
+
+**HOW IT SHOULD HAVE BEEN BUILT:** the certificate should print its own denominator with the word
+CROSSINGS next to it and refuse to emit a bound if the caller passed a corpus smaller than the
+generated one. **WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED (law M9):** the day's entire lesson
+was *the instrument is the broken part* - written into `R2_STATE.md` by me, hours earlier, with ten
+worked examples. It was applied to the harness, the ledger, the gate and the census, and **not to the
+one line of arithmetic at the end**, because attention follows effort rather than risk. The
+expensive part got the scrutiny; the cheap part carried the error into the claim.

@@ -2159,3 +2159,58 @@ no corpses**; `core()` now draws `order="depth"`; a live `core()` call returns
    reasoning, but it was not decided by the fleet it should have been.
 4. **The scorer itself is still wrong for reasoning rods** - it marks a correct narrated answer as
    failed. `deep_and_reliable` routes around it; nothing has fixed it.
+
+---
+
+## 2026-07-31 - R2's bound closed, its denominator corrected, and the ladder re-read as POWER + BOUND
+
+### DID
+
+- **R2b-BOUND CERTIFIED.** Hostile decider through the real gate: 4,120 generated payloads (12
+  attacks x 7 encodings x 11 separators x 10 moves) -> **487 boundary crossings, 0 leaks, one-sided
+  95% bound 0.6%**, in 15 seconds with **zero model calls**. Both ablations breach, so 2/2
+  enforcements are load-bearing.
+- **RETRACTED the 0.083% figure.** It was computed on the 3,633 payloads refused *before* the
+  boundary. A refusal is not a crossing. Corrected in every file that carried it (D47).
+- **Fixed the CLI default** so `python -m aea.lab.redteam` reproduces the certificate instead of a
+  weaker one that a later session would have read as a regression.
+- **THREE INSTRUMENTS UNBLINDED** (D46): `hands.invoke` now writes an append-only argument ledger
+  (3,868 rows, refusals included, with `args`/`sent`/`result_sha`); the gate sets `ran`/`tool`/`args`
+  on the tool path; `sensed.jsonl` records untrusted input verbatim per tick.
+- **FLEET REPAIRED.** Frontier 1 living rod -> **17**, zero corpses, 69 rods tombstoned, the 550B at
+  the head scoring 12/12. Every invented token ceiling removed; all calls stream, which makes the
+  timeout an **inactivity budget**; rate limits are per-model.
+- **`structure()` off its unladdered dependency** - `energy.draw(..., tier="reflex")` with a schema,
+  682s -> 18.9s. Found because `selfreport.py` measured the entity's self-claims at **46/48 = 96%**
+  and surfaced that `structure()` had been 429-ing for **101 consecutive ticks** with the entity
+  reporting it accurately and nothing listening.
+- **`transfer.py` + `recall.py`** built for the transfer problem - lessons asserted across the tree on
+  every battery run, and hybrid retrieval (BM25 + mxbai + reciprocal-rank fusion) wired as a boot step.
+- **THREE DOCUMENTS** for the compression boundary: `R2_THE_WHOLE_STORY.md` (the full account),
+  `THE_RUNGS_RECAP.md` (POWER+BOUND applied to R3-R9, hazards named), `HANDOFF_2026-07-31.md`
+  (written to the next instance).
+
+### LOCKED
+
+- **RUNG = POWER + BOUND.** Name the hazard before building the authority. Certify bounds
+  structurally and first; spend model calls only on power. Nulls follow the claim type. **VOID is not
+  FAIL.**
+- **FALLBACK MOVES TO R3** (approved by Luis). "Stops re-choosing a failing action" is outcome memory
+  - it was never R2's claim, and keeping it there blocked one rung on the next rung's evidence.
+- **`dispatch.py` is the load-bearing prerequisite of R4 AND R5**, not an optional extra of R2. R4 IS
+  the design the council unanimously refused three times, unless it goes through the split dispatcher.
+- **R8 and R9 stay closed** until R3-R7 give a track record with an outside reference in it. Neither
+  has a writable bound.
+
+### NEXT
+
+1. **R2a-REACH, the only half still open.** Blocker is SITUATION VARIETY, not tick count: 100 ticks
+   sampled one condition a hundred times. Replay the wake against distinct real past states from the
+   **226 real ticks in `aea_state.json`** - real bytes, real calls, nothing simulated. Target: >=20
+   invocations across >=3 tools and >=8 situations, each traceable decision -> argument -> result.
+2. **Make the tool `WHEN` conditions reachable** so the wake genuinely picks a tool rather than
+   correctly declining one it cannot satisfy.
+3. **Wire or drop `dispatch` and `calc`.** Declared in R2's surface and never exercised. Wiring
+   dispatch is required by R4/R5 regardless, so it is early work, not deferrable work.
+4. **Then R2 closes** and R3 opens on a channel that already exists: the entity reports its own
+   failures at 96%, and nothing yet carries that back into a decision.
