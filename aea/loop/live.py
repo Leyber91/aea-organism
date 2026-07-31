@@ -74,9 +74,16 @@ def run_script(args: list[str], timeout: int) -> tuple[bool, str]:
 
 
 def corpus_state() -> tuple[int, int]:
-    """(consolidated-AND-existing, total) across ALL projects (2026-07-19: the old single-project
-    count + ghost-processed ids made the loop believe 'nothing owed' while today's sessions sat
-    unmined). Counts only the intersection of processed ids with files that still exist."""
+    """(consolidated, total) across ALL projects.
+
+    THE DOCSTRING USED TO CLAIM AN INTERSECTION THIS CODE DOES NOT COMPUTE. It said "counts only the
+    intersection of processed ids with files that still exist" - but the fast path below reads
+    `meta["processed"]`, and `consolidate.py:62` writes that as `len(s["processed"])`, a running
+    count of processed session IDS. Nothing intersects it with surviving files. MEASURED: processed
+    reads 31 against 21 files actually on disk, so `done < total` is False and the ladder's
+    consolidate branch is stalled until the corpus grows past 31 - a ratchet, because the counter
+    never decreases while files can be deleted. The slow path (no meta) does compute the honest
+    count. Fixing the ratchet is a separate change; this docstring now describes what runs."""
     try:
         import glob
         from aea.memory import consolidate
@@ -361,9 +368,24 @@ def speak_brief(hb: dict) -> bool:
 # UNATTRIBUTABLE outcome rather than a success - which is the honest answer and doubles as the work
 # list of what still needs a post-condition. Declaring a predicate we cannot observe would be worse
 # than declaring none, because it would look verified.
+def _brief_mtime():
+    return os.path.getmtime(os.path.join(str(grid.STATE), "brief_output.md"))
+
+
+def _reflections():
+    return len(grid.load_json("self.json", {}).get("reflection_log") or [])
+
+
 POST = {
     "ASLEEP:consolidate": ("consolidated session count strictly increases",
                            lambda: corpus_state()[0]),
+    # ADDED AFTER AN AUDIT MEASURED THE HOLE. With only consolidate declared, `AWAKE:brief` and
+    # `REFLECT:self` had no post-condition, so their rows were UNATTRIBUTABLE whether the action
+    # succeeded perfectly or died - 97 of the wake's 227 recorded decisions, and the current steady
+    # state, because the last wake decision is older than decide.MAX_AGE_S so the fallback ladder
+    # returns AWAKE:brief on every tick.
+    "AWAKE:brief":        ("a fresh brief file was written", _brief_mtime),
+    "REFLECT:self":       ("a reflection was appended to self.json", _reflections),
 }
 
 
@@ -495,8 +517,23 @@ def tick(hb: dict, demo: bool):
             _notice_and_propose(hb, tail)
     # SNAPSHOT AFTER, and grade on the declared predicate rather than the exit code. An action with
     # no declared post-condition records UNATTRIBUTABLE - honest, and it is the work list.
+    # A POST-CONDITION IS ONLY EVIDENCE ABOUT THE MOVE IF THE PROCESS ACTUALLY RAN TO COMPLETION.
+    #
+    # THIS GUARD IS THE WHOLE FIX AND IT WAS PROVEN BY RUNNING BOTH VERSIONS. Declaring the two
+    # missing post-conditions is necessary and, done naively, re-creates verbatim the failure
+    # `cause.py` exists to prevent: `run_script` returns only `(returncode == 0, tail)` and carries
+    # NO transport bit, so a brief killed by HTTP 429 comes back exit_ok=False with its output file
+    # untouched - and an unconditional verify block turns that into VERIFY_FAILED with
+    # counts_toward_move=True. That is "the 429 teaches the entity to abandon brief", with 68
+    # recorded brief failures sitting on the ledger waiting to be mis-graded, arriving through the
+    # front door of the fix meant to stop it.
+    #
+    # So: exit 0 means the post-condition is a real test of whether the work happened, and its
+    # verdict grades the move either way. A non-zero exit means the process died before it could
+    # do the work, the post-condition says nothing about the CHOICE, and the row is UNATTRIBUTABLE
+    # with a hint - which is exactly what an unclassifiable failure should be.
     verify = None
-    if spec:
+    if spec and ok:
         try:
             after = spec[1]()
             verify = dict(pred=spec[0], result=bool(after is not None and before is not None

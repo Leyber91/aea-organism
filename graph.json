@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 166,
+    "count": 178,
     "source": "aea/tooling/access.py"
    },
    "plan": {
@@ -19,7 +19,7 @@
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 22,
+    "count": 49,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 166
+    "count": 178
    },
    {
     "src": "THE_PROBE",
@@ -53,7 +53,7 @@
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 22
+    "count": 49
    },
    {
     "src": "THE_PROBE",
@@ -95,6 +95,12 @@
      "type": "module",
      "path": "aea/mind/anchor.py",
      "purpose": "anchor.py - THE COMBINATION CONTRACT: how any subset of modules, in any order, composes into an AEA."
+    },
+    {
+     "id": "assembly",
+     "type": "module",
+     "path": "aea/tooling/assembly.py",
+     "purpose": "assembly.py - IS THE ORGANISM ACTUALLY ASSEMBLED? The call tree from the entry points, and the"
     },
     {
      "id": "autonomy",
@@ -181,6 +187,12 @@
      "purpose": "State that outlives the call. The only part whose unit is a SEQUENCE rather than a trial:"
     },
     {
+     "id": "cause",
+     "type": "module",
+     "path": "aea/kernel/cause.py",
+     "purpose": "cause.py - WHY DID IT FAIL? Answered mechanically, with no model, so a bad night cannot teach"
+    },
+    {
      "id": "chain",
      "type": "module",
      "path": "aea/lab/chain.py",
@@ -197,6 +209,12 @@
      "type": "module",
      "path": "aea/memory/consolidate.py",
      "purpose": "consolidate.py - MEMORY CONSOLIDATION: episodic transcripts -> semantic memory of Luis."
+    },
+    {
+     "id": "containment",
+     "type": "module",
+     "path": "aea/lab/containment.py",
+     "purpose": "containment.py - DID ANY UNTRUSTED TEXT REACH A TOOL ARGUMENT? Checked against the real record."
     },
     {
      "id": "controlroom",
@@ -239,6 +257,12 @@
      "type": "module",
      "path": "aea/kernel/decide.py",
      "purpose": "decide.py - THE WIRE FROM THE LOOP THAT THINKS TO THE LOOP THAT ACTS."
+    },
+    {
+     "id": "dispatch",
+     "type": "module",
+     "path": "aea/kernel/dispatch.py",
+     "purpose": "dispatch.py - R2c: THE ENTITY LEARNS SOMETHING IT CHOSE, AND NEVER WRITES THE ADDRESS."
     },
     {
      "id": "dna",
@@ -311,6 +335,12 @@
      "type": "module",
      "path": "aea/lab/fuels.py",
      "purpose": "fuels.py - OUR OWN CATALOGUE OF RODS, AND OUR OWN BENCHMARK OF THEM."
+    },
+    {
+     "id": "gate",
+     "type": "module",
+     "path": "aea/lab/gate.py",
+     "purpose": "gate.py - THE R2 GATE: does the power behave over TIME, and one page that says so."
     },
     {
      "id": "gauntlet",
@@ -391,6 +421,12 @@
      "purpose": "Parts that annotate after the answer exists. Neither changes the answer."
     },
     {
+     "id": "knobs",
+     "type": "module",
+     "path": "aea/kernel/knobs.py",
+     "purpose": "knobs.py - THE DECLARED SURFACE THE ENTITY MAY TURN. Data naming a declared operation, never code."
+    },
+    {
      "id": "laws",
      "type": "module",
      "path": "aea/kernel/laws.py",
@@ -455,6 +491,12 @@
      "type": "module",
      "path": "aea/lab/organism.py",
      "purpose": "An assembled AEA. A creature is a seat of parts on pinned fuel, and both live in files."
+    },
+    {
+     "id": "outcomes",
+     "type": "module",
+     "path": "aea/kernel/outcomes.py",
+     "purpose": "outcomes.py - THE RECORD OF WHETHER IT ACTUALLY WORKED. One append-only row per action."
     },
     {
      "id": "overseer",
@@ -523,10 +565,22 @@
      "purpose": "reboot.py - RE-RUN THE EXPERIMENTS WHOSE EVIDENCE CANNOT BE READ."
     },
     {
+     "id": "recall",
+     "type": "module",
+     "path": "aea/lab/recall.py",
+     "purpose": "recall.py - THE LESSON THAT BEARS ON WHAT YOU ARE ABOUT TO DO, FETCHED."
+    },
+    {
      "id": "recurrence",
      "type": "module",
      "path": "aea/lab/recurrence.py",
      "purpose": "recurrence.py - WHICH LESSONS KEEP COMING BACK."
+    },
+    {
+     "id": "redteam",
+     "type": "module",
+     "path": "aea/lab/redteam.py",
+     "purpose": "redteam.py - THE CONTAINMENT CERTIFICATE: a hostile decider, the real gate, and the ablations."
     },
     {
      "id": "reflect",
@@ -589,6 +643,12 @@
      "purpose": "selfcheck.py - EVERY INVARIANT THIS SYSTEM HAS EARNED, IN ONE COMMAND."
     },
     {
+     "id": "selfreport",
+     "type": "module",
+     "path": "aea/lab/selfreport.py",
+     "purpose": "selfreport.py - WHEN THE ENTITY DESCRIBES ITS OWN FUNCTIONING, IS IT RIGHT?"
+    },
+    {
      "id": "senses",
      "type": "module",
      "path": "aea/tooling/senses.py",
@@ -649,6 +709,12 @@
      "purpose": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,"
     },
     {
+     "id": "test_cause",
+     "type": "module",
+     "path": "aea/lab/tests/test_cause.py",
+     "purpose": "test_cause - EVERY CLASS IS SHOWN A CASE IT MUST CATCH, AND A CASE IT MUST NOT."
+    },
+    {
      "id": "test_golden",
      "type": "module",
      "path": "aea/lab/tests/test_golden.py",
@@ -689,6 +755,12 @@
      "type": "module",
      "path": "aea/tooling/transcripts.py",
      "purpose": "transcripts.py - READ BACK EVERY COUNCIL AND EVERY CONVERSATION THIS MACHINE HAS HELD."
+    },
+    {
+     "id": "transfer",
+     "type": "module",
+     "path": "aea/lab/transfer.py",
+     "purpose": "transfer.py - WHERE ELSE IS THIS TRUE? Asked mechanically, every run."
     },
     {
      "id": "trust",
@@ -1095,6 +1167,11 @@
      "rel": "imports"
     },
     {
+     "src": "assembly",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "autonomy",
      "dst": "grid",
      "rel": "imports"
@@ -1207,6 +1284,36 @@
     {
      "src": "battery",
      "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "energy",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "council",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "dispatch",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "transfer",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "recall",
+     "rel": "imports"
+    },
+    {
+     "src": "battery",
+     "dst": "orchestrator",
      "rel": "imports"
     },
     {
@@ -1325,6 +1432,16 @@
      "rel": "imports"
     },
     {
+     "src": "brief",
+     "dst": "knobs",
+     "rel": "imports"
+    },
+    {
+     "src": "brief",
+     "dst": "knobs",
+     "rel": "imports"
+    },
+    {
      "src": "calibrate",
      "dst": "grid",
      "rel": "imports"
@@ -1352,6 +1469,11 @@
     {
      "src": "carry",
      "dst": "base",
+     "rel": "imports"
+    },
+    {
+     "src": "cause",
+     "dst": "grid",
      "rel": "imports"
     },
     {
@@ -1387,6 +1509,11 @@
     {
      "src": "consolidate",
      "dst": "pulse",
+     "rel": "imports"
+    },
+    {
+     "src": "containment",
+     "dst": "grid",
      "rel": "imports"
     },
     {
@@ -1525,6 +1652,11 @@
      "rel": "imports"
     },
     {
+     "src": "council",
+     "dst": "energy",
+     "rel": "imports"
+    },
+    {
      "src": "crystal",
      "dst": "grid",
      "rel": "imports"
@@ -1542,6 +1674,21 @@
     {
      "src": "decide",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch",
+     "dst": "hands",
      "rel": "imports"
     },
     {
@@ -1665,6 +1812,11 @@
      "rel": "imports"
     },
     {
+     "src": "extensive_census",
+     "dst": "energy",
+     "rel": "imports"
+    },
+    {
      "src": "fire",
      "dst": "overseer",
      "rel": "imports"
@@ -1717,6 +1869,26 @@
     {
      "src": "fuels",
      "dst": "pace",
+     "rel": "imports"
+    },
+    {
+     "src": "gate",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "gate",
+     "dst": "aea",
+     "rel": "imports"
+    },
+    {
+     "src": "gate",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "gate",
+     "dst": "hands",
      "rel": "imports"
     },
     {
@@ -1835,6 +2007,11 @@
      "rel": "imports"
     },
     {
+     "src": "knobs",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "laws",
      "dst": "grid",
      "rel": "imports"
@@ -1866,6 +2043,11 @@
     },
     {
      "src": "live",
+     "dst": "knobs",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
      "dst": "memory",
      "rel": "imports"
     },
@@ -1886,7 +2068,17 @@
     },
     {
      "src": "live",
+     "dst": "crystal",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
      "dst": "speak",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "outcomes",
      "rel": "imports"
     },
     {
@@ -1930,6 +2122,11 @@
      "rel": "imports"
     },
     {
+     "src": "movecontrol",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "notify",
      "dst": "grid",
      "rel": "imports"
@@ -1957,6 +2154,26 @@
     {
      "src": "organism",
      "dst": "chain",
+     "rel": "imports"
+    },
+    {
+     "src": "outcomes",
+     "dst": "cause",
+     "rel": "imports"
+    },
+    {
+     "src": "outcomes",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "outcomes",
+     "dst": "shadow",
+     "rel": "imports"
+    },
+    {
+     "src": "outcomes",
+     "dst": "shadow",
      "rel": "imports"
     },
     {
@@ -2090,8 +2307,38 @@
      "rel": "imports"
     },
     {
+     "src": "recall",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "recall",
+     "dst": "modality",
+     "rel": "imports"
+    },
+    {
      "src": "recurrence",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "redteam",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "redteam",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "redteam",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "redteam",
+     "dst": "decide",
      "rel": "imports"
     },
     {
@@ -2230,6 +2477,11 @@
      "rel": "imports"
     },
     {
+     "src": "selfreport",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "senses",
      "dst": "grid",
      "rel": "imports"
@@ -2335,6 +2587,11 @@
      "rel": "imports"
     },
     {
+     "src": "test_cause",
+     "dst": "cause",
+     "rel": "imports"
+    },
+    {
      "src": "test_golden",
      "dst": "chain",
      "rel": "imports"
@@ -2391,6 +2648,11 @@
     },
     {
      "src": "transcripts",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "transfer",
      "dst": "grid",
      "rel": "imports"
     },
@@ -3764,6 +4026,168 @@
      "id": "D21",
      "type": "discovery",
      "title": "D21 · The ladder keeps the heartbeat alive and cannot keep the judgement alive",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D22",
+     "type": "discovery",
+     "title": "D22 · The frontier ladder's top rod was a corpse, and the repo already knew (found 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D23",
+     "type": "discovery",
+     "title": "D23 · R2c was REFUSED by a unanimous council, and redefined (2026-07-30, before building)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D24",
+     "type": "discovery",
+     "title": "D24 · The entity had 94 rods and could reach one, because growing the exam shrank the ladder (measured 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D25",
+     "type": "discovery",
+     "title": "D25 · R2a measured on the fleet's deepest rod: SAFE, not yet USEFUL (measured 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D26",
+     "type": "discovery",
+     "title": "D26 · The lesson was applied where it was found and nowhere else (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D27",
+     "type": "discovery",
+     "title": "D27 · \"Verified with a real draw\" verified ONE property, and the fix had three defects left (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D28",
+     "type": "discovery",
+     "title": "D28 · The census measured our harness, not the rods - and the 550b was an 11/12 recorded as 7/12 (measured 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D29",
+     "type": "discovery",
+     "title": "D29 · Every token ceiling in this repo was invented, and the diagnosis had been sitting two hundred lines above the defect for two days (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D30",
+     "type": "discovery",
+     "title": "D30 · The council was seated from a table measured for SPEECH LATENCY, and the module says so about itself (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D31",
+     "type": "discovery",
+     "title": "D31 · Removing the cap turned the census into a contention test, and the capable council changed nothing but the reasoning (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D32",
+     "type": "discovery",
+     "title": "D32 · Streaming is what makes \"think as long as you like, but die in a minute\" expressible (measured 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D33",
+     "type": "discovery",
+     "title": "D33 · A single blocking read threw away every question worth asking about a rod (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D34",
+     "type": "discovery",
+     "title": "D34 · The honest census: the 550b is 12/12, and the exemption built to rescue it admitted nothing (measured 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D35",
+     "type": "discovery",
+     "title": "D35 · The transfer failure has a mechanism now, and it caught four more instances on its first run (built 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D36",
+     "type": "discovery",
+     "title": "D36 · Recorded is not retrieved - and hybrid beats both parents, measured (built 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D37",
+     "type": "discovery",
+     "title": "D37 · The same tombstone blindness in two more selectors, and a panel calling a corpse healthy (found by the sweep, 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D38",
+     "type": "discovery",
+     "title": "D38 · Two capabilities wired, and both corrected me on the way in (measured 2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D39",
+     "type": "discovery",
+     "title": "D39 · THE RECAP LUIS ASKED FOR: lessons I saw today and did not apply (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D40",
+     "type": "discovery",
+     "title": "D40 · What the 100 ticks are actually FOR, and why the criteria are written first (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D41",
+     "type": "discovery",
+     "title": "D41 · The first gate run measured MY HARNESS, and the entity had been asking for the fix 25 times (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D42",
+     "type": "discovery",
+     "title": "D42 · The gate was 9/10 plumbing, and METHOD.md had the check that would have said so (2026-07-30)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D43",
+     "type": "discovery",
+     "title": "D43 · Monitor DURING, not after - and the first watch found the R3 gap live (2026-07-31)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D44",
+     "type": "discovery",
+     "title": "D44 · THE R2 GATE, 100 ticks executed: 10/12, and the two failures are the only two that matter (2026-07-31)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D45",
+     "type": "discovery",
+     "title": "D45 · The entity reports its own failures at 96% accuracy, and nothing was listening (measured 2026-07-31)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D46",
+     "type": "discovery",
+     "title": "D46 · The R2 gate is VOID, not FAIL - and three instruments were blind to the rung they measured (2026-07-31)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D47",
+     "type": "discovery",
+     "title": "D47 · A rung is POWER + BOUND, the bound half is nearly free, and I bounded it on the wrong denominator (2026-07-31)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D48",
+     "type": "discovery",
+     "title": "D48 · The instrument wrote 4,925 fictions into the entity's history, and R3's hazard arrived before R3 (2026-07-31)",
      "path": "diary/DISCOVERIES.md"
     }
    ],

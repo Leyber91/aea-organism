@@ -1,16 +1,16 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-07-30 05:27 UTC",
- "seconds": 16.7,
+ "at": "2026-07-31 08:36 UTC",
+ "seconds": 11.8,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "135 modules, 26 reachable from a wake, 103 orphaned, 0 act at import",
+   "detail": "147 modules, 31 reachable from a wake, 110 orphaned, 0 act at import",
    "data": {
-    "modules": 135,
-    "wake": 26,
+    "modules": 147,
+    "wake": 31,
     "orphans": [
      "aea.energy.capability_census",
      "aea.energy.capacity",
@@ -28,16 +28,16 @@
      "aea.io.listen",
      "aea.io.mixer",
      "aea.io.prosody",
-     "aea.kernel.crystal",
+     "aea.kernel.dispatch",
      "aea.kernel.fit",
      "aea.kernel.goals",
      "aea.kernel.modality",
      "aea.kernel.seats",
-     "aea.kernel.shadow",
      "aea.kernel.toolkinds",
      "aea.lab.battery",
      "aea.lab.calibrate",
      "aea.lab.chain",
+     "aea.lab.containment",
      "aea.lab.convbench",
      "aea.lab.crystallize",
      "aea.lab.duet",
@@ -71,7 +71,9 @@
      "aea.lab.experiments.x24_the_store_and_the_door",
      "aea.lab.fleet",
      "aea.lab.fuels",
+     "aea.lab.gate",
      "aea.lab.grader",
+     "aea.lab.movecontrol",
      "aea.lab.organism",
      "aea.lab.overseer",
      "aea.lab.parts.base",
@@ -87,12 +89,16 @@
      "aea.lab.party",
      "aea.lab.protocol",
      "aea.lab.reboot",
+     "aea.lab.recall",
      "aea.lab.recurrence",
+     "aea.lab.redteam",
      "aea.lab.report",
      "aea.lab.rescore",
+     "aea.lab.selfreport",
      "aea.lab.site",
      "aea.lab.social",
      "aea.lab.stats",
+     "aea.lab.transfer",
      "aea.mind.axes",
      "aea.mind.background",
      "aea.mind.checkpoint",
@@ -103,6 +109,7 @@
      "aea.organs.converse",
      "aea.organs.reflect",
      "aea.tooling.access",
+     "aea.tooling.assembly",
      "aea.tooling.board",
      "aea.tooling.build_graph",
      "aea.tooling.export_city",
@@ -147,16 +154,6 @@
    "data": {
     "hits": []
    }
-  },
-  {
-   "check": "every module imports",
-   "pass": true,
-   "detail": "0 failures"
-  },
-  {
-   "check": "46 frozen behaviours",
-   "pass": true,
-   "detail": "all 46 hold"
   },
   {
    "check": "house style",

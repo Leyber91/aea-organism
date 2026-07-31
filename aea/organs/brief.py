@@ -84,8 +84,15 @@ def section_ok(t: str) -> bool:
     return t.lower() not in {p.lower() for p in PLACEHOLDERS}
 
 
-def grid_public(T, parent, goal, prompt, tier="bulk", depth=1, mx=400):
-    """A traced PUBLIC reasoning node -> hosted free grid. Regime rule: easy synthesis -> ONE good model."""
+def grid_public(T, parent, goal, prompt, tier="bulk", depth=1, mx=None):
+    """A traced PUBLIC reasoning node -> hosted free grid. Regime rule: easy synthesis -> ONE good model.
+
+    `mx=None` READS THE DECLARED KNOB. It used to be the literal 400, chosen by nobody in
+    particular, and a ceiling below a rod's published window only truncates thinking - measured, a
+    550B rod scored 7/12 under a 40-token budget and 12/12 without it while a non-deliberating
+    control did not move. The knob carries bounds and a reason; see aea/kernel/knobs.py."""
+    from aea.kernel import knobs
+    mx = knobs.get("produce_brief", "public_max_tokens") if mx is None else mx
     node = T.spawn(goal, parent=parent, zone="public", depth=depth)
     n = orchestrator.pick(pool, tier, "public", meter)
     if not n:
@@ -97,12 +104,23 @@ def grid_public(T, parent, goal, prompt, tier="bulk", depth=1, mx=400):
     return node, txt
 
 
-def grid_private(T, parent, goal, prompt, depth=3, mx=300, cap="text"):
+def grid_private(T, parent, goal, prompt, depth=3, mx=None, cap="text"):
     """A traced PRIVATE node. zone=sensitive => ZONES boundary allows LOCAL ONLY. depth=3 -> a small FAST
     local model (the router picks ollama/granite4.1:3b, the reliable non-thinking instruct)
     so the private step doesn't cold-load a 9B past the timeout. Returns the plant to PROVE it."""
+    # THE KNOB THE ENTITY IS ALLOWED TO TURN, AND THE IMPASSE IT EXISTS FOR. `unstick.propose` has
+    # returned {"move": "raise_budget", "knob": "max_tokens", "to": 900} against this capability for
+    # weeks - correctly, because a reasoning rod spends its budget thinking and emits content only
+    # afterwards, so at 300 it can answer correctly and still return an empty string. Nothing could
+    # ever apply that proposal, because this number was a literal at a call site. Reading it here is
+    # what lets the R3 loop close: a move can be applied, its outcome observed, and the record can
+    # then change what happens next. Bounds and the reason live in aea/kernel/knobs.py.
+    from aea.kernel import knobs
+    mx = knobs.get("produce_brief", "max_tokens") if mx is None else mx
+    depth = knobs.get("produce_brief", "depth") if depth is None else depth
     node = T.spawn(goal, parent=parent, zone="sensitive", depth=depth)
     T.mark(node, "route", "zone=sensitive -> LOCAL ONLY (ZONES['sensitive']={local}); private data never leaves the machine")
+    T.mark(node, "knob", f"max_tokens={mx} (declared knob produce_brief.max_tokens)")
     # A CRASHED SERVER IS NOT A WRONG ANSWER, AND IT MUST NOT COST A STREAK.
     #
     # This capability sat at DRAFT with 34 failures in 40 for eighteen days. Every recorded failure
@@ -196,12 +214,12 @@ def main():
     s2, opp_txt = grid_public(T, T.root, "pick the single most relevant AI opportunity for Luis",
         f"Fresh AI stories from Hacker News today:\n{story_block}\n\n"
         "Luis is an AI engineer building agentic/multi-agent systems on free infrastructure. Pick the SINGLE "
-        "most relevant story as an opportunity. Output one line naming it, then ONE short sentence why it matters to him. No preamble, no emoji.", tier="deep", mx=700)
+        "most relevant story as an opportunity. Output one line naming it, then ONE short sentence why it matters to him. No preamble, no emoji.", tier="deep")
 
     # ---- Section 3: today's first focus (PRIVATE -> LOCAL ONLY) ----
     s3, focus_txt, priv_plant = grid_private(T, T.root, "plan Luis's day from his real calendar+inbox (private)",
         f"Luis's real day and inbox today:\n{PRIVATE_BLOCK}\n\nIn EXACTLY 3 terse bullets: (1) the best use of his FREE block, "
-        "(2) the one email that needs an action today, (3) one thing worth reading. No preamble, no emoji.", mx=320)
+        "(2) the one email that needs an action today, (3) one thing worth reading. No preamble, no emoji.")
     boundary_ok = (priv_plant == "ollama")
     print(f"[boundary] private 'today' section ran on: {priv_plant}  -> {'LOCAL-ONLY HELD' if boundary_ok else 'BREACH!!'}")
 

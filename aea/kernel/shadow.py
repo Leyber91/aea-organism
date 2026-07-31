@@ -77,6 +77,11 @@ PROTECTED = (
     # returned False while the module was already deciding what counts.
     "aea/kernel/cause.py",
     "aea/kernel/outcomes.py",
+    # THE DECLARED SURFACE ITSELF. The entity may TURN a knob (gated by vary_own_knob); it may
+    # never rewrite the table that says which knobs exist or what their bounds are. Editing the
+    # bounds is how "raise the budget to 900" becomes "raise it to ten million" without any gate
+    # noticing, and a registry the subject can edit is not a registry.
+    "aea/kernel/knobs.py",
     ".git",
 )
 
