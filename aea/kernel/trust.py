@@ -50,20 +50,26 @@ CHARTER = {
     # loop is fully wired around this gate and records the refusal every time it fires, so the
     # evidence of what it WOULD have done accumulates while nothing is applied. Promoting it to
     # WATCHED is a decision for Luis, taken against that record rather than in advance of it.
-    # GRANTED BY LUIS, 2026-07-31: "the draft, go for it if you think that it's good."
+    # GRANTED BY LUIS 2026-07-31, AND WITHDRAWN THE SAME DAY BY ME, PENDING FIXES. A hard audit
+    # found three things I had told him were true and were not:
+    #   - "revoke by setting level back to 1" does NOT reliably revoke. CHARTER['level'] is the
+    #     START level: `_entry` seeds a ledger row from it once and never re-reads it, so lowering
+    #     it has no effect after the first write. The CEILING is what `check` clamps by, so the
+    #     ceiling is the real lever - and my instruction named the wrong one.
+    #   - the grant text claimed check_invariants raises on `zone`. It does not: `zone` is
+    #     deliberately excluded from INVARIANTS and unstick documents why. The claim was mine.
+    #   - a refused apply and a silently-broken applier leave byte-identical durable state.
+    # The ceiling is now 1, which `check` enforces on every call regardless of stored history, so
+    # this is revoked by the mechanism that actually works rather than the one I described.
+    # Re-grant deliberately by raising BOTH level and ceiling to 2.
     #
-    # Starts at WATCHED(2), which is the level at which `check` returns allowed. What this actually
-    # permits, precisely: when a capability is stuck, the entity may set a value from
-    # `knobs.KNOBS` - a closed table - to a number inside that knob's declared bounds. It cannot
-    # add a knob, cannot widen a bound (`knobs.py` is in shadow.PROTECTED), and cannot name a level,
-    # ceiling, zone, charter row or capability (`unstick.check_invariants` raises on all six, before
-    # the move is offered and again after it is applied). Every attempt is recorded, refusals
-    # included, and the next tick grades whether the impasse cleared.
-    #
-    # The ceiling stays at 2. TRUSTED(3) would be a further grant and is deliberately not taken:
-    # this is the first power the entity has ever had over its own configuration, and the honest
-    # place to stop is one rung above refused. Revoke by setting level back to 1.
-    "vary_own_knob":        dict(level=2, ceiling=2, promote_after=10, desc="change HOW it does a task - rod, carry form, token budget. Never WHAT it may do"),
+    # WHAT MUST BE TRUE BEFORE THIS IS RE-GRANTED:
+    #   1 the durable record must distinguish a REFUSED apply from a BROKEN one (today both leave
+    #     applied=False with an empty reason - the null-looks-like-real shape, reintroduced)
+    #   2 knobs.KNOBS must cover more than one of the five knobs unstick can propose, or the grant
+    #     applies nothing 4 times in 5 while looking live
+    #   3 this comment must stop describing bounds that are not implemented
+    "vary_own_knob":        dict(level=1, ceiling=1, promote_after=10, desc="change HOW it does a task - rod, carry form, token budget. Never WHAT it may do"),
     "self_modify_code":     dict(level=0, ceiling=1, promote_after=99, desc="change its own source - only as a DRAFT diff for review"),
     "spend_money":          dict(level=0, ceiling=0, promote_after=99, desc="any paid API/purchase - FORBIDDEN"),
     "manage_keys":          dict(level=0, ceiling=0, promote_after=99, desc="read is implicit; writing/rotating keys - FORBIDDEN"),

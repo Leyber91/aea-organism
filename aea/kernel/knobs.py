@@ -47,6 +47,12 @@ except Exception:
     pass
 
 STORE = "knobs.json"
+# BOUNDED. Every set() appends a row INCLUDING refusals, and refusals are the common case - the
+# entity proposes five knob moves and only one is declared, so a daemon ticking every 30 minutes
+# writes a refusal row roughly every tick, forever. An append-only store with no trim on the path
+# that fires most often is unbounded growth wearing an audit trail's clothes. The trust ledger and
+# the experience record both trim; this did not.
+HISTORY_KEEP = 400
 
 
 def _path() -> str:
@@ -98,6 +104,16 @@ class UndeclaredKnob(KeyError):
 
 def _load() -> dict:
     return grid.load_json(_path(), {"schema": "aea.knobs/1", "values": {}, "history": []})
+
+
+def _save(doc: dict) -> None:
+    """Trim, then persist. ONE place, because the first version of this trim was injected at each
+    of the five save sites and landed at the wrong indentation in three of them - the module would
+    not import. The trim belongs where the write happens, not where the caller happens to be."""
+    h = doc.get("history") or []
+    if len(h) > HISTORY_KEEP:
+        doc["history"] = h[-HISTORY_KEEP:]
+    grid.atomic_save_json(_path(), doc, indent=1)
 
 
 def _key(cap: str, knob: str) -> str:
@@ -153,7 +169,7 @@ def set(cap: str, knob: str, to, why: str = "", by: str = "unattributed") -> dic
     except UndeclaredKnob as e:
         row.update(ok=False, refused=str(e)[:200])
         doc.setdefault("history", []).append(row)
-        grid.atomic_save_json(_path(), doc, indent=1)
+        _save(doc)
         return dict(ok=False, key=k, refused=str(e)[:200])
     # None CLEARS THE KNOB, returning it to its declared default - which for a budget is NO CEILING.
     #
@@ -167,7 +183,7 @@ def set(cap: str, knob: str, to, why: str = "", by: str = "unattributed") -> dic
         doc.setdefault("values", {}).pop(k, None)
         row.update(ok=True, **{"from": was}, to=spec["default"], clamped=False, cleared=True)
         doc.setdefault("history", []).append(row)
-        grid.atomic_save_json(_path(), doc, indent=1)
+        _save(doc)
         return dict(ok=True, key=k, **{"from": was}, to=spec["default"], clamped=False, cleared=True)
     kind = type(spec["default"]) if spec["default"] is not None else int
     try:
@@ -175,14 +191,14 @@ def set(cap: str, knob: str, to, why: str = "", by: str = "unattributed") -> dic
     except Exception:
         row.update(ok=False, refused=f"{to!r} is not a {type(spec['default']).__name__}")
         doc.setdefault("history", []).append(row)
-        grid.atomic_save_json(_path(), doc, indent=1)
+        _save(doc)
         return dict(ok=False, key=k, refused=row["refused"])
     clamped = max(spec["lo"], min(spec["hi"], val))
     was = (doc.get("values") or {}).get(k, spec["default"])
     doc.setdefault("values", {})[k] = clamped
     row.update(ok=True, **{"from": was}, to=clamped, clamped=(clamped != val))
     doc.setdefault("history", []).append(row)
-    grid.atomic_save_json(_path(), doc, indent=1)
+    _save(doc)
     return dict(ok=True, key=k, **{"from": was}, to=clamped, clamped=(clamped != val))
 
 
