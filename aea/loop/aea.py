@@ -127,7 +127,13 @@ def structure(reasoning):
         r = energy.draw("Turn this reasoning by Luis's entity into the five fields, quoting his "
                         "ACTUAL projects and priorities - no placeholders, no meta-commentary. "
                         "`move` is the name after the final MOVE: line, or the exact string NONE "
-                        "if absent.\n\nREASONING:\n" + reasoning[:2800],
+                        # THE WHOLE REASONING, NOT THE FIRST 2800 CHARACTERS. The conclusion is
+                        # written LAST - the instructions ask for the MOVE: line on its own final
+                        # row - so truncating the head kept the deliberation and threw away the
+                        # decision. The deeper the rod, the longer it thinks, and the more certain
+                        # it was to be cut. NVIDIA serves a million-token context; nothing in this
+                        # loop has to fit in 2800 characters.
+                        "if absent.\n\nREASONING:\n" + reasoning,
                         # REFLEX, NOT SOLID. Measured: the first version asked the `solid` tier and
                         # took **682 SECONDS** - a deep reasoning rod deliberated its way through a
                         # JSON schema, against groq's two seconds for the same job. The capability
@@ -149,7 +155,7 @@ def structure(reasoning):
                 "fields, quoting his ACTUAL projects/priorities - no placeholders, no meta-commentary. "
                 "`move` is special: copy the name after the final `MOVE:` line VERBATIM, or the exact "
                 "string NONE if it says NONE or if there is no MOVE line at all. Never infer a move "
-                "from the prose - an absent MOVE line means NONE.\n\nREASONING:\n" + reasoning[:2800]}],
+                "from the prose - an absent MOVE line means NONE.\n\nREASONING:\n" + reasoning}],
             "response_format": {"type": "json_schema", "json_schema": {"name": "aeastate", "strict": True, "schema": STRUCT_SCHEMA}}}).encode()
         req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", data=body,
             headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 aea", "Authorization": f"Bearer {k}"}, method="POST")
@@ -160,7 +166,7 @@ def structure(reasoning):
         # A FAILED STRUCTURING MUST NOT PRODUCE A MOVE. The fallback keeps the reasoning readable,
         # but every field the executor reads is emptied: NONE is the only safe default when the
         # formatter is the thing that broke.
-        return {"matters_now": reasoning[:200], "changed": "", "action": "", "move": "NONE",
+        return {"matters_now": reasoning, "changed": "", "action": "", "move": "NONE",
                 "note_to_self": f"(structuring failed: {str(e)[:60]})"}
 
 fetch_json = grid.fetch_json   # one home (was duplicated verbatim here and in brief.py)

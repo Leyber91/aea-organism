@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 178,
+    "count": 179,
     "source": "aea/tooling/access.py"
    },
    "plan": {
@@ -19,7 +19,7 @@
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 49,
+    "count": 50,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 178
+    "count": 179
    },
    {
     "src": "THE_PROBE",
@@ -53,7 +53,7 @@
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 49
+    "count": 50
    },
    {
     "src": "THE_PROBE",
@@ -721,6 +721,12 @@
      "purpose": "THE ADDITION LAW, APPLIED TO OURSELVES. No network, no cost, exactly reproducible."
     },
     {
+     "id": "test_knobs",
+     "type": "module",
+     "path": "aea/lab/tests/test_knobs.py",
+     "purpose": "test_knobs - THE DECLARATION MAY NOT GROW INTO A PROGRAMMING LANGUAGE."
+    },
+    {
      "id": "test_pipeline",
      "type": "module",
      "path": "aea/lab/tests/test_pipeline.py",
@@ -1144,6 +1150,21 @@
     {
      "src": "aea",
      "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "impasse",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "crystal",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "live",
      "rel": "imports"
     },
     {
@@ -1802,6 +1823,16 @@
      "rel": "imports"
     },
     {
+     "src": "energy",
+     "dst": "capability_census",
+     "rel": "imports"
+    },
+    {
+     "src": "energy",
+     "dst": "orchestrator",
+     "rel": "imports"
+    },
+    {
      "src": "export_city",
      "dst": "grid",
      "rel": "imports"
@@ -1814,6 +1845,11 @@
     {
      "src": "extensive_census",
      "dst": "energy",
+     "rel": "imports"
+    },
+    {
+     "src": "extensive_census",
+     "dst": "capability_census",
      "rel": "imports"
     },
     {
@@ -2164,16 +2200,6 @@
     {
      "src": "outcomes",
      "dst": "grid",
-     "rel": "imports"
-    },
-    {
-     "src": "outcomes",
-     "dst": "shadow",
-     "rel": "imports"
-    },
-    {
-     "src": "outcomes",
-     "dst": "shadow",
      "rel": "imports"
     },
     {
@@ -2619,6 +2645,21 @@
     {
      "src": "test_golden",
      "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "test_knobs",
+     "dst": "knobs",
+     "rel": "imports"
+    },
+    {
+     "src": "test_knobs",
+     "dst": "unstick",
+     "rel": "imports"
+    },
+    {
+     "src": "test_knobs",
+     "dst": "brief",
      "rel": "imports"
     },
     {
@@ -4188,6 +4229,12 @@
      "id": "D48",
      "type": "discovery",
      "title": "D48 · The instrument wrote 4,925 fictions into the entity's history, and R3's hazard arrived before R3 (2026-07-31)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D49",
+     "type": "discovery",
+     "title": "D49 · R3 closes, and the day's lesson is that a fix lands on the object you name, not the one you meant (2026-07-31)",
      "path": "diary/DISCOVERIES.md"
     }
    ],

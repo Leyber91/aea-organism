@@ -71,10 +71,10 @@ def run(poll_secs: int = 50):
                     seed = open(talk_mod.SEED_PATH, encoding="utf-8").read()
                 except Exception:
                     pass
-                state["turns"].append({"who": "luis", "text": text[:800], "t": time.strftime("%H:%M")})
+                state["turns"].append({"who": "luis", "text": text, "t": time.strftime("%H:%M")})
                 r = talk_mod.answer(text, state, ident, seed, "private")
                 reply = r["text"].strip() if r.get("ok") else "(no rod answered)"
-                state["turns"].append({"who": "entity", "text": reply[:1200], "t": time.strftime("%H:%M")})
+                state["turns"].append({"who": "entity", "text": reply, "t": time.strftime("%H:%M")})
                 state["turns"] = state["turns"][-60:]
                 talk_mod.save_state(state)
                 if pulse:

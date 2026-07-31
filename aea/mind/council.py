@@ -389,7 +389,7 @@ def design(problem: str, extra: int = 1, verbose: bool = True) -> list:
         os.path.join(OUT, "rosters", time.strftime("%Y%m%dT%H%M%S") + ".json"),
         dict(problem=problem, roles=want,
              seats=[dict(name=s.name, tier=s.tier, held=s.held, seed=s.seed) for s in seats],
-             designer_raw=raw[:4000]))
+             designer_raw=raw))
     return seats
 
 

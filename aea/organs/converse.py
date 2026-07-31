@@ -1792,7 +1792,7 @@ def act_or_answer(user_text: str, turns: list, system: str, allow: tuple, zone: 
             if name in ("web_fetch", "json_get"):
                 print(f"      OUTBOUND {name} -> {str(args.get('url'))[:120]}", flush=True)
             out = hands.invoke(name, args, zone=zone, allow=allow)
-            trace.append({"tool": name, "args": args, "out": out[:200]})
+            trace.append({"tool": name, "args": args, "out": out})
             print(f"      TOOL {name}({json.dumps(args)[:60]}) -> {out[:80]}", flush=True)
         except hands.Refused as e:
             out = "REFUSED: %s" % e

@@ -40,7 +40,10 @@ def watch(goal, attempt, worker, pool, meter):
         except Exception as e:
             print(f"     (strict watcher failed: {str(e)[:50]}; falling back)")
     n = swarm.pick_varied(pool, 'reflex', meter) or orchestrator.pick(pool, 'bulk', 'public', meter)
-    r = orchestrator.call_node(n, f"Judge vs GOAL. GOAL: {goal}\nWORKER: {attempt[:600]}\nOutput ONLY JSON {{\"on_goal\":bool,\"correct\":bool,\"verdict\":\"accept|redo|reground|halt\",\"why\":\"...\"}}", meter, 150)
+    # THE THIRD JUDGE PATH IN THIS FILE, and the last one still reading a fragment: 600 characters
+    # of a worker's output, then a verdict on whether it met the goal. Its 150-token reply budget
+    # goes too - a rod that must think before answering spends that on the preamble.
+    r = orchestrator.call_node(n, f"Judge vs GOAL. GOAL: {goal}\nWORKER: {attempt}\nOutput ONLY JSON {{\"on_goal\":bool,\"correct\":bool,\"verdict\":\"accept|redo|reground|halt\",\"why\":\"...\"}}", meter, None)
     try:
         return json.loads(re.search(r'\{.*\}', r['text'], re.S).group(0)), f"{n['plant']}/{n['model']}"
     except Exception:

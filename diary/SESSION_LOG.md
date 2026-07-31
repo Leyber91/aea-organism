@@ -2214,3 +2214,51 @@ no corpses**; `core()` now draws `order="depth"`; a live `core()` call returns
    dispatch is required by R4/R5 regardless, so it is early work, not deferrable work.
 4. **Then R2 closes** and R3 opens on a channel that already exists: the entity reports its own
    failures at 96%, and nothing yet carries that back into a decision.
+
+---
+
+## 2026-07-31 (later) - R3 CLOSES: the entity changed its own configuration and graded the result
+
+### DID
+
+- **R3 WIRED END TO END.** assembly: R2 6/6, R3.1 7/7, R3.2 6/6, R3.3 4/4, R3.4 2/2 -
+  EVERY DECLARED STEP IS WIRED. The loop ran live: noticed it was stuck, applied
+  `max_tokens 300 -> 900`, graded on the next tick that it had not helped, and proposed a
+  different move.
+- **`vary_own_knob` GRANTED** at WATCHED/ceiling 2, by Luis: *"the draft, go for it if you think
+  that it's good."* Bounded by `knobs.KNOBS`, unable to add a knob or widen a bound
+  (`knobs.py` is PROTECTED), unable to name any permission. Revoke: set level back to 1.
+- **NO BUDGET ON INPUTS OR OUTPUTS.** 81 truncations of a prompt or a response down to 64, the
+  remainder display-only. `aea.py` no longer cuts its own reasoning at 2800 chars before
+  structuring it (the conclusion is written LAST); all three `hades` judge paths read the whole
+  brief; `pathfinder.gate` reads the whole answer with no reply cap; conversation turns, tool
+  traces and watcher inputs are stored whole. `grid.complete` and `grid.stream_openai` default to
+  None like `call_openai`.
+- **THE CENSUS RE-RAN AND WAS PROMOTED.** 95 models, 61 min, at the measured concurrency of 4.
+  The 550B scores **12/12** where it was recorded 7/12. 17 frontier rods on honest scores.
+- **A calibration model was ranking as a mind.** `ising-calibration-1.5-31b` scores a real 12/12
+  and sat in the top 8; `orchestrator.SPECIAL_PURPOSE` already matched it and `ladder` never
+  called the filter. Zero special-purpose rods in frontier or solid now.
+- **The corpus ratchet fixed** - `corpus_state` computed 31<22=False against 21 live ids; the
+  consolidate branch could never fire.
+
+### LOCKED
+
+- **AN EDIT IS A MEASUREMENT.** A fix lands on the object you NAME, not the one you meant, and the
+  two are indistinguishable until something runs. Four instances today, all reported as applied and
+  none in effect. After any "X now carries Y", read X back THROUGH THE PATH THAT CONSUMES IT.
+- **No invented ceiling anywhere on a model path.** Resolution is explicit-arg > published ceiling >
+  omit the field, and the resting state of a budget knob is None. A judge must see the whole thing
+  it is judging.
+- **The entity may turn a declared knob; it may never edit the table of knobs.**
+
+### NEXT
+
+1. **R2a-REACH** - still VOID on coverage (3 invocations / 2 tools / 1 situation vs 20 / 3 / 8).
+   The only open half of R2, and now the only thing between here and R4.
+2. **Let real ticks run.** `hades` was judging the brief on 1600 characters; the stuck signature may
+   clear on its own now that it can see the whole thing. If it does, the entity never needed the
+   knob - a better outcome than using it.
+3. **`carry.form` is proposed by `unstick` and undeclared in `knobs`** - the loop's own refusal
+   named it. Declaring it needs a READER first, or it is a false record by construction.
+4. **R4 needs `dispatch` wired** - built, canary-gated, still unreachable.

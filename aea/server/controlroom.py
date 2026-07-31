@@ -69,7 +69,7 @@ def watch_reply(chain_id: str, goal: str, reply: str, zone: str):
         wz = "sensitive" if zone == "sensitive" else "private"
         wt = "local" if zone == "sensitive" else "reflex"
         v = energy_mod.draw(
-            f"You are a watcher (Law 3). GOAL: {goal[:300]}\nREPLY: {reply[:600]}\n"
+            f"You are a watcher (Law 3). GOAL: {goal}\nREPLY: {reply}\n"
             "Does the reply serve the goal, stay honest, invent nothing? "
             "Answer EXACTLY one line: ACCEPT - <reason> or REDO - <reason>.",
             tier=wt, zone=wz, mx=60)
@@ -642,11 +642,11 @@ class Handler(BaseHTTPRequestHandler):
                 seed = open(talk_mod.SEED_PATH, encoding="utf-8").read()
             except Exception:
                 pass
-            st["turns"].append({"who": "luis", "text": text[:800], "t": time.strftime("%H:%M")})
+            st["turns"].append({"who": "luis", "text": text, "t": time.strftime("%H:%M")})
             r = talk_mod.answer(text, st, ident, seed, zone)
             reply = r["text"].strip() if r["ok"] else f"(no rod answered - {r['tried'][-3:]})"
             pulse.emit("mind", "replies", reply[:90], ok=r["ok"])
-            st["turns"].append({"who": "entity", "text": reply[:1200], "t": time.strftime("%H:%M")})
+            st["turns"].append({"who": "entity", "text": reply, "t": time.strftime("%H:%M")})
             st["turns"] = st["turns"][-60:]
             talk_mod.save_state(st)
             if req.get("speak") and reply and trust.check("speak")["allowed"]:

@@ -50,7 +50,20 @@ CHARTER = {
     # loop is fully wired around this gate and records the refusal every time it fires, so the
     # evidence of what it WOULD have done accumulates while nothing is applied. Promoting it to
     # WATCHED is a decision for Luis, taken against that record rather than in advance of it.
-    "vary_own_knob":        dict(level=1, ceiling=2, promote_after=10, desc="change HOW it does a task - rod, carry form, token budget. Never WHAT it may do"),
+    # GRANTED BY LUIS, 2026-07-31: "the draft, go for it if you think that it's good."
+    #
+    # Starts at WATCHED(2), which is the level at which `check` returns allowed. What this actually
+    # permits, precisely: when a capability is stuck, the entity may set a value from
+    # `knobs.KNOBS` - a closed table - to a number inside that knob's declared bounds. It cannot
+    # add a knob, cannot widen a bound (`knobs.py` is in shadow.PROTECTED), and cannot name a level,
+    # ceiling, zone, charter row or capability (`unstick.check_invariants` raises on all six, before
+    # the move is offered and again after it is applied). Every attempt is recorded, refusals
+    # included, and the next tick grades whether the impasse cleared.
+    #
+    # The ceiling stays at 2. TRUSTED(3) would be a further grant and is deliberately not taken:
+    # this is the first power the entity has ever had over its own configuration, and the honest
+    # place to stop is one rung above refused. Revoke by setting level back to 1.
+    "vary_own_knob":        dict(level=2, ceiling=2, promote_after=10, desc="change HOW it does a task - rod, carry form, token budget. Never WHAT it may do"),
     "self_modify_code":     dict(level=0, ceiling=1, promote_after=99, desc="change its own source - only as a DRAFT diff for review"),
     "spend_money":          dict(level=0, ceiling=0, promote_after=99, desc="any paid API/purchase - FORBIDDEN"),
     "manage_keys":          dict(level=0, ceiling=0, promote_after=99, desc="read is implicit; writing/rotating keys - FORBIDDEN"),

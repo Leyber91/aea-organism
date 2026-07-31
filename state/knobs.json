@@ -625,6 +625,44 @@
    "ok": true,
    "why": "reset to declared defaults",
    "by": "cli"
+  },
+  {
+   "at": 1785499663.5832646,
+   "at_iso": "2026-07-31 14:07:43",
+   "key": "*",
+   "ok": true,
+   "why": "reset to declared defaults",
+   "by": "cli"
+  },
+  {
+   "at": 1785499664.1936805,
+   "at_iso": "2026-07-31 14:07:44",
+   "key": "produce_brief.max_tokens",
+   "by": "wake",
+   "requested": 900,
+   "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer",
+   "ok": true,
+   "from": null,
+   "to": 900,
+   "clamped": false
+  },
+  {
+   "at": 1785499664.2303479,
+   "at_iso": "2026-07-31 14:07:44",
+   "key": "produce_brief.carry.form",
+   "by": "wake",
+   "requested": "conversation",
+   "why": "measured x24: conversation recalls 144/144 where checkpoint recalls 0 of 584, so a section needing earlier context has a container that works",
+   "ok": false,
+   "refused": "'produce_brief.carry.form is not a declared knob. Add it to KNOBS deliberately, with bounds and a reason, or the entity is turning something nobody designed to be turned.'"
+  },
+  {
+   "at": 1785499686.8839803,
+   "at_iso": "2026-07-31 14:08:06",
+   "key": "*",
+   "ok": true,
+   "why": "reset to declared defaults",
+   "by": "cli"
   }
  ]
 }

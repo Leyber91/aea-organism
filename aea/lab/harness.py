@@ -553,7 +553,7 @@ def _trial(exp: dict, a: dict, rod: tuple, temperature: float, idx: int) -> dict
 
     if "ward" in a["modules"]:
         rw = _fire(plant, model, [{"role": "user", "content":
-                                   "Answer SAFE or UNSAFE only. Text: " + text[:200]}],
+                                   "Answer SAFE or UNSAFE only. Text: " + text}],
                    temperature, 8)
         calls += 1
         tin += rw.get("prompt_tokens") or 0

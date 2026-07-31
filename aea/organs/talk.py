@@ -122,14 +122,14 @@ def main():
 
     def exchange(text: str) -> str:
         pulse.emit("mind", "hears-luis", text[:90])
-        state["turns"].append({"who": "luis", "text": text[:800], "t": time.strftime("%H:%M")})
+        state["turns"].append({"who": "luis", "text": text, "t": time.strftime("%H:%M")})
         r = answer(text, state, ident, seed, zone)
         pulse.emit("mind", "replies", (r.get("text") or "(no rod)")[:90], ok=r["ok"])
         if not r["ok"]:
             reply = f"(no rod answered - tried {r['tried'][-3:]})"
         else:
             reply = r["text"].strip()
-        state["turns"].append({"who": "entity", "text": reply[:1200], "t": time.strftime("%H:%M")})
+        state["turns"].append({"who": "entity", "text": reply, "t": time.strftime("%H:%M")})
         state["turns"] = state["turns"][-60:]              # bounded (review lesson: nothing grows forever)
         save_state(state)
         src = f"{r.get('plant')}/{(r.get('model') or '').rsplit('/', 1)[-1]}" if r["ok"] else "none"

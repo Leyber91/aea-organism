@@ -1941,3 +1941,72 @@ introduced in the same file, in the same session, by the author of that sentence
 applied to the axis I was thinking about - outcomes - and not to the axis I was not - provenance.
 Attention follows the question you are holding, and a lesson only transfers to a costume you have
 already imagined. That is what `transfer.py` is for and it did not encode this shape; it does now.
+
+---
+
+## D49 · R3 closes, and the day's lesson is that a fix lands on the object you name, not the one you meant (2026-07-31)
+
+R3 is wired end to end and the loop RAN: it noticed it was stuck, changed its own configuration,
+graded whether that helped on the next tick, found it had not, and proposed something different.
+
+    tick 1   STUCK: 16 of 20 failures share one cause
+             KNOB APPLIED: produce_brief max_tokens -> 900
+    tick 2   GRADED: raise_budget -> did not
+             PROPOSED: change_form carry.form -> conversation
+             KNOB REFUSED: carry.form is not a declared knob
+
+`vary_own_knob` was granted by Luis at WATCHED, ceiling 2. What it permits precisely: setting a
+value from the closed `knobs.KNOBS` table, inside that knob's declared bounds. It cannot add a knob,
+cannot widen a bound (`knobs.py` is PROTECTED), and cannot name a level, ceiling, zone, charter row
+or capability. Revoke by setting level back to 1.
+
+**THE LESSON, AND IT COST FOUR SEPARATE INSTANCES TODAY: A FIX LANDS ON THE OBJECT YOU NAME, NOT THE
+ONE YOU MEANT - AND THE TWO ARE INDISTINGUISHABLE UNTIL SOMETHING RUNS.**
+
+  1 Stamped `capability_census`'s report. The ladder does not read that file.
+  2 Stamped `rep` inside `promote()`. That function builds an EXPLICIT dict and saves THAT, so the
+    field never reached disk.
+  3 Declared `produce_brief.depth` as a knob while `grid_private`'s signature stayed `depth=3`, so
+    `depth is None` was unreachable and the knob had no reader.
+  4 Edited `_apply_knob` to take `(cap, move)` and a later read-modify-write script restored the
+    always-False version. The loop then reported `applied=False, refused=""` - no exception, no log
+    line, nothing to notice. The gate was OPEN, the entity proposed CORRECTLY, and the apply did
+    nothing while looking exactly like a working refusal.
+
+In all four the edit was reported as applied and was not in effect. **A field added to the wrong
+object is byte-identical to a field never added.** The only thing that caught any of them was
+running the system and reading what it actually did - the staleness warning that kept firing, the
+knob that read 3 after being set to 1, the `applied=False` with an empty reason.
+
+**HOW IT SHOULD HAVE BEEN BUILT:** every one of these is a claim of the form "X now carries Y".
+That claim is checkable in one line - read X back and assert Y - and none of the four did. The
+discipline is not "edit more carefully"; it is *after any change to what a store or a signature
+carries, READ IT BACK THROUGH THE PATH THAT CONSUMES IT.*
+
+**WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED (law M9).** "Verify, don't claim" is the fourth line
+of this repo's own operating rules and I applied it all day to OUTCOMES - re-running the
+certificate, rendering the prompt, driving the loop - while treating EDITS as self-evidently
+effective. Attention followed the interesting half. An edit is a measurement of the file, and it
+deserves the same suspicion as a measurement of a rod.
+
+**THE TRUNCATIONS, and this is Luis's point: "no more budget on inputs or outputs... we might have
+solved breakthroughs. We don't know."** Removed from every path that feeds a model or stores a
+response - 81 down to 64, and the remainder are display prints. The worst were not budgets at all:
+
+  - `aea.py` fed `reasoning[:2800]` to its own structurer. The conclusion is written LAST, as the
+    final `MOVE:` line, so truncating the head kept the deliberation and threw away the decision -
+    and the deeper the rod, the longer it thinks, the more certain it was to be cut.
+  - `hades` judged "does each of three sections have content" against `attempt[:700]`, `[:1600]` and
+    `[:600]` on three separate paths. `produce_brief`'s dominant failure signature across 20 records
+    is `hades=unverified sections_ok=true`: the brief's own check says the sections are there and
+    the watcher disagreed about text it was never shown.
+  - `pathfinder.gate` asked "does the ANSWER FULLY solve the TASK" against `ans[:500]`, with four
+    tokens to reply - so a reasoning rod spent the budget starting to think, returned nothing, and
+    `startswith('y')` read that as NO.
+
+**AND THE KNOB DEFAULT WAS THE DEFECT WEARING THE FIX'S CLOTHES.** I lifted `300` out of `brief.py`
+into `KNOBS` as the declared default, re-inventing the exact ceiling the knob existed to remove and
+blessing it with a registry. A number nobody chose does not become chosen by being written somewhere
+tidier. `None` now means omit the field; `set(knob, None)` clears back to it, because the first
+version could RAISE a budget and never REMOVE one - a one-way ratchet toward always having a limit,
+which is this module's own purpose inverted.

@@ -757,7 +757,7 @@ def run(task: str, rod: str, allow=("calc",), zone: str = "public", max_turns: i
                 args = {}
             try:
                 out = invoke(name, args, zone=zone, allow=allow, src="converse")
-                trace.append({"tool": name, "args": args, "out": out[:120]})
+                trace.append({"tool": name, "args": args, "out": out})
                 if verbose:
                     print("   turn %d  %s(%s) -> %s"
                           % (turn + 1, name, json.dumps(args)[:60], out[:80].replace("\n", " ")))

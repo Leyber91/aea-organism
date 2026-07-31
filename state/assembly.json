@@ -1,10 +1,10 @@
 {
- "at": 1785492700.3072088,
- "at_iso": "2026-07-31 12:11:40",
+ "at": 1785499795.2761953,
+ "at_iso": "2026-07-31 14:09:55",
  "modules": 152,
- "functions": 1378,
- "live": 125,
- "unresolved_calls": 205,
+ "functions": 1380,
+ "live": 131,
+ "unresolved_calls": 212,
  "steps": [
   {
    "step": "R2  the wake's decision reaches a tool",
@@ -401,12 +401,8 @@
   "aea.kernel.impasse:<main>",
   "aea.kernel.impasse:render",
   "aea.kernel.knobs:<main>",
-  "aea.kernel.knobs:_key",
-  "aea.kernel.knobs:_load",
   "aea.kernel.knobs:board",
-  "aea.kernel.knobs:declared",
   "aea.kernel.knobs:get",
-  "aea.kernel.knobs:set",
   "aea.kernel.laws:<main>",
   "aea.kernel.laws:count",
   "aea.kernel.laws:for_zone",

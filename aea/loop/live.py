@@ -170,22 +170,41 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     return "IDLE", [], 0
 
 
-def _apply_knob(move: dict) -> bool:
-    """Perform a knob change. RETURNS FALSE AND SAYS WHY, because nothing reads a knob store yet.
+def _apply_knob(cap: str, move: dict) -> bool:
+    """Perform a knob change through the DECLARED registry. True only if a reader will see it.
 
-    THIS IS DELIBERATELY HONEST RATHER THAN CONVENIENT. The obvious implementation writes the move
-    into a `knobs.json` and returns True - and that would be a FALSE OUTCOME RECORD, R3's named
-    hazard, written by R3's own loop on its first tick: `applied=True` while no organ reads the
-    file, so the next tick grades a change that never reached anything.
+    THIS RETURNED FALSE UNCONDITIONALLY UNTIL THE READER EXISTED, and that was the honest choice
+    rather than the convenient one: writing the move into a store and returning True would have
+    been a FALSE OUTCOME RECORD - R3's own named hazard, produced by R3's own loop on its first
+    tick - because no organ read a knob, so the next tick would grade a change that never reached
+    anything. `aea/kernel/knobs.py` is now that reader and `brief.grid_private` takes its budget
+    from `produce_brief.max_tokens`, so `applied=True` is a claim the next tick can check.
 
-    So it refuses, the pending row records `applied=False`, and the grade is written with
-    counts_toward_move=False - not evidence, excluding nothing, demoting nothing. The apply path is
-    DECLARED and UNBUILT, and the record says exactly that.
+    IT WAS ALSO SILENTLY REVERTED ONCE, which is why the early return now says so. A later script
+    that read-modified-wrote this file restored the always-False version, and the loop reported
+    `applied=False, refused=""` - no exception, no log line, nothing to notice. The gate was open,
+    the entity proposed correctly, and the apply did nothing while looking exactly like a working
+    refusal. An early return that cannot be told apart from a policy decision is the null-looks-like-
+    real shape again, in the one function whose whole job is to make a change real.
 
-    To build it: an organ must READ its knob before each run (`brief` reading its token budget and
-    its rod from a declared store), and that read has to exist before this write can mean anything.
-    Wiring the write first is how a system starts learning from changes it never made."""
-    return False
+    UNDECLARED KNOBS ARE REFUSED, NOT CREATED. `knobs.set` returns ok=False for anything absent from
+    its table, and a clamped value says it clamped. Both come back as False here rather than as an
+    exception, because a tick must keep breathing - and both are LOGGED, so a refusal and a
+    never-attempted change stay distinguishable."""
+    knob = str(move.get("knob") or "").strip()
+    to = move.get("to")
+    if not knob or to is None:
+        log("  KNOB SKIPPED: the move names no knob/value (%s)" % str(move)[:80])
+        return False
+    from aea.kernel import knobs
+    r = knobs.set(cap, knob, to, why=str(move.get("why") or "")[:150], by="wake")
+    if not r.get("ok"):
+        log("  KNOB REFUSED: %s" % str(r.get("refused"))[:110])
+        return False
+    log("  KNOB APPLIED: %s %s -> %s%s" % (cap, knob, r.get("to"),
+                                           " (clamped)" if r.get("clamped") else ""))
+    pulse.emit("life", "knob", "%s.%s %s -> %s" % (cap, knob, r.get("from"), r.get("to")), ok=True)
+    return True
 
 
 def _notice_and_propose(hb: dict, tail: str):
@@ -294,7 +313,7 @@ def _notice_and_propose(hb: dict, tail: str):
                 if v.get("allowed"):
                     try:
                         unstick.check_invariants(move)   # raises on level/ceiling/privacy/charter
-                        applied = bool(_apply_knob(move))
+                        applied = bool(_apply_knob(cap, move))
                     except Exception as e:
                         refused = "%s: %s" % (type(e).__name__, str(e)[:80])
                 else:

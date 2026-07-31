@@ -99,7 +99,7 @@ class Chain:
             carried = Carry.pack(self.form, text, value)
             if self.form == "conversation":
                 history = history + [{"role": "user", "content": task["data"]},
-                                     {"role": "assistant", "content": text[:2000]}]
+                                     {"role": "assistant", "content": text}]
             # The capacity fields. A part adds a CAPACITY, not accuracy, so the trace has to record
             # what became possible at this step and not only whether the number was right.
             rb = r.get("read_by") or "none"

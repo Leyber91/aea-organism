@@ -123,7 +123,7 @@ def review(said: str, reply: str, facts: list, tool_calls: list,
     tools = "\n".join("- %s -> %s" % (c.get("tool"), str(c.get("out"))[:160])
                       for c in (tool_calls or [])) or "- (none: the speaker used no tool)"
     prompt = PROMPT.format(facts="\n".join("- %s" % f for f in (facts or [])[:12]) or "- (none)",
-                           tools=tools, said=said[:600], reply=reply[:600])
+                           tools=tools, said=said, reply=reply)
     r = grid.call_openai(o["plant"], o["model"], [{"role": "user", "content": prompt}],
                          max_tokens=220, temperature=0.1, timeout=timeout)
     if not r.get("ok"):
