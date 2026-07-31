@@ -582,6 +582,23 @@ def _ledger(**row) -> None:
     require `src == "wake"`. Forgetting to label a new harness therefore EXCLUDES it rather than
     silently promoting it to real. The opposite default - assume wake unless told - fails open, and
     every fail-open boundary in this repo has eventually been the defect."""
+    # `src="wake"` REQUIRES A DECISION ID. Claiming to be the entity is not a label anyone may take.
+    #
+    # MEASURED 2026-08-01: the ledger held ELEVEN rows marked src="wake", and not one was the entity.
+    # Every one carried decision_id=None, all eleven fell inside an eight-minute window on a single
+    # afternoon, one named a tool called `probe_429` that does not exist, and only one of the eleven
+    # actually ran. They were harness drives - `vital.py` and ad-hoc probes calling
+    # `hands.invoke(..., src="wake")` to exercise the path - and they were about to be counted as
+    # R2-REACH evidence on a page published to the internet. The honest count was 0 of 20.
+    #
+    # The fail-closed `src` default stopped a harness being mistaken for the entity by ACCIDENT; it
+    # did nothing about a harness that says "wake" on purpose. A real wake invocation always carries
+    # the tick number - `live.tick` passes `decision_id=hb["total_ticks"]` - so the claim is checkable
+    # rather than merely declared, and an unbacked claim is downgraded rather than refused, because
+    # the call itself is legitimate and only its provenance is wrong.
+    if row.get("src") == "wake" and row.get("decision_id") is None:
+        row["src"] = "unattributed"
+        row["src_downgraded"] = "claimed wake with no decision_id - only the live loop carries one"
     row.setdefault("src", "unattributed")
     try:
         path = _ledger_path()
