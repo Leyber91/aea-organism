@@ -69,6 +69,14 @@ PROTECTED = (
     "aea/tooling/selfcheck.py",
     "aea/lab/stats.py",        # the tests any future gate would use to say "better"
     "aea/lab/grader.py",
+    # R3'S INSTRUMENT. `cause.classify` decides whether a failure is allowed to discredit a MOVE,
+    # and `outcomes.require` is the refusal that stops a success being claimed without a
+    # post-condition. An entity that can edit either can rewrite the record of its own competence,
+    # which is the same class as authoring the test that judges it. This list previously held
+    # yesterday's graders and none of R3's - measured, `shadow.protected('aea/kernel/cause.py')`
+    # returned False while the module was already deciding what counts.
+    "aea/kernel/cause.py",
+    "aea/kernel/outcomes.py",
     ".git",
 )
 

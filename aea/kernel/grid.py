@@ -138,6 +138,38 @@ def atomic_save_json(path: str, data, indent=None):
     raise last
 
 
+def append_jsonl(path: str, row: dict) -> None:
+    """Append ONE json object as ONE line, under the cross-process lock, and RAISE if it cannot.
+
+    IT DID NOT EXIST. Every jsonl append in this tree is a bare `open(path, "a")` written afresh -
+    `hands.py`, `pulse.py`, `tracelog.py` - which is three copies of the same eight lines and, more
+    importantly, three different answers to what happens when the write fails.
+
+    THIS ONE RAISES, and that is the whole design decision. `hands._ledger` wraps its append in
+    `except Exception: pass` with the comment "bookkeeping never stops the gate", which is right for
+    a gate whose job is to keep serving and WRONG for an evidence store: **a lost failure row is
+    indistinguishable from a success that never happened.** R3's entire claim is that the record of
+    what happened is trustworthy, so a store that can silently drop rows cannot carry it. If the
+    disk is full the tick must die loudly rather than quietly learn from a corpus with holes in it.
+
+    The retry is the same Windows sharing-violation guard as `atomic_save_json`: this repo runs for
+    weeks on Windows and writes the same stores from the wake, the control room and the CLI."""
+    path = _state(path)
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    line = json.dumps(row, ensure_ascii=False, default=str) + "\n"
+    last = None
+    for i in range(_IO_RETRIES):
+        try:
+            with file_lock(path):              # degrades to unlocked rather than deadlocking
+                with open(path, "a", encoding="utf-8") as f:
+                    f.write(line)
+            return
+        except PermissionError as e:           # momentary sharing violation, not a real failure
+            last = e
+            time.sleep(_IO_BACKOFF * (2 ** i))
+    raise last
+
+
 class StateUnreadable(OSError):
     """The file exists and could not be read. NOT the same as corrupt, and NOT the same as absent."""
 

@@ -51,10 +51,26 @@ summary written from untrusted returned content.
 **Bound gate:** for every stored outcome, the stored verdict matches the ledger — `hands_ledger.jsonl`
 now records `outcome`, `sent` and `result_sha`, so this is checkable without a model. A record that
 disagrees with the ledger is a falsification, and one instance kills it.
-**Evidence already collected:** `brief` failed 33 of 34 times and was chosen again; `BRIEF_GIVE_UP`,
-a hardcoded counter, is what stopped it rather than the wake. And the entity ALREADY reports its own
-failures at 96% accuracy (D45) through an accidental channel — R3 is strengthening a path that
-exists, not building one.
+**Evidence already collected:** `brief` failed 33 of 34 times and was chosen again.
+
+**TWO CORRECTIONS TO THIS SECTION, both to claims I wrote here on 2026-07-31 and both verified
+false the same day (D49):**
+
+*(a) `BRIEF_GIVE_UP` did NOT stop the brief.* The key `brief_fails` **does not exist in
+`heartbeat.json`** - verified, its seven keys are alive_since, boot_count, consolidated_sessions,
+history, last_brief_date, last_wake_why, total_ticks. `live.py:317/320` maintain the counter, but
+the 100-tick run went through `aea/lab/gate.py`, which calls `decide.choose` directly and **bypasses
+`live.choose_action` entirely**, so the guard was never armed and never reached. Ablating it would
+have recorded a working guard as decoration - the exact failure named one file over. The brief most
+likely stopped via `live.py:137`'s `last_brief_date` suppression, which is not a learned decision
+either, and that has NOT been confirmed.
+
+*(b) "the entity reports its own failures at 96%" is TRUE AND MISLEADING.* The 46/48 is real, but
+**194 of the 226 memory notes are the single string `(structuring failed: HTTP Error 429: Too Many
+Requests)`** - 85% of the corpus is one recurring formatter error. The measurement shows the entity
+can accurately count occurrences of one error string in its six-note window. **There is not one
+instance in that channel of the entity reporting whether a MOVE succeeded**, which is the thing R3
+is about. R3 is NOT strengthening an existing path; that path does not exist yet.
 **Cheap half:** the bound, entirely — replay stored outcomes against the ledger, no model.
 
 ---

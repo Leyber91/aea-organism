@@ -257,6 +257,55 @@ def speak_brief(hb: dict) -> bool:
         return False
 
 
+# R3 - THE DECLARED POST-CONDITION PER ACTION. An exit code is not evidence that the work happened:
+# MEASURED, `consolidate` exited 0 twenty-five times in one recorded run while `state_bytes` rose
+# monotonically with zero decreases. The process succeeded; the consolidation did not.
+#
+# Each entry is (predicate-in-words, observe) where `observe` returns a comparable scalar. The row
+# is graded on STRICTLY INCREASED between before and after. An action with no entry here records an
+# UNATTRIBUTABLE outcome rather than a success - which is the honest answer and doubles as the work
+# list of what still needs a post-condition. Declaring a predicate we cannot observe would be worse
+# than declaring none, because it would look verified.
+POST = {
+    "ASLEEP:consolidate": ("consolidated session count strictly increases",
+                           lambda: corpus_state()[0]),
+}
+
+
+def _post_for(action: str):
+    for prefix, spec in POST.items():
+        if action.startswith(prefix):
+            return spec
+    return None
+
+
+def _record_outcome(hb, action, kind, exit_ok, tail, *, verify=None, exc=None, args=None):
+    """Every branch of the tick ends here. A tick that acted and recorded nothing is the hole R3
+    exists to close, so this is called from ALL of them - including the refusals and the rest.
+
+    `exit_ok` AND `effect_ok` ARE DIFFERENT FACTS AND THEY ARE STORED SEPARATELY. The row's `ok`
+    means VERIFIED SUCCESS - a declared post-condition was evaluated and held. It does NOT mean the
+    process exited 0, because exit 0 was recorded 25 times while the work did not happen. When they
+    disagree, the disagreement is the finding, and it is exactly what a store built on exit codes
+    can never surface. With no declared post-condition the row is UNATTRIBUTABLE: we did not fail,
+    we simply did not establish anything, and saying so is what puts the action on the work list."""
+    effect_ok = bool(isinstance(verify, dict) and verify.get("result"))
+    try:
+        from aea.kernel import outcomes
+        row = outcomes.build(action, kind, effect_ok, src="wake", args=args, verify=verify, exc=exc,
+                             note=str(tail or "")[:280], decision_id=hb.get("total_ticks"))
+        row["exit_ok"] = bool(exit_ok)
+        row["effect_ok"] = effect_ok
+        row["disagreed"] = bool(exit_ok) and isinstance(verify, dict) and not effect_ok
+        outcomes.write(row)
+    except Exception as e:
+        # An outcome that cannot be written must be VISIBLE. It does not kill the tick - the entity
+        # must keep breathing - but it is never silent, because a store with invisible holes in it
+        # is worse than no store: it reads as evidence.
+        log(f"  OUTCOME NOT RECORDED ({type(e).__name__}: {str(e)[:120]})")
+        pulse.emit("life", "outcome-lost", f"#{hb.get('total_ticks')} {action}: {str(e)[:90]}", ok=False)
+
+
 def tick(hb: dict, demo: bool):
     hb["total_ticks"] += 1
     action, args, tmo = choose_action(hb)
@@ -270,6 +319,7 @@ def tick(hb: dict, demo: bool):
     if pend:
         from aea.kernel import hands
         t0 = time.time()
+        verify, exc = None, None
         try:
             # THE ALLOW-LIST IS DERIVED FROM THE DECISION TABLES, NOT TYPED HERE. A hand-kept copy
             # is the failure `_moves()` was built to prevent, one layer further out: wiring a tool
@@ -281,11 +331,24 @@ def tick(hb: dict, demo: bool):
                           | {s["tool"] for s in decide.FREE_ARG.values()})
             out = hands.invoke(pend["tool"], pend["args"], zone="sensitive", allow=allow,
                                src="wake")
-            ok, tail = True, str(out)[:300]
+            # THE POST-CONDITION FOR A TOOL, and it replaces a hardcoded `True`. This line read
+            # `ok, tail = True, str(out)[:300]`: ANY non-raising return was a success. But
+            # `hands.py:342` returns the STRING "ERROR: no such state file" as a perfectly normal
+            # value, so reading a file that does not exist was recorded as the tool working. A
+            # returned error message is a failed post-condition, not a result.
+            body = str(out)
+            held = not body.lstrip().upper().startswith("ERROR:")
+            verify = dict(pred="the tool returned a payload rather than an error",
+                          result=held, detail=body[:120])
+            ok, tail = held, body[:300]
         except hands.Refused as e:
-            ok, tail = False, f"REFUSED: {str(e)[:140]}"
+            # A REFUSAL IS THE GATE WORKING, not the move being wrong. It is recorded, and it is
+            # not evidence about the entity's judgement.
+            ok, tail, exc = False, f"REFUSED: {str(e)[:140]}", None
+            verify = dict(pred="the gate permitted the call", result=False, detail=str(e)[:120])
         except Exception as e:
-            ok, tail = False, f"{type(e).__name__}: {str(e)[:140]}"
+            ok, tail, exc = False, f"{type(e).__name__}: {str(e)[:140]}", e
+        _record_outcome(hb, action, "tool", ok, tail, verify=verify, exc=exc, args=pend.get("args"))
         el = round(time.time() - t0, 2)
         pulse.emit("life", "tool", f"#{hb['total_ticks']} {action} {pend['args']} "
                                    f"{'ok' if ok else 'FAIL'} {el}s", ok=ok)
@@ -306,9 +369,25 @@ def tick(hb: dict, demo: bool):
         why = hb.get("last_wake_why") or "corpus fully consolidated; nothing owed"
         log(f"tick {hb['total_ticks']}  RESTING - {why}")
         pulse.emit("life", "rest", f"#{hb['total_ticks']} {why}", ok=True)
+        # A REST IS RECORDED TOO, and it is not bookkeeping. "It stopped choosing what fails" is
+        # satisfied perfectly by an entity that declines everything, so the certificate has to be
+        # able to tell "it learned" from "it went quiet". That needs the declines counted, not just
+        # the acts. It is UNATTRIBUTABLE by construction: nothing was attempted, so nothing about
+        # the move was established.
+        _record_outcome(hb, action or "REST", "rest", False, why)
         return
     log(f"tick {hb['total_ticks']}  {action}  -> running {' '.join(args)}")
     pulse.emit("life", "tick", f"#{hb['total_ticks']} {action}")
+    # SNAPSHOT BEFORE. The predicate is declared in POST and observed on both sides, so the verdict
+    # is re-derivable rather than asserted. `run_script` returns `r.returncode == 0`, which is the
+    # third of the three lies: exit 0 was recorded 25 times while the work did not happen.
+    spec = _post_for(action)
+    before = None
+    if spec:
+        try:
+            before = spec[1]()
+        except Exception:
+            spec = None                       # cannot observe it -> refuse to claim it
     ok, tail = run_script(args, tmo)
     pulse.emit("life", "tick-done", f"#{hb['total_ticks']} {action} {'ok' if ok else 'FAIL'}", ok=ok)
     if action.startswith("AWAKE"):
@@ -319,6 +398,24 @@ def tick(hb: dict, demo: bool):
         else:
             hb["brief_fails"] = int(hb.get("brief_fails", 0)) + 1
             _notice_and_propose(hb, tail)
+    # SNAPSHOT AFTER, and grade on the declared predicate rather than the exit code. An action with
+    # no declared post-condition records UNATTRIBUTABLE - honest, and it is the work list.
+    verify = None
+    if spec:
+        try:
+            after = spec[1]()
+            verify = dict(pred=spec[0], result=bool(after is not None and before is not None
+                                                    and after > before),
+                          detail=f"{before} -> {after}")
+        except Exception:
+            verify = None
+    if verify is not None and ok and not verify["result"]:
+        # THE EXIT CODE AND THE WORLD DISAGREE, which is the case worth catching. The process said
+        # it succeeded and the thing it was for did not happen.
+        log(f"  POST-CONDITION FAILED though the process exited 0: {verify['pred']} ({verify['detail']})")
+        pulse.emit("life", "post-failed", f"#{hb['total_ticks']} {action} {verify['detail']}", ok=False)
+        ok = False
+    _record_outcome(hb, action, "script", ok, tail, verify=verify, args=list(args or []))
     done, total = corpus_state()
     hb["consolidated_sessions"] = done
     hb["history"] = (hb.get("history", []) + [f"{now_iso()} {action} {'ok' if ok else 'FAIL'} :: {tail[:80]}"])[-30:]
