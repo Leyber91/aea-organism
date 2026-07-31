@@ -279,7 +279,8 @@ def tick(hb: dict, demo: bool):
             # deriving the list widens nothing that the zone does not already permit.
             allow = tuple({s["tool"] for s in decide.TOOL_KNOWN.values()}
                           | {s["tool"] for s in decide.FREE_ARG.values()})
-            out = hands.invoke(pend["tool"], pend["args"], zone="sensitive", allow=allow)
+            out = hands.invoke(pend["tool"], pend["args"], zone="sensitive", allow=allow,
+                               src="wake")
             ok, tail = True, str(out)[:300]
         except hands.Refused as e:
             ok, tail = False, f"REFUSED: {str(e)[:140]}"

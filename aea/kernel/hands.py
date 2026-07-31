@@ -538,6 +538,17 @@ def fence(name: str, out: str) -> str:
 LEDGER = os.path.join(str(grid.STATE), "hands_ledger.jsonl")
 
 
+def _ledger_path() -> str:
+    """RESOLVED AT CALL TIME, so a harness can write somewhere that is not production.
+
+    `LEDGER` was a module constant bound to `grid.STATE` at import. `redteam.py` carefully
+    redirects `aea_state.json` into a temp directory and then wrote **4,920 synthetic attack rows
+    straight into the real ledger**, because the ledger path was not redirectable. MEASURED
+    2026-07-31: the production ledger held 4,925 rows, ALL synthetic, `decision_id` null on 4,924
+    of them, and zero rows of real wake traffic."""
+    return os.environ.get("AEA_HANDS_LEDGER") or os.path.join(str(grid.STATE), "hands_ledger.jsonl")
+
+
 def _ledger(**row) -> None:
     """One append-only row per invocation attempt: the EXACT argument bytes, and the verdict.
 
@@ -556,23 +567,43 @@ def _ledger(**row) -> None:
 
     Arguments are written WHOLE. Truncating the one artefact whose answer lives in its exact bytes
     would be the window defect from METHOD.md's instrument law, committed in the place it matters
-    most."""
+    most.
+
+    EVERY ROW CARRIES `src`, AND THE DEFAULT IS NOT `wake`. The docstring above says the thing that
+    has cost most here is NULL LOOKING LIKE REAL. **Synthetic looking like real is the same shape
+    one level up, and this module had it.** The certificate's 4,920 crossings are clean moves -
+    `read_state`, `self_map`, `calc 2+2` - because the canary payloads are refused BEFORE the
+    boundary and never reach a row. So the synthetic rows are indistinguishable from entity history
+    BY CONTENT, and R3's proposed bound gate is *the stored outcome matches the ledger*. Unlabelled,
+    that gate would have certified outcomes against 4,920 actions that never happened in a real
+    tick - **a false outcome record, which is R3's named hazard, manufactured by the instrument.**
+
+    FAIL-CLOSED: an unlabelled row is `unattributed`, and a consumer asking for entity history must
+    require `src == "wake"`. Forgetting to label a new harness therefore EXCLUDES it rather than
+    silently promoting it to real. The opposite default - assume wake unless told - fails open, and
+    every fail-open boundary in this repo has eventually been the defect."""
+    row.setdefault("src", "unattributed")
     try:
-        os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
-        with open(LEDGER, "a", encoding="utf-8") as f:
+        path = _ledger_path()
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "a", encoding="utf-8") as f:
             f.write(json.dumps(row, ensure_ascii=False, default=str) + "\n")
     except Exception:
         pass                                   # bookkeeping never stops the gate
 
 
-def invoke(name: str, args: dict, zone: str = "public", allow=None, decision_id=None) -> str:
+def invoke(name: str, args: dict, zone: str = "public", allow=None, decision_id=None,
+           src: str = "unattributed") -> str:
     """Run a tool, or refuse. THE ONLY WAY A TOOL EVER RUNS - there is no path around this check,
     which is the entire point of the module.
 
-    Every attempt is written to `hands_ledger.jsonl` before it can matter - see `_ledger`."""
+    Every attempt is written to the ledger before it can matter - see `_ledger`.
+
+    `src` NAMES WHO IS CALLING, and it defaults to `unattributed` rather than to `wake` on purpose:
+    only the unattended loop may claim to be the entity acting. See `_ledger`."""
     _t0 = time.time()
     _base = dict(at=_t0, at_iso=time.strftime("%Y-%m-%d %H:%M:%S"), tool=name, zone=zone,
-                 decision_id=decision_id, args=args,
+                 decision_id=decision_id, args=args, src=src,
                  allow=sorted(allow) if allow else None)
     v = allowed(name, zone, allow)
     if not v["ok"]:
@@ -725,7 +756,7 @@ def run(task: str, rod: str, allow=("calc",), zone: str = "public", max_turns: i
             except Exception:
                 args = {}
             try:
-                out = invoke(name, args, zone=zone, allow=allow)
+                out = invoke(name, args, zone=zone, allow=allow, src="converse")
                 trace.append({"tool": name, "args": args, "out": out[:120]})
                 if verbose:
                     print("   turn %d  %s(%s) -> %s"

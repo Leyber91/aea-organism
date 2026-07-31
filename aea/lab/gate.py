@@ -404,9 +404,19 @@ def watch(run_id: str = None, verbose: bool = True) -> dict:
     return dict(ticks=s["ticks"], run=run_id, tripped=[w["key"] for w in tripped], summary=s)
 
 
+def _ledger_path() -> str:
+    """RESOLVED AT CALL TIME so a harness run can be sandboxed. See D48 and `hands._ledger_path`:
+    `hands.LEDGER` was fixed at import, `redteam` could not redirect it, and 4,920 synthetic rows
+    landed in the production ledger that `containment.py` reads. This module is a harness too, and
+    it had the identical shape - found by the detector written for the first instance."""
+    return os.environ.get("AEA_GATE_LEDGER") or os.path.join(str(grid.STATE), "lab",
+                                                             "gate_ledger.jsonl")
+
+
 def record(row: dict) -> None:
-    os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
-    with open(LEDGER, "a", encoding="utf-8") as f:
+    path = _ledger_path()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
@@ -621,6 +631,7 @@ def run(n: int = 100, mode: str = "compressed", sleep_s: float = 0.0, verbose: b
                               | {sp["tool"] for sp in decide.FREE_ARG.values()})
                 try:
                     res = hands.invoke(cand["tool"], cand["args"], zone="sensitive", allow=allow,
+                                       src="gate",
                                        decision_id=row.get("decision_id"))
                     # `ran` WAS NULL ON EXACTLY THE TOOL PATH, and that made this harness blind to
                     # the only thing R2 is about. `summarise()` computes executed = sum(ran); the

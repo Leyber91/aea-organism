@@ -159,7 +159,8 @@ def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
     if invoke is None:
         from aea.kernel import hands
         def invoke(name, args):
-            return hands.invoke(name, args, zone="public", allow=("web_search", "web_fetch"))
+            return hands.invoke(name, args, zone="public", allow=("web_search", "web_fetch"),
+                                src="dispatch")
 
     out = dict(plan=p, results=[], fetched=[], refused=[], sent=[])
     try:

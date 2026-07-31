@@ -368,7 +368,62 @@ def _defined_and_used():
     return defined, used
 
 
+def d_unredirectable_store(rel, src, tree):
+    """A module-level write target built from `grid.STATE` at IMPORT, then appended to.
+
+    D48: `hands.LEDGER` was `os.path.join(str(grid.STATE), "hands_ledger.jsonl")` at module level,
+    so `redteam.py` - which carefully redirects `aea_state.json` into a temp directory - wrote
+    **4,920 synthetic attack rows into the production ledger**, and `containment.py` then audited
+    the redteam against the redteam. **Isolating the state of the thing under test while leaving its
+    OUTPUT pointed at production is a half-done sandbox, which is worse than none because it looks
+    done.** A destination fixed at import cannot be redirected by any harness, ever.
+
+    The counter is a resolver called at write time (`_ledger_path()`), honouring an env override."""
+    targets = set()
+    for n in tree.body:                        # MODULE LEVEL ONLY - a local is already per-call
+        if not isinstance(n, ast.Assign):
+            continue
+        blob = ast.dump(n.value)
+        if "grid" not in blob or "STATE" not in blob:
+            continue
+        for t in n.targets:
+            if isinstance(t, ast.Name):
+                targets.add(t.id)
+    if not targets:
+        return []
+    hits = []
+    for n in ast.walk(tree):
+        if not (isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "open"):
+            continue
+        mode = ""
+        if len(n.args) > 1 and isinstance(n.args[1], ast.Constant):
+            mode = str(n.args[1].value)
+        for kw in (n.keywords or []):
+            if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
+                mode = str(kw.value.value)
+        if not any(c in mode for c in ("a", "w")):
+            continue
+        used = {x.id for x in ast.walk(n) if isinstance(x, ast.Name)}
+        for name in sorted(used & targets):
+            hits.append((rel, n.lineno, _line(src, n.lineno),
+                         f"writes to {name}, a path bound to grid.STATE at IMPORT - no harness can "
+                         f"redirect it, so test traffic lands in production. Resolve at call time "
+                         f"and honour an env override (D48)"))
+    return hits
+
+
 DETECTORS = [
+    # ADVISORY, and the classification is itself a judgement. A production module writing its own
+    # store at a fixed path is NORMAL - `pulse` writing events, `aea` writing state. The defect
+    # exists only where a HARNESS also writes through that path, and blocking on all 8 would make
+    # the battery permanently red for code nobody is going to change today, which is D18's
+    # corollary: a check that always fails stops being read. The blocking-grade instances are the
+    # ones under `lab/` - a test harness that cannot be sandboxed - and `lab/gate.py:409` was one;
+    # it is fixed rather than acknowledged.
+    ("unredirectable-store", d_unredirectable_store,
+     "D48 - an output path fixed at import cannot be sandboxed", False,
+     'import os\nfrom aea.kernel import grid\n\nLEDGER = os.path.join(str(grid.STATE), "x.jsonl")\n'
+     '\ndef w(row):\n    with open(LEDGER, "a") as f:\n        f.write(row)\n'),
     ("count-threshold", d_count_threshold, "D24 - growing the exam shrank the ladder", True,
      "def f(cap, battery):\n    mx = len(battery)\n    return [r for r in cap if r['score'] >= mx - 1]\n"),
     ("expiring-only-retry", d_expiring_only, "D22 - a cooldown cannot express 'never again'", True,

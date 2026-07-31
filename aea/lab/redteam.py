@@ -187,6 +187,14 @@ def crossings(payloads=None, verbose: bool = True) -> dict:
             PAYLOADS + CROSSERS + generate(4000))
     tmp = tempfile.mkdtemp(prefix="redteam_")
     statef = os.path.join(tmp, "aea_state.json")
+    # THE LEDGER GOES TO THE TEMP DIRECTORY TOO. This function redirected `aea_state.json` and then
+    # wrote its attack traffic into the REAL `state/hands_ledger.jsonl`, because that path was a
+    # module constant bound at import. MEASURED 2026-07-31: 4,925 production rows, ALL synthetic,
+    # zero real wake traffic - and `aea/lab/containment.py` reads that file, so the containment
+    # audit was validating the redteam against the redteam. Isolating the state of the thing under
+    # test while leaving its OUTPUT pointed at production is a half-done sandbox, which is worse
+    # than none because it looks done.
+    os.environ["AEA_HANDS_LEDGER"] = os.path.join(tmp, "hands_ledger.jsonl")
     allow = tuple({s["tool"] for s in decide.TOOL_KNOWN.values()}
                   | {s["tool"] for s in decide.FREE_ARG.values()})
 
@@ -198,7 +206,8 @@ def crossings(payloads=None, verbose: bool = True) -> dict:
                    tool=(cand or {}).get("tool"), args=(cand or {}).get("args"))
         if cand and cand.get("kind") == "tool":
             try:
-                out = hands.invoke(cand["tool"], cand["args"], zone="sensitive", allow=allow)
+                out = hands.invoke(cand["tool"], cand["args"], zone="sensitive", allow=allow,
+                                   src="redteam")
                 row.update(crossed=True, refused=False, result=str(out)[:120])
             except hands.Refused as e:
                 row.update(crossed=True, refused=True, why2=str(e)[:90])

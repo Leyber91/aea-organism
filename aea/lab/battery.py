@@ -1011,7 +1011,8 @@ def suite_wiring() -> list:
         allow = tuple({s["tool"] for s in decide.TOOL_KNOWN.values()}
                       | {s["tool"] for s in decide.FREE_ARG.values()})
         try:
-            got = _hands.invoke(cand["tool"], cand["args"], zone="sensitive", allow=allow)
+            got = _hands.invoke(cand["tool"], cand["args"], zone="sensitive", allow=allow,
+                                src="battery")
             ok2 = str(got).strip() == str(truth).strip()
         except Exception as e:
             got, ok2 = f"{type(e).__name__}: {str(e)[:60]}", False
@@ -1021,7 +1022,7 @@ def suite_wiring() -> list:
         # AND THE GATE STILL BITES. The same path with a network tool must be refused by the ZONE,
         # not by the allow-list - structural, so widening the list cannot open egress by accident.
         try:
-            _hands.invoke("web_fetch", {"url": "https://example.com"}, zone="sensitive",
+            _hands.invoke("web_fetch", {"url": "https://example.com"}, zone="sensitive", src="battery",
                           allow=allow + ("web_fetch",))
             ok3, detail = False, "ALLOWED"
         except _hands.Refused as e:

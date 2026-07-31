@@ -1877,3 +1877,67 @@ was *the instrument is the broken part* - written into `R2_STATE.md` by me, hour
 worked examples. It was applied to the harness, the ledger, the gate and the census, and **not to the
 one line of arithmetic at the end**, because attention follows effort rather than risk. The
 expensive part got the scrutiny; the cheap part carried the error into the claim.
+
+---
+
+## D48 · The instrument wrote 4,925 fictions into the entity's history, and R3's hazard arrived before R3 (2026-07-31)
+
+Found by looking at `git status` before starting R3, not by any test.
+
+**WHAT WAS TRUE.** `state/hands_ledger.jsonl` held **4,925 rows and every one was synthetic** -
+written between 01:34 and 02:30 by `redteam.py` development and two certificate runs. `decision_id`
+was null on 4,924 of 4,925. **There was no real wake traffic in it at all**; the three genuine R2
+tool invocations from the 100-tick gate predate the ledger's existence.
+
+**WHY IT LOOKED LIKE HISTORY, which is the part worth keeping.** Only **5** of the rows contain the
+canary. The canary payloads are REFUSED BEFORE THE BOUNDARY and so never reach a row at all - the
+4,920 that actually crossed are clean moves: `read_state`, `self_map`, `list_tools`, `calc 2+2`.
+**The attack corpus deposits innocent-looking rows by construction**, so synthetic traffic is
+indistinguishable from entity history BY CONTENT. Nothing about reading the file would have revealed
+it. It took counting `decision_id` nulls and timestamps.
+
+**WHY IT MATTERED, and the timing is the point.** R3's proposed bound gate is *for every stored
+outcome, the stored verdict matches the ledger*. Unlabelled, that gate would have certified outcomes
+against 4,920 actions that never happened in a real tick - **a FALSE OUTCOME RECORD, which is R3's
+named hazard, manufactured by the instrument built to detect it, one day before the rung was built.**
+
+**THE CAUSE:** `LEDGER` was a module constant bound to `grid.STATE` at import. `redteam.py`
+carefully redirects `aea_state.json` into a temp directory, and its output had nowhere else to go.
+**Isolating the state of the thing under test while leaving its OUTPUT pointed at production is a
+half-done sandbox, and that is worse than none, because it looks done.**
+
+**FIXED.** `hands._ledger_path()` resolves at call time and honours `AEA_HANDS_LEDGER`; `redteam`
+points it into its own temp dir (verified: the production file does not reappear, and the
+certificate still reads 0.6% on 487 crossings). Every row carries `src`, **defaulting to
+`unattributed` rather than `wake`** - so forgetting to label a new harness EXCLUDES it instead of
+promoting it to entity history. The opposite default fails open, and every fail-open boundary here
+has eventually been the defect. The 4,925 rows are quarantined under `archive/`, kept as evidence.
+Protocol battery after the change: **222/222**.
+
+**AND THE SAME DEFECT WAS FOUND A THIRD TIME, IN THE SAME FUNCTION, WHILE FIXING IT.** With the
+ledger now correctly empty of wake rows, `containment.audit()` STILL printed a clean bill - because
+`outbound()` also collects `gate.chose`/`gate.result`/`gate.ran`, and **D46 had already established
+that not one of those is a tool argument.** My first guard asked `if not outs`, which never fired,
+because the set was not empty - it was full of the wrong things. Three costumes, one defect:
+  1. read two files THAT DID NOT EXIST, fall back silently, report clean (D46)
+  2. read a file that exists and is ENTIRELY SYNTHETIC, report clean (this entry)
+  3. read the right file, find it EMPTY, and be rescued into a pass by unrelated strings
+
+**The general form, and it is the same lesson as the bound denominator four hours earlier: AN AUDIT
+MUST COUNT THE TRIALS OF ITS OWN CLAIM, AND REFUSE TO BE SATISFIED BY ANY OTHER NUMBER.** The claim
+is *no wake-written string reached a TOOL ARGUMENT*, so only `hands.*` rows are trials; 306 other
+strings are context and cannot substitute. It now reports **VOID** with the two counts side by side.
+
+**HOW IT SHOULD HAVE BEEN BUILT:** provenance is not a field you add when it bites - a store that
+mixes real and synthetic rows with no marker is unusable for any claim about history, so `src`
+belonged in `_ledger` the hour it was written. And any harness that redirects state must redirect
+ALL of it, which argues for one `sandbox()` helper rather than per-file env vars.
+
+**WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED (law M9, part four).** The `_ledger` docstring I
+wrote yesterday says, in capitals, that the costliest shape here is **NULL LOOKING LIKE REAL**, and
+argues for recording refusals so "the gate held" cannot be confused with "the gate was never
+approached." **Synthetic looking like real is that identical shape one level up**, and it was
+introduced in the same file, in the same session, by the author of that sentence. The lesson was
+applied to the axis I was thinking about - outcomes - and not to the axis I was not - provenance.
+Attention follows the question you are holding, and a lesson only transfers to a costume you have
+already imagined. That is what `transfer.py` is for and it did not encode this shape; it does now.

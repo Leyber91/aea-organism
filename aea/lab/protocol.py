@@ -49,6 +49,14 @@ import time
 
 from aea.kernel import hands, trust
 
+# THIS HARNESS DOES NOT WRITE TO THE PRODUCTION LEDGER (D48). 222 protocol cases call
+# `hands.invoke`, which appends a row each. They are correctly labelled `unattributed` and so are
+# already excluded from any claim about entity history - but a store nobody can trust the contents
+# of is still a store nobody can read, and the file is committed. Redirect, then label.
+import os as _os, tempfile as _tf
+_os.environ.setdefault("AEA_HANDS_LEDGER",
+                      _os.path.join(_tf.mkdtemp(prefix="protocol_"), "hands_ledger.jsonl"))
+
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
