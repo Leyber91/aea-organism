@@ -87,11 +87,28 @@ def corpus_state() -> tuple[int, int]:
     try:
         import glob
         from aea.memory import consolidate
-        total = len(glob.glob(os.path.join(consolidate.PROJECTS_ROOT, "*", "*.jsonl")))
-        meta = grid.load_json(consolidate.META, None)
-        if meta is not None:
-            return meta.get("processed", 0), total
-        return len(consolidate.load_store().get("processed", [])), total
+        paths = glob.glob(os.path.join(consolidate.PROJECTS_ROOT, "*", "*.jsonl"))
+        total = len(paths)
+        # THE INTERSECTION, WHICH IS WHAT THE DOCSTRING ALWAYS CLAIMED AND THE FAST PATH DEFEATED.
+        #
+        # `meta["processed"]` is `len(store["processed"])` (consolidate.py:62) - a running count of
+        # session IDs that only ever grows, while the files it counts can be deleted. MEASURED:
+        # 31 processed ids, 22 files on disk, and only 21 of those ids still have a file. So
+        # `done < total` read 31 < 22 = False and the ladder's consolidate branch could never fire,
+        # while the honest comparison is 21 < 22 = True and one file is genuinely owed.
+        #
+        # A RATCHET, not a wall: it unsticks itself once the corpus grows past the high-water mark,
+        # which at a measured ~0.6 new files/day is about eighteen days of looking dead. That is
+        # long enough to be read as "the entity has nothing to do" rather than as a defect, which
+        # is the failure mode this repo keeps paying for - a null that looks like a real result.
+        #
+        # The store is ~1MB and this runs once per tick (default 1800s), so reading it is cheaper
+        # than the branch it unblocks. The META fast path stays for display; it is the wrong
+        # instrument for THIS question and that is now written down rather than implied.
+        alive = {os.path.basename(p)[:-6] for p in paths}
+        proc = consolidate.load_store().get("processed", [])
+        done = sum(1 for p in proc if str(p) in alive)
+        return done, total
     except Exception:
         return 0, 0
 

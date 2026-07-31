@@ -208,10 +208,74 @@ def _moves() -> str:
                      for n in names)
 
 
+STANDING_LINES = 5          # hard cap - this block competes with nothing, and must never win
+STANDING_CHARS = 420
+
+
+def standing(state: dict) -> str:
+    """R3.4 - WHAT THE RECORD KNOWS, PUT WHERE THE WAKE CAN READ IT.
+
+    ITS OWN FIELD, NEVER THROUGH `state["memory"]`. The memory window is `[-6:]` and each note is
+    capped near 160 chars, so routing outcomes through it would evict everything the entity noticed
+    about Luis within one bad afternoon. A record that can only be delivered by destroying the rest
+    of the context is not delivered.
+
+    IT ALSO CLOSES TWO IMPOSSIBLE CONDITIONS, which is the half that matters more. `decide.WHEN`
+    ships `brief: "no brief lately"` and `consolidate: "raw memory notes have piled up undistilled"`
+    and then asks the wake to "check each condition above against your actual situation" - while the
+    prompt contained NO timestamp and NO backlog count. The entity was being asked to judge
+    quantities it could not see, which is not a hard question, it is an unanswerable one, and the
+    honest answer to an unanswerable question is NONE. That is the same defect that made the
+    `responsive` criterion impossible in R2, still live in the move menu that drives the wake.
+
+    So this block carries three things and nothing else: what the RECORD says is stuck, what a
+    PROVEN part would do about it, and the two NUMBERS the conditions ask about. Hard-capped,
+    because a self-report that can crowd out the world is a self-report that will."""
+    from aea.kernel import impasse, crystal
+    lines = []
+    try:
+        stuck = [r for r in impasse.scan() if r.get("stuck")]
+    except Exception:
+        stuck = []
+    for r in stuck[:2]:
+        cap = r.get("capability")
+        line = (f"- {cap} is STUCK: {r.get('consecutive_failures')} failures sharing one cause"
+                f" ({str(r.get('dominant_signature') or '')[:60]})")
+        try:
+            parts = crystal.applicable(r.get("dominant_signature") or "")
+        except Exception:
+            parts = []
+        if parts:
+            line += f" | a part resolved this before: {str(parts[0].get('name'))[:40]}"
+        lines.append(line)
+
+    # THE TWO QUANTITIES `decide.WHEN` ASKS ABOUT. Without these the conditions are unanswerable.
+    try:
+        from aea.loop import live
+        done, total = live.corpus_state()
+        owed = max(0, total - done)
+        lines.append(f"- undistilled sessions waiting to be consolidated: {owed} of {total}")
+    except Exception:
+        pass
+    try:
+        hb = grid.load_json("heartbeat.json", {})
+        last = hb.get("last_brief_date")
+        lines.append(f"- last brief written: {last or 'never'} (today is "
+                     f"{time.strftime('%Y-%m-%d', time.gmtime())})")
+    except Exception:
+        pass
+
+    if not lines:
+        return "(nothing owed and nothing stuck)"
+    out = "\n".join(lines[:STANDING_LINES])
+    return out[:STANDING_CHARS]
+
+
 def tick(seed, state):
     state["tick"] += 1
     world = sense()
     mem = "\n".join(f"- {m}" for m in state["memory"][-6:]) or "(first awakening - no prior memory)"
+    owed = standing(state)
     prompt = (
         "You are Luis's autonomous entity (the AEA). You persist across time and serve ONLY him. Reason as HIM,"
         " for him.\n\n"
@@ -228,6 +292,10 @@ def tick(seed, state):
         # acting half can do. This is `list_tools` doing its job at the DECISION layer instead of
         # only inside a conversation - and it adds no capability, it only stops the entity
         # proposing moves it cannot make and never proposing the ones it can.
+        # THE SEVENTH INTERPOLATION. Placed immediately above the move menu on purpose: the menu
+        # asks the wake to check each condition "against your actual situation", and until this line
+        # the situation was not in the prompt.
+        f"WHAT YOUR OWN RECORD SAYS RIGHT NOW (measured, not remembered):\n{owed}\n\n"
         f"\nSEPARATELY from all of that: these are the mechanical moves you can run on YOURSELF "
         f"while he is away. They serve your own upkeep, not his priorities - never substitute one "
         f"for real work:\n{_moves()}\n"
