@@ -350,6 +350,14 @@ def promote(force: bool = False):
     rep = grid.load_json(OUT, None)
     if not rep:
         print("no exam yet"); return
+    # THE STAMP GOES ON THE WRITER THAT ACTUALLY WRITES. `capability_census` stamps its own
+    # report and does NOT produce the live ladder - this function does, and it is the second
+    # writer of the only two-writer store in the tree. Stamping the other one and then watching
+    # the staleness warning still fire is how the mistake surfaced: the guard was correct and
+    # pointed at a file nobody was writing.
+    from aea.energy.capability_census import PROBE_CONTRACT
+    rep["probe_contract"] = PROBE_CONTRACT
+    rep["code"] = grid.code_stamp()
     live_path = os.path.join(grid.STATE, "capability_census.json")
     live = grid.load_json(live_path, {}) or {}
     have, incoming = len(live.get("models") or []), len(rep["models"])
@@ -405,10 +413,17 @@ def promote(force: bool = False):
               f"this would silently retune frontier/solid/reflex for the whole entity.\n"
               f"  Check the tier ratios in energy.ladder first, then pass --force.")
         return
+    # THE SAVED DICT IS BUILT EXPLICITLY, SO A STAMP ON `rep` NEVER ARRIVES. That is how this was
+    # missed twice: the stamp was added to `capability_census`'s report (a file the ladder does not
+    # read), then to `rep` here (an object this line does not save), and both times the staleness
+    # warning kept firing and was the only thing that noticed. A field added to the wrong object is
+    # indistinguishable from a field never added, and only running the check tells them apart.
     grid.atomic_save_json(live_path,
                           {"generated": rep["generated"], "battery": rep["battery"],
                            "source": "aea.energy.extensive_census",   # who wrote the live ladder
                            "promoted_at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
+                           "probe_contract": rep.get("probe_contract"),
+                           "code": rep.get("code"),
                            "models": rep["models"]}, indent=1)
     print(f"promoted {incoming} exam results into capability_census.json (the live ladder)"
           + (f" - REPLACED a census of {have}" if have else ""))

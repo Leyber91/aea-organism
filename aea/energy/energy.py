@@ -203,6 +203,28 @@ def _warn_if_stale(census: dict) -> bool:
     return True
 
 
+def _general_only(rows: list) -> list:
+    """Drop rods that are not GENERAL-PURPOSE, using the filter that already existed one module over.
+
+    MEASURED after the honest re-census: `nvidia/ising-calibration-1.5-31b` scores 12/12 in 0.9s and
+    landed in the TOP 8 of both frontier and solid. The score is real - it genuinely answers the
+    battery - and it is a calibration model, not a reasoning rod. A twelve-probe exam cannot tell
+    those apart, which is exactly why `orchestrator.SPECIAL_PURPOSE` exists and already matches
+    `calibration`, `embed`, `rerank`, `guard`, `ocr`, `whisper`, `vision` and the rest.
+
+    `orchestrator.load_pool` has always applied it. `ladder` never did - so one registry of
+    non-general models was honoured on one path and ignored on the other, and the path ignoring it
+    is the one that feeds the entity's own deliberation. The filter is not new; calling it is.
+
+    Imported lazily because `orchestrator` sits above this module, and an import-time dependency
+    would invert the direction the packages are supposed to run in."""
+    try:
+        from aea.mind.orchestrator import is_general
+    except Exception:
+        return rows                       # cannot filter -> rank everything rather than nothing
+    return [r for r in rows if is_general(r.get("model", ""))]
+
+
 def ladder(tier: str = "frontier", zone: str = "private", order: str | None = None) -> list[tuple[str, str]]:
     """The ranked energy rods for a tier+zone, from the LIVE censuses. Local floor always appended.
     order='depth': among qualified rods prefer PARAMETER DEPTH (the counsel duel 2026-07-11:
@@ -212,6 +234,7 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
     cap = census.get("models", [])
     mx = len(census.get("battery", [])) or 6
     _warn_if_stale(census)
+    cap = _general_only(cap)
     # THE THRESHOLD IS A RATIO, NOT `mx - 1`. MEASURED 2026-07-30, and this one line cost the entity
     # its whole fleet. The docstring above still says "frontier (census >=5/6) | solid (4/6)" - the
     # ratios this tier was designed around, 83% and 67%. The threshold was written as `mx - 1`,
