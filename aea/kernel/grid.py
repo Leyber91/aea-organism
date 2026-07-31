@@ -1077,7 +1077,7 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
                     total_tokens=None, tool_calls=None, deprecation=None, status=0, error=str(e))
 
 
-def stream_openai(plant: str, model: str, messages, max_tokens=256, temperature=0.2, timeout=60,
+def stream_openai(plant: str, model: str, messages, max_tokens=None, temperature=None, timeout=60,
                   receipt: dict | None = None):
     """Same call as `call_openai`, but YIELD the answer in pieces as the rod emits them.
 
@@ -1116,9 +1116,22 @@ def stream_openai(plant: str, model: str, messages, max_tokens=256, temperature=
         headers["Authorization"] = f"Bearer {k}"
     elif cap.get("anon"):
         headers["Authorization"] = f"Bearer {cap['anon']}"
-    payload_out = {"model": model, "messages": messages, "max_tokens": max_tokens,
+    # THE SAME RESOLUTION AS `call_openai`, AND IT WAS MISSING HERE FOR THE WHOLE STREAMING PATH.
+    # explicit arg > the owner's published ceiling > OMIT THE FIELD. This function defaulted to
+    # `max_tokens=256` and sent it unconditionally - the exact number this module's own docstring
+    # (grid.py:892) names as the defect that filtered "EVERY fitness score, census and tool probe in
+    # this repo". The diagnosis was written two hundred lines above this function and applied only
+    # to its sibling. Everything voice and conversation streams, so this was the live path.
+    pub = own_params(model)
+    if max_tokens is None:
+        max_tokens = pub.get("max_tokens")          # may stay None -> field omitted below
+    if temperature is None:
+        temperature = pub.get("temperature", 0.2)
+    payload_out = {"model": model, "messages": messages,
                    "temperature": temperature, "stream": True,
                    "stream_options": {"include_usage": True}}
+    if max_tokens is not None:                      # a made-up ceiling is worse than none at all
+        payload_out["max_tokens"] = max_tokens
     body = json.dumps(payload_out).encode("utf-8")
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     t0 = time.time()
@@ -1161,8 +1174,16 @@ def stream_openai(plant: str, model: str, messages, max_tokens=256, temperature=
 
 
 def complete(prompt: str, capability="reasoning", zone="private", depth=0,
-             max_tokens=256, router: Router | None = None) -> dict:
-    """The entity's front door: route by capability+zone+depth, draw metered power, return text."""
+             max_tokens=None, router: Router | None = None) -> dict:
+    """The entity's front door: route by capability+zone+depth, draw metered power, return text.
+
+    `max_tokens=None` MEANS 'NO OPINION', AND THE DEFAULT USED TO BE 256. That mattered more here
+    than anywhere else, because this function passes the value on EXPLICITLY - and an explicit
+    argument wins `call_openai`'s resolution order by design, since a caller who names a number is
+    presumed to know something. So a literal 256 sitting in this signature made the
+    published-ceiling branch DEAD for every caller of the entity's own front door, no matter how
+    carefully `call_openai` had been fixed. The number was never chosen by anyone; it was the
+    parameter default nobody revisited."""
     router = router or Router()
     plant, model, wait = router.pick(capability, zone, depth=depth)
     if not plant:

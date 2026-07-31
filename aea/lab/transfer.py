@@ -200,23 +200,79 @@ def d_silent_default(rel, src, tree):
     return hits
 
 
+_CEIL_NAMES = ("max_tokens", "mx", "num_predict", "max_new_tokens", "max_output_tokens", "n_predict")
+
+
 def d_invented_ceiling(rel, src, tree):
-    """A literal `max_tokens=<int>` - a ceiling we invented rather than the rod's own.
+    """A literal token ceiling - a number we invented rather than the rod's own.
 
     D29: the provider bills neither tokens nor requests, so every ceiling below the rod's published
     window only truncates thinking and corrupts the measurement taken through it. Resolution is
-    explicit-arg > published ceiling > omit the field."""
+    explicit-arg > published ceiling > omit the field.
+
+    THIS DETECTOR WAS ITSELF THE DEFECT, AND IT IS THE REASON THE CLASS KEPT RECURRING. The first
+    version walked `n.keywords` only, and its single shipped control was a keyword argument. A
+    four-shape AST census of the tree found **100 literal ceilings**, of which it could see 62:
+
+        max_tokens=256                  keyword           62   CAUGHT
+        call(..., 256)                  positional        15   MISSED
+        def f(..., max_tokens=256)      default parameter 19   MISSED
+        {"max_tokens": 256}             dict key           4   MISSED
+
+    So it was green-by-construction on 38 live instances - including `grid.stream_openai`, whose
+    default parameter carried the exact 256 this module's own prose names as the defect, on the
+    path every voice and conversation call takes. That is D18 arriving INSIDE the detector written
+    to honour D18: *a detector never shown a positive it must catch has not been tested, only run.*
+    Each of the three missing shapes now ships with its own control, so `verify_detectors` refuses
+    to report until all four fire."""
     hits = []
+
+    def flag(node, label, value):
+        hits.append((rel, node.lineno, _line(src, node.lineno),
+                     f"{label}={value} is a ceiling we chose - pass None and let the rod's "
+                     f"published window decide, or name what the number buys"))
+
     for n in ast.walk(tree):
-        if not isinstance(n, ast.Call):
-            continue
-        for kw in (n.keywords or []):
-            if kw.arg in ("max_tokens", "mx") and isinstance(kw.value, ast.Constant) \
-                    and isinstance(kw.value.value, int):
-                hits.append((rel, kw.value.lineno, _line(src, kw.value.lineno),
-                             f"{kw.arg}={kw.value.value} is a ceiling we chose - pass None and let "
-                             f"the rod's published window decide, or name what the number buys"))
+        # SHAPE 1 - the keyword argument. The only one the first version could see.
+        if isinstance(n, ast.Call):
+            for kw in (n.keywords or []):
+                if kw.arg in _CEIL_NAMES and isinstance(kw.value, ast.Constant) \
+                        and isinstance(kw.value.value, int) and not isinstance(kw.value.value, bool):
+                    flag(kw.value, kw.arg, kw.value.value)
+
+        # SHAPE 2 - the DEFAULT PARAMETER. 19 instances, and the most dangerous shape of the four:
+        # it applies to every caller who does not override it, and it is invisible at every call
+        # site. `stream_openai(..., max_tokens=256, ...)` filtered the whole streaming path.
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            a = n.args
+            names = [x.arg for x in (a.posonlyargs + a.args)]
+            defaults = list(a.defaults)
+            for name, dflt in zip(names[len(names) - len(defaults):], defaults):
+                if name in _CEIL_NAMES and isinstance(dflt, ast.Constant) \
+                        and isinstance(dflt.value, int) and not isinstance(dflt.value, bool):
+                    flag(dflt, name, dflt.value)
+            for name, dflt in zip([x.arg for x in a.kwonlyargs], a.kw_defaults):
+                if name in _CEIL_NAMES and isinstance(dflt, ast.Constant) \
+                        and isinstance(dflt.value, int) and not isinstance(dflt.value, bool):
+                    flag(dflt, name, dflt.value)
+
+        # SHAPE 3 - the DICT KEY, which is how a hand-rolled POST body carries its ceiling past
+        # every helper that would have resolved it.
+        if isinstance(n, ast.Dict):
+            for k, v in zip(n.keys, n.values):
+                if isinstance(k, ast.Constant) and k.value in _CEIL_NAMES \
+                        and isinstance(v, ast.Constant) and isinstance(v.value, int) \
+                        and not isinstance(v.value, bool):
+                    flag(v, str(k.value), v.value)
     return hits
+
+
+# SHAPE 4 - the POSITIONAL argument. Deliberately NOT detected by name, because a bare integer in
+# argument slot N is only a ceiling if the callee's slot N is a ceiling, and resolving that
+# statically means a per-callee table that would itself go stale silently. The census counted 15;
+# they are surfaced by `--positional`, which reports the callees worth reading rather than
+# pretending to a certainty the AST cannot give. Claiming to catch this shape would be the
+# comfortable answer and a false one.
 
 
 def d_expiring_only(rel, src, tree):
@@ -432,9 +488,28 @@ DETECTORS = [
      "from aea.mind import tiers\n\ndef seat():\n    return tiers.organ('reflex')\n"),
     ("silent-default", d_silent_default, "D19/D21 - a null indistinguishable from a real result", False,
      "def f(p):\n    try:\n        return open(p).read()\n    except Exception:\n        return {}\n"),
+    # THREE CONTROLS, NOT ONE, AND THAT IS THE WHOLE POINT. Each is a shape copied verbatim out of
+    # this tree, and each was a LIVE MISS until it was added here - 38 instances the detector was
+    # green on by construction. `verify_detectors` refuses to report unless every one fires, so the
+    # only way to lose a shape again is to delete its control on purpose.
     ("invented-ceiling", d_invented_ceiling, "D29 - a limit that buys nothing only costs", False,
      "def f(c):\n    return c.call(model='m', messages=[], max_tokens=256)\n"),
 ]
+
+# EXTRA CONTROLS - VERIFIED, NEVER REPORTED. One defect can take several SHAPES, and each shape
+# needs its own positive or the detector is untested on it. Registering them as additional DETECTORS
+# rows verifies them correctly and then prints the identical finding list once per row, which is how
+# a report stops being read - so they are checked by `verify_detectors` and never rendered.
+#
+# Each was a live miss. The keyword control was this detector's only positive while 38 instances sat
+# in the other two shapes, including `grid.stream_openai`'s default parameter carrying the exact 256
+# this module's own prose names as the defect, on the path every voice call takes.
+EXTRA_CONTROLS = (
+    ("invented-ceiling/default-param", d_invented_ceiling,
+     "def stream_openai(plant, model, messages, max_tokens=256, temperature=0.2):\n    return 1\n"),
+    ("invented-ceiling/dict-key", d_invented_ceiling,
+     "def f(model, messages):\n    return {'model': model, 'messages': messages, 'max_tokens': 256}\n"),
+)
 
 
 def verify_detectors() -> list:
@@ -442,7 +517,9 @@ def verify_detectors() -> list:
     and this module refuses to report until it is fixed - see the header. This is the difference
     between "found nothing" and "matched nothing", which are the same sentence from outside."""
     bad = []
-    for name, fn, _why, _blk, control in DETECTORS:
+    checks = ([(n, f, c) for n, f, _w, _b, c in DETECTORS]
+              + [(n, f, c) for n, f, c in EXTRA_CONTROLS])
+    for name, fn, control in checks:
         try:
             tree = ast.parse(control)
             kw = {}

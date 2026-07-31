@@ -104,7 +104,7 @@ def grid_public(T, parent, goal, prompt, tier="bulk", depth=1, mx=None):
     return node, txt
 
 
-def grid_private(T, parent, goal, prompt, depth=3, mx=None, cap="text"):
+def grid_private(T, parent, goal, prompt, depth=None, mx=None, cap="text"):
     """A traced PRIVATE node. zone=sensitive => ZONES boundary allows LOCAL ONLY. depth=3 -> a small FAST
     local model (the router picks ollama/granite4.1:3b, the reliable non-thinking instruct)
     so the private step doesn't cold-load a 9B past the timeout. Returns the plant to PROVE it."""

@@ -77,8 +77,32 @@ def list_serving(plant: str, base: str, keyname: str) -> list[str]:
 
 
 def probe(plant, base, keyname, model, item):
+    """One probe, scored on THE ROD'S ANSWER rather than on our budget.
+
+    THE IDENTICAL DEFECT ITS SIBLING ALREADY FIXED AND DOCUMENTED. This function sent
+    `max_tokens=item["mx"]` - the battery item's own tiny budget, 40 tokens for `instruct` - and
+    `aea/energy/extensive_census.py:105-125` records what that does: measured on
+    nemotron-3-ultra-550b, `finish_reason: "length"`, `completion_tokens 40/40`, and the same
+    188-character deliberation present in both `content` and `reasoning_content`. The rod's private
+    thinking was scored as its answer, probe after probe, and it entered the census at 7/12. With
+    the ceiling removed it scored 12/12 while a non-deliberating control did not move.
+
+    THAT SCORE IS NOT COSMETIC HERE. `energy.py`, `orchestrator.py` and `controlroom.py` all read
+    this store to rank rods, seat councils and paint the honesty display, so a budget artefact
+    propagated into every selection the system makes. The lesson was written into the sibling's
+    docstring and left unapplied in the module next to it - which is the exact shape `transfer.py`
+    exists to catch, and could not, because its detector never saw this argument form.
+
+    `mx` STAYS IN THE BATTERY AND IS NO LONGER SENT. It documents the intended brevity of an answer;
+    brevity is judged by `item["check"]` on what came back, which is a property of the ROD. A
+    ceiling enforces brevity by truncation, which measures our impatience instead.
+
+    NOTE ON STORED SCORES: every row in `state/capability_census.json` older than this change was
+    taken through the old filter and is not comparable with rows taken after it. A re-run is the
+    only honest way to compare, and the file records no code version, so nothing downstream can tell
+    the two apart - see the assembly/versioning work."""
     r = grid.call_openai(plant, model, [{"role": "user", "content": item["prompt"]}],
-                         max_tokens=item["mx"], temperature=item["temp"], timeout=TIMEOUT)
+                         max_tokens=None, temperature=item["temp"], timeout=TIMEOUT)
     text = (r.get("text") or "").strip()
     if not r["ok"]:
         return dict(id=item["id"], outcome=("TIMEOUT" if "timed out" in (r.get("error") or "").lower()
