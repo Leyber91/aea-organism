@@ -36,6 +36,10 @@ STATE = os.path.join(grid.STATE, "talk_state.json")
 SEED_PATH = os.path.join(grid.STATE, "aea_seed.md")
 IDENTITY = os.path.join(grid.STATE, "identity.json")
 KEEP_TURNS = 14           # rolling window of exchanges carried into context
+# THE CONTEXT BUDGET IN CHARACTERS, and it bounds the WINDOW rather than any message. Generous on
+# purpose - the rods here serve very large contexts and cutting thought is the failure this repo
+# spent a day removing. It exists so one 200KB paste cannot be replayed into every later turn.
+CONTEXT_CHARS = 120_000
 
 
 def load_state() -> dict:
@@ -100,12 +104,26 @@ def answer(user_text: str, state: dict, ident: dict, seed: str, zone: str) -> di
     except Exception:
         pass
     system = build_system(ident, seed, memories, zone)
+    # FEWER TURNS, NEVER A CUT TURN. Two constraints that look opposed and are not.
+    #
+    # Storing the turn text WHOLE is right: the record of what Luis actually said is the record,
+    # and truncating it at 800 characters was losing the middle of every long message. But feeding
+    # it back unbounded is a different failure - MEASURED after that truncation was removed, three
+    # pasted turns of 200KB produced a 603,638-character prompt, about 150k tokens, 125x what the
+    # same conversation cost before, replayed on every single turn.
+    #
+    # So the window degrades by DROPPING THE OLDEST EXCHANGE rather than by cutting any message.
+    # Nothing a person wrote is ever half-shown to the rod; a very long conversation simply carries
+    # less history. The budget is generous because the context is (Nvidia serves a million tokens)
+    # and it exists only to stop one paste from dominating every future turn.
     recent = state["turns"][-KEEP_TURNS:]
+    while len(recent) > 1 and sum(len(t.get("text") or "") for t in recent) > CONTEXT_CHARS:
+        recent = recent[1:]
     convo = "\n".join(f"{'Luis' if t['who'] == 'luis' else 'you'}: {t['text']}" for t in recent)
     prompt = (f"Conversation so far:\n{convo}\n\nLuis: {user_text}\n\n"
               f"Reply as yourself - grounded in the seed, the memories, and your true state.")
     tier = "local" if zone == "sensitive" else "frontier"
-    r = energy.draw(prompt, tier=tier, zone=zone, mx=420, temp=0.4, system=system,
+    r = energy.draw(prompt, tier=tier, zone=zone, mx=None, temp=0.4, system=system,
                     timeout=45, order="depth")   # conversation draws by DEPTH (the counsel duel)
     r["memories"] = memories[:4]        # the RECEIPT: what it attended to for this answer
     return r

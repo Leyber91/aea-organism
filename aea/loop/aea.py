@@ -368,7 +368,21 @@ def tick(seed, state):
     return out, who, verdict, vwho, reasoning
 
 def main():
-    n_ticks = int(sys.argv[1]) if len(sys.argv) > 1 else 3
+    # THE SAME GUARD AS `live.main`, for the same reason. `python -m aea.loop.aea --help` raised
+    # `ValueError: invalid literal for int() with base 10: '--help'` - a crash rather than a
+    # daemon, so less dangerous than its sibling, but the same missing check: an argument nobody
+    # anticipated went straight into `int()`.
+    _args = [x for x in sys.argv[1:] if not x.startswith("-")]
+    _flags = [x for x in sys.argv[1:] if x.startswith("-")]
+    if _flags:
+        print(f"aea: unrecognised flag(s) {' '.join(_flags)}")
+        print("  usage: python -m aea.loop.aea [N_TICKS]     (no flags)")
+        sys.exit(2)
+    try:
+        n_ticks = int(_args[0]) if _args else 3
+    except ValueError:
+        print(f"aea: N_TICKS must be an integer, got {_args[0]!r}")
+        sys.exit(2)
     seed = open(SEED_PATH, encoding="utf-8").read()
     state = load_state()
     print(f"=== THE AEA WAKES ===  (seed: {len(seed)} chars | prior memory: {len(state['memory'])} notes | starting at tick {state['tick']})")

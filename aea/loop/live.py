@@ -596,8 +596,30 @@ def tick(hb: dict, demo: bool):
     log(f"tick {hb['total_ticks']}  {action}  {'ok' if ok else 'FAIL'}  ({tail[:70]})  | corpus {done}/{total}")
 
 
+KNOWN_FLAGS = ("--status", "--interval", "--ticks", "--demo", "--once")
+
+
 def main():
     a = sys.argv
+    # AN UNRECOGNISED FLAG MUST NOT START THE ENTITY. THIS ALREADY COST SOMETHING.
+    #
+    # MEASURED 2026-07-31: an auditor ran `python -m aea.loop.live --help` while surveying CLI
+    # entry points. There was no guard, so `--help` fell past every branch and STARTED THE REAL
+    # UNATTENDED DAEMON against real state. It executed two live wake ticks - 14:40:30 and
+    # 14:41:20 - writing rows into production knobs.json and creating state/outcomes.jsonl, before
+    # anyone noticed and killed it.
+    #
+    # Starting an autonomous loop is the most consequential thing in this repo, and it was the
+    # DEFAULT behaviour for any argument nobody had thought of. `--help`, a typo, a flag from a
+    # sibling command - all of them booted the entity. Unknown fails CLOSED here like everywhere
+    # else, and the refusal names what is actually accepted.
+    unknown = [x for x in a[1:] if x.startswith("-") and x not in KNOWN_FLAGS]
+    if unknown:
+        print(f"live: unrecognised flag(s) {' '.join(unknown)}")
+        print(f"  accepted: {', '.join(KNOWN_FLAGS)}")
+        print("  REFUSING TO START. Running the unattended loop is not a safe default for an "
+              "argument nobody recognised.")
+        return 2
     if "--status" in a:
         hb = load_hb()
         done, total = corpus_state()
