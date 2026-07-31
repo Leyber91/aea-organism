@@ -41,6 +41,7 @@ prefers-reduced-motion.
 from __future__ import annotations
 
 import json
+import hashlib
 import math
 import os
 import re
@@ -176,7 +177,18 @@ def _tree(org: dict) -> dict:
         return leaves[n]
     count(root)
 
-    pos, depth, ring = {}, {root: 0}, 96
+    # ADAPTIVE RING. `ring = 96` times a max depth of 6 puts nodes at radius 576 inside a viewBox
+    # whose half-width is 500 - MEASURED: x ran from -54.4 to 1054.4 and THREE live functions were
+    # drawn off-canvas, invisible, on a page whose tag says every mark is live system truth.
+    # Budget now: tree 0-372, planned band 392-408, dead field 430-492, all inside 500 at any depth.
+    _maxd = 1
+    def _probe(n, d):
+        nonlocal _maxd
+        _maxd = max(_maxd, d)
+        for c in (kids.get(n) or []):
+            _probe(c, d + 1)
+    _probe(root, 0)
+    pos, depth, ring = {}, {root: 0}, 372.0 / max(1, _maxd)
 
     def place(n, a0, a1, d):
         a = (a0 + a1) / 2
@@ -193,11 +205,21 @@ def _tree(org: dict) -> dict:
             cur += w
     place(root, -math.pi / 2, 3 * math.pi / 2, 0)
 
+    # ANGULAR SECTOR PER PACKAGE, so the dark halo can be read: a package whose live nodes sit at
+    # angle X gets its dead nodes at angle X too, and the lit/dark ratio becomes visible per package.
+    secs, span = {}, {}
+    for n, (x, y) in pos.items():
+        a = math.atan2(y - 500, x - 500) % (2 * math.pi)
+        span.setdefault(_pkg(n), []).append(a)
+    for k, v in span.items():
+        secs[k] = (min(v), max(v)) if max(v) - min(v) < math.pi else (0.0, 2 * math.pi)
+
     tree = [(p, c) for p, ch in kids.items() for c in ch]
     tset = {(p, c) for p, c in tree}
     cross = [(a, b) for a, b in org["edges"]
              if (a, b) not in tset and a in pos and b in pos]
-    return dict(pos=pos, tree=tree, cross=cross, root=root, depth=depth, leaves=leaves)
+    return dict(pos=pos, tree=tree, cross=cross, root=root, depth=depth, leaves=leaves,
+                sectors=secs, maxd=_maxd)
 
 
 def _svg(org: dict, T: dict) -> str:
@@ -206,31 +228,48 @@ def _svg(org: dict, T: dict) -> str:
         return ""
     # THE FIELD. Every function the organism cannot reach, as a dim halo. The ratio is the story of
     # this repo and it should land before a word is read.
+    # THE FIELD: DETERMINISTIC, AND SECTORED BY PACKAGE SO IT SAYS SOMETHING.
+    #
+    # It used `hash(n)`, which Python SALTS PER PROCESS - two publishes of identical state differed
+    # by 1,144 lines because every dot moved. An accumulation built on a canvas that reshuffles
+    # itself is worse than no accumulation. sha1 is stable across processes and machines.
+    #
+    # And the angle now comes from the dot's OWN package, so the halo carries the measurement:
+    # loop 25 live / 3 dark, kernel 74/132, and the entire 558-function lab sector is black. Placed
+    # uniformly it showed nothing at all.
+    secs = T.get("sectors") or {}
     for n in org["dead"]:
-        h = hash(n) & 0xFFFFFF
-        a = (h % 3600) / 3600 * 2 * math.pi
-        r = 430 + ((h >> 12) % 1000) / 1000 * 62
-        out.append(f'<circle cx="{500 + r*math.cos(a):.0f}" cy="{500 + r*math.sin(a):.0f}" r="1" class="dead"/>')
+        h = int(hashlib.sha1(n.encode()).hexdigest()[:8], 16)
+        a0, a1 = secs.get(_pkg(n), (0.0, 2 * math.pi))
+        a = a0 + (h % 10000) / 10000 * (a1 - a0)
+        r = 430 + ((h >> 16) % 1000) / 1000 * 62
+        out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" r="1" class="dead"/>')
     # CROSS-LINKS - real calls that are not tree edges. Faint, so the tree stays readable.
     for a, b in T["cross"]:
         x1, y1 = pos[a]; x2, y2 = pos[b]
-        out.append(f'<path d="M{x1},{y1} Q500,500 {x2},{y2}" class="cross"/>')
+        # A CROSS EDGE APPEARS ONLY WHEN BOTH ENDS HAVE ARRIVED - max of the two depths. Drawing it
+        # earlier would show a relationship to a function that is not on screen yet.
+        dd = max(T["depth"].get(a, 9), T["depth"].get(b, 9))
+        out.append(f'<path d="M{x1},{y1} Q500,500 {x2},{y2}" class="cross" data-d="{dd}"/>')
     # THE BRANCHES. Curved to the parent so the flow outward from the wake is unmistakable.
     for p, c in T["tree"]:
         if p not in pos or c not in pos:
             continue
         x1, y1 = pos[p]; x2, y2 = pos[c]
         out.append(f'<path d="M{x1},{y1} Q{(x1+x2)/2:.0f},{(y1+y2)/2:.0f} {x2},{y2}" '
-                   f'class="branch d{min(T["depth"].get(c,4),4)}"/>')
+                   f'class="branch" data-d="{T["depth"].get(c, 9)}"/>')
     for n, (x, y) in pos.items():
         d = T["depth"].get(n, 4)
         synth = ":" not in n
         hue = PKG_HUE.get(_pkg(n), 40)
         r = 8 if d == 0 else (5.5 if synth else max(2.0, 5.2 - d * 0.75))
         cls = "node core" if d == 0 else ("node hub" if synth else "node")
-        style = "" if (d == 0 or synth) else f' style="fill:hsl({hue} 82% {62 - min(d,5)*4}%)"'
-        out.append(f'<circle cx="{x}" cy="{y}" r="{r:.1f}" class="{cls}"{style}>'
-                   f'<title>{n.replace("aea.","")}  (depth {d})</title></circle>')
+        # NO PER-PACKAGE HUE ON THE FILL. Every live node was amber-ish, so amber meant "exists" -
+        # the one property every mark shares - and the two-ink law reserves it for the FIRED state.
+        # Resting nodes are structure grey; the frame CSS paints the arriving ring amber.
+        style = ""
+        out.append(f'<circle cx="{x}" cy="{y}" r="{r:.1f}" class="{cls}" data-d="{d}"{style}>'
+                   f'<title>{n.replace("aea.","")}  (hop {d})</title></circle>')
     # LABEL THE FIRST RING - the functions the wake calls directly. These are the ones worth naming.
     # LABEL ONLY THE FIRST RING - the real entry points and the import-only cluster. The previous
     # version labelled every depth-1 node, which after the rooting fix is still readable but was an
@@ -290,6 +329,46 @@ def build() -> str:
         f'<div class="g"><i style="height:{max(4, round(100*h.get("live",0)/gmax))}%"></i>'
         f'<span>{h.get("live")}</span></div>' for h in hist[-14:])
 
+    # ================= THE ACCUMULATION =================
+    # ONE ATTRIBUTE ON THE SVG ROOT drives every frame, over a layout computed ONCE. Heer & Robertson
+    # (InfoVis 2007) and Misue et al (JVLC 1995): a mark must not move when its data has not changed,
+    # or the reader cannot tell drift from meaning. Per-frame relayout is therefore forbidden here -
+    # and this code would be the worst offender, because angle is allocated by subtree size, so ONE
+    # added node re-slices every sibling wedge.
+    MAXD = T["maxd"]
+    hist = {}
+    for n in T["pos"]:
+        hist[T["depth"].get(n, 9)] = hist.get(T["depth"].get(n, 9), 0) + 1
+    cum, run = [], 0
+    for k in range(MAXD + 1):
+        run += hist.get(k, 0); cum.append(run)
+
+    frame_css = []
+    for k in range(MAXD + 1):
+        for d in range(k + 1, MAXD + 1):
+            frame_css.append(f'#org[data-frame="{k}"] .node[data-d="{d}"]{{fill:#191d22;opacity:.28;r:1.2px}}')
+            frame_css.append(f'#org[data-frame="{k}"] .branch[data-d="{d}"],'
+                             f'#org[data-frame="{k}"] .cross[data-d="{d}"]{{opacity:0}}')
+        frame_css.append(f'#org[data-frame="{k}"] .node[data-d="{k}"]{{fill:var(--amber)}}')
+        frame_css.append(f'#org[data-frame="{k}"] .branch[data-d="{k}"]{{stroke:var(--amber);opacity:.92}}')
+    frame_css = "\n".join(frame_css)
+
+    # THE CAPTION IS NOT OPTIONAL. The page honours prefers-reduced-motion, which kills the motion
+    # channel entirely - so what changed must survive with zero animation, in words, measured.
+    caps, seen_pkg = [], set()
+    for k in range(MAXD + 1):
+        at_k = [n for n in T["pos"] if T["depth"].get(n) == k]
+        new_pk = sorted({_pkg(n) for n in at_k} - seen_pkg)
+        seen_pkg |= {_pkg(n) for n in at_k}
+        where = ", ".join("aea." + p for p in new_pk) if new_pk else "-"
+        caps.append(f"HOP {k} — {len(at_k)} function{'s' if len(at_k)!=1 else ''} arrive — "
+                    f"{cum[k]} of {len(T['pos'])} reachable — first reach into {where}")
+    rail = "".join(
+        f'<button data-k="{k}" aria-current="{"step" if k==MAXD else "false"}">'
+        f'<b>HOP {k}</b><span>+{hist.get(k,0)}</span><em>{cum[k]}</em></button>'
+        for k in range(MAXD + 1))
+
+    caps_js = json.dumps(caps)
     live_n, fn_n = len(org["live"]), org["functions"]
     stamp = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())
 
@@ -314,7 +393,22 @@ svg{{display:block;width:100%;height:auto}}
 .branch{{fill:none;stroke:#4a535d;stroke-width:1.05;opacity:.55}}
 .branch.d1{{stroke:var(--amber);stroke-width:1.7;opacity:.85}}
 .branch.d2{{stroke:var(--brass);stroke-width:1.3;opacity:.6}}
-.node{{opacity:.95}}
+.node{{fill:#5b636c;opacity:.95;transition:fill .22s ease,opacity .22s ease,r .22s ease}}
+.branch{{transition:opacity .22s ease,stroke .22s ease;transition-delay:0ms}}
+.cross{{transition:opacity .22s ease}}
+.node{{transition-delay:120ms}}
+.stage{{display:flex;gap:0;align-items:stretch}}
+#rail{{display:flex;flex-direction:column;border-right:1px solid #16191d;min-width:132px}}
+#rail button{{display:flex;gap:9px;align-items:baseline;background:none;border:0;border-bottom:1px
+ solid #131619;color:#6d757e;font:inherit;padding:11px 13px;cursor:pointer;text-align:left}}
+#rail button:hover{{background:#0d1013;color:#aeb5bd}}
+#rail button[aria-current="step"]{{background:#0e1114;color:#eef1f4;
+ box-shadow:inset 2px 0 0 var(--amber)}}
+#rail b{{font-size:10px;letter-spacing:.14em;font-weight:600;width:44px}}
+#rail span{{color:var(--brass);font-size:11px;width:30px}}
+#rail em{{color:#4b525a;font-style:normal;font-size:10px;margin-left:auto}}
+.canvas{{flex:1;min-width:0}}
+#cap{{margin:0;padding:11px 14px;border-top:1px solid #16191d;color:#8b939c;font-size:11.5px}}
 .node.core{{fill:#fff;stroke:var(--amber);stroke-width:3}}
 .node.hub{{fill:#0a0c0e;stroke:var(--amber);stroke-width:2}}
 .halo{{fill:none;stroke:var(--amber);stroke-width:1;opacity:.32}}
@@ -353,16 +447,29 @@ svg{{display:block;width:100%;height:auto}}
 a{{color:var(--brass)}}
 @media (prefers-reduced-motion:no-preference){{.node.core{{animation:p 3.4s ease-in-out infinite}}
 @keyframes p{{0%,100%{{opacity:1}}50%{{opacity:.55}}}}}}
+/* THE MOTION CHANNEL IS OPTIONAL AND THE CAPTION IS NOT. With motion off, nothing animates and the
+   sentence under the graph still says exactly what arrived - change blindness is not a reason to
+   require animation. */
+@media (prefers-reduced-motion:reduce){{#org *{{transition:none !important;transition-delay:0 !important}}}}
+/* GENERATED, ONE RULE PER (frame, depth) PAIR. Frame k: shallower than k = structure grey and
+   drawn; exactly k = amber, the only amber besides the wake; deeper than k = the same dim dot as
+   the dead field, its edges at zero. What ACCUMULATES is the edges, because the edges are the
+   answer to "how is the code related". */
+{frame_css}
 </style>
 <div class="wrap">
 <h1>THE AEA — THE ORGANISM</h1>
 <p class="sub">An autonomous entity, drawn from its own state. Every number on this page is read
 from a file the running system wrote. {stamp}</p>
 
-<div class="hero">
-<svg viewBox="0 0 1000 1000" role="img" aria-label="the live call graph of the entity">
+<div class="hero"><div class="stage">
+<nav id="rail" aria-label="reveal the graph one call-hop at a time">{rail}</nav>
+<div class="canvas">
+<svg id="org" viewBox="0 0 1000 1000" data-frame="{MAXD}" role="img" aria-label="the live call graph of the entity, revealed by call depth">
 {_svg(org, T)}
 </svg>
+<p id="cap">{caps[MAXD]}</p>
+</div></div>
 <div class="legend">
 <span><i style="background:#fff;box-shadow:0 0 0 2px var(--amber)"></i>the wake — where every
  tick begins</span>
@@ -408,6 +515,22 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 <br><br>github.com/Leyber91
 </div>
 </div>
+<script>
+/* ~25 lines, no library, no external request. The ENTIRE state is one integer attribute over frozen
+   coordinates, so going backward is exactly symmetric and free: clicking hop 2 after hop 6 removes
+   precisely what hops 3-6 added, with no residue and no replayed arrival. */
+var CAPS={caps_js},MAXD={MAXD};
+var svg=document.getElementById('org'),rail=document.getElementById('rail'),cap=document.getElementById('cap');
+function go(k){{k=Math.max(0,Math.min(MAXD,k));svg.setAttribute('data-frame',k);cap.textContent=CAPS[k];
+ [].forEach.call(rail.querySelectorAll('button'),function(b){{
+   b.setAttribute('aria-current',+b.dataset.k===k?'step':'false');}});
+ history.replaceState(null,'','#hop-'+k);}}
+rail.addEventListener('click',function(e){{var b=e.target.closest('button');if(b)go(+b.dataset.k);}});
+document.addEventListener('keydown',function(e){{
+ if(e.key==='ArrowRight')go(+svg.getAttribute('data-frame')+1);
+ if(e.key==='ArrowLeft')go(+svg.getAttribute('data-frame')-1);}});
+var m=location.hash.match(/hop-(\d+)/);if(m)go(+m[1]);
+</script>
 """
 
 
