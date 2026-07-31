@@ -35,7 +35,12 @@ def gate(task, ans, pool, meter):
     """ceiling-detect quality gate: did this answer actually solve it?"""
     if not ans or len(ans.strip()) < 3: return False
     n = swarm.pick_varied(pool, 'reflex', meter)
-    r = orchestrator.call_node(n, f"Reply ONLY yes or no: does the ANSWER correctly and fully solve the TASK?\nTASK: {task}\nANSWER: {ans[:500]}", meter, 4)
+    # THE WHOLE ANSWER, AND NO EMISSION CEILING. This asked "does the ANSWER correctly and FULLY
+    # solve the TASK" while passing the first 500 characters, and allowed 4 tokens for the reply -
+    # so a reasoning rod spent its entire budget starting to think and returned nothing, which
+    # `startswith('y')` then read as NO. A gate that asks about completeness must see the whole
+    # thing, and a rod that must think first has to be allowed to finish.
+    r = orchestrator.call_node(n, f"Reply ONLY yes or no: does the ANSWER correctly and fully solve the TASK?\nTASK: {task}\nANSWER: {ans}", meter, None)
     return r['ok'] and r['text'].strip().lower().startswith('y')
 
 def attempt(task, tier, pool, meter, n_nodes=1):

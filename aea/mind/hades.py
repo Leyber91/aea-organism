@@ -27,8 +27,10 @@ def watch(goal, attempt, worker, pool, meter):
     k = grid.key('GROQ_API_KEY')
     if k:
         try:
-            body = json.dumps({"model": "openai/gpt-oss-120b", "temperature": 0, "max_tokens": 1500,  # reasoning model: needs room to think THEN emit the strict JSON (250 -> 400 json_validate_failed)
-                "messages": [{"role": "user", "content": f"You are HADES, a watcher; you do no work, you ONLY judge a worker's output against the ORIGINAL GOAL. Be strict. verdict must be one of: accept | redo | reground | halt.\nGOAL: {goal}\nWORKER OUTPUT: {attempt[:700]}"}],
+            body = json.dumps({"model": "openai/gpt-oss-120b", "temperature": 0, # NO CEILING. 1500 was raised twice already (250 -> 400 -> 1500) because the rod kept running
+                # out mid-JSON, which is the tell that the number was never the right instrument.
+                # Omitted entirely, so the provider applies the model's own maximum.
+                "messages": [{"role": "user", "content": f"You are HADES, a watcher; you do no work, you ONLY judge a worker's output against the ORIGINAL GOAL. Be strict. verdict must be one of: accept | redo | reground | halt.\nGOAL: {goal}\nWORKER OUTPUT: {attempt}"}],
                 "response_format": {"type": "json_schema", "json_schema": {"name": "verdict", "strict": True, "schema": VERDICT_SCHEMA}}}).encode()
             req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", data=body,
                 headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 aea", "Authorization": f"Bearer {k}"}, method="POST")
@@ -56,7 +58,15 @@ def watch_local(goal, attempt, meter, worker_model="granite4.1:3b"):
         "section is a pass). Only set verdict='redo' if a section is empty, missing, or shows an error. "
         "Output ONLY one JSON object: {\"on_goal\":true_or_false,\"correct\":true_or_false,"
         "\"verdict\":\"accept|redo|reground|halt\",\"why\":\"short reason\"}.\n"
-        f"GOAL: {goal}\nBRIEF:\n{attempt[:1600]}"}], max_tokens=700, temperature=0, timeout=120)
+        # THE JUDGE READS THE WHOLE BRIEF, AND EMITS WITHOUT A CEILING.
+        #
+        # This asked for a verdict on whether EACH OF THREE SECTIONS has content, while showing the
+        # judge the first 1600 characters. A brief whose third section starts at 1700 was judged
+        # absent - and `produce_brief`'s dominant impasse signature across 20 recorded failures is
+        # `hades=unverified sections_ok=true`: the brief's own check says the sections ARE there,
+        # and the watcher disagreed about text it was never shown. Truncating the evidence and then
+        # asking a completeness question is not a strict judge, it is a broken one.
+        f"GOAL: {goal}\nBRIEF:\n{attempt}"}], max_tokens=None, temperature=0, timeout=120)
     if r.get("ok"):
         meter.record("ollama", model)
     try:

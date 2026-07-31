@@ -48,6 +48,18 @@ except Exception:
 
 STORE = "knobs.json"
 
+
+def _path() -> str:
+    """RESOLVED AT CALL TIME so a harness can be sandboxed - D48, and it bit again here.
+
+    `test_knobs` exercises the clamp by setting `hi * 100`, which persisted 32000 into the
+    PRODUCTION store and left the brief capped there. The test then "restored the pre-test value",
+    which on the next run was already the polluted one - so it passed in isolation, failed in a
+    sweep, and quietly held a real ceiling on the live organ in between. A store bound to
+    `grid.STATE` at import cannot be redirected, which is the same shape that put 4,920 synthetic
+    rows in the hands ledger, arriving in code written the same day as the fix for it."""
+    return os.environ.get("AEA_KNOBS") or os.path.join(str(grid.STATE), STORE)
+
 # THE FROZEN SCHEMA. Exactly these keys describe a knob, and `test_knobs` asserts this literal so
 # that adding `when:` or `unless:` breaks a test deliberately rather than arriving one reasonable
 # key at a time. See S5's named failure path.
@@ -56,14 +68,24 @@ KNOB_KEYS = ("default", "lo", "hi", "unit", "desc")
 # EVERY KNOB THAT EXISTS. A knob absent from this table cannot be read and cannot be set - an
 # undeclared knob is not a knob, it is a typo with a value attached.
 KNOBS = {
+    # DEFAULT None MEANS OMIT THE FIELD - no ceiling, the rod's own published maximum applies.
+    #
+    # THE FIRST VERSION OF THIS TABLE SAID 300, AND THAT WAS THE DEFECT WEARING THE FIX'S CLOTHES.
+    # I lifted the literal out of `brief.py` and wrote it here as the "declared default", which
+    # re-invented the exact ceiling the knob existed to remove - now blessed by a registry and
+    # therefore harder to see. A number nobody chose does not become chosen by being written down
+    # somewhere tidier. The honest default for a budget is NO BUDGET.
+    #
+    # `lo`/`hi` still bound what may be SET, because a knob the entity can turn needs a range; but
+    # the resting state is no ceiling at all.
     ("produce_brief", "max_tokens"): dict(
-        default=300, lo=120, hi=4000, unit="tokens",
-        desc="budget for the PRIVATE synthesis calls in brief.py. The impasse this exists for: a "
-             "reasoning rod spends its budget thinking and emits content only afterwards, so at "
-             "300 it can answer correctly and still return an empty string."),
+        default=None, lo=120, hi=32000, unit="tokens",
+        desc="budget for the PRIVATE synthesis calls in brief.py. None = omit the field entirely. "
+             "The impasse this exists for: a reasoning rod spends its budget thinking and emits "
+             "content only afterwards, so at 300 it answers correctly and returns an empty string."),
     ("produce_brief", "public_max_tokens"): dict(
-        default=400, lo=120, hi=4000, unit="tokens",
-        desc="budget for the PUBLIC gather calls in brief.py"),
+        default=None, lo=120, hi=32000, unit="tokens",
+        desc="budget for the PUBLIC gather calls in brief.py. None = omit the field entirely."),
     ("produce_brief", "depth"): dict(
         default=3, lo=1, hi=5, unit="steps",
         desc="how many reasoning steps the private synthesis is given"),
@@ -75,7 +97,7 @@ class UndeclaredKnob(KeyError):
 
 
 def _load() -> dict:
-    return grid.load_json(STORE, {"schema": "aea.knobs/1", "values": {}, "history": []})
+    return grid.load_json(_path(), {"schema": "aea.knobs/1", "values": {}, "history": []})
 
 
 def _key(cap: str, knob: str) -> str:
@@ -103,9 +125,13 @@ def get(cap: str, knob: str, fallback=None):
     except Exception:
         v = None
     if v is None:
-        return spec["default"] if fallback is None else fallback
+        # NO STORED VALUE -> the declared default, which may itself be None meaning "no ceiling".
+        # `fallback` is only consulted when the knob is undeclared; a declared None is an ANSWER,
+        # not an absence, and treating it as one would quietly restore a caller's old literal.
+        return spec["default"]
+    kind = type(spec["default"]) if spec["default"] is not None else int
     try:
-        v = type(spec["default"])(v)
+        v = kind(v)
     except Exception:
         return spec["default"]
     return max(spec["lo"], min(spec["hi"], v))
@@ -127,21 +153,36 @@ def set(cap: str, knob: str, to, why: str = "", by: str = "unattributed") -> dic
     except UndeclaredKnob as e:
         row.update(ok=False, refused=str(e)[:200])
         doc.setdefault("history", []).append(row)
-        grid.atomic_save_json(STORE, doc, indent=1)
+        grid.atomic_save_json(_path(), doc, indent=1)
         return dict(ok=False, key=k, refused=str(e)[:200])
+    # None CLEARS THE KNOB, returning it to its declared default - which for a budget is NO CEILING.
+    #
+    # WITHOUT THIS THE KNOB IS A ONE-WAY RATCHET. `set` coerced through `int`, so `set(..., None)`
+    # raised and was refused: the entity could RAISE a budget and never REMOVE one, and every knob
+    # drifted permanently toward having a limit. That is the defect this whole module exists to
+    # undo, rebuilt as a property of the module itself. Caught by the test's own restore step
+    # failing once the default became None.
+    if to is None:
+        was = (doc.get("values") or {}).get(k, spec["default"])
+        doc.setdefault("values", {}).pop(k, None)
+        row.update(ok=True, **{"from": was}, to=spec["default"], clamped=False, cleared=True)
+        doc.setdefault("history", []).append(row)
+        grid.atomic_save_json(_path(), doc, indent=1)
+        return dict(ok=True, key=k, **{"from": was}, to=spec["default"], clamped=False, cleared=True)
+    kind = type(spec["default"]) if spec["default"] is not None else int
     try:
-        val = type(spec["default"])(to)
+        val = kind(to)
     except Exception:
         row.update(ok=False, refused=f"{to!r} is not a {type(spec['default']).__name__}")
         doc.setdefault("history", []).append(row)
-        grid.atomic_save_json(STORE, doc, indent=1)
+        grid.atomic_save_json(_path(), doc, indent=1)
         return dict(ok=False, key=k, refused=row["refused"])
     clamped = max(spec["lo"], min(spec["hi"], val))
     was = (doc.get("values") or {}).get(k, spec["default"])
     doc.setdefault("values", {})[k] = clamped
     row.update(ok=True, **{"from": was}, to=clamped, clamped=(clamped != val))
     doc.setdefault("history", []).append(row)
-    grid.atomic_save_json(STORE, doc, indent=1)
+    grid.atomic_save_json(_path(), doc, indent=1)
     return dict(ok=True, key=k, **{"from": was}, to=clamped, clamped=(clamped != val))
 
 
@@ -174,6 +215,6 @@ if __name__ == "__main__":
         d.setdefault("history", []).append(
             dict(at=time.time(), at_iso=time.strftime("%Y-%m-%d %H:%M:%S"), key="*",
                  ok=True, why="reset to declared defaults", by="cli"))
-        grid.atomic_save_json(STORE, d, indent=1)
+        grid.atomic_save_json(_path(), d, indent=1)
         print("every knob returned to its declared default")
     print(board())

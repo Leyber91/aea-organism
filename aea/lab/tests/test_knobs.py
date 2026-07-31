@@ -20,6 +20,14 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8") if hasattr(sys.stdout, "reconfigure") else None
 
+# THIS TEST DOES NOT TOUCH THE PRODUCTION STORE. It exercises the clamp by setting hi*100, and the
+# first version persisted 32000 into the live knobs file - so the brief ran under a real ceiling
+# this test had installed, the "restore" restored the already-polluted value, and it passed alone
+# while failing in a sweep. Redirected BEFORE knobs is imported so the module never sees the real
+# path. D48, in a file written the same day as the fix for D48.
+import os as _os, tempfile as _tf
+_os.environ["AEA_KNOBS"] = _os.path.join(_tf.mkdtemp(prefix="knobtest_"), "knobs.json")
+
 from aea.kernel import knobs, unstick
 
 ROWS: list = []
@@ -44,8 +52,12 @@ def run() -> dict:
         check(f"{k} is bounded and the range is sane",
               isinstance(spec["lo"], (int, float)) and isinstance(spec["hi"], (int, float))
               and spec["lo"] < spec["hi"], f"{spec['lo']}..{spec['hi']}")
-        check(f"{k} default sits inside its bounds",
-              spec["lo"] <= spec["default"] <= spec["hi"], spec["default"])
+        # A DECLARED None IS "NO CEILING" AND IS THE HONEST RESTING STATE FOR A BUDGET. The first
+        # version of this assertion required a numeric default, which quietly forced every knob to
+        # name a number - and a number nobody chose is the defect this whole table exists to remove.
+        check(f"{k} default is None (no ceiling) or inside its bounds",
+              spec["default"] is None or spec["lo"] <= spec["default"] <= spec["hi"],
+              spec["default"])
         check(f"{k} says WHY it exists", len(str(spec["desc"])) > 30, len(str(spec["desc"])))
         # NO KNOB MAY NAME A PERMISSION. `unstick.INVARIANTS` enforces this on the move; the table
         # simply contains no such entry, so the two guards agree by construction.

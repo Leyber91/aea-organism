@@ -1,9 +1,6 @@
 {
  "schema": "aea.knobs/1",
- "values": {
-  "produce_brief.max_tokens": 900,
-  "produce_brief.depth": 3
- },
+ "values": {},
  "history": [
   {
    "at": 1785477698.795115,
@@ -390,6 +387,244 @@
    "from": 4000,
    "to": 900,
    "clamped": false
+  },
+  {
+   "at": 1785493651.0062015,
+   "at_iso": "2026-07-31 12:27:31",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 900,
+   "why": "entity raising it",
+   "ok": true,
+   "from": 900,
+   "to": 900,
+   "clamped": false
+  },
+  {
+   "at": 1785493651.017537,
+   "at_iso": "2026-07-31 12:27:31",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 0,
+   "why": "",
+   "ok": true,
+   "from": 900,
+   "to": 120,
+   "clamped": true
+  },
+  {
+   "at": 1785493652.2439003,
+   "at_iso": "2026-07-31 12:27:32",
+   "key": "produce_brief.not_a_real_knob",
+   "by": "test",
+   "requested": 1,
+   "why": "",
+   "ok": false,
+   "refused": "'produce_brief.not_a_real_knob is not a declared knob. Add it to KNOBS deliberately, with bounds and a reason, or the entity is turning something nobody designed to be turned.'"
+  },
+  {
+   "at": 1785493652.255872,
+   "at_iso": "2026-07-31 12:27:32",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 3200000,
+   "why": "",
+   "ok": true,
+   "from": 120,
+   "to": 32000,
+   "clamped": true
+  },
+  {
+   "at": 1785493652.2654195,
+   "at_iso": "2026-07-31 12:27:32",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": "not a number",
+   "why": "",
+   "ok": false,
+   "refused": "'not a number' is not a NoneType"
+  },
+  {
+   "at": 1785493652.2762713,
+   "at_iso": "2026-07-31 12:27:32",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 120,
+   "why": "restore after test",
+   "ok": true,
+   "from": 32000,
+   "to": 120,
+   "clamped": false
+  },
+  {
+   "at": 1785493665.0836895,
+   "at_iso": "2026-07-31 12:27:45",
+   "key": "*",
+   "ok": true,
+   "why": "reset to declared defaults",
+   "by": "cli"
+  },
+  {
+   "at": 1785493678.0361826,
+   "at_iso": "2026-07-31 12:27:58",
+   "key": "produce_brief.not_a_real_knob",
+   "by": "test",
+   "requested": 1,
+   "why": "",
+   "ok": false,
+   "refused": "'produce_brief.not_a_real_knob is not a declared knob. Add it to KNOBS deliberately, with bounds and a reason, or the entity is turning something nobody designed to be turned.'"
+  },
+  {
+   "at": 1785493678.0444317,
+   "at_iso": "2026-07-31 12:27:58",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 3200000,
+   "why": "",
+   "ok": true,
+   "from": null,
+   "to": 32000,
+   "clamped": true
+  },
+  {
+   "at": 1785493678.0512846,
+   "at_iso": "2026-07-31 12:27:58",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": "not a number",
+   "why": "",
+   "ok": false,
+   "refused": "'not a number' is not a NoneType"
+  },
+  {
+   "at": 1785493678.0678637,
+   "at_iso": "2026-07-31 12:27:58",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": null,
+   "why": "restore after test",
+   "ok": false,
+   "refused": "None is not a NoneType"
+  },
+  {
+   "at": 1785493703.139958,
+   "at_iso": "2026-07-31 12:28:23",
+   "key": "produce_brief.not_a_real_knob",
+   "by": "test",
+   "requested": 1,
+   "why": "",
+   "ok": false,
+   "refused": "'produce_brief.not_a_real_knob is not a declared knob. Add it to KNOBS deliberately, with bounds and a reason, or the entity is turning something nobody designed to be turned.'"
+  },
+  {
+   "at": 1785493703.1460252,
+   "at_iso": "2026-07-31 12:28:23",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 3200000,
+   "why": "",
+   "ok": true,
+   "from": 32000,
+   "to": 32000,
+   "clamped": true
+  },
+  {
+   "at": 1785493703.151134,
+   "at_iso": "2026-07-31 12:28:23",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": "not a number",
+   "why": "",
+   "ok": false,
+   "refused": "'not a number' is not a NoneType"
+  },
+  {
+   "at": 1785493703.1563766,
+   "at_iso": "2026-07-31 12:28:23",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 32000,
+   "why": "restore after test",
+   "ok": true,
+   "from": 32000,
+   "to": 32000,
+   "clamped": false
+  },
+  {
+   "at": 1785493711.528137,
+   "at_iso": "2026-07-31 12:28:31",
+   "key": "produce_brief.not_a_real_knob",
+   "by": "test",
+   "requested": 1,
+   "why": "",
+   "ok": false,
+   "refused": "'produce_brief.not_a_real_knob is not a declared knob. Add it to KNOBS deliberately, with bounds and a reason, or the entity is turning something nobody designed to be turned.'"
+  },
+  {
+   "at": 1785493711.5332189,
+   "at_iso": "2026-07-31 12:28:31",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 3200000,
+   "why": "",
+   "ok": true,
+   "from": 32000,
+   "to": 32000,
+   "clamped": true
+  },
+  {
+   "at": 1785493711.5379329,
+   "at_iso": "2026-07-31 12:28:31",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": "not a number",
+   "why": "",
+   "ok": false,
+   "refused": "'not a number' is not a NoneType"
+  },
+  {
+   "at": 1785493711.5434518,
+   "at_iso": "2026-07-31 12:28:31",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 32000,
+   "why": "restore after test",
+   "ok": true,
+   "from": 32000,
+   "to": 32000,
+   "clamped": false
+  },
+  {
+   "at": 1785493712.2551434,
+   "at_iso": "2026-07-31 12:28:32",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 32000,
+   "why": "probe",
+   "ok": true,
+   "from": 32000,
+   "to": 32000,
+   "clamped": false
+  },
+  {
+   "at": 1785493712.2612014,
+   "at_iso": "2026-07-31 12:28:32",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 999999,
+   "why": "",
+   "ok": true,
+   "from": 32000,
+   "to": 32000,
+   "clamped": true
+  },
+  {
+   "at": 1785493745.125635,
+   "at_iso": "2026-07-31 12:29:05",
+   "key": "*",
+   "ok": true,
+   "why": "reset to declared defaults",
+   "by": "cli"
   }
  ]
 }
