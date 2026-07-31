@@ -2262,3 +2262,59 @@ no corpses**; `core()` now draws `order="depth"`; a live `core()` call returns
 3. **`carry.form` is proposed by `unstick` and undeclared in `knobs`** - the loop's own refusal
    named it. Declaring it needs a READER first, or it is a false record by construction.
 4. **R4 needs `dispatch` wired** - built, canary-gated, still unreachable.
+
+---
+
+## 2026-07-31 (close) - THE GRANT WAS WITHDRAWN, AND THE ENTRY ABOVE IT IS CORRECTED
+
+### CORRECTIONS TO THE ENTRY ABOVE - it is wrong and this supersedes it
+
+- **`vary_own_knob` IS NOT GRANTED.** It was granted at WATCHED and **withdrawn the same day**
+  (`b397d93`) after a hard audit found three of my safety claims false. Live now:
+  `trust.check("vary_own_knob")` -> `DRAFT, allowed=False, ceiling=1`.
+- **"Revoke by setting level back to 1" IS THE WRONG LEVER.** `CHARTER["level"]` is the START level -
+  `_entry` seeds a ledger row from it once and never re-reads it. `check()` clamps by **CEILING**.
+  I documented the wrong lever on the one capability where the lever IS the safety story.
+- **"No invented ceiling anywhere on a model path" IS FALSE.** Measured: `transfer` reports
+  **invented-ceiling 80, silent-default 31, unredirectable-store 7, 118 advisory**. Four doors were
+  fixed, not the class.
+- **The grant text overstated the bound**: it claimed `check_invariants` raises on `zone`. It does
+  not - `zone` is deliberately excluded from `INVARIANTS` and `unstick.py` documents why.
+
+### DID (after the entry above)
+
+- **Removed the budget from inputs and outputs.** `hades` was judging "does each of three sections
+  have content" against `attempt[:700]`/`[:1600]`/`[:600]` on THREE paths - `produce_brief`'s
+  dominant failure signature is `hades=unverified sections_ok=true`, the brief's own check saying
+  the sections are there while the watcher disagreed about text it never saw. `pathfinder.gate`
+  asked "does the ANSWER FULLY solve the TASK" against `ans[:500]` with four tokens to reply.
+  `aea.py` fed `reasoning[:2800]` to its own structurer, and the conclusion is written LAST.
+- **Re-ran and promoted the census.** 95 models, 61 min, at the measured concurrency of 4. The 550B
+  scores **12/12** where it was recorded 7/12. 17 frontier rods on honest scores. A calibration
+  model was ranking as a mind - `orchestrator.SPECIAL_PURPOSE` already matched it and `ladder` never
+  called the filter.
+- **`vital.py` + `QUALITIES.md`** - a whole-entity run with `sys.setprofile` listening to every
+  function, and the ten angles a test must measure. It found a livelock I had just created, and two
+  production-pollution defects in itself.
+- **ARGV GUARDS.** `python -m aea.loop.live --help` had no guard and **STARTED THE REAL DAEMON**
+  against production - it fired during the audit and ran two live wake ticks. Starting an autonomous
+  loop was the default for any argument nobody had thought of.
+
+### LOCKED
+
+- **AN EDIT IS A MEASUREMENT.** A fix lands on the object you NAME, not the one you meant, and the
+  two are indistinguishable until something runs. FIVE instances today, every one reported as
+  applied and none in effect. After any "X now carries Y", read X back THROUGH ITS CONSUMER.
+- **A quality with no probe is an opinion** (`aea/lab/QUALITIES.md`). Presence is the weakest of the
+  ten angles and it is the one everyone builds.
+- **The pending work lives in `diary/OPEN_LOOPS.md`**, now step 3 of the boot sequence. Every entry
+  carries a verdict and names its WIRING, its CODE, and the MILESTONE the assembled entity can
+  demonstrate. Its machine-side twins are `vital.py` and `assembly.py`, and they outrank it.
+
+### NEXT
+
+Read `diary/OPEN_LOOPS.md`. The five FINISH items in order; **the first is THE RATCHET** -
+`selfcheck` gains one invariant that fails when any detector count RISES against a committed
+baseline, and the wake runs `selfcheck` itself. Nothing built to catch defects currently runs by
+itself: `battery`, `transfer`, `selfcheck`, `vital`, `assembly` and all four test files have ZERO
+non-prose callers. **Do not re-grant `vary_own_knob` before items 2, 3 and 4.**

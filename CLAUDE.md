@@ -28,11 +28,16 @@ changes is when the *methodology* or the *repo shape* genuinely changes.
    its edges. Never re-scan the tree; that's what burns tokens. Refresh: `python -m aea.tooling.build_graph`.
 2. **`diary/SESSION_LOG.md`** — the latest entry: current state, what's `LOCKED` (do not re-litigate),
    and the exact `NEXT` task. Build from `NEXT`; don't re-decide what's under `LOCKED`.
-3. **`diary/DISCOVERIES.md`** — *why* the plan is what it is (D1–D8 + the shortest path). Inherit the
+3. **`diary/OPEN_LOOPS.md`** - THE PENDING WORK. Every step carries a verdict (FINISH/LATER/KILL)
+   and names three things: the WIRING, the CODE, and the MILESTONE the assembled entity can
+   demonstrate the moment it lands. Its machine-side twins are `aea/lab/vital.py` (what RAN and what
+   CHANGED at runtime) and `aea/tooling/assembly.py` (what is reachable, statically) - when the file
+   and the manifests disagree, the manifests are the truth.
+4. **`diary/DISCOVERIES.md`** — *why* the plan is what it is (D1–D8 + the shortest path). Inherit the
    reasoning, not just the result. The raw, undistilled sparks these grew from live one step upstream
    in **`diary/REFLECTIONS.md`** (Luis's realizations, verbatim) — read it to catch the current frontier.
-4. The laws in §3 below. Then `GAME_PLAN.md` + `design/` on demand (read, don't re-plan).
-5. **Before any non-trivial change, ASK: `python -m aea.lab.recall "what you are about to do"`.**
+5. The laws in §3 below. Then `GAME_PLAN.md` + `design/` on demand (read, don't re-plan).
+6. **Before any non-trivial change, ASK: `python -m aea.lab.recall "what you are about to do"`.**
    Hybrid lexical+semantic over every recorded lesson, MEASURED at 7/12 hit@5 against a gate of this
    repo's own defects (lexical alone 3, semantic alone 4). It is one command and it costs seconds.
    *Why this is a boot step and not advice:* the recurring failure here has never been forgetting -
