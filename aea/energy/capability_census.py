@@ -76,6 +76,12 @@ def list_serving(plant: str, base: str, keyname: str) -> list[str]:
         print(f"[{plant}] /models failed: {e}"); return []
 
 
+# THE PROBE'S CONTRACT, STAMPED INTO EVERY REPORT. When this string changes, scores taken before and
+# after are NOT comparable, and the store says so rather than leaving a reader to guess. Bump it
+# deliberately when what the probe MEASURES changes - never when the code merely moves.
+PROBE_CONTRACT = "no-ceiling/v2"   # v1 sent the battery item's own mx (40 for instruct) - see probe()
+
+
 def probe(plant, base, keyname, model, item):
     """One probe, scored on THE ROD'S ANSWER rather than on our budget.
 
@@ -175,6 +181,13 @@ def run(plants):
               f"  Prefer: python -m aea.energy.extensive_census && ... --promote\n"
               f"  Or pass --force if replacing the scale is intended.")
         return
+    # EVERY REPORT NAMES THE CODE THAT PRODUCED IT. Without this, the ceiling fix in `probe` would
+    # have created a store holding two incompatible generations of score with no way to tell them
+    # apart - rows taken at max_tokens=40 sitting beside rows taken with the field omitted, and
+    # `energy.ladder` ranking rods off the mixture. A fix that silently invalidates history is worse
+    # than the defect, because the defect at least applied uniformly.
+    report["code"] = grid.code_stamp()
+    report["probe_contract"] = PROBE_CONTRACT
     grid.atomic_save_json(OUT, report, indent=2)   # readers (energy.ladder per draw) must never see a torn file
     print(f"swept {len(rows)} chat models in {round(time.time()-t0,1)}s -> {OUT}\n")
     rank(report)

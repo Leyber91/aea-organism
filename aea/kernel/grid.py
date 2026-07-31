@@ -170,6 +170,51 @@ def append_jsonl(path: str, row: dict) -> None:
     raise last
 
 
+_STAMP_CACHE = {}
+
+
+def code_stamp() -> dict:
+    """{commit, dirty} - WHICH VERSION OF THE CODE PRODUCED THIS ROW. The one home for that answer.
+
+    WHY EVERY MEASUREMENT STORE NEEDS IT, with a cost this repo has already paid. On 2026-07-31 a
+    ceiling defect was fixed in `capability_census.probe`: it had been sending `max_tokens=40` for
+    the `instruct` probe, which scored a rod's private deliberation as its answer and put a 550B
+    into the ladder at 7/12 instead of 12/12. `energy`, `orchestrator` and `controlroom` all rank
+    rods from that store. The fix is correct and it creates a WORSE problem than the defect: rows
+    taken before and after are not comparable, they sit in the same file, and NOTHING can tell them
+    apart - so the honest reading of the whole store becomes "unknown", which is indistinguishable
+    from a store that is fine.
+
+    A stamp costs one git call and converts that into a question anyone can answer. It is the same
+    move `harness.check_id` makes for a check's spec and `fuel.require` makes for a rod's identity;
+    this is the third axis and it was the missing one.
+
+    `dirty` is a LIST, not a bool, in the sense that matters: None means we could not tell, which is
+    not the same as False. A row that cannot name its code is worse than one that names a dirty
+    tree, and both are better than a row that implies a cleanliness nobody checked."""
+    if "v" in _STAMP_CACHE:
+        return dict(_STAMP_CACHE["v"])
+    out = dict(commit="", dirty=None)
+    try:
+        import subprocess
+        r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=str(ROOT),
+                           capture_output=True, text=True, timeout=10)
+        if r.returncode == 0:
+            out["commit"] = (r.stdout or "").strip()[:12]
+        d = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT),
+                           capture_output=True, text=True, timeout=10)
+        if d.returncode == 0:
+            # git prints LF/CRLF warnings on Windows; a warning line is not a modified file, and
+            # counting it would mark every row dirty forever.
+            files = [l for l in (d.stdout or "").splitlines()
+                     if l.strip() and not l.startswith("warning:")]
+            out["dirty"] = bool(files)
+    except Exception:
+        pass                                   # commit="" / dirty=None both mean UNKNOWN, honestly
+    _STAMP_CACHE["v"] = dict(out)
+    return dict(out)
+
+
 class StateUnreadable(OSError):
     """The file exists and could not be read. NOT the same as corrupt, and NOT the same as absent."""
 

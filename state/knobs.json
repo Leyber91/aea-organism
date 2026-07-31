@@ -302,6 +302,50 @@
    "from": 4000,
    "to": 900,
    "clamped": false
+  },
+  {
+   "at": 1785490258.688107,
+   "at_iso": "2026-07-31 11:30:58",
+   "key": "produce_brief.not_a_real_knob",
+   "by": "test",
+   "requested": 1,
+   "why": "",
+   "ok": false,
+   "refused": "'produce_brief.not_a_real_knob is not a declared knob. Add it to KNOBS deliberately, with bounds and a reason, or the entity is turning something nobody designed to be turned.'"
+  },
+  {
+   "at": 1785490258.6931748,
+   "at_iso": "2026-07-31 11:30:58",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 400000,
+   "why": "",
+   "ok": true,
+   "from": 900,
+   "to": 4000,
+   "clamped": true
+  },
+  {
+   "at": 1785490258.6987092,
+   "at_iso": "2026-07-31 11:30:58",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": "not a number",
+   "why": "",
+   "ok": false,
+   "refused": "'not a number' is not a int"
+  },
+  {
+   "at": 1785490258.7041838,
+   "at_iso": "2026-07-31 11:30:58",
+   "key": "produce_brief.max_tokens",
+   "by": "test",
+   "requested": 900,
+   "why": "restore after test",
+   "ok": true,
+   "from": 4000,
+   "to": 900,
+   "clamped": false
   }
  ]
 }

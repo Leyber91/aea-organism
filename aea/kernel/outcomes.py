@@ -75,25 +75,12 @@ def _path() -> str:
 
 
 def _code() -> dict:
-    """The version of the decider that produced this row. Cheap, and the only thing that makes two
-    rows comparable."""
-    try:
-        d = shadow_dirty()
-        return dict(commit=(shadow_head() or "")[:12], dirty=bool(d))
-    except Exception:
-        return dict(commit="", dirty=None)          # None means UNKNOWN, which is not False
+    """The version of the decider that produced this row. ONE HOME: `grid.code_stamp`.
 
-
-def shadow_head():
-    from aea.kernel import shadow
-    return shadow.head()
-
-
-def shadow_dirty():
-    from aea.kernel import shadow
-    # `dirty()` returns a list that includes git's LF/CRLF warnings on Windows; a warning line is
-    # not a modified file, and counting it would mark every row dirty forever.
-    return [f for f in (shadow.dirty() or []) if not str(f).startswith("warning:")]
+    This module grew its own copy first. Two implementations of "which code wrote this" is exactly
+    the duplication that lets two stores disagree about the same commit, so the second caller
+    (`capability_census`) became the reason to promote it rather than copy it again."""
+    return grid.code_stamp()
 
 
 def require(row: dict) -> dict:

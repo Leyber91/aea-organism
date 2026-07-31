@@ -30,6 +30,10 @@ except Exception: pass
 HERE = grid.HERE
 USAGE = os.path.join(grid.STATE, "energy_usage.json")
 CAPABILITY = os.path.join(grid.STATE, "capability_census.json")
+# ONE DEFINITION, IMPORTED RATHER THAN RE-TYPED. A second copy of a contract string is exactly how
+# two modules come to disagree about whether a store is current - and the first version of this line
+# WAS a second copy, written directly under a comment forbidding it. Imported lazily inside the
+# check so this module keeps no import-time dependency on the census.
 FITNESS = os.path.join(grid.STATE, "model_fitness.json")
 COOL_AFTER = 3          # consecutive live failures -> rod cools ...
 COOL_SECONDS = 900      # ... for 15 minutes, then it may retry (review 2026-07-10: cooling was a
@@ -153,6 +157,52 @@ def _depth_key(rows: list):
                       r["avg_latency"] if r["avg_latency"] is not None else 9)
 
 
+_STALE_SAID = {}
+
+
+def _warn_if_stale(census: dict) -> bool:
+    """SAY IT OUT LOUD when the ladder is ranking on scores from a superseded probe contract.
+
+    THE PROBLEM A FIX CREATES, and it is worse than the defect it repairs. `capability_census.probe`
+    sent `max_tokens=40` for the `instruct` item, which scored a rod's private deliberation as its
+    answer and put a 550B into this ladder at 7/12. Removing the ceiling is correct - and it means
+    every score already on disk was taken under different conditions from every score taken after.
+    They share one file. `ladder` ranks the entity's whole fleet off the mixture, and until this
+    function existed NOTHING could tell them apart, so the honest reading of the store was "unknown"
+    while it looked entirely fine.
+
+    IT WARNS, IT DOES NOT REFUSE. A hard refusal here would take the fleet down to the local floor
+    the moment a contract is bumped - punishing the correct action, which is how a check gets
+    deleted. Once per process, naming the command that fixes it.
+
+    A store with NO stamp at all is the stale case, not a passing one: everything written before
+    today is unstamped, and unknown provenance fails toward "say so"."""
+    try:
+        from aea.energy.capability_census import PROBE_CONTRACT
+    except Exception:
+        return False                      # cannot name the contract -> cannot claim staleness
+    try:
+        got = str((census.get("probe_contract") or "")).strip()
+    except Exception:
+        got = ""
+    if got == PROBE_CONTRACT:
+        return False
+    if _STALE_SAID.get("said"):
+        return True
+    _STALE_SAID["said"] = True
+    where = "no probe_contract stamp" if not got else f"probe_contract={got!r}"
+    for line in (
+        f"[energy] THE LADDER IS RANKING ON SUPERSEDED SCORES: {where}, this code expects "
+        f"{PROBE_CONTRACT!r}.",
+        "  Every score predating the ceiling fix was taken with the battery item's own tiny "
+        "budget (40 tokens for `instruct`), which scores a reasoning rod's preamble as its answer.",
+        "  Re-rank honestly:  python -m aea.energy.capability_census",
+        "  Until then the ordering reflects our old defaults as much as it reflects the rods.",
+    ):
+        print(line)
+    return True
+
+
 def ladder(tier: str = "frontier", zone: str = "private", order: str | None = None) -> list[tuple[str, str]]:
     """The ranked energy rods for a tier+zone, from the LIVE censuses. Local floor always appended.
     order='depth': among qualified rods prefer PARAMETER DEPTH (the counsel duel 2026-07-11:
@@ -161,6 +211,7 @@ def ladder(tier: str = "frontier", zone: str = "private", order: str | None = No
     census = _load(CAPABILITY, {})
     cap = census.get("models", [])
     mx = len(census.get("battery", [])) or 6
+    _warn_if_stale(census)
     # THE THRESHOLD IS A RATIO, NOT `mx - 1`. MEASURED 2026-07-30, and this one line cost the entity
     # its whole fleet. The docstring above still says "frontier (census >=5/6) | solid (4/6)" - the
     # ratios this tier was designed around, 83% and 67%. The threshold was written as `mx - 1`,
