@@ -328,7 +328,13 @@ def _notice_and_propose(hb: dict, tail: str):
                 pulse.emit("life", "propose", "%s: %s -> %s"
                            % (cap, move.get("move"), str(move.get("to"))[:40]), ok=False)
             else:
-                log("  EXHAUSTED: every declared move has been tried. Ask for help.")
+                if (p or {}).get("blocked"):
+                    log("  BLOCKED: %d move(s) remain UNTRIED and none can be applied - no "
+                        "declared knob for %s. This needs a reader built, not more patience."
+                        % (len((p or {}).get("unappliable") or []),
+                           ", ".join((p or {}).get("unappliable") or []) or "?"))
+                else:
+                    log("  EXHAUSTED: every declared move has been tried. Ask for help.")
     except Exception as e:
         log("  (notice/propose failed, loop continues: %s)" % str(e)[:80])
 

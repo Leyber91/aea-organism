@@ -51,6 +51,11 @@ from aea.kernel import grid, unstick
 
 LIBRARY = os.path.join(grid.STATE, "crystal.json")
 
+
+def _lib_path() -> str:
+    """RESOLVED AT CALL TIME so a harness can be sandboxed - D48, same as `unstick._exp_path`."""
+    return os.environ.get("AEA_CRYSTAL") or os.path.join(str(grid.STATE), "crystal.json")
+
 SEEN_BEFORE = 2        # distinct times a move must resolve the SAME impasse before admission
 PROMOTE_AFTER = 3      # clean reuses per level
 LEVELS = {0: "RETIRED", 1: "DRAFT", 2: "WATCHED", 3: "TRUSTED"}
@@ -58,11 +63,11 @@ CEILING = 3
 
 
 def _load() -> dict:
-    return grid.load_json(LIBRARY, {"schema": "aea.crystal/1", "parts": {}})
+    return grid.load_json(_lib_path(), {"schema": "aea.crystal/1", "parts": {}})
 
 
 def _save(doc: dict):
-    grid.atomic_save_json(LIBRARY, doc)
+    grid.atomic_save_json(_lib_path(), doc)
 
 
 def part_id(signature: str, move: dict) -> str:
@@ -87,7 +92,7 @@ def harvest(min_seen: int = SEEN_BEFORE) -> dict:
     until it does it again; the literature's failure mode is a library that fills with one-offs and
     then shadows the parts that work. `min_seen` is the whole gate and raising it is always safe.
     """
-    exp = grid.load_json(unstick.EXPERIENCE, {"attempts": []})
+    exp = grid.load_json(unstick._exp_path(), {"attempts": []})
     doc = _load()
     wins = {}
     for a in exp.get("attempts", []):
@@ -234,7 +239,7 @@ def board() -> str:
                     p["name"][:58]))
     if not parts:
         L.append("(empty - nothing has resolved the same impasse twice yet)")
-    exp = grid.load_json(unstick.EXPERIENCE, {"attempts": []})
+    exp = grid.load_json(unstick._exp_path(), {"attempts": []})
     L.append("")
     L.append("experience holds %d attempts; admission needs the same move to resolve the same "
              "impasse %d times." % (len(exp.get("attempts") or []), SEEN_BEFORE))

@@ -1,14 +1,14 @@
 {
-  "math": {
-    "plant": "nvidia",
-    "model": "meta/llama-3.2-3b-instruct",
-    "tier": "bulk",
-    "wins": 3
+  "we": {
+    "plant": "groq",
+    "model": "openai/gpt-oss-20b",
+    "tier": "reflex",
+    "wins": 2
   },
-  "other": {
-    "plant": "nvidia",
-    "model": "qwen/qwen3-next-80b-a3b-instruct",
-    "tier": "bulk",
-    "wins": 1
+  "math": {
+    "plant": "groq",
+    "model": "llama-3.3-70b-versatile",
+    "tier": "reflex",
+    "wins": 2
   }
 }

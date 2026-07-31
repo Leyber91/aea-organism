@@ -42,6 +42,17 @@ import time
 from aea.kernel import grid, impasse, trust
 
 EXPERIENCE = os.path.join(grid.STATE, "experience.json")
+
+
+def _exp_path() -> str:
+    """RESOLVED AT CALL TIME so a harness can be sandboxed - D48, found here by `vital.py`.
+
+    `vital` prints "production state untouched" and that was FALSE for this file: the constant
+    above is bound at import, so every test that drove the loop wrote real rows into the entity's
+    real experience record. A harness that pollutes the evidence store is the 4,925-synthetic-rows
+    incident in a second file, and it was sitting in my own detector's advisory list the whole
+    time."""
+    return os.environ.get("AEA_EXPERIENCE") or os.path.join(str(grid.STATE), "experience.json")
 FUELS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                      "lab", "organisms", "fuels.json")
 
@@ -143,11 +154,42 @@ def _rods_that_pass(suite: str, exclude=(), zone: str = "public") -> list:
     return out
 
 
-def moves_for(sig: str, tried=(), zone: str = "public") -> list:
+def appliable(cap: str, move: dict) -> bool:
+    """Can this move ACTUALLY be carried out, or is it only nameable?
+
+    THE LIVELOCK THIS CLOSES, caught by `aea/lab/vital.py` on its first run. `raise_budget` had been
+    tried and genuinely failed, so `tried_for` correctly excluded it and the menu advanced to
+    `change_form carry.form`. That knob is NOT in `knobs.KNOBS`, so `_apply_knob` refused - and a
+    refusal is correctly recorded with counts_toward_move=False, because the move was never tried.
+    So it could never be excluded either, and the entity proposed the same inapplicable move on
+    every tick, forever, while `applied` stayed False and nothing moved.
+
+    Both halves were right. A refusal must not count as evidence about a move, and an untried move
+    must stay on the menu - and together they produce a loop. The missing rule is the one this
+    function adds: **a move that cannot be applied must not be offered.** Same class as a declared
+    knob with no reader, one level up: a declared MOVE with no applier.
+
+    `swap_rod` and other non-knob moves are left alone - they are appliable by other machinery, or
+    by nobody yet, and this only filters what the knob registry owns."""
+    knob = str(move.get("knob") or "").strip()
+    if not knob:
+        return True                       # not a knob move; not this function's business
+    try:
+        from aea.kernel import knobs
+        knobs.declared(cap, knob)
+        return True
+    except Exception:
+        return False
+
+
+def moves_for(sig: str, tried=(), zone: str = "public", cap: str = "") -> list:
     """The declared set of things that may change, ordered by what the evidence says to try first.
 
     Each move names the knob it turns and the reason. Nothing here touches a permission; if a move
     ever needs to, it does not belong in this list and the system should stop instead.
+
+    `cap` filters to moves that can actually be APPLIED for that capability - see `appliable`.
+    Omitted, every move is offered, which is the old behaviour and is what the CLI wants.
     """
     s = (sig or "").lower()
     out = []
@@ -185,7 +227,13 @@ def moves_for(sig: str, tried=(), zone: str = "public") -> list:
         out.append({"move": "back_off", "knob": "retry_delay", "to": "30s/60s/5m/15m/60m",
                     "why": "a transient fault clears with time; the ladder resets on first success"})
 
-    return [m for m in out if json.dumps(m, sort_keys=True) not in tried]
+    out = [m for m in out if json.dumps(m, sort_keys=True) not in tried]
+    # AND ONLY WHAT CAN ACTUALLY BE APPLIED. Without this the menu offers a move whose knob no
+    # registry declares, the apply refuses, the refusal correctly does not count as evidence, so
+    # the move is never excluded and the entity proposes it every tick forever. See `appliable`.
+    if cap:
+        out = [m for m in out if appliable(cap, m)]
+    return out
 
 
 def check_invariants(move: dict):
@@ -200,7 +248,11 @@ def check_invariants(move: dict):
 
 
 def _load_exp() -> dict:
-    return grid.load_json(EXPERIENCE, {"schema": "aea.experience/1", "attempts": []})
+    # THROUGH THE RESOLVER, NOT THE CONSTANT. The constant is bound at import and cannot be
+    # redirected; this is the reader every caller actually goes through, so pointing the WRITER at
+    # `_exp_path()` and leaving this line alone produced a sandbox that wrote to a temp file and
+    # read production - the fifth instance today of a fix landing on the wrong object.
+    return grid.load_json(_exp_path(), {"schema": "aea.experience/1", "attempts": []})
 
 
 EXCLUDE_S = 6 * 3600   # how long an attributable failure keeps a move off the menu
@@ -257,7 +309,10 @@ def propose(cap: str, state: dict | None = None, zone: str = "public") -> dict:
                 "move": None}
     sig = r["dominant_signature"]
     already = tried_for(sig)
-    opts = moves_for(sig, tried=already, zone=zone)
+    opts = moves_for(sig, tried=already, zone=zone, cap=cap)
+    # WHAT WAS FILTERED FOR BEING INAPPLICABLE, kept so the refusal can name itself.
+    unappliable = [m.get("knob") for m in moves_for(sig, tried=already, zone=zone)
+                   if cap and not appliable(cap, m)]
     for m in opts:
         if m["move"] == "swap_rod":
             allowed = plants_for(zone)
@@ -272,7 +327,14 @@ def propose(cap: str, state: dict | None = None, zone: str = "public") -> dict:
             "already_tried": len(already), "move": opts[0] if opts else None,
             "alternatives": opts[1:4],
             "why": r["why"],
-            "exhausted": not opts and bool(already)}
+            # TWO DIFFERENT EMPTY MENUS, AND CONFLATING THEM IS AN HONESTY FAILURE (QUALITIES #4).
+            # `exhausted` means "I tried everything I have". `blocked` means "there are moves I have
+            # never tried and NONE of them can be applied" - which is not the entity running out of
+            # ideas, it is the system missing a reader, and it needs a human rather than patience.
+            # The log said "every declared move has been tried" in a run where nothing had been.
+            "exhausted": not opts and bool(already),
+            "blocked": not opts and not already and bool(unappliable),
+            "unappliable": unappliable}
 
 
 def record(cap: str, sig: str, move: dict, worked: bool, note: str = "",
@@ -303,7 +365,7 @@ def record(cap: str, sig: str, move: dict, worked: bool, note: str = "",
     # be named. It is deliberately NOT applied automatically yet - admission is the next rung and
     # the 2026 skill-induction literature is unanimous that admitting badly is worse than not at all.
     doc["resolutions"] = {k: v[-3:] for k, v in resolved.items()}
-    grid.atomic_save_json(EXPERIENCE, doc)
+    grid.atomic_save_json(_exp_path(), doc)
     return doc
 
 

@@ -1,11 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 8,
-  "total_ticks": 113,
+  "boot_count": 10,
+  "total_ticks": 114,
   "last_brief_date": "2026-07-20",
-  "consolidated_sessions": 19,
+  "consolidated_sessions": 21,
   "history": [
-    "2026-07-21 06:50:34 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
     "2026-07-21 07:21:15 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
     "2026-07-21 07:51:23 UTC AWAKE:brief FAIL :: ",
     "2026-07-21 08:21:54 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
@@ -34,7 +33,29 @@
     "2026-07-30 03:30:30 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 51 memories from 17/20 sessions consolidate",
     "2026-07-30 03:30:42 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 54 memories from 18/20 sessions consolidate",
     "2026-07-30 03:30:56 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 57 memories from 19/20 sessions consolidate",
-    "2026-07-30 03:46:11 UTC LOOK:self_map ok :: I am 121 Python modules, about 29,740 lines of code. 25 of them are reachable fr"
+    "2026-07-30 03:46:11 UTC LOOK:self_map ok :: I am 121 Python modules, about 29,740 lines of code. 25 of them are reachable fr",
+    "2026-07-31 12:41:20 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, "
   ],
-  "last_wake_why": "the wake chose know_yourself (1s ago)"
+  "last_wake_why": "decision is stale (48602s old, limit 5400s)",
+  "brief_fails": 1,
+  "_brief_runs_seen": 91,
+  "proposed_move": {
+    "move": "change_form",
+    "knob": "carry.form",
+    "to": "conversation",
+    "why": "measured x24: conversation recalls 144/144 where checkpoint recalls 0 of 584, so a section needing earlier context has a container that works"
+  },
+  "_r3_pending": {
+    "signature": "fail n -> hades=unverified sections_ok=true",
+    "move": {
+      "move": "change_form",
+      "knob": "carry.form",
+      "to": "conversation",
+      "why": "measured x24: conversation recalls 144/144 where checkpoint recalls 0 of 584, so a section needing earlier context has a container that works"
+    },
+    "part": null,
+    "applied": false,
+    "refused": "",
+    "why": "unstick"
+  }
 }

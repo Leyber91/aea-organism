@@ -702,12 +702,12 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/nvidia/nemotron-3-nano-30b-a3b": {
-  "calls": 1,
-  "ok": 0,
+  "calls": 6,
+  "ok": 5,
   "fail": 1,
-  "consec_fail": 1,
-  "ema_latency": null,
-  "last": "2026-07-30 18:00"
+  "consec_fail": 0,
+  "ema_latency": 1.3,
+  "last": "2026-07-31 12:47"
  },
  "nvidia/nvidia/nemotron-3-super-120b-a12b": {
   "calls": 28,
