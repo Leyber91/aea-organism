@@ -38,6 +38,19 @@ CHARTER = {
     "speak":                dict(level=2, ceiling=3, promote_after=3,  desc="voice output on this machine (local TTS)"),
     "draft_outbound":       dict(level=1, ceiling=1, promote_after=99, desc="draft email/post/application text - ALWAYS human-approved"),
     "send_outbound":        dict(level=0, ceiling=0, promote_after=99, desc="actually send/post/apply - FORBIDDEN to the entity"),
+    # R3. VARYING A KNOB IS A REAL POWER AND IT WAS UNDECLARED, WHICH IS WHY IT WAS UNGRANTED.
+    # `unstick.propose` has been correct and inert since it was written: it names which rod, which
+    # carry form, how many tokens - never a level, a ceiling, a zone or a charter row, and
+    # `check_invariants` raises on any of those. But there was no CHARTER entry covering it, and
+    # this file's own law is that an unknown capability is added deliberately or not at all. So the
+    # honest fix is not to smuggle knob-changing under `self_modify_code` (source diffs, a different
+    # and larger thing) but to name it.
+    #
+    # IT STARTS AT DRAFT, WHICH MEANS REFUSED - `check` returns allowed only at level >= 2. The R3
+    # loop is fully wired around this gate and records the refusal every time it fires, so the
+    # evidence of what it WOULD have done accumulates while nothing is applied. Promoting it to
+    # WATCHED is a decision for Luis, taken against that record rather than in advance of it.
+    "vary_own_knob":        dict(level=1, ceiling=2, promote_after=10, desc="change HOW it does a task - rod, carry form, token budget. Never WHAT it may do"),
     "self_modify_code":     dict(level=0, ceiling=1, promote_after=99, desc="change its own source - only as a DRAFT diff for review"),
     "spend_money":          dict(level=0, ceiling=0, promote_after=99, desc="any paid API/purchase - FORBIDDEN"),
     "manage_keys":          dict(level=0, ceiling=0, promote_after=99, desc="read is implicit; writing/rotating keys - FORBIDDEN"),

@@ -203,11 +203,50 @@ def _load_exp() -> dict:
     return grid.load_json(EXPERIENCE, {"schema": "aea.experience/1", "attempts": []})
 
 
-def tried_for(sig: str) -> list:
-    """Everything already attempted against this exact impasse, so it never repeats itself."""
+EXCLUDE_S = 6 * 3600   # how long an attributable failure keeps a move off the menu
+
+
+def tried_for(sig: str, now: float = None) -> list:
+    """Moves that have been tried against this impasse AND genuinely failed on their own merits.
+
+    THE OLD VERSION WAS A PERMANENT-REMOVAL PATH AND IT IS THE ONE R3 EXISTS TO CLOSE. It returned
+    every move ever attempted against a signature - no outcome filter, no cause filter, no expiry -
+    and `moves_for` then subtracts that list from the menu. So ONE attempt removed a move
+    indefinitely, whether it worked, failed, or died because the network was down. `propose`
+    returns four options today with `already_tried: 0`; ten transient 429s during one storm would
+    have stripped the menu to nothing and returned `exhausted: True` - the entity concluding,
+    permanently and wrongly, that it had tried everything it could.
+
+    THREE FILTERS, and they are the same shape as the ones `crystal.record_use` needed:
+
+    1 A MOVE THAT WORKED IS NOT 'TRIED', IT IS PROVEN. Excluding it is backwards - it belongs at
+      the TOP of the menu, which is what `crystal.applicable` is for.
+    2 A FAILURE THAT WAS NOT THE MOVE'S FAULT IS NOT EVIDENCE ABOUT THE MOVE. Rows carry
+      `counts_toward_move` from `cause.classify`; a transient or a code fault must not exclude
+      anything. Rows written before that field existed have no cause recorded, and the honest
+      reading of an unattributed failure is that it proves nothing - so it does not exclude either.
+    3 EXCLUSION EXPIRES. A move that failed six hours ago against a system that has since changed
+      is worth another look. Permanence is reserved for things that answered Gone, and no move here
+      ever does.
+    """
+    now = time.time() if now is None else now
     doc = _load_exp()
-    return [json.dumps(a["move"], sort_keys=True) for a in doc["attempts"]
-            if a.get("signature") == sig]
+    out = []
+    for a in doc["attempts"]:
+        if a.get("signature") != sig:
+            continue
+        if a.get("worked"):
+            continue                                   # proven, not exhausted
+        if not a.get("counts_toward_move", False):
+            continue                                   # not the move's fault, or unknown
+        try:
+            when = time.mktime(time.strptime(a.get("at", ""), "%Y-%m-%d %H:%M UTC"))
+        except Exception:
+            when = None
+        if when is not None and (now - when) > EXCLUDE_S:
+            continue                                   # the exclusion has expired
+        out.append(json.dumps(a["move"], sort_keys=True))
+    return out
 
 
 def propose(cap: str, state: dict | None = None, zone: str = "public") -> dict:
@@ -236,7 +275,8 @@ def propose(cap: str, state: dict | None = None, zone: str = "public") -> dict:
             "exhausted": not opts and bool(already)}
 
 
-def record(cap: str, sig: str, move: dict, worked: bool, note: str = "") -> dict:
+def record(cap: str, sig: str, move: dict, worked: bool, note: str = "",
+           counts_toward_move: bool = False, cause_class: str = "") -> dict:
     """THE EXPERIENCE RECORD. What was stuck, what was tried, and whether it worked.
 
     This is the file crystallisation will read. A move that resolved an impasse is a candidate part;
@@ -248,7 +288,11 @@ def record(cap: str, sig: str, move: dict, worked: bool, note: str = "") -> dict
     doc = _load_exp()
     doc["attempts"].append({
         "at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
-        "capability": cap, "signature": sig, "move": move, "worked": bool(worked), "note": note})
+        "capability": cap, "signature": sig, "move": move, "worked": bool(worked), "note": note,
+        # THE FIELD THAT DECIDES WHETHER THIS ROW MAY EXCLUDE THE MOVE. Defaults to FALSE, so a
+        # caller that has not classified the failure cannot accidentally remove a capability -
+        # fail-closed in the direction of keeping options open. `tried_for` reads it.
+        "counts_toward_move": bool(counts_toward_move), "cause": str(cause_class or "")})
     doc["attempts"] = doc["attempts"][-500:]
     resolved = {}
     for a in doc["attempts"]:

@@ -146,6 +146,24 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     return "IDLE", [], 0
 
 
+def _apply_knob(move: dict) -> bool:
+    """Perform a knob change. RETURNS FALSE AND SAYS WHY, because nothing reads a knob store yet.
+
+    THIS IS DELIBERATELY HONEST RATHER THAN CONVENIENT. The obvious implementation writes the move
+    into a `knobs.json` and returns True - and that would be a FALSE OUTCOME RECORD, R3's named
+    hazard, written by R3's own loop on its first tick: `applied=True` while no organ reads the
+    file, so the next tick grades a change that never reached anything.
+
+    So it refuses, the pending row records `applied=False`, and the grade is written with
+    counts_toward_move=False - not evidence, excluding nothing, demoting nothing. The apply path is
+    DECLARED and UNBUILT, and the record says exactly that.
+
+    To build it: an organ must READ its knob before each run (`brief` reading its token budget and
+    its rod from a declared store), and that read has to exist before this write can mean anything.
+    Wiring the write first is how a system starts learning from changes it never made."""
+    return False
+
+
 def _notice_and_propose(hb: dict, tail: str):
     """THE WIRE FROM A FAILING WAKE TO THE MACHINERY THAT KNOWS WHAT TO CHANGE.
 
@@ -166,7 +184,7 @@ def _notice_and_propose(hb: dict, tail: str):
     """
     cap = "produce_brief"
     try:
-        from aea.kernel import trust, impasse, unstick
+        from aea.kernel import trust, impasse, unstick, crystal
         cause = (tail or "").strip()[:70] or "no output"
 
         # 1 - did the child manage to record anything? Compare the run count before and after.
@@ -178,11 +196,88 @@ def _notice_and_propose(hb: dict, tail: str):
 
         # 2 - diagnose, and say what to change.
         d = impasse.read(cap)
+
+        # 2a - GRADE THE PREVIOUS PROPOSAL BEFORE MAKING A NEW ONE. This is the REFINE arc, and
+        # without it the library only ever grows. A part or a move was put forward last tick; the
+        # observable is whether this capability is still stuck now. The grade is only written when
+        # the move was actually APPLIED - grading a move that was refused would record a false
+        # outcome, which is precisely R3's hazard.
+        pending = hb.pop("_r3_pending", None)
+        if pending:
+            worked = not d.get("stuck")
+            if pending.get("applied"):
+                unstick.record(cap, pending["signature"], pending["move"], worked,
+                               note=pending.get("why", "")[:120],
+                               counts_toward_move=True, cause_class="OK" if worked else "VERIFY_FAILED")
+                if pending.get("part"):
+                    crystal.record_use(pending["part"], worked, counts=True,
+                                       why="impasse %s" % pending["signature"][:60])
+                log("  GRADED: %s -> %s" % (pending["move"].get("move"), "worked" if worked else "did not"))
+            else:
+                # NOT APPLIED, SO NOT EVIDENCE. Recorded with counts_toward_move=False so it can
+                # never exclude the move from a future menu, and never demote a part.
+                unstick.record(cap, pending["signature"], pending["move"], False,
+                               note="refused: %s" % pending.get("refused", "")[:100],
+                               counts_toward_move=False, cause_class="UNATTRIBUTABLE")
+                if pending.get("part"):
+                    crystal.record_use(pending["part"], False, counts=False,
+                                       why="proposal was refused, not tried")
+
+        # 2b - ADMIT WHAT HAS EARNED IT. The WRITE arc: anything that resolved the same impasse
+        # SEEN_BEFORE times becomes a part. Cheap, deterministic, no model.
+        try:
+            h = crystal.harvest()
+            if h.get("admitted"):
+                for part in h["admitted"]:
+                    log("  CRYSTALLISED: %s" % part["name"][:80])
+                    pulse.emit("life", "crystallise", part["name"][:90], ok=True)
+        except Exception as e:
+            log("  (harvest skipped: %s)" % str(e)[:70])
+
         if d.get("stuck"):
-            p = unstick.propose(cap, zone="sensitive")
-            move = (p.get("move") or {}) if isinstance(p, dict) else {}
+            sig = d.get("dominant_signature") or ""
+            # 2c - THE READ ARC, AND IT COMES BEFORE THE FRESH GUESS. "Have I been here before?"
+            # A proven part for THIS impasse outranks a newly proposed move; that preference IS
+            # the record changing what it does next, and without it the library is write-only.
+            parts = crystal.applicable(sig) if sig else []
+            part_id, source = None, "unstick"
+            if parts:
+                part_id = parts[0]["id"]
+                # THROUGH `carry_out`, NOT AROUND IT. Reading `parts[0]["move"]` directly would work
+                # and would leave the declared accessor dead - the exact shape this whole rung is
+                # about. `apply_fn=None` is its DRY RUN: it re-checks the part is not resting,
+                # re-runs `check_invariants`, hands back the move, and deliberately does NOT call
+                # `record_use`. That matters, because `carry_out`'s own grading answers "did the
+                # knob apply", while the question R3 asks is "did the impasse clear" - which is only
+                # observable on the NEXT tick. Two different verdicts; the later one is the honest
+                # one, so the dry run is the correct door here.
+                got = crystal.carry_out(part_id)
+                move = dict(got.get("move") or {})
+                source = "crystal/%s" % parts[0]["name"][:40]
+                log("  RECALLED: a part already resolved this impasse %d time(s)" % parts[0]["wins"])
+            else:
+                p = unstick.propose(cap, zone="sensitive")
+                move = (p.get("move") or {}) if isinstance(p, dict) else {}
             hb["proposed_move"] = move
             log("  STUCK: %s" % str(d.get("why"))[:90])
+
+            # 2d - THE APPLY ARC, GATED BY A DECLARED PERMISSION. `vary_own_knob` sits at DRAFT,
+            # so this refuses today and records the refusal. The loop is assembled and blocked at
+            # exactly one visible gate rather than being absent.
+            applied, refused = False, ""
+            if move:
+                v = trust.check("vary_own_knob")
+                if v.get("allowed"):
+                    try:
+                        unstick.check_invariants(move)   # raises on level/ceiling/privacy/charter
+                        applied = bool(_apply_knob(move))
+                    except Exception as e:
+                        refused = "%s: %s" % (type(e).__name__, str(e)[:80])
+                else:
+                    refused = "vary_own_knob is %s - not granted" % v.get("name", "DRAFT")
+                    log("  NOT APPLIED: %s" % refused)
+                hb["_r3_pending"] = dict(signature=sig, move=move, part=part_id, applied=applied,
+                                         refused=refused, why=source)
             if move:
                 log("  PROPOSED: %s %s -> %s" % (move.get("move"), move.get("knob"),
                                                  str(move.get("to"))[:44]))

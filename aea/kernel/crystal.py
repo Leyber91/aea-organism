@@ -122,6 +122,12 @@ def applicable(signature: str, min_level: int = 1) -> list:
     parts are never offered. Ordered by level then by record, so the most-proven part goes first.
     """
     doc = _load()
+    # A RESTED PART COMES BACK. `record_use` puts a part at the floor to REST rather than deleting
+    # it, and this is where the rest ends - so the un-retire path exists and is exercised by the
+    # same call that would otherwise never offer it again.
+    woke = [p for p in doc["parts"].values() if _rested(p)]
+    if woke:
+        _save(doc)
     out = [p for p in doc["parts"].values()
            if p["level"] >= max(1, min_level) and p["signature"] == signature]
     out.sort(key=lambda p: (-p["level"], -p["wins"], p["fails"]))
@@ -149,26 +155,72 @@ def carry_out(pid: str, apply_fn=None) -> dict:
     return {"ok": ok, "move": p["move"], "part": record_use(pid, ok)}
 
 
-def record_use(pid: str, worked: bool) -> dict:
-    """Grade a part the way capabilities are graded: slow up, fast down, retire at the floor."""
+DEMOTE_AFTER = 2       # attributable failures before a level is taken away
+COOLDOWN_S = 3600      # a part at the floor rests; it is not destroyed
+
+
+def record_use(pid: str, worked: bool, counts: bool = True, why: str = "") -> dict:
+    """Grade a part: slow up, slow down, REST at the floor - never deleted by one bad night.
+
+    THIS FUNCTION USED TO BE THE FALSE POSITIVE THE WHOLE DESIGN EXISTS TO PREVENT. It read
+    `p["level"] -= 1` on any failure, and a part is admitted at level 1, so the FIRST failure drove
+    it to 0 and stamped `retired` - with the comment "RETIRED. Never offered again by
+    applicable()." There was no n, no cause check and no un-retire path anywhere in the module.
+    Admission required a move to resolve the same impasse SEEN_BEFORE=2 times; deletion required
+    one. A single 429 during a storm permanently destroyed a capability the entity had earned.
+
+    THREE CHANGES, and they mirror `energy._retire`/`_cooling`, which already got this right for
+    rods: a cooldown expires by design and cannot express "never again", so permanence is reserved
+    for a thing that genuinely answered Gone.
+
+    1 `counts=False` IS NOT A FAILURE, IT IS NOT EVIDENCE. A use whose outcome row was classed
+      TRANSIENT_EXTERNAL, CODE_FAULT or UNATTRIBUTABLE says nothing about the part. It is recorded
+      as a use and it moves nothing. It does NOT silently skip - the row is kept with its reason,
+      because a use that vanished is indistinguishable from a use that never happened.
+    2 DEMOTE_AFTER attributable failures before a level is taken, so n=1 cannot demote.
+    3 THE FLOOR IS A COOLDOWN, NOT A TOMBSTONE. A part at level 0 rests for COOLDOWN_S and is then
+      offered again at DRAFT. Nothing in this module may make a part unreachable forever.
+    """
     doc = _load()
     p = doc["parts"][pid]
     p["uses"] += 1
+    if not counts:
+        p["unattributed"] = int(p.get("unattributed") or 0) + 1
+        p["last_unattributed_why"] = str(why)[:120]
+        _save(doc)
+        return p
     if worked:
         p["wins"] += 1
         p["streak"] += 1
+        p.pop("resting_until", None)         # a win ends a rest immediately
         if p["streak"] >= PROMOTE_AFTER and p["level"] < CEILING:
             p["level"] += 1
             p["streak"] = 0
     else:
         p["fails"] += 1
         p["streak"] = 0
-        p["level"] -= 1                      # a part that breaks once is not a part yet
-        if p["level"] < 1:
-            p["level"] = 0                   # RETIRED. Never offered again by applicable().
-            p["retired"] = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())
+        p["since_demote"] = int(p.get("since_demote") or 0) + 1
+        if p["since_demote"] >= DEMOTE_AFTER:
+            p["since_demote"] = 0
+            p["level"] -= 1
+            if p["level"] < 1:
+                p["level"] = 0
+                p["resting_until"] = time.time() + COOLDOWN_S
+                p["rested_why"] = str(why)[:120] or "at the floor after attributable failures"
     _save(doc)
     return p
+
+
+def _rested(p: dict) -> bool:
+    """A part at the floor whose rest has expired comes back at DRAFT. Called by `applicable`."""
+    until = p.get("resting_until")
+    if not until or time.time() < float(until):
+        return False
+    p["level"] = 1
+    p["since_demote"] = 0
+    p.pop("resting_until", None)
+    p["returned"] = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())
+    return True
 
 
 def board() -> str:

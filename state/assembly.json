@@ -1,10 +1,10 @@
 {
- "at": 1785469977.379477,
- "at_iso": "2026-07-31 05:52:57",
+ "at": 1785472839.2941716,
+ "at_iso": "2026-07-31 06:40:39",
  "modules": 150,
- "functions": 1362,
- "live": 115,
- "unresolved_calls": 184,
+ "functions": 1364,
+ "live": 126,
+ "unresolved_calls": 204,
  "steps": [
   {
    "step": "R2  the wake's decision reaches a tool",
@@ -76,9 +76,9 @@
   },
   {
    "step": "R3.2 it stops re-choosing what the record says fails",
-   "have": 5,
+   "have": 6,
    "need": 6,
-   "state": "PARTIAL",
+   "state": "DONE",
    "functions": [
     {
      "fn": "aea.kernel.impasse:read",
@@ -90,7 +90,7 @@
     },
     {
      "fn": "aea.kernel.unstick:record",
-     "live": false
+     "live": true
     },
     {
      "fn": "aea.kernel.unstick:tried_for",
@@ -108,25 +108,25 @@
   },
   {
    "step": "R3.3 what works twice becomes a part, and one bad night cannot delete it",
-   "have": 0,
+   "have": 4,
    "need": 4,
-   "state": "NOT STARTED",
+   "state": "DONE",
    "functions": [
     {
      "fn": "aea.kernel.crystal:harvest",
-     "live": false
+     "live": true
     },
     {
      "fn": "aea.kernel.crystal:applicable",
-     "live": false
+     "live": true
     },
     {
      "fn": "aea.kernel.crystal:record_use",
-     "live": false
+     "live": true
     },
     {
      "fn": "aea.kernel.crystal:carry_out",
-     "live": false
+     "live": true
     }
    ]
   },
@@ -323,15 +323,7 @@
   "aea.kernel.cause:<main>",
   "aea.kernel.cause:classify.out",
   "aea.kernel.crystal:<main>",
-  "aea.kernel.crystal:_load",
-  "aea.kernel.crystal:_save",
-  "aea.kernel.crystal:applicable",
   "aea.kernel.crystal:board",
-  "aea.kernel.crystal:carry_out",
-  "aea.kernel.crystal:harvest",
-  "aea.kernel.crystal:name_for",
-  "aea.kernel.crystal:part_id",
-  "aea.kernel.crystal:record_use",
   "aea.kernel.dispatch:<main>",
   "aea.kernel.dispatch:_host",
   "aea.kernel.dispatch:allowed_host",
@@ -471,7 +463,6 @@
   "aea.kernel.trust:board",
   "aea.kernel.trust:reset_streak",
   "aea.kernel.unstick:<main>",
-  "aea.kernel.unstick:record",
   "aea.kernel.unstick:render",
   "aea.lab.battery:<main>",
   "aea.lab.battery:_mk_wav",
