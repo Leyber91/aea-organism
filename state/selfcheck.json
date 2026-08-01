@@ -1,16 +1,16 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-01 04:12 UTC",
- "seconds": 53.2,
+ "at": "2026-08-01 04:48 UTC",
+ "seconds": 46.4,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "152 modules, 31 reachable from a wake, 115 orphaned, 0 act at import",
+   "detail": "153 modules, 32 reachable from a wake, 115 orphaned, 0 act at import",
    "data": {
-    "modules": 152,
-    "wake": 31,
+    "modules": 153,
+    "wake": 32,
     "orphans": [
      "aea.energy.capacity",
      "aea.energy.extensive_census",

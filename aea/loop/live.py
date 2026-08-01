@@ -294,6 +294,12 @@ def _notice_and_propose(hb: dict, tail: str):
                 # knob apply", while the question R3 asks is "did the impasse clear" - which is only
                 # observable on the NEXT tick. Two different verdicts; the later one is the honest
                 # one, so the dry run is the correct door here.
+                p = None          # BOUND ON BOTH ARMS. The recourse/blocked branch below reads `p`,
+                                  # and this arm never assigned it: a crystal part that returns an
+                                  # empty move falls straight through to line ~343 with `p` unbound,
+                                  # raising NameError inside a bare handler that discarded it. One
+                                  # name, defined on one path, read on both - the same wrong-object
+                                  # shape this repo has now paid for six times.
                 got = crystal.carry_out(part_id)
                 move = dict(got.get("move") or {})
                 source = "crystal/%s" % parts[0]["name"][:40]
@@ -328,6 +334,23 @@ def _notice_and_propose(hb: dict, tail: str):
                 pulse.emit("life", "propose", "%s: %s -> %s"
                            % (cap, move.get("move"), str(move.get("to"))[:40]), ok=False)
             else:
+                # THE RECOURSE LADDER, SURFACED WHERE THE ENTITY IS ACTUALLY BLOCKED. This is the
+                # capability Luis asked for on 2026-08-01: the unconventional route that solved a
+                # blocked task was not insight, it was a ladder walked in order, and a ladder is
+                # data a 30B rod can walk as well as a frontier one. Logged now so a human sees the
+                # next move; the entity walks it once R3's apply path is granted again.
+                try:
+                    from aea.kernel import recourse
+                    _f = ("blocked: no appliable move" if (p or {}).get("blocked")
+                          else (refused or "the obvious move is unavailable"))
+                    _first = recourse.steps(_f)[0]
+                    log("  RECOURSE: %s - %s" % (_first["rung"], _first["do"][:96]))
+                except Exception as e:
+                    # NOT `pass`. A swallowed error here means the ladder silently stops appearing
+                    # and the log looks exactly like a tick where it had nothing to say. That is the
+                    # null-that-reads-as-a-result, in the file whose whole subject is not counting
+                    # an error instead of reading it.
+                    log("  (recourse unavailable: %s: %s)" % (type(e).__name__, str(e)[:70]))
                 if (p or {}).get("blocked"):
                     log("  BLOCKED: %d move(s) remain UNTRIED and none can be applied - no "
                         "declared knob for %s. This needs a reader built, not more patience."
