@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-01 22:22 UTC",
- "seconds": 28.9,
+ "at": "2026-08-01 23:14 UTC",
+ "seconds": 27.4,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "155 modules, 32 reachable from a wake, 117 orphaned, 0 act at import",
+   "detail": "156 modules, 32 reachable from a wake, 118 orphaned, 0 act at import",
    "data": {
-    "modules": 155,
+    "modules": 156,
     "wake": 32,
     "orphans": [
      "aea.energy.capacity",
@@ -37,6 +37,7 @@
      "aea.lab.battery",
      "aea.lab.calibrate",
      "aea.lab.chain",
+     "aea.lab.charset_proof",
      "aea.lab.containment",
      "aea.lab.convbench",
      "aea.lab.crystallize",

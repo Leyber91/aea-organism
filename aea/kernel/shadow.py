@@ -93,7 +93,12 @@ PROTECTED = (
 # broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
 # alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
 # the suite must report at least this many. Raise it when behaviours are added on purpose.
-FROZEN_FLOOR = 46
+# RAISED WITH selfcheck's, AND THEY MUST NEVER DIVERGE AGAIN. There are TWO floors: this one gates
+# a self-modification proposal, selfcheck's gates a build. I raised selfcheck 46 -> 56 -> 59 today
+# and never touched this one, so thirteen frozen behaviours could have been DELETED and a proposal
+# would still have passed this gate green. The ninth wrong-object edit of the day: I fixed the
+# constant I was looking at rather than every constant that means the same thing.
+FROZEN_FLOOR = 59
 
 GATE_FILES = (
     "aea/tooling/xray.py",
