@@ -1,0 +1,15 @@
+{
+ "counts": {
+  "unredirectable-store": 7,
+  "count-threshold": 0,
+  "expiring-only-retry": 0,
+  "scope-violation": 0,
+  "silent-default": 32,
+  "invented-ceiling": 80,
+  "import-bound-write": 43,
+  "global-write": 7,
+  "mutable-module-state": 6,
+  "import-time-work": 4
+ },
+ "set": "2026-08-01 04:08 UTC"
+}

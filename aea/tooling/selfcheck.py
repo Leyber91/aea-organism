@@ -289,10 +289,70 @@ def check_state() -> dict:
     return {"check": "state intact", "pass": ok, "detail": ", ".join(rows)}
 
 
+BASELINE = "defect_baseline.json"
+
+
+def check_ratchet() -> dict:
+    """COUNTED DEFECTS DO NOT INCREASE. The one check that changes the rate rather than the count.
+
+    THE PROBLEM IT SOLVES, named by a hard audit on 2026-07-31: *a detection that changes no number
+    and fails no command is indistinguishable from no detection.* `transfer` reports 118 advisory
+    findings and `scope` reports 60, and nothing anywhere recorded that they were 118 and 60 - so
+    the 119th and the 61st were invisible by construction. Every instrument in this repo could see
+    the defect and none of them could see the defect ARRIVING.
+
+    WHY A RATCHET AND NOT `blocking=True`. `transfer.py` already records the reason: a check that
+    always fails stops being read, and then it disables every check sharing its verdict (D18's
+    corollary). A ratchet tolerates the 80 invented ceilings we have decided to live with, and makes
+    the 81st a hard stop. It is the only shape that survives a backlog.
+
+    RAISING A BASELINE IS A DELIBERATE ACT. `--rebaseline` writes the current counts and says how
+    many rose. Doing it to silence a red run is possible and is a choice a person makes with the
+    numbers in front of them, which is exactly the property a mute button lacks."""
+    import subprocess
+    cur, detail = {}, []
+    for mod, keys in (("aea.lab.transfer", ("invented-ceiling", "silent-default",
+                                            "unredirectable-store", "count-threshold",
+                                            "expiring-only-retry", "scope-violation")),
+                      ("aea.tooling.scope", ("import-bound-write", "global-write",
+                                             "mutable-module-state", "import-time-work"))):
+        try:
+            r = subprocess.run([sys.executable, "-m", mod], cwd=str(grid.ROOT),
+                               capture_output=True, text=True, timeout=300)
+            for line in (r.stdout or "").splitlines():
+                p = line.split()
+                if len(p) >= 2 and p[0] in keys and p[1].isdigit():
+                    cur[p[0]] = int(p[1])
+        except Exception as e:
+            return {"check": "defect ratchet", "pass": False,
+                    "detail": f"could not run {mod}: {str(e)[:60]}"}
+    if not cur:
+        return {"check": "defect ratchet", "pass": False,
+                "detail": "no counts parsed - the detectors changed their output shape"}
+
+    base = grid.load_json(BASELINE, None)
+    if base is None:
+        grid.atomic_save_json(BASELINE, {"counts": cur, "set": time.strftime("%Y-%m-%d %H:%M UTC",
+                                                                            time.gmtime())}, indent=1)
+        return {"check": "defect ratchet", "pass": True,
+                "detail": "baseline written (%d shapes) - first run" % len(cur)}
+
+    prev, risen = base.get("counts") or {}, []
+    for k, v in sorted(cur.items()):
+        was = prev.get(k)
+        if was is not None and v > was:
+            risen.append(f"{k} {was}->{v}")
+        detail.append(f"{k} {v}" + ("" if was is None or v == was else f" (was {was})"))
+    return {"check": "defect ratchet", "pass": not risen,
+            "detail": (", ".join(detail) if not risen
+                       else "ROSE: " + "; ".join(risen) + " - a NEW instance of a known defect")}
+
+
 CHECKS = [("structure", check_structure), ("state", check_state), ("leaks", check_leaks), ("ignored", check_ignored),
           ("paths", check_paths),
-          ("imports", check_imports), ("frozen", check_frozen), ("house", check_house)]
-SLOW = {"imports", "frozen"}
+          ("imports", check_imports), ("frozen", check_frozen), ("house", check_house),
+          ("ratchet", check_ratchet)]
+SLOW = {"imports", "frozen", "ratchet"}
 
 
 def run(quick: bool = False) -> dict:

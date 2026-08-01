@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-07-31 19:02 UTC",
- "seconds": 18.0,
+ "at": "2026-08-01 04:12 UTC",
+ "seconds": 53.2,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "148 modules, 31 reachable from a wake, 111 orphaned, 0 act at import",
+   "detail": "152 modules, 31 reachable from a wake, 115 orphaned, 0 act at import",
    "data": {
-    "modules": 148,
+    "modules": 152,
     "wake": 31,
     "orphans": [
      "aea.energy.capacity",
@@ -109,6 +109,8 @@
      "aea.mind.relay",
      "aea.organs.converse",
      "aea.organs.reflect",
+     "aea.tooling._pages",
+     "aea.tooling._pubscan",
      "aea.tooling.access",
      "aea.tooling.assembly",
      "aea.tooling.board",
@@ -116,6 +118,8 @@
      "aea.tooling.export_city",
      "aea.tooling.heal",
      "aea.tooling.journey_check",
+     "aea.tooling.publish",
+     "aea.tooling.scope",
      "aea.tooling.scout",
      "aea.tooling.selfcheck",
      "aea.tooling.senses",
@@ -193,6 +197,11 @@
      "web/world.html: emoji"
     ]
    }
+  },
+  {
+   "check": "defect ratchet",
+   "pass": true,
+   "detail": "count-threshold 0, expiring-only-retry 0, global-write 7, import-bound-write 43, import-time-work 4, invented-ceiling 80, mutable-module-state 6, scope-violation 0, silent-default 32, unredirectable-store 7"
   }
  ]
 }
