@@ -45,6 +45,7 @@ import os
 import re
 import sys
 import time
+import ast
 import urllib.error
 import urllib.request
 
@@ -313,6 +314,64 @@ def _self_map(topic: str = "") -> str:
     return "\n".join(L)[:3500]
 
 
+MAX_EXP = 64                 # the largest exponent worth computing here
+MAX_RESULT = 1e60            # and the largest result, so 2**64 is fine and 10**60 is not
+
+# A CONSTANT, NOT A LAZY GLOBAL. The first version built this on first use behind `global`, and the
+# ratchet flagged it as new mutable module state within a minute - correctly. There is nothing to
+# defer: `ast` is stdlib and the tuple is fixed. A lazy global buys nothing and costs a mutable name.
+_OK_NODES = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant, ast.Add, ast.Sub,
+             ast.Mult, ast.Div, ast.Mod, ast.Pow, ast.USub, ast.UAdd, ast.FloorDiv)
+
+
+def _explosive(expr: str):
+    """Why this expression must not be evaluated, or None if it is safe. Structural, not textual.
+
+    Three refusals, in order of how badly they fail:
+      SHAPE     any node type outside a closed arithmetic set. The charset already excludes letters,
+                so this catches whatever is left - a walrus, a slice, a tuple - by what it IS
+                rather than by how it is spelled
+      TOWER     a Pow anywhere beneath another Pow. `9**9**9` and `9**(9**9)` are the same tree and
+                the old check saw only the first
+      MAGNITUDE for each Pow, its base and exponent subtrees contain no Pow by then, so they can be
+                evaluated safely and checked BEFORE the outer power is computed. That is what makes
+                `9**(9999*9999)` decidable: the exponent is not a literal, it is an expression, and
+                an expression can be evaluated where a regex can only fail to match it."""
+    try:
+        tree = ast.parse(expr, mode="eval")
+    except SyntaxError as ex:
+        return "not an arithmetic expression (%s)" % str(ex)[:40]
+
+    for node in ast.walk(tree):
+        if not isinstance(node, _OK_NODES):
+            return "%s is not arithmetic" % type(node).__name__
+        if isinstance(node, ast.Constant) and not isinstance(node.value, (int, float)):
+            return "only numbers are allowed"
+
+    def has_pow(n):
+        return any(isinstance(x, ast.Pow) for x in ast.walk(n))
+
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.BinOp) and isinstance(node.op, ast.Pow)):
+            continue
+        if has_pow(node.left) or has_pow(node.right):
+            return "stacked exponents are refused (resource bomb)"
+        try:
+            # both sides are Pow-free here, so evaluating them cannot itself explode
+            base = eval(compile(ast.Expression(node.left), "<b>", "eval"), {"__builtins__": {}}, {})
+            exp = eval(compile(ast.Expression(node.right), "<e>", "eval"), {"__builtins__": {}}, {})
+        except Exception as ex:
+            return "could not size the exponent (%s)" % type(ex).__name__
+        try:
+            if abs(exp) > MAX_EXP:
+                return "exponent too large (max %d)" % MAX_EXP
+            if abs(base) > 1 and abs(base) ** abs(exp) > MAX_RESULT:
+                return "the result would not fit"
+        except (OverflowError, TypeError, ValueError):
+            return "exponent too large"
+    return None
+
+
 def _calc(expression: str = "") -> str:
     """Arithmetic only, by regex, before eval sees it. A calculator that can import is not a
     calculator.
@@ -338,14 +397,19 @@ def _calc(expression: str = "") -> str:
     if len(e) > 400:
         return "ERROR: expression too long"
     # No towers at all: a**b**c is where the growth becomes unbounded in one step.
-    if re.search(r"\*\*[^*]*\*\*", e):
-        return "ERROR: stacked exponents are refused (resource bomb)"
-    for base, exp in re.findall(r"(\d+(?:\.\d+)?)\s*\*\*\s*(\d+(?:\.\d+)?)", e):
-        try:
-            if float(exp) > 64 or (float(base) > 1 and float(base) ** float(exp) > 1e60):
-                return "ERROR: exponent too large (max 64, and the result must fit)"
-        except (ValueError, OverflowError):
-            return "ERROR: exponent too large"
+    # PARSED, NOT SCANNED. This was two regexes and both were blind to a parenthesis.
+    #
+    # MEASURED 2026-08-02, each in its own subprocess with a six-second budget:
+    #     (9)**9999999   9**(9999*9999)   (-9)**9999999   9**(9999999+1)   (9)**(9999999)
+    # all five DID NOT FINISH - inside the charset, under the cap, and never checked, because the
+    # exponent scan required a BARE LITERAL on both sides of `**` and one parenthesis hides it.
+    #
+    # A regex decides questions about TEXT. "Is this a resource bomb" is a question about STRUCTURE.
+    # Patching the pattern only moves the boundary to the next form nobody thought of, which is how
+    # this guard came to exist. So the expression is parsed and the tree is decided over.
+    bad = _explosive(e)
+    if bad:
+        return "ERROR: %s" % bad
     try:
         return str(eval(e, {"__builtins__": {}}, {}))
     except Exception as ex:

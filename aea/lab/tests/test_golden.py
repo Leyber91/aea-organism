@@ -431,10 +431,44 @@ def check_consumption():
     return fails
 
 
+
+# =================================================================================================
+# THE CALCULATOR CANNOT BE MADE TO HANG. Frozen because the guard that was there LOOKED right and
+# was blind: it scanned text for a bare literal on both sides of `**`, so one parenthesis hid the
+# exponent and five bombs walked through a charset check, a length cap and two regexes.
+#
+# These are checked WITHOUT evaluating them dangerously - the guard must REFUSE them, so a correct
+# implementation never computes anything. If a future edit makes one of them return a number, this
+# suite hangs, which is itself the signal.
+# =================================================================================================
+CALC_BOMBS = ["(9)**9999999", "9**(9999*9999)", "(-9)**9999999", "9**(9999999+1)",
+              "(9)**(9999999)", "9**9**9", "9**(9**9)", "9**9**9**9", "9**99999999"]
+CALC_MUST_WORK = [("2+2", "4"), ("17%5", "2"), ("2**10", "1024"), ("(2+3)*4", "20"),
+                  ("1.5**2", "2.25")]
+
+
+def check_calc_bombs():
+    from aea.kernel import hands as _h
+    fails = []
+    for e in CALC_BOMBS:
+        out = str(_h.TOOLS["calc"]["impl"](e))
+        ok = out.startswith("ERROR")
+        print("  calc      %-24s -> %-38s %s" % (e, out[:38], "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("calc:bomb:" + e, out[:40], "ERROR..."))
+    for e, want in CALC_MUST_WORK:
+        out = str(_h.TOOLS["calc"]["impl"](e))
+        ok = out == want
+        print("  calc      %-24s -> %-38s %s" % (e, out[:38], "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("calc:works:" + e, out[:40], want))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
-         + check_kernel() + check_decision_chain() + check_consumption())
+         + check_kernel() + check_decision_chain() + check_consumption() + check_calc_bombs())
     print()
     if f:
         print("%d FAILURES. Something changed what it does:" % len(f))
@@ -449,7 +483,9 @@ if __name__ == "__main__":
              # the decision chain, frozen end to end: three of these are hostile
              + len(CHAIN_TO_TOOL_GOLDEN)
              # a decision is carried out once, and the decline is distinguishable
-             + 3)
+             + 3
+             # the calculator cannot be made to hang, and still computes
+             + len(CALC_BOMBS) + len(CALC_MUST_WORK))
     print("all %d frozen behaviours hold." % total)
     print("2 of them are frozen at a KNOWN-BAD value (METHOD defect 15). Fixing the reader is "
           "supposed to break this file.")
