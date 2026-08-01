@@ -2378,3 +2378,84 @@ non-prose callers. **Do not re-grant `vary_own_knob` before items 2, 3 and 4.**
   rung's M closing conditions are met", with the trail accumulating. The audit's standing objection:
   the 0.6% bound lives in a comment and prose, not in any state file, so `redteam` must run at build
   time and write a stamped certificate before that number may be printed.
+
+---
+
+## 2026-08-02 · THE GRAPH BECOMES ONE LADDER - and it had been drawing two
+
+**DID** - the published organism (`docs/index.html` via `aea/tooling/publish.py`) was carrying two
+rung vocabularies and three controls that could contradict each other. Every item below was found by
+rendering the page and reading the image, not by reading the source.
+
+- **ONE RUNG AXIS.** The hero's BY RUNG rail was built from `assembly.STEPS` - five entries reading
+  R2 / R3.1 / R3.2 / R3.3 / R3.4 - while THE CLIMB below it was built from `ladder.json`, eleven
+  rungs reading R0 ... R9. **They agreed about 12 of the 29 functions they between them named**, so
+  one circle could be R3.2 on one axis and R2 on the other. That is D14 (the architecture describing
+  the same climb four times, nothing checking the descriptions against each other) reproduced INSIDE
+  a single instrument. The rail now reads the same file the climb does; `assembly.STEPS` keeps the
+  WHAT IS WIRED manifest and may no longer name a rung on the picture. `data-lr` is gone; nodes and
+  branches carry one attribute, `data-r`, meaning one thing.
+- **THE THIRD CONTROL IS GONE.** There was a `climb` mode with its own attribute and its own copy of
+  the accumulation rules, driven by an autoplay that ran on load. Measured on the landing screenshot:
+  the hero drew the climb's near-empty frame 0 under a caption from a third source while the rail
+  said HOP 6 and the mode button said BY CALL HOP. Now every path into a frame goes through `go()`,
+  which writes the graph, the rail, the mode buttons and the climb list together. The autoplay is
+  owned by the section it illustrates and waits for an IntersectionObserver - so the landing view is
+  the organism again, and the climb plays when the reader reaches it.
+- **THE RUNG AXIS ACCUMULATES, THE HOP AXIS REVEALS**, and the difference is a claim: a hop is a
+  slice of a structure that exists; a rung was BUILT ON the rungs beneath it. Later rungs are not
+  drawn at all rather than drawn faint - at R2, R3's functions are not a capability yet.
+- **STANDBY** (`ladder.RUNG_STANDBY` + `standby_for`): a rung that has not started can still own
+  code. R4's seven `dispatch` functions - written, refused in their obvious shape by four council
+  seats three times, left with zero callers on purpose - now light in BRASS out in the dead field on
+  R4's frame. Before this, "not built" and "built and deliberately held" rendered identically. The
+  entry is only honest while it is unreachable, so `standby_state` re-measures against the live call
+  graph every build and says NO LONGER STANDBY the moment one acquires a caller.
+- **THE CAPTIONS SAY WHAT THE PICTURE CANNOT.** Zero-function rungs name what they are waiting on;
+  R2's caption names the **three functions it declares that the wake cannot reach**
+  (`hands:_read_state`, `_what_to_try`, `_my_record`) - `verify_funcs` only ever asked whether a
+  declared name RESOLVES, which is a weaker question than whether the organism can get to it.
+- **SYNTHETIC NODES ARE NOT FUNCTIONS.** `ENTRY` and `VIA-IMPORT` were counted in the rail (145) and
+  not in the card (143). Both series now count real functions; hop 0 shows +0 and says so.
+- **THE FUTURE BADGE WAS INVISIBLE.** `.rstat` fell back to `--dim` (#171a1e), a BACKGROUND token,
+  on a #0e1114 panel - so the six rungs that are honestly unbuilt were the six whose state the page
+  did not say out loud.
+
+**THE DEFECT THAT MATTERED MOST, and it was in the data rather than the drawing**
+
+`measure_r1` tested the wire with `"decide.choose()" in source`. Commit `fe96176` gave that call an
+argument, so the literal stopped matching and **R1 flipped PROVEN -> PARTIAL with `wired=False` on a
+rung whose wire had just been improved.** The next publish would have printed that downgrade on a
+page whose whole claim is that its numbers are true. It now asks `assembly.scan()` for the call edge
+- the same source the picture is drawn from. Ninth wrong-object instance here; the fourth part of
+the record is the one that matters: **the docstring six lines below the defect describes the same
+defect in the same function**, caught once and written up, and the fix that time was aimed at the
+string that had broken rather than at string-matching as the technique. Attention followed the
+failure instead of the class.
+
+**VERIFIED** - `python -m aea.tooling.publish` twice, byte-identical modulo the timestamp; privacy
+scan clean; `selfcheck` ALL INVARIANTS HOLD (ratchet included); 59/59 frozen behaviours; `transfer`
+119 advisory WITH A CONTROL RUN of the same tree without these edits, also 119, so none is mine.
+Screenshots read at hop 6, R0, R2, R3, R4, R8 and the climb section. The autoplay trigger is
+verified by DOM dump rather than by screenshot: at a 1400x1400 viewport the hero stays
+`data-mode="hop" data-frame="6"`, at 1400x3200 (climb in view) it settles at `rung`/`4` = R3, the
+highest earned rung. The rendered end state of that frame is the `#rung-4` screenshot.
+
+**LOCKED**
+
+- **ONE LADDER ON THE PAGE.** `state/ladder.json` is the only rung vocabulary the picture may use.
+  A second manifest naming rungs is the defect, not a convenience.
+- **A WIRE IS A CALL EDGE; TEST IT AS ONE.** No instrument in this repo may certify a wire by
+  matching characters in source when `assembly.scan()` can be asked for the edge.
+- **STANDBY IS A MEASUREMENT, NOT A LABEL.** Held code must be shown to be unreachable on every
+  build, and stops being standby the moment something calls it.
+
+**NEXT**
+
+- Unchanged and still first: `diary/OPEN_LOOPS.md` **item 5, R2a-REACH** - 5 of 8 situations, the
+  last open half of R2, and the only rung below R3 still open. It needs situation variety in the
+  live loop, not a replay harness.
+- On the page specifically: R5-R9 own no code and no standby, so six rungs still say only what they
+  are waiting for. That is honest and it is also the ceiling of what this instrument can show until
+  the work exists. **Do not add rungs, criteria, or decoration to make it look fuller** (OPEN_LOOPS
+  KILL list, first entry).

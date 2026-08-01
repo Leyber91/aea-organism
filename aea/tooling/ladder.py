@@ -263,6 +263,52 @@ RUNG_FUNCS = {
 }
 
 
+# =================================================================================================
+# STANDBY - CODE THAT BELONGS TO A RUNG NOBODY HAS CLIMBED, WRITTEN AND DELIBERATELY NOT WIRED.
+#
+# `funcs` above answers "what does this rung RUN". This answers a different question the ladder was
+# silent about: what already EXISTS for a rung that has not started. Six of the eleven rungs declare
+# nothing, so the picture drew nothing for them, and "not built" and "built and held back" rendered
+# identically - when they are opposite facts. `dispatch.py` is R4's egress path: eight functions,
+# refused by four council seats three times in the obvious `web_fetch(url)` shape, rewritten as a
+# split dispatcher, and left with zero callers ON PURPOSE until the bound is certified.
+#
+# THE ENTRY IS ONLY HONEST WHILE IT IS UNREACHABLE. A standby function that acquires a caller is no
+# longer standby - it is either the rung starting or a wire nobody meant to land. `standby_state`
+# reports which, per rung, measured against the live call graph rather than assumed.
+RUNG_STANDBY = {
+    "R4": ["kernel.dispatch:plan", "kernel.dispatch:carry", "kernel.dispatch:run",
+           "kernel.dispatch:allowed_host", "kernel.dispatch:topics", "kernel.dispatch:_host",
+           "kernel.dispatch:_host_why"],
+}
+
+
+def standby_for(rid: str) -> tuple:
+    """(names that exist and are unreached, state) - never a name this repo cannot show you."""
+    names = RUNG_STANDBY.get(rid) or []
+    if not names:
+        return [], None
+    try:
+        from aea.tooling import assembly
+        mods = assembly.scan()
+        live, _ = assembly.reachable(mods)
+        known = set()
+        for mod, d in (mods or {}).items():
+            for fn in ((d or {}).get("defs") or {}):
+                known.add("%s:%s" % (mod.replace("aea.", "", 1), fn))
+        live = {k.replace("aea.", "", 1) for k in live}
+    except Exception as e:
+        return names, "unverified: %s" % type(e).__name__
+    gone = [n for n in names if n not in known]
+    wired = [n for n in names if n in live]
+    held = [n for n in names if n in known and n not in live]
+    if gone:
+        return held, "DECLARED BUT ABSENT: %s" % ", ".join(sorted(gone))
+    if wired:
+        return held, "NO LONGER STANDBY - now reachable: %s" % ", ".join(sorted(wired))
+    return held, "held: written, zero callers"
+
+
 def verify_funcs() -> dict:
     """Every declared name resolved against the live call graph. Misses are RETURNED, not dropped.
 
@@ -335,6 +381,39 @@ def measure_r0() -> dict:
                 met=bool(longest >= GATE_HOURS and crashes == 0))
 
 
+def _wired_r1(body: str) -> bool:
+    """Does `choose_action` reach `decide.choose`? ASKED OF THE CALL GRAPH, not of the characters.
+
+    THE FAILURE THIS REPLACES, in four parts, because three of them do not stop a recurrence.
+
+      THE RULE          a wire is a call edge; test it as one.
+      WHAT IT COST      this read `"decide.choose()" in body`. `fe96176` gave the call an argument -
+                        `decide.choose(after=hb.get("_last_decision"))` - and the literal stopped
+                        matching. R1 flipped PROVEN -> PARTIAL with `wired=False` on a rung whose
+                        wire had just been IMPROVED, and the next publish would have printed that
+                        downgrade on a page whose entire claim is that its numbers are true.
+      HOW TO BUILD IT   `assembly.scan()` already resolves every call in the tree to
+                        `module:function`, and the page's own picture is drawn from it. Ask that.
+                        The regex stays only as the fallback for when the scan itself fails.
+      WHY IT WASN'T     the docstring six lines below this one describes THE SAME DEFECT in the same
+                        function - a scanner blinded by a refactor, caught once, written up, and
+                        left in place two inches above a second instance of itself. The fix that
+                        time was aimed at the pattern that had broken (`_fallback_ladder`) rather
+                        than at the technique that broke it, so string-matching source survived as
+                        the method and only the string was corrected. Attention followed the failure
+                        instead of the class (law M9). Ninth wrong-object edit in this repo.
+    """
+    try:
+        from aea.tooling import assembly
+        calls = (assembly.scan().get("aea.loop.live", {}).get("defs", {})
+                 .get("choose_action", {}).get("calls", []))
+        if calls:
+            return "aea.kernel.decide:choose" in calls
+    except Exception:
+        pass
+    return bool(re.search(r"decide\.choose\s*\(", body))
+
+
 def measure_r1() -> dict:
     """Is the wire there, and CAN the reachable gate ever fire?
 
@@ -346,7 +425,7 @@ def measure_r1() -> dict:
     try:
         src = io.open(os.path.join(grid.ROOT, "aea", "loop", "live.py"), encoding="utf-8").read()
         m = re.search(r"def choose_action\(hb: dict\).*?(?=\ndef )", src, re.S)
-        out["wired"] = "decide.choose()" in (m.group(0) if m else "")
+        out["wired"] = _wired_r1(m.group(0) if m else "")
         # READ THE FLOOR FROM THE FUNCTION THAT IS THE FLOOR. This scanned `choose_action` and broke
         # silently the moment the ladder was extracted into `_fallback_ladder` - it returned [] and
         # `subset` became null, so the structural finding that R1's original gate is unreachable
@@ -567,8 +646,10 @@ def build() -> dict:
     out = []
     for r in RUNGS:
         m = MEASURE[r["id"]]() if r["id"] in MEASURE else {}
+        sb, sbs = standby_for(r["id"])
         out.append(dict(r, measured=m, status=status_for(r["id"], m),
-                        funcs=RUNG_FUNCS.get(r["id"], [])))
+                        funcs=RUNG_FUNCS.get(r["id"], []),
+                        standby=sb, standby_state=sbs))
     # STAMPED HERE, not via a grid helper I assumed existed. `grid.now_iso` is not a thing, and the
     # hasattr guard silently produced None - a field that reads as "unmeasured" when it was only
     # ever "misspelled". A fallback that hides a typo is worse than the crash it prevents.

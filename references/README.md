@@ -24,6 +24,18 @@ folder name is the employer — that path never gets written here).
 - **External:** the PORTFOLIO site's locked visual language (§6 of the site master — palette, type,
   motifs). Pointer only; the game's look and the site's are meant to rhyme.
 
+## EXTERNAL READING - books and papers, with what they do NOT cover
+
+A reference that only lists what a source contains invites the next reader to hunt for what it does
+not have. Each entry records the absences too.
+
+- **System Design for the LLM Era** (Sampriti Mitra, Packt 2026) -> `BOOK_system_design_llm_era.md`
+  Serving and application architecture, NOT agent architecture. Tool calling is one paragraph and
+  multi-agent is absent. Useful for three things: its plan-approve-execute loop against excessive
+  agency (independently the same split as our role rule), evaluation as a blocking deploy gate with
+  a weighted rubric and a stated threshold, and the production observability vocabulary. We
+  deliberately REFUSE its cost chapter - hard token ceilings are measured harm here.
+
 ## PRIVACY GUARD (standing)
 No employer/client/internal-system names, no NDA/multi-employment references, no compensation data,
 no absolute filesystem paths, no personal identifiers enter this repo. If any external reference is

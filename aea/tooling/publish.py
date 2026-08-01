@@ -88,7 +88,7 @@ def _load(name, default):
         return default
 
 
-def organism(lr=None) -> dict:
+def organism(lr=None, standby=None) -> dict:
     """The live call graph, and the field it sits inside. Computed, not stored."""
     from aea.tooling import assembly
     mods = assembly.scan()
@@ -122,7 +122,8 @@ def organism(lr=None) -> dict:
             for c in d["calls"]:
                 if c in live and c != src:
                     edges.append((src, c))
-    return dict(lr=lr, live=sorted(live), dead=sorted(allfns - live), edges=edges, depth=depth,
+    return dict(lr=lr, standby=standby or {}, live=sorted(live), dead=sorted(allfns - live),
+                edges=edges, depth=depth,
                 modules=len(mods), functions=len(allfns), unresolved=unresolved)
 
 
@@ -229,27 +230,40 @@ def _tree(org: dict) -> dict:
     cross = [(a, b) for a, b in org["edges"]
              if (a, b) not in tset and a in pos and b in pos]
     # WHICH RUNG DECLARES THIS FUNCTION - the FUNCTIONAL axis, beside the structural one. The two
-    # answer different questions: hop depth says "what calls what" and covers all 137; rung says
-    # "what capability is this part of" and covers 25. Both are true, neither replaces the other,
-    # and the page must never let a viewer mistake the 18% for the whole.
+    # answer different questions: hop depth says "what calls what" and covers all 143; rung says
+    # "what capability is this part of" and covers 28. Both are true, neither replaces the other,
+    # and the page must never let a viewer mistake the 20% for the whole.
+    #
+    # THERE IS EXACTLY ONE RUNG VOCABULARY AND IT IS `ladder.json`. This map was built from
+    # `assembly.STEPS` while the CLIMB below was built from `ladder.json`, so ONE PAGE carried two
+    # ladders: the rail read R2 / R3.1 / R3.2 / R3.3 / R3.4 (five steps, beginning at R2) while the
+    # climb read R0 ... R9 (eleven rungs, beginning at the root). They agreed about 12 of the 29
+    # functions they between them named, so a circle could be R3.2 on one axis and R2 on the other.
+    # That is discovery D14 - the architecture describing the same climb more than once and nothing
+    # checking the descriptions against each other - reproduced INSIDE a single instrument.
+    #
+    # `assembly.STEPS` keeps its own job (the WHAT IS WIRED manifest, which is about wiring and not
+    # about capability). It is no longer allowed to name a rung on the picture.
+    lr = (org or {}).get("lr") or {}
     rung = {}
-    try:
-        from aea.tooling import assembly as _asm
-        for i, (_title, fns) in enumerate(_asm.STEPS):
-            for f in fns:
-                if f in pos:
-                    rung.setdefault(f, i)
-    except Exception:
-        pass
+    for n in pos:
+        k = lr.get(n.replace("aea.", "", 1))
+        if k is not None:
+            rung[n] = k
     return dict(pos=pos, tree=tree, cross=cross, root=root, depth=depth, leaves=leaves,
-                sectors=secs, maxd=_maxd, rung=rung, lr=(org or {}).get("lr") or {})
+                sectors=secs, maxd=_maxd, rung=rung, lr=lr,
+                standby=(org or {}).get("standby") or {})
 
 
 def _lrb(T, child):
     """A branch belongs to the rung of the node it ARRIVES at. Drawing an edge into a node that has
-    not been revealed is the visual form of claiming something exists before it was built."""
-    k = T.get("lr", {}).get(str(child).replace("aea.", "", 1))
-    return f' data-lr="{k}"' if k is not None else ""
+    not been revealed is the visual form of claiming something exists before it was built.
+
+    ONE ATTRIBUTE. Nodes and branches both carry `data-r`, and `data-r` means one thing: the index
+    of the rung in `ladder.json` that declares this function. There used to be a second attribute,
+    `data-lr`, holding the other ladder's answer for the same circle."""
+    k = T.get("rung", {}).get(child)
+    return f' data-r="{k}"' if k is not None else ""
 
 
 def _svg(org: dict, T: dict) -> str:
@@ -267,13 +281,26 @@ def _svg(org: dict, T: dict) -> str:
     # And the angle now comes from the dot's OWN package, so the halo carries the measurement:
     # loop 25 live / 3 dark, kernel 74/132, and the entire 558-function lab sector is black. Placed
     # uniformly it showed nothing at all.
+    # STANDBY, DRAWN IN THE FIELD AND NEVER IN THE BODY. A rung that has not started can still own
+    # code: `dispatch.py` is R4's egress path, written, refused in its obvious shape by four council
+    # seats, and left with zero callers on purpose. Before this it was one more anonymous dot in the
+    # 1,182 - so "not built" and "built and deliberately held" looked the same, which is the
+    # difference between an empty rung and a fenced one. Brass, not amber: amber is the fired state
+    # under the two-ink law and none of these has ever run in the loop.
+    standby = T.get("standby") or {}
     secs = T.get("sectors") or {}
     for n in org["dead"]:
         h = int(hashlib.sha1(n.encode()).hexdigest()[:8], 16)
         a0, a1 = secs.get(_pkg(n), (0.0, 2 * math.pi))
         a = a0 + (h % 10000) / 10000 * (a1 - a0)
         r = 430 + ((h >> 16) % 1000) / 1000 * 62
-        out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" r="1" class="dead"/>')
+        k = standby.get(n.replace("aea.", "", 1))
+        if k is None:
+            out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" r="1" class="dead"/>')
+        else:
+            out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" '
+                       f'r="1" class="dead standby" data-r="{k}">'
+                       f'<title>{n.replace("aea.","")}  (written for rung {k}, zero callers)</title></circle>')
     # CROSS-LINKS - real calls that are not tree edges. Faint, so the tree stays readable.
     for a, b in T["cross"]:
         x1, y1 = pos[a]; x2, y2 = pos[b]
@@ -301,8 +328,6 @@ def _svg(org: dict, T: dict) -> str:
         style = ""
         rung = T.get("rung", {}).get(n)
         ra = f' data-r="{rung}"' if rung is not None else ""
-        _lk = T.get("lr", {}).get(n.replace("aea.", "", 1))
-        ra += f' data-lr="{_lk}"' if _lk is not None else ""
         out.append(f'<circle cx="{x}" cy="{y}" r="{r:.1f}" class="{cls}" data-d="{d}"{ra}{style}>'
                    f'<title>{n.replace("aea.","")}  (hop {d})</title></circle>')
     # LABEL THE FIRST RING - the functions the wake calls directly. These are the ones worth naming.
@@ -422,10 +447,15 @@ CLIMB_BASE_CSS = """
 .lhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .rid{font-weight:700;letter-spacing:.08em;color:var(--brass);min-width:40px}
 .rtitle{letter-spacing:.05em;font-size:13px}
+/* THE STATUS BADGE HAD NO COLOUR FOR THE STATUS SIX OF THE ELEVEN RUNGS ARE IN. It fell back to
+   `--dim`, which is #171a1e - a BACKGROUND token, used as a text colour on a #0e1114 panel. Every
+   FUTURE badge rendered as an empty box, so the six rungs that are honestly unbuilt were the six
+   whose state the page did not say out loud. Caught by reading the render, not the stylesheet. */
 .rstat{margin-left:auto;font-size:10px;letter-spacing:.1em;padding:1px 6px;
- border:1px solid #2b3138;color:var(--dim)}
+ border:1px solid #2b3138;color:#8b939c}
 .s-proven{color:var(--amber);border-color:var(--amber)}
 .s-partial{color:var(--brass);border-color:var(--brass)}
+.s-future{color:#5d666f;border-color:#262c33}
 .rplain{margin:6px 0 3px;color:#939ca6;font-size:12px;line-height:1.55;max-width:74ch}
 .rev{margin:0;font-size:11px;color:var(--brass);font-variant-numeric:tabular-nums}
 @media (max-width:620px){.rstat{margin-left:0}.rplain{font-size:11.5px}}
@@ -439,11 +469,13 @@ def build() -> str:
     # describing code that is not there.
     lad = _load("ladder.json", {})
     cert = _load("redteam_cert.json", {})
-    lr = {}
+    lr, sby = {}, {}
     for _k, _r in enumerate(lad.get("rungs") or []):
         for _f in (_r.get("funcs") or []):
             lr.setdefault(_f, _k)
-    org = organism(lr)
+        for _f in (_r.get("standby") or []):
+            sby.setdefault(_f, _k)
+    org = organism(lr, sby)
     T = _tree(org)
     asm = _load("assembly.json", {})
     cen = _load("capability_census.json", {})
@@ -461,7 +493,8 @@ def build() -> str:
     cert_ecross = sum(_ex.values()) or "&mdash;"
     cert_icross = sum(_im.values()) or "&mdash;"
     cert_ebound = ("%.3f%%" % cert["exposed_bound_pct"]) if cert.get("exposed_bound_pct") is not None else "&mdash;"
-    narr_json = json.dumps([str(r.get('beat') or '') for r in (lad.get('rungs') or [])])
+    # THE NARRATION BEATS MOVED INTO THE RUNG CAPTIONS. They used to ride their own global and their
+    # own writer, which is how they ended up printed under a graph that was not showing that rung.
     hist = []
     try:
         p = os.path.join(str(grid.STATE), "assembly_history.jsonl")
@@ -497,20 +530,31 @@ def build() -> str:
     # and this code would be the worst offender, because angle is allocated by subtree size, so ONE
     # added node re-slices every sibling wedge.
     MAXD = T["maxd"]
+    # REAL FUNCTIONS ONLY, in the rail as well as in the caption. The rail's cumulative column read
+    # 145 beside a caption reading "143 of 143 reachable" - the two synthetic nodes this drawing
+    # invented (`ENTRY`, `VIA-IMPORT`) counted in one series and not the other. Hop 0 therefore
+    # shows +0: the thing at the centre is a bracket, and the five real entry points arrive at hop 1.
     hist = {}
     for n in T["pos"]:
+        if ":" not in n:
+            continue
         hist[T["depth"].get(n, 9)] = hist.get(T["depth"].get(n, 9), 0) + 1
     cum, run = [], 0
     for k in range(MAXD + 1):
         run += hist.get(k, 0); cum.append(run)
 
     # THE SECOND AXIS: BY RUNG, not by call-hop. They answer different questions and neither
-    # replaces the other. Hop depth says WHAT CALLS WHAT and covers all 137 live functions. Rung
-    # says WHAT CAPABILITY THIS IS PART OF and covers 25 - so 112 functions are declared by no
+    # replaces the other. Hop depth says WHAT CALLS WHAT and covers all 143 live functions. Rung
+    # says WHAT CAPABILITY THIS IS PART OF and covers 28 - so 115 functions are declared by no
     # rung, and in that mode they rest rather than vanish. The number is printed in every rung
-    # caption: a viewer must never mistake 18 percent for the whole.
-    from aea.tooling import assembly as _asm
-    RUNGS = [t for t, _f in _asm.STEPS]
+    # caption: a viewer must never mistake 20 percent for the whole.
+    #
+    # ELEVEN RUNGS, FROM THE SAME FILE THE CLIMB READS. This list came from `assembly.STEPS`, which
+    # holds five entries and begins at R2 - so the instrument that is supposed to show the climb
+    # could not show its first three rungs, and named the rest in a vocabulary the section below it
+    # does not use.
+    _rungs = lad.get("rungs") or []
+    RUNGS = [(str(r.get("id", "")), str(r.get("title", "")), r) for r in _rungs]
     rcount = {}
     for _n, _i in (T.get("rung") or {}).items():
         rcount[_i] = rcount.get(_i, 0) + 1
@@ -518,16 +562,33 @@ def build() -> str:
     for i in range(len(RUNGS)):
         _r += rcount.get(i, 0); rcum.append(_r)
 
+    # THE RUNG AXIS ACCUMULATES; THE HOP AXIS REVEALS. That difference is the claim each one makes.
+    # A hop is a slice of one structure that already exists, so shallower hops are context and the
+    # current one is the arrival. A rung is a thing that was BUILT ON TOP of the rungs beneath it,
+    # so everything below stays lit - the picture has to show a body growing, not a spotlight
+    # sliding over a finished body. Later rungs are not drawn at all: at R2 the functions R3 will
+    # add do not exist yet as a capability, and drawing them faint would be a claim about the future.
     frame_css = []
+    frame_css.append('#org[data-mode="rung"] .node{fill:#222930;opacity:.26}')
+    frame_css.append('#org[data-mode="rung"] .branch{opacity:.05}')
+    frame_css.append('#org[data-mode="rung"] .cross{opacity:0}')
+    frame_css.append('#org[data-mode="rung"] .node[data-r]{opacity:0}')
+    frame_css.append('#org[data-mode="rung"] .branch[data-r]{opacity:0}')
+    frame_css.append('#org[data-mode="rung"] .node,#org[data-mode="rung"] .branch'
+                     '{transition:opacity .5s ease,fill .5s ease,r .5s ease,stroke .5s ease}')
     for k in range(len(RUNGS)):
-        for d in range(k + 1, len(RUNGS)):
+        for d in range(k + 1):
             frame_css.append(f'#org[data-mode="rung"][data-frame="{k}"] .node[data-r="{d}"]'
-                             f'{{fill:#191d22;opacity:.28;r:1.2px}}')
-        frame_css.append(f'#org[data-mode="rung"][data-frame="{k}"] .node[data-r="{k}"]'
-                         f'{{fill:var(--amber);r:4.4px;opacity:1}}')
-    frame_css.append('#org[data-mode="rung"] .node:not([data-r]){fill:#2b3138;opacity:.5}')
-    frame_css.append('#org[data-mode="rung"] .node[data-r]{fill:#5b636c;opacity:.95;r:3.4px}')
-    frame_css.append('#org[data-mode="rung"] .branch,#org[data-mode="rung"] .cross{opacity:.22}')
+                             f'{{opacity:.95;fill:{"var(--amber)" if d == k else "#818b96"}}}')
+            frame_css.append(f'#org[data-mode="rung"][data-frame="{k}"] .branch[data-r="{d}"]'
+                             f'{{opacity:{".85" if d == k else ".30"};'
+                             f'stroke:{"var(--amber)" if d == k else "#4d555e"}}}')
+        frame_css.append(f'#org[data-mode="rung"][data-frame="{k}"] .node[data-r="{k}"]{{r:4.4px}}')
+        # THE STANDBY DOTS LIGHT ONLY ON THEIR OWN RUNG, in brass, out in the field where they
+        # actually live. On every other frame they are one more dot in the 1,182, which is exactly
+        # what they are to the running organism.
+        frame_css.append(f'#org[data-mode="rung"][data-frame="{k}"] .standby[data-r="{k}"]'
+                         f'{{fill:var(--brass);r:2.6px;opacity:.95}}')
     for k in range(MAXD + 1):
         for d in range(k + 1, MAXD + 1):
             frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .node[data-d="{d}"]{{fill:#191d22;opacity:.28;r:1.2px}}')
@@ -535,51 +596,93 @@ def build() -> str:
                              f'#org[data-mode="hop"][data-frame="{k}"] .cross[data-d="{d}"]{{opacity:0}}')
         frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .node[data-d="{k}"]{{fill:var(--amber)}}')
         frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .branch[data-d="{k}"]{{stroke:var(--amber);opacity:.92}}')
-    frame_css = "\n".join(frame_css)
-    # GROWTH CSS. At climb frame k: everything rungs <= k added is drawn, what THIS rung added is
-    # amber and larger, and what a later rung will add is not drawn at all. Unclaimed functions stay
-    # faint throughout - the body the rungs are built from.
-    grow = ['#org[data-mode="climb"] .node{fill:#222930;opacity:.26}',
-            '#org[data-mode="climb"] .branch{opacity:.05}',
-            '#org[data-mode="climb"] .cross{opacity:0}',
-            '#org[data-mode="climb"] .node[data-lr]{opacity:0}',
-            '#org[data-mode="climb"] .branch[data-lr]{opacity:0}',
-            '#org[data-mode="climb"] .node,#org[data-mode="climb"] .branch'
-            '{transition:opacity .5s ease,fill .5s ease,r .5s ease,stroke .5s ease}']
-    _nr = len(lad.get("rungs") or [])
-    for k in range(_nr):
-        for d in range(k + 1):
-            grow.append('#org[data-climb="%d"] .node[data-lr="%d"]'
-                        '{opacity:.95;fill:%s}' % (k, d, "var(--amber)" if d == k else "#818b96"))
-            grow.append('#org[data-climb="%d"] .branch[data-lr="%d"]'
-                        '{opacity:%s;stroke:%s}' % (k, d, ".85" if d == k else ".30",
-                                                    "var(--amber)" if d == k else "#4d555e"))
-        grow.append('#org[data-climb="%d"] .node[data-lr="%d"]{r:4.4px}' % (k, k))
-    frame_css += CLIMB_BASE_CSS + climb_css + "\n" + "\n".join(grow)
+    # THE GROWTH CSS THAT USED TO LIVE HERE IS GONE, and its absence is the fix. There was a THIRD
+    # mode, `climb`, with its own attribute (`data-climb`) and its own copy of the accumulation
+    # rules keyed on `data-lr` - a second renderer of the same axis, driven by a second control,
+    # that neither the mode buttons nor the rail knew about. Measured on the rendered page: the
+    # climb's autoplay set `data-mode="climb"` on load and overwrote the caption every 560 ms, so
+    # the landing view showed a nearly-empty field captioned with an R3 narration beat while the
+    # rail highlighted HOP 6 and the mode button said BY CALL HOP. Three controls, three answers,
+    # one picture. Now: one mode, one attribute, one integer, two rails onto it.
+    frame_css = "\n".join(frame_css) + CLIMB_BASE_CSS + climb_css
 
     # THE CAPTION IS NOT OPTIONAL. The page honours prefers-reduced-motion, which kills the motion
     # channel entirely - so what changed must survive with zero animation, in words, measured.
+    # SYNTHETIC NODES ARE NOT FUNCTIONS. `ENTRY` and `VIA-IMPORT` are scaffolding this drawing
+    # invented to avoid a worse lie (see _tree), and they were being counted in a sentence that ends
+    # with the word "functions" - HOP 0 read "1 function arrives" while the thing that arrives is a
+    # bracket. Small, and exactly the kind of number nobody re-checks.
+    NREAL = len([n for n in T["pos"] if ":" in n])
     caps, seen_pkg = [], set()
     for k in range(MAXD + 1):
         at_k = [n for n in T["pos"] if T["depth"].get(n) == k]
-        new_pk = sorted({_pkg(n) for n in at_k} - seen_pkg)
-        seen_pkg |= {_pkg(n) for n in at_k}
+        real_k = [n for n in at_k if ":" in n]
+        new_pk = sorted({_pkg(n) for n in real_k} - seen_pkg)
+        seen_pkg |= {_pkg(n) for n in real_k}
         where = ", ".join("aea." + p for p in new_pk) if new_pk else "-"
-        caps.append(f"HOP {k} — {len(at_k)} function{'s' if len(at_k)!=1 else ''} arrive — "
-                    f"{cum[k]} of {len(T['pos'])} reachable — first reach into {where}")
+        creal = len([n for n in T["pos"] if ":" in n and T["depth"].get(n, 99) <= k])
+        if not real_k:
+            caps.append(f"HOP {k} — the entry bracket, which is not a function. The "
+                        f"{hist.get(1,0)} real entry points the wake starts from arrive at hop 1.")
+            continue
+        caps.append(f"HOP {k} — {len(real_k)} function{'s' if len(real_k)!=1 else ''} arrive — "
+                    f"{creal} of {NREAL} reachable — first reach into {where}")
     rail = "".join(
         f'<button data-k="{k}" aria-current="{"step" if k==MAXD else "false"}">'
         f'<b>HOP {k}</b><span>+{hist.get(k,0)}</span><em>{cum[k]}</em></button>'
         for k in range(MAXD + 1))
+    # WHERE THE RUNG AXIS COMES TO REST: the highest rung that is actually earned, the same integer
+    # the climb rests on. Resting on the last rung would draw R9 SELF-MODIFICATION as the state of
+    # the organism, and R9 is shut on purpose.
+    RREST = max([k for k, (_i, _t, r) in enumerate(RUNGS) if r.get("status") != "future"] or [0])
     rrail = "".join(
-        f'<button data-k="{k}" aria-current="{"step" if k==len(RUNGS)-1 else "false"}">'
-        f'<b>{t.split()[0]}</b><span>+{rcount.get(k,0)}</span><em>{rcum[k]}</em></button>'
-        for k, t in enumerate(RUNGS))
-    rcaps = json.dumps([
-        f"{t} — {rcount.get(k,0)} function{'s' if rcount.get(k,0)!=1 else ''} declared — "
-        f"{rcum[k]} of {len(T.get('rung') or {})} declared by any rung, "
-        f"{len(T['pos']) - len(T.get('rung') or {})} of {len(T['pos'])} declared by none"
-        for k, t in enumerate(RUNGS)])
+        f'<button data-k="{k}" aria-current="{"step" if k==RREST else "false"}" '
+        f'data-st="{r.get("status","future")}">'
+        f'<b>{i}</b><span>+{rcount.get(k,0)}</span><em>{rcum[k]}</em></button>'
+        for k, (i, _t, r) in enumerate(RUNGS))
+
+    # THE RUNG CAPTION CARRIES THE THING THE PICTURE CANNOT DRAW: that a rung declaring nothing is
+    # not a rendering failure. Six of the eleven add zero functions, and the honest sentence for
+    # those is what they are WAITING ON, read from the same manifest.
+    _declared = len(T.get("rung") or {})
+    rcaps_l = []
+    for k, (rid, rtitle, r) in enumerate(RUNGS):
+        n_k = rcount.get(k, 0)
+        head = (f"{rid} {rtitle} — {n_k} function{'s' if n_k != 1 else ''} declared — "
+                f"{rcum[k]} of {_declared} the ladder names, "
+                f"{NREAL - _declared} of {NREAL} live functions declared by no rung.")
+        if n_k == 0:
+            blocked = r.get("blocked_on")
+            head = (f"{rid} {rtitle} — nothing in the live graph belongs to this rung. "
+                    + (f"Waiting on {blocked}." if blocked else "Not built.")
+                    + f" The organism stops growing here: {rcum[k]} of {NREAL} functions are"
+                      f" declared by any rung, and every one of them was added below this line.")
+        # STANDBY IS A DIFFERENT SENTENCE FROM ABSENT, and the picture can only carry it if the
+        # caption names it - the dots are out in the field at one and a half pixels.
+        _sb = r.get("standby") or []
+        if _sb:
+            _mods = sorted({f.split(":")[0] for f in _sb})
+            head += (f" {len(_sb)} function{'s' if len(_sb) != 1 else ''} for this rung already"
+                     f" exist and nothing calls them ({', '.join('aea.' + m for m in _mods)},"
+                     f" {r.get('standby_state')}) — lit in brass out in the field, because they are"
+                     f" written and have never run.")
+        # DECLARED BUT UNREACHABLE. A rung may name a function that exists in the tree and that
+        # nothing calls - `verify_funcs` checks the name resolves, which is a weaker question than
+        # whether the organism can get to it. R2 names three such helpers today. Saying so in the
+        # caption costs one clause and stops the rail's count from reading as coverage.
+        _dead_named = [f for f in (r.get("funcs") or []) if ("aea." + f) not in T["pos"]]
+        if _dead_named:
+            head += (f" {len(_dead_named)} declared function"
+                     f"{'s' if len(_dead_named) != 1 else ''} on this rung "
+                     f"{'are' if len(_dead_named) != 1 else 'is'} not reachable from the wake: "
+                     + ", ".join(sorted(_dead_named)) + ".")
+        beat = str(r.get("beat") or "").strip()
+        rcaps_l.append(head + ("  " + beat if beat else ""))
+    # THE CAPTION IS THE WHOLE ACCESSIBLE CHANNEL. With prefers-reduced-motion the graph does not
+    # animate at all, so everything the motion would have said has to survive here in words that
+    # were measured. Nothing in this list is typed: id, title, blocked_on and beat come from
+    # ladder.json, every count from the live call graph.
+    rcaps = json.dumps(rcaps_l)
 
     caps_js = json.dumps(caps)
     live_n, fn_n = len(org["live"]), org["functions"]
@@ -776,69 +879,69 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 <br><br>github.com/Leyber91
 </div>
 </div>
-<script>window.__CLIMB_NARR={narr_json};</script>
 <script>
-/* THE CLIMB. One integer over frozen layout, exactly like the graph reveal - stepping backward
-   costs nothing and nothing re-flows. Auto-advance runs once and stops the moment the reader
-   touches a control, because a reader who has taken over should not be fought. Under
-   prefers-reduced-motion it never runs; every rung stays fully readable either way. */
-(function(){{
-  var cl=document.getElementById('climb'), cr=document.getElementById('crail');
-  if(!cl||!cr) return;
-  var n=cl.children.length, timer=null;
-  var org=document.getElementById('org'), cap=document.getElementById('cap');
-  var NARR=window.__CLIMB_NARR||[];
-  function setC(k){{
-    cl.setAttribute('data-frame',k);
-    var bs=cr.querySelectorAll('button');
-    for(var i=0;i<bs.length;i++) bs[i].setAttribute('aria-current', i==k?'step':'false');
-    /* THE GRAPH GROWS WITH THE RAIL. This is the wire that makes the climb and the organism ONE
-       instrument instead of two sections sharing a page: stepping a rung reveals the functions that
-       rung actually added, outward from the wake. Coordinates never move - only this integer. */
-    /* ITS OWN ATTRIBUTE. `data-frame` already means "hop depth" to the reveal above, and two
-       readers writing one attribute with two vocabularies is how the graph ended up blank: the
-       older init resets data-mode to 'hop' on load, and the frame numbers do not even share a
-       range. Detached where they must be, wired where it matters. */
-    if(org){{ org.setAttribute('data-mode','climb'); org.setAttribute('data-climb',k); }}
-    if(cap && NARR[k]) cap.textContent = NARR[k];
-  }}
-  cr.addEventListener('click',function(e){{
-    var b=e.target.closest('button'); if(!b) return;
-    if(timer){{clearInterval(timer);timer=null;}}
-    setC(+b.getAttribute('data-c'));
-  }});
-  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!rm){{ var k=0; setC(0);
-    var rest=+(cl.getAttribute('data-rest')||n-1);
-    timer=setInterval(function(){{ k++; if(k>rest){{clearInterval(timer);timer=null;setC(rest);return;}} setC(k); }},560); }}
-}})();
+/* ONE INTEGER, TWO AXES, THREE CONTROLS THAT CANNOT DISAGREE.
+   The entire state of this instrument is (mode, frame) over coordinates computed once and never
+   recomputed, so going backward is exactly symmetric and free: clicking hop 2 after hop 6 removes
+   precisely what hops 3-6 added, with no residue and no replayed arrival.
 
-/* ~25 lines, no library, no external request. The ENTIRE state is one integer attribute over frozen
-   coordinates, so going backward is exactly symmetric and free: clicking hop 2 after hop 6 removes
-   precisely what hops 3-6 added, with no residue and no replayed arrival. */
-var CAPS={caps_js},RCAPS={rcaps},MAXD={MAXD},RMAX=RCAPS.length-1;
+   THE CONTROLS ARE THREE VIEWS OF THE SAME STATE, not three states: the mode buttons, the rail
+   beside the graph, and THE CLIMB rail far below. They were two independent controllers writing
+   different attributes with different vocabularies, and the result was measurable on a screenshot -
+   the landing view drew the climb's near-empty frame under a caption from a third source while the
+   rail insisted it was showing HOP 6 of the full graph. Every path into a frame now goes through
+   go(), and go() writes all three. */
+var CAPS={caps_js},RCAPS={rcaps},MAXD={MAXD},RMAX=RCAPS.length-1,RREST={RREST};
 var svg=document.getElementById('org'),cap=document.getElementById('cap'),
     rail=document.getElementById('rail'),rrail=document.getElementById('rrail'),
-    mh=document.getElementById('m-hop'),mr=document.getElementById('m-rung'),mode='hop';
+    mh=document.getElementById('m-hop'),mr=document.getElementById('m-rung'),
+    climb=document.getElementById('climb'),crail=document.getElementById('crail'),
+    mode='hop',timer=null;
+function stop(){{if(timer){{clearInterval(timer);timer=null;}}}}
 function go(k){{var max=mode==='hop'?MAXD:RMAX,r=mode==='hop'?rail:rrail;
  k=Math.max(0,Math.min(max,k));
  svg.setAttribute('data-frame',k);svg.setAttribute('data-mode',mode);
  cap.textContent=(mode==='hop'?CAPS:RCAPS)[k];
  [].forEach.call(r.querySelectorAll('button'),function(b){{
    b.setAttribute('aria-current',+b.dataset.k===k?'step':'false');}});
+ /* THE CLIMB IS THE SAME INTEGER. The list below the fold and the graph above it are one axis, so
+    the layers accumulate exactly as the functions do and neither can show a rung the other is not
+    showing. */
+ if(mode==='rung'&&climb){{climb.setAttribute('data-frame',k);
+   [].forEach.call(crail.querySelectorAll('button'),function(b){{
+     b.setAttribute('aria-current',+b.dataset.c===k?'step':'false');}});}}
  history.replaceState(null,'','#'+mode+'-'+k);}}
-function setMode(m){{mode=m;rail.hidden=(m!=='hop');rrail.hidden=(m!=='rung');
+function setMode(m,k){{mode=m;rail.hidden=(m!=='hop');rrail.hidden=(m!=='rung');
  mh.className=m==='hop'?'on':'';mr.className=m==='rung'?'on':'';
- go(m==='hop'?MAXD:RMAX);}}
-mh.addEventListener('click',function(){{setMode('hop');}});
-mr.addEventListener('click',function(){{setMode('rung');}});
-rail.addEventListener('click',function(e){{var b=e.target.closest('button');if(b)go(+b.dataset.k);}});
-rrail.addEventListener('click',function(e){{var b=e.target.closest('button');if(b)go(+b.dataset.k);}});
+ go(k==null?(m==='hop'?MAXD:RREST):k);}}
+mh.addEventListener('click',function(){{stop();setMode('hop');}});
+mr.addEventListener('click',function(){{stop();setMode('rung');}});
+rail.addEventListener('click',function(e){{var b=e.target.closest('button');
+ if(b){{stop();if(mode!=='hop')setMode('hop',+b.dataset.k);else go(+b.dataset.k);}}}});
+rrail.addEventListener('click',function(e){{var b=e.target.closest('button');
+ if(b){{stop();if(mode!=='rung')setMode('rung',+b.dataset.k);else go(+b.dataset.k);}}}});
+if(crail)crail.addEventListener('click',function(e){{var b=e.target.closest('button');
+ if(b){{stop();setMode('rung',+b.dataset.c);}}}});
 document.addEventListener('keydown',function(e){{
- if(e.key==='ArrowRight')go(+svg.getAttribute('data-frame')+1);
- if(e.key==='ArrowLeft')go(+svg.getAttribute('data-frame')-1);}});
+ if(e.key==='ArrowRight'){{stop();go(+svg.getAttribute('data-frame')+1);}}
+ if(e.key==='ArrowLeft'){{stop();go(+svg.getAttribute('data-frame')-1);}}}});
+
+/* THE AUTOPLAY IS OWNED BY THE SECTION IT ILLUSTRATES, AND IT WAITS TO BE LOOKED AT.
+   It used to run on load, which meant the first thing a visitor saw was the climb's frame 0 - a
+   dark field with eight lit dots - instead of the organism, on a hero whose whole argument is the
+   ratio of lit to dark landing before a word is read. It plays once, when THE CLIMB is actually on
+   screen, and any touch on any control ends it for good: a reader who has taken over is not fought.
+   Under prefers-reduced-motion it never runs and every rung stays readable without it. */
+var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function play(){{if(timer)return;var k=0;setMode('rung',0);
+ timer=setInterval(function(){{k++;if(k>RREST){{stop();go(RREST);return;}}go(k);}},560);}}
 var h=location.hash.match(/(hop|rung)-(\d+)/);
-if(h){{mode=h[1];setMode(mode);go(+h[2]);}}else{{svg.setAttribute('data-mode','hop');}}
+if(h){{setMode(h[1],+h[2]);}}
+else{{setMode('hop');
+  if(!rm&&climb&&window.IntersectionObserver){{
+    var io=new IntersectionObserver(function(es){{
+      if(es[0].isIntersecting){{io.disconnect();play();}}}},{{threshold:.25}});
+    io.observe(climb);}}}}
 </script>
 """
 

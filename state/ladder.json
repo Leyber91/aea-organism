@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-01 19:52:50 UTC",
+ "generated": "2026-08-01 22:26:51 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -10,7 +10,7 @@
  "funcs_check": {
   "checked": 31,
   "missing": [],
-  "known": 1574
+  "known": 1578
  },
  "rungs": [
   {
@@ -27,8 +27,8 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 60,
-    "ticks": 453,
+    "boots": 62,
+    "ticks": 465,
     "first": "2026-07-10",
     "last": "2026-08-01",
     "met": true
@@ -42,7 +42,9 @@
     "loop.live:log",
     "loop.live:now_iso",
     "loop.live:run_script"
-   ]
+   ],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R1",
@@ -81,7 +83,9 @@
     "loop.live:_fallback_ladder",
     "loop.live:_ladder_would_say",
     "kernel.decide:latest"
-   ]
+   ],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R1.5",
@@ -104,7 +108,9 @@
     "kernel.decide:parse",
     "kernel.decide:explain",
     "loop.aea:move_from"
-   ]
+   ],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R2",
@@ -135,7 +141,9 @@
     "kernel.hands:_my_record",
     "kernel.hands:_ledger_path",
     "loop.live:_post_for"
-   ]
+   ],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R3",
@@ -147,14 +155,14 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 119,
-    "graded": 91,
-    "suppressions": 14,
-    "not_repeated": 8,
+    "outcomes": 130,
+    "graded": 92,
+    "suppressions": 24,
+    "not_repeated": 18,
     "bound": "PASS",
     "bound_pairs": 57,
     "met": true,
-    "entity_rows": 103,
+    "entity_rows": 114,
     "disagreements": 3,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
@@ -170,7 +178,9 @@
     "kernel.outcomes:read",
     "kernel.cause:classify",
     "loop.live:_record_outcome"
-   ]
+   ],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R4",
@@ -183,7 +193,17 @@
    "blocked_on": "dispatch (built, canary-gated, unwired)",
    "measured": {},
    "status": "future",
-   "funcs": []
+   "funcs": [],
+   "standby": [
+    "kernel.dispatch:plan",
+    "kernel.dispatch:carry",
+    "kernel.dispatch:run",
+    "kernel.dispatch:allowed_host",
+    "kernel.dispatch:topics",
+    "kernel.dispatch:_host",
+    "kernel.dispatch:_host_why"
+   ],
+   "standby_state": "held: written, zero callers"
   },
   {
    "id": "R5",
@@ -196,7 +216,9 @@
    "blocked_on": "R4 (egress) and R3 (storing what came back)",
    "measured": {},
    "status": "future",
-   "funcs": []
+   "funcs": [],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R6",
@@ -209,7 +231,9 @@
    "blocked_on": "R5 (material worth linking)",
    "measured": {},
    "status": "future",
-   "funcs": []
+   "funcs": [],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R7",
@@ -222,7 +246,9 @@
    "blocked_on": "R3 through R6 running with a track record",
    "measured": {},
    "status": "future",
-   "funcs": []
+   "funcs": [],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R8",
@@ -235,7 +261,9 @@
    "blocked_on": "an unsolved research problem, not code",
    "measured": {},
    "status": "future",
-   "funcs": []
+   "funcs": [],
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R9",
@@ -248,7 +276,9 @@
    "blocked_on": "every rung below it, and a statable hazard",
    "measured": {},
    "status": "future",
-   "funcs": []
+   "funcs": [],
+   "standby": [],
+   "standby_state": null
   }
  ]
 }
