@@ -860,3 +860,56 @@ power as a principle.*
 > "Do not stop until R3 is actually done. Take all the measures that you need or think that you will
 > need to do. Do any checks."
 
+
+---
+
+## 2026-08-01b · THE SITUATION IS THE UNIT — and a situation with no tool is the interesting one
+
+*Captured immediately, in his words, on being told R2-REACH needs variety and cannot be faked.*
+
+> "So there are to reach, um, we need variety. So you will need to start a deep research on what do
+> you need, all the situations, conceivable. If you find a pattern that makes you refuse more than
+> all the situations, how to act on those situations and how to look for new situations. So if
+> situations, and you don't know how to approach it. You will know how to look for the tools or how
+> to create them."
+
+**WHAT HE IS ACTUALLY ASKING FOR, and it is bigger than the rung.** R2-REACH is stuck at 1 tool and
+1 situation. The lazy reading is "run the loop longer until variety accumulates". The reading he is
+giving is that VARIETY IS NOT A BYPRODUCT OF TIME - it is a property of a SITUATION SPACE the entity
+does not currently have a model of. It cannot seek variety because it cannot name what it is varying.
+
+**FOUR THINGS, and they are a ladder of their own:**
+
+    1  ENUMERATE     what situations are conceivable for this entity at all? Not the ones it has
+                     met - the space. An entity that has only ever been in one situation cannot
+                     tell whether that is because the world is uniform or because it is blind.
+    2  GENERALISE    find the pattern that covers MANY situations rather than one rule per case.
+                     "If you find a pattern that makes you refuse more than all the situations" -
+                     one principle that answers a whole class beats a table with a row per case.
+                     This is [[principles-into-prompts]] applied to perception rather than action.
+    3  SEEK          how to LOOK FOR new situations. Actively, as a move - not waiting to be handed
+                     one. A system that only ever responds has no way to discover its own blind
+                     spots.
+    4  EXTEND        and the sharpest one: *"if there are situations you don't know how to approach,
+                     you will know how to look for the tools or how to create them."* When the
+                     situation has NO matching tool, the correct move is not to refuse - it is to
+                     go and find the tool, or BUILD it.
+
+**WHY (4) IS THE REAL CONTENT.** Every tool this entity has was written by a human and declared in a
+closed table. That table is exactly as complete as the imagination of whoever wrote it, which means
+the entity's competence has a hard ceiling nobody measured. A situation with no tool currently
+produces a correct refusal - and a correct refusal that happens every time is indistinguishable from
+incapacity. The move he is naming turns "I cannot" into "I do not have this YET, and here is how I
+get it."
+
+**THE HAZARD, stated before the capability, because that is the law here.** An entity that can
+create its own tools has just been handed the R9 problem through a side door: a system that writes
+the thing that acts is a system that can write past its own containment. So the bound has to be
+written FIRST and it has to be structural - a created tool enters the same closed allow-list, the
+same zone gating, the same argument boundary that is certified at 0.6%, or it does not enter at all.
+**Certify the bound in code; express the power as a principle.** Tool creation is power.
+
+**AND THE STANDING CONFIRMATION:**
+
+> "the reflections are important that you record them all as you did."
+

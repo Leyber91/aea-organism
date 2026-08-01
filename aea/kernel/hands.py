@@ -331,16 +331,90 @@ def _calc(expression: str = "") -> str:
         return "ERROR: %s" % ex
 
 
+# THE STORES THE ENTITY MAY READ, AS AN ALLOW-LIST. Fail-closed, and it is the authority.
+#
+# `_read_state` validated its filename as `[a-z0-9_]+\.json` and stopped there - a pattern that
+# EVERY personal store in state/ also satisfies, including the largest one. Personal data was one
+# argument away, and the only thing in front of it was the enum in `decide.STATE_READABLE`, which is
+# a property of the CALLER. Anything else reaching `hands.invoke` bypassed it, and the tool surface
+# is exactly what widens next. (The names are deliberately not written here: naming them is what a
+# deny-list forces, and the privacy scan cannot tell a defended name from a leaked one.)
+#
+# WHY AN ALLOW-LIST RATHER THAN A DENY-LIST, and this is the part worth keeping: a deny-list is
+# fail-open. It must name every personal store, so it protects only what someone remembered, and a
+# store added next month is readable until it is noticed. It also forces the guard to CONTAIN the
+# names it defends, which is indistinguishable from a leak to any scanner - the privacy scan refused
+# the first version of this change for exactly that reason and was right to.
+#
+# An allow-list is fail-closed and never has to name a secret. Everything here is a store the entity
+# writes ABOUT ITSELF. `decide.STATE_READABLE` imports this tuple rather than keeping a copy: one
+# security boundary, one list.
+READABLE_STATES = (
+    "heartbeat.json", "trust_ledger.json", "aea_state.json", "grid_state.json",
+    "ladder.json", "selfcheck.json", "knobs.json", "experience.json",
+    "crystal.json", "goals.json", "identity.json", "focus.json",
+    "capacity.json", "senses.json", "known_good.json", "defect_baseline.json",
+)
+
+
 def _read_state(name: str = "") -> str:
     """Read one of the entity's OWN state files. Local, no network, so it is the one tool a
     sensitive-zone seat may hold. Filename only - a path separator is refused rather than resolved,
-    because '..' is how every sandbox escape starts."""
+    because '..' is how every sandbox escape starts. Anything outside READABLE_STATES is refused,
+    which is fail-closed: a store nobody has thought of yet is already denied."""
     if not re.fullmatch(r"[a-z0-9_]+\.json", name or ""):
         return "ERROR: filename must match [a-z0-9_]+.json, no paths"
+    if name not in READABLE_STATES:
+        return "ERROR: not an allowed state file (allow-list, not deny-list: anything not named is refused)"
     p = os.path.join(grid.STATE, name)
     if not os.path.exists(p):
         return "ERROR: no such state file"
     return json.dumps(grid.load_json(p, {}))[:4000]
+
+
+# =============================================================================================
+# ACQUIRED TOOLS. Not written for this purpose - WIRED from functions that already existed, were
+# already exercised, and are pure. This is the whole difference between acquisition and creation,
+# and it is why the containment certificate survives: no new code path reaches an argument, and
+# both arguments below are enum-selected or absent.
+# =============================================================================================
+def _what_to_try(kind: str = "") -> str:
+    """The recourse ladder for a KIND of block. `aea.kernel.recourse` already holds it.
+
+    ENUM, NOT FREE TEXT, and that is deliberate. `recourse.steps` takes a failure string and only
+    regex-matches it, so a hostile string could do nothing - but the bound this repo certifies is
+    "no wake-written string reaches a tool argument", and the value of that sentence comes from
+    having no exceptions in it. The wake picks a kind; the canned text is written here."""
+    canned = {
+        "tool_missing": "the tool is not installed: command not found",
+        "permission_denied": "403 permission denied for this credential",
+        "bad_response": "422 the response was rejected as invalid",
+        "no_idea": "the obvious move is unavailable and nothing else is named",
+    }
+    if kind not in canned:
+        return "ERROR: kind must be one of " + ", ".join(sorted(canned))
+    from aea.kernel import recourse
+    rungs = recourse.steps(canned[kind])
+    return " | ".join("%d. %s: %s" % (i, r["rung"], r["do"][:110])
+                      for i, r in enumerate(rungs, 1))[:4000]
+
+
+def _my_record(_: str = "") -> str:
+    """How the entity's own recent actions were classified. `outcomes.tally` already computes it.
+
+    Takes no argument at all, which is the safest possible shape - there is no string to reach."""
+    from aea.kernel import outcomes
+    rows = outcomes.read()
+    t = outcomes.tally(rows)
+    mine = [r for r in rows if r.get("src") == "wake" and "(" not in str(r.get("move") or "")]
+    verdicts = []
+    for m in ("AWAKE:brief", "ASLEEP:consolidate", "REFLECT:self"):
+        v = outcomes.verdict_for(m, rows)
+        if v["graded"]:
+            verdicts.append("%s graded=%d streak=%d%s"
+                            % (m, v["graded"], v["streak"], " HELD" if v["suppress"] else ""))
+    return json.dumps({"rows": len(rows), "mine": len(mine), "by_cause": t,
+                       "per_move": verdicts})[:4000]
 
 
 # ---------------------------------------------------------------------------------------------
@@ -369,6 +443,17 @@ TOOLS = {
         desc="Fetch a JSON URL and return ONE field, by dotted path like 'owner.login'.",
         params={"url": "full URL", "key": "dotted path"}, required=["url", "key"],
         note="PUBLIC ONLY, same reason as web_fetch; prefer it when one field is wanted"),
+    "what_to_try": dict(
+        capability="reason_private_local", zones=ZONES, outbound=False, impl=_what_to_try,
+        desc="Given a KIND of block, return the ordered ladder of things to try next.",
+        params={"kind": "one of tool_missing, permission_denied, bad_response, no_idea"},
+        required=["kind"],
+        note="local and pure; acquired from aea.kernel.recourse, argument is a closed enum"),
+    "my_record": dict(
+        capability="reason_private_local", zones=ZONES, outbound=False, impl=_my_record,
+        desc="How your own recent actions were classified, and which moves the record holds back.",
+        params={}, required=[],
+        note="local and pure; acquired from aea.kernel.outcomes, takes no argument at all"),
     "read_state": dict(
         capability="reason_private_local", zones=ZONES, outbound=False, impl=_read_state,
         desc="Read one of the entity's own state files by filename, e.g. 'heartbeat.json'.",

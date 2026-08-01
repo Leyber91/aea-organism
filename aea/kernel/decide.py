@@ -91,7 +91,11 @@ KNOWN = {
 #                                       natural first R2b case precisely because it cannot leave.
 #   send_email / spend                  impl=None and zones=() in hands.py. Structurally absent,
 #                                       not merely unlisted - there is no code to reach.
-STATE_READABLE = ("heartbeat.json", "trust_ledger.json", "aea_state.json", "grid_state.json")
+# IMPORTED, NOT COPIED. `hands.READABLE_STATES` is the enforcement point and therefore the
+# authority; a second hand-kept copy of a security boundary drifts, and this repo has paid
+# for that shape three times already.
+from aea.kernel.hands import READABLE_STATES as STATE_READABLE
+BLOCK_KINDS = ("tool_missing", "permission_denied", "bad_response", "no_idea")
 SELF_TOPICS = ("structure", "laws", "capabilities", "invariants")
 
 # WHAT EACH MOVE IS FOR, AND WHEN IT IS OWED - the half the wake was missing.
@@ -126,6 +130,10 @@ WHEN = {
     "know_your_hands": "LIST the tools available to call, because someone needs that list and you "
                        "cannot produce it",
     "read_your_state": "read the live contents of one of your own state files right now",
+    "what_to_try":     "you are BLOCKED and the obvious move is unavailable - get the ordered ladder "
+                       "of what to try next for this kind of block",
+    "my_record":       "you want to know how your own recent actions turned out, and which moves "
+                       "your record is currently holding back",
     "calc": "you need an exact arithmetic result - write it as `MOVE: calc <expression>`",
 }
 
@@ -163,6 +171,11 @@ FREE_ARG = {
                  ok=re.compile(r"^[\d\s+\-*/().%]{1,120}$")),
 }
 
+# WIDENED 2026-08-01, AND WIDENING IS THE POINT. R2-REACH needs 8 distinct (tool, args)
+# situations and the surface could reach only 9 in total, of which the wake ever chose ONE. A gate
+# with no headroom is a gate that passes by luck. Every entry below is a store the entity writes
+# about ITSELF - none is personal, and `hands.PRIVATE_STORES` refuses the personal ones at the tool
+# regardless of what this table says.
 TOOL_KNOWN = {
     "know_yourself":   dict(tool="self_map",   arg="topic", enum=SELF_TOPICS,   default="structure",
                             action="LOOK:self_map"),
@@ -170,6 +183,10 @@ TOOL_KNOWN = {
                             action="LOOK:list_tools"),
     "read_your_state": dict(tool="read_state", arg="name",  enum=STATE_READABLE, default="heartbeat.json",
                             action="LOOK:read_state"),
+    "what_to_try":     dict(tool="what_to_try", arg="kind", enum=BLOCK_KINDS, default="no_idea",
+                            action="LOOK:what_to_try"),
+    "my_record":       dict(tool="my_record",  arg=None,    enum=(),           default=None,
+                            action="LOOK:my_record"),
 }
 
 # Which words in the opening of an action select which tool. Same closed-vocabulary discipline as
