@@ -90,6 +90,24 @@ RUNGS = [
         why_first="Until something reads the decision, the reasoning is a diary entry.",
     ),
     dict(
+        # THE RUNG THIS FILE OMITTED, and an adversarial audit caught it. `diary/THE_LADDER_REVISED.md`
+        # - written AFTER a council found the original ladder had been authored by an advocate with
+        # no opposition - adds R1.5 at line 119 and it was never removed. Shipping a ten-rung ladder
+        # would have contradicted the repo's own revised source while claiming to be drawn from it.
+        id="R1.5", title="THE DECISION IS PARSED",
+        power="The wake's prose is parsed into a candidate tool call and validated against the "
+              "declared schema before anything can act on it - and it does nothing else.",
+        bound="An invalid parse is logged as a receipt, never swallowed. A decision that could not "
+              "be understood must leave a trace saying so.",
+        gate="50 ticks with valid parses logged, invalid logged as receipts, and none discarded "
+             "silently.",
+        plain="Between deciding and doing there is a translation step, and it is where most systems "
+              "of this kind quietly break: the reasoning says one thing, the parser hears another, "
+              "and nothing records the gap. This rung does only the translation, so that when it is "
+              "wrong you find out.",
+        why_first="A misheard instruction that leaves no trace is worse than a refused one.",
+    ),
+    dict(
         id="R2", title="THE DECISION IS A TOOL CALL",
         power="The wake's own decision causes a real tool to run, unattended, across distinct "
               "situations, with the call and its arguments recorded.",
@@ -295,7 +313,7 @@ def measure_r1() -> dict:
     # Rows written before this instrument existed carry no `wake` key at all. They are counted as
     # what they are - unmeasured - rather than as failures, because a tick that predates the
     # instrument says nothing about the claim.
-    p = os.path.join(grid.STATE, "decisions.jsonl")
+    p = os.path.join(grid.STATE, "r1_decisions.jsonl")
     total, measured, differed = 0, 0, 0
     if os.path.exists(p):
         for line in io.open(p, encoding="utf-8", errors="replace"):
@@ -434,7 +452,31 @@ def measure_r3() -> dict:
     return out
 
 
-MEASURE = {"R0": measure_r0, "R1": measure_r1, "R2": measure_r2, "R3": measure_r3}
+def measure_r15() -> dict:
+    """Parses and receipts, counted from live.log - the same bytes a human would check.
+
+    A VALID parse leaves `WAKE -> <action>`; a DECLINED one leaves the wake's reason (stale, no
+    decision, unknown action). The rung's claim is that NEITHER is swallowed, so the honest measure
+    is that every wake consultation produced one line or the other. `swallowed` is what would
+    falsify it and it has no way of being greater than zero today - which is stated here rather
+    than quietly implying the check is stronger than it is."""
+    out = dict(valid=None, receipts=None, ticks=None, swallowed=None, met=None)
+    rows = _log_rows()
+    if not rows:
+        return out
+    valid = sum(1 for _t, b in rows if b.strip().startswith("WAKE ->"))
+    receipts = sum(1 for _t, b in rows
+                   if re.search(r"decision is stale|no decision|unrecognised|not a known action", b, re.I))
+    out["valid"] = valid
+    out["receipts"] = receipts
+    out["ticks"] = valid + receipts
+    out["swallowed"] = 0
+    out["met"] = bool((valid + receipts) >= 50 and valid > 0)
+    return out
+
+
+MEASURE = {"R0": measure_r0, "R1": measure_r1, "R1.5": measure_r15,
+           "R2": measure_r2, "R3": measure_r3}
 
 
 def status_for(rid: str, m: dict) -> str:

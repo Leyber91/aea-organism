@@ -201,7 +201,11 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
             would = _ladder_would_say(hb)
             differed = bool(would and would != cand["action"])
             hb["_r1_last"] = dict(wake=cand["action"], ladder=would, differed=differed, why=why)
-            grid.append_jsonl(os.path.join(grid.STATE, "decisions.jsonl"),
+            # ITS OWN FILE. `decisions.jsonl` already held 124 rows of a COMPLETELY DIFFERENT
+            # schema - the reflect organ's lane/node/chosen/alts log - and appending a second
+            # record type to it meant any consumer had to discriminate, while a naive reader got
+            # two shapes silently interleaved. One store, one schema.
+            grid.append_jsonl(os.path.join(grid.STATE, "r1_decisions.jsonl"),
                               dict(at=time.time(), at_iso=now_iso(), tick=hb.get("total_ticks"),
                                    wake=cand["action"], ladder=would, differed=differed,
                                    why=str(why)[:160], src="wake"))

@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-01 05:40:59 UTC",
+ "generated": "2026-08-01 05:44:14 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -53,12 +53,29 @@
     "subset": true,
     "stale_limit_s": 5400,
     "last_why": "the wake chose brief (57s ago)",
-    "decision_rows": 126,
+    "decision_rows": 2,
     "comparable": 2,
     "differed": 2,
     "met": true
    },
    "status": "proven"
+  },
+  {
+   "id": "R1.5",
+   "title": "THE DECISION IS PARSED",
+   "power": "The wake's prose is parsed into a candidate tool call and validated against the declared schema before anything can act on it - and it does nothing else.",
+   "bound": "An invalid parse is logged as a receipt, never swallowed. A decision that could not be understood must leave a trace saying so.",
+   "gate": "50 ticks with valid parses logged, invalid logged as receipts, and none discarded silently.",
+   "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
+   "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
+   "measured": {
+    "valid": 22,
+    "receipts": 2,
+    "ticks": 24,
+    "swallowed": 0,
+    "met": false
+   },
+   "status": "partial"
   },
   {
    "id": "R2",

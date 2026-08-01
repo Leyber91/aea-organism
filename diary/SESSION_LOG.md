@@ -2318,3 +2318,63 @@ Read `diary/OPEN_LOOPS.md`. The five FINISH items in order; **the first is THE R
 baseline, and the wake runs `selfcheck` itself. Nothing built to catch defects currently runs by
 itself: `battery`, `transfer`, `selfcheck`, `vital`, `assembly` and all four test files have ZERO
 non-prose callers. **Do not re-grant `vary_own_knob` before items 2, 3 and 4.**
+
+---
+
+## 2026-08-01 · R0, R1 AND R3 CLOSE — and the ladder finally starts at its own root
+
+**DID**
+
+- **`aea/tooling/ladder.py`** — the rung manifest, measured from live state, written because the page
+  drew its rail from `assembly.STEPS` which holds five entries and BEGINS AT R2. Luis: *"we only have
+  until number three, but we don't include number one. Why? We should."* The display was not
+  filtering R0/R1 out; the structure it reads had no root.
+- **R0 PROVEN, and it had been for a week.** `live.log` holds WAKE#6 running 2026-07-19 20:36 ->
+  2026-07-30 03:29: **246.89 hours**, 188 ticks, ended by being killed rather than by failing, zero
+  tracebacks in the whole twenty-day log. Gate was 72h. Green by 3.4x and unrecorded.
+- **R1 PROVEN against a gate that had to be rewritten first.** The original asks for an action the
+  fallback could not produce - but `decide.KNOWN` is a strict SUBSET of the fallback's surface, so
+  no run of any length could satisfy it. The reachable gate is the DIFFERENCE, and it fired at ticks
+  140/141: *the wake chose AWAKE:brief where the fallback would have run REFLECT:self*. 2 comparable,
+  2 differed, receipts in `state/r1_decisions.jsonl`.
+- **R3 CLOSES, both halves.** Power at ticks 135-139: three `REFLECT:self` failures graded
+  VERIFY_FAILED, then `HELD BACK`, then two ticks that did not repeat it. Bound via
+  **`aea/lab/r3_bound.py`** - two arms, each proving itself with a planted falsification and an
+  ablation before its result is read, 4/4, zero falsifications in 28 outcomes. Arm A has ZERO pairs
+  and the certificate says so in its own output.
+- **R1.5 ADDED** after an adversarial audit caught that `THE_LADDER_REVISED.md` has ELEVEN rungs -
+  the council added "the decision is PARSED" and it was never removed. Measured 24/50 ticks, PARTIAL.
+- **Luis's principle wired, not noted.** `standing()` now carries the outcome record to the wake as
+  language; `choose_action` keeps the mechanical hold as the floor. The wake's own next note read
+  *"Do not keep retrying `brief`... the next real move is to surface the exact code change needed"* -
+  reasoning the ladder has no branch for.
+
+**FOUR DEFECTS FOUND WHILE CLOSING, all of them instruments rather than subjects**
+
+1. **The harness was forging the evidence R3 reads.** `--ticks N` implied demo mode, demo swapped
+   `AWAKE:brief` for a cheap consolidate slice, and stamped it `src="wake"`. Sixteen rows blamed a
+   move the entity never chose; the new suppression read them and held it back. Fixed three ways -
+   `--ticks` bounds only, substituted runs are `src="demo"`, and `verdict_for` fails closed.
+2. **No failure could ever grade a move.** The post-condition was evaluated only on exit 0, so every
+   real failure became UNATTRIBUTABLE, which grades nothing - R3's fallback was unreachable by
+   construction. `cause.looks_transient` now carries the 429 protection instead of the exit code.
+3. **The ladder counted what its own reader refuses** (graded=19 over forged rows; honest is 3).
+4. **My own refactor blinded the R1 instrument** - it scanned `choose_action` after the ladder moved
+   to `_fallback_ladder`, returned `[]`, and the structural finding silently stopped computing.
+
+**LOCKED**
+
+- RUNG = POWER + BOUND. Certify the bound in code; express the power as a principle.
+- Provenance fails closed everywhere: only the live loop is `src="wake"`.
+- An empty arm is not a passed arm. A bound with no traffic is stated as untested, never as certified.
+
+**NEXT**
+
+- **R2-REACH, 0/20.** The only rung below R3 still open. It needs SITUATION VARIETY in the live loop -
+  elapsed unattended time where a tool is genuinely the owed move. It cannot be closed by a replay
+  harness: those rows would be `src="replay"` and the fail-closed rule correctly refuses them, which
+  is the same defect fixed in (1) above.
+- **The page**, rebuilt against `ladder.json` - eleven rungs, mostly dark, amber meaning "N of this
+  rung's M closing conditions are met", with the trail accumulating. The audit's standing objection:
+  the 0.6% bound lives in a comment and prose, not in any state file, so `redteam` must run at build
+  time and write a stamped certificate before that number may be printed.

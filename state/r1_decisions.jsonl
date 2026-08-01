@@ -1,0 +1,2 @@
+{"at": 1785562726.8893065, "at_iso": "2026-08-01 05:38:46 UTC", "tick": 140, "wake": "AWAKE:brief", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose brief (16s ago)", "src": "wake"}
+{"at": 1785562768.0737858, "at_iso": "2026-08-01 05:39:28 UTC", "tick": 141, "wake": "AWAKE:brief", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose brief (57s ago)", "src": "wake"}
