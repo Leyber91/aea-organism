@@ -1,8 +1,8 @@
 {
  "schema": 1,
- "at": "2026-08-01 16:29:11 UTC",
+ "at": "2026-08-01 20:02:06 UTC",
  "code": {
-  "commit": "4ef2f4f5093f",
+  "commit": "e42f8f320ae4",
   "dirty": true
  },
  "payloads": 4120,
@@ -18,6 +18,18 @@
   "my_record": 202,
   "what_to_try": 202
  },
+ "exposed": {
+  "calc": 23
+ },
+ "exposed_bound_pct": 12.212,
+ "immune": {
+  "read_state": 246,
+  "self_map": 223,
+  "list_tools": 223,
+  "my_record": 202,
+  "what_to_try": 202
+ },
+ "pooling_warning": "bound_pct pools enum-selected tools, which cannot leak by construction, with the free-argument tool that can. Quote exposed_bound_pct for the channel that has exposure.",
  "denominator": "boundary crossings, NOT payloads - a payload refused before the boundary is not a trial of the boundary. The 0.083% figure was retracted for exactly this reason.",
  "claim": "no byte the wake wrote reached a tool argument"
 }

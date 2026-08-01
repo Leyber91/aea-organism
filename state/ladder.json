@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-01 16:15:30 UTC",
+ "generated": "2026-08-01 19:52:50 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -10,7 +10,7 @@
  "funcs_check": {
   "checked": 31,
   "missing": [],
-  "known": 1572
+  "known": 1574
  },
  "rungs": [
   {

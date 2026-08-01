@@ -456,6 +456,11 @@ def build() -> str:
     cert_tools = len(_pt) or "&mdash;"
     cert_per = ", ".join("%s %d" % (k, v) for k, v in sorted(_pt.items(), key=lambda x: -x[1])) or "&mdash;"
     cert_when = (cert.get("at") or "&mdash;")[:10]
+    _ex = cert.get("exposed") or {}
+    _im = cert.get("immune") or {}
+    cert_ecross = sum(_ex.values()) or "&mdash;"
+    cert_icross = sum(_im.values()) or "&mdash;"
+    cert_ebound = ("%.3f%%" % cert["exposed_bound_pct"]) if cert.get("exposed_bound_pct") is not None else "&mdash;"
     narr_json = json.dumps([str(r.get('beat') or '') for r in (lad.get('rungs') or [])])
     hist = []
     try:
@@ -717,11 +722,17 @@ from a file the running system wrote. {stamp}</p>
 the hazard that power creates: no byte the entity wrote reaches a tool argument. A hostile chooser
 drove {cert_payloads} generated payloads at the boundary; {cert_cross} of them actually crossed it.</p>
 <div class="grid">
-<div class="card"><div class="cap">leak rate, one-sided 95%</div>
- <div class="big">{cert_bound}<em> upper bound</em></div>
- <div class="src">{cert_leaks} leaks in {cert_cross} crossings &mdash; the denominator is CROSSINGS,
- not payloads. A payload refused before the boundary was never a trial of it, and an earlier figure
- of 0.083% was retracted for exactly that mistake.</div></div>
+<div class="card"><div class="cap">the channel that HAS exposure</div>
+ <div class="big">{cert_ebound}<em> upper bound, n={cert_ecross}</em></div>
+ <div class="src">Five of the six tools take an argument SELECTED from a closed table, so a byte the
+ entity wrote cannot reach them by construction &mdash; their {cert_icross} crossings are not trials
+ of anything. One tool takes a free argument. THAT is the number, and it is the honest one.</div></div>
+<div class="card"><div class="cap">pooled over all six</div>
+ <div class="big">{cert_bound}<em> &mdash; do not quote this</em></div>
+ <div class="src">{cert_leaks} leaks in {cert_cross} crossings. Arithmetically correct and the wrong
+ statistic: it states a bound on channels that need none and hides the bound on the one that does.
+ Published here for a day before it was caught &mdash; the same shape as an earlier 0.083% that was
+ retracted for the same reason, a denominator not counting trials of the claim.</div></div>
 <div class="card"><div class="cap">tools actually attacked</div>
  <div class="big">{cert_tools}<em> of {cert_tools} covered</em></div>
  <div class="src">{cert_per} &mdash; per-tool, because a pooled number once read 0.2% while two

@@ -378,6 +378,67 @@ READABLE_STATES = (
 )
 
 
+BUDGET_NOTE = "[truncated: %d of %d chars. KEYS NOT SHOWN: %s. Ask for one by name.]"
+
+
+def _window(doc, budget: int = 4000) -> str:
+    """A budgeted view of a document that SAYS what it left out.
+
+    THE DEFECT THIS REPLACES, measured 2026-08-01: this was `json.dumps(doc)[:4000]` - the first
+    4,000 characters by byte position. For the entity's own state file that is 2.48 percent of
+    161,328, and the key holding its OWN DECISIONS falls outside the window entirely. The entity
+    read that file dozens of times and never once saw its own decisions, and nothing told it so.
+    Its repetition was read as stubbornness; it was a nearly information-free read.
+
+    A silent truncation is the null-that-reads-as-a-result in its purest form: the reader cannot
+    tell "the file does not contain what I need" from "I was shown the first two percent". So the
+    budget is unchanged and spent differently - the SHAPE first, because knowing a key exists is
+    what lets a reader ask for it, then content until the budget runs out, then a note naming
+    exactly what was withheld."""
+    import json as _j
+    if not isinstance(doc, dict):
+        t = _j.dumps(doc)
+        return t if len(t) <= budget else t[:budget] + " [truncated: %d of %d chars]" % (budget, len(t))
+    sizes = {k: len(_j.dumps(v)) for k, v in doc.items()}
+    shape = "KEYS: " + ", ".join("%s(%d)" % (k, n) for k, n in
+                                 sorted(sizes.items(), key=lambda x: -x[1])) + "\n"
+    out, shown, total = [shape], [], sum(sizes.values())
+    room = budget - len(shape) - 90
+    for k, n in sorted(sizes.items(), key=lambda x: x[1]):     # smallest first: most keys shown
+        piece = "%s=%s" % (k, _j.dumps(doc[k]))
+        if len(piece) <= room:
+            out.append(piece)
+            shown.append(k)
+            room -= len(piece) + 1
+    # SPEND WHAT IS LEFT ON THE BIGGEST KEY, AND FROM THE RIGHT END IF IT IS A LIST.
+    #
+    # Placing only whole keys used 145 of 4,000 characters, because nothing large fits whole - so
+    # the entity learned the shape and received no content. And for a LIST the head is the OLDEST
+    # entry: head-truncating `surfaced` returns decisions from tick1, days stale, which is exactly
+    # the useless end. A reader asking what it has been deciding wants the tail.
+    missing = [k for k in sizes if k not in shown]
+    if missing and room > 200:
+        big = max(missing, key=lambda k: sizes[k])
+        v = doc[big]
+        if isinstance(v, list):
+            tail, acc = [], 0
+            for item in reversed(v):
+                piece = _j.dumps(item)
+                if acc + len(piece) > room - 120:
+                    break
+                tail.append(piece)
+                acc += len(piece) + 1
+            body = ("[... %d earlier] " % (len(v) - len(tail))) + ", ".join(reversed(tail))
+        else:
+            body = _j.dumps(v)[:max(0, room - 120)] + " [...head only]"
+        out.append("%s (most recent) = %s" % (big, body))
+        shown.append(big)
+        missing = [k for k in missing if k != big]
+    if missing:
+        out.append(BUDGET_NOTE % (budget - max(0, room), total, ", ".join(sorted(missing))))
+    return "\n".join(out)[:budget + 200]
+
+
 def _read_state(name: str = "") -> str:
     """Read one of the entity's OWN state files. Local, no network, so it is the one tool a
     sensitive-zone seat may hold. Filename only - a path separator is refused rather than resolved,
@@ -390,7 +451,7 @@ def _read_state(name: str = "") -> str:
     p = os.path.join(grid.STATE, name)
     if not os.path.exists(p):
         return "ERROR: no such state file"
-    return json.dumps(grid.load_json(p, {}))[:4000]
+    return _window(grid.load_json(p, {}), 4000)
 
 
 # =============================================================================================
