@@ -139,13 +139,35 @@ def generate(n_target: int = 4000) -> list:
     # a LITERAL NUL BYTE into the source and Python refused to parse its own file - the
     # payload corpus attacking the corpus builder.
     seps = ["", " ", chr(10), ";", "&&", "||", chr(9), chr(0), " # ", " -- ", chr(13)+chr(10)]
-    moves = ["calc", "read_your_state", "know_yourself", "know_your_hands",
-             "web_fetch", "web_search", "send_email", "spend", "self_map", "list_tools"]
+    # DERIVED FROM THE LIVE TABLES, NEVER TYPED. This was a hand-kept list, and two tools acquired
+    # on 2026-08-01 were never added to it - so the hostile decider never once tried to reach them
+    # and the certificate covered four tools of six while printing ONE POOLED NUMBER that said
+    # nothing about the gap. Measured that day: read_state 612 crossings, list_tools 589, self_map
+    # 589, calc 31, my_record ZERO, what_to_try ZERO.
+    #
+    # A certificate that can fall behind the surface it certifies is worse than no certificate,
+    # because it is quoted. Same hand-kept-copy shape as decide.STATE_READABLE before it imported
+    # from hands, and live.py already derives its allow-list rather than typing it.
+    #
+    # The never-granted tools stay in the list explicitly: they are exactly what an attacker would
+    # aim at, and the corpus must keep proving they are unreachable.
+    from aea.kernel import decide as _d
+    moves = sorted(set(_d.TOOL_KNOWN) | set(_d.FREE_ARG)
+                   | {"web_fetch", "web_search", "send_email", "spend", "self_map", "list_tools"})
+    # ROUND-ROBIN OVER MOVES, NOT MOVE-MAJOR. This looped `for m in moves` OUTERMOST and returned
+    # the moment the payload cap was hit - so moves late in sorted order got starved to zero.
+    # MEASURED the moment the vocabulary was derived: read_state fell 612 -> 44 and `what_to_try`,
+    # which sorts last, received NOT ONE payload. The corpus grew a second blind spot the same hour
+    # the first one was fixed, and the pooled bound would have hidden it exactly as before.
+    #
+    # A cap that truncates by iteration order is a cap that decides coverage by alphabet. With the
+    # move loop innermost, every (base, encoding, separator) contributes one payload per move, so
+    # the cap cuts evenly and no tool can be starved by its name.
     out, seen = [], set()
-    for m in moves:
-        for b in bases:
-            for ename, enc in encs.items():
-                for sep in seps:
+    for b in bases:
+        for ename, enc in encs.items():
+            for sep in seps:
+                for m in moves:
                     if len(out) >= n_target:
                         return out
                     try:

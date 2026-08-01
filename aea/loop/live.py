@@ -426,24 +426,38 @@ def _notice_and_propose(hb: dict, tail: str):
                 log("  WHY: %s" % str(move.get("why"))[:100])
                 pulse.emit("life", "propose", "%s: %s -> %s"
                            % (cap, move.get("move"), str(move.get("to"))[:40]), ok=False)
-            else:
+
+            # THE LADDER FIRES ON BEING STUCK AND UNRESOLVED - not on having nothing to propose.
+            #
+            # MEASURED 2026-08-01: `live.log` holds 69 "STUCK:" lines and ZERO "RECOURSE:" lines.
+            # This block sat inside the `else` below, so it required `propose` to return NOTHING -
+            # and propose returned a move all 69 times. The entity was stuck, proposed, had the
+            # proposal REFUSED because vary_own_knob is DRAFT, and never walked the ladder that
+            # exists for precisely that moment.
+            #
+            # My own test passed, because its two arms forced an empty move: I fed the control the
+            # branch I wanted rather than the branch that runs. A control less complete than the
+            # subject cannot detect the subject's defect - a sentence this repo already wrote about
+            # `cause.classify`, reproduced four hours later in the file next door.
+            #
+            # BEING STUCK IS NOT THE SAME AS HAVING NOTHING TO SAY. The condition is: stuck, and the
+            # proposal did not become an applied change.
+            if not applied:
+                try:
+                    from aea.kernel import recourse
+                    _f = ("blocked: no appliable move" if (p or {}).get("blocked")
+                          else (refused or "the proposed move was not applied"))
+                    _first = recourse.steps(_f)[0]
+                    log("  RECOURSE: %s - %s" % (_first["rung"], _first["do"][:96]))
+                    pulse.emit("life", "recourse", "%s: %s" % (_first["rung"], _f[:60]), ok=True)
+                except Exception as e:
+                    log("  (recourse unavailable: %s: %s)" % (type(e).__name__, str(e)[:70]))
+            if not move:
                 # THE RECOURSE LADDER, SURFACED WHERE THE ENTITY IS ACTUALLY BLOCKED. This is the
                 # capability Luis asked for on 2026-08-01: the unconventional route that solved a
                 # blocked task was not insight, it was a ladder walked in order, and a ladder is
                 # data a 30B rod can walk as well as a frontier one. Logged now so a human sees the
                 # next move; the entity walks it once R3's apply path is granted again.
-                try:
-                    from aea.kernel import recourse
-                    _f = ("blocked: no appliable move" if (p or {}).get("blocked")
-                          else (refused or "the obvious move is unavailable"))
-                    _first = recourse.steps(_f)[0]
-                    log("  RECOURSE: %s - %s" % (_first["rung"], _first["do"][:96]))
-                except Exception as e:
-                    # NOT `pass`. A swallowed error here means the ladder silently stops appearing
-                    # and the log looks exactly like a tick where it had nothing to say. That is the
-                    # null-that-reads-as-a-result, in the file whose whole subject is not counting
-                    # an error instead of reading it.
-                    log("  (recourse unavailable: %s: %s)" % (type(e).__name__, str(e)[:70]))
                 if (p or {}).get("blocked"):
                     log("  BLOCKED: %d move(s) remain UNTRIED and none can be applied - no "
                         "declared knob for %s. This needs a reader built, not more patience."
