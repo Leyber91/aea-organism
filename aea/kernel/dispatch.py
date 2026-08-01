@@ -124,10 +124,56 @@ def plan(topic: str) -> dict:
                 why=spec["why"], at=time.time())
 
 
-def _host(url: str) -> str:
-    m = re.match(r"https?://([^/:?#]+)", str(url or ""), re.I)
-    return (m.group(1) or "").lower() if m else ""
+def _host_why(u: str):
+    """(authority a client will DIAL, reason it was refused). Never an empty value with no reason.
 
+    THE DEFECT THIS REPLACES, measured 2026-08-01: the regex `https?://([^/:?#]+)` stops at the
+    first colon. Give it a URL whose USERINFO field is an allowlisted name and whose real authority
+    is somewhere else - the shape is `https://<allowed>:443` then the userinfo separator then
+    `<attacker-host>/x` - and it returned the ALLOWLISTED name, while any real client dials the
+    attacker. A parser that hands an allowlist exactly the name that will pass it is worse than no
+    parser: the allowlist then certifies the attack and the log records an approval.
+
+    (The literal form is deliberately not written out here. It parses as an email address, and the
+    privacy scan that gates every push cannot tell a defensive example from a leak - which is the
+    same reason the readable-state allow-list never names the stores it protects.)
+
+    urlsplit is the parser the client itself uses, which is the whole point - a guard that parses
+    differently from the thing it guards is guessing. Anything carrying userinfo, a non-standard
+    port or a non-ASCII host is REFUSED rather than normalised, because normalising means deciding
+    what an ambiguous authority meant and that decision is what the attack is made of.
+
+    THE REASON IS RETURNED, not dropped. `_host` used to answer "" for a malformed URL and "" for a
+    refused one, and a caller could not tell them apart - which is the null-that-reads-as-a-result
+    shape, in a security parser. The ratchet flagged it the moment it was written."""
+    from urllib.parse import urlsplit
+    raw = str(u or "")
+    try:
+        p = urlsplit(raw)
+    except Exception as e:
+        return "", "unparseable url (%s)" % type(e).__name__
+    if p.scheme not in ("http", "https"):
+        return "", "scheme %r is not http(s)" % p.scheme
+    if p.username or p.password:
+        return "", "userinfo present - the authority is ambiguous and this is exactly the confusion"
+    try:
+        port = p.port
+    except ValueError:
+        return "", "port is not a number"
+    if port not in (None, 80, 443):
+        return "", "non-standard port %r" % port
+    h = p.hostname or ""
+    if not h:
+        return "", "no host"
+    if not h.isascii():
+        return "", "non-ascii host - punycode and homograph forms are refused, never normalised"
+    return h.lower(), ""
+
+
+def _host(u: str) -> str:
+    """The authority a real client will dial, or "" if this URL cannot be represented safely.
+    `_host_why` carries the reason when a caller wants to say why it refused."""
+    return _host_why(u)[0]
 
 def allowed_host(url: str, domains) -> bool:
     """Is this result on the topic's allowlist? A poisoned SERP entry must not be able to point the

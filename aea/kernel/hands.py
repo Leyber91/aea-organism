@@ -70,12 +70,33 @@ class Refused(PermissionError):
 # THE IMPLEMENTATIONS. Deliberately small and boring; the interesting code is the gate below.
 # ---------------------------------------------------------------------------------------------
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Refuse every redirect rather than following it.
+
+    THE DEFECT THIS CLOSES. `_web_fetch` called `urllib.request.urlopen` directly, and Python's
+    default opener follows redirects. So a host allowlist checked before the call bounds THE FIRST
+    HOP ONLY: an allowlisted host that 302s to anywhere hands back the second hop's body, and every
+    guard upstream has already passed. The allowlist is decorative against any allowlisted host that
+    will redirect - which includes most of them, and all of them if one is ever compromised.
+
+    Refusing outright rather than re-checking the target is deliberate: re-checking means parsing a
+    second URL with the same parser that was wrong about the first, and a fetch that needs a redirect
+    is a fetch whose address was not actually known in advance."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(
+            req.full_url, code,
+            "refused: redirect to %s - the allowlist bounds the first hop only, so following one "
+            "would leave it behind" % str(newurl)[:120], headers, fp)
+
+
 def _web_fetch(url: str = "") -> str:
     if not str(url).startswith(("http://", "https://")):
         return "ERROR: url must be http(s)"
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "aea-hands/1"})
-        with urllib.request.urlopen(req, timeout=20) as r:
+        opener = urllib.request.build_opener(_NoRedirect)
+        with opener.open(req, timeout=20) as r:
             return r.read().decode("utf-8", "ignore")[:8000]
     except Exception as e:
         return "ERROR: %s" % e
@@ -420,6 +441,13 @@ def _my_record(_: str = "") -> str:
 # ---------------------------------------------------------------------------------------------
 # THE REGISTRY. Every tool declares what it costs in permission, not just what it does.
 #
+# `outbound` WAS FALSE ON ALL THREE NETWORK TOOLS, and it is not documentation - `invoke`
+# computes `need = 2 if t["outbound"] else 1` from it, so web_search, web_fetch and json_get
+# each demanded the LOWEST trust level while being the only things here that open a socket.
+# Every assertion elsewhere that reads this field was reading a false statement. Corrected
+# 2026-08-01; the direction is strictly stricter, and gather_public sits at TRUSTED so
+# nothing that legitimately worked stops working.
+#
 #   capability  which charter capability it runs as. None = pure local computation, nothing leaves
 #               this process, so there is nothing for the ledger to grade.
 #   zones       the zones it may be called FROM. Network tools are public-only; see the docstring.
@@ -434,12 +462,12 @@ TOOLS = {
         params={"expression": "string"}, required=["expression"],
         note="local and pure; the one tool with no permission cost"),
     "web_fetch": dict(
-        capability="gather_public", zones=("public",), outbound=False, impl=_web_fetch,
+        capability="gather_public", zones=("public",), outbound=True, impl=_web_fetch,
         desc="HTTP GET a URL and return the body text. Use for live public data.",
         params={"url": "full URL including https://"}, required=["url"],
         note="PUBLIC ONLY: the model writes the address, so the request itself carries data out"),
     "json_get": dict(
-        capability="gather_public", zones=("public",), outbound=False, impl=_json_get,
+        capability="gather_public", zones=("public",), outbound=True, impl=_json_get,
         desc="Fetch a JSON URL and return ONE field, by dotted path like 'owner.login'.",
         params={"url": "full URL", "key": "dotted path"}, required=["url", "key"],
         note="PUBLIC ONLY, same reason as web_fetch; prefer it when one field is wanted"),
@@ -460,7 +488,7 @@ TOOLS = {
         params={"name": "filename like heartbeat.json"}, required=["name"],
         note="local read, no network, so it is safe in every zone"),
     "web_search": dict(
-        capability="gather_public", zones=("public",), outbound=False, impl=_web_search,
+        capability="gather_public", zones=("public",), outbound=True, impl=_web_search,
         desc="Search the web and return ranked titles, URLs and snippets. Use this to FIND a "
              "source when you do not already have its address, then web_fetch to read it.",
         params={"query": "what to search for, in plain words", "n": "how many results, 1-10"},
