@@ -389,10 +389,52 @@ def check_decision_chain():
     return fails
 
 
+
+# =================================================================================================
+# A DECISION IS CARRIED OUT ONCE. Frozen because its ABSENCE was invisible for the whole life of the
+# repo: there was no consumption marker anywhere, the staleness window is 5,400s, so one decision was
+# handed to the acting loop on every tick for ninety minutes and executed every time. It read as an
+# entity repeating itself. It was a queue with no acknowledgement.
+#
+# The third case is the one that matters most: "already carried out" must be DISTINGUISHABLE from
+# "the wake is silent". Collapsing them is what made the defect invisible.
+# =================================================================================================
+def check_consumption():
+    from aea.kernel import decide as _d
+    fails = []
+    doc = {"tick": 900, "at": 1000.0, "action": "look", "move": "read_your_state ladder.json",
+           "surfaced": []}
+    state = {"surfaced": [doc]}
+    import json as _j
+    import tempfile
+    import os as _o
+    fd, path = tempfile.mkstemp(suffix=".json")
+    _o.close(fd)
+    with open(path, "w", encoding="utf-8") as fh:      # this file does not import io
+        fh.write(_j.dumps(state))
+    now = 1060.0                                  # 60s later: inside the staleness window
+    for label, after, want_cand, want_in in (
+            ("offered when nothing carried out", None, True, "the wake chose"),
+            ("declined once carried out", 900, False, "already carried out"),
+            ("offered again after an older mark", 899, True, "the wake chose"),
+    ):
+        c, w = _d.choose(path=path, now=now, after=after)
+        ok = (bool(c) == want_cand) and (want_in in w)
+        print("  consume   %-46s -> %-34s %s" % (label, w[:34], "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("consume:" + label, "%s|%s" % (bool(c), w[:40]),
+                          "%s|%s" % (want_cand, want_in)))
+    try:
+        _o.unlink(path)
+    except Exception:
+        pass
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
-         + check_kernel() + check_decision_chain())
+         + check_kernel() + check_decision_chain() + check_consumption())
     print()
     if f:
         print("%d FAILURES. Something changed what it does:" % len(f))
@@ -405,7 +447,9 @@ if __name__ == "__main__":
              # unknown-model, the meter's ceiling, its slot release, and unmeasured's 410 rule
              + len(THINK_GOLDEN) + len(PARAM_GOLDEN) + 4
              # the decision chain, frozen end to end: three of these are hostile
-             + len(CHAIN_TO_TOOL_GOLDEN))
+             + len(CHAIN_TO_TOOL_GOLDEN)
+             # a decision is carried out once, and the decline is distinguishable
+             + 3)
     print("all %d frozen behaviours hold." % total)
     print("2 of them are frozen at a KNOWN-BAD value (METHOD defect 15). Fixing the reader is "
           "supposed to break this file.")

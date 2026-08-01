@@ -472,7 +472,7 @@ def parse(decision: dict, known: dict = None) -> tuple:
                 age_s=decision.get("_age_s")), ""
 
 
-def choose(path: str = None, known: dict = None, now: float = None) -> tuple:
+def choose(path: str = None, known: dict = None, now: float = None, after: int = None) -> tuple:
     """The whole wire in one call: (candidate | None, why). `why` is never empty when candidate is
     None, and the caller is expected to log it whichever way it goes.
 
@@ -480,9 +480,24 @@ def choose(path: str = None, known: dict = None, now: float = None) -> tuple:
     d, why = latest(path, now=now)
     if d is None:
         return None, why
+    # CARRIED OUT ONCE. There was no consumption marker anywhere in this repo, and the staleness
+    # window is 5,400s - so a single decision was handed to the acting loop on every tick for ninety
+    # minutes and executed every time. That is what produced 54 ledger rows against 26 decisions,
+    # and it is what looked like an entity repeating itself: it decided once, and nothing
+    # acknowledged the decision, so the loop replayed it.
+    #
+    # `after` is the last decision the caller actually carried out. A decision at or below it is
+    # declined WITH A REASON, because "nothing new has been decided" and "the wake is silent" are
+    # different states that were indistinguishable in the log.
+    tick = d.get("tick")
+    if after is not None and isinstance(tick, int) and tick <= after:
+        return None, f"decision #{tick} was already carried out - nothing new since"
     cand, why2 = parse(d, known)
     if cand is None:
         return None, why2
+    # THE DECISION'S OWN IDENTITY travels with it. The caller used to stamp the ledger with its
+    # own tick number, so one decision executed on two ticks wrote two rows with different ids.
+    cand["decision_tick"] = tick
     return cand, f"the wake chose {cand['name']} ({int(cand.get('age_s') or 0)}s ago)"
 
 

@@ -1,7 +1,7 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-01 20:03 UTC",
- "seconds": 29.6,
+ "at": "2026-08-01 21:22 UTC",
+ "seconds": 27.7,
  "pass": true,
  "checks": [
   {
@@ -168,9 +168,9 @@
    "detail": "0 failures"
   },
   {
-   "check": "56 frozen behaviours",
+   "check": "59 frozen behaviours",
    "pass": true,
-   "detail": "all 56 hold"
+   "detail": "all 59 hold"
   },
   {
    "check": "house style",

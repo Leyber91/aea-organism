@@ -184,7 +184,8 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     # entity with no better idea, and it already encodes a measured failure: a brief that failed for
     # an external reason re-ran byte-identically forty-eight times a day and starved every branch
     # below it, with twelve identical trust-ledger entries as the receipt.
-    cand, why = decide.choose()
+    # PASS WHAT WE ALREADY CARRIED OUT. Without this the same decision comes back every tick.
+    cand, why = decide.choose(after=hb.get("_last_decision"))
     hb["last_wake_why"] = why                      # visible in --status either way
     if cand:
         log(f"  {decide.explain(cand, why)}")
@@ -638,7 +639,11 @@ def tick(hb: dict, demo: bool):
             # toward R2-REACH. The guard was right and the caller was incomplete: the fix belongs
             # here, never in the guard.
             out = hands.invoke(pend["tool"], pend["args"], zone="sensitive", allow=allow,
-                               src="wake", decision_id=hb.get("total_ticks"))
+                               src="wake",
+                               # THE DECISION'S id, NOT THE TICK'S. Stamping the live tick made one
+                               # decision executed twice look like two decisions, which inflated
+                               # every REACH count computed over this ledger.
+                               decision_id=hb.get("_last_decision") or hb.get("total_ticks"))
             # THE POST-CONDITION FOR A TOOL, and it replaces a hardcoded `True`. This line read
             # `ok, tail = True, str(out)[:300]`: ANY non-raising return was a success. But
             # `hands.py:342` returns the STRING "ERROR: no such state file" as a perfectly normal
