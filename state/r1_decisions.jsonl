@@ -49,3 +49,5 @@
 {"at": 1785598516.6527755, "at_iso": "2026-08-01 15:35:16 UTC", "tick": 200, "wake": "AWAKE:brief", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose brief (58s ago)", "src": "wake"}
 {"at": 1785598733.8373582, "at_iso": "2026-08-01 15:38:53 UTC", "tick": 201, "wake": "REFLECT:self", "ladder": "REFLECT:self", "differed": false, "why": "the wake chose reflect (2s ago)", "src": "wake"}
 {"at": 1785598762.8694882, "at_iso": "2026-08-01 15:39:22 UTC", "tick": 202, "wake": "REFLECT:self", "ladder": "REFLECT:self", "differed": false, "why": "the wake chose reflect (31s ago)", "src": "wake"}
+{"at": 1785599200.2522264, "at_iso": "2026-08-01 15:46:40 UTC", "tick": 205, "wake": "LOOK:my_record", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose my_record (2s ago)", "src": "wake"}
+{"at": 1785599201.7766063, "at_iso": "2026-08-01 15:46:41 UTC", "tick": 206, "wake": "LOOK:my_record", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose my_record (3s ago)", "src": "wake"}

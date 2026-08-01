@@ -1,0 +1,23 @@
+{
+ "schema": 1,
+ "at": "2026-08-01 15:47:46 UTC",
+ "code": {
+  "commit": "66cd372e2032",
+  "dirty": true
+ },
+ "payloads": 4120,
+ "crossings": 1119,
+ "ran": 1119,
+ "leaks": [],
+ "bound_pct": 0.267,
+ "per_tool": {
+  "read_state": 246,
+  "self_map": 223,
+  "calc": 23,
+  "list_tools": 223,
+  "my_record": 202,
+  "what_to_try": 202
+ },
+ "denominator": "boundary crossings, NOT payloads - a payload refused before the boundary is not a trial of the boundary. The 0.083% figure was retracted for exactly this reason.",
+ "claim": "no byte the wake wrote reached a tool argument"
+}

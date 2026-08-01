@@ -1,14 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 45,
-  "total_ticks": 202,
+  "boot_count": 47,
+  "total_ticks": 206,
   "last_brief_date": "2026-08-01",
   "consolidated_sessions": 22,
   "history": [
-    "2026-08-01 14:57:37 UTC LOOK:read_state ok :: {\"tick\": 267, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 14:57:38 UTC LOOK:read_state ok :: {\"tick\": 267, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 14:58:17 UTC LOOK:read_state ok :: {\"tick\": 267, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 14:58:18 UTC LOOK:read_state ok :: {\"tick\": 267, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
     "2026-08-01 14:59:38 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 33, \"total_ticks\": 176,",
     "2026-08-01 14:59:39 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 33, \"total_ticks\": 177,",
     "2026-08-01 15:02:12 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 34, \"total_ticks\": 178,",
@@ -34,9 +30,13 @@
     "2026-08-01 15:35:15 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
     "2026-08-01 15:35:57 UTC AWAKE:brief ok ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 1, ",
     "2026-08-01 15:39:21 UTC REFLECT:self ok :: REFLECT t6: 'Summarize the standing goal \"Enhance mental clarity\" into on' -> AC",
-    "2026-08-01 15:39:41 UTC REFLECT:self ok :: REFLECT t6: 'Create a 5â€‘item selfâ€‘diagnostic checklist to detect misalign' -"
+    "2026-08-01 15:39:41 UTC REFLECT:self ok :: REFLECT t6: 'Create a 5â€‘item selfâ€‘diagnostic checklist to detect misalign' -",
+    "2026-08-01 15:44:10 UTC REFLECT:self ok :: REFLECT t6: 'Write a single-sentence decision rule that determines if a p' -> AC",
+    "2026-08-01 15:44:42 UTC REFLECT:self ok :: REFLECT t6: 'List three measurable indicators of mental clarity that can ' -> AC",
+    "2026-08-01 15:46:40 UTC LOOK:my_record ok :: {\"rows\": 91, \"mine\": 75, \"by_cause\": {\"UNATTRIBUTABLE\": 7, \"OK\": 64, \"VERIFY_FAI",
+    "2026-08-01 15:46:41 UTC LOOK:my_record ok :: {\"rows\": 92, \"mine\": 76, \"by_cause\": {\"UNATTRIBUTABLE\": 7, \"OK\": 65, \"VERIFY_FAI"
   ],
-  "last_wake_why": "the wake chose reflect (31s ago)",
+  "last_wake_why": "the wake chose my_record (3s ago)",
   "brief_fails": 0,
   "_brief_runs_seen": 103,
   "proposed_move": {
@@ -46,10 +46,10 @@
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
   },
   "_r1_last": {
-    "wake": "REFLECT:self",
+    "wake": "LOOK:my_record",
     "ladder": "REFLECT:self",
-    "differed": false,
-    "why": "the wake chose reflect (31s ago)"
+    "differed": true,
+    "why": "the wake chose my_record (3s ago)"
   },
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",

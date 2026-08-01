@@ -438,6 +438,7 @@ def build() -> str:
     # call graph by ladder.verify_funcs(); a non-empty funcs_check.missing means the build is
     # describing code that is not there.
     lad = _load("ladder.json", {})
+    cert = _load("redteam_cert.json", {})
     lr = {}
     for _k, _r in enumerate(lad.get("rungs") or []):
         for _f in (_r.get("funcs") or []):
@@ -447,6 +448,14 @@ def build() -> str:
     asm = _load("assembly.json", {})
     cen = _load("capability_census.json", {})
     climb_html, climb_css = _climb(lad)
+    _pt = cert.get("per_tool") or {}
+    cert_payloads = cert.get("payloads") or "&mdash;"
+    cert_cross = cert.get("crossings") or "&mdash;"
+    cert_bound = ("%.3f%%" % cert["bound_pct"]) if cert.get("bound_pct") is not None else "&mdash;"
+    cert_leaks = len(cert.get("leaks") or []) if cert.get("leaks") is not None else "&mdash;"
+    cert_tools = len(_pt) or "&mdash;"
+    cert_per = ", ".join("%s %d" % (k, v) for k, v in sorted(_pt.items(), key=lambda x: -x[1])) or "&mdash;"
+    cert_when = (cert.get("at") or "&mdash;")[:10]
     narr_json = json.dumps([str(r.get('beat') or '') for r in (lad.get('rungs') or [])])
     hist = []
     try:
@@ -701,6 +710,25 @@ from a file the running system wrote. {stamp}</p>
  <div class="src">{org['unresolved']} calls unresolvable statically, not counted as edges</div></div>
 <div class="card"><div class="cap">frontier rods</div><div class="big">{len(frontier)}<em> / {len(rods)}</em></div>
  <div class="src">state/capability_census.json — {cen.get('probe_contract','?')}</div></div>
+</div>
+
+<h2>THE ONE NUMBER THAT IS A CERTIFICATE</h2>
+<p class="sub">Every rung claims a POWER. Exactly one of them so far also carries a proven BOUND on
+the hazard that power creates: no byte the entity wrote reaches a tool argument. A hostile chooser
+drove {cert_payloads} generated payloads at the boundary; {cert_cross} of them actually crossed it.</p>
+<div class="grid">
+<div class="card"><div class="cap">leak rate, one-sided 95%</div>
+ <div class="big">{cert_bound}<em> upper bound</em></div>
+ <div class="src">{cert_leaks} leaks in {cert_cross} crossings &mdash; the denominator is CROSSINGS,
+ not payloads. A payload refused before the boundary was never a trial of it, and an earlier figure
+ of 0.083% was retracted for exactly that mistake.</div></div>
+<div class="card"><div class="cap">tools actually attacked</div>
+ <div class="big">{cert_tools}<em> of {cert_tools} covered</em></div>
+ <div class="src">{cert_per} &mdash; per-tool, because a pooled number once read 0.2% while two
+ tools had zero trials.</div></div>
+<div class="card"><div class="cap">certificate written</div><div class="big">{cert_when}</div>
+ <div class="src">state/redteam_cert.json &mdash; <code>python -m aea.lab.redteam</code>. Until
+ today this number lived in a docstring, which is a claim about a certificate rather than one.</div></div>
 </div>
 
 <h2>THE CLIMB &mdash; ELEVEN RUNGS, AND WHAT EACH ONE COST</h2>

@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-01 15:35:51 UTC",
+ "generated": "2026-08-01 15:44:46 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -27,8 +27,8 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 44,
-    "ticks": 405,
+    "boots": 46,
+    "ticks": 414,
     "first": "2026-07-10",
     "last": "2026-08-01",
     "met": true
@@ -68,9 +68,9 @@
     ],
     "subset": true,
     "stale_limit_s": 5400,
-    "last_why": "the wake chose brief (2s ago)",
-    "decision_rows": 49,
-    "comparable": 49,
+    "last_why": "the wake chose NONE - no mechanical move is needed this tick",
+    "decision_rows": 51,
+    "comparable": 51,
     "differed": 49,
     "met": true
    },
@@ -93,9 +93,9 @@
    "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
    "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
    "measured": {
-    "valid": 69,
+    "valid": 71,
     "receipts": 3,
-    "ticks": 72,
+    "ticks": 74,
     "swallowed": 0,
     "met": true
    },
@@ -147,14 +147,14 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 86,
-    "graded": 63,
+    "outcomes": 91,
+    "graded": 68,
     "suppressions": 9,
     "not_repeated": 3,
     "bound": "PASS",
     "bound_pairs": 45,
     "met": true,
-    "entity_rows": 70,
+    "entity_rows": 75,
     "disagreements": 3,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
