@@ -64,10 +64,18 @@ TOOL_WINDOW_S = 900.0        # how far apart two witnesses to one call may be st
 # object, and it destroyed 38 ledger rows once already when a survey script called it on this exact
 # path. A line-oriented store is read line by line.
 # =================================================================================================
-def _jsonl(name: str) -> list:
+def _jsonl(name: str):
+    """Read a line store, and COUNT what could not be read rather than skipping it.
+
+    This swallowed parse errors silently. In a module whose entire subject is that a record must not
+    misrepresent what happened, a row that cannot be read back is a defect in the record itself -
+    and silently dropping it makes the certificate stronger-looking than the data supports, because
+    the denominator quietly shrinks. The ratchet caught it as a new silent-default the moment it was
+    written, which is the ratchet working exactly as intended on its own author."""
     p = os.path.join(grid.STATE, name)
+    bad = 0
     if not os.path.exists(p):
-        return []
+        return [], 0
     out = []
     for line in io.open(p, encoding="utf-8", errors="replace"):
         line = line.strip()
@@ -75,9 +83,9 @@ def _jsonl(name: str) -> list:
             continue
         try:
             out.append(json.loads(line))
-        except Exception:
-            pass                      # an unparseable line is not an outcome; it is also not a lie
-    return out
+        except ValueError:
+            bad += 1
+    return out, bad
 
 
 def _tool_of(row: dict) -> str:
@@ -183,7 +191,8 @@ def _poison(outcomes: list, ledger: list) -> tuple:
 
 
 def certify() -> dict:
-    outcomes, ledger = _jsonl("outcomes.jsonl"), _jsonl("hands_ledger.jsonl")
+    outcomes, bad_o = _jsonl("outcomes.jsonl")
+    ledger, bad_l = _jsonl("hands_ledger.jsonl")
     live = dict(a=arm_a(outcomes, ledger), b=arm_b(outcomes))
 
     po, pl = _poison(outcomes, ledger)
@@ -197,6 +206,7 @@ def certify() -> dict:
     instrument_ok = a_caught and b_caught and a_ablated and b_ablated
 
     falsifications = len(live["a"]["findings"]) + len(live["b"]["findings"])
+    unreadable = bad_o + bad_l
     # VOID is not PASS and it is not FAIL. If the control did not fire, this run says NOTHING about
     # the subject, and recording it as clean would be the exact failure it is built to prevent.
     verdict = ("VOID - the instrument did not prove itself" if not instrument_ok
@@ -205,6 +215,8 @@ def certify() -> dict:
         schema=1, verdict=verdict,
         outcomes=len(outcomes), ledger_rows=len(ledger),
         tool_pairs=live["a"]["pairs"], falsifications=falsifications,
+        unreadable_rows=unreadable,
+        unreadable_by_store={"outcomes.jsonl": bad_o, "hands_ledger.jsonl": bad_l},
         live=live,
         control=dict(arm_a_caught_the_plant=a_caught, arm_b_caught_the_plant=b_caught,
                      arm_a_ablation_silent=a_ablated, arm_b_ablation_silent=b_ablated,

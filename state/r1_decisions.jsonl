@@ -1,2 +1,7 @@
 {"at": 1785562726.8893065, "at_iso": "2026-08-01 05:38:46 UTC", "tick": 140, "wake": "AWAKE:brief", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose brief (16s ago)", "src": "wake"}
 {"at": 1785562768.0737858, "at_iso": "2026-08-01 05:39:28 UTC", "tick": 141, "wake": "AWAKE:brief", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose brief (57s ago)", "src": "wake"}
+{"at": 1785563875.4916818, "at_iso": "2026-08-01 05:57:55 UTC", "tick": 142, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (13s ago)", "src": "wake"}
+{"at": 1785563877.9512587, "at_iso": "2026-08-01 05:57:57 UTC", "tick": 143, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (15s ago)", "src": "wake"}
+{"at": 1785563879.9916282, "at_iso": "2026-08-01 05:57:59 UTC", "tick": 144, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (17s ago)", "src": "wake"}
+{"at": 1785563925.8648567, "at_iso": "2026-08-01 05:58:45 UTC", "tick": 145, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (63s ago)", "src": "wake"}
+{"at": 1785563928.3556685, "at_iso": "2026-08-01 05:58:48 UTC", "tick": 146, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (65s ago)", "src": "wake"}

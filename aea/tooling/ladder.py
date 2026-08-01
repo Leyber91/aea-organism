@@ -292,14 +292,14 @@ def measure_r1() -> dict:
         if not out["ladder_surface"]:
             out["instrument"] = ("could not find the fallback ladder to compare against - this is a "
                                  "broken measurement, not an empty result")
-    except Exception:
-        pass
+    except Exception as e:
+        out["instrument"] = f"source scan failed: {type(e).__name__}: {str(e)[:80]}"
     try:
         from aea.kernel import decide
         out["wake_surface"] = sorted({v[0] for v in decide.KNOWN.values()})
         out["stale_limit_s"] = getattr(decide, "MAX_AGE_S", None)
-    except Exception:
-        pass
+    except Exception as e:
+        out["wake_surface_error"] = f"{type(e).__name__}: {str(e)[:80]}"
     if out["wake_surface"] and out["ladder_surface"]:
         out["subset"] = set(out["wake_surface"]) <= set(out["ladder_surface"])
     hb = grid.load_json(os.path.join(grid.STATE, "heartbeat.json"), {}) or {}
@@ -361,14 +361,19 @@ def measure_r2() -> dict:
         out["claimed_wake"] = sum(1 for r in rows if r.get("src") == "wake")
         out["invocations"] = len(real)
         out["tools"] = len({r.get("tool") for r in real})
-        out["situations"] = len({r.get("decision_id") for r in real})
+        # A SITUATION IS A DISTINCT (tool, arguments) PAIR, NOT A DISTINCT TICK. Counting decision
+        # ids would make three identical `read_state heartbeat.json` calls read as three situations
+        # purely because the tick counter advanced - inflating the rung's hardest criterion with
+        # the clock. The gate asks for VARIETY, and repeating one call is the opposite of it.
+        out["situations"] = len({(r.get("tool"), json.dumps(r.get("args"), sort_keys=True))
+                                 for r in real})
     try:
         from aea.tooling import assembly
         mods = assembly.scan()
         live, _ = assembly.reachable(mods)
         out["wire"] = any(":invoke" in f for f in live)
-    except Exception:
-        pass
+    except Exception as e:
+        out["wire_error"] = f"{type(e).__name__}: {str(e)[:80]}"
     g = REACH_GATE
     if out["invocations"] is not None:
         out["met"] = bool(out["invocations"] >= g[0] and out["tools"] >= g[1]
@@ -417,8 +422,8 @@ def measure_r3() -> dict:
         out["bound"] = c["verdict"]
         out["bound_pairs"] = c["tool_pairs"]
         out["falsifications"] = c["falsifications"]
-    except Exception:
-        pass
+    except Exception as e:
+        out["bound"] = f"UNMEASURED - {type(e).__name__}: {str(e)[:70]}"
 
     # THE POWER HALF, READ OUT OF THE LOG. A suppression that is never followed by a different
     # action proves nothing - the entity might simply have stopped. So both halves are counted: the

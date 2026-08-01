@@ -1,15 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 15,
-  "total_ticks": 141,
+  "boot_count": 17,
+  "total_ticks": 146,
   "last_brief_date": "2026-07-20",
   "consolidated_sessions": 22,
   "history": [
-    "2026-07-30 03:30:30 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 51 memories from 17/20 sessions consolidate",
-    "2026-07-30 03:30:42 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 54 memories from 18/20 sessions consolidate",
-    "2026-07-30 03:30:56 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 57 memories from 19/20 sessions consolidate",
-    "2026-07-30 03:46:11 UTC LOOK:self_map ok :: I am 121 Python modules, about 29,740 lines of code. 25 of them are reachable fr",
-    "2026-07-31 12:41:20 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
     "2026-08-01 05:20:25 UTC ASLEEP:consolidate(demo) ok ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
     "2026-08-01 05:20:29 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
     "2026-08-01 05:20:32 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
@@ -34,9 +29,14 @@
     "2026-08-01 05:30:30 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)",
     "2026-08-01 05:30:37 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)",
     "2026-08-01 05:39:26 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
-    "2026-08-01 05:40:05 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, "
+    "2026-08-01 05:40:05 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
+    "2026-08-01 05:57:55 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 16, \"total_ticks\": 141,",
+    "2026-08-01 05:57:57 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 16, \"total_ticks\": 142,",
+    "2026-08-01 05:58:00 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 16, \"total_ticks\": 143,",
+    "2026-08-01 05:58:46 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 17, \"total_ticks\": 144,",
+    "2026-08-01 05:58:48 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 17, \"total_ticks\": 145,"
   ],
-  "last_wake_why": "the wake chose brief (57s ago)",
+  "last_wake_why": "the wake chose read_your_state (65s ago)",
   "brief_fails": 5,
   "_brief_runs_seen": 102,
   "proposed_move": {
@@ -46,10 +46,10 @@
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
   },
   "_r1_last": {
-    "wake": "AWAKE:brief",
+    "wake": "LOOK:read_state",
     "ladder": "REFLECT:self",
     "differed": true,
-    "why": "the wake chose brief (57s ago)"
+    "why": "the wake chose read_your_state (65s ago)"
   },
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",

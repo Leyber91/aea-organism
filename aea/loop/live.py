@@ -150,10 +150,13 @@ def _ladder_would_say(hb: dict) -> str:
     Deliberately runs with NO holds applied. The question is what the FALLBACK would have chosen,
     and the holds are R3's machinery, not R1's - mixing them would let an R3 suppression register as
     an R1 override and quietly inflate the rung below it."""
-    try:
-        return _fallback_ladder(hb, {})[0]
-    except Exception:
-        return ""
+    # NO SWALLOW HERE. This read `except Exception: return ""`, and the caller computes
+    # `differed = bool(would and would != cand)` - so an empty string makes differed FALSE, and a
+    # broken probe would have been recorded as "the wake agreed with the floor" on every tick. That
+    # is R1's own evidence quietly manufactured out of an error, in the function that produces it.
+    # The caller already wraps this in a handler that LOGS, so letting it propagate is both safer
+    # and louder. The ratchet caught this as a new silent-default within minutes of it being written.
+    return _fallback_ladder(hb, {})[0]
 
 
 def choose_action(hb: dict) -> tuple[str, list[str], int]:
@@ -614,8 +617,14 @@ def tick(hb: dict, demo: bool):
             # deriving the list widens nothing that the zone does not already permit.
             allow = tuple({s["tool"] for s in decide.TOOL_KNOWN.values()}
                           | {s["tool"] for s in decide.FREE_ARG.values()})
+            # THE DECISION ID TRAVELS WITH THE CALL, and without it the row is not evidence. The
+            # provenance guard in `hands` downgrades any row claiming src="wake" with no
+            # decision_id to "unattributed" - correctly, since only the live loop issues one - so
+            # three real tool invocations landed in the ledger this morning and counted for nothing
+            # toward R2-REACH. The guard was right and the caller was incomplete: the fix belongs
+            # here, never in the guard.
             out = hands.invoke(pend["tool"], pend["args"], zone="sensitive", allow=allow,
-                               src="wake")
+                               src="wake", decision_id=hb.get("total_ticks"))
             # THE POST-CONDITION FOR A TOOL, and it replaces a hardcoded `True`. This line read
             # `ok, tail = True, str(out)[:300]`: ANY non-raising return was a success. But
             # `hands.py:342` returns the STRING "ERROR: no such state file" as a perfectly normal

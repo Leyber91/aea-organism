@@ -246,7 +246,7 @@ def standing(state: dict) -> str:
     for r in stuck[:2]:
         cap = r.get("capability")
         line = (f"- {cap} is STUCK: {r.get('consecutive_failures')} failures sharing one cause"
-                f" ({str(r.get('dominant_signature') or '')[:60]})")
+                f" ({str(r.get('dominant_signature') or '')[:40]})")
         try:
             parts = crystal.applicable(r.get("dominant_signature") or "")
         except Exception:
@@ -260,9 +260,44 @@ def standing(state: dict) -> str:
         from aea.loop import live
         done, total = live.corpus_state()
         owed = max(0, total - done)
-        lines.append(f"- undistilled sessions waiting to be consolidated: {owed} of {total}")
+        # ONLY WHEN SOMETHING IS OWED. "0 of 22" is a line that costs characters and carries no
+        # decision - and this block is hard-capped, so every noise line evicts a signal one. It was
+        # the reason the lookup principle below could not fit without raising the cap, and raising
+        # the cap is the wrong trade: this block must never win against the entity's picture of the
+        # world. Replace noise with signal instead of buying more room.
+        if owed:
+            lines.append(f"- undistilled sessions waiting to be consolidated: {owed} of {total}")
     except Exception:
         pass
+
+    # LOOKING IS A MOVE, AND THE WAKE DID NOT KNOW IT. R2-REACH sat at 0 of 20 not because the tool
+    # path is broken - it is wired and its bound is certified - but because the wake never chose a
+    # tool. MEASURED across ticks 227-235: nine consecutive decisions, every one `brief`, while the
+    # prose said "confirm whether the fix is live", "check if the caching fix is live", "verify the
+    # push". It wanted a fact it did not have, on every tick, and it had three tools for exactly
+    # that.
+    #
+    # The menu already lists them with WHEN conditions. A menu is a static list of conditions, and
+    # that is precisely what Luis named on 2026-08-01: the way of thinking has to be stated as a
+    # principle, not left implicit in a table the reader has to match itself against. So the
+    # principle is stated, and only when its trigger is actually present in the entity's own last
+    # note - an unresolved question about its own state.
+    try:
+        # SUBSTRING, NOT REGEX. The regex form of this test evaluated True on one line and
+        # False on the very next line with an identical expression, and the block silently
+        # never fired - twenty minutes lost to an instrument rather than a subject, again.
+        # Nothing here needs a pattern engine: four literal phrases against lowercased text.
+        # The cheapest thing that answers the question is also the one with no way to be
+        # shadowed, mis-escaped by a shell, or read differently on two adjacent lines.
+        notes = " ".join(str(n) for n in (state.get("memory") or [])[-2:]).lower()
+        if any(w in notes for w in ("whether", "check if", "confirm", "verif")):
+            lines.append("- you keep asking whether something is true. LOOK instead of assuming: "
+                         "`read_your_state` or `know_yourself` is one move and answers it.")
+    except Exception as e:
+        # NOT `pass`. A swallowed error here means the principle silently never reaches the wake and
+        # the prompt looks exactly like a tick where the trigger was absent - which is precisely how
+        # this block failed on its first run and cost twenty minutes of looking in the wrong place.
+        print(f"  (standing: lookup principle not added - {type(e).__name__}: {str(e)[:90]})")
     try:
         hb = grid.load_json("heartbeat.json", {})
         last = hb.get("last_brief_date")
@@ -300,8 +335,7 @@ def standing(state: dict) -> str:
         # picture of the world and must never win. The sentence was shortened instead.
         for v in sorted(bad, key=lambda x: -x["streak"])[:1]:
             lines.append(f"- your record: {v['move']} failed {v['streak']}x in a row on its own "
-                         f"merits. Repeating it is not persistence - pick another move, or say "
-                         f"what would make this one work.")
+                         f"merits - repeating it is not persistence. Pick another move.")
     except Exception:
         pass
 
