@@ -314,16 +314,58 @@ def parse(decision: dict, known: dict = None) -> tuple:
         raw = str(decision.get("move") or "").strip()
         # Tolerate the shapes a formatter produces around a bare name - `MOVE: brief`, `"brief"`,
         # `know your hands` - then match against the closed table. Tolerant on FORM, exact on NAME.
-        key = re.sub(r"^\s*move\s*[:\-]\s*", "", raw, flags=re.I)
-        key = re.sub(r"[^a-z0-9]+", "_", key.strip().strip("`\"'").lower()).strip("_")
+        body = re.sub(r"^\s*move\s*[:\-]\s*", "", raw, flags=re.I).strip().strip("`\"'")
+        # HEAD AND ARGUMENT, SPLIT BEFORE NORMALISING. The whole line used to be folded into one
+        # key, so `read_your_state ladder.json` became `read_your_state_ladder_json` and matched
+        # nothing - which is why a tool argument could never be selected and every call collapsed to
+        # its default. The head is matched exactly against the closed table; `rest` is only ever
+        # used to LOOK UP a member of a closed enum and is never passed through to a tool.
+        #
+        # Two-word tool names survive because the head is grown while it still matches: the
+        # candidate `know your hands` normalises to `know_your_hands` before any split is accepted.
+        parts = body.split()
+        head, rest = body, ""
+        for n in range(len(parts), 0, -1):
+            cand = re.sub(r"[^a-z0-9]+", "_", " ".join(parts[:n]).lower()).strip("_")
+            if cand in TOOL_KNOWN or cand in KNOWN or cand in FREE_ARG:
+                head, rest = " ".join(parts[:n]), " ".join(parts[n:])
+                break
+        key = re.sub(r"[^a-z0-9]+", "_", head.strip().strip("`\"'").lower()).strip("_")
         if not key or key in ("none", "no", "nothing", "no_move", "n_a", "na", "null"):
             return None, "the wake chose NONE - no mechanical move is needed this tick"
         if key in TOOL_KNOWN:
             spec = TOOL_KNOWN[key]
-            # THE DEFAULT ARGUMENT, ALWAYS. The wake picks the tool by name and nothing else; it
-            # cannot steer the argument here, so the R2a guarantee (no wake-written string reaches a
-            # tool) holds by construction rather than by filtering.
-            args = {spec["arg"]: spec["default"]} if spec["arg"] else {}
+            # SELECTION FROM A CLOSED ENUM, WHICH IS NOT THE SAME AS WRITING AN ARGUMENT.
+            #
+            # This read `args = {spec["arg"]: spec["default"]}` unconditionally, with the note that
+            # the wake "cannot steer the argument here, so the R2a guarantee holds by construction".
+            # True, and it capped the rung: MEASURED 2026-08-01, ten consecutive invocations were
+            # `read_state heartbeat.json`, every one the default, while sixteen files sat in an enum
+            # nothing ever read. Five tools gives five distinct situations against a gate of EIGHT,
+            # so R2-REACH was unreachable by construction rather than merely unmet.
+            #
+            # The guarantee is preserved exactly, because selection is a LOOKUP:
+            #   the wake writes   an arbitrary string
+            #   this code does    match it against a CLOSED table
+            #   the tool receives a member of that table, or the default
+            # No byte the wake wrote reaches the tool. An unmatched string yields the DEFAULT - not
+            # the string, and not a steerable error. `../../../../etc/passwd` selects nothing and
+            # the tool sees the default.
+            #
+            # EXACT MATCH ONLY. No prefixes, no fuzzy matching, no normalisation beyond lowercase
+            # and strip: every relaxation is a way for a crafted string to select something the
+            # author did not intend, and these enums are small enough that exactness is free.
+            args = {}
+            if spec["arg"]:
+                want = spec["default"]
+                enum = tuple(spec.get("enum") or ())
+                if rest and enum:
+                    cand = str(rest).strip().strip("`\"'").lower()
+                    for member in enum:
+                        if cand == str(member).lower():
+                            want = member          # the TABLE's value, never the wake's string
+                            break
+                args = {spec["arg"]: want}
             return dict(kind="tool", name=key, tool=spec["tool"], args=args,
                         action=spec["action"], age_s=decision.get("_age_s")), ""
         if key in known:

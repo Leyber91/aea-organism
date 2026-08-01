@@ -1,18 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 17,
-  "total_ticks": 146,
+  "boot_count": 21,
+  "total_ticks": 154,
   "last_brief_date": "2026-07-20",
   "consolidated_sessions": 22,
   "history": [
-    "2026-08-01 05:20:25 UTC ASLEEP:consolidate(demo) ok ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
-    "2026-08-01 05:20:29 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
-    "2026-08-01 05:20:32 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
-    "2026-08-01 05:20:36 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
-    "2026-08-01 05:20:39 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
-    "2026-08-01 05:20:43 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
-    "2026-08-01 05:20:46 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
-    "2026-08-01 05:20:50 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
     "2026-08-01 05:20:53 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
     "2026-08-01 05:20:56 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
     "2026-08-01 05:24:30 UTC ASLEEP:consolidate(demo) FAIL ::   +0 semantic memories  |  store now 82 memories from 32/22 sessions consolidate",
@@ -34,9 +26,17 @@
     "2026-08-01 05:57:57 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 16, \"total_ticks\": 142,",
     "2026-08-01 05:58:00 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 16, \"total_ticks\": 143,",
     "2026-08-01 05:58:46 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 17, \"total_ticks\": 144,",
-    "2026-08-01 05:58:48 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 17, \"total_ticks\": 145,"
+    "2026-08-01 05:58:48 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 17, \"total_ticks\": 145,",
+    "2026-08-01 14:20:13 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 18, \"total_ticks\": 146,",
+    "2026-08-01 14:20:14 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 18, \"total_ticks\": 147,",
+    "2026-08-01 14:22:13 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 19, \"total_ticks\": 148,",
+    "2026-08-01 14:22:14 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 19, \"total_ticks\": 149,",
+    "2026-08-01 14:24:08 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 20, \"total_ticks\": 150,",
+    "2026-08-01 14:24:09 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 20, \"total_ticks\": 151,",
+    "2026-08-01 14:26:16 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 21, \"total_ticks\": 152,",
+    "2026-08-01 14:26:17 UTC LOOK:read_state ok :: {\"alive_since\": \"2026-07-10 20:08:57 UTC\", \"boot_count\": 21, \"total_ticks\": 153,"
   ],
-  "last_wake_why": "the wake chose read_your_state (65s ago)",
+  "last_wake_why": "the wake chose read_your_state (3s ago)",
   "brief_fails": 5,
   "_brief_runs_seen": 102,
   "proposed_move": {
@@ -49,7 +49,7 @@
     "wake": "LOOK:read_state",
     "ladder": "REFLECT:self",
     "differed": true,
-    "why": "the wake chose read_your_state (65s ago)"
+    "why": "the wake chose read_your_state (3s ago)"
   },
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",

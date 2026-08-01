@@ -210,8 +210,20 @@ def _moves() -> str:
     from aea.kernel import decide
     names = list(decide.TOOL_KNOWN) + list(decide.KNOWN) + list(decide.FREE_ARG)
     w = max(len(n) for n in names)
-    return "\n".join(f"  - {n:<{w}}  use when {decide.WHEN.get(n, '(no description - do not pick this)')}"
-                     for n in names)
+    # THE ENUM IS PART OF THE MOVE. The menu named the tool and its condition and never showed
+    # WHICH values it accepts, so the wake could not know the other fifteen state files existed and
+    # every call collapsed to the default. A closed set the reader cannot see is a closed set the
+    # reader cannot use.
+    out = []
+    for n in names:
+        line = f"  - {n:<{w}}  use when {decide.WHEN.get(n, '(no description - do not pick this)')}"
+        spec = decide.TOOL_KNOWN.get(n) or {}
+        enum = tuple(spec.get("enum") or ())
+        if enum:
+            line += (f"\n    {'':<{w}}    write `MOVE: {n} <one of: "
+                     + ", ".join(str(e) for e in enum) + ">`")
+        out.append(line)
+    return "\n".join(out)
 
 
 STANDING_LINES = 5          # hard cap - this block competes with nothing, and must never win
