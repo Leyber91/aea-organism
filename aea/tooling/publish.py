@@ -321,11 +321,114 @@ def _bar(label, value, of, note=""):
             f'<span class="n">{note}</span></div>')
 
 
+
+def _climb(lad: dict):
+    """The rungs as accumulating layers. Returns (html, css) - both generated, neither typed.
+
+    A rung's EVIDENCE line is assembled from whatever its measurement actually holds, so a rung with
+    no instrument renders a dash rather than a sentence. That asymmetry is the point: a reader can
+    see at a glance which rungs are receipts and which are still only claims."""
+    from html import escape as esc
+    rungs = (lad or {}).get("rungs") or []
+    if not rungs:
+        return "", ""
+
+    def ev(r):
+        m = r.get("measured") or {}
+        i = r.get("id")
+        if i == "R0" and m.get("longest_hours") is not None:
+            return "%.1f h unbroken, %d ticks, %d crashes - the gate is 72 h" % (
+                m["longest_hours"], m.get("longest_ticks") or 0, m.get("crashes") or 0)
+        if i == "R1" and m.get("comparable"):
+            return "%d of %d comparable ticks chose differently from the floor" % (
+                m.get("differed") or 0, m["comparable"])
+        if i == "R1.5" and m.get("ticks"):
+            return "%d parses, %d receipts, %d swallowed" % (
+                m.get("valid") or 0, m.get("receipts") or 0, m.get("swallowed") or 0)
+        if i == "R2" and m.get("invocations") is not None:
+            return "%s/20 invocations, %s/3 tools, %s/8 situations" % (
+                m["invocations"], m.get("tools"), m.get("situations"))
+        if i == "R3" and m.get("graded") is not None:
+            return "%s graded outcomes, %s non-repeats, bound %s over %s paired witnesses" % (
+                m["graded"], m.get("not_repeated") or 0, m.get("bound"), m.get("bound_pairs"))
+        return ""
+
+    items, css = [], []
+    for k, r in enumerate(rungs):
+        st = r.get("status", "future")
+        e = ev(r)
+        blocked = r.get("blocked_on")
+        line = esc(e) if e else ("&mdash; waiting on " + esc(str(blocked)) if blocked else "&mdash;")
+        items.append(
+            '<li class="layer" data-k="%d" data-st="%s">'
+            '<div class="lhead"><span class="rid">%s</span>'
+            '<span class="rtitle">%s</span>'
+            '<span class="rstat s-%s">%s</span></div>'
+            '<p class="rplain">%s</p><p class="rev">%s</p></li>'
+            % (k, st, esc(str(r.get("id", ""))), esc(str(r.get("title", ""))), st, st.upper(),
+               esc(str(r.get("plain", ""))), line))
+    n = len(rungs)
+    for k in range(n):
+        for d in range(k + 1, n):
+            css.append('#climb[data-frame="%d"] .layer[data-k="%d"]{opacity:.45}' % (k, d))
+        # AMBER ONLY WHERE IT IS EARNED. A future rung can still be SELECTED - the reader should be
+        # able to look at what is coming - but it is drawn as an outline, never filled, because
+        # amber is the fired state and there is nothing fired there.
+        if rungs[k].get("status") == "future":
+            css.append('#climb[data-frame="%d"] .layer[data-k="%d"]{opacity:1;'
+                       'border-left-style:dashed;border-left-color:var(--brass)}' % (k, k))
+        else:
+            css.append('#climb[data-frame="%d"] .layer[data-k="%d"]{border-left-color:var(--amber);'
+                       'background:rgba(255,176,0,.05)}' % (k, k))
+            css.append('#climb[data-frame="%d"] .layer[data-k="%d"] .rid{color:var(--amber)}'
+                       % (k, k))
+    # WHERE THE ANIMATION COMES TO REST, COMPUTED - the highest rung that is actually earned.
+    #
+    # It rested on the LAST rung, so the page's steady state drew R9 SELF-MODIFICATION in amber.
+    # R9 is `future`: unbuilt, and shut on purpose because no hazard can be stated for it yet. Amber
+    # is the earned state under the two-ink law, so the resting frame was claiming the top of the
+    # ladder without a word of text being wrong. Found by rendering the page and reading the image.
+    rest = max([k for k, r in enumerate(rungs) if r.get("status") != "future"] or [0])
+    rail = "".join('<button data-c="%d" aria-current="%s" data-st="%s">%s</button>'
+                   % (k, "step" if k == rest else "false", r.get("status", "future"),
+                      esc(str(r.get("id", ""))))
+                   for k, r in enumerate(rungs))
+    html = ('<div class="climbwrap"><nav id="crail" aria-label="step through the rungs">%s</nav>'
+            '<ol id="climb" data-frame="%d" data-rest="%d">%s</ol></div>'
+            % (rail, rest, rest, "".join(items)))
+    return html, "\n".join(css)
+
+
+CLIMB_BASE_CSS = """
+.climbwrap{margin:14px 0 6px}
+#crail{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+#crail button{font:inherit;font-size:11px;letter-spacing:.06em;padding:4px 9px;cursor:pointer;
+ background:#181d22;color:#9aa4ae;border:1px solid #333b44;border-radius:2px}
+#crail button[data-st="future"]{color:#5d666f}
+#crail button[aria-current="step"]{color:var(--amber);border-color:var(--amber)}
+#climb{list-style:none;margin:0;padding:0;display:flex;flex-direction:column-reverse;gap:6px}
+.layer{border-left:2px solid #2b3138;padding:9px 12px;background:#0e1114;
+ transition:opacity .45s ease,border-color .45s ease,background .45s ease}
+.lhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.rid{font-weight:700;letter-spacing:.08em;color:var(--brass);min-width:40px}
+.rtitle{letter-spacing:.05em;font-size:13px}
+.rstat{margin-left:auto;font-size:10px;letter-spacing:.1em;padding:1px 6px;
+ border:1px solid #2b3138;color:var(--dim)}
+.s-proven{color:var(--amber);border-color:var(--amber)}
+.s-partial{color:var(--brass);border-color:var(--brass)}
+.rplain{margin:6px 0 3px;color:#939ca6;font-size:12px;line-height:1.55;max-width:74ch}
+.rev{margin:0;font-size:11px;color:var(--brass);font-variant-numeric:tabular-nums}
+@media (max-width:620px){.rstat{margin-left:0}.rplain{font-size:11.5px}}
+@media (prefers-reduced-motion:reduce){.layer{transition:none}}
+"""
+
 def build() -> str:
     org = organism()
     T = _tree(org)
     asm = _load("assembly.json", {})
     cen = _load("capability_census.json", {})
+    lad = _load("ladder.json", {})
+    climb_html, climb_css = _climb(lad)
     hist = []
     try:
         p = os.path.join(str(grid.STATE), "assembly_history.jsonl")
@@ -400,6 +503,7 @@ def build() -> str:
         frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .node[data-d="{k}"]{{fill:var(--amber)}}')
         frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .branch[data-d="{k}"]{{stroke:var(--amber);opacity:.92}}')
     frame_css = "\n".join(frame_css)
+    frame_css += CLIMB_BASE_CSS + climb_css
 
     # THE CAPTION IS NOT OPTIONAL. The page honours prefers-reduced-motion, which kills the motion
     # channel entirely - so what changed must survive with zero animation, in words, measured.
@@ -561,6 +665,15 @@ from a file the running system wrote. {stamp}</p>
  <div class="src">state/capability_census.json — {cen.get('probe_contract','?')}</div></div>
 </div>
 
+<h2>THE CLIMB &mdash; ELEVEN RUNGS, AND WHAT EACH ONE COST</h2>
+<p class="sub">Every rung is TWO claims wearing one name: a POWER it gains, and a BOUND on the
+hazard that power creates. Step through them. What is already earned stays lit beneath, because the
+point is what accumulates; what is not built yet says what it is waiting for.</p>
+{climb_html}
+<p class="src">state/ladder.json &mdash; <code>python -m aea.tooling.ladder</code>, measured from
+live state on every build. A dash is a measurement: it means this repository cannot prove that rung
+today, and saying so is worth more than a number that rounds up.</p>
+
 <h2>THE LADDER — WHAT IS WIRED</h2>
 {step_rows or '<p class="sub">no manifest</p>'}
 <p class="src">A step is DONE only when every function in it has a caller reachable from an entry
@@ -587,6 +700,30 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 </div>
 </div>
 <script>
+/* THE CLIMB. One integer over frozen layout, exactly like the graph reveal - stepping backward
+   costs nothing and nothing re-flows. Auto-advance runs once and stops the moment the reader
+   touches a control, because a reader who has taken over should not be fought. Under
+   prefers-reduced-motion it never runs; every rung stays fully readable either way. */
+(function(){{
+  var cl=document.getElementById('climb'), cr=document.getElementById('crail');
+  if(!cl||!cr) return;
+  var n=cl.children.length, timer=null;
+  function setC(k){{
+    cl.setAttribute('data-frame',k);
+    var bs=cr.querySelectorAll('button');
+    for(var i=0;i<bs.length;i++) bs[i].setAttribute('aria-current', i==k?'step':'false');
+  }}
+  cr.addEventListener('click',function(e){{
+    var b=e.target.closest('button'); if(!b) return;
+    if(timer){{clearInterval(timer);timer=null;}}
+    setC(+b.getAttribute('data-c'));
+  }});
+  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!rm){{ var k=0; setC(0);
+    var rest=+(cl.getAttribute('data-rest')||n-1);
+    timer=setInterval(function(){{ k++; if(k>rest){{clearInterval(timer);timer=null;setC(rest);return;}} setC(k); }},560); }}
+}})();
+
 /* ~25 lines, no library, no external request. The ENTIRE state is one integer attribute over frozen
    coordinates, so going backward is exactly symmetric and free: clicking hop 2 after hop 6 removes
    precisely what hops 3-6 added, with no residue and no replayed arrival. */

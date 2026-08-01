@@ -243,8 +243,11 @@ def _moves() -> str:
     return "\n".join(out)
 
 
-STANDING_LINES = 5          # hard cap - this block competes with nothing, and must never win
-STANDING_CHARS = 420
+STANDING_LINES = 6          # hard cap - this block competes with nothing, and must never win
+STANDING_CHARS = 620      # +200 for the class mapping and the already-seen line;
+                          # both are decision-changing and neither fits in 420 with
+                          # the stuck line present. Still hard-capped: this block
+                          # competes with the entity's picture of the world.
 
 
 def standing(state: dict) -> str:
@@ -320,13 +323,51 @@ def standing(state: dict) -> str:
         # shadowed, mis-escaped by a shell, or read differently on two adjacent lines.
         notes = " ".join(str(n) for n in (state.get("memory") or [])[-2:]).lower()
         if any(w in notes for w in ("whether", "check if", "confirm", "verif")):
-            lines.append("- you keep asking whether something is true. LOOK instead of assuming: "
-                         "`read_your_state` or `know_yourself` is one move and answers it.")
+            # ONE SENTENCE COVERING THE WHOLE CLASS, not four conditions to match against. This
+            # named two tools and the wake used one of them, 28 times. The generalisation Luis asked
+            # for: state the mapping from KIND OF QUESTION to move, once.
+            lines.append("- you keep asking whether something is true. LOOK, do not assume - and "
+                         "match the question to the move: about a FILE use `read_your_state`, "
+                         "about HOW YOU ARE BUILT use `know_yourself`, about WHETHER YOUR ACTIONS "
+                         "WORKED use `my_record`, about BEING BLOCKED use `what_to_try`.")
     except Exception as e:
         # NOT `pass`. A swallowed error here means the principle silently never reaches the wake and
         # the prompt looks exactly like a tick where the trigger was absent - which is precisely how
         # this block failed on its first run and cost twenty minutes of looking in the wrong place.
         print(f"  (standing: lookup principle not added - {type(e).__name__}: {str(e)[:90]})")
+
+    # WHAT IT HAS ALREADY LOOKED AT. From its own ledger, as a fact rather than a prohibition.
+    #
+    # MEASURED: 28 invocations, 2 distinct (tool, argument) pairs. From inside a tick, reading a
+    # file for the fourteenth time is indistinguishable from reading it for the first - there was
+    # simply no signal. This is that signal, and it is deliberately NOT a rule: re-reading a file
+    # that has genuinely changed is correct, and a mechanical no-repeat filter would make the entity
+    # worse exactly when its state is moving fastest. Power as a principle; the floor is unchanged.
+    try:
+        import json as _j
+        from aea.kernel import grid as _g
+        _p = _g.STATE + "/hands_ledger.jsonl"
+        _rows = []
+        for _l in open(_p, encoding="utf-8", errors="replace"):
+            _l = _l.strip()
+            if _l:
+                try:
+                    _rows.append(_j.loads(_l))
+                except ValueError:
+                    pass
+        _mine = [r for r in _rows if r.get("src") == "wake" and r.get("decision_id")][-24:]
+        _seen = {}
+        for r in _mine:
+            k = "%s %s" % (r.get("tool"), (r.get("args") or {}).get("name")
+                           or (r.get("args") or {}).get("topic") or "")
+            _seen[k.strip()] = _seen.get(k.strip(), 0) + 1
+        if _seen:
+            _top = sorted(_seen.items(), key=lambda x: -x[1])[:3]
+            lines.append("- already looked at recently: "
+                         + "; ".join("%s x%d" % (k, n) for k, n in _top)
+                         + ". Looking again returns the same answer unless it changed.")
+    except Exception as e:
+        print("  (standing: already-seen not added - %s: %s)" % (type(e).__name__, str(e)[:70]))
     try:
         hb = grid.load_json("heartbeat.json", {})
         last = hb.get("last_brief_date")
