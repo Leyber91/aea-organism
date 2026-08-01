@@ -25,3 +25,9 @@
 {"at": 1785596298.9226491, "at_iso": "2026-08-01 14:58:18 UTC", "tick": 176, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (43s ago)", "src": "wake"}
 {"at": 1785596377.754207, "at_iso": "2026-08-01 14:59:37 UTC", "tick": 177, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (1s ago)", "src": "wake"}
 {"at": 1785596379.2611425, "at_iso": "2026-08-01 14:59:39 UTC", "tick": 178, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (3s ago)", "src": "wake"}
+{"at": 1785596531.69307, "at_iso": "2026-08-01 15:02:11 UTC", "tick": 179, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (3s ago)", "src": "wake"}
+{"at": 1785596533.2110457, "at_iso": "2026-08-01 15:02:13 UTC", "tick": 180, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (4s ago)", "src": "wake"}
+{"at": 1785596636.8040526, "at_iso": "2026-08-01 15:03:56 UTC", "tick": 181, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (1s ago)", "src": "wake"}
+{"at": 1785596638.373807, "at_iso": "2026-08-01 15:03:58 UTC", "tick": 182, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (3s ago)", "src": "wake"}
+{"at": 1785596696.4830627, "at_iso": "2026-08-01 15:04:56 UTC", "tick": 183, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (1s ago)", "src": "wake"}
+{"at": 1785596697.9526453, "at_iso": "2026-08-01 15:04:57 UTC", "tick": 184, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (3s ago)", "src": "wake"}

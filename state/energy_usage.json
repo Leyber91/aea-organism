@@ -57,12 +57,12 @@
   "cooled_at": 1784725408.0140953
  },
  "ollama/qwen2.5:7b": {
-  "calls": 443,
-  "ok": 443,
+  "calls": 449,
+  "ok": 449,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 3.5,
-  "last": "2026-08-01 14:59"
+  "ema_latency": 3.6,
+  "last": "2026-08-01 15:04"
  },
  "groq/llama-3.3-70b-versatile": {
   "calls": 69,
@@ -661,12 +661,12 @@
   "retired_why": "410 at reap"
  },
  "nvidia/nvidia/nemotron-3-ultra-550b-a55b": {
-  "calls": 251,
-  "ok": 232,
-  "fail": 19,
-  "consec_fail": 0,
-  "ema_latency": 39.1,
-  "last": "2026-08-01 14:59"
+  "calls": 257,
+  "ok": 236,
+  "fail": 21,
+  "consec_fail": 2,
+  "ema_latency": 46.2,
+  "last": "2026-08-01 15:04"
  },
  "groq/qwen/qwen3-32b": {
   "calls": 0,
@@ -712,12 +712,12 @@
   "cooled_at": 1785596005.6468801
  },
  "nvidia/nvidia/nemotron-3-super-120b-a12b": {
-  "calls": 30,
-  "ok": 28,
+  "calls": 32,
+  "ok": 30,
   "fail": 2,
   "consec_fail": 0,
-  "ema_latency": 26.4,
-  "last": "2026-08-01 14:41"
+  "ema_latency": 21.9,
+  "last": "2026-08-01 15:04"
  },
  "nvidia/nvidia/nvidia-nemotron-nano-9b-v2": {
   "calls": 21,
