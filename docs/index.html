@@ -256,11 +256,160 @@ a{color:var(--brass)}
 #climb[data-frame="9"] .layer[data-k="10"]{opacity:.45}
 #climb[data-frame="9"] .layer[data-k="9"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
 #climb[data-frame="10"] .layer[data-k="10"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
+#org[data-mode="climb"] .node{fill:#222930;opacity:.26}
+#org[data-mode="climb"] .branch{opacity:.05}
+#org[data-mode="climb"] .cross{opacity:0}
+#org[data-mode="climb"] .node[data-lr]{opacity:0}
+#org[data-mode="climb"] .branch[data-lr]{opacity:0}
+#org[data-mode="climb"] .node,#org[data-mode="climb"] .branch{transition:opacity .5s ease,fill .5s ease,r .5s ease,stroke .5s ease}
+#org[data-climb="0"] .node[data-lr="0"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="0"] .branch[data-lr="0"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="0"] .node[data-lr="0"]{r:4.4px}
+#org[data-climb="1"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="1"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="1"] .node[data-lr="1"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="1"] .branch[data-lr="1"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="1"] .node[data-lr="1"]{r:4.4px}
+#org[data-climb="2"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="2"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="2"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="2"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="2"] .node[data-lr="2"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="2"] .branch[data-lr="2"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="2"] .node[data-lr="2"]{r:4.4px}
+#org[data-climb="3"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="3"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="3"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="3"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="3"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="3"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="3"] .node[data-lr="3"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="3"] .branch[data-lr="3"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="3"] .node[data-lr="3"]{r:4.4px}
+#org[data-climb="4"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="4"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="4"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="4"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="4"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="4"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="4"] .node[data-lr="3"]{opacity:.95;fill:#818b96}
+#org[data-climb="4"] .branch[data-lr="3"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="4"] .node[data-lr="4"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="4"] .branch[data-lr="4"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="4"] .node[data-lr="4"]{r:4.4px}
+#org[data-climb="5"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="5"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="5"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="5"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="5"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="5"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="5"] .node[data-lr="3"]{opacity:.95;fill:#818b96}
+#org[data-climb="5"] .branch[data-lr="3"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="5"] .node[data-lr="4"]{opacity:.95;fill:#818b96}
+#org[data-climb="5"] .branch[data-lr="4"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="5"] .node[data-lr="5"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="5"] .branch[data-lr="5"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="5"] .node[data-lr="5"]{r:4.4px}
+#org[data-climb="6"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="6"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="6"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="6"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="6"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="6"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="6"] .node[data-lr="3"]{opacity:.95;fill:#818b96}
+#org[data-climb="6"] .branch[data-lr="3"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="6"] .node[data-lr="4"]{opacity:.95;fill:#818b96}
+#org[data-climb="6"] .branch[data-lr="4"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="6"] .node[data-lr="5"]{opacity:.95;fill:#818b96}
+#org[data-climb="6"] .branch[data-lr="5"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="6"] .node[data-lr="6"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="6"] .branch[data-lr="6"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="6"] .node[data-lr="6"]{r:4.4px}
+#org[data-climb="7"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="7"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="7"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="7"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="7"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="7"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="7"] .node[data-lr="3"]{opacity:.95;fill:#818b96}
+#org[data-climb="7"] .branch[data-lr="3"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="7"] .node[data-lr="4"]{opacity:.95;fill:#818b96}
+#org[data-climb="7"] .branch[data-lr="4"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="7"] .node[data-lr="5"]{opacity:.95;fill:#818b96}
+#org[data-climb="7"] .branch[data-lr="5"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="7"] .node[data-lr="6"]{opacity:.95;fill:#818b96}
+#org[data-climb="7"] .branch[data-lr="6"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="7"] .node[data-lr="7"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="7"] .branch[data-lr="7"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="7"] .node[data-lr="7"]{r:4.4px}
+#org[data-climb="8"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="3"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="3"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="4"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="4"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="5"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="5"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="6"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="6"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="7"]{opacity:.95;fill:#818b96}
+#org[data-climb="8"] .branch[data-lr="7"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="8"] .node[data-lr="8"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="8"] .branch[data-lr="8"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="8"] .node[data-lr="8"]{r:4.4px}
+#org[data-climb="9"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="3"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="3"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="4"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="4"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="5"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="5"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="6"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="6"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="7"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="7"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="8"]{opacity:.95;fill:#818b96}
+#org[data-climb="9"] .branch[data-lr="8"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="9"] .node[data-lr="9"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="9"] .branch[data-lr="9"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="9"] .node[data-lr="9"]{r:4.4px}
+#org[data-climb="10"] .node[data-lr="0"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="0"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="1"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="1"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="2"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="2"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="3"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="3"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="4"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="4"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="5"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="5"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="6"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="6"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="7"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="7"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="8"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="8"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="9"]{opacity:.95;fill:#818b96}
+#org[data-climb="10"] .branch[data-lr="9"]{opacity:.30;stroke:#4d555e}
+#org[data-climb="10"] .node[data-lr="10"]{opacity:.95;fill:var(--amber)}
+#org[data-climb="10"] .branch[data-lr="10"]{opacity:.85;stroke:var(--amber)}
+#org[data-climb="10"] .node[data-lr="10"]{r:4.4px}
 </style>
 <div class="wrap">
 <h1>THE AEA — THE ORGANISM</h1>
 <p class="sub">An autonomous entity, drawn from its own state. Every number on this page is read
-from a file the running system wrote. 2026-08-01 15:17 UTC</p>
+from a file the running system wrote. 2026-08-01 15:39 UTC</p>
 
 <div class="hero"><div class="stage">
 <div class="rails">
@@ -1375,10 +1524,12 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <circle cx="925.0" cy="270.5" r="1" class="dead"/>
 <circle cx="304.0" cy="898.9" r="1" class="dead"/>
 <circle cx="932.2" cy="381.8" r="1" class="dead"/>
+<circle cx="884.0" cy="301.6" r="1" class="dead"/>
 <circle cx="948.4" cy="479.7" r="1" class="dead"/>
 <circle cx="386.3" cy="60.6" r="1" class="dead"/>
 <circle cx="940.2" cy="550.8" r="1" class="dead"/>
 <circle cx="48.8" cy="582.6" r="1" class="dead"/>
+<circle cx="591.7" cy="945.7" r="1" class="dead"/>
 <circle cx="518.2" cy="55.1" r="1" class="dead"/>
 <circle cx="29.0" cy="377.8" r="1" class="dead"/>
 <circle cx="64.5" cy="342.0" r="1" class="dead"/>
@@ -1554,35 +1705,35 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <path d="M322.7,443.8 Q500,500 254.0,531.3" class="cross" data-d="4"/>
 <path d="M338.9,407.0 Q500,500 276.8,391.8" class="cross" data-d="4"/>
 <path d="M495.5,376.1 Q500,500 319.1,456.7" class="cross" data-d="3"/>
-<path d="M500.0,500.0 Q504,469 508.9,438.6" class="branch" data-d="1"/>
-<path d="M500.0,500.0 Q529,510 558.4,520.9" class="branch" data-d="1"/>
-<path d="M500.0,500.0 Q480,523 459.0,546.5" class="branch" data-d="1"/>
+<path d="M500.0,500.0 Q504,469 508.9,438.6" class="branch" data-d="1" data-lr="0"/>
+<path d="M500.0,500.0 Q529,510 558.4,520.9" class="branch" data-d="1" data-lr="0"/>
+<path d="M500.0,500.0 Q480,523 459.0,546.5" class="branch" data-d="1" data-lr="1"/>
 <path d="M500.0,500.0 Q469,499 438.0,498.9" class="branch" data-d="1"/>
 <path d="M500.0,500.0 Q479,478 457.4,455.0" class="branch" data-d="1"/>
 <path d="M500.0,500.0 Q492,470 484.5,440.0" class="branch" data-d="1"/>
 <path d="M508.9,438.6 Q507,407 504.5,376.1" class="branch" data-d="2"/>
-<path d="M508.9,438.6 Q511,408 513.4,376.7" class="branch" data-d="2"/>
-<path d="M508.9,438.6 Q516,408 522.3,378.0" class="branch" data-d="2"/>
-<path d="M508.9,438.6 Q520,409 531.0,379.9" class="branch" data-d="2"/>
+<path d="M508.9,438.6 Q511,408 513.4,376.7" class="branch" data-d="2" data-lr="0"/>
+<path d="M508.9,438.6 Q516,408 522.3,378.0" class="branch" data-d="2" data-lr="0"/>
+<path d="M508.9,438.6 Q520,409 531.0,379.9" class="branch" data-d="2" data-lr="0"/>
 <path d="M558.4,520.9 Q549,452 539.6,382.5" class="branch" data-d="2"/>
-<path d="M558.4,520.9 Q557,455 556.1,389.4" class="branch" data-d="2"/>
+<path d="M558.4,520.9 Q557,455 556.1,389.4" class="branch" data-d="2" data-lr="3"/>
 <path d="M558.4,520.9 Q565,460 571.4,398.6" class="branch" data-d="2"/>
 <path d="M558.4,520.9 Q591,505 623.5,488.8" class="branch" data-d="2"/>
-<path d="M558.4,520.9 Q573,554 588.5,586.9" class="branch" data-d="2"/>
-<path d="M558.4,520.9 Q563,562 567.7,603.9" class="branch" data-d="2"/>
-<path d="M558.4,520.9 Q551,568 543.8,616.0" class="branch" data-d="2"/>
-<path d="M558.4,520.9 Q547,570 535.3,618.9" class="branch" data-d="2"/>
+<path d="M558.4,520.9 Q573,554 588.5,586.9" class="branch" data-d="2" data-lr="3"/>
+<path d="M558.4,520.9 Q563,562 567.7,603.9" class="branch" data-d="2" data-lr="4"/>
+<path d="M558.4,520.9 Q551,568 543.8,616.0" class="branch" data-d="2" data-lr="0"/>
+<path d="M558.4,520.9 Q547,570 535.3,618.9" class="branch" data-d="2" data-lr="0"/>
 <path d="M558.4,520.9 Q527,572 495.5,623.9" class="branch" data-d="2"/>
 <path d="M558.4,520.9 Q507,568 456.2,616.0" class="branch" data-d="2"/>
-<path d="M459.0,546.5 Q451,579 443.9,610.6" class="branch" data-d="2"/>
-<path d="M459.0,546.5 Q446,575 432.3,603.9" class="branch" data-d="2"/>
+<path d="M459.0,546.5 Q451,579 443.9,610.6" class="branch" data-d="2" data-lr="1"/>
+<path d="M459.0,546.5 Q446,575 432.3,603.9" class="branch" data-d="2" data-lr="2"/>
 <path d="M459.0,546.5 Q440,571 421.4,595.9" class="branch" data-d="2"/>
-<path d="M459.0,546.5 Q434,565 408.5,583.6" class="branch" data-d="2"/>
-<path d="M459.0,546.5 Q429,560 399.9,573.2" class="branch" data-d="2"/>
-<path d="M459.0,546.5 Q427,556 394.9,565.8" class="branch" data-d="2"/>
+<path d="M459.0,546.5 Q434,565 408.5,583.6" class="branch" data-d="2" data-lr="4"/>
+<path d="M459.0,546.5 Q429,560 399.9,573.2" class="branch" data-d="2" data-lr="1"/>
+<path d="M459.0,546.5 Q427,556 394.9,565.8" class="branch" data-d="2" data-lr="1"/>
 <path d="M438.0,498.9 Q414,528 390.4,558.1" class="branch" data-d="2"/>
 <path d="M438.0,498.9 Q409,514 379.4,528.8" class="branch" data-d="2"/>
-<path d="M438.0,498.9 Q407,498 376.0,497.8" class="branch" data-d="2"/>
+<path d="M438.0,498.9 Q407,498 376.0,497.8" class="branch" data-d="2" data-lr="2"/>
 <path d="M438.0,498.9 Q407,494 376.5,488.8" class="branch" data-d="2"/>
 <path d="M438.0,498.9 Q408,489 377.6,479.9" class="branch" data-d="2"/>
 <path d="M438.0,498.9 Q409,485 379.4,471.2" class="branch" data-d="2"/>
@@ -1593,9 +1744,9 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <path d="M504.5,376.1 Q506,345 506.7,314.1" class="branch" data-d="3"/>
 <path d="M513.4,376.7 Q517,346 520.1,315.1" class="branch" data-d="3"/>
 <path d="M531.0,379.9 Q539,350 546.5,319.9" class="branch" data-d="3"/>
-<path d="M556.1,389.4 Q564,359 572.0,328.5" class="branch" data-d="3"/>
+<path d="M556.1,389.4 Q564,359 572.0,328.5" class="branch" data-d="3" data-lr="3"/>
 <path d="M556.1,389.4 Q570,362 584.1,334.1" class="branch" data-d="3"/>
-<path d="M556.1,389.4 Q576,365 595.9,340.6" class="branch" data-d="3"/>
+<path d="M556.1,389.4 Q576,365 595.9,340.6" class="branch" data-d="3" data-lr="3"/>
 <path d="M571.4,398.6 Q589,373 607.1,348.0" class="branch" data-d="3"/>
 <path d="M623.5,488.8 Q626,427 627.9,365.0" class="branch" data-d="3"/>
 <path d="M623.5,488.8 Q635,437 646.0,384.8" class="branch" data-d="3"/>
@@ -1609,15 +1760,15 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <path d="M623.5,488.8 Q650,522 677.3,556.2" class="branch" data-d="3"/>
 <path d="M623.5,488.8 Q644,538 664.3,587.1" class="branch" data-d="3"/>
 <path d="M623.5,488.8 Q637,549 650.1,609.9" class="branch" data-d="3"/>
-<path d="M567.7,603.9 Q590,626 612.6,648.1" class="branch" data-d="3"/>
-<path d="M567.7,603.9 Q576,635 584.1,665.9" class="branch" data-d="3"/>
+<path d="M567.7,603.9 Q590,626 612.6,648.1" class="branch" data-d="3" data-lr="4"/>
+<path d="M567.7,603.9 Q576,635 584.1,665.9" class="branch" data-d="3" data-lr="4"/>
 <path d="M495.5,623.9 Q494,655 493.3,685.9" class="branch" data-d="3"/>
-<path d="M443.9,610.6 Q433,640 421.9,668.8" class="branch" data-d="3"/>
-<path d="M443.9,610.6 Q427,637 409.9,662.7" class="branch" data-d="3"/>
+<path d="M443.9,610.6 Q433,640 421.9,668.8" class="branch" data-d="3" data-lr="1"/>
+<path d="M443.9,610.6 Q427,637 409.9,662.7" class="branch" data-d="3" data-lr="2"/>
 <path d="M421.4,595.9 Q404,622 387.4,648.1" class="branch" data-d="3"/>
 <path d="M421.4,595.9 Q399,618 377.0,639.6" class="branch" data-d="3"/>
-<path d="M408.5,583.6 Q388,607 367.3,630.3" class="branch" data-d="3"/>
-<path d="M408.5,583.6 Q383,602 358.2,620.4" class="branch" data-d="3"/>
+<path d="M408.5,583.6 Q388,607 367.3,630.3" class="branch" data-d="3" data-lr="4"/>
+<path d="M408.5,583.6 Q383,602 358.2,620.4" class="branch" data-d="3" data-lr="4"/>
 <path d="M379.4,528.8 Q349,536 319.1,543.3" class="branch" data-d="3"/>
 <path d="M377.6,479.9 Q347,475 316.5,469.9" class="branch" data-d="3"/>
 <path d="M379.4,471.2 Q349,464 319.1,456.7" class="branch" data-d="3"/>
@@ -1629,7 +1780,7 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <path d="M408.5,416.4 Q386,395 362.7,374.5" class="branch" data-d="3"/>
 <path d="M408.5,416.4 Q390,391 372.1,365.0" class="branch" data-d="3"/>
 <path d="M408.5,416.4 Q395,386 382.2,356.1" class="branch" data-d="3"/>
-<path d="M572.0,328.5 Q584,300 595.9,271.3" class="branch" data-d="4"/>
+<path d="M572.0,328.5 Q584,300 595.9,271.3" class="branch" data-d="4" data-lr="3"/>
 <path d="M627.9,365.0 Q642,337 657.1,308.1" class="branch" data-d="4"/>
 <path d="M627.9,365.0 Q649,342 670.5,320.0" class="branch" data-d="4"/>
 <path d="M627.9,365.0 Q656,349 683.1,332.7" class="branch" data-d="4"/>
@@ -1647,10 +1798,10 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <path d="M677.3,556.2 Q702,578 726.9,600.1" class="branch" data-d="4"/>
 <path d="M664.3,587.1 Q692,602 719.1,616.2" class="branch" data-d="4"/>
 <path d="M650.1,609.9 Q675,628 700.1,646.5" class="branch" data-d="4"/>
-<path d="M612.6,648.1 Q635,670 657.1,691.9" class="branch" data-d="4"/>
+<path d="M612.6,648.1 Q635,670 657.1,691.9" class="branch" data-d="4" data-lr="4"/>
 <path d="M612.6,648.1 Q624,678 635.4,707.7" class="branch" data-d="4"/>
 <path d="M584.1,665.9 Q602,691 620.1,717.0" class="branch" data-d="4"/>
-<path d="M584.1,665.9 Q594,696 604.1,725.1" class="branch" data-d="4"/>
+<path d="M584.1,665.9 Q594,696 604.1,725.1" class="branch" data-d="4" data-lr="4"/>
 <path d="M493.3,685.9 Q523,714 553.3,742.2" class="branch" data-d="4"/>
 <path d="M493.3,685.9 Q514,716 535.7,745.4" class="branch" data-d="4"/>
 <path d="M493.3,685.9 Q501,717 509.0,747.8" class="branch" data-d="4"/>
@@ -1699,21 +1850,21 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <path d="M484.5,440.0 Q486,408 486.6,376.7" class="branch" data-d="2"/>
 <path d="M484.5,440.0 Q490,408 495.5,376.1" class="branch" data-d="2"/>
 <circle cx="500.0" cy="500.0" r="8.0" class="node core" data-d="0"><title>ENTRY  (hop 0)</title></circle>
-<circle cx="508.9" cy="438.6" r="4.5" class="node" data-d="1"><title>loop.live:main  (hop 1)</title></circle>
+<circle cx="508.9" cy="438.6" r="4.5" class="node" data-d="1" data-lr="0"><title>loop.live:main  (hop 1)</title></circle>
 <circle cx="504.5" cy="376.1" r="3.7" class="node" data-d="2"><title>loop.live:corpus_state  (hop 2)</title></circle>
 <circle cx="506.7" cy="314.1" r="3.0" class="node" data-d="3"><title>memory.consolidate:load_store  (hop 3)</title></circle>
-<circle cx="513.4" cy="376.7" r="3.7" class="node" data-d="2"><title>loop.live:load_hb  (hop 2)</title></circle>
+<circle cx="513.4" cy="376.7" r="3.7" class="node" data-d="2" data-lr="0"><title>loop.live:load_hb  (hop 2)</title></circle>
 <circle cx="520.1" cy="315.1" r="3.0" class="node" data-d="3"><title>kernel.grid:load_json  (hop 3)</title></circle>
-<circle cx="522.3" cy="378.0" r="3.7" class="node" data-d="2"><title>loop.live:log  (hop 2)</title></circle>
-<circle cx="531.0" cy="379.9" r="3.7" class="node" data-d="2"><title>loop.live:save_hb  (hop 2)</title></circle>
+<circle cx="522.3" cy="378.0" r="3.7" class="node" data-d="2" data-lr="0"><title>loop.live:log  (hop 2)</title></circle>
+<circle cx="531.0" cy="379.9" r="3.7" class="node" data-d="2" data-lr="0"><title>loop.live:save_hb  (hop 2)</title></circle>
 <circle cx="546.5" cy="319.9" r="3.0" class="node" data-d="3"><title>kernel.grid:atomic_save_json  (hop 3)</title></circle>
-<circle cx="558.4" cy="520.9" r="4.5" class="node" data-d="1"><title>loop.live:tick  (hop 1)</title></circle>
+<circle cx="558.4" cy="520.9" r="4.5" class="node" data-d="1" data-lr="0"><title>loop.live:tick  (hop 1)</title></circle>
 <circle cx="539.6" cy="382.5" r="3.7" class="node" data-d="2"><title>kernel.cause:looks_transient  (hop 2)</title></circle>
-<circle cx="556.1" cy="389.4" r="3.7" class="node" data-d="2" data-r="0"><title>kernel.hands:invoke  (hop 2)</title></circle>
-<circle cx="572.0" cy="328.5" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.hands:_ledger  (hop 3)</title></circle>
-<circle cx="595.9" cy="271.3" r="2.2" class="node" data-d="4"><title>kernel.hands:_ledger_path  (hop 4)</title></circle>
+<circle cx="556.1" cy="389.4" r="3.7" class="node" data-d="2" data-r="0" data-lr="3"><title>kernel.hands:invoke  (hop 2)</title></circle>
+<circle cx="572.0" cy="328.5" r="3.0" class="node" data-d="3" data-r="0" data-lr="3"><title>kernel.hands:_ledger  (hop 3)</title></circle>
+<circle cx="595.9" cy="271.3" r="2.2" class="node" data-d="4" data-lr="3"><title>kernel.hands:_ledger_path  (hop 4)</title></circle>
 <circle cx="584.1" cy="334.1" r="3.0" class="node" data-d="3"><title>kernel.hands:_unwrap_args  (hop 3)</title></circle>
-<circle cx="595.9" cy="340.6" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.hands:allowed  (hop 3)</title></circle>
+<circle cx="595.9" cy="340.6" r="3.0" class="node" data-d="3" data-r="0" data-lr="3"><title>kernel.hands:allowed  (hop 3)</title></circle>
 <circle cx="571.4" cy="398.6" r="3.7" class="node" data-d="2"><title>kernel.pulse:emit  (hop 2)</title></circle>
 <circle cx="607.1" cy="348.0" r="3.0" class="node" data-d="3"><title>kernel.pulse:_rotate  (hop 3)</title></circle>
 <circle cx="623.5" cy="488.8" r="3.7" class="node" data-d="2"><title>loop.live:_notice_and_propose  (hop 2)</title></circle>
@@ -1755,20 +1906,20 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <circle cx="750.1" cy="683.1" r="2.0" class="node" data-d="5"><title>kernel.knobs:_load  (hop 5)</title></circle>
 <circle cx="800.2" cy="719.7" r="2.0" class="node" data-d="6"><title>kernel.knobs:_path  (hop 6)</title></circle>
 <circle cx="736.3" cy="700.7" r="2.0" class="node" data-d="5"><title>kernel.knobs:_save  (hop 5)</title></circle>
-<circle cx="588.5" cy="586.9" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_post_for  (hop 2)</title></circle>
-<circle cx="567.7" cy="603.9" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_record_outcome  (hop 2)</title></circle>
-<circle cx="612.6" cy="648.1" r="3.0" class="node" data-d="3" data-r="1"><title>kernel.outcomes:build  (hop 3)</title></circle>
-<circle cx="657.1" cy="691.9" r="2.2" class="node" data-d="4" data-r="1"><title>kernel.cause:classify  (hop 4)</title></circle>
+<circle cx="588.5" cy="586.9" r="3.7" class="node" data-d="2" data-r="1" data-lr="3"><title>loop.live:_post_for  (hop 2)</title></circle>
+<circle cx="567.7" cy="603.9" r="3.7" class="node" data-d="2" data-r="1" data-lr="4"><title>loop.live:_record_outcome  (hop 2)</title></circle>
+<circle cx="612.6" cy="648.1" r="3.0" class="node" data-d="3" data-r="1" data-lr="4"><title>kernel.outcomes:build  (hop 3)</title></circle>
+<circle cx="657.1" cy="691.9" r="2.2" class="node" data-d="4" data-r="1" data-lr="4"><title>kernel.cause:classify  (hop 4)</title></circle>
 <circle cx="704.9" cy="732.6" r="2.0" class="node" data-d="5"><title>kernel.cause:_frame_under_aea  (hop 5)</title></circle>
 <circle cx="687.6" cy="746.8" r="2.0" class="node" data-d="5"><title>kernel.cause:_hint  (hop 5)</title></circle>
 <circle cx="635.4" cy="707.7" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_code  (hop 4)</title></circle>
 <circle cx="669.3" cy="759.7" r="2.0" class="node" data-d="5"><title>kernel.grid:code_stamp  (hop 5)</title></circle>
-<circle cx="584.1" cy="665.9" r="3.0" class="node" data-d="3" data-r="1"><title>kernel.outcomes:write  (hop 3)</title></circle>
+<circle cx="584.1" cy="665.9" r="3.0" class="node" data-d="3" data-r="1" data-lr="4"><title>kernel.outcomes:write  (hop 3)</title></circle>
 <circle cx="620.1" cy="717.0" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_path  (hop 4)</title></circle>
-<circle cx="604.1" cy="725.1" r="2.2" class="node" data-d="4" data-r="1"><title>kernel.outcomes:require  (hop 4)</title></circle>
+<circle cx="604.1" cy="725.1" r="2.2" class="node" data-d="4" data-r="1" data-lr="4"><title>kernel.outcomes:require  (hop 4)</title></circle>
 <circle cx="630.2" cy="781.3" r="2.0" class="node" data-d="5"><title>kernel.cause:counts  (hop 5)</title></circle>
-<circle cx="543.8" cy="616.0" r="3.7" class="node" data-d="2"><title>loop.live:now_iso  (hop 2)</title></circle>
-<circle cx="535.3" cy="618.9" r="3.7" class="node" data-d="2"><title>loop.live:run_script  (hop 2)</title></circle>
+<circle cx="543.8" cy="616.0" r="3.7" class="node" data-d="2" data-lr="0"><title>loop.live:now_iso  (hop 2)</title></circle>
+<circle cx="535.3" cy="618.9" r="3.7" class="node" data-d="2" data-lr="0"><title>loop.live:run_script  (hop 2)</title></circle>
 <circle cx="495.5" cy="623.9" r="3.7" class="node" data-d="2"><title>loop.live:speak_brief  (hop 2)</title></circle>
 <circle cx="493.3" cy="685.9" r="3.0" class="node" data-d="3"><title>io.speak:speak  (hop 3)</title></circle>
 <circle cx="553.3" cy="742.2" r="2.2" class="node" data-d="4"><title>io.speak:_identity  (hop 4)</title></circle>
@@ -1783,21 +1934,21 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <circle cx="446.7" cy="742.2" r="2.2" class="node" data-d="4"><title>io.speak:play_wav  (hop 4)</title></circle>
 <circle cx="429.3" cy="737.7" r="2.2" class="node" data-d="4"><title>io.speak:sapi_speak  (hop 4)</title></circle>
 <circle cx="456.2" cy="616.0" r="3.7" class="node" data-d="2"><title>loop.live:today  (hop 2)</title></circle>
-<circle cx="459.0" cy="546.5" r="4.5" class="node" data-d="1"><title>loop.live:choose_action  (hop 1)</title></circle>
-<circle cx="443.9" cy="610.6" r="3.7" class="node" data-d="2" data-r="0"><title>kernel.decide:choose  (hop 2)</title></circle>
-<circle cx="421.9" cy="668.8" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.decide:latest  (hop 3)</title></circle>
+<circle cx="459.0" cy="546.5" r="4.5" class="node" data-d="1" data-lr="1"><title>loop.live:choose_action  (hop 1)</title></circle>
+<circle cx="443.9" cy="610.6" r="3.7" class="node" data-d="2" data-r="0" data-lr="1"><title>kernel.decide:choose  (hop 2)</title></circle>
+<circle cx="421.9" cy="668.8" r="3.0" class="node" data-d="3" data-r="0" data-lr="1"><title>kernel.decide:latest  (hop 3)</title></circle>
 <circle cx="395.9" cy="725.1" r="2.2" class="node" data-d="4"><title>kernel.decide:_finite  (hop 4)</title></circle>
-<circle cx="409.9" cy="662.7" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.decide:parse  (hop 3)</title></circle>
-<circle cx="432.3" cy="603.9" r="3.7" class="node" data-d="2"><title>kernel.decide:explain  (hop 2)</title></circle>
+<circle cx="409.9" cy="662.7" r="3.0" class="node" data-d="3" data-r="0" data-lr="2"><title>kernel.decide:parse  (hop 3)</title></circle>
+<circle cx="432.3" cy="603.9" r="3.7" class="node" data-d="2" data-lr="2"><title>kernel.decide:explain  (hop 2)</title></circle>
 <circle cx="421.4" cy="595.9" r="3.7" class="node" data-d="2" data-r="1"><title>kernel.grid:append_jsonl  (hop 2)</title></circle>
 <circle cx="387.4" cy="648.1" r="3.0" class="node" data-d="3"><title>kernel.grid:_state  (hop 3)</title></circle>
 <circle cx="377.0" cy="639.6" r="3.0" class="node" data-d="3"><title>kernel.grid:file_lock  (hop 3)</title></circle>
-<circle cx="408.5" cy="583.6" r="3.7" class="node" data-d="2"><title>kernel.outcomes:suppressed  (hop 2)</title></circle>
-<circle cx="367.3" cy="630.3" r="3.0" class="node" data-d="3"><title>kernel.outcomes:read  (hop 3)</title></circle>
-<circle cx="358.2" cy="620.4" r="3.0" class="node" data-d="3"><title>kernel.outcomes:verdict_for  (hop 3)</title></circle>
+<circle cx="408.5" cy="583.6" r="3.7" class="node" data-d="2" data-lr="4"><title>kernel.outcomes:suppressed  (hop 2)</title></circle>
+<circle cx="367.3" cy="630.3" r="3.0" class="node" data-d="3" data-lr="4"><title>kernel.outcomes:read  (hop 3)</title></circle>
+<circle cx="358.2" cy="620.4" r="3.0" class="node" data-d="3" data-lr="4"><title>kernel.outcomes:verdict_for  (hop 3)</title></circle>
 <circle cx="311.0" cy="660.6" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_base  (hop 4)</title></circle>
-<circle cx="399.9" cy="573.2" r="3.7" class="node" data-d="2"><title>loop.live:_fallback_ladder  (hop 2)</title></circle>
-<circle cx="394.9" cy="565.8" r="3.7" class="node" data-d="2"><title>loop.live:_ladder_would_say  (hop 2)</title></circle>
+<circle cx="399.9" cy="573.2" r="3.7" class="node" data-d="2" data-lr="1"><title>loop.live:_fallback_ladder  (hop 2)</title></circle>
+<circle cx="394.9" cy="565.8" r="3.7" class="node" data-d="2" data-lr="1"><title>loop.live:_ladder_would_say  (hop 2)</title></circle>
 <circle cx="438.0" cy="498.9" r="4.5" class="node" data-d="1" data-r="4"><title>loop.aea:tick  (hop 1)</title></circle>
 <circle cx="390.4" cy="558.1" r="3.7" class="node" data-d="2"><title>loop.aea:_moves  (hop 2)</title></circle>
 <circle cx="379.4" cy="528.8" r="3.7" class="node" data-d="2"><title>loop.aea:core  (hop 2)</title></circle>
@@ -1813,7 +1964,7 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <circle cx="131.0" cy="546.9" r="2.0" class="node" data-d="6"><title>kernel.grid:_merge_tool_calls  (hop 6)</title></circle>
 <circle cx="252.4" cy="513.4" r="2.2" class="node" data-d="4"><title>kernel.grid:own_params  (hop 4)</title></circle>
 <circle cx="190.5" cy="516.8" r="2.0" class="node" data-d="5"><title>kernel.grid:_rod_facts  (hop 5)</title></circle>
-<circle cx="376.0" cy="497.8" r="3.7" class="node" data-d="2"><title>loop.aea:move_from  (hop 2)</title></circle>
+<circle cx="376.0" cy="497.8" r="3.7" class="node" data-d="2" data-lr="2"><title>loop.aea:move_from  (hop 2)</title></circle>
 <circle cx="376.5" cy="488.8" r="3.7" class="node" data-d="2"><title>loop.aea:sense  (hop 2)</title></circle>
 <circle cx="377.6" cy="479.9" r="3.7" class="node" data-d="2"><title>loop.aea:standing  (hop 2)</title></circle>
 <circle cx="316.5" cy="469.9" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.impasse:scan  (hop 3)</title></circle>
@@ -1859,14 +2010,14 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
  tick begins</span>
 <span><i style="background:var(--amber)"></i>reached in 1–2 calls</span>
 <span><i style="background:var(--brass)"></i>reachable</span>
-<span><i style="background:#1b1f24"></i>1175 functions it cannot reach</span>
+<span><i style="background:#1b1f24"></i>1177 functions it cannot reach</span>
 </div>
 </div>
 
 <h2>WHAT IS ALIVE</h2>
 <div class="grid">
 <div class="card"><div class="cap">reachable from the wake</div>
- <div class="big">143<em> / 1318 functions</em></div>
+ <div class="big">143<em> / 1320 functions</em></div>
  <div class="src">aea/tooling/assembly.py — real call edges, not imports</div></div>
 <div class="card"><div class="cap">modules</div><div class="big">160</div>
  <div class="src">234 calls unresolvable statically, not counted as edges</div></div>
@@ -1878,7 +2029,7 @@ from a file the running system wrote. 2026-08-01 15:17 UTC</p>
 <p class="sub">Every rung is TWO claims wearing one name: a POWER it gains, and a BOUND on the
 hazard that power creates. Step through them. What is already earned stays lit beneath, because the
 point is what accumulates; what is not built yet says what it is waiting for.</p>
-<div class="climbwrap"><nav id="crail" aria-label="step through the rungs"><button data-c="0" aria-current="false" data-st="proven">R0</button><button data-c="1" aria-current="false" data-st="proven">R1</button><button data-c="2" aria-current="false" data-st="proven">R1.5</button><button data-c="3" aria-current="false" data-st="partial">R2</button><button data-c="4" aria-current="step" data-st="proven">R3</button><button data-c="5" aria-current="false" data-st="future">R4</button><button data-c="6" aria-current="false" data-st="future">R5</button><button data-c="7" aria-current="false" data-st="future">R6</button><button data-c="8" aria-current="false" data-st="future">R7</button><button data-c="9" aria-current="false" data-st="future">R8</button><button data-c="10" aria-current="false" data-st="future">R9</button></nav><ol id="climb" data-frame="4" data-rest="4"><li class="layer" data-k="0" data-st="proven"><div class="lhead"><span class="rid">R0</span><span class="rtitle">THE LOOP SURVIVES</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Before anything can think, it has to still be there tomorrow. This rung is only about staying alive across being switched off - it adds no ability at all, and it is first because everything above it is worthless without it.</p><p class="rev">246.9 h unbroken, 188 ticks, 0 crashes - the gate is 72 h</p></li><li class="layer" data-k="1" data-st="proven"><div class="lhead"><span class="rid">R1</span><span class="rtitle">THE DECISION IS READ</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">There were two loops here: one that thought and could not act, one that acted and could not think. This rung is the wire between them - the thinking loop&#x27;s answer is now read first. It is a small change and it is the moment deliberation stopped being decoration.</p><p class="rev">33 of 33 comparable ticks chose differently from the floor</p></li><li class="layer" data-k="2" data-st="proven"><div class="lhead"><span class="rid">R1.5</span><span class="rtitle">THE DECISION IS PARSED</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.</p><p class="rev">53 parses, 3 receipts, 0 swallowed</p></li><li class="layer" data-k="3" data-st="partial"><div class="lhead"><span class="rid">R2</span><span class="rtitle">THE DECISION IS A TOOL CALL</span><span class="rstat s-partial">PARTIAL</span></div><p class="rplain">An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.</p><p class="rev">28/20 invocations, 1/3 tools, 2/8 situations</p></li><li class="layer" data-k="4" data-st="proven"><div class="lhead"><span class="rid">R3</span><span class="rtitle">THE OUTCOME IS REMEMBERED</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.</p><p class="rev">48 graded outcomes, 3 non-repeats, bound PASS over 31 paired witnesses</p></li><li class="layer" data-k="5" data-st="future"><div class="lhead"><span class="rid">R4</span><span class="rtitle">PERCEPTION BECOMES A CHOICE</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Fixed inputs are not perception. This is where the system starts deciding what it wants to know - which is also the first point at which it can send something out of the machine, and that is why it is fenced before it is built.</p><p class="rev">&mdash; waiting on dispatch (built, canary-gated, unwired)</p></li><li class="layer" data-k="6" data-st="future"><div class="lhead"><span class="rid">R5</span><span class="rtitle">RESEARCH</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">A summary cannot be wrong, which is exactly why it cannot be useful. Research means committing to something that reality is allowed to kill - so the test of this rung is not what it found, it is whether it ever admitted being wrong.</p><p class="rev">&mdash; waiting on R4 (egress) and R3 (storing what came back)</p></li><li class="layer" data-k="7" data-st="future"><div class="lhead"><span class="rid">R6</span><span class="rtitle">REFLECTION</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Storage and recall already work. This is the step where something notices what several memories mean together - and the hard requirement is that the new thought keeps a thread back to what produced it.</p><p class="rev">&mdash; waiting on R5 (material worth linking)</p></li><li class="layer" data-k="8" data-st="future"><div class="lhead"><span class="rid">R7</span><span class="rtitle">THE COUNCIL ON ITS OWN PLANS</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">This is what it means for a system to be able to disagree with itself. It is also the easiest thing in the whole ladder to fake, because a review that always approves looks exactly like a review that is never needed.</p><p class="rev">&mdash; waiting on R3 through R6 running with a track record</p></li><li class="layer" data-k="9" data-st="future"><div class="lhead"><span class="rid">R8</span><span class="rtitle">THE DRIVE</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Wanting something is not a feature you add; it is a target you can be tricked by. This rung stays shut, and the reason it stays shut is that nobody has solved it - not this project and not the published literature.</p><p class="rev">&mdash; waiting on an unsolved research problem, not code</p></li><li class="layer" data-k="10" data-st="future"><div class="lhead"><span class="rid">R9</span><span class="rtitle">SELF-MODIFICATION</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">The top of the ladder, named here so that nobody arrives at it by accident. It is listed as closed rather than omitted, because a ladder that stops before its last rung invites someone to assume there is nothing above.</p><p class="rev">&mdash; waiting on every rung below it, and a statable hazard</p></li></ol></div>
+<div class="climbwrap"><nav id="crail" aria-label="step through the rungs"><button data-c="0" aria-current="false" data-st="proven">R0</button><button data-c="1" aria-current="false" data-st="proven">R1</button><button data-c="2" aria-current="false" data-st="proven">R1.5</button><button data-c="3" aria-current="false" data-st="partial">R2</button><button data-c="4" aria-current="step" data-st="proven">R3</button><button data-c="5" aria-current="false" data-st="future">R4</button><button data-c="6" aria-current="false" data-st="future">R5</button><button data-c="7" aria-current="false" data-st="future">R6</button><button data-c="8" aria-current="false" data-st="future">R7</button><button data-c="9" aria-current="false" data-st="future">R8</button><button data-c="10" aria-current="false" data-st="future">R9</button></nav><ol id="climb" data-frame="4" data-rest="4"><li class="layer" data-k="0" data-st="proven"><div class="lhead"><span class="rid">R0</span><span class="rtitle">THE LOOP SURVIVES</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Before anything can think, it has to still be there tomorrow. This rung is only about staying alive across being switched off - it adds no ability at all, and it is first because everything above it is worthless without it.</p><p class="rev">246.9 h unbroken, 188 ticks, 0 crashes - the gate is 72 h</p></li><li class="layer" data-k="1" data-st="proven"><div class="lhead"><span class="rid">R1</span><span class="rtitle">THE DECISION IS READ</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">There were two loops here: one that thought and could not act, one that acted and could not think. This rung is the wire between them - the thinking loop&#x27;s answer is now read first. It is a small change and it is the moment deliberation stopped being decoration.</p><p class="rev">49 of 49 comparable ticks chose differently from the floor</p></li><li class="layer" data-k="2" data-st="proven"><div class="lhead"><span class="rid">R1.5</span><span class="rtitle">THE DECISION IS PARSED</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.</p><p class="rev">69 parses, 3 receipts, 0 swallowed</p></li><li class="layer" data-k="3" data-st="partial"><div class="lhead"><span class="rid">R2</span><span class="rtitle">THE DECISION IS A TOOL CALL</span><span class="rstat s-partial">PARTIAL</span></div><p class="rplain">An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.</p><p class="rev">42/20 invocations, 2/3 tools, 3/8 situations</p></li><li class="layer" data-k="4" data-st="proven"><div class="lhead"><span class="rid">R3</span><span class="rtitle">THE OUTCOME IS REMEMBERED</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.</p><p class="rev">63 graded outcomes, 3 non-repeats, bound PASS over 45 paired witnesses</p></li><li class="layer" data-k="5" data-st="future"><div class="lhead"><span class="rid">R4</span><span class="rtitle">PERCEPTION BECOMES A CHOICE</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Fixed inputs are not perception. This is where the system starts deciding what it wants to know - which is also the first point at which it can send something out of the machine, and that is why it is fenced before it is built.</p><p class="rev">&mdash; waiting on dispatch (built, canary-gated, unwired)</p></li><li class="layer" data-k="6" data-st="future"><div class="lhead"><span class="rid">R5</span><span class="rtitle">RESEARCH</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">A summary cannot be wrong, which is exactly why it cannot be useful. Research means committing to something that reality is allowed to kill - so the test of this rung is not what it found, it is whether it ever admitted being wrong.</p><p class="rev">&mdash; waiting on R4 (egress) and R3 (storing what came back)</p></li><li class="layer" data-k="7" data-st="future"><div class="lhead"><span class="rid">R6</span><span class="rtitle">REFLECTION</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Storage and recall already work. This is the step where something notices what several memories mean together - and the hard requirement is that the new thought keeps a thread back to what produced it.</p><p class="rev">&mdash; waiting on R5 (material worth linking)</p></li><li class="layer" data-k="8" data-st="future"><div class="lhead"><span class="rid">R7</span><span class="rtitle">THE COUNCIL ON ITS OWN PLANS</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">This is what it means for a system to be able to disagree with itself. It is also the easiest thing in the whole ladder to fake, because a review that always approves looks exactly like a review that is never needed.</p><p class="rev">&mdash; waiting on R3 through R6 running with a track record</p></li><li class="layer" data-k="9" data-st="future"><div class="lhead"><span class="rid">R8</span><span class="rtitle">THE DRIVE</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Wanting something is not a feature you add; it is a target you can be tricked by. This rung stays shut, and the reason it stays shut is that nobody has solved it - not this project and not the published literature.</p><p class="rev">&mdash; waiting on an unsolved research problem, not code</p></li><li class="layer" data-k="10" data-st="future"><div class="lhead"><span class="rid">R9</span><span class="rtitle">SELF-MODIFICATION</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">The top of the ladder, named here so that nobody arrives at it by accident. It is listed as closed rather than omitted, because a ladder that stops before its last rung invites someone to assume there is nothing above.</p><p class="rev">&mdash; waiting on every rung below it, and a statable hazard</p></li></ol></div>
 <p class="src">state/ladder.json &mdash; <code>python -m aea.tooling.ladder</code>, measured from
 live state on every build. A dash is a measurement: it means this repository cannot prove that rung
 today, and saying so is worth more than a number that rounds up.</p>
@@ -1908,6 +2059,7 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 <br><br>github.com/Leyber91
 </div>
 </div>
+<script>window.__CLIMB_NARR=["Start with the least impressive claim available: that it is still here tomorrow. Everything above this is worthless without it.", "There were two loops - one that thought and could not act, one that acted and could not think. This is the wire between them.", "Between deciding and doing sits a translation, and it is where systems like this quietly break. This rung does only the translation, so a mishearing leaves a trace.", "An intention is a sentence, and nothing executes a sentence. Here it becomes an instruction - and a wall goes up between what the system says and what it may hand to a tool.", "Until now it remembered what it MEANT to do. Improvement is the gap between that and what happened, so this is the first rung where the word learning is defensible.", "The fork: let it choose what to look at, and the query itself becomes a way out of the machine. A council refused this design three times. It waits for a split dispatcher.", "A summary cannot be wrong, which is exactly why it cannot be useful. The test of this rung is not what it finds - it is whether it ever admits being wrong.", "Storage and recall already work. This is where something notices what several memories mean together, and must keep a thread back to what produced it.", "The easiest thing on this ladder to fake, because a review that always approves looks exactly like a review that was never needed.", "Wanting is not a feature you add; it is a target you can be tricked by. This stays shut, and it stays shut because nobody has solved it - not this project, not the literature.", "Named here so that nobody arrives at it by accident. Listed as closed rather than omitted, because a ladder that stops before its last rung invites the wrong assumption."];</script>
 <script>
 /* THE CLIMB. One integer over frozen layout, exactly like the graph reveal - stepping backward
    costs nothing and nothing re-flows. Auto-advance runs once and stops the moment the reader
@@ -1917,10 +2069,21 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
   var cl=document.getElementById('climb'), cr=document.getElementById('crail');
   if(!cl||!cr) return;
   var n=cl.children.length, timer=null;
+  var org=document.getElementById('org'), cap=document.getElementById('cap');
+  var NARR=window.__CLIMB_NARR||[];
   function setC(k){
     cl.setAttribute('data-frame',k);
     var bs=cr.querySelectorAll('button');
     for(var i=0;i<bs.length;i++) bs[i].setAttribute('aria-current', i==k?'step':'false');
+    /* THE GRAPH GROWS WITH THE RAIL. This is the wire that makes the climb and the organism ONE
+       instrument instead of two sections sharing a page: stepping a rung reveals the functions that
+       rung actually added, outward from the wake. Coordinates never move - only this integer. */
+    /* ITS OWN ATTRIBUTE. `data-frame` already means "hop depth" to the reveal above, and two
+       readers writing one attribute with two vocabularies is how the graph ended up blank: the
+       older init resets data-mode to 'hop' on load, and the frame numbers do not even share a
+       range. Detached where they must be, wired where it matters. */
+    if(org){ org.setAttribute('data-mode','climb'); org.setAttribute('data-climb',k); }
+    if(cap && NARR[k]) cap.textContent = NARR[k];
   }
   cr.addEventListener('click',function(e){
     var b=e.target.closest('button'); if(!b) return;

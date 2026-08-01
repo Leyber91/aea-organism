@@ -88,7 +88,7 @@ def _load(name, default):
         return default
 
 
-def organism() -> dict:
+def organism(lr=None) -> dict:
     """The live call graph, and the field it sits inside. Computed, not stored."""
     from aea.tooling import assembly
     mods = assembly.scan()
@@ -122,7 +122,7 @@ def organism() -> dict:
             for c in d["calls"]:
                 if c in live and c != src:
                     edges.append((src, c))
-    return dict(live=sorted(live), dead=sorted(allfns - live), edges=edges, depth=depth,
+    return dict(lr=lr, live=sorted(live), dead=sorted(allfns - live), edges=edges, depth=depth,
                 modules=len(mods), functions=len(allfns), unresolved=unresolved)
 
 
@@ -242,7 +242,14 @@ def _tree(org: dict) -> dict:
     except Exception:
         pass
     return dict(pos=pos, tree=tree, cross=cross, root=root, depth=depth, leaves=leaves,
-                sectors=secs, maxd=_maxd, rung=rung)
+                sectors=secs, maxd=_maxd, rung=rung, lr=(org or {}).get("lr") or {})
+
+
+def _lrb(T, child):
+    """A branch belongs to the rung of the node it ARRIVES at. Drawing an edge into a node that has
+    not been revealed is the visual form of claiming something exists before it was built."""
+    k = T.get("lr", {}).get(str(child).replace("aea.", "", 1))
+    return f' data-lr="{k}"' if k is not None else ""
 
 
 def _svg(org: dict, T: dict) -> str:
@@ -280,7 +287,8 @@ def _svg(org: dict, T: dict) -> str:
             continue
         x1, y1 = pos[p]; x2, y2 = pos[c]
         out.append(f'<path d="M{x1},{y1} Q{(x1+x2)/2:.0f},{(y1+y2)/2:.0f} {x2},{y2}" '
-                   f'class="branch" data-d="{T["depth"].get(c, 9)}"/>')
+                   f'class="branch" data-d="{T["depth"].get(c, 9)}"'
+                   f'{_lrb(T, c)}/>')
     for n, (x, y) in pos.items():
         d = T["depth"].get(n, 4)
         synth = ":" not in n
@@ -293,6 +301,8 @@ def _svg(org: dict, T: dict) -> str:
         style = ""
         rung = T.get("rung", {}).get(n)
         ra = f' data-r="{rung}"' if rung is not None else ""
+        _lk = T.get("lr", {}).get(n.replace("aea.", "", 1))
+        ra += f' data-lr="{_lk}"' if _lk is not None else ""
         out.append(f'<circle cx="{x}" cy="{y}" r="{r:.1f}" class="{cls}" data-d="{d}"{ra}{style}>'
                    f'<title>{n.replace("aea.","")}  (hop {d})</title></circle>')
     # LABEL THE FIRST RING - the functions the wake calls directly. These are the ones worth naming.
@@ -423,12 +433,21 @@ CLIMB_BASE_CSS = """
 """
 
 def build() -> str:
-    org = organism()
+    # THE MAP IS BUILT FIRST because organism() needs it - the graph is tagged as it is walked,
+    # not decorated afterwards. FUNCTION -> RUNG, lowest wins. Names are checked against the live
+    # call graph by ladder.verify_funcs(); a non-empty funcs_check.missing means the build is
+    # describing code that is not there.
+    lad = _load("ladder.json", {})
+    lr = {}
+    for _k, _r in enumerate(lad.get("rungs") or []):
+        for _f in (_r.get("funcs") or []):
+            lr.setdefault(_f, _k)
+    org = organism(lr)
     T = _tree(org)
     asm = _load("assembly.json", {})
     cen = _load("capability_census.json", {})
-    lad = _load("ladder.json", {})
     climb_html, climb_css = _climb(lad)
+    narr_json = json.dumps([str(r.get('beat') or '') for r in (lad.get('rungs') or [])])
     hist = []
     try:
         p = os.path.join(str(grid.STATE), "assembly_history.jsonl")
@@ -503,7 +522,26 @@ def build() -> str:
         frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .node[data-d="{k}"]{{fill:var(--amber)}}')
         frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .branch[data-d="{k}"]{{stroke:var(--amber);opacity:.92}}')
     frame_css = "\n".join(frame_css)
-    frame_css += CLIMB_BASE_CSS + climb_css
+    # GROWTH CSS. At climb frame k: everything rungs <= k added is drawn, what THIS rung added is
+    # amber and larger, and what a later rung will add is not drawn at all. Unclaimed functions stay
+    # faint throughout - the body the rungs are built from.
+    grow = ['#org[data-mode="climb"] .node{fill:#222930;opacity:.26}',
+            '#org[data-mode="climb"] .branch{opacity:.05}',
+            '#org[data-mode="climb"] .cross{opacity:0}',
+            '#org[data-mode="climb"] .node[data-lr]{opacity:0}',
+            '#org[data-mode="climb"] .branch[data-lr]{opacity:0}',
+            '#org[data-mode="climb"] .node,#org[data-mode="climb"] .branch'
+            '{transition:opacity .5s ease,fill .5s ease,r .5s ease,stroke .5s ease}']
+    _nr = len(lad.get("rungs") or [])
+    for k in range(_nr):
+        for d in range(k + 1):
+            grow.append('#org[data-climb="%d"] .node[data-lr="%d"]'
+                        '{opacity:.95;fill:%s}' % (k, d, "var(--amber)" if d == k else "#818b96"))
+            grow.append('#org[data-climb="%d"] .branch[data-lr="%d"]'
+                        '{opacity:%s;stroke:%s}' % (k, d, ".85" if d == k else ".30",
+                                                    "var(--amber)" if d == k else "#4d555e"))
+        grow.append('#org[data-climb="%d"] .node[data-lr="%d"]{r:4.4px}' % (k, k))
+    frame_css += CLIMB_BASE_CSS + climb_css + "\n" + "\n".join(grow)
 
     # THE CAPTION IS NOT OPTIONAL. The page honours prefers-reduced-motion, which kills the motion
     # channel entirely - so what changed must survive with zero animation, in words, measured.
@@ -699,6 +737,7 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 <br><br>github.com/Leyber91
 </div>
 </div>
+<script>window.__CLIMB_NARR={narr_json};</script>
 <script>
 /* THE CLIMB. One integer over frozen layout, exactly like the graph reveal - stepping backward
    costs nothing and nothing re-flows. Auto-advance runs once and stops the moment the reader
@@ -708,10 +747,21 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
   var cl=document.getElementById('climb'), cr=document.getElementById('crail');
   if(!cl||!cr) return;
   var n=cl.children.length, timer=null;
+  var org=document.getElementById('org'), cap=document.getElementById('cap');
+  var NARR=window.__CLIMB_NARR||[];
   function setC(k){{
     cl.setAttribute('data-frame',k);
     var bs=cr.querySelectorAll('button');
     for(var i=0;i<bs.length;i++) bs[i].setAttribute('aria-current', i==k?'step':'false');
+    /* THE GRAPH GROWS WITH THE RAIL. This is the wire that makes the climb and the organism ONE
+       instrument instead of two sections sharing a page: stepping a rung reveals the functions that
+       rung actually added, outward from the wake. Coordinates never move - only this integer. */
+    /* ITS OWN ATTRIBUTE. `data-frame` already means "hop depth" to the reveal above, and two
+       readers writing one attribute with two vocabularies is how the graph ended up blank: the
+       older init resets data-mode to 'hop' on load, and the frame numbers do not even share a
+       range. Detached where they must be, wired where it matters. */
+    if(org){{ org.setAttribute('data-mode','climb'); org.setAttribute('data-climb',k); }}
+    if(cap && NARR[k]) cap.textContent = NARR[k];
   }}
   cr.addEventListener('click',function(e){{
     var b=e.target.closest('button'); if(!b) return;

@@ -1,12 +1,17 @@
 {
  "schema": 1,
- "generated": "2026-08-01 15:08:26 UTC",
+ "generated": "2026-08-01 15:35:51 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
   3,
   8
  ],
+ "funcs_check": {
+  "checked": 31,
+  "missing": [],
+  "known": 1572
+ },
  "rungs": [
   {
    "id": "R0",
@@ -14,6 +19,7 @@
    "power": "One process holds a heartbeat, advances it every tick, and resumes at the right tick after being stopped.",
    "bound": "A stop leaves a clean recorded state rather than a crash; nothing is lost by being switched off.",
    "gate": "Runs 72 hours unattended, the heartbeat advances, and termination leaves a clean asleep state.",
+   "beat": "Start with the least impressive claim available: that it is still here tomorrow. Everything above this is worthless without it.",
    "plain": "Before anything can think, it has to still be there tomorrow. This rung is only about staying alive across being switched off - it adds no ability at all, and it is first because everything above it is worthless without it.",
    "why_first": "A capability that evaporates when the machine sleeps was never a capability.",
    "measured": {
@@ -21,13 +27,22 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 36,
-    "ticks": 388,
+    "boots": 44,
+    "ticks": 405,
     "first": "2026-07-10",
     "last": "2026-08-01",
     "met": true
    },
-   "status": "proven"
+   "status": "proven",
+   "funcs": [
+    "loop.live:main",
+    "loop.live:tick",
+    "loop.live:load_hb",
+    "loop.live:save_hb",
+    "loop.live:log",
+    "loop.live:now_iso",
+    "loop.live:run_script"
+   ]
   },
   {
    "id": "R1",
@@ -35,6 +50,7 @@
    "power": "The deliberating loop's chosen action is read by the acting loop before its own fallback ladder runs.",
    "bound": "A malformed or stale decision cannot crash the loop or bypass the staleness limit; the fallback answers instead.",
    "gate": "MIS-SPECIFIED AS WRITTEN. The original gate asks for an action the fallback could not produce, but the wake's surface is a strict subset of the fallback's, so no run can satisfy it. The reachable gate is: a tick where the wake's fresh choice DIFFERED from what the fallback would have returned at that same tick.",
+   "beat": "There were two loops - one that thought and could not act, one that acted and could not think. This is the wire between them.",
    "plain": "There were two loops here: one that thought and could not act, one that acted and could not think. This rung is the wire between them - the thinking loop's answer is now read first. It is a small change and it is the moment deliberation stopped being decoration.",
    "why_first": "Until something reads the decision, the reasoning is a diary entry.",
    "measured": {
@@ -52,13 +68,20 @@
     ],
     "subset": true,
     "stale_limit_s": 5400,
-    "last_why": "the wake chose read_your_state (3s ago)",
-    "decision_rows": 33,
-    "comparable": 33,
-    "differed": 33,
+    "last_why": "the wake chose brief (2s ago)",
+    "decision_rows": 49,
+    "comparable": 49,
+    "differed": 49,
     "met": true
    },
-   "status": "proven"
+   "status": "proven",
+   "funcs": [
+    "loop.live:choose_action",
+    "kernel.decide:choose",
+    "loop.live:_fallback_ladder",
+    "loop.live:_ladder_would_say",
+    "kernel.decide:latest"
+   ]
   },
   {
    "id": "R1.5",
@@ -66,16 +89,22 @@
    "power": "The wake's prose is parsed into a candidate tool call and validated against the declared schema before anything can act on it - and it does nothing else.",
    "bound": "An invalid parse is logged as a receipt, never swallowed. A decision that could not be understood must leave a trace saying so.",
    "gate": "50 ticks with valid parses logged, invalid logged as receipts, and none discarded silently.",
+   "beat": "Between deciding and doing sits a translation, and it is where systems like this quietly break. This rung does only the translation, so a mishearing leaves a trace.",
    "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
    "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
    "measured": {
-    "valid": 53,
+    "valid": 69,
     "receipts": 3,
-    "ticks": 56,
+    "ticks": 72,
     "swallowed": 0,
     "met": true
    },
-   "status": "proven"
+   "status": "proven",
+   "funcs": [
+    "kernel.decide:parse",
+    "kernel.decide:explain",
+    "loop.aea:move_from"
+   ]
   },
   {
    "id": "R2",
@@ -83,19 +112,30 @@
    "power": "The wake's own decision causes a real tool to run, unattended, across distinct situations, with the call and its arguments recorded.",
    "bound": "No string the wake wrote reaches a tool argument. The tool surface is a closed read-only allow-list; the boundary holds against a hostile chooser.",
    "gate": "WIRE readable from source; BOUND certified against a generated adversarial corpus; REACH at least 20 invocations across 3 tools and 8 distinct situations, each traceable from decision to argument to result to record.",
+   "beat": "An intention is a sentence, and nothing executes a sentence. Here it becomes an instruction - and a wall goes up between what the system says and what it may hand to a tool.",
    "plain": "An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.",
    "why_first": "This is the door every dormant part of the system sits behind.",
    "measured": {
     "wire": true,
     "bound_pct": null,
-    "invocations": 28,
-    "tools": 1,
-    "situations": 2,
+    "invocations": 42,
+    "tools": 2,
+    "situations": 3,
     "met": false,
-    "ledger_rows": 69,
-    "claimed_wake": 39
+    "ledger_rows": 83,
+    "claimed_wake": 53
    },
-   "status": "partial"
+   "status": "partial",
+   "funcs": [
+    "kernel.hands:invoke",
+    "kernel.hands:allowed",
+    "kernel.hands:_ledger",
+    "kernel.hands:_read_state",
+    "kernel.hands:_what_to_try",
+    "kernel.hands:_my_record",
+    "kernel.hands:_ledger_path",
+    "loop.live:_post_for"
+   ]
   },
   {
    "id": "R3",
@@ -103,23 +143,34 @@
    "power": "After each action the system stores what it decided, what it called, what came back, and whether those matched - and a later decision demonstrably uses that record.",
    "bound": "A stored outcome may not disagree with the ledger. A false 'it worked' is worse than storing nothing, because the system then learns confidently in the wrong direction.",
    "gate": "Every stored outcome matches the ledger, and a tick can be shown where the system did NOT repeat something its own record says keeps failing.",
+   "beat": "Until now it remembered what it MEANT to do. Improvement is the gap between that and what happened, so this is the first rung where the word learning is defensible.",
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 71,
-    "graded": 48,
+    "outcomes": 86,
+    "graded": 63,
     "suppressions": 9,
     "not_repeated": 3,
     "bound": "PASS",
-    "bound_pairs": 31,
+    "bound_pairs": 45,
     "met": true,
-    "entity_rows": 55,
-    "disagreements": 2,
+    "entity_rows": 70,
+    "disagreements": 3,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
     "met_caveat": "power demonstrated and bound certified on arm B; arm A carries no traffic until R2-REACH is non-zero"
    },
-   "status": "proven"
+   "status": "proven",
+   "funcs": [
+    "kernel.outcomes:build",
+    "kernel.outcomes:write",
+    "kernel.outcomes:require",
+    "kernel.outcomes:verdict_for",
+    "kernel.outcomes:suppressed",
+    "kernel.outcomes:read",
+    "kernel.cause:classify",
+    "loop.live:_record_outcome"
+   ]
   },
   {
    "id": "R4",
@@ -127,10 +178,12 @@
    "power": "What the system looks at next is chosen by the previous tick, not fixed in advance.",
    "bound": "THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound string while untrusted text is already in context. No byte of any outbound query may originate outside a closed topic table.",
    "gate": "Across a week the queries are not near-duplicates; and a hostile chooser driving the intent vocabulary cannot get a single byte of its own into an outbound request.",
+   "beat": "The fork: let it choose what to look at, and the query itself becomes a way out of the machine. A council refused this design three times. It waits for a split dispatcher.",
    "plain": "Fixed inputs are not perception. This is where the system starts deciding what it wants to know - which is also the first point at which it can send something out of the machine, and that is why it is fenced before it is built.",
    "blocked_on": "dispatch (built, canary-gated, unwired)",
    "measured": {},
-   "status": "future"
+   "status": "future",
+   "funcs": []
   },
   {
    "id": "R5",
@@ -138,10 +191,12 @@
    "power": "A falsifiable hypothesis stated before searching, sources kept with what they said, summarised against the hypothesis, ending in survives, dies, or forks - with a numeric stopping rule.",
    "bound": "A FABRICATED SOURCE. Every citation must resolve to bytes that were actually fetched, hashed at fetch time. A research organ is the first component with a motive to invent a reference.",
    "gate": "Five runs in which at least one hypothesis DIED, and every citation resolves to a stored artefact with a matching hash.",
+   "beat": "A summary cannot be wrong, which is exactly why it cannot be useful. The test of this rung is not what it finds - it is whether it ever admits being wrong.",
    "plain": "A summary cannot be wrong, which is exactly why it cannot be useful. Research means committing to something that reality is allowed to kill - so the test of this rung is not what it found, it is whether it ever admitted being wrong.",
    "blocked_on": "R4 (egress) and R3 (storing what came back)",
    "measured": {},
-   "status": "future"
+   "status": "future",
+   "funcs": []
   },
   {
    "id": "R6",
@@ -149,10 +204,12 @@
    "power": "Derive a memory from several memories, store it competing with its own sources, and retrieve it later in a real decision.",
    "bound": "UNTRACEABLE PROVENANCE. A derived memory that cannot name where it came from is an unfalsifiable fact that will be cited forever and can never be checked.",
    "gate": "A reflection is retrieved and used in a later decision, and every one of its sources can be walked back to the memory it came from.",
+   "beat": "Storage and recall already work. This is where something notices what several memories mean together, and must keep a thread back to what produced it.",
    "plain": "Storage and recall already work. This is the step where something notices what several memories mean together - and the hard requirement is that the new thought keeps a thread back to what produced it.",
    "blocked_on": "R5 (material worth linking)",
    "measured": {},
-   "status": "future"
+   "status": "future",
+   "funcs": []
   },
   {
    "id": "R7",
@@ -160,10 +217,12 @@
    "power": "Low confidence or flagged stakes convene an adversarial review of the system's own plan before it acts, with the adversary as a held seat.",
    "bound": "THEATRE. A council that never stops anything, or one that fails whenever its subject fails, is ceremony. Independence has to be demonstrated, not assumed.",
    "gate": "At least one action the council STOPPED with a legible reason; the seats run on different models from the subject and from each other; and a deliberately bad plan must produce a STOP - the positive control, without which a never-firing gate and a world with nothing to stop look identical.",
+   "beat": "The easiest thing on this ladder to fake, because a review that always approves looks exactly like a review that was never needed.",
    "plain": "This is what it means for a system to be able to disagree with itself. It is also the easiest thing in the whole ladder to fake, because a review that always approves looks exactly like a review that is never needed.",
    "blocked_on": "R3 through R6 running with a track record",
    "measured": {},
-   "status": "future"
+   "status": "future",
+   "funcs": []
   },
   {
    "id": "R8",
@@ -171,10 +230,12 @@
    "power": "Something that makes it start, rather than waiting to be started.",
    "bound": "NOT WRITEABLE YET. Any measurable proxy for a goal that the system can influence, it will eventually optimise instead of the goal. Specification gaming is the best-documented failure in this literature and there is no known mechanism that avoids it here.",
    "gate": "R3-R7 running for a month with a person reading the ledger, and at least one instance where the system chose NOT to act. A system that has never declined has not demonstrated judgement, and a drive without demonstrated restraint is the worst available move.",
+   "beat": "Wanting is not a feature you add; it is a target you can be tricked by. This stays shut, and it stays shut because nobody has solved it - not this project, not the literature.",
    "plain": "Wanting something is not a feature you add; it is a target you can be tricked by. This rung stays shut, and the reason it stays shut is that nobody has solved it - not this project and not the published literature.",
    "blocked_on": "an unsolved research problem, not code",
    "measured": {},
-   "status": "future"
+   "status": "future",
+   "funcs": []
   },
   {
    "id": "R9",
@@ -182,10 +243,12 @@
    "power": "It changes its own wiring.",
    "bound": "NOT WRITEABLE YET. A system that edits its own code can edit the thing that judges the edit.",
    "gate": "Everything below, honestly green, and a bound that can be stated. A rung whose hazard cannot yet be named must not be built.",
+   "beat": "Named here so that nobody arrives at it by accident. Listed as closed rather than omitted, because a ladder that stops before its last rung invites the wrong assumption.",
    "plain": "The top of the ladder, named here so that nobody arrives at it by accident. It is listed as closed rather than omitted, because a ladder that stops before its last rung invites someone to assume there is nothing above.",
    "blocked_on": "every rung below it, and a statable hazard",
    "measured": {},
-   "status": "future"
+   "status": "future",
+   "funcs": []
   }
  ]
 }

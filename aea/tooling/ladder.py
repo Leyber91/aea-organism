@@ -68,6 +68,7 @@ RUNGS = [
               "switched off.",
         gate="Runs 72 hours unattended, the heartbeat advances, and termination leaves a clean "
              "asleep state.",
+        beat='Start with the least impressive claim available: that it is still here tomorrow. Everything above this is worthless without it.',
         plain="Before anything can think, it has to still be there tomorrow. This rung is only "
               "about staying alive across being switched off - it adds no ability at all, and it is "
               "first because everything above it is worthless without it.",
@@ -83,6 +84,7 @@ RUNGS = [
              "produce, but the wake's surface is a strict subset of the fallback's, so no run can "
              "satisfy it. The reachable gate is: a tick where the wake's fresh choice DIFFERED from "
              "what the fallback would have returned at that same tick.",
+        beat='There were two loops - one that thought and could not act, one that acted and could not think. This is the wire between them.',
         plain="There were two loops here: one that thought and could not act, one that acted and "
               "could not think. This rung is the wire between them - the thinking loop's answer is "
               "now read first. It is a small change and it is the moment deliberation stopped being "
@@ -101,6 +103,7 @@ RUNGS = [
               "be understood must leave a trace saying so.",
         gate="50 ticks with valid parses logged, invalid logged as receipts, and none discarded "
              "silently.",
+        beat='Between deciding and doing sits a translation, and it is where systems like this quietly break. This rung does only the translation, so a mishearing leaves a trace.',
         plain="Between deciding and doing there is a translation step, and it is where most systems "
               "of this kind quietly break: the reasoning says one thing, the parser hears another, "
               "and nothing records the gap. This rung does only the translation, so that when it is "
@@ -116,6 +119,7 @@ RUNGS = [
         gate="WIRE readable from source; BOUND certified against a generated adversarial corpus; "
              "REACH at least 20 invocations across 3 tools and 8 distinct situations, each "
              "traceable from decision to argument to result to record.",
+        beat='An intention is a sentence, and nothing executes a sentence. Here it becomes an instruction - and a wall goes up between what the system says and what it may hand to a tool.',
         plain="An intention is a sentence, and nothing can execute a sentence. This rung turns a "
               "decision into an instruction a machine actually carries out - and at the same time "
               "puts a wall between what the system says and what it is allowed to hand to a tool.",
@@ -129,6 +133,7 @@ RUNGS = [
               "storing nothing, because the system then learns confidently in the wrong direction.",
         gate="Every stored outcome matches the ledger, and a tick can be shown where the system did "
              "NOT repeat something its own record says keeps failing.",
+        beat='Until now it remembered what it MEANT to do. Improvement is the gap between that and what happened, so this is the first rung where the word learning is defensible.',
         plain="Until now it remembered what it meant to do, never what happened. Improvement is "
               "exactly the gap between those two, so this is the first rung where the word learning "
               "is defensible - and only in the narrow sense that a prediction was made and checked.",
@@ -142,6 +147,7 @@ RUNGS = [
               "originate outside a closed topic table.",
         gate="Across a week the queries are not near-duplicates; and a hostile chooser driving the "
              "intent vocabulary cannot get a single byte of its own into an outbound request.",
+        beat='The fork: let it choose what to look at, and the query itself becomes a way out of the machine. A council refused this design three times. It waits for a split dispatcher.',
         plain="Fixed inputs are not perception. This is where the system starts deciding what it "
               "wants to know - which is also the first point at which it can send something out of "
               "the machine, and that is why it is fenced before it is built.",
@@ -157,6 +163,7 @@ RUNGS = [
               "to invent a reference.",
         gate="Five runs in which at least one hypothesis DIED, and every citation resolves to a "
              "stored artefact with a matching hash.",
+        beat='A summary cannot be wrong, which is exactly why it cannot be useful. The test of this rung is not what it finds - it is whether it ever admits being wrong.',
         plain="A summary cannot be wrong, which is exactly why it cannot be useful. Research means "
               "committing to something that reality is allowed to kill - so the test of this rung is "
               "not what it found, it is whether it ever admitted being wrong.",
@@ -170,6 +177,7 @@ RUNGS = [
               "unfalsifiable fact that will be cited forever and can never be checked.",
         gate="A reflection is retrieved and used in a later decision, and every one of its sources "
              "can be walked back to the memory it came from.",
+        beat='Storage and recall already work. This is where something notices what several memories mean together, and must keep a thread back to what produced it.',
         plain="Storage and recall already work. This is the step where something notices what "
               "several memories mean together - and the hard requirement is that the new thought "
               "keeps a thread back to what produced it.",
@@ -185,6 +193,7 @@ RUNGS = [
              "different models from the subject and from each other; and a deliberately bad plan "
              "must produce a STOP - the positive control, without which a never-firing gate and a "
              "world with nothing to stop look identical.",
+        beat='The easiest thing on this ladder to fake, because a review that always approves looks exactly like a review that was never needed.',
         plain="This is what it means for a system to be able to disagree with itself. It is also "
               "the easiest thing in the whole ladder to fake, because a review that always approves "
               "looks exactly like a review that is never needed.",
@@ -201,6 +210,7 @@ RUNGS = [
              "where the system chose NOT to act. A system that has never declined has not "
              "demonstrated judgement, and a drive without demonstrated restraint is the worst "
              "available move.",
+        beat='Wanting is not a feature you add; it is a target you can be tricked by. This stays shut, and it stays shut because nobody has solved it - not this project, not the literature.',
         plain="Wanting something is not a feature you add; it is a target you can be tricked by. "
               "This rung stays shut, and the reason it stays shut is that nobody has solved it - "
               "not this project and not the published literature.",
@@ -213,12 +223,69 @@ RUNGS = [
               "the edit.",
         gate="Everything below, honestly green, and a bound that can be stated. A rung whose hazard "
              "cannot yet be named must not be built.",
+        beat='Named here so that nobody arrives at it by accident. Listed as closed rather than omitted, because a ladder that stops before its last rung invites the wrong assumption.',
         plain="The top of the ladder, named here so that nobody arrives at it by accident. It is "
               "listed as closed rather than omitted, because a ladder that stops before its last "
               "rung invites someone to assume there is nothing above.",
         blocked_on="every rung below it, and a statable hazard",
     ),
 ]
+
+
+
+# =================================================================================================
+# WHICH FUNCTIONS CARRY WHICH RUNG. The wire that lets the published page draw the organism GROWING
+# as the ladder is climbed, rather than showing a finished shape and a separate list beside it.
+#
+# The attribution is a DESIGN STATEMENT - a rung is an idea, and a call graph only knows edges, so
+# no derivation can produce this. What is NOT a judgement is whether a named function exists, and
+# `verify_funcs()` checks every one against the live graph at build time. A name that resolves to
+# nothing is reported, never dropped: an empty list read as an empty world has cost this repo three
+# times already.
+#
+# R4-R9 DECLARE NOTHING. They are unbuilt, so they add no functions, so the growth stops exactly
+# where the work stops - the same reason the animation rests on the highest earned rung instead of
+# the last one.
+# =================================================================================================
+RUNG_FUNCS = {
+    "R0": ["loop.live:main", "loop.live:tick", "loop.live:load_hb", "loop.live:save_hb",
+           "loop.live:log", "loop.live:now_iso", "loop.live:run_script"],
+    "R1": ["loop.live:choose_action", "kernel.decide:choose", "loop.live:_fallback_ladder",
+           "loop.live:_ladder_would_say", "kernel.decide:latest"],
+    "R1.5": ["kernel.decide:parse", "kernel.decide:explain", "loop.aea:move_from"],
+    "R2": ["kernel.hands:invoke", "kernel.hands:allowed", "kernel.hands:_ledger",
+           "kernel.hands:_read_state", "kernel.hands:_what_to_try", "kernel.hands:_my_record",
+           "kernel.hands:_ledger_path", "loop.live:_post_for"],
+    "R3": ["kernel.outcomes:build", "kernel.outcomes:write", "kernel.outcomes:require",
+           "kernel.outcomes:verdict_for", "kernel.outcomes:suppressed", "kernel.outcomes:read",
+           "kernel.cause:classify", "loop.live:_record_outcome"],
+    "R4": [], "R5": [], "R6": [], "R7": [], "R8": [], "R9": [],
+}
+
+
+def verify_funcs() -> dict:
+    """Every declared name resolved against the live call graph. Misses are RETURNED, not dropped.
+
+    A rung that claims a function which does not exist is making a claim about code that is not
+    there, and that is exactly the kind of quiet decay this whole file exists to catch."""
+    try:
+        from aea.tooling import assembly
+        # THE MODULE VALUE IS {path, defs}, NOT A MAP OF FUNCTIONS. The first version iterated the
+        # outer dict and built keys from "path" and "defs", so all 31 declared names reported
+        # missing - a 31-of-31 miss is a format mismatch announcing itself, which is exactly why the
+        # check reports the names instead of quietly returning a count.
+        #
+        # Graph keys carry the  prefix; the page strips it for display, and the declarations
+        # above are written in the DISPLAY form because that is what a reader of the page sees.
+        known = set()
+        for mod, d in (assembly.scan() or {}).items():
+            for fn in ((d or {}).get("defs") or {}):
+                known.add("%s:%s" % (mod.replace("aea.", "", 1), fn))
+    except Exception as e:
+        return dict(checked=0, missing=[], error="%s: %s" % (type(e).__name__, str(e)[:90]))
+    missing = [n for names in RUNG_FUNCS.values() for n in names if n not in known]
+    return dict(checked=sum(len(v) for v in RUNG_FUNCS.values()), missing=sorted(missing),
+                known=len(known))
 
 
 # =================================================================================================
@@ -500,12 +567,14 @@ def build() -> dict:
     out = []
     for r in RUNGS:
         m = MEASURE[r["id"]]() if r["id"] in MEASURE else {}
-        out.append(dict(r, measured=m, status=status_for(r["id"], m)))
+        out.append(dict(r, measured=m, status=status_for(r["id"], m),
+                        funcs=RUNG_FUNCS.get(r["id"], [])))
     # STAMPED HERE, not via a grid helper I assumed existed. `grid.now_iso` is not a thing, and the
     # hasattr guard silently produced None - a field that reads as "unmeasured" when it was only
     # ever "misspelled". A fallback that hides a typo is worse than the crash it prevents.
     doc = dict(schema=1, generated=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
-               gate_hours=GATE_HOURS, reach_gate=list(REACH_GATE), rungs=out)
+               gate_hours=GATE_HOURS, reach_gate=list(REACH_GATE),
+               funcs_check=verify_funcs(), rungs=out)
     grid.atomic_save_json(os.path.join(grid.STATE, LADDER_JSON), doc, indent=1)
     return doc
 
