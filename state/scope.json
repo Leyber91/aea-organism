@@ -1,0 +1,485 @@
+{
+ "findings": [
+  {
+   "kind": "import-bound-write",
+   "file": "aea/bench/bench_core.py",
+   "line": 363,
+   "snippet": "grid.atomic_save_json(RUNS_FP, st)",
+   "note": "writes through RUNS_FP, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/bench/bench_core.py",
+   "line": 359,
+   "snippet": "grid.atomic_save_json(RUNS_FP, st)",
+   "note": "writes through RUNS_FP, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/bench/bench_core.py",
+   "line": 394,
+   "snippet": "grid.atomic_save_json(RUNS_FP + \".1\", st)",
+   "note": "writes through RUNS_FP, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/capability_census.py",
+   "line": 191,
+   "snippet": "grid.atomic_save_json(OUT, report, indent=2)   # readers (energy.ladder per draw) must never see a torn ",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/capacity.py",
+   "line": 176,
+   "snippet": "grid.atomic_save_json(OUT, report, indent=2)",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "mutable-module-state",
+   "file": "aea/energy/energy.py",
+   "line": 192,
+   "snippet": "_STALE_SAID[\"said\"] = True",
+   "note": "assigns into module-level _STALE_SAID[...] from inside a function",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/energy.py",
+   "line": 56,
+   "snippet": "grid.atomic_save_json(USAGE, u, indent=1)",
+   "note": "writes through USAGE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/extensive_census.py",
+   "line": 306,
+   "snippet": "grid.atomic_save_json(OUT, report, indent=1)",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/model_fitness.py",
+   "line": 106,
+   "snippet": "grid.atomic_save_json(OUT, report, indent=2)   # readers (energy.ladder / load_pool) must never see a to",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/probe.py",
+   "line": 109,
+   "snippet": "with open(OUT, \"w\", encoding=\"utf-8\") as f:",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/rodprobe.py",
+   "line": 200,
+   "snippet": "grid.atomic_save_json(CEILING, doc, indent=1)",
+   "note": "writes through CEILING, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/energy/rodprobe.py",
+   "line": 228,
+   "snippet": "grid.atomic_save_json(STORE, {\"schema\": \"aea.rods/1\",",
+   "note": "writes through STORE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/io/earcheck.py",
+   "line": 258,
+   "snippet": "grid.atomic_save_json(os.path.join(OUT, \"result.json\"),",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "global-write",
+   "file": "aea/io/speak.py",
+   "line": 59,
+   "snippet": "global _tts",
+   "note": "declares global _tts - process-wide state written from inside a call; two callers see each other's writes",
+   "severity": "REAL"
+  },
+  {
+   "kind": "mutable-module-state",
+   "file": "aea/io/speak.py",
+   "line": 274,
+   "snippet": "_CALL[0] += 1",
+   "note": "assigns into module-level _CALL[...] from inside a function",
+   "severity": "REAL"
+  },
+  {
+   "kind": "global-write",
+   "file": "aea/io/speak.py",
+   "line": 512,
+   "snippet": "global _FILLERS",
+   "note": "declares global _FILLERS - process-wide state written from inside a call; two callers see each other's writes",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/kernel/goals.py",
+   "line": 50,
+   "snippet": "grid.atomic_save_json(GOALS, doc)",
+   "note": "writes through GOALS, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "mutable-module-state",
+   "file": "aea/kernel/grid.py",
+   "line": 214,
+   "snippet": "_STAMP_CACHE[\"v\"] = dict(out)",
+   "note": "assigns into module-level _STAMP_CACHE[...] from inside a function",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/kernel/hands.py",
+   "line": 945,
+   "snippet": "grid.atomic_save_json(MEASURED, doc)",
+   "note": "writes through MEASURED, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/kernel/pulse.py",
+   "line": 25,
+   "snippet": "with open(EVENTS, \"a\", encoding=\"utf-8\") as f:",
+   "note": "writes through EVENTS, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/kernel/seats.py",
+   "line": 56,
+   "snippet": "grid.atomic_save_json(ROSTER, doc)",
+   "note": "writes through ROSTER, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/kernel/shadow.py",
+   "line": 557,
+   "snippet": "grid.atomic_save_json(KNOWN_GOOD, doc)",
+   "note": "writes through KNOWN_GOOD, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/kernel/shadow.py",
+   "line": 607,
+   "snippet": "grid.atomic_save_json(os.path.join(PROPOSALS, pid + \".json\"), rec, indent=1)",
+   "note": "writes through PROPOSALS, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/kernel/trust.py",
+   "line": 88,
+   "snippet": "grid.atomic_save_json(LEDGER, state, indent=2)",
+   "note": "writes through LEDGER, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "global-write",
+   "file": "aea/lab/pace.py",
+   "line": 86,
+   "snippet": "global _last_save",
+   "note": "declares global _last_save - process-wide state written from inside a call; two callers see each other's writes",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/lab/pace.py",
+   "line": 99,
+   "snippet": "grid.atomic_save_json(_PATH, doc)",
+   "note": "writes through _PATH, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "global-write",
+   "file": "aea/lab/parts/base.py",
+   "line": 175,
+   "snippet": "global _CAT",
+   "note": "declares global _CAT - process-wide state written from inside a call; two callers see each other's writes",
+   "severity": "REAL"
+  },
+  {
+   "kind": "global-write",
+   "file": "aea/lab/party.py",
+   "line": 827,
+   "snippet": "global CAST",
+   "note": "declares global CAST - process-wide state written from inside a call; two callers see each other's writes",
+   "severity": "REAL"
+  },
+  {
+   "kind": "global-write",
+   "file": "aea/lab/party.py",
+   "line": 834,
+   "snippet": "global GUESTS, LANG",
+   "note": "declares global GUESTS, LANG - process-wide state written from inside a call; two callers see each other's writes",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/lab/party.py",
+   "line": 1076,
+   "snippet": "grid.atomic_save_json(os.path.join(OUT, \"party.json\"), payload)",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/lab/recall.py",
+   "line": 194,
+   "snippet": "grid.atomic_save_json(CACHE, dict(fingerprint=fp, vectors=vecs))",
+   "note": "writes through CACHE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/loop/aea.py",
+   "line": 196,
+   "snippet": "json.dump(s, open(STATE_PATH, \"w\", encoding=\"utf-8\"), ensure_ascii=False, indent=2)",
+   "note": "writes through STATE_PATH, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "mutable-module-state",
+   "file": "aea/loop/live.py",
+   "line": 39,
+   "snippet": "_stop[\"now\"] = True",
+   "note": "assigns into module-level _stop[...] from inside a function",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/loop/live.py",
+   "line": 53,
+   "snippet": "grid.atomic_save_json(HEARTBEAT, hb, indent=2)     # kill-safe (review 2026-07-10)",
+   "note": "writes through HEARTBEAT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/loop/live.py",
+   "line": 58,
+   "snippet": "open(LOG, \"a\", encoding=\"utf-8\").write(line + \"\\n\")",
+   "note": "writes through LOG, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/loop/live.py",
+   "line": 644,
+   "snippet": "_instance = open(PIDLOCK, \"a+b\")",
+   "note": "writes through PIDLOCK, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/memory/consolidate.py",
+   "line": 61,
+   "snippet": "grid.atomic_save_json(STORE, s)           # kill-safe: temp + os.replace",
+   "note": "writes through STORE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/memory/index_codex.py",
+   "line": 46,
+   "snippet": "grid.atomic_save_json(INDEX, ix)",
+   "note": "writes through INDEX, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/memory/memory.py",
+   "line": 16,
+   "snippet": "def _save(m): grid.atomic_save_json(STORE, m)     # kill-safe (review 2026-07-10)",
+   "note": "writes through STORE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/mind/axes.py",
+   "line": 143,
+   "snippet": "grid.atomic_save_json(_FP(), st)",
+   "note": "writes through _FP, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/mind/council.py",
+   "line": 388,
+   "snippet": "grid.atomic_save_json(",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/mind/council.py",
+   "line": 544,
+   "snippet": "grid.atomic_save_json(os.path.join(OUT, \"last.json\"),",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/mind/pathfinder.py",
+   "line": 26,
+   "snippet": "def save(p): json.dump(p, open(PATHS, 'w', encoding='utf-8'), indent=2)",
+   "note": "writes through PATHS, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-time-work",
+   "file": "aea/organs/brief.py",
+   "line": 27,
+   "snippet": "PRIV = grid.load_json(\"private_today.json\", {})",
+   "note": "load_json() runs merely because the module was NAMED - an import for one function pays for all of them, and it cannot be sandboxed",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-time-work",
+   "file": "aea/organs/brief.py",
+   "line": 33,
+   "snippet": "_pd = PRIV.get(\"date\", \"\")",
+   "note": "get() runs merely because the module was NAMED - an import for one function pays for all of them, and it cannot be sandboxed",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-time-work",
+   "file": "aea/organs/brief.py",
+   "line": 50,
+   "snippet": "+ \"\\nINBOX SIGNAL:\\n- \" + \"\\n- \".join(PRIV.get(\"inbox_signal\", [])))",
+   "note": "get() runs merely because the module was NAMED - an import for one function pays for all of them, and it cannot be sandboxed",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-time-work",
+   "file": "aea/organs/brief.py",
+   "line": 49,
+   "snippet": "PRIVATE_BLOCK = (_hdr + \"\\nCALENDAR:\\n- \" + \"\\n- \".join(PRIV.get(\"calendar\", []))",
+   "note": "get() runs merely because the module was NAMED - an import for one function pays for all of them, and it cannot be sandboxed",
+   "severity": "REAL"
+  },
+  {
+   "kind": "global-write",
+   "file": "aea/organs/converse.py",
+   "line": 1007,
+   "snippet": "global _FLOOR",
+   "note": "declares global _FLOOR - process-wide state written from inside a call; two callers see each other's writes",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/organs/reflect.py",
+   "line": 184,
+   "snippet": "grid.atomic_save_json(SELF, self_, indent=1)",
+   "note": "writes through SELF, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/organs/talk.py",
+   "line": 49,
+   "snippet": "grid.atomic_save_json(STATE, s)",
+   "note": "writes through STATE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/organs/telegram_bridge.py",
+   "line": 85,
+   "snippet": "grid.atomic_save_json(STATE, st)",
+   "note": "writes through STATE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/organs/telegram_bridge.py",
+   "line": 61,
+   "snippet": "grid.atomic_save_json(STATE, st)",
+   "note": "writes through STATE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/server/controlroom.py",
+   "line": 701,
+   "snippet": "grid.atomic_save_json(LIVE_PID_FP, {\"pid\": p.pid, \"started\": time.strftime(\"%Y-%m-%d %H:%M:%S\")})",
+   "note": "writes through LIVE_PID_FP, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/server/controlroom.py",
+   "line": 710,
+   "snippet": "grid.atomic_save_json(LIVE_PID_FP, {})",
+   "note": "writes through LIVE_PID_FP, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/tooling/access.py",
+   "line": 182,
+   "snippet": "grid.atomic_save_json(OUT, res)",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/tooling/scout.py",
+   "line": 274,
+   "snippet": "grid.atomic_save_json(os.path.join(OUT, repo.replace(\"/\", \"_\") + \".json\"), doc, indent=1)",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "mutable-module-state",
+   "file": "aea/tooling/selfcheck.py",
+   "line": 173,
+   "snippet": "return _SCAN_CACHE.setdefault(key, sorted(set(hits)))",
+   "note": "_SCAN_CACHE.setdefault() mutates a MODULE-LEVEL container - it is shared by every caller in the process and survives between calls",
+   "severity": "REAL"
+  },
+  {
+   "kind": "mutable-module-state",
+   "file": "aea/tooling/selfcheck.py",
+   "line": 154,
+   "snippet": "return _SCAN_CACHE.setdefault(key, out)",
+   "note": "_SCAN_CACHE.setdefault() mutates a MODULE-LEVEL container - it is shared by every caller in the process and survives between calls",
+   "severity": "REAL"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/tooling/senses.py",
+   "line": 230,
+   "snippet": "grid.atomic_save_json(OUT, res)",
+   "note": "writes through OUT, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  },
+  {
+   "kind": "import-bound-write",
+   "file": "aea/tooling/transcripts.py",
+   "line": 202,
+   "snippet": "open(PAGE, \"w\", encoding=\"utf-8\").write(page(rs))",
+   "note": "writes through PAGE, a path bound to grid.STATE at IMPORT - no harness can redirect it, so test traffic lands in production (D48)",
+   "severity": "LOAD_BEARING"
+  }
+ ],
+ "files": 171
+}
