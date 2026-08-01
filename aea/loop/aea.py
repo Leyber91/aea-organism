@@ -105,8 +105,25 @@ def move_from(reasoning: str) -> str:
     # move would have been unreachable from the moment it was wired, and the log would have shown a
     # wake that simply never asked for arithmetic. `decide.parse` owns splitting name from argument;
     # this function's only job is to hand over what the core actually wrote.
+    # A MOVE THAT CARRIES A SELECTION IS ALSO RETURNED WHOLE, not just a FREE_ARG one.
+    #
+    # THE REGRESSION THIS FIXES, measured within minutes of causing it. `decide.parse` learned to
+    # split a MOVE line into head and argument so the wake could select an enum member - but THIS
+    # function runs FIRST and gates what ever reaches it. It normalised the whole line, so
+    # `read_your_state ladder.json` became `read_your_state_ladder_json`, matched nothing, and
+    # returned NONE. Twelve consecutive wake ticks produced NONE while their own prose said "Read
+    # the entity's live state to capture the actual evidence" - the intention was there every time
+    # and the first of two parsers discarded it.
+    #
+    # I fixed one parser and not the other, which is the same wrong-object shape as every other
+    # defect today: the edit landed on the object I named rather than the one that runs.
+    #
+    # THE LAYERING, stated so it is not re-broken: this function EXTRACTS what the core wrote;
+    # `decide.parse` is the authority that SPLITS and VALIDATES it against the closed tables. So
+    # anything whose head names a known move is handed over whole, and nothing here decides whether
+    # the argument is acceptable - that judgement belongs to exactly one place.
     head = re.sub(r"[^a-z0-9]+", "_", line.partition(" ")[0].lower()).strip("_")
-    if head in decide.FREE_ARG:
+    if head in decide.FREE_ARG or head in valid:
         return line
     return "NONE"
 

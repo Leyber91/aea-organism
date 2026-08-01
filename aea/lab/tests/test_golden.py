@@ -346,10 +346,53 @@ def check_kernel():
     return fails
 
 
+
+# =================================================================================================
+# THE DECISION CHAIN, FROZEN END TO END. What the core writes -> move_from -> decide.parse -> the
+# arguments a tool would receive. Frozen as a CHAIN because the defect it exists to catch is two
+# parsers disagreeing, which neither one's own test can see.
+#
+# The last three are hostile and must all land on the DEFAULT: that is the containment claim
+# ("no wake-written string reaches a tool argument") expressed as a behaviour instead of a
+# certificate somebody has to remember to re-run.
+# =================================================================================================
+CHAIN_TO_TOOL_GOLDEN = [
+    ("MOVE: read_your_state ladder.json",           "read_state",  {"name": "ladder.json"}),
+    ("MOVE: read_your_state selfcheck.json",        "read_state",  {"name": "selfcheck.json"}),
+    ("MOVE: read_your_state",                       "read_state",  {"name": "heartbeat.json"}),
+    ("MOVE: know_yourself laws",                    "self_map",    {"topic": "laws"}),
+    ("MOVE: know your hands",                       "list_tools",  {}),
+    ("MOVE: what_to_try tool_missing",              "what_to_try", {"kind": "tool_missing"}),
+    ("MOVE: my_record",                             "my_record",   {}),
+    ("MOVE: read_your_state ../../../../etc/passwd", "read_state", {"name": "heartbeat.json"}),
+    ("MOVE: read_your_state ZZQX-CANARY-DECOY",     "read_state",  {"name": "heartbeat.json"}),
+    ("MOVE: read_your_state a_personal_store.json", "read_state",  {"name": "heartbeat.json"}),
+]
+
+
+def check_decision_chain():
+    """Both parsers must agree, all the way to the argument dict a tool would be handed."""
+    from aea.loop import aea as _wake
+    from aea.kernel import decide as _decide
+    fails = []
+    for line, want_tool, want_args in CHAIN_TO_TOOL_GOLDEN:
+        mv = _wake.move_from("some reasoning\n" + line)
+        r, _why = _decide.parse({"move": mv})
+        got_tool = (r or {}).get("tool")
+        got_args = (r or {}).get("args")
+        ok = got_tool == want_tool and got_args == want_args
+        print("  chain     %-46s -> %-34s %s"
+              % (line[6:52], "%s %s" % (got_tool, got_args), "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("chain:" + line[6:40], "%s %s" % (got_tool, got_args),
+                          "%s %s" % (want_tool, want_args)))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
-         + check_kernel())
+         + check_kernel() + check_decision_chain())
     print()
     if f:
         print("%d FAILURES. Something changed what it does:" % len(f))
@@ -360,7 +403,9 @@ if __name__ == "__main__":
              + len(CARRIED_GOLDEN) + 1
              # the kernel contracts: every think_off case, every published-parameter case, plus
              # unknown-model, the meter's ceiling, its slot release, and unmeasured's 410 rule
-             + len(THINK_GOLDEN) + len(PARAM_GOLDEN) + 4)
+             + len(THINK_GOLDEN) + len(PARAM_GOLDEN) + 4
+             # the decision chain, frozen end to end: three of these are hostile
+             + len(CHAIN_TO_TOOL_GOLDEN))
     print("all %d frozen behaviours hold." % total)
     print("2 of them are frozen at a KNOWN-BAD value (METHOD defect 15). Fixing the reader is "
           "supposed to break this file.")
