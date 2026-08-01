@@ -2459,3 +2459,56 @@ highest earned rung. The rendered end state of that frame is the `#rung-4` scree
   are waiting for. That is honest and it is also the ceiling of what this instrument can show until
   the work exists. **Do not add rungs, criteria, or decoration to make it look fuller** (OPEN_LOOPS
   KILL list, first entry).
+
+---
+
+## 2026-08-02 · FOUR RUNGS PROVEN, R2 HONEST AND OPEN, AND THE REPETITION WAS PLUMBING
+
+**DID**
+
+- **R0, R1, R1.5, R3 PROVEN.** Two of them had gates no run could satisfy: R1's asked for an action
+  the fallback could not produce while the wake's surface is a strict SUBSET of the fallback's, and
+  R3's fallback could never accumulate evidence because the post-condition ran only on exit 0, so
+  every real failure classified UNATTRIBUTABLE and graded nothing. Gates restated, then measured.
+- **R0 was green by 3.4x and unrecorded** - 246.89 h unbroken, 188 ticks, zero tracebacks - because
+  the manifest the page read began at R2. `aea/tooling/ladder.py` now measures all eleven rungs.
+- **THE PAGE** - THE CLIMB grows the organism rung by rung with a narrative beat each; the
+  containment certificate is a file the system writes; live at the organism repo.
+- **THREE EGRESS DEFECTS**, verified before touching: the three network tools declared
+  `outbound=False` and the trust level is computed FROM that field; `dispatch._host` returned an
+  allowlisted name for a URL that dials elsewhere; `_web_fetch` followed cross-authority redirects.
+  All fixed, redirect guard proven both directions with two loopback servers.
+- **A DECISION IS CARRIED OUT ONCE.** There was no consumption marker anywhere - `decide.latest()`
+  returned the newest decision unconditionally and the staleness window is 5,400s, so ONE decision
+  was executed on every tick for ninety minutes.
+
+**THE CORRECTION THAT MATTERS MOST.** I twice explained the entity's repetition wrongly - first as
+"it is investigating one thing", then as "it has no signal about what it has already seen". Both
+wrong. It decided ONCE and the loop replayed the decision. Not a mind in a groove: a queue with no
+acknowledgement.
+
+**AND A RETRACTION.** I published a containment bound of 0.267% and it was the wrong statistic. Five
+of six tools take an argument SELECTED from a closed table, so a wake byte cannot reach them by
+construction - their 1,096 crossings are not trials of anything. `calc` is the only exposed channel:
+23 crossings, honest bound 12.212%. Same shape as the 0.083% retracted the day before - a
+denominator not counting trials of the claim.
+
+**LOCKED**
+
+- **THE ROLE RULE** (agreed with Luis 2026-08-02): *a role may PROPOSE a widening, it may never
+  PERFORM one.* A role changes WHO DELIBERATES, never WHAT CAN BE EXECUTED, so it speaks through the
+  certified surface and inherits the bound. Proposing is speech; performing is action.
+- **NO TOKEN CAPS**, anywhere, including experiments. Measured harm: 7/12 under a budget, 12/12
+  without.
+- The human analogy lives in titles and docs, never in evidence.
+
+**NEXT**
+
+Waiting on the roles-and-R2 research (15 agents) before choosing. Three candidate moves, ranked:
+1. **Split the claim.** The 12.212% answers the wrong question for `calc` - it is the one tool whose
+   arguments are MEANT to carry model bytes, so leak-rate is the wrong metric and the enum tools'
+   immunity is a proof, not a probability. Correctness fix, do it regardless of the rest.
+2. **Fix the gate.** "Occupies 8 positions spontaneously" measures the environment; no published
+   benchmark scores an agent that way - they supply the situations and measure the choice.
+3. **Roles as the source of situations.** Highest ceiling, slowest, and it is what Luis actually
+   wants built.
