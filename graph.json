@@ -7,15 +7,15 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 179,
-    "source": "aea/tooling/access.py"
+    "count": 187,
+    "source": "aea/tooling/_pages.py"
    },
    "plan": {
     "count": 81,
     "source": "design/00_VISION.md"
    },
    "reflections": {
-    "count": 51,
+    "count": 54,
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 179
+    "count": 187
    },
    {
     "src": "THE_PROBE",
@@ -47,7 +47,7 @@
     "src": "THE_PROBE",
     "dst": "reflections",
     "rel": "contains",
-    "count": 51
+    "count": 54
    },
    {
     "src": "THE_PROBE",
@@ -66,6 +66,18 @@
  "subgraphs": {
   "code": {
    "nodes": [
+    {
+     "id": "_pages",
+     "type": "module",
+     "path": "aea/tooling/_pages.py",
+     "purpose": "_pages - turn GitHub Pages on for the gh-pages branch, and VERIFY it is actually serving."
+    },
+    {
+     "id": "_pubscan",
+     "type": "module",
+     "path": "aea/tooling/_pubscan.py",
+     "purpose": "_pubscan - the last gate before bytes go public. Run as a FILE, never through a shell."
+    },
     {
      "id": "access",
      "type": "module",
@@ -427,6 +439,12 @@
      "purpose": "knobs.py - THE DECLARED SURFACE THE ENTITY MAY TURN. Data naming a declared operation, never code."
     },
     {
+     "id": "ladder",
+     "type": "module",
+     "path": "aea/tooling/ladder.py",
+     "purpose": "ladder.py - THE TEN RUNGS, MEASURED FROM LIVE STATE. The manifest the published page draws from."
+    },
+    {
      "id": "laws",
      "type": "module",
      "path": "aea/kernel/laws.py",
@@ -547,10 +565,22 @@
      "purpose": "protocol.py - THE TOOL PROTOCOL BATTERY. Every angle we can test without a network."
     },
     {
+     "id": "publish",
+     "type": "module",
+     "path": "aea/tooling/publish.py",
+     "purpose": "publish.py - DRAW THE ORGANISM. The living picture, generated from the real state, for the web."
+    },
+    {
      "id": "pulse",
      "type": "module",
      "path": "aea/kernel/pulse.py",
      "purpose": "pulse.py - the entity's NERVOUS SIGNAL. Every organ emits what it does, as it does it,"
+    },
+    {
+     "id": "r3_bound",
+     "type": "module",
+     "path": "aea/lab/r3_bound.py",
+     "purpose": "r3_bound.py - R3'S BOUND, CERTIFIED STRUCTURALLY. Zero model calls, seconds, hostile by default."
     },
     {
      "id": "read",
@@ -569,6 +599,12 @@
      "type": "module",
      "path": "aea/lab/recall.py",
      "purpose": "recall.py - THE LESSON THAT BEARS ON WHAT YOU ARE ABOUT TO DO, FETCHED."
+    },
+    {
+     "id": "recourse",
+     "type": "module",
+     "path": "aea/kernel/recourse.py",
+     "purpose": "recourse.py - WHEN THE OBVIOUS PATH IS BLOCKED, WHAT DO YOU TRY NEXT? Declared, not improvised."
     },
     {
      "id": "recurrence",
@@ -623,6 +659,12 @@
      "type": "module",
      "path": "aea/gameapi/schema.py",
      "purpose": "aea.gameapi.schema - THE BEING AS A STRUCTURE (the world's fog map)."
+    },
+    {
+     "id": "scope",
+     "type": "module",
+     "path": "aea/tooling/scope.py",
+     "purpose": "scope.py - IS EVERYTHING AT THE RIGHT SCOPE? Asked mechanically, across the tree."
     },
     {
      "id": "scout",
@@ -779,6 +821,12 @@
      "type": "module",
      "path": "aea/kernel/unstick.py",
      "purpose": "unstick.py - WHEN REPEATING CANNOT HELP, CHANGE SOMETHING. Steps 3 and 4 of five."
+    },
+    {
+     "id": "vital",
+     "type": "module",
+     "path": "aea/lab/vital.py",
+     "purpose": "vital.py - IS THE ORGANISM ALIVE AS ONE THING? A whole-entity run, with listeners on the code."
     },
     {
      "id": "x01_generic_frame",
@@ -1165,6 +1213,16 @@
     {
      "src": "aea",
      "dst": "live",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "outcomes",
      "rel": "imports"
     },
     {
@@ -1698,6 +1756,11 @@
      "rel": "imports"
     },
     {
+     "src": "decide",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
      "src": "dispatch",
      "dst": "grid",
      "rel": "imports"
@@ -1969,6 +2032,16 @@
     },
     {
      "src": "hands",
+     "dst": "recourse",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
+     "dst": "outcomes",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
      "dst": "laws",
      "rel": "imports"
     },
@@ -2048,6 +2121,31 @@
      "rel": "imports"
     },
     {
+     "src": "ladder",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "ladder",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "ladder",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "ladder",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "ladder",
+     "dst": "r3_bound",
+     "rel": "imports"
+    },
+    {
      "src": "laws",
      "dst": "grid",
      "rel": "imports"
@@ -2084,7 +2182,17 @@
     },
     {
      "src": "live",
+     "dst": "cause",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
      "dst": "memory",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "outcomes",
      "rel": "imports"
     },
     {
@@ -2120,6 +2228,11 @@
     {
      "src": "live",
      "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
+     "dst": "recourse",
      "rel": "imports"
     },
     {
@@ -2313,8 +2426,43 @@
      "rel": "imports"
     },
     {
+     "src": "publish",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "publish",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "publish",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "publish",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "publish",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
      "src": "pulse",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "r3_bound",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "r3_bound",
+     "dst": "cause",
      "rel": "imports"
     },
     {
@@ -2359,7 +2507,17 @@
     },
     {
      "src": "redteam",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "redteam",
      "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "redteam",
+     "dst": "decide",
      "rel": "imports"
     },
     {
@@ -2444,6 +2602,11 @@
     },
     {
      "src": "schema",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "scope",
      "dst": "grid",
      "rel": "imports"
     },
@@ -2648,6 +2811,21 @@
      "rel": "imports"
     },
     {
+     "src": "test_golden",
+     "dst": "aea",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
      "src": "test_knobs",
      "dst": "knobs",
      "rel": "imports"
@@ -2725,6 +2903,61 @@
     {
      "src": "unstick",
      "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "unstick",
+     "dst": "knobs",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "knobs",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "outcomes",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "unstick",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "crystal",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "trust",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "live",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "aea",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "vital",
+     "dst": "hands",
      "rel": "imports"
     },
     {
@@ -3930,6 +4163,24 @@
      "id": "2026-07-28 — RESOURCE-AWARE EVOLUTION, N",
      "type": "reflection",
      "title": "2026-07-28 — RESOURCE-AWARE EVOLUTION, NO HALF-SOLUTIONS, AND CHAMBERS OF ORIGINAL THOUGHT",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "2026-08-01",
+     "type": "reflection",
+     "title": "2026-08-01 · WE ARE CODING WAYS OF THINKING, AND YOU CANNOT HARD-CODE A WAY OF THINKING",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "2026-08-01b",
+     "type": "reflection",
+     "title": "2026-08-01b · THE SITUATION IS THE UNIT — and a situation with no tool is the interesting one",
+     "path": "diary/REFLECTIONS.md"
+    },
+    {
+     "id": "2026-08-02",
+     "type": "reflection",
+     "title": "2026-08-02 · ROLES ARE THE UNIT. And the capability is not making one - it is making the next one",
      "path": "diary/REFLECTIONS.md"
     }
    ],

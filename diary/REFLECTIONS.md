@@ -913,3 +913,85 @@ same zone gating, the same argument boundary that is certified at 0.6%, or it do
 
 > "the reflections are important that you record them all as you did."
 
+
+---
+
+## 2026-08-02 · ROLES ARE THE UNIT. And the capability is not making one - it is making the next one
+
+*Captured on hearing that the entity's "repetition" was a queue with no acknowledgement, not a mind
+stuck in a groove.*
+
+> "So you're telling me that it's all about decision of keeping on the same. The entity was not
+> repeating itself, but it kept the same loop."
+
+He restated the finding more precisely than I had: one is a flaw in the mind, the other is a flaw in
+the plumbing, and it was the plumbing. A decision was made once and replayed for ninety minutes
+because nothing acknowledged it.
+
+**THE HUMAN LADDER, HELD AT ARM'S LENGTH.**
+
+> "As we advance up the ladder, we are going to the same equivalent as human behavior... all
+> documentation or the titles, like a comparison of what a full autonomous entity architecture would
+> be if we compare it to a human being. It's an analogy. I don't want to be trapped by that."
+
+Both halves matter and the second is the harder discipline. The comparison goes in the TITLES and
+the DOCS, as a column beside the claims - for naming and intuition. It never enters the evidence. A
+rung is not proven because it resembles a human faculty, and the day that sentence gets forgotten is
+the day the ladder becomes a metaphor with a test suite attached.
+
+**THE CLAIM, AND IT IS THE BIGGEST ONE HE HAS MADE ABOUT THE ARCHITECTURE.**
+
+> "We are having, like, different parts that are fed by different models and different prompts to
+> provide us with different decisions, like the council, like the orchestrator and everything. But do
+> you actually know what this means? This means that we have to make a capability to generate
+> different personalities, to generate different sides of a behavior. So the ability to generate new
+> roles."
+
+The parts are already there - the wake, HADES, the council seats, the orchestrator, the swarm, the
+organs. What was never named is that they are all the SAME SHAPE: a model, a prompt, a scope. Name
+the shape and it becomes composable, and composable means generable.
+
+**THE PROGRESSION HE DESCRIBED:**
+
+    1  ENOUGH ROLES   hand-authored, sufficient to climb the ladder
+    2  THE GENERATOR  a role whose job is to read a NEED and emit a role that meets it -
+                      "hey, we're having a descriptive task, we don't have enough with these roles,
+                      so we need to generate a new one that actually takes care of it"
+    3  THE REAL ONE   "maybe this solution won't be enough after we arrive to another point, but then
+                      you will realize it's the capability of constant change and keeping track from
+                      where we came from"
+
+That third line is the whole thing. The capability is not generating a role. It is generating the
+NEXT one, knowing the current one has stopped fitting, and being able to say where every one came
+from. Creation without lineage is accumulation, and accumulation is how a library becomes a place
+nobody can explain.
+
+**WHY HE WANTS IT, WHICH IS ALSO THE SAFETY QUESTION:**
+
+> "Sometimes we are obfuscated on a paradigm, and we cannot see past that."
+
+That is the argument FOR letting a role reach past the current tool surface - and it is exactly the
+thing containment forbids. The resolution agreed on 2026-08-02:
+
+    A ROLE MAY PROPOSE A WIDENING. IT MAY NEVER PERFORM ONE.
+
+A role must be able to say "you need a tool you have not considered", because that is the entire
+value of a perspective we do not have. But proposing is SPEECH and performing is ACTION. The
+proposal lands in a queue with its reasoning; a human or a gate decides. A role changes WHO
+DELIBERATES, never WHAT CAN BE EXECUTED - so it speaks through the same certified surface and
+inherits the bound instead of escaping it. Same split as the recourse ladder's
+`separate-the-law-from-the-mandate`: the thing that notices is not the thing that enacts.
+
+**AND THE OPERATING INSTRUCTIONS THAT CAME WITH IT:**
+
+> "We cannot put caps on the tokens. It's important."
+> "We need to trigger a deep research... we cannot keep like this. We have to find original ways. We
+> have to brainstorm. So we need to run the trials, the experiments."
+> "Make sure that the reflections are updated. The graph is updated."
+> "I need you tell me that you understood what I just said before starting to do anything. So both of
+> us we align, because we can have a conversation, you and I, of what we are to need."
+
+That last one is a standing instruction about how to work, not about this task. Align first on
+anything structural. A wrong mode call wastes the session, and a wrong ARCHITECTURE call wastes more
+than that.
+
