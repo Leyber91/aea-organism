@@ -261,9 +261,19 @@ def measure_r1() -> dict:
     try:
         src = io.open(os.path.join(grid.ROOT, "aea", "loop", "live.py"), encoding="utf-8").read()
         m = re.search(r"def choose_action\(hb: dict\).*?(?=\ndef )", src, re.S)
-        body = m.group(0) if m else ""
-        out["wired"] = "decide.choose()" in body
+        out["wired"] = "decide.choose()" in (m.group(0) if m else "")
+        # READ THE FLOOR FROM THE FUNCTION THAT IS THE FLOOR. This scanned `choose_action` and broke
+        # silently the moment the ladder was extracted into `_fallback_ladder` - it returned [] and
+        # `subset` became null, so the structural finding that R1's original gate is unreachable
+        # stopped being computed and the field read as "not applicable" rather than "the instrument
+        # is looking at the wrong function". An empty list from a scanner is never evidence of an
+        # empty world.
+        mf = re.search(r"def _fallback_ladder\(.*?(?=\ndef )", src, re.S)
+        body = mf.group(0) if mf else ""
         out["ladder_surface"] = sorted(set(re.findall(r'return\s+\(?\s*"([^"]+)"', body)))
+        if not out["ladder_surface"]:
+            out["instrument"] = ("could not find the fallback ladder to compare against - this is a "
+                                 "broken measurement, not an empty result")
     except Exception:
         pass
     try:
@@ -276,9 +286,39 @@ def measure_r1() -> dict:
         out["subset"] = set(out["wake_surface"]) <= set(out["ladder_surface"])
     hb = grid.load_json(os.path.join(grid.STATE, "heartbeat.json"), {}) or {}
     out["last_why"] = hb.get("last_wake_why")
-    # MET only if the wire exists AND the reachable gate has actually fired. It has not: nothing
-    # records a per-tick comparison yet, so this is None (unknown), never False (measured absent).
-    out["met"] = None
+
+    # THE REACHABLE GATE, READ FROM ITS OWN RECEIPTS. `live.choose_action` now writes one row per
+    # wake-won tick naming the action it chose AND the action `_fallback_ladder` would have returned
+    # at that same tick with the same state. `differed=True` is R1: the deliberation was
+    # load-bearing, not decorative.
+    #
+    # Rows written before this instrument existed carry no `wake` key at all. They are counted as
+    # what they are - unmeasured - rather than as failures, because a tick that predates the
+    # instrument says nothing about the claim.
+    p = os.path.join(grid.STATE, "decisions.jsonl")
+    total, measured, differed = 0, 0, 0
+    if os.path.exists(p):
+        for line in io.open(p, encoding="utf-8", errors="replace"):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            total += 1
+            if r.get("wake") is None:
+                continue
+            measured += 1
+            if r.get("differed"):
+                differed += 1
+    out["decision_rows"] = total
+    out["comparable"] = measured
+    out["differed"] = differed
+    # MET when the wire exists AND at least one comparable tick showed the wake leaving the floor.
+    # Still None - not False - while nothing comparable has been recorded: unmeasured and refuted
+    # are different answers and only one of them is honest here.
+    out["met"] = (bool(out["wired"] and differed > 0) if measured else None)
     return out
 
 

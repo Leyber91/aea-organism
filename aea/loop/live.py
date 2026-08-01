@@ -117,6 +117,45 @@ def corpus_state() -> tuple[int, int]:
 BRIEF_GIVE_UP = 3        # consecutive failures after which the brief stops monopolising the loop
 
 
+def _fallback_ladder(hb: dict, hold: dict | None = None) -> tuple[str, list[str], int]:
+    """THE FLOOR. What this loop does with no better idea, with the record's holds applied.
+
+    EXTRACTED, NOT COPIED. R1's gate needs to ask "what would the fallback have done at this same
+    tick?", and answering that by re-implementing these four branches would have created a second
+    copy that drifts from the one that executes - so the comparison would eventually certify a
+    ladder that no longer exists. Law W1 says extract on the SECOND writing, not the tenth, and this
+    was the second.
+
+    It is not legacy. It is the correct default for an entity with no better idea, and it encodes a
+    measured failure: a brief that failed externally re-ran byte-identically forty-eight times a day
+    and starved every branch below it."""
+    hold = hold or {}
+    stuck = int(hb.get("brief_fails", 0)) >= BRIEF_GIVE_UP
+    if hb.get("last_brief_date") != today() and not stuck and "AWAKE:brief" not in hold:
+        return "AWAKE:brief", ["-m", "aea.organs.brief"], 240
+    done, total = corpus_state()
+    if total and done < total and "ASLEEP:consolidate" not in hold:
+        return "ASLEEP:consolidate", ["-m", "aea.memory.consolidate", "--limit", str(CONSOLIDATE_SLICE)], 600
+    # NOT resting: t6 the reflection tick - self-originate ONE task (the autonomy organ, gated by HADES).
+    # This is the wire from an internal goal to an action - what makes the self a loop, not a document.
+    if (os.path.exists(os.path.join(os.path.dirname(HERE), "organs", "reflect.py"))
+            and "REFLECT:self" not in hold):
+        return "REFLECT:self", ["-m", "aea.organs.reflect", "--once"], 240
+    return "IDLE", [], 0
+
+
+def _ladder_would_say(hb: dict) -> str:
+    """The counterfactual R1 is measured against: the action with the wake taken out of the loop.
+
+    Deliberately runs with NO holds applied. The question is what the FALLBACK would have chosen,
+    and the holds are R3's machinery, not R1's - mixing them would let an R3 suppression register as
+    an R1 override and quietly inflate the rung below it."""
+    try:
+        return _fallback_ladder(hb, {})[0]
+    except Exception:
+        return ""
+
+
 def choose_action(hb: dict) -> tuple[str, list[str], int]:
     """AWAKE if today's brief is undone, else ASLEEP (consolidate) if backlog remains, else IDLE.
 
@@ -147,6 +186,30 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     if cand:
         log(f"  {decide.explain(cand, why)}")
         pulse.emit("wake", "chose", f"{cand['action']} :: {why}")
+        # R1'S REACHABLE GATE, INSTRUMENTED. The gate written in THE_WIRING_LADDER asks for "a tick
+        # where the entity chose something the ladder would not have" - and that sentence cannot be
+        # satisfied by any run, because `decide.KNOWN` is a strict SUBSET of what `_ladder_would_say`
+        # returns. The wake can REORDER the fallback; it can never leave it. A gate no execution can
+        # meet is indistinguishable from a rung nobody attempted, which is why R1 sat at "open"
+        # while its wire had been working for weeks.
+        #
+        # The honest observable is the DIFFERENCE, not the novelty: at this same tick, with this
+        # same state, would the fallback have done something else? That is answerable, it is what
+        # the wire was actually built to permit, and it is recorded here as a receipt rather than
+        # inferred later from a log.
+        try:
+            would = _ladder_would_say(hb)
+            differed = bool(would and would != cand["action"])
+            hb["_r1_last"] = dict(wake=cand["action"], ladder=would, differed=differed, why=why)
+            grid.append_jsonl(os.path.join(grid.STATE, "decisions.jsonl"),
+                              dict(at=time.time(), at_iso=now_iso(), tick=hb.get("total_ticks"),
+                                   wake=cand["action"], ladder=would, differed=differed,
+                                   why=str(why)[:160], src="wake"))
+            if differed:
+                log(f"  R1: the wake chose {cand['action']} where the fallback would have run {would}")
+                pulse.emit("wake", "overrode-fallback", f"{cand['action']} != {would}", ok=True)
+        except Exception as e:
+            log(f"  (R1 comparison not recorded: {type(e).__name__}: {str(e)[:70]})")
         if cand.get("kind") == "tool":
             # R2a. A TOOL IS NOT A SUBPROCESS, so it does not go down the argv path. It is stashed
             # for `tick` to invoke through `hands`, which re-checks seat, zone and ledger at the
@@ -184,23 +247,13 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     except Exception as e:
         log("  (outcome record unreadable, ladder runs unfiltered: %s)" % str(e)[:80])
 
-    stuck = int(hb.get("brief_fails", 0)) >= BRIEF_GIVE_UP
-    if hb.get("last_brief_date") != today() and not stuck and "AWAKE:brief" not in hold:
-        return "AWAKE:brief", ["-m", "aea.organs.brief"], 240
-    done, total = corpus_state()
-    if total and done < total and "ASLEEP:consolidate" not in hold:
-        return "ASLEEP:consolidate", ["-m", "aea.memory.consolidate", "--limit", str(CONSOLIDATE_SLICE)], 600
-    # NOT resting: t6 the reflection tick - self-originate ONE task (the autonomy organ, gated by HADES).
-    # This is the wire from an internal goal to an action - what makes the self a loop, not a document.
-    if (os.path.exists(os.path.join(os.path.dirname(HERE), "organs", "reflect.py"))
-            and "REFLECT:self" not in hold):
-        return "REFLECT:self", ["-m", "aea.organs.reflect", "--once"], 240
-    if hold:
+    act, argv, tmo = _fallback_ladder(hb, hold)
+    if act == "IDLE" and hold:
         # THE BOTTOM RUNG OF THE RECOURSE LADDER, reached honestly: everything the record allows has
         # been tried or held. Say what was held and stop, rather than idling in silence.
         log("  EXHAUSTED BY THE RECORD: %s held back; nothing left the record permits."
             % ", ".join(sorted(hold)))
-    return "IDLE", [], 0
+    return act, argv, tmo
 
 
 def _apply_knob(cap: str, move: dict) -> bool:

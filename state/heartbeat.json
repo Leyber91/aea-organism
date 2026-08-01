@@ -1,12 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 14,
-  "total_ticks": 139,
+  "boot_count": 15,
+  "total_ticks": 141,
   "last_brief_date": "2026-07-20",
   "consolidated_sessions": 22,
   "history": [
-    "2026-07-21 19:01:16 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
-    "2026-07-21 19:31:54 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
     "2026-07-30 03:30:30 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 51 memories from 17/20 sessions consolidate",
     "2026-07-30 03:30:42 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 54 memories from 18/20 sessions consolidate",
     "2026-07-30 03:30:56 UTC ASLEEP:consolidate(demo) ok ::   +3 semantic memories  |  store now 57 memories from 19/20 sessions consolidate",
@@ -34,16 +32,24 @@
     "2026-08-01 05:28:14 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)",
     "2026-08-01 05:30:23 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)",
     "2026-08-01 05:30:30 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)",
-    "2026-08-01 05:30:37 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)"
+    "2026-08-01 05:30:37 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)",
+    "2026-08-01 05:39:26 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
+    "2026-08-01 05:40:05 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, "
   ],
-  "last_wake_why": "decision is stale (109197s old, limit 5400s)",
-  "brief_fails": 3,
-  "_brief_runs_seen": 100,
+  "last_wake_why": "the wake chose brief (57s ago)",
+  "brief_fails": 5,
+  "_brief_runs_seen": 102,
   "proposed_move": {
     "move": "raise_budget",
     "knob": "max_tokens",
     "to": 900,
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
+  },
+  "_r1_last": {
+    "wake": "AWAKE:brief",
+    "ladder": "REFLECT:self",
+    "differed": true,
+    "why": "the wake chose brief (57s ago)"
   },
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",
