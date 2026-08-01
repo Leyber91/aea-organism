@@ -85,6 +85,35 @@ _HINTS = (
 _AEA_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # .../aea
 
 
+# THE SUBSET OF _HINTS THAT MEAN "THE WORLD FAILED, NOT THE CHOICE". Derived from the table above by
+# what each hint SAYS, never re-typed, because a second hand-kept copy of these needles is exactly
+# the drift this module was written to prevent.
+#
+# WHY THIS HAD TO BECOME BINDING. `live.py` evaluated a post-condition ONLY when the process exited
+# 0, on the correct reasoning that a 429 kills the process and grading the move on that teaches the
+# entity to abandon a good action because of network weather. But the consequence was that EVERY
+# non-zero exit became UNATTRIBUTABLE, so no failure ever graded a move, so R3's "stop re-choosing
+# what fails" could never accumulate a single point of evidence. The rung was unreachable by
+# construction - the same shape as R1's gate, found the same day.
+#
+# The exit code was never the right authority. The post-condition is direct evidence about the
+# world; the exit code is a statement about a process. So the post-condition is now evaluated
+# either way, and THIS predicate carries the protection that the exit-code guard used to: a tail
+# that looks transient produces TRANSIENT_EXTERNAL and grades nothing, exactly as before.
+_TRANSIENT_SAYS = ("rate limit", "timeout", "transport failure", "every plant was cooling")
+TRANSIENT_NEEDLES = tuple(n for n, say in _HINTS if any(s in say for s in _TRANSIENT_SAYS))
+
+
+def looks_transient(text: str) -> bool:
+    """Does this tail carry a signature of the world failing rather than the choice being wrong?
+
+    Deliberately conservative in ONE direction: a false positive here only costs a move that is not
+    graded this tick, while a false negative teaches the entity that a correct action is broken. Of
+    the two errors, only the second is permanent."""
+    t = str(text or "").lower()
+    return any(n.lower() in t for n in TRANSIENT_NEEDLES)
+
+
 def _hint(text: str) -> str:
     t = str(text or "")
     for needle, say in _HINTS:

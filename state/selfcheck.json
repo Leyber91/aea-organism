@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-01 04:48 UTC",
- "seconds": 46.4,
+ "at": "2026-08-01 05:32 UTC",
+ "seconds": 26.6,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "153 modules, 32 reachable from a wake, 115 orphaned, 0 act at import",
+   "detail": "155 modules, 32 reachable from a wake, 117 orphaned, 0 act at import",
    "data": {
-    "modules": 153,
+    "modules": 155,
     "wake": 32,
     "orphans": [
      "aea.energy.capacity",
@@ -88,6 +88,7 @@
      "aea.lab.parts.shape",
      "aea.lab.party",
      "aea.lab.protocol",
+     "aea.lab.r3_bound",
      "aea.lab.reboot",
      "aea.lab.recall",
      "aea.lab.recurrence",
@@ -118,6 +119,7 @@
      "aea.tooling.export_city",
      "aea.tooling.heal",
      "aea.tooling.journey_check",
+     "aea.tooling.ladder",
      "aea.tooling.publish",
      "aea.tooling.scope",
      "aea.tooling.scout",

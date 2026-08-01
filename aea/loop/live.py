@@ -15,7 +15,8 @@ survived sleep). Heavy work is delegated to the proven scripts as subprocesses, 
 can never take down the life.
 
   python live.py                          # run forever, 30-min ticks (production)
-  python live.py --interval 1 --ticks 2   # bounded demo (prove heartbeat + restart-resume)
+  python live.py --interval 1 --ticks 2   # bounded REAL run (honest actions, stamped src=wake)
+  python live.py --interval 1 --ticks 2 --demo   # cheap substitute actions, stamped src=demo
   python live.py --status                 # print the heartbeat and exit
 """
 from __future__ import annotations
@@ -157,16 +158,48 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     hb.pop("_pending_tool", None)
     pulse.emit("wake", "no-decision", why, ok=True)   # ok=True: declining is not a fault
 
+    # R3'S POWER HALF, AND IT IS THE MECHANICAL FLOOR UNDER A PRINCIPLE THE WAKE IS ALSO TOLD.
+    #
+    # MEASURED 2026-08-01, on a ten-tick run: this ladder returned `ASLEEP:consolidate` TEN TIMES IN
+    # A ROW while `outcomes.jsonl` accumulated nine VERIFY_FAILED rows for that exact move - the
+    # post-condition "consolidated session count strictly increases" failing 22 -> 22 every time
+    # while the process exited 0. The record was complete, correct, and read by nobody. That is the
+    # same defect as the wake's decision that nothing consumed, one rung down, and R3 is not closed
+    # until a choice actually changes because of what was stored.
+    #
+    # ONLY OWN-FAULT FAILURES SUPPRESS. `outcomes.verdict_for` counts a streak solely from causes in
+    # `cause.GRADES_THE_MOVE` (OK, VERIFY_FAILED), so a rate-limit storm or a dead network can never
+    # retire a good action - and a single success resets the streak, so recovery is visible.
+    #
+    # AND IT MAY NEVER SILENCE EVERYTHING. If the record condemns every branch, the entity does not
+    # fall through to a mute rest: it says which moves it is holding back and why. A loop that goes
+    # quiet because a filter ate its whole menu is indistinguishable from a dead one.
+    hold = {}
+    try:
+        from aea.kernel import outcomes as _oc
+        hold = _oc.suppressed(["AWAKE:brief", "ASLEEP:consolidate", "REFLECT:self"])
+        for _m, _v in hold.items():
+            log("  HELD BACK: %s - %s" % (_m, _v["why"][:110]))
+            pulse.emit("life", "held-back", "%s: streak %d" % (_m, _v["streak"]), ok=True)
+    except Exception as e:
+        log("  (outcome record unreadable, ladder runs unfiltered: %s)" % str(e)[:80])
+
     stuck = int(hb.get("brief_fails", 0)) >= BRIEF_GIVE_UP
-    if hb.get("last_brief_date") != today() and not stuck:
+    if hb.get("last_brief_date") != today() and not stuck and "AWAKE:brief" not in hold:
         return "AWAKE:brief", ["-m", "aea.organs.brief"], 240
     done, total = corpus_state()
-    if total and done < total:
+    if total and done < total and "ASLEEP:consolidate" not in hold:
         return "ASLEEP:consolidate", ["-m", "aea.memory.consolidate", "--limit", str(CONSOLIDATE_SLICE)], 600
     # NOT resting: t6 the reflection tick - self-originate ONE task (the autonomy organ, gated by HADES).
     # This is the wire from an internal goal to an action - what makes the self a loop, not a document.
-    if os.path.exists(os.path.join(os.path.dirname(HERE), "organs", "reflect.py")):
+    if (os.path.exists(os.path.join(os.path.dirname(HERE), "organs", "reflect.py"))
+            and "REFLECT:self" not in hold):
         return "REFLECT:self", ["-m", "aea.organs.reflect", "--once"], 240
+    if hold:
+        # THE BOTTOM RUNG OF THE RECOURSE LADDER, reached honestly: everything the record allows has
+        # been tried or held. Say what was held and stop, rather than idling in silence.
+        log("  EXHAUSTED BY THE RECORD: %s held back; nothing left the record permits."
+            % ", ".join(sorted(hold)))
     return "IDLE", [], 0
 
 
@@ -461,7 +494,8 @@ def _post_for(action: str):
     return None
 
 
-def _record_outcome(hb, action, kind, exit_ok, tail, *, verify=None, exc=None, args=None):
+def _record_outcome(hb, action, kind, exit_ok, tail, *, verify=None, exc=None, args=None,
+                    src: str = "wake", result=None):
     """Every branch of the tick ends here. A tick that acted and recorded nothing is the hole R3
     exists to close, so this is called from ALL of them - including the refusals and the rest.
 
@@ -474,7 +508,8 @@ def _record_outcome(hb, action, kind, exit_ok, tail, *, verify=None, exc=None, a
     effect_ok = bool(isinstance(verify, dict) and verify.get("result"))
     try:
         from aea.kernel import outcomes
-        row = outcomes.build(action, kind, effect_ok, src="wake", args=args, verify=verify, exc=exc,
+        row = outcomes.build(action, kind, effect_ok, src=src, args=args, verify=verify, exc=exc,
+                             result=result,
                              note=str(tail or "")[:280], decision_id=hb.get("total_ticks"))
         row["exit_ok"] = bool(exit_ok)
         row["effect_ok"] = effect_ok
@@ -491,7 +526,18 @@ def _record_outcome(hb, action, kind, exit_ok, tail, *, verify=None, exc=None, a
 def tick(hb: dict, demo: bool):
     hb["total_ticks"] += 1
     action, args, tmo = choose_action(hb)
+    substituted = False
     if demo and action.startswith("AWAKE"):        # keep the demo cheap: skip the 60s brief, do a memory slice
+        # THE HARNESS SUBSTITUTES A MOVE, AND THE RECORD MUST SAY SO. Until 2026-08-01 this swap ran
+        # and the outcome was still stamped src="wake" - so fifteen rows blamed ASLEEP:consolidate
+        # for failures while the entity had actually chosen AWAKE:brief every time. R3's suppression
+        # then read those rows and held back a move the entity never picked. A FALSE OUTCOME RECORD,
+        # R3's own named hazard, manufactured by R3's own test rig and fed straight back to it.
+        #
+        # This is the second time this exact shape has been paid for here: the first 100-tick gate
+        # run measured the harness rather than the entity. The fix is the same one `hands` already
+        # uses - provenance fails closed, and only the live loop may claim to be the wake.
+        substituted = True
         action, args, tmo = "ASLEEP:consolidate(demo)", ["-m", "aea.memory.consolidate", "--limit", "1"], 300
     # R2a - THE TOOL PATH. Separate from the script path because the gate is different: `run_script`
     # spawns a subprocess with an argv we control entirely, while `hands.invoke` re-checks the seat,
@@ -597,8 +643,24 @@ def tick(hb: dict, demo: bool):
     # verdict grades the move either way. A non-zero exit means the process died before it could
     # do the work, the post-condition says nothing about the CHOICE, and the row is UNATTRIBUTABLE
     # with a hint - which is exactly what an unclassifiable failure should be.
+    # THE POST-CONDITION IS EVALUATED EITHER WAY NOW, and the transient protection moved to where it
+    # belongs. This read `if spec and ok:` - the post-condition was only checked when the process
+    # exited 0 - and the reasoning was right: a 429 kills the process, the post-condition then fails,
+    # and grading the move on that teaches the entity to abandon `brief` because of network weather.
+    #
+    # But MEASURED 2026-08-01, the cost of that guard was the whole rung: every non-zero exit
+    # produced verify=None, `cause.classify` fell to UNATTRIBUTABLE, and UNATTRIBUTABLE grades
+    # nothing. So no failure of any kind ever counted toward a move, `outcomes.verdict_for` could
+    # never reach a streak of one, and R3's "stop re-choosing what fails" was unreachable by
+    # construction. Five real failures in a row across brief and reflect produced graded=0.
+    #
+    # The exit code was never the right authority - it describes a process, while the post-condition
+    # describes the world. `cause.looks_transient` now carries the protection, reading the SAME
+    # needle table the hints come from, so a 429 still classifies TRANSIENT_EXTERNAL and still
+    # grades nothing, while `produce_brief -> level 1 (DRAFT)` - the brief ran, produced output, and
+    # was judged inadequate - finally counts as what it is: the move failing on its merits.
     verify = None
-    if spec and ok:
+    if spec:
         try:
             after = spec[1]()
             verify = dict(pred=spec[0], result=bool(after is not None and before is not None
@@ -606,13 +668,17 @@ def tick(hb: dict, demo: bool):
                           detail=f"{before} -> {after}")
         except Exception:
             verify = None
+    from aea.kernel import cause as _cause
+    transient = _cause.looks_transient(tail)
+    _res = dict(transport=True, error=str(tail)[:160]) if transient else None
     if verify is not None and ok and not verify["result"]:
         # THE EXIT CODE AND THE WORLD DISAGREE, which is the case worth catching. The process said
         # it succeeded and the thing it was for did not happen.
         log(f"  POST-CONDITION FAILED though the process exited 0: {verify['pred']} ({verify['detail']})")
         pulse.emit("life", "post-failed", f"#{hb['total_ticks']} {action} {verify['detail']}", ok=False)
         ok = False
-    _record_outcome(hb, action, "script", ok, tail, verify=verify, args=list(args or []))
+    _record_outcome(hb, action, "script", ok, tail, verify=verify, args=list(args or []),
+                    src="demo" if substituted else "wake", result=_res)
     done, total = corpus_state()
     hb["consolidated_sessions"] = done
     hb["history"] = (hb.get("history", []) + [f"{now_iso()} {action} {'ok' if ok else 'FAIL'} :: {tail[:80]}"])[-30:]
@@ -654,7 +720,15 @@ def main():
 
     interval = int(a[a.index("--interval") + 1]) if "--interval" in a else 1800
     max_ticks = int(a[a.index("--ticks") + 1]) if "--ticks" in a else None
-    demo = "--demo" in a or max_ticks is not None
+    # BOUNDING THE RUN AND SUBSTITUTING THE ACTION ARE TWO DIFFERENT THINGS, and conflating them
+    # into one variable is what let the harness fabricate evidence. `--ticks N` meant "demo", so
+    # every bounded run silently swapped AWAKE:brief for a cheap consolidate slice and recorded the
+    # result as the entity's own decision. There was NO WAY to run a bounded, honest tick - which is
+    # why R3's power half could not be demonstrated without this line changing.
+    #
+    # `--ticks` now bounds the count and nothing else. `--demo` is the only thing that substitutes,
+    # and its rows are stamped src="demo" so they can never grade the entity.
+    demo = "--demo" in a
     signal.signal(signal.SIGINT, _on_signal)
     try:
         signal.signal(signal.SIGTERM, _on_signal)

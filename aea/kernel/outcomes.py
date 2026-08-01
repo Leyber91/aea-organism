@@ -147,6 +147,84 @@ def record(move: str, kind: str, ok: bool, **kw) -> dict:
     return write(build(move, kind, ok, **kw))
 
 
+# =================================================================================================
+# R3'S POWER HALF. The record is worthless until something CHOOSES differently because of it, and
+# until 2026-08-01 nothing did: a ten-tick run chose `ASLEEP:consolidate` ten times in a row while
+# this very store accumulated nine VERIFY_FAILED rows for that exact move. The store was correct,
+# complete, and unread - which is the same shape as the wake's decision that nothing consumed, one
+# rung down. A record nobody reads is a diary.
+#
+# WHAT COUNTS AS EVIDENCE ABOUT A MOVE, and this is the whole subtlety. Only `cause.GRADES_THE_MOVE`
+# - OK and VERIFY_FAILED. A 429, a dead network, an unattributable run: none of them say anything
+# about whether the move was the right choice, and letting them suppress it would teach the entity
+# to abandon good actions during bad weather. That is the same filter `unstick.tried_for` needed and
+# it is needed here for the same reason.
+FAIL_STREAK = 3          # consecutive own-fault failures before a move is suppressed
+COOLDOWN_S = 3600.0      # and how long the suppression lasts before the move is offered again
+
+
+def _base(move) -> str:
+    """'ASLEEP:consolidate(demo)' -> 'ASLEEP:consolidate'. One move, one identity, however the
+    variant is annotated at the call site."""
+    return str(move or "").split("(", 1)[0].strip()
+
+
+def verdict_for(move: str, rows=None, now: float = None) -> dict:
+    """What the record says about ONE move. Fail-closed: no evidence means no suppression.
+
+    `streak` counts CONSECUTIVE grading failures ending at the most recent grading row. A move that
+    failed nine times and then worked has a streak of zero - recovery has to be visible, or the
+    first bad afternoon retires a capability permanently. That was the defect in the original
+    `tried_for` and it is not repeated here."""
+    import time as _t
+    now = _t.time() if now is None else now
+    rows = read() if rows is None else rows
+    # THE LABEL THE LADDER RETURNS IS NOT THE LABEL THE TICK RECORDS. `choose_action` returns
+    # "ASLEEP:consolidate"; the tick executes and stores "ASLEEP:consolidate(demo)". Comparing them
+    # with == finds nothing, so a move with nine recorded failures reads as never attempted - the
+    # exact wrong-object shape this repo has now paid for seven times, and the one that would have
+    # made this whole function a no-op while looking correct. Matched on the base label instead.
+    base = _base(move)
+    # FAIL CLOSED ON PROVENANCE, and this filter is the whole reason the function is trustworthy.
+    #
+    # MEASURED 2026-08-01: `live.tick` in demo mode silently swaps AWAKE:brief for a cheap
+    # consolidate slice, and it stamped the result src="wake" - so fifteen rows recorded failures of
+    # a move the entity had not chosen. This function read them and suppressed that move. The
+    # instrument manufactured its own evidence and then believed it.
+    #
+    # Two guards, because the historical rows are already on disk and history is not rewritten here:
+    #   src != "wake"     a script, a probe, a battery or the demo harness never grades the entity
+    #   "(" in the label  a VARIANT is not the move. `_base` deliberately merges variants for
+    #                     identity, so the raw label is what still carries the harness marker.
+    mine = [r for r in rows if _base(r.get("move")) == base
+            and r.get("src") == "wake"
+            and "(" not in str(r.get("move") or "")
+            and (r.get("cause") or {}).get("class") in cause.GRADES_THE_MOVE]
+    streak, last_at, last_note = 0, None, ""
+    for r in reversed(mine):
+        if r.get("ok") is True:
+            break
+        streak += 1
+        if last_at is None:
+            last_at, last_note = float(r.get("at") or 0), str(r.get("note") or "")[:120]
+    rested = last_at is not None and (now - last_at) > COOLDOWN_S
+    return dict(move=move, graded=len(mine), streak=streak, last_at=last_at, last_note=last_note,
+                rested=rested, suppress=bool(streak >= FAIL_STREAK and not rested),
+                why=(f"the record shows {streak} consecutive failures of this move that were its "
+                     f"own fault ({last_note})" if streak >= FAIL_STREAK and not rested else ""))
+
+
+def suppressed(moves, rows=None, now: float = None) -> dict:
+    """{move: verdict} for every move the record says to stop choosing right now.
+
+    NEVER returns every move. If the record condemns all of them the entity would have nothing left
+    and would rest forever on a store that is only telling it the weather is bad - so the caller is
+    handed the full map and decides. Refusing to act at all is a decision that must be made in the
+    open, not fall out of a filter."""
+    rows = read() if rows is None else rows
+    return {m: v for m in moves for v in [verdict_for(m, rows, now)] if v["suppress"]}
+
+
 def read(where=None, wake_only: bool = False) -> list:
     """Every row, oldest first. `wake_only` is the fail-closed filter for any claim about the ENTITY."""
     p = _path()

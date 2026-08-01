@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-01 05:08:15 UTC",
+ "generated": "2026-08-01 05:32:05 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -21,10 +21,10 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 10,
-    "ticks": 281,
+    "boots": 14,
+    "ticks": 329,
     "first": "2026-07-10",
-    "last": "2026-07-31",
+    "last": "2026-08-01",
     "met": true
    },
    "status": "proven"
@@ -52,7 +52,7 @@
     ],
     "subset": true,
     "stale_limit_s": 5400,
-    "last_why": "decision is stale (48602s old, limit 5400s)",
+    "last_why": "decision is stale (109197s old, limit 5400s)",
     "met": null
    },
    "status": "open"
@@ -86,12 +86,20 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 1,
-    "with_verify": 1,
+    "outcomes": 26,
+    "graded": 3,
+    "suppressions": 8,
+    "not_repeated": 2,
+    "bound": "PASS",
+    "bound_pairs": 0,
+    "met": true,
+    "entity_rows": 10,
     "disagreements": 0,
-    "met": null
+    "falsifications": 0,
+    "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
+    "met_caveat": "power demonstrated and bound certified on arm B; arm A carries no traffic until R2-REACH is non-zero"
    },
-   "status": "open"
+   "status": "proven"
   },
   {
    "id": "R4",

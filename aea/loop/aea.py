@@ -271,6 +271,40 @@ def standing(state: dict) -> str:
     except Exception:
         pass
 
+    # WHAT THE OUTCOME RECORD SAYS ABOUT THE MOVES THEMSELVES - R3'S PRINCIPLE, STATED IN LANGUAGE.
+    #
+    # Luis, 2026-08-01: *"We are coding ways of thinking... but we cannot hard code that. We have to
+    # make them flexible. So you need to put the principles into prompts in order to show the way.
+    # Because I've realized that many functions are very static."*
+    #
+    # `live.choose_action` now mechanically holds back a move with three consecutive own-fault
+    # failures, and that floor is not going anywhere - a guarantee that a model can talk its way
+    # around is not a guarantee. But a floor is all it is. Stated here as a PRINCIPLE with the
+    # evidence attached, the same fact becomes something that can be reasoned about instead of
+    # merely obeyed: the wake can see that consolidate keeps failing its post-condition and propose
+    # something the ladder has no branch for, which is the only way the ladder ever grows.
+    #
+    # THE DIVISION THAT KEEPS THIS SAFE: express the POWER as a principle, certify the BOUND in
+    # code. This block is power. The suppression in `choose_action` and the write-time refusal in
+    # `outcomes.require` are the bound, and neither is stated as a suggestion.
+    try:
+        from aea.kernel import outcomes
+        rows = outcomes.read()
+        bad = [outcomes.verdict_for(m, rows) for m in
+               ("AWAKE:brief", "ASLEEP:consolidate", "REFLECT:self")]
+        bad = [v for v in bad if v["streak"] >= 2]
+        # KEPT SHORT ON PURPOSE. At full length this line was the last of four and ran past
+        # STANDING_CHARS, so the wake received "...Prefer a different move, or" and nothing after
+        # it - a principle truncated before its verb, which is worse than absent because it reads
+        # as complete. Raising the cap was the wrong fix: this block competes with the entity's
+        # picture of the world and must never win. The sentence was shortened instead.
+        for v in sorted(bad, key=lambda x: -x["streak"])[:1]:
+            lines.append(f"- your record: {v['move']} failed {v['streak']}x in a row on its own "
+                         f"merits. Repeating it is not persistence - pick another move, or say "
+                         f"what would make this one work.")
+    except Exception:
+        pass
+
     if not lines:
         return "(nothing owed and nothing stuck)"
     out = "\n".join(lines[:STANDING_LINES])

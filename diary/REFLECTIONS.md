@@ -806,3 +806,57 @@ full of it and we are barely touching it. This should run on a cadence, not when
 
 *(He flagged this himself as an out-of-mind dump: "I don't want to get outside focus of the code that
 we're doing, but I need to get all these out of my mind." Captured here, not acted on yet.)*
+
+---
+
+## 2026-08-01 · WE ARE CODING WAYS OF THINKING, AND YOU CANNOT HARD-CODE A WAY OF THINKING
+
+*Captured verbatim during the R3 push. Luis flagged it as the point he most wanted made, and told me
+to record it because it is material, not just direction.*
+
+> "What I generalize is that we are coding ways of thinking. We're coding ways of thoughts or
+> reflections, but we cannot hard code that. We have to make them flexible. So you need to put the
+> principles into prompts in order to show the way. Because I've realized that many functions are
+> very static. We don't make them flexible enough to actually be real. And that's the point that we
+> have to do."
+
+**THE DIAGNOSIS: the functions in this repo are static, and static is the wrong shape for a thought.**
+
+Every reasoning move that has been earned here got written down as a Python function with a fixed
+table inside it. `unstick.tried_for` filters what was already attempted. `crystal.applicable` picks a
+part. `recourse.LADDER` holds seven rungs of what to try when blocked. Each one is a *way of
+thinking* that was learned expensively and then frozen into an `if`. They work, and they are exactly
+as intelligent today as the day they were written, which is the problem: a way of thinking that
+cannot bend to a situation its author did not foresee is a rule, not a thought.
+
+**THE MOVE: the principle goes into the PROMPT. The function stays as the floor.**
+
+Not "replace the code with prompting" - that loses the guarantee. The pattern that already works in
+this repo is R1's: the wake decides first, the hard-coded ladder answers when it cannot. The
+generalization is that EVERY frozen reasoning move should have that shape - a principle stated in
+language, offered to the thinking layer, with the mechanical version underneath as the floor that
+catches it when the language fails.
+
+**THE PROGRESSION HE NAMED, and it is a roadmap, not a metaphor:**
+
+> "Possibly we'll have different modes as we advance - more mechanical, then more flexible, then the
+> path will be defining itself."
+
+    MECHANICAL   the rule is a table. Deterministic, certifiable, blind to novelty.       <- today
+    FLEXIBLE     the rule is a principle in the prompt; the table is the floor beneath it.
+    SELF-DEFINING the path is written by the thing walking it.
+
+That is the same ladder the rungs describe, seen from a different side. R0-R3 are mechanical by
+necessity - you cannot certify a bound against a system that reasons its way around it. The flexible
+mode is what R4 onward actually needs, and the third mode is R9 wearing plain clothes.
+
+**WHY THIS IS NOT A LICENCE TO LOOSEN EVERYTHING.** The bound half of every rung must stay
+mechanical - a containment guarantee that a model can talk its way past is not a guarantee. The
+POWER half is where flexibility belongs. Stated as one line: *certify the bound in code, express the
+power as a principle.*
+
+**AND THE STANDING INSTRUCTION THAT CAME WITH IT:**
+
+> "Do not stop until R3 is actually done. Take all the measures that you need or think that you will
+> need to do. Do any checks."
+

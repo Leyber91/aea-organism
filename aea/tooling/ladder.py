@@ -319,8 +319,17 @@ def measure_r2() -> dict:
 
 
 def measure_r3() -> dict:
-    """Outcomes written, and whether any stored verdict disagrees with the ledger."""
-    out = dict(outcomes=None, with_verify=None, disagreements=None, met=None)
+    """BOTH HALVES, and neither is asserted.
+
+    BOUND  `aea.lab.r3_bound` replays every stored outcome against the hands ledger and against the
+           invariants `outcomes.require` enforces on write, and proves its own instrument first with
+           a planted falsification plus an ablation. Its VOID verdict is not a pass.
+    POWER  the gate sentence is "a tick can be shown where the entity did NOT repeat something it
+           had already recorded as having failed". That is read straight out of live.log: a HELD
+           BACK line for move X, followed by a tick whose action is not X. Reading it from the log
+           rather than from a flag means the evidence is the same bytes a human would check."""
+    out = dict(outcomes=None, graded=None, suppressions=None, not_repeated=None,
+               bound=None, bound_pairs=None, met=None)
     p = os.path.join(grid.STATE, "outcomes.jsonl")
     if not os.path.exists(p):
         return out
@@ -333,11 +342,55 @@ def measure_r3() -> dict:
             except Exception:
                 pass
     out["outcomes"] = len(rows)
-    out["with_verify"] = sum(1 for r in rows if r.get("verify") or r.get("effect_ok") is not None)
+    # THE SAME PROVENANCE FILTER `outcomes.verdict_for` APPLIES, and it has to be the same or the
+    # ladder counts evidence the reader refuses. It did: this line read every row and returned 19,
+    # of which 16 were demo-harness rows for a move the entity never chose. A rung reported PROVEN
+    # on numbers its own consumer throws away is the wrong-object failure wearing a certificate.
+    real = [r for r in rows if r.get("src") == "wake" and "(" not in str(r.get("move") or "")]
+    out["entity_rows"] = len(real)
+    out["graded"] = sum(1 for r in real if (r.get("cause") or {}).get("counts_toward_move"))
     out["disagreements"] = sum(1 for r in rows
                                if r.get("exit_ok") is not None
                                and r.get("effect_ok") is not None
                                and r.get("exit_ok") != r.get("effect_ok"))
+    try:
+        from aea.lab import r3_bound
+        c = r3_bound.certify()
+        out["bound"] = c["verdict"]
+        out["bound_pairs"] = c["tool_pairs"]
+        out["falsifications"] = c["falsifications"]
+    except Exception:
+        pass
+
+    # THE POWER HALF, READ OUT OF THE LOG. A suppression that is never followed by a different
+    # action proves nothing - the entity might simply have stopped. So both halves are counted: the
+    # move was held, AND the very next executed tick did something else.
+    held, notrep = 0, 0
+    pending = None
+    for raw in _log_rows():
+        body = raw[1]
+        m = re.match(r"HELD BACK: (\S+)", body.strip())
+        if m:
+            held += 1
+            pending = m.group(1)
+            continue
+        t = re.match(r"tick \d+\s+(\S+)", body)
+        if t and pending:
+            if not t.group(1).startswith(pending.split("(")[0]):
+                notrep += 1
+            pending = None
+    out["suppressions"] = held
+    out["not_repeated"] = notrep
+    # AN EMPTY ARM IS NOT A PASSED ARM, and this is where R2's hardest lesson applies to R3. The
+    # bound has two arms; arm A compares tool outcomes against the hands ledger and currently has
+    # ZERO pairs, because no tool has yet run from a wake decision (R2-REACH is 0). Arm B covers
+    # every outcome and does hold. So the bound is certified on the arm that has traffic and
+    # UNTESTED on the arm that does not - which is a different sentence from "certified", and the
+    # difference is exactly the 0.083%-vs-0.6% retraction that cost a day on R2.
+    out["bound_untested_arm"] = "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet"
+    out["met"] = bool(out["bound"] == "PASS" and out["graded"] > 0 and notrep > 0)
+    out["met_caveat"] = ("power demonstrated and bound certified on arm B; arm A carries no traffic "
+                         "until R2-REACH is non-zero" if out["met"] else "")
     return out
 
 
