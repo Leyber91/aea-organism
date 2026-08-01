@@ -107,6 +107,25 @@ LADDER = [
             "The law chose, not taste - and because a law chose, the choice is explainable.",
     ),
     dict(
+        rung="separate-the-law-from-the-mandate",
+        when=r".",
+        escalate=True,
+        do="For each move the law ALLOWS, ask a second question: is this inside what was actually "
+           "asked for, or an EXTENSION of it? If it is an extension AND it is irreversible, or "
+           "publicly visible, or carries the human's identity - stop here and ask, even though the "
+           "ladder has rungs left.",
+        why="THE ONE THING THAT WAS DONE WRONG on 2026-08-01, and the reason this rung exists. "
+            "'You have permissions to enable GitHub Pages' authorised enabling Pages. At rung 5 two "
+            "moves survived - flip the existing repo to public, or create a new public repo - and "
+            "the privacy law correctly killed the first. It had NOTHING to say about the second, and "
+            "'no law forbids it' was treated as 'I am authorised'. Those are different claims. A new "
+            "public repository under someone's name is permanent, world-visible, and carries their "
+            "identity; it was created on an inference. The output was scanned and the outcome was "
+            "good, which is exactly why the hole is worth writing down - a bad decision that works "
+            "is the one that gets repeated. A law says what may never be done. It does not say what "
+            "you were asked to do, and only one of those two was being checked.",
+    ),
+    dict(
         rung="verify-by-the-effect",
         when=r".",
         do="After the action, observe the EFFECT through the path a user would: fetch the URL, read "
@@ -141,10 +160,18 @@ def steps(failure: str = "") -> list:
     return out + [LADDER[-1]]
 
 
+def escalating(failure: str = "") -> list:
+    """The rungs that must HALT the walk rather than continue it. A caller that ignores these is
+    walking a ladder with no top - which is how an autonomous system does something authorised-
+    adjacent and calls it authorised."""
+    return [r["rung"] for r in steps(failure) if r.get("escalate")]
+
+
 def render(failure: str = "") -> str:
     L = [f"RECOURSE for: {failure or '(any blocked action)'}", "=" * 92]
     for i, r in enumerate(steps(failure), 1):
-        L.append(f"{i}. {r['rung'].upper().replace('-', ' ')}")
+        mark = "  <- STOP HERE IF IT APPLIES" if r.get("escalate") else ""
+        L.append(f"{i}. {r['rung'].upper().replace('-', ' ')}{mark}")
         L.append(f"     DO   {r['do']}")
         L.append(f"     WHY  {r['why']}")
     return "\n".join(L)
