@@ -24,16 +24,26 @@ svg{display:block;width:100%;height:auto}
 .cross{transition:opacity .22s ease}
 .node{transition-delay:120ms}
 .stage{display:flex;gap:0;align-items:stretch}
-#rail{display:flex;flex-direction:column;border-right:1px solid #16191d;min-width:132px}
-#rail button{display:flex;gap:9px;align-items:baseline;background:none;border:0;border-bottom:1px
+#rail,#rrail{display:flex;flex-direction:column}
+/* an id selector with display:flex OUTRANKS the UA stylesheet's hidden rule, so both
+   rails rendered at once - hidden must be restated at the same specificity */
+#rail[hidden],#rrail[hidden]{display:none}
+#rail button,#rrail button{}
+#rail button,#rrail button{display:flex;gap:9px;align-items:baseline;background:none;border:0;border-bottom:1px
  solid #131619;color:#6d757e;font:inherit;padding:11px 13px;cursor:pointer;text-align:left}
-#rail button:hover{background:#0d1013;color:#aeb5bd}
-#rail button[aria-current="step"]{background:#0e1114;color:#eef1f4;
+#rail button:hover,#rrail button:hover{background:#0d1013;color:#aeb5bd}
+#rail button[aria-current="step"],#rrail button[aria-current="step"]{background:#0e1114;color:#eef1f4;
  box-shadow:inset 2px 0 0 var(--amber)}
-#rail b{font-size:10px;letter-spacing:.14em;font-weight:600;width:44px}
-#rail span{color:var(--brass);font-size:11px;width:30px}
-#rail em{color:#4b525a;font-style:normal;font-size:10px;margin-left:auto}
+#rail b,#rrail b{font-size:10px;letter-spacing:.14em;font-weight:600;width:44px}
+#rail span,#rrail span{color:var(--brass);font-size:11px;width:30px}
+#rail em,#rrail em{color:#4b525a;font-style:normal;font-size:10px;margin-left:auto}
 .canvas{flex:1;min-width:0}
+.rails{display:flex;flex-direction:column;border-right:1px solid #16191d;min-width:150px}
+.modes{display:flex;border-bottom:1px solid #16191d}
+.modes button{flex:1;background:none;border:0;color:#5c646d;font:inherit;font-size:9.5px;
+ letter-spacing:.12em;padding:9px 4px;cursor:pointer}
+.modes button.on{color:var(--amber);background:#0e1114}
+.modes button:hover{color:#aeb5bd}
 #cap{margin:0;padding:11px 14px;border-top:1px solid #16191d;color:#8b939c;font-size:11.5px}
 .node.core{fill:#fff;stroke:var(--amber);stroke-width:3}
 .node.hub{fill:#0a0c0e;stroke:var(--amber);stroke-width:2}
@@ -81,72 +91,94 @@ a{color:var(--brass)}
    drawn; exactly k = amber, the only amber besides the wake; deeper than k = the same dim dot as
    the dead field, its edges at zero. What ACCUMULATES is the edges, because the edges are the
    answer to "how is the code related". */
-#org[data-frame="0"] .node[data-d="1"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="0"] .branch[data-d="1"],#org[data-frame="0"] .cross[data-d="1"]{opacity:0}
-#org[data-frame="0"] .node[data-d="2"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="0"] .branch[data-d="2"],#org[data-frame="0"] .cross[data-d="2"]{opacity:0}
-#org[data-frame="0"] .node[data-d="3"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="0"] .branch[data-d="3"],#org[data-frame="0"] .cross[data-d="3"]{opacity:0}
-#org[data-frame="0"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="0"] .branch[data-d="4"],#org[data-frame="0"] .cross[data-d="4"]{opacity:0}
-#org[data-frame="0"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="0"] .branch[data-d="5"],#org[data-frame="0"] .cross[data-d="5"]{opacity:0}
-#org[data-frame="0"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="0"] .branch[data-d="6"],#org[data-frame="0"] .cross[data-d="6"]{opacity:0}
-#org[data-frame="0"] .node[data-d="0"]{fill:var(--amber)}
-#org[data-frame="0"] .branch[data-d="0"]{stroke:var(--amber);opacity:.92}
-#org[data-frame="1"] .node[data-d="2"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="1"] .branch[data-d="2"],#org[data-frame="1"] .cross[data-d="2"]{opacity:0}
-#org[data-frame="1"] .node[data-d="3"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="1"] .branch[data-d="3"],#org[data-frame="1"] .cross[data-d="3"]{opacity:0}
-#org[data-frame="1"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="1"] .branch[data-d="4"],#org[data-frame="1"] .cross[data-d="4"]{opacity:0}
-#org[data-frame="1"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="1"] .branch[data-d="5"],#org[data-frame="1"] .cross[data-d="5"]{opacity:0}
-#org[data-frame="1"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="1"] .branch[data-d="6"],#org[data-frame="1"] .cross[data-d="6"]{opacity:0}
-#org[data-frame="1"] .node[data-d="1"]{fill:var(--amber)}
-#org[data-frame="1"] .branch[data-d="1"]{stroke:var(--amber);opacity:.92}
-#org[data-frame="2"] .node[data-d="3"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="2"] .branch[data-d="3"],#org[data-frame="2"] .cross[data-d="3"]{opacity:0}
-#org[data-frame="2"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="2"] .branch[data-d="4"],#org[data-frame="2"] .cross[data-d="4"]{opacity:0}
-#org[data-frame="2"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="2"] .branch[data-d="5"],#org[data-frame="2"] .cross[data-d="5"]{opacity:0}
-#org[data-frame="2"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="2"] .branch[data-d="6"],#org[data-frame="2"] .cross[data-d="6"]{opacity:0}
-#org[data-frame="2"] .node[data-d="2"]{fill:var(--amber)}
-#org[data-frame="2"] .branch[data-d="2"]{stroke:var(--amber);opacity:.92}
-#org[data-frame="3"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="3"] .branch[data-d="4"],#org[data-frame="3"] .cross[data-d="4"]{opacity:0}
-#org[data-frame="3"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="3"] .branch[data-d="5"],#org[data-frame="3"] .cross[data-d="5"]{opacity:0}
-#org[data-frame="3"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="3"] .branch[data-d="6"],#org[data-frame="3"] .cross[data-d="6"]{opacity:0}
-#org[data-frame="3"] .node[data-d="3"]{fill:var(--amber)}
-#org[data-frame="3"] .branch[data-d="3"]{stroke:var(--amber);opacity:.92}
-#org[data-frame="4"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="4"] .branch[data-d="5"],#org[data-frame="4"] .cross[data-d="5"]{opacity:0}
-#org[data-frame="4"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="4"] .branch[data-d="6"],#org[data-frame="4"] .cross[data-d="6"]{opacity:0}
-#org[data-frame="4"] .node[data-d="4"]{fill:var(--amber)}
-#org[data-frame="4"] .branch[data-d="4"]{stroke:var(--amber);opacity:.92}
-#org[data-frame="5"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
-#org[data-frame="5"] .branch[data-d="6"],#org[data-frame="5"] .cross[data-d="6"]{opacity:0}
-#org[data-frame="5"] .node[data-d="5"]{fill:var(--amber)}
-#org[data-frame="5"] .branch[data-d="5"]{stroke:var(--amber);opacity:.92}
-#org[data-frame="6"] .node[data-d="6"]{fill:var(--amber)}
-#org[data-frame="6"] .branch[data-d="6"]{stroke:var(--amber);opacity:.92}
+#org[data-mode="rung"][data-frame="0"] .node[data-r="1"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="0"] .node[data-r="2"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="0"] .node[data-r="3"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="0"] .node[data-r="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="0"] .node[data-r="0"]{fill:var(--amber);r:4.4px;opacity:1}
+#org[data-mode="rung"][data-frame="1"] .node[data-r="2"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="1"] .node[data-r="3"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="1"] .node[data-r="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="1"] .node[data-r="1"]{fill:var(--amber);r:4.4px;opacity:1}
+#org[data-mode="rung"][data-frame="2"] .node[data-r="3"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="2"] .node[data-r="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="2"] .node[data-r="2"]{fill:var(--amber);r:4.4px;opacity:1}
+#org[data-mode="rung"][data-frame="3"] .node[data-r="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="rung"][data-frame="3"] .node[data-r="3"]{fill:var(--amber);r:4.4px;opacity:1}
+#org[data-mode="rung"][data-frame="4"] .node[data-r="4"]{fill:var(--amber);r:4.4px;opacity:1}
+#org[data-mode="rung"] .node:not([data-r]){fill:#2b3138;opacity:.5}
+#org[data-mode="rung"] .node[data-r]{fill:#5b636c;opacity:.95;r:3.4px}
+#org[data-mode="rung"] .branch,#org[data-mode="rung"] .cross{opacity:.22}
+#org[data-mode="hop"][data-frame="0"] .node[data-d="1"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="0"] .branch[data-d="1"],#org[data-mode="hop"][data-frame="0"] .cross[data-d="1"]{opacity:0}
+#org[data-mode="hop"][data-frame="0"] .node[data-d="2"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="0"] .branch[data-d="2"],#org[data-mode="hop"][data-frame="0"] .cross[data-d="2"]{opacity:0}
+#org[data-mode="hop"][data-frame="0"] .node[data-d="3"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="0"] .branch[data-d="3"],#org[data-mode="hop"][data-frame="0"] .cross[data-d="3"]{opacity:0}
+#org[data-mode="hop"][data-frame="0"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="0"] .branch[data-d="4"],#org[data-mode="hop"][data-frame="0"] .cross[data-d="4"]{opacity:0}
+#org[data-mode="hop"][data-frame="0"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="0"] .branch[data-d="5"],#org[data-mode="hop"][data-frame="0"] .cross[data-d="5"]{opacity:0}
+#org[data-mode="hop"][data-frame="0"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="0"] .branch[data-d="6"],#org[data-mode="hop"][data-frame="0"] .cross[data-d="6"]{opacity:0}
+#org[data-mode="hop"][data-frame="0"] .node[data-d="0"]{fill:var(--amber)}
+#org[data-mode="hop"][data-frame="0"] .branch[data-d="0"]{stroke:var(--amber);opacity:.92}
+#org[data-mode="hop"][data-frame="1"] .node[data-d="2"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="1"] .branch[data-d="2"],#org[data-mode="hop"][data-frame="1"] .cross[data-d="2"]{opacity:0}
+#org[data-mode="hop"][data-frame="1"] .node[data-d="3"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="1"] .branch[data-d="3"],#org[data-mode="hop"][data-frame="1"] .cross[data-d="3"]{opacity:0}
+#org[data-mode="hop"][data-frame="1"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="1"] .branch[data-d="4"],#org[data-mode="hop"][data-frame="1"] .cross[data-d="4"]{opacity:0}
+#org[data-mode="hop"][data-frame="1"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="1"] .branch[data-d="5"],#org[data-mode="hop"][data-frame="1"] .cross[data-d="5"]{opacity:0}
+#org[data-mode="hop"][data-frame="1"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="1"] .branch[data-d="6"],#org[data-mode="hop"][data-frame="1"] .cross[data-d="6"]{opacity:0}
+#org[data-mode="hop"][data-frame="1"] .node[data-d="1"]{fill:var(--amber)}
+#org[data-mode="hop"][data-frame="1"] .branch[data-d="1"]{stroke:var(--amber);opacity:.92}
+#org[data-mode="hop"][data-frame="2"] .node[data-d="3"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="2"] .branch[data-d="3"],#org[data-mode="hop"][data-frame="2"] .cross[data-d="3"]{opacity:0}
+#org[data-mode="hop"][data-frame="2"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="2"] .branch[data-d="4"],#org[data-mode="hop"][data-frame="2"] .cross[data-d="4"]{opacity:0}
+#org[data-mode="hop"][data-frame="2"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="2"] .branch[data-d="5"],#org[data-mode="hop"][data-frame="2"] .cross[data-d="5"]{opacity:0}
+#org[data-mode="hop"][data-frame="2"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="2"] .branch[data-d="6"],#org[data-mode="hop"][data-frame="2"] .cross[data-d="6"]{opacity:0}
+#org[data-mode="hop"][data-frame="2"] .node[data-d="2"]{fill:var(--amber)}
+#org[data-mode="hop"][data-frame="2"] .branch[data-d="2"]{stroke:var(--amber);opacity:.92}
+#org[data-mode="hop"][data-frame="3"] .node[data-d="4"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="3"] .branch[data-d="4"],#org[data-mode="hop"][data-frame="3"] .cross[data-d="4"]{opacity:0}
+#org[data-mode="hop"][data-frame="3"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="3"] .branch[data-d="5"],#org[data-mode="hop"][data-frame="3"] .cross[data-d="5"]{opacity:0}
+#org[data-mode="hop"][data-frame="3"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="3"] .branch[data-d="6"],#org[data-mode="hop"][data-frame="3"] .cross[data-d="6"]{opacity:0}
+#org[data-mode="hop"][data-frame="3"] .node[data-d="3"]{fill:var(--amber)}
+#org[data-mode="hop"][data-frame="3"] .branch[data-d="3"]{stroke:var(--amber);opacity:.92}
+#org[data-mode="hop"][data-frame="4"] .node[data-d="5"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="4"] .branch[data-d="5"],#org[data-mode="hop"][data-frame="4"] .cross[data-d="5"]{opacity:0}
+#org[data-mode="hop"][data-frame="4"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="4"] .branch[data-d="6"],#org[data-mode="hop"][data-frame="4"] .cross[data-d="6"]{opacity:0}
+#org[data-mode="hop"][data-frame="4"] .node[data-d="4"]{fill:var(--amber)}
+#org[data-mode="hop"][data-frame="4"] .branch[data-d="4"]{stroke:var(--amber);opacity:.92}
+#org[data-mode="hop"][data-frame="5"] .node[data-d="6"]{fill:#191d22;opacity:.28;r:1.2px}
+#org[data-mode="hop"][data-frame="5"] .branch[data-d="6"],#org[data-mode="hop"][data-frame="5"] .cross[data-d="6"]{opacity:0}
+#org[data-mode="hop"][data-frame="5"] .node[data-d="5"]{fill:var(--amber)}
+#org[data-mode="hop"][data-frame="5"] .branch[data-d="5"]{stroke:var(--amber);opacity:.92}
+#org[data-mode="hop"][data-frame="6"] .node[data-d="6"]{fill:var(--amber)}
+#org[data-mode="hop"][data-frame="6"] .branch[data-d="6"]{stroke:var(--amber);opacity:.92}
 </style>
 <div class="wrap">
 <h1>THE AEA — THE ORGANISM</h1>
 <p class="sub">An autonomous entity, drawn from its own state. Every number on this page is read
-from a file the running system wrote. 2026-07-31 23:54 UTC</p>
+from a file the running system wrote. 2026-08-01 00:19 UTC</p>
 
 <div class="hero"><div class="stage">
+<div class="rails">
+<div class="modes"><button id="m-hop" class="on">BY CALL HOP</button><button id="m-rung">BY RUNG</button></div>
 <nav id="rail" aria-label="reveal the graph one call-hop at a time"><button data-k="0" aria-current="false"><b>HOP 0</b><span>+1</span><em>1</em></button><button data-k="1" aria-current="false"><b>HOP 1</b><span>+6</span><em>7</em></button><button data-k="2" aria-current="false"><b>HOP 2</b><span>+32</span><em>39</em></button><button data-k="3" aria-current="false"><b>HOP 3</b><span>+34</span><em>73</em></button><button data-k="4" aria-current="false"><b>HOP 4</b><span>+42</span><em>115</em></button><button data-k="5" aria-current="false"><b>HOP 5</b><span>+18</span><em>133</em></button><button data-k="6" aria-current="step"><b>HOP 6</b><span>+4</span><em>137</em></button></nav>
+<nav id="rrail" hidden aria-label="reveal the graph one capability rung at a time"><button data-k="0" aria-current="false"><b>R2</b><span>+6</span><em>6</em></button><button data-k="1" aria-current="false"><b>R3.1</b><span>+7</span><em>13</em></button><button data-k="2" aria-current="false"><b>R3.2</b><span>+6</span><em>19</em></button><button data-k="3" aria-current="false"><b>R3.3</b><span>+4</span><em>23</em></button><button data-k="4" aria-current="step"><b>R3.4</b><span>+2</span><em>25</em></button></nav>
+</div>
 <div class="canvas">
-<svg id="org" viewBox="0 0 1000 1000" data-frame="6" role="img" aria-label="the live call graph of the entity, revealed by call depth">
+<svg id="org" viewBox="0 0 1000 1000" data-mode="hop" data-frame="6" role="img" aria-label="the live call graph of the entity, revealed by call depth">
 <circle cx="47.8" cy="479.2" r="1" class="dead"/>
 <circle cx="369.2" cy="938.8" r="1" class="dead"/>
 <circle cx="915.7" cy="333.9" r="1" class="dead"/>
@@ -1175,6 +1207,7 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
 <circle cx="482.3" cy="52.1" r="1" class="dead"/>
 <circle cx="481.9" cy="43.0" r="1" class="dead"/>
 <circle cx="482.9" cy="67.4" r="1" class="dead"/>
+<circle cx="159.5" cy="791.9" r="1" class="dead"/>
 <circle cx="939.8" cy="287.0" r="1" class="dead"/>
 <circle cx="435.3" cy="971.5" r="1" class="dead"/>
 <circle cx="827.8" cy="803.6" r="1" class="dead"/>
@@ -1240,6 +1273,10 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
 <circle cx="66.9" cy="341.3" r="1" class="dead"/>
 <circle cx="895.6" cy="266.4" r="1" class="dead"/>
 <circle cx="33.7" cy="546.4" r="1" class="dead"/>
+<circle cx="569.2" cy="32.4" r="1" class="dead"/>
+<circle cx="686.0" cy="76.7" r="1" class="dead"/>
+<circle cx="872.2" cy="749.5" r="1" class="dead"/>
+<circle cx="216.2" cy="170.3" r="1" class="dead"/>
 <circle cx="673.9" cy="98.9" r="1" class="dead"/>
 <circle cx="559.0" cy="23.7" r="1" class="dead"/>
 <circle cx="922.9" cy="306.5" r="1" class="dead"/>
@@ -1541,27 +1578,27 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
 <circle cx="533.7" cy="380.7" r="3.7" class="node" data-d="2"><title>loop.live:save_hb  (hop 2)</title></circle>
 <circle cx="550.5" cy="321.0" r="3.0" class="node" data-d="3"><title>kernel.grid:atomic_save_json  (hop 3)</title></circle>
 <circle cx="555.2" cy="528.1" r="4.5" class="node" data-d="1"><title>loop.live:tick  (hop 1)</title></circle>
-<circle cx="551.9" cy="387.4" r="3.7" class="node" data-d="2"><title>kernel.hands:invoke  (hop 2)</title></circle>
-<circle cx="564.4" cy="325.5" r="3.0" class="node" data-d="3"><title>kernel.hands:_ledger  (hop 3)</title></circle>
+<circle cx="551.9" cy="387.4" r="3.7" class="node" data-d="2" data-r="0"><title>kernel.hands:invoke  (hop 2)</title></circle>
+<circle cx="564.4" cy="325.5" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.hands:_ledger  (hop 3)</title></circle>
 <circle cx="585.8" cy="267.3" r="2.2" class="node" data-d="4"><title>kernel.hands:_ledger_path  (hop 4)</title></circle>
 <circle cx="577.9" cy="331.1" r="3.0" class="node" data-d="3"><title>kernel.hands:_unwrap_args  (hop 3)</title></circle>
-<circle cx="590.9" cy="337.7" r="3.0" class="node" data-d="3"><title>kernel.hands:allowed  (hop 3)</title></circle>
+<circle cx="590.9" cy="337.7" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.hands:allowed  (hop 3)</title></circle>
 <circle cx="568.9" cy="396.9" r="3.7" class="node" data-d="2"><title>kernel.pulse:emit  (hop 2)</title></circle>
 <circle cx="603.3" cy="345.3" r="3.0" class="node" data-d="3"><title>kernel.pulse:_rotate  (hop 3)</title></circle>
 <circle cx="637.8" cy="293.8" r="2.2" class="node" data-d="4"><title>kernel.grid:file_lock  (hop 4)</title></circle>
 <circle cx="623.6" cy="490.3" r="3.7" class="node" data-d="2"><title>loop.live:_notice_and_propose  (hop 2)</title></circle>
-<circle cx="626.3" cy="363.4" r="3.0" class="node" data-d="3"><title>kernel.crystal:applicable  (hop 3)</title></circle>
+<circle cx="626.3" cy="363.4" r="3.0" class="node" data-d="3" data-r="3"><title>kernel.crystal:applicable  (hop 3)</title></circle>
 <circle cx="653.5" cy="305.2" r="2.2" class="node" data-d="4"><title>kernel.crystal:_load  (hop 4)</title></circle>
 <circle cx="691.9" cy="256.6" r="2.0" class="node" data-d="5"><title>kernel.crystal:_lib_path  (hop 5)</title></circle>
 <circle cx="668.3" cy="317.9" r="2.2" class="node" data-d="4"><title>kernel.crystal:_rested  (hop 4)</title></circle>
 <circle cx="682.1" cy="331.7" r="2.2" class="node" data-d="4"><title>kernel.crystal:_save  (hop 4)</title></circle>
-<circle cx="646.1" cy="384.8" r="3.0" class="node" data-d="3"><title>kernel.crystal:carry_out  (hop 3)</title></circle>
-<circle cx="662.3" cy="409.1" r="3.0" class="node" data-d="3"><title>kernel.crystal:harvest  (hop 3)</title></circle>
+<circle cx="646.1" cy="384.8" r="3.0" class="node" data-d="3" data-r="3"><title>kernel.crystal:carry_out  (hop 3)</title></circle>
+<circle cx="662.3" cy="409.1" r="3.0" class="node" data-d="3" data-r="3"><title>kernel.crystal:harvest  (hop 3)</title></circle>
 <circle cx="706.2" cy="362.2" r="2.2" class="node" data-d="4"><title>kernel.crystal:name_for  (hop 4)</title></circle>
 <circle cx="716.4" cy="378.8" r="2.2" class="node" data-d="4"><title>kernel.crystal:part_id  (hop 4)</title></circle>
 <circle cx="725.2" cy="396.2" r="2.2" class="node" data-d="4"><title>kernel.unstick:_exp_path  (hop 4)</title></circle>
-<circle cx="674.5" cy="435.6" r="3.0" class="node" data-d="3"><title>kernel.crystal:record_use  (hop 3)</title></circle>
-<circle cx="679.0" cy="449.5" r="3.0" class="node" data-d="3"><title>kernel.impasse:read  (hop 3)</title></circle>
+<circle cx="674.5" cy="435.6" r="3.0" class="node" data-d="3" data-r="3"><title>kernel.crystal:record_use  (hop 3)</title></circle>
+<circle cx="679.0" cy="449.5" r="3.0" class="node" data-d="3" data-r="2"><title>kernel.impasse:read  (hop 3)</title></circle>
 <circle cx="738.7" cy="432.7" r="2.2" class="node" data-d="4"><title>kernel.impasse:signature  (hop 4)</title></circle>
 <circle cx="683.7" cy="470.9" r="3.0" class="node" data-d="3"><title>kernel.trust:check  (hop 3)</title></circle>
 <circle cx="743.2" cy="451.6" r="2.2" class="node" data-d="4"><title>kernel.trust:_entry  (hop 4)</title></circle>
@@ -1570,16 +1607,16 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
 <circle cx="747.8" cy="490.3" r="2.2" class="node" data-d="4"><title>kernel.trust:_alert  (hop 4)</title></circle>
 <circle cx="809.8" cy="487.8" r="2.0" class="node" data-d="5"><title>io.notify:call  (hop 5)</title></circle>
 <circle cx="747.8" cy="509.7" r="2.2" class="node" data-d="4"><title>kernel.trust:_save  (hop 4)</title></circle>
-<circle cx="684.7" cy="521.9" r="3.0" class="node" data-d="3"><title>kernel.unstick:check_invariants  (hop 3)</title></circle>
-<circle cx="676.9" cy="557.5" r="3.0" class="node" data-d="3"><title>kernel.unstick:propose  (hop 3)</title></circle>
+<circle cx="684.7" cy="521.9" r="3.0" class="node" data-d="3" data-r="2"><title>kernel.unstick:check_invariants  (hop 3)</title></circle>
+<circle cx="676.9" cy="557.5" r="3.0" class="node" data-d="3" data-r="2"><title>kernel.unstick:propose  (hop 3)</title></circle>
 <circle cx="743.2" cy="548.4" r="2.2" class="node" data-d="4"><title>kernel.unstick:appliable  (hop 4)</title></circle>
 <circle cx="804.0" cy="560.5" r="2.0" class="node" data-d="5"><title>kernel.knobs:declared  (hop 5)</title></circle>
-<circle cx="738.7" cy="567.3" r="2.2" class="node" data-d="4"><title>kernel.unstick:moves_for  (hop 4)</title></circle>
+<circle cx="738.7" cy="567.3" r="2.2" class="node" data-d="4" data-r="2"><title>kernel.unstick:moves_for  (hop 4)</title></circle>
 <circle cx="798.4" cy="584.1" r="2.0" class="node" data-d="5"><title>kernel.unstick:_rods_that_pass  (hop 5)</title></circle>
 <circle cx="858.0" cy="601.0" r="2.0" class="node" data-d="6"><title>kernel.unstick:is_local  (hop 6)</title></circle>
 <circle cx="732.7" cy="585.8" r="2.2" class="node" data-d="4"><title>kernel.unstick:plants_for  (hop 4)</title></circle>
-<circle cx="725.2" cy="603.8" r="2.2" class="node" data-d="4"><title>kernel.unstick:tried_for  (hop 4)</title></circle>
-<circle cx="662.3" cy="590.9" r="3.0" class="node" data-d="3"><title>kernel.unstick:record  (hop 3)</title></circle>
+<circle cx="725.2" cy="603.8" r="2.2" class="node" data-d="4" data-r="2"><title>kernel.unstick:tried_for  (hop 4)</title></circle>
+<circle cx="662.3" cy="590.9" r="3.0" class="node" data-d="3" data-r="2"><title>kernel.unstick:record  (hop 3)</title></circle>
 <circle cx="716.4" cy="621.2" r="2.2" class="node" data-d="4"><title>kernel.unstick:_load_exp  (hop 4)</title></circle>
 <circle cx="646.1" cy="615.2" r="3.0" class="node" data-d="3"><title>loop.live:_apply_knob  (hop 3)</title></circle>
 <circle cx="694.8" cy="653.5" r="2.2" class="node" data-d="4"><title>kernel.knobs:set  (hop 4)</title></circle>
@@ -1587,18 +1624,18 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
 <circle cx="743.4" cy="691.9" r="2.0" class="node" data-d="5"><title>kernel.knobs:_load  (hop 5)</title></circle>
 <circle cx="792.1" cy="730.3" r="2.0" class="node" data-d="6"><title>kernel.knobs:_path  (hop 6)</title></circle>
 <circle cx="727.6" cy="710.4" r="2.0" class="node" data-d="5"><title>kernel.knobs:_save  (hop 5)</title></circle>
-<circle cx="584.2" cy="591.1" r="3.7" class="node" data-d="2"><title>loop.live:_post_for  (hop 2)</title></circle>
-<circle cx="556.3" cy="610.5" r="3.7" class="node" data-d="2"><title>loop.live:_record_outcome  (hop 2)</title></circle>
-<circle cx="603.3" cy="654.7" r="3.0" class="node" data-d="3"><title>kernel.outcomes:build  (hop 3)</title></circle>
-<circle cx="645.8" cy="700.6" r="2.2" class="node" data-d="4"><title>kernel.cause:classify  (hop 4)</title></circle>
+<circle cx="584.2" cy="591.1" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_post_for  (hop 2)</title></circle>
+<circle cx="556.3" cy="610.5" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_record_outcome  (hop 2)</title></circle>
+<circle cx="603.3" cy="654.7" r="3.0" class="node" data-d="3" data-r="1"><title>kernel.outcomes:build  (hop 3)</title></circle>
+<circle cx="645.8" cy="700.6" r="2.2" class="node" data-d="4" data-r="1"><title>kernel.cause:classify  (hop 4)</title></circle>
 <circle cx="691.9" cy="743.4" r="2.0" class="node" data-d="5"><title>kernel.cause:_frame_under_aea  (hop 5)</title></circle>
 <circle cx="672.2" cy="757.8" r="2.0" class="node" data-d="5"><title>kernel.cause:_hint  (hop 5)</title></circle>
 <circle cx="621.2" cy="716.4" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_code  (hop 4)</title></circle>
 <circle cx="651.5" cy="770.5" r="2.0" class="node" data-d="5"><title>kernel.grid:code_stamp  (hop 5)</title></circle>
-<circle cx="564.4" cy="674.5" r="3.0" class="node" data-d="3"><title>kernel.outcomes:write  (hop 3)</title></circle>
-<circle cx="603.8" cy="725.2" r="2.2" class="node" data-d="4"><title>kernel.grid:append_jsonl  (hop 4)</title></circle>
+<circle cx="564.4" cy="674.5" r="3.0" class="node" data-d="3" data-r="1"><title>kernel.outcomes:write  (hop 3)</title></circle>
+<circle cx="603.8" cy="725.2" r="2.2" class="node" data-d="4" data-r="1"><title>kernel.grid:append_jsonl  (hop 4)</title></circle>
 <circle cx="585.8" cy="732.7" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_path  (hop 4)</title></circle>
-<circle cx="567.3" cy="738.7" r="2.2" class="node" data-d="4"><title>kernel.outcomes:require  (hop 4)</title></circle>
+<circle cx="567.3" cy="738.7" r="2.2" class="node" data-d="4" data-r="1"><title>kernel.outcomes:require  (hop 4)</title></circle>
 <circle cx="584.1" cy="798.4" r="2.0" class="node" data-d="5"><title>kernel.cause:counts  (hop 5)</title></circle>
 <circle cx="524.2" cy="621.6" r="3.7" class="node" data-d="2"><title>loop.live:now_iso  (hop 2)</title></circle>
 <circle cx="514.6" cy="623.1" r="3.7" class="node" data-d="2"><title>loop.live:run_script  (hop 2)</title></circle>
@@ -1617,12 +1654,12 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
 <circle cx="378.8" cy="716.4" r="2.2" class="node" data-d="4"><title>io.speak:sapi_speak  (hop 4)</title></circle>
 <circle cx="431.1" cy="603.1" r="3.7" class="node" data-d="2"><title>loop.live:today  (hop 2)</title></circle>
 <circle cx="457.9" cy="545.5" r="4.5" class="node" data-d="1"><title>loop.live:choose_action  (hop 1)</title></circle>
-<circle cx="419.5" cy="594.3" r="3.7" class="node" data-d="2"><title>kernel.decide:choose  (hop 2)</title></circle>
-<circle cx="384.8" cy="646.1" r="3.0" class="node" data-d="3"><title>kernel.decide:latest  (hop 3)</title></circle>
+<circle cx="419.5" cy="594.3" r="3.7" class="node" data-d="2" data-r="0"><title>kernel.decide:choose  (hop 2)</title></circle>
+<circle cx="384.8" cy="646.1" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.decide:latest  (hop 3)</title></circle>
 <circle cx="346.5" cy="694.8" r="2.2" class="node" data-d="4"><title>kernel.decide:_finite  (hop 4)</title></circle>
-<circle cx="373.7" cy="636.6" r="3.0" class="node" data-d="3"><title>kernel.decide:parse  (hop 3)</title></circle>
+<circle cx="373.7" cy="636.6" r="3.0" class="node" data-d="3" data-r="0"><title>kernel.decide:parse  (hop 3)</title></circle>
 <circle cx="408.9" cy="584.2" r="3.7" class="node" data-d="2"><title>kernel.decide:explain  (hop 2)</title></circle>
-<circle cx="438.4" cy="507.3" r="4.5" class="node" data-d="1"><title>loop.aea:tick  (hop 1)</title></circle>
+<circle cx="438.4" cy="507.3" r="4.5" class="node" data-d="1" data-r="4"><title>loop.aea:tick  (hop 1)</title></circle>
 <circle cx="402.6" cy="576.8" r="3.7" class="node" data-d="2"><title>loop.aea:_moves  (hop 2)</title></circle>
 <circle cx="385.4" cy="547.5" r="3.7" class="node" data-d="2"><title>loop.aea:core  (hop 2)</title></circle>
 <circle cx="328.2" cy="571.2" r="3.0" class="node" data-d="3"><title>energy.energy:draw  (hop 3)</title></circle>
@@ -1640,7 +1677,7 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
 <circle cx="376.9" cy="514.6" r="3.7" class="node" data-d="2"><title>loop.aea:move_from  (hop 2)</title></circle>
 <circle cx="376.1" cy="504.9" r="3.7" class="node" data-d="2"><title>loop.aea:sense  (hop 2)</title></circle>
 <circle cx="376.1" cy="495.1" r="3.7" class="node" data-d="2"><title>loop.aea:standing  (hop 2)</title></circle>
-<circle cx="314.1" cy="492.7" r="3.0" class="node" data-d="3"><title>kernel.impasse:scan  (hop 3)</title></circle>
+<circle cx="314.1" cy="492.7" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.impasse:scan  (hop 3)</title></circle>
 <circle cx="376.9" cy="485.4" r="3.7" class="node" data-d="2"><title>loop.aea:structure  (hop 2)</title></circle>
 <circle cx="315.3" cy="478.1" r="3.0" class="node" data-d="3"><title>kernel.grid:key  (hop 3)</title></circle>
 <circle cx="382.1" cy="461.7" r="3.7" class="node" data-d="2"><title>mind.hades:watch  (hop 2)</title></circle>
@@ -1683,16 +1720,16 @@ from a file the running system wrote. 2026-07-31 23:54 UTC</p>
  tick begins</span>
 <span><i style="background:var(--amber)"></i>reached in 1–2 calls</span>
 <span><i style="background:var(--brass)"></i>reachable</span>
-<span><i style="background:#1b1f24"></i>1145 functions it cannot reach</span>
+<span><i style="background:#1b1f24"></i>1150 functions it cannot reach</span>
 </div>
 </div>
 
 <h2>WHAT IS ALIVE</h2>
 <div class="grid">
 <div class="card"><div class="cap">reachable from the wake</div>
- <div class="big">135<em> / 1280 functions</em></div>
+ <div class="big">135<em> / 1285 functions</em></div>
  <div class="src">aea/tooling/assembly.py — real call edges, not imports</div></div>
-<div class="card"><div class="cap">modules</div><div class="big">154</div>
+<div class="card"><div class="cap">modules</div><div class="big">156</div>
  <div class="src">218 calls unresolvable statically, not counted as edges</div></div>
 <div class="card"><div class="cap">frontier rods</div><div class="big">16<em> / 95</em></div>
  <div class="src">state/capability_census.json — no-ceiling/v2</div></div>
@@ -1727,15 +1764,27 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 /* ~25 lines, no library, no external request. The ENTIRE state is one integer attribute over frozen
    coordinates, so going backward is exactly symmetric and free: clicking hop 2 after hop 6 removes
    precisely what hops 3-6 added, with no residue and no replayed arrival. */
-var CAPS=["HOP 0 \u2014 1 function arrive \u2014 1 of 137 reachable \u2014 first reach into aea.?", "HOP 1 \u2014 6 functions arrive \u2014 7 of 137 reachable \u2014 first reach into aea.loop", "HOP 2 \u2014 32 functions arrive \u2014 39 of 137 reachable \u2014 first reach into aea.energy, aea.kernel, aea.mind, aea.server", "HOP 3 \u2014 34 functions arrive \u2014 73 of 137 reachable \u2014 first reach into aea.io, aea.memory", "HOP 4 \u2014 42 functions arrive \u2014 115 of 137 reachable \u2014 first reach into -", "HOP 5 \u2014 18 functions arrive \u2014 133 of 137 reachable \u2014 first reach into -", "HOP 6 \u2014 4 functions arrive \u2014 137 of 137 reachable \u2014 first reach into -"],MAXD=6;
-var svg=document.getElementById('org'),rail=document.getElementById('rail'),cap=document.getElementById('cap');
-function go(k){k=Math.max(0,Math.min(MAXD,k));svg.setAttribute('data-frame',k);cap.textContent=CAPS[k];
- [].forEach.call(rail.querySelectorAll('button'),function(b){
+var CAPS=["HOP 0 \u2014 1 function arrive \u2014 1 of 137 reachable \u2014 first reach into aea.?", "HOP 1 \u2014 6 functions arrive \u2014 7 of 137 reachable \u2014 first reach into aea.loop", "HOP 2 \u2014 32 functions arrive \u2014 39 of 137 reachable \u2014 first reach into aea.energy, aea.kernel, aea.mind, aea.server", "HOP 3 \u2014 34 functions arrive \u2014 73 of 137 reachable \u2014 first reach into aea.io, aea.memory", "HOP 4 \u2014 42 functions arrive \u2014 115 of 137 reachable \u2014 first reach into -", "HOP 5 \u2014 18 functions arrive \u2014 133 of 137 reachable \u2014 first reach into -", "HOP 6 \u2014 4 functions arrive \u2014 137 of 137 reachable \u2014 first reach into -"],RCAPS=["R2  the wake's decision reaches a tool \u2014 6 functions declared \u2014 6 of 25 declared by any rung, 112 of 137 declared by none", "R3.1 the outcome is recorded \u2014 7 functions declared \u2014 13 of 25 declared by any rung, 112 of 137 declared by none", "R3.2 it stops re-choosing what the record says fails \u2014 6 functions declared \u2014 19 of 25 declared by any rung, 112 of 137 declared by none", "R3.3 what works twice becomes a part, and one bad night cannot delete it \u2014 4 functions declared \u2014 23 of 25 declared by any rung, 112 of 137 declared by none", "R3.4 the record reaches the wake's eyes \u2014 2 functions declared \u2014 25 of 25 declared by any rung, 112 of 137 declared by none"],MAXD=6,RMAX=RCAPS.length-1;
+var svg=document.getElementById('org'),cap=document.getElementById('cap'),
+    rail=document.getElementById('rail'),rrail=document.getElementById('rrail'),
+    mh=document.getElementById('m-hop'),mr=document.getElementById('m-rung'),mode='hop';
+function go(k){var max=mode==='hop'?MAXD:RMAX,r=mode==='hop'?rail:rrail;
+ k=Math.max(0,Math.min(max,k));
+ svg.setAttribute('data-frame',k);svg.setAttribute('data-mode',mode);
+ cap.textContent=(mode==='hop'?CAPS:RCAPS)[k];
+ [].forEach.call(r.querySelectorAll('button'),function(b){
    b.setAttribute('aria-current',+b.dataset.k===k?'step':'false');});
- history.replaceState(null,'','#hop-'+k);}
+ history.replaceState(null,'','#'+mode+'-'+k);}
+function setMode(m){mode=m;rail.hidden=(m!=='hop');rrail.hidden=(m!=='rung');
+ mh.className=m==='hop'?'on':'';mr.className=m==='rung'?'on':'';
+ go(m==='hop'?MAXD:RMAX);}
+mh.addEventListener('click',function(){setMode('hop');});
+mr.addEventListener('click',function(){setMode('rung');});
 rail.addEventListener('click',function(e){var b=e.target.closest('button');if(b)go(+b.dataset.k);});
+rrail.addEventListener('click',function(e){var b=e.target.closest('button');if(b)go(+b.dataset.k);});
 document.addEventListener('keydown',function(e){
  if(e.key==='ArrowRight')go(+svg.getAttribute('data-frame')+1);
  if(e.key==='ArrowLeft')go(+svg.getAttribute('data-frame')-1);});
-var m=location.hash.match(/hop-(\d+)/);if(m)go(+m[1]);
+var h=location.hash.match(/(hop|rung)-(\d+)/);
+if(h){mode=h[1];setMode(mode);go(+h[2]);}else{svg.setAttribute('data-mode','hop');}
 </script>

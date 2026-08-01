@@ -218,8 +218,21 @@ def _tree(org: dict) -> dict:
     tset = {(p, c) for p, c in tree}
     cross = [(a, b) for a, b in org["edges"]
              if (a, b) not in tset and a in pos and b in pos]
+    # WHICH RUNG DECLARES THIS FUNCTION - the FUNCTIONAL axis, beside the structural one. The two
+    # answer different questions: hop depth says "what calls what" and covers all 137; rung says
+    # "what capability is this part of" and covers 25. Both are true, neither replaces the other,
+    # and the page must never let a viewer mistake the 18% for the whole.
+    rung = {}
+    try:
+        from aea.tooling import assembly as _asm
+        for i, (_title, fns) in enumerate(_asm.STEPS):
+            for f in fns:
+                if f in pos:
+                    rung.setdefault(f, i)
+    except Exception:
+        pass
     return dict(pos=pos, tree=tree, cross=cross, root=root, depth=depth, leaves=leaves,
-                sectors=secs, maxd=_maxd)
+                sectors=secs, maxd=_maxd, rung=rung)
 
 
 def _svg(org: dict, T: dict) -> str:
@@ -268,7 +281,9 @@ def _svg(org: dict, T: dict) -> str:
         # the one property every mark shares - and the two-ink law reserves it for the FIRED state.
         # Resting nodes are structure grey; the frame CSS paints the arriving ring amber.
         style = ""
-        out.append(f'<circle cx="{x}" cy="{y}" r="{r:.1f}" class="{cls}" data-d="{d}"{style}>'
+        rung = T.get("rung", {}).get(n)
+        ra = f' data-r="{rung}"' if rung is not None else ""
+        out.append(f'<circle cx="{x}" cy="{y}" r="{r:.1f}" class="{cls}" data-d="{d}"{ra}{style}>'
                    f'<title>{n.replace("aea.","")}  (hop {d})</title></circle>')
     # LABEL THE FIRST RING - the functions the wake calls directly. These are the ones worth naming.
     # LABEL ONLY THE FIRST RING - the real entry points and the import-only cluster. The previous
@@ -343,14 +358,37 @@ def build() -> str:
     for k in range(MAXD + 1):
         run += hist.get(k, 0); cum.append(run)
 
+    # THE SECOND AXIS: BY RUNG, not by call-hop. They answer different questions and neither
+    # replaces the other. Hop depth says WHAT CALLS WHAT and covers all 137 live functions. Rung
+    # says WHAT CAPABILITY THIS IS PART OF and covers 25 - so 112 functions are declared by no
+    # rung, and in that mode they rest rather than vanish. The number is printed in every rung
+    # caption: a viewer must never mistake 18 percent for the whole.
+    from aea.tooling import assembly as _asm
+    RUNGS = [t for t, _f in _asm.STEPS]
+    rcount = {}
+    for _n, _i in (T.get("rung") or {}).items():
+        rcount[_i] = rcount.get(_i, 0) + 1
+    rcum, _r = [], 0
+    for i in range(len(RUNGS)):
+        _r += rcount.get(i, 0); rcum.append(_r)
+
     frame_css = []
+    for k in range(len(RUNGS)):
+        for d in range(k + 1, len(RUNGS)):
+            frame_css.append(f'#org[data-mode="rung"][data-frame="{k}"] .node[data-r="{d}"]'
+                             f'{{fill:#191d22;opacity:.28;r:1.2px}}')
+        frame_css.append(f'#org[data-mode="rung"][data-frame="{k}"] .node[data-r="{k}"]'
+                         f'{{fill:var(--amber);r:4.4px;opacity:1}}')
+    frame_css.append('#org[data-mode="rung"] .node:not([data-r]){fill:#2b3138;opacity:.5}')
+    frame_css.append('#org[data-mode="rung"] .node[data-r]{fill:#5b636c;opacity:.95;r:3.4px}')
+    frame_css.append('#org[data-mode="rung"] .branch,#org[data-mode="rung"] .cross{opacity:.22}')
     for k in range(MAXD + 1):
         for d in range(k + 1, MAXD + 1):
-            frame_css.append(f'#org[data-frame="{k}"] .node[data-d="{d}"]{{fill:#191d22;opacity:.28;r:1.2px}}')
-            frame_css.append(f'#org[data-frame="{k}"] .branch[data-d="{d}"],'
-                             f'#org[data-frame="{k}"] .cross[data-d="{d}"]{{opacity:0}}')
-        frame_css.append(f'#org[data-frame="{k}"] .node[data-d="{k}"]{{fill:var(--amber)}}')
-        frame_css.append(f'#org[data-frame="{k}"] .branch[data-d="{k}"]{{stroke:var(--amber);opacity:.92}}')
+            frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .node[data-d="{d}"]{{fill:#191d22;opacity:.28;r:1.2px}}')
+            frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .branch[data-d="{d}"],'
+                             f'#org[data-mode="hop"][data-frame="{k}"] .cross[data-d="{d}"]{{opacity:0}}')
+        frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .node[data-d="{k}"]{{fill:var(--amber)}}')
+        frame_css.append(f'#org[data-mode="hop"][data-frame="{k}"] .branch[data-d="{k}"]{{stroke:var(--amber);opacity:.92}}')
     frame_css = "\n".join(frame_css)
 
     # THE CAPTION IS NOT OPTIONAL. The page honours prefers-reduced-motion, which kills the motion
@@ -367,6 +405,15 @@ def build() -> str:
         f'<button data-k="{k}" aria-current="{"step" if k==MAXD else "false"}">'
         f'<b>HOP {k}</b><span>+{hist.get(k,0)}</span><em>{cum[k]}</em></button>'
         for k in range(MAXD + 1))
+    rrail = "".join(
+        f'<button data-k="{k}" aria-current="{"step" if k==len(RUNGS)-1 else "false"}">'
+        f'<b>{t.split()[0]}</b><span>+{rcount.get(k,0)}</span><em>{rcum[k]}</em></button>'
+        for k, t in enumerate(RUNGS))
+    rcaps = json.dumps([
+        f"{t} — {rcount.get(k,0)} function{'s' if rcount.get(k,0)!=1 else ''} declared — "
+        f"{rcum[k]} of {len(T.get('rung') or {})} declared by any rung, "
+        f"{len(T['pos']) - len(T.get('rung') or {})} of {len(T['pos'])} declared by none"
+        for k, t in enumerate(RUNGS)])
 
     caps_js = json.dumps(caps)
     live_n, fn_n = len(org["live"]), org["functions"]
@@ -398,16 +445,26 @@ svg{{display:block;width:100%;height:auto}}
 .cross{{transition:opacity .22s ease}}
 .node{{transition-delay:120ms}}
 .stage{{display:flex;gap:0;align-items:stretch}}
-#rail{{display:flex;flex-direction:column;border-right:1px solid #16191d;min-width:132px}}
-#rail button{{display:flex;gap:9px;align-items:baseline;background:none;border:0;border-bottom:1px
+#rail,#rrail{{display:flex;flex-direction:column}}
+/* an id selector with display:flex OUTRANKS the UA stylesheet's hidden rule, so both
+   rails rendered at once - hidden must be restated at the same specificity */
+#rail[hidden],#rrail[hidden]{{display:none}}
+#rail button,#rrail button{{}}
+#rail button,#rrail button{{display:flex;gap:9px;align-items:baseline;background:none;border:0;border-bottom:1px
  solid #131619;color:#6d757e;font:inherit;padding:11px 13px;cursor:pointer;text-align:left}}
-#rail button:hover{{background:#0d1013;color:#aeb5bd}}
-#rail button[aria-current="step"]{{background:#0e1114;color:#eef1f4;
+#rail button:hover,#rrail button:hover{{background:#0d1013;color:#aeb5bd}}
+#rail button[aria-current="step"],#rrail button[aria-current="step"]{{background:#0e1114;color:#eef1f4;
  box-shadow:inset 2px 0 0 var(--amber)}}
-#rail b{{font-size:10px;letter-spacing:.14em;font-weight:600;width:44px}}
-#rail span{{color:var(--brass);font-size:11px;width:30px}}
-#rail em{{color:#4b525a;font-style:normal;font-size:10px;margin-left:auto}}
+#rail b,#rrail b{{font-size:10px;letter-spacing:.14em;font-weight:600;width:44px}}
+#rail span,#rrail span{{color:var(--brass);font-size:11px;width:30px}}
+#rail em,#rrail em{{color:#4b525a;font-style:normal;font-size:10px;margin-left:auto}}
 .canvas{{flex:1;min-width:0}}
+.rails{{display:flex;flex-direction:column;border-right:1px solid #16191d;min-width:150px}}
+.modes{{display:flex;border-bottom:1px solid #16191d}}
+.modes button{{flex:1;background:none;border:0;color:#5c646d;font:inherit;font-size:9.5px;
+ letter-spacing:.12em;padding:9px 4px;cursor:pointer}}
+.modes button.on{{color:var(--amber);background:#0e1114}}
+.modes button:hover{{color:#aeb5bd}}
 #cap{{margin:0;padding:11px 14px;border-top:1px solid #16191d;color:#8b939c;font-size:11.5px}}
 .node.core{{fill:#fff;stroke:var(--amber);stroke-width:3}}
 .node.hub{{fill:#0a0c0e;stroke:var(--amber);stroke-width:2}}
@@ -463,9 +520,13 @@ a{{color:var(--brass)}}
 from a file the running system wrote. {stamp}</p>
 
 <div class="hero"><div class="stage">
+<div class="rails">
+<div class="modes"><button id="m-hop" class="on">BY CALL HOP</button><button id="m-rung">BY RUNG</button></div>
 <nav id="rail" aria-label="reveal the graph one call-hop at a time">{rail}</nav>
+<nav id="rrail" hidden aria-label="reveal the graph one capability rung at a time">{rrail}</nav>
+</div>
 <div class="canvas">
-<svg id="org" viewBox="0 0 1000 1000" data-frame="{MAXD}" role="img" aria-label="the live call graph of the entity, revealed by call depth">
+<svg id="org" viewBox="0 0 1000 1000" data-mode="hop" data-frame="{MAXD}" role="img" aria-label="the live call graph of the entity, revealed by call depth">
 {_svg(org, T)}
 </svg>
 <p id="cap">{caps[MAXD]}</p>
@@ -519,17 +580,29 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 /* ~25 lines, no library, no external request. The ENTIRE state is one integer attribute over frozen
    coordinates, so going backward is exactly symmetric and free: clicking hop 2 after hop 6 removes
    precisely what hops 3-6 added, with no residue and no replayed arrival. */
-var CAPS={caps_js},MAXD={MAXD};
-var svg=document.getElementById('org'),rail=document.getElementById('rail'),cap=document.getElementById('cap');
-function go(k){{k=Math.max(0,Math.min(MAXD,k));svg.setAttribute('data-frame',k);cap.textContent=CAPS[k];
- [].forEach.call(rail.querySelectorAll('button'),function(b){{
+var CAPS={caps_js},RCAPS={rcaps},MAXD={MAXD},RMAX=RCAPS.length-1;
+var svg=document.getElementById('org'),cap=document.getElementById('cap'),
+    rail=document.getElementById('rail'),rrail=document.getElementById('rrail'),
+    mh=document.getElementById('m-hop'),mr=document.getElementById('m-rung'),mode='hop';
+function go(k){{var max=mode==='hop'?MAXD:RMAX,r=mode==='hop'?rail:rrail;
+ k=Math.max(0,Math.min(max,k));
+ svg.setAttribute('data-frame',k);svg.setAttribute('data-mode',mode);
+ cap.textContent=(mode==='hop'?CAPS:RCAPS)[k];
+ [].forEach.call(r.querySelectorAll('button'),function(b){{
    b.setAttribute('aria-current',+b.dataset.k===k?'step':'false');}});
- history.replaceState(null,'','#hop-'+k);}}
+ history.replaceState(null,'','#'+mode+'-'+k);}}
+function setMode(m){{mode=m;rail.hidden=(m!=='hop');rrail.hidden=(m!=='rung');
+ mh.className=m==='hop'?'on':'';mr.className=m==='rung'?'on':'';
+ go(m==='hop'?MAXD:RMAX);}}
+mh.addEventListener('click',function(){{setMode('hop');}});
+mr.addEventListener('click',function(){{setMode('rung');}});
 rail.addEventListener('click',function(e){{var b=e.target.closest('button');if(b)go(+b.dataset.k);}});
+rrail.addEventListener('click',function(e){{var b=e.target.closest('button');if(b)go(+b.dataset.k);}});
 document.addEventListener('keydown',function(e){{
  if(e.key==='ArrowRight')go(+svg.getAttribute('data-frame')+1);
  if(e.key==='ArrowLeft')go(+svg.getAttribute('data-frame')-1);}});
-var m=location.hash.match(/hop-(\d+)/);if(m)go(+m[1]);
+var h=location.hash.match(/(hop|rung)-(\d+)/);
+if(h){{mode=h[1];setMode(mode);go(+h[2]);}}else{{svg.setAttribute('data-mode','hop');}}
 </script>
 """
 
