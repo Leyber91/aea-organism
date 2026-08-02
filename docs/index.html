@@ -338,120 +338,143 @@ a{color:var(--brass)}
 #org[data-mode="hop"][data-frame="5"] .branch[data-d="5"]{stroke:var(--amber);opacity:.92}
 #org[data-mode="hop"][data-frame="6"] .node[data-d="6"]{fill:var(--amber)}
 #org[data-mode="hop"][data-frame="6"] .branch[data-d="6"]{stroke:var(--amber);opacity:.92}
-.climbwrap{margin:14px 0 6px}
-#crail{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.climbwrap{margin:16px 0 6px}
+.youare{margin:0 0 14px;color:#8b939c;font-size:12.5px;max-width:78ch}
+.youare b{color:#eef1f4;font-weight:600}
+#crail{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
 #crail button{font:inherit;font-size:11px;letter-spacing:.06em;padding:4px 9px;cursor:pointer;
  background:#181d22;color:#9aa4ae;border:1px solid #333b44;border-radius:2px}
 #crail button[data-st="future"]{color:#5d666f}
 #crail button[aria-current="step"]{color:var(--amber);border-color:var(--amber)}
-#climb{list-style:none;margin:0;padding:0;display:flex;flex-direction:column-reverse;gap:6px}
-.layer{border-left:2px solid #2b3138;padding:9px 12px;background:#0e1114;
- transition:opacity .45s ease,border-color .45s ease,background .45s ease}
-.lhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.rid{font-weight:700;letter-spacing:.08em;color:var(--brass);min-width:40px}
-.rtitle{letter-spacing:.05em;font-size:13px}
-/* THE STATUS BADGE HAD NO COLOUR FOR THE STATUS SIX OF THE ELEVEN RUNGS ARE IN. It fell back to
-   `--dim`, which is #171a1e - a BACKGROUND token, used as a text colour on a #0e1114 panel. Every
-   FUTURE badge rendered as an empty box, so the six rungs that are honestly unbuilt were the six
-   whose state the page did not say out loud. Caught by reading the render, not the stylesheet. */
+
+/* READING ORDER IS BUILD ORDER. The floor first, the dark top last. The ladder is carried by the
+   spine, which fills where the climb actually reached, not by inverting the list. */
+#climb{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.layer{display:flex;gap:14px;padding:0;background:transparent;
+ transition:opacity .45s ease,background .45s ease}
+.lbody{flex:1;min-width:0;padding:12px 14px 14px 0}
+
+/* THE SPINE IS THE CLIMB. A continuous rail down the left, SOLID where a subsystem is online and
+   hollow where it is not - so the difference that matters most on this page is the one carried by
+   the most ink, instead of by a ten-pixel badge. */
+.spine{position:relative;width:14px;flex:none}
+.spine:before{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:#20262c}
+.spine i{position:absolute;left:1px;top:16px;width:12px;height:12px;border-radius:50%;
+ background:#0a0c0e;border:2px solid #2b3138;box-sizing:border-box}
+.layer[data-st="proven"] .spine:before{background:var(--amber);opacity:.55}
+.layer[data-st="proven"] .spine i{background:var(--amber);border-color:var(--amber)}
+.layer[data-st="partial"] .spine:before{background:var(--brass);opacity:.45}
+.layer[data-st="partial"] .spine i{background:#0a0c0e;border-color:var(--brass)}
+.layer[data-st="future"] .spine:before{background:#191d22}
+.layer[data-st="future"] .spine i{border-style:dashed}
+.layer:first-child .spine:before{top:16px}
+.layer:last-child .spine:before{bottom:calc(100% - 24px)}
+
+.lhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.rid{font-weight:700;letter-spacing:.08em;color:#6d757e;min-width:38px;font-size:11px}
+/* THE PLAIN NAME IS THE HEADLINE, and the formal title sits under it. A reader who has never seen
+   this project reads a sentence; a reader who has, still gets the vocabulary. */
+.rhuman{font-size:15px;letter-spacing:.01em;color:#dfe3e8}
 .rstat{margin-left:auto;font-size:10px;letter-spacing:.1em;padding:1px 6px;
  border:1px solid #2b3138;color:#8b939c}
 .s-proven{color:var(--amber);border-color:var(--amber)}
 .s-partial{color:var(--brass);border-color:var(--brass)}
 .s-future{color:#5d666f;border-color:#262c33}
-.rplain{margin:6px 0 3px;color:#939ca6;font-size:12px;line-height:1.55;max-width:74ch}
-.rev{margin:0;font-size:11px;color:var(--brass);font-variant-numeric:tabular-nums}
-@media (max-width:620px){.rstat{margin-left:0}.rplain{font-size:11.5px}}
+.rtitle{margin:3px 0 0;font-size:10.5px;letter-spacing:.16em;color:#5c646d}
+.rplain{margin:8px 0 5px;color:#939ca6;font-size:12.5px;line-height:1.6;max-width:76ch}
+.rev{margin:0;font-size:11.5px;color:var(--brass);font-variant-numeric:tabular-nums}
+.rwait{margin:0;font-size:11.5px;color:#5c646d}
+@media (max-width:620px){.rstat{margin-left:0}.rplain{font-size:12px}.rhuman{font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){.layer{transition:none}}
-#climb[data-frame="0"] .layer[data-k="1"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="2"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="3"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="4"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="5"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="6"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="7"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="0"] .layer[data-k="0"]{border-left-color:var(--amber);background:rgba(255,176,0,.05)}
-#climb[data-frame="0"] .layer[data-k="0"] .rid{color:var(--amber)}
-#climb[data-frame="1"] .layer[data-k="2"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="3"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="4"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="5"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="6"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="7"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="1"] .layer[data-k="1"]{border-left-color:var(--amber);background:rgba(255,176,0,.05)}
-#climb[data-frame="1"] .layer[data-k="1"] .rid{color:var(--amber)}
-#climb[data-frame="2"] .layer[data-k="3"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="4"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="5"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="6"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="7"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="2"] .layer[data-k="2"]{border-left-color:var(--amber);background:rgba(255,176,0,.05)}
-#climb[data-frame="2"] .layer[data-k="2"] .rid{color:var(--amber)}
-#climb[data-frame="3"] .layer[data-k="4"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="5"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="6"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="7"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="3"] .layer[data-k="3"]{border-left-color:var(--amber);background:rgba(255,176,0,.05)}
-#climb[data-frame="3"] .layer[data-k="3"] .rid{color:var(--amber)}
-#climb[data-frame="4"] .layer[data-k="5"]{opacity:.45}
-#climb[data-frame="4"] .layer[data-k="6"]{opacity:.45}
-#climb[data-frame="4"] .layer[data-k="7"]{opacity:.45}
-#climb[data-frame="4"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="4"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="4"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="4"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="4"] .layer[data-k="4"]{border-left-color:var(--amber);background:rgba(255,176,0,.05)}
-#climb[data-frame="4"] .layer[data-k="4"] .rid{color:var(--amber)}
-#climb[data-frame="5"] .layer[data-k="6"]{opacity:.45}
-#climb[data-frame="5"] .layer[data-k="7"]{opacity:.45}
-#climb[data-frame="5"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="5"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="5"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="5"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="5"] .layer[data-k="5"]{border-left-color:var(--amber);background:rgba(255,176,0,.05)}
-#climb[data-frame="5"] .layer[data-k="5"] .rid{color:var(--amber)}
-#climb[data-frame="6"] .layer[data-k="7"]{opacity:.45}
-#climb[data-frame="6"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="6"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="6"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="6"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="6"] .layer[data-k="6"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
-#climb[data-frame="7"] .layer[data-k="8"]{opacity:.45}
-#climb[data-frame="7"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="7"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="7"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="7"] .layer[data-k="7"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
-#climb[data-frame="8"] .layer[data-k="9"]{opacity:.45}
-#climb[data-frame="8"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="8"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="8"] .layer[data-k="8"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
-#climb[data-frame="9"] .layer[data-k="10"]{opacity:.45}
-#climb[data-frame="9"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="9"] .layer[data-k="9"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
-#climb[data-frame="10"] .layer[data-k="11"]{opacity:.45}
-#climb[data-frame="10"] .layer[data-k="10"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
-#climb[data-frame="11"] .layer[data-k="11"]{opacity:1;border-left-style:dashed;border-left-color:var(--brass)}
+#climb[data-frame="0"] .layer[data-k="1"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="2"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="3"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="4"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="5"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="6"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="7"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="0"] .layer[data-k="0"]{background:#0e1114}
+#climb[data-frame="0"] .layer[data-k="0"] .rid,#climb[data-frame="0"] .layer[data-k="0"] .rhuman{color:var(--amber)}
+#climb[data-frame="1"] .layer[data-k="2"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="3"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="4"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="5"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="6"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="7"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="1"] .layer[data-k="1"]{background:#0e1114}
+#climb[data-frame="1"] .layer[data-k="1"] .rid,#climb[data-frame="1"] .layer[data-k="1"] .rhuman{color:var(--amber)}
+#climb[data-frame="2"] .layer[data-k="3"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="4"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="5"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="6"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="7"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="2"] .layer[data-k="2"]{background:#0e1114}
+#climb[data-frame="2"] .layer[data-k="2"] .rid,#climb[data-frame="2"] .layer[data-k="2"] .rhuman{color:var(--amber)}
+#climb[data-frame="3"] .layer[data-k="4"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="5"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="6"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="7"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="3"] .layer[data-k="3"]{background:#0e1114}
+#climb[data-frame="3"] .layer[data-k="3"] .rid,#climb[data-frame="3"] .layer[data-k="3"] .rhuman{color:var(--amber)}
+#climb[data-frame="4"] .layer[data-k="5"]{opacity:.3}
+#climb[data-frame="4"] .layer[data-k="6"]{opacity:.3}
+#climb[data-frame="4"] .layer[data-k="7"]{opacity:.3}
+#climb[data-frame="4"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="4"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="4"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="4"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="4"] .layer[data-k="4"]{background:#0e1114}
+#climb[data-frame="4"] .layer[data-k="4"] .rid,#climb[data-frame="4"] .layer[data-k="4"] .rhuman{color:var(--amber)}
+#climb[data-frame="5"] .layer[data-k="6"]{opacity:.3}
+#climb[data-frame="5"] .layer[data-k="7"]{opacity:.3}
+#climb[data-frame="5"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="5"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="5"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="5"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="5"] .layer[data-k="5"]{background:#0e1114}
+#climb[data-frame="5"] .layer[data-k="5"] .rid,#climb[data-frame="5"] .layer[data-k="5"] .rhuman{color:var(--amber)}
+#climb[data-frame="6"] .layer[data-k="7"]{opacity:.3}
+#climb[data-frame="6"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="6"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="6"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="6"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="6"] .layer[data-k="6"]{background:#0e1114}
+#climb[data-frame="7"] .layer[data-k="8"]{opacity:.3}
+#climb[data-frame="7"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="7"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="7"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="7"] .layer[data-k="7"]{background:#0e1114}
+#climb[data-frame="8"] .layer[data-k="9"]{opacity:.3}
+#climb[data-frame="8"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="8"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="8"] .layer[data-k="8"]{background:#0e1114}
+#climb[data-frame="9"] .layer[data-k="10"]{opacity:.3}
+#climb[data-frame="9"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="9"] .layer[data-k="9"]{background:#0e1114}
+#climb[data-frame="10"] .layer[data-k="11"]{opacity:.3}
+#climb[data-frame="10"] .layer[data-k="10"]{background:#0e1114}
+#climb[data-frame="11"] .layer[data-k="11"]{background:#0e1114}
 </style>
 <div class="wrap">
 <h1>THE AEA — THE ORGANISM</h1>
 <p class="sub">An autonomous entity, drawn from its own state. Every number on this page is read
-from a file the running system wrote. 2026-08-02 05:02 UTC</p>
+from a file the running system wrote. 2026-08-02 05:06 UTC</p>
 
 <div class="hero"><div class="stage">
 <div class="rails">
@@ -1602,7 +1625,7 @@ from a file the running system wrote. 2026-08-02 05:02 UTC</p>
 <circle cx="387.4" cy="974.4" r="1" class="dead"/>
 <circle cx="953.2" cy="604.0" r="1" class="dead"/>
 <circle cx="925.2" cy="306.4" r="1" class="dead"/>
-<circle cx="743.0" cy="142.5" r="1" class="dead"/>
+<circle cx="932.6" cy="576.9" r="1" class="dead"/>
 <circle cx="781.1" cy="138.1" r="1" class="dead"/>
 <circle cx="136.3" cy="250.8" r="1" class="dead"/>
 <circle cx="49.0" cy="548.4" r="1" class="dead"/>
@@ -2192,11 +2215,17 @@ be DECIDED rather than sampled.</p>
  was actually present. The estimator that produced them has been removed.</div></div>
 </div>
 
-<h2>THE CLIMB &mdash; ELEVEN RUNGS, AND WHAT EACH ONE COST</h2>
-<p class="sub">Every rung is TWO claims wearing one name: a POWER it gains, and a BOUND on the
-hazard that power creates. Step through them. What is already earned stays lit beneath, because the
-point is what accumulates; what is not built yet says what it is waiting for.</p>
-<div class="climbwrap"><nav id="crail" aria-label="step through the rungs"><button data-c="0" aria-current="false" data-st="proven">R0</button><button data-c="1" aria-current="false" data-st="proven">R1</button><button data-c="2" aria-current="false" data-st="proven">R1.5</button><button data-c="3" aria-current="false" data-st="proven">R2</button><button data-c="4" aria-current="false" data-st="proven">R3</button><button data-c="5" aria-current="step" data-st="partial">R4a</button><button data-c="6" aria-current="false" data-st="future">R4b</button><button data-c="7" aria-current="false" data-st="future">R5</button><button data-c="8" aria-current="false" data-st="future">R6</button><button data-c="9" aria-current="false" data-st="future">R7</button><button data-c="10" aria-current="false" data-st="future">R8</button><button data-c="11" aria-current="false" data-st="future">R9</button></nav><ol id="climb" data-frame="5" data-rest="5"><li class="layer" data-k="0" data-st="proven"><div class="lhead"><span class="rid">R0</span><span class="rtitle">THE LOOP SURVIVES</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Before anything can think, it has to still be there tomorrow. This rung is only about staying alive across being switched off - it adds no ability at all, and it is first because everything above it is worthless without it.</p><p class="rev">246.9 h unbroken, 188 ticks, 0 crashes - the gate is 72 h</p></li><li class="layer" data-k="1" data-st="proven"><div class="lhead"><span class="rid">R1</span><span class="rtitle">THE DECISION IS READ</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">There were two loops here: one that thought and could not act, one that acted and could not think. This rung is the wire between them - the thinking loop&#x27;s answer is now read first. It is a small change and it is the moment deliberation stopped being decoration.</p><p class="rev">75 of 78 comparable ticks chose differently from the floor</p></li><li class="layer" data-k="2" data-st="proven"><div class="lhead"><span class="rid">R1.5</span><span class="rtitle">THE DECISION IS PARSED</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.</p><p class="rev">98 parses, 3 receipts, 0 swallowed</p></li><li class="layer" data-k="3" data-st="proven"><div class="lhead"><span class="rid">R2</span><span class="rtitle">THE DECISION IS A TOOL CALL</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.</p><p class="rev">26/20 invocations, 3/3 tools, None/8 situations</p></li><li class="layer" data-k="4" data-st="proven"><div class="lhead"><span class="rid">R3</span><span class="rtitle">THE OUTCOME IS REMEMBERED</span><span class="rstat s-proven">PROVEN</span></div><p class="rplain">Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.</p><p class="rev">113 graded outcomes, 23 non-repeats, bound PASS over 70 paired witnesses</p></li><li class="layer" data-k="5" data-st="partial"><div class="lhead"><span class="rid">R4a</span><span class="rtitle">PERCEPTION IS A CHOICE</span><span class="rstat s-partial">PARTIAL</span></div><p class="rplain">Fixed inputs are not perception. This is the step where what the system examines becomes something it decided - and it is deliberately the LOCAL half, because a system can choose what to look at long before it should be allowed to look outside the machine.</p><p class="rev">&mdash;</p></li><li class="layer" data-k="6" data-st="future"><div class="lhead"><span class="rid">R4b</span><span class="rtitle">PERCEPTION REACHES THE WORLD</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">This is the first point at which something can leave the machine because the system decided it should. Four seats refused the obvious design unanimously, three times, and were right each time: the request itself is the way data gets out, and a call budget limits the number of doors rather than what fits through one.</p><p class="rev">&mdash; waiting on dispatch running dry, then a reconvened council</p></li><li class="layer" data-k="7" data-st="future"><div class="lhead"><span class="rid">R5</span><span class="rtitle">RESEARCH</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">A summary cannot be wrong, which is exactly why it cannot be useful. Research means committing to something that reality is allowed to kill - so the test of this rung is not what it found, it is whether it ever admitted being wrong.</p><p class="rev">&mdash; waiting on R4 (egress) and R3 (storing what came back)</p></li><li class="layer" data-k="8" data-st="future"><div class="lhead"><span class="rid">R6</span><span class="rtitle">REFLECTION</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Storage and recall already work. This is the step where something notices what several memories mean together - and the hard requirement is that the new thought keeps a thread back to what produced it.</p><p class="rev">&mdash; waiting on R5 (material worth linking)</p></li><li class="layer" data-k="9" data-st="future"><div class="lhead"><span class="rid">R7</span><span class="rtitle">THE COUNCIL ON ITS OWN PLANS</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">This is what it means for a system to be able to disagree with itself. It is also the easiest thing in the whole ladder to fake, because a review that always approves looks exactly like a review that is never needed.</p><p class="rev">&mdash; waiting on R3 through R6 running with a track record</p></li><li class="layer" data-k="10" data-st="future"><div class="lhead"><span class="rid">R8</span><span class="rtitle">THE DRIVE</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">Wanting something is not a feature you add; it is a target you can be tricked by. This rung stays shut, and the reason it stays shut is that nobody has solved it - not this project and not the published literature.</p><p class="rev">&mdash; waiting on an unsolved research problem, not code</p></li><li class="layer" data-k="11" data-st="future"><div class="lhead"><span class="rid">R9</span><span class="rtitle">SELF-MODIFICATION</span><span class="rstat s-future">FUTURE</span></div><p class="rplain">The top of the ladder, named here so that nobody arrives at it by accident. It is listed as closed rather than omitted, because a ladder that stops before its last rung invites someone to assume there is nothing above.</p><p class="rev">&mdash; waiting on every rung below it, and a statable hazard</p></li></ol></div>
+<h2>THE CLIMB &mdash; 12 SUBSYSTEMS, IN THE ONLY ORDER THEY CAN COME ONLINE</h2>
+<p class="sub">Think of a deep-space probe. Nothing it was built to do can happen until the dull
+things hold: the power, the clock, the radio. You cannot point an instrument from a spacecraft that
+does not know what time it is, and the most impressive fact about a probe that has flown for decades
+is the least glamorous one &mdash; <b>it is still running</b>. So the order is not a roadmap anyone
+chose. It is the order the parts are allowed to arrive in.</p>
+<p class="sub">The same is true here, and it is why this list starts at the bottom. Each subsystem
+below is <b>two claims wearing one name</b>: a power it gains, and a bound on the hazard that power
+creates. A subsystem is only online when both have been shown &mdash; and every number under it is
+telemetry. Nobody has seen the spacecraft; there are only the signals it sent back.</p>
+<div class="climbwrap"><p class="youare"><b>6 of 12 online.</b> The climb stops at <b>R4a</b> &mdash; It picks what to look at next. Everything above that line is named so that nobody arrives at it by accident.</p><nav id="crail" aria-label="step through the subsystems"><button data-c="0" aria-current="false" data-st="proven">R0</button><button data-c="1" aria-current="false" data-st="proven">R1</button><button data-c="2" aria-current="false" data-st="proven">R1.5</button><button data-c="3" aria-current="false" data-st="proven">R2</button><button data-c="4" aria-current="false" data-st="proven">R3</button><button data-c="5" aria-current="step" data-st="partial">R4a</button><button data-c="6" aria-current="false" data-st="future">R4b</button><button data-c="7" aria-current="false" data-st="future">R5</button><button data-c="8" aria-current="false" data-st="future">R6</button><button data-c="9" aria-current="false" data-st="future">R7</button><button data-c="10" aria-current="false" data-st="future">R8</button><button data-c="11" aria-current="false" data-st="future">R9</button></nav><ol id="climb" data-frame="5" data-rest="5"><li class="layer" data-k="0" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R0</span><span class="rhuman">It is still running tomorrow</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE LOOP SURVIVES</p><p class="rplain">Before anything can think, it has to still be there tomorrow. This rung is only about staying alive across being switched off - it adds no ability at all, and it is first because everything above it is worthless without it.</p><p class="rev">246.9 hours unbroken, 188 ticks, 0 crashes - the gate is 72 hours</p></div></li><li class="layer" data-k="1" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R1</span><span class="rhuman">The part that thinks is listened to</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS READ</p><p class="rplain">There were two loops here: one that thought and could not act, one that acted and could not think. This rung is the wire between them - the thinking loop&#x27;s answer is now read first. It is a small change and it is the moment deliberation stopped being decoration.</p><p class="rev">75 of 78 comparable ticks chose differently from the floor</p></div></li><li class="layer" data-k="2" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R1.5</span><span class="rhuman">What it said is understood exactly</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS PARSED</p><p class="rplain">Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.</p><p class="rev">98 parses, 3 receipts, 0 swallowed</p></div></li><li class="layer" data-k="3" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R2</span><span class="rhuman">It can actually press a button</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS A TOOL CALL</p><p class="rplain">An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.</p><p class="rev">26 of 20 invocations, 3 of 3 tools</p></div></li><li class="layer" data-k="4" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R3</span><span class="rhuman">It remembers whether that worked</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE OUTCOME IS REMEMBERED</p><p class="rplain">Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.</p><p class="rev">113 graded outcomes, 23 not repeated, bound PASS over 70 paired witnesses</p></div></li><li class="layer" data-k="5" data-st="partial"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R4a</span><span class="rhuman">It picks what to look at next</span><span class="rstat s-partial">PARTIAL</span></div><p class="rtitle">PERCEPTION IS A CHOICE</p><p class="rplain">Fixed inputs are not perception. This is the step where what the system examines becomes something it decided - and it is deliberately the LOCAL half, because a system can choose what to look at long before it should be allowed to look outside the machine.</p><p class="rev">10 looks chosen by the entity, 1 carried a reason, 0 changed what it examined, 1 distinct thing looked at</p></div></li><li class="layer" data-k="6" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R4b</span><span class="rhuman">It could look outside the machine</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">PERCEPTION REACHES THE WORLD</p><p class="rplain">This is the first point at which something can leave the machine because the system decided it should. Four seats refused the obvious design unanimously, three times, and were right each time: the request itself is the way data gets out, and a call budget limits the number of doors rather than what fits through one.</p><p class="rwait">not started &mdash; waiting on dispatch running dry, then a reconvened council</p></div></li><li class="layer" data-k="7" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R5</span><span class="rhuman">It can be wrong on purpose, and find out</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">RESEARCH</p><p class="rplain">A summary cannot be wrong, which is exactly why it cannot be useful. Research means committing to something that reality is allowed to kill - so the test of this rung is not what it found, it is whether it ever admitted being wrong.</p><p class="rwait">not started &mdash; waiting on R4 (egress) and R3 (storing what came back)</p></div></li><li class="layer" data-k="8" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R6</span><span class="rhuman">It connects things it remembers</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">REFLECTION</p><p class="rplain">Storage and recall already work. This is the step where something notices what several memories mean together - and the hard requirement is that the new thought keeps a thread back to what produced it.</p><p class="rwait">not started &mdash; waiting on R5 (material worth linking)</p></div></li><li class="layer" data-k="9" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R7</span><span class="rhuman">It argues with itself before acting</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">THE COUNCIL ON ITS OWN PLANS</p><p class="rplain">This is what it means for a system to be able to disagree with itself. It is also the easiest thing in the whole ladder to fake, because a review that always approves looks exactly like a review that is never needed.</p><p class="rwait">not started &mdash; waiting on R3 through R6 running with a track record</p></div></li><li class="layer" data-k="10" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R8</span><span class="rhuman">It starts things nobody asked for</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">THE DRIVE</p><p class="rplain">Wanting something is not a feature you add; it is a target you can be tricked by. This rung stays shut, and the reason it stays shut is that nobody has solved it - not this project and not the published literature.</p><p class="rwait">not started &mdash; waiting on an unsolved research problem, not code</p></div></li><li class="layer" data-k="11" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R9</span><span class="rhuman">It rewires itself</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">SELF-MODIFICATION</p><p class="rplain">The top of the ladder, named here so that nobody arrives at it by accident. It is listed as closed rather than omitted, because a ladder that stops before its last rung invites someone to assume there is nothing above.</p><p class="rwait">not started &mdash; waiting on every rung below it, and a statable hazard</p></div></li></ol></div>
 <p class="src">state/ladder.json &mdash; <code>python -m aea.tooling.ladder</code>, measured from
 live state on every build. A dash is a measurement: it means this repository cannot prove that rung
 today, and saying so is worth more than a number that rounds up.</p>

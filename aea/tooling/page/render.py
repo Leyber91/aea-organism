@@ -54,7 +54,7 @@ def build() -> str:
         caps_js=json.dumps(axes.hop_captions(T, maxd, per_hop)),
         rcaps=axes.rung_captions(rungs, T, per_rung, rcum),
         frame_css=style.frame_rules(len(rungs), maxd, climb_css),
-        climb_html=climb_html,
+        climb_html=climb_html, n_rungs=len(rungs),
         step_rows=panels.step_rows(asm),
         growth=panels.growth(sources.history()),
         live_n=len(org["live"]), fn_n=org["functions"], cen=cen,

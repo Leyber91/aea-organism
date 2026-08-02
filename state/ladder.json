@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-02 05:03:00 UTC",
+ "generated": "2026-08-02 06:09:18 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -22,7 +22,7 @@
    "loop.live:main [ENTRY]"
   ],
   "measured": 33,
-  "known": 1377,
+  "known": 1378,
   "claim": "checked against reachability, not existence. `unwired` is a rung claiming a capability nothing can get to; `dispatch_only` is an upper bound and says so; `asserted_entries` are doors, where reachability is the assumption the walk begins from rather than anything this check measured."
  },
  "rungs": [
@@ -41,8 +41,8 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 85,
-    "ticks": 497,
+    "boots": 97,
+    "ticks": 511,
     "first": "2026-07-10",
     "last": "2026-08-02",
     "met": true
@@ -85,10 +85,10 @@
     ],
     "subset": true,
     "stale_limit_s": 5400,
-    "last_why": "decision #350 was already carried out - nothing new since",
-    "decision_rows": 78,
-    "comparable": 78,
-    "differed": 75,
+    "last_why": "the wake chose read_your_state (1s ago)",
+    "decision_rows": 88,
+    "comparable": 88,
+    "differed": 85,
     "met": true
    },
    "status": "proven",
@@ -113,9 +113,9 @@
    "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
    "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
    "measured": {
-    "valid": 98,
+    "valid": 108,
     "receipts": 3,
-    "ticks": 101,
+    "ticks": 111,
     "swallowed": 0,
     "met": true
    },
@@ -141,13 +141,13 @@
    "measured": {
     "wire": true,
     "bound_pct": null,
-    "invocations": 26,
+    "invocations": 35,
     "tools": 3,
     "situations": null,
     "met": true,
-    "ledger_rows": 111,
-    "claimed_wake": 79,
-    "executions": 68,
+    "ledger_rows": 121,
+    "claimed_wake": 89,
+    "executions": 78,
     "situations_observed": 5,
     "wire_evidence": "EXTRACTED",
     "bound_form": "PROOF over the accepted language"
@@ -177,14 +177,14 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 155,
-    "graded": 113,
+    "outcomes": 167,
+    "graded": 125,
     "suppressions": 33,
     "not_repeated": 23,
     "bound": "PASS",
     "bound_pairs": 70,
     "met": true,
-    "entity_rows": 139,
+    "entity_rows": 151,
     "disagreements": 6,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
@@ -215,13 +215,13 @@
    "beat": "Fixed inputs are not perception. Here what it examines becomes something it chose - and choosing is not the same as rotating, which is why the record keeps the reason.",
    "why_first": "Until what it examines is a choice, every situation it meets is one somebody else picked.",
    "measured": {
-    "by_entity": 10,
-    "with_reason": 1,
-    "changed_with_reason": 0,
-    "distinct": 1,
-    "met": false
+    "by_entity": 20,
+    "with_reason": 11,
+    "changed_with_reason": 8,
+    "distinct": 3,
+    "met": true
    },
-   "status": "partial",
+   "status": "proven",
    "funcs": [
     "kernel.perceive:record",
     "kernel.perceive:verdict",

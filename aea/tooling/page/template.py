@@ -16,7 +16,8 @@ doubled exactly as it was; nothing here was retyped.
 from __future__ import annotations
 
 
-def document(*, MAXD,
+def document(*, n_rungs,
+             MAXD,
              RREST,
              T,
              _svg,
@@ -210,10 +211,16 @@ be DECIDED rather than sampled.</p>
  was actually present. The estimator that produced them has been removed.</div></div>
 </div>
 
-<h2>THE CLIMB &mdash; ELEVEN RUNGS, AND WHAT EACH ONE COST</h2>
-<p class="sub">Every rung is TWO claims wearing one name: a POWER it gains, and a BOUND on the
-hazard that power creates. Step through them. What is already earned stays lit beneath, because the
-point is what accumulates; what is not built yet says what it is waiting for.</p>
+<h2>THE CLIMB &mdash; {n_rungs} SUBSYSTEMS, IN THE ONLY ORDER THEY CAN COME ONLINE</h2>
+<p class="sub">Think of a deep-space probe. Nothing it was built to do can happen until the dull
+things hold: the power, the clock, the radio. You cannot point an instrument from a spacecraft that
+does not know what time it is, and the most impressive fact about a probe that has flown for decades
+is the least glamorous one &mdash; <b>it is still running</b>. So the order is not a roadmap anyone
+chose. It is the order the parts are allowed to arrive in.</p>
+<p class="sub">The same is true here, and it is why this list starts at the bottom. Each subsystem
+below is <b>two claims wearing one name</b>: a power it gains, and a bound on the hazard that power
+creates. A subsystem is only online when both have been shown &mdash; and every number under it is
+telemetry. Nobody has seen the spacecraft; there are only the signals it sent back.</p>
 {climb_html}
 <p class="src">state/ladder.json &mdash; <code>python -m aea.tooling.ladder</code>, measured from
 live state on every build. A dash is a measurement: it means this repository cannot prove that rung

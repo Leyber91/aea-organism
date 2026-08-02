@@ -2731,7 +2731,13 @@ by the audit script; these were dropped, so they are leads, not defects. Highest
 - `aea/tooling/assembly.py:215` [medium] _dispatch_table has no branch for a func that is itself an ast.Call, so TABLE.get(k, default)(args) draws no dispatch edge
 - `aea/tooling/selfcheck.py:225` [medium] check_paths cannot see the escaped Windows path - the exact form an absolute path takes in Python source
 - `aea/tooling/page/guard.py:27` [medium] The only gate on the publish write path does not match any API-key format this repo actually holds
-- `aea/tooling/_pubscan.py:22` [medium] _pubscan's absolute-path pattern misses the bare /Users/ form it claims to refuse
+- `aea/tooling/_pubscan.py:22` [medium] _pubscan's absolute-path pattern misses the bare POSIX-home
+  form it claims to refuse (a leading slash, `home` or the user-directory word, a trailing slash).
+  *Written around the literal on purpose, 2026-08-02:* spelling it out put the exact string into a
+  tracked file and turned `selfcheck`'s privacy guard permanently RED - a finding that cannot be
+  written down without tripping the check it is about. That guard's own comment records the last
+  time it sat red for an unrelated reason and therefore never had to prove it could go green for
+  the right one. Same trick as `guard.py` and `redteam.py`: describe the needle, never carry it.
 - `aea/lab/tests/test_golden.py:581` [medium] check_second_dispatcher's import arm ships no control, on the exact logic that was already found blind once
 - `aea/lab/gate.py:480` [medium] `repeat_after_satisfied` returns 0.0 on a zero denominator, so the `settles` criterion — one of only two the file claims a coin flip cannot fake — passes on a run where consolidate never ran
 
@@ -2742,3 +2748,70 @@ containment denominator, `measure_r15`'s swallowed count), so they are the next 
 the wake's own sentence and the consumption marker stops replay, so the instrument is correct and
 the capability is what is missing: the wake must choose a DIFFERENT local source and say why, eight
 times. Then the 21 leads above.
+
+---
+
+## 2026-08-02 (close·2) · THE CLIMB READS IN BUILD ORDER, and the frame is a deep-space probe
+
+**THE DIAGNOSIS, and it was one decision rather than a hundred.** Luis: *"the design right now sucks
+... and I don't see that at all."* Rendered the page and read it as somebody who does not work here:
+**it led with what the system cannot do.** The list was `column-reverse` - chosen so the climb would
+read bottom-to-top like a ladder - and on a scrolling page that inverts reading order against build
+order. A stranger landed on R9 SELF-MODIFICATION, unbuilt and shut on purpose, and scrolled past six
+greyed "waiting on..." boxes before reaching anything that had happened. Every row also looked
+identical: online and not-started differed by a ten-pixel badge, so **the distinction that matters
+most on the page carried the least ink.**
+
+**DID**
+
+- **Reading order is build order.** The floor first, the dark top last. The ladder feeling is carried
+  by a SPINE down the left that fills - solid amber online, hollow at partial, dashed where nothing
+  is built - so "6 of 12 online" lands before a word is read.
+- **Every rung leads with a plain name** (`It can actually press a button`) with the formal title
+  beneath it. The names are `human` in `ladder.RUNGS` - data in the manifest, not text in a template
+  - so a reader crosses between the two vocabularies instead of being required to hold one.
+- **THE FRAME IS A DEEP-SPACE PROBE, and it is structurally true rather than evocative.** Spacecraft
+  order is real: nothing does science until the power, the clock and the radio hold, and the most
+  impressive fact about a probe that has flown for decades is the least glamorous one - it is still
+  running, which is R0 exactly. Everything anyone knows about it is TELEMETRY; nobody has seen the
+  spacecraft. That is this page's epistemology in the metaphor's own words. The transmitter being the
+  one part that carries data OUT is why R4b is shut, so the hazard maps for free, and nobody thinks
+  Voyager is conscious, so the claim ceiling survives the metaphor.
+  **THE RULE IT IS HELD TO: the metaphor describes the SHAPE OF THE PROBLEM, never the properties of
+  the system, and never appears in a block carrying a measured number.**
+
+**THREE NUMBERS WERE TYPED INTO THE PRESENTATION INSTEAD OF READ FROM THE MANIFEST** - one class,
+three instances, on the page whose subtitle is that nothing is typed by hand:
+
+    the heading said ELEVEN RUNGS     there are twelve. Counted now, via the derived signature
+    R2 published `None/8 situations`  a retired criterion with a hardcoded denominator, outliving
+                                      the gate re-scoped to (20, 3). The gate arrives as an argument
+    R4a said "nothing measured yet"   while carrying four real numbers - the reader asked for
+                                      `distinct_sources` and the manifest holds `by_entity`,
+                                      `with_reason`, `distinct`. A FALSE DASH is the exact thing
+                                      this page exists to prevent, and it takes one wrong key
+
+**AND `selfcheck` WAS RED FOR A REASON WORTH KEEPING.** `no private data in tracked files` failed on
+`SESSION_LOG.md` - a review finding ABOUT `_pubscan`'s path pattern that contained the literal it
+described. **A finding that cannot be written down without tripping the check it is about.** Same
+self-flagging class as `guard.py` an hour earlier. Rewritten around the literal, as `guard.py` and
+`redteam.py` already do. Note the guard's own comment records the last time it sat red for an
+unrelated reason and therefore never had to prove it could go green for the right one.
+
+**AND I BROKE A STANDING RULE WHILE DIAGNOSING IT.** Tested that regex through a `python -c` string
+in the shell, which eats backslashes - it reported no match while `check_leaks` reported one, and I
+nearly recorded the guard as wrong. Wrote the probe to a FILE and it named line 2734 immediately.
+The rule is in CLAUDE.md verbatim: never test a regex or a path through a shell heredoc.
+
+**VERIFIED** - `ALL INVARIANTS HOLD`, 124/124 frozen behaviours, ratchet green, privacy clean,
+honesty gate passing, page rebuilt and read at both halves of the climb.
+
+**PUBLISHED** - `organism/main` at `e40caf3`. Generator drift NONE, `index.html` matches `docs/`
+byte for byte, and neither `ELEVEN` nor `None/8` survives in the published bytes.
+
+**NEXT**
+
+- **The hero is still unexplained.** The page opens on a call graph of 160 lit dots in a field of
+  1,187 dark ones with nothing telling a stranger what they are looking at. The probe frame currently
+  lives only in the climb's intro; the open question is whether it should carry the top of the page.
+- Item 4, the upper-ladder re-gate (R4-R8), unchanged as the thing that decides the path.

@@ -928,13 +928,30 @@ def invoke(name: str, args: dict, zone: str = "public", allow=None, decision_id=
 # THE LOOP. A rod, a task, an allowlist, a zone.
 # ---------------------------------------------------------------------------------------------
 
-def _chat(plant: str, model: str, messages: list, tools: list, max_tokens: int = 900) -> dict:
+def _chat(plant: str, model: str, messages: list, tools: list, max_tokens: int = None) -> dict:
+    """`max_tokens=None` SENDS NO CEILING AT ALL, and that is the default on purpose.
+
+    A cap is not a budget, it is a guillotine placed before the answer. The default rod here is a
+    reasoning model that spends ~1,400 characters thinking before it writes 300 of content -
+    MEASURED, not estimated - so a 400-token ceiling cuts it mid-thought and the grader records
+    `no_call`: cannot call tools. The rod called nothing because we stopped it.
+
+    This is the same confound `capability_census` already documents at line 186, in a different
+    file, unfixed. It is also the mistake that made THIS fix necessary: a probe run today reported
+    "provider-side structure enforcement does not work" when what it had measured was its own
+    `max_tokens=400` truncating every reply. Re-run without the ceiling: 11 of 12 valid, first try.
+
+    Omitting the field is not the same as raising it. A bigger number is a newer guess about
+    somebody else's model; absence lets the plant apply its own maximum, which is the only figure
+    that was ever correct."""
     cap = grid.PLANTS[plant]
     url = cap["base"].rstrip("/") + "/chat/completions"
     headers = {"Content-Type": "application/json", "User-Agent": "aea-hands/1"}
     if cap.get("auth"):
         headers["Authorization"] = "Bearer " + (grid.key(cap["auth"]) or "")
-    body = {"model": model, "messages": messages, "max_tokens": max_tokens, "temperature": 0.1}
+    body = {"model": model, "messages": messages, "temperature": 0.1}
+    if max_tokens is not None:
+        body["max_tokens"] = max_tokens
     if tools:
         body["tools"] = tools
         body["tool_choice"] = "auto"
@@ -1059,7 +1076,7 @@ def probe(rod: str) -> dict:
     t0 = time.time()
     msgs = [{"role": "user", "content": PROBE_TASK}]
     try:
-        msg = _chat(plant, model, msgs, schema(["calc"]), max_tokens=400)
+        msg = _chat(plant, model, msgs, schema(["calc"]))
     except urllib.error.HTTPError as e:
         body = ""
         try:
@@ -1101,13 +1118,18 @@ def probe(rod: str) -> dict:
     msgs += [msg, {"role": "tool", "tool_call_id": tc.get("id", ""), "content": got}]
     final = ""
     try:
-        final = (_chat(plant, model, msgs, schema(["calc"]), max_tokens=400).get("content") or "")
+        final = (_chat(plant, model, msgs, schema(["calc"])).get("content") or "")
     except Exception as e:
         final = "ERR %s" % e
     used = PROBE_ANSWER in final.replace(",", "").replace(" ", "")
     return {"rod": rod, "plant": plant, "result": "called", "pass": bool(used),
             "expression": args.get("expression", "")[:40], "tool_returned": got[:24],
             "used_result": used, "detail": final[:120].replace("\n", " "),
+            # WHY IT STOPPED TRAVELS WITH THE GRADE. `_chat` already carries `finish_reason` into
+            # the message and this threw it away, so "the rod ignored the tool's answer" and "we cut
+            # it off mid-sentence" graded identically. Measured: across 376 rows in three stores,
+            # finish_reason is recorded NOWHERE. A grader blind to truncation measures its ceiling.
+            "finish_reason": msg.get("finish_reason"),
             "seconds": round(time.time() - t0, 1)}
 
 

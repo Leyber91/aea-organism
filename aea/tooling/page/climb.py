@@ -60,9 +60,18 @@ def _evidence(r: dict, gate: tuple) -> str:
     if i == "R3" and m.get("graded") is not None:
         return "%s graded outcomes, %s not repeated, bound %s over %s paired witnesses" % (
             m["graded"], m.get("not_repeated") or 0, m.get("bound"), m.get("bound_pairs"))
-    if i == "R4a" and m.get("distinct_sources") is not None:
-        return "%s chosen with a reason, %s distinct sources" % (
-            m.get("chosen_with_reason", 0), m.get("distinct_sources"))
+    if i == "R4a" and m.get("by_entity") is not None:
+        return ("%s looks chosen by the entity, %s carried a reason, %s changed what it examined, "
+                "%s distinct thing%s looked at" % (
+                    m["by_entity"], m.get("with_reason") or 0, m.get("changed_with_reason") or 0,
+                    m.get("distinct") or 0, "" if (m.get("distinct") or 0) == 1 else "s"))
+    # A MEASURED RUNG THAT PRINTS "nothing measured here yet" IS THE FALSE DASH THIS PAGE EXISTS TO
+    # PREVENT, and it takes one wrong key to produce. R4a landed with `by_entity`/`with_reason`/
+    # `distinct` and this function asked for `distinct_sources`, so a PARTIAL rung carrying four
+    # real numbers rendered as untouched. A dash must mean the repository cannot prove it - never
+    # that the reader of the measurement guessed at its shape. Checked against the manifest below.
+    if (r.get("measured") or {}) and i not in ("R0", "R1", "R1.5", "R2", "R3", "R4a"):
+        return "measured, but this page has no reader for %s yet" % i
     return ""
 
 
