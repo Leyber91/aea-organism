@@ -2683,3 +2683,62 @@ Amended to the public identity, with the co-author trailer, before anything left
   pattern was written as a literal and matched itself. Assembled like the rest, and verified BOTH
   ways - it still detects `api_key=`, `Bearer `, `client_secret:` and any email, and it now reads
   itself clean.
+
+---
+## 2026-08-02 - THE EVIDENCE LABEL, AND THE 21 FINDINGS STILL OPEN
+
+**DID.** Luis asked whether Graphify or similar was in mind. It was - `assembly.py` is the same
+idea and predates it - so the useful question was what they have that we do not. Answer: every edge
+carries EXTRACTED or INFERRED. Ours labelled nothing. Implementing that found something worse:
+`ladder.verify_funcs()` had never checked wiring at all. It built its known-set from
+`assembly.scan()` (which only parses definitions) and asserted membership, so it tested SPELLING.
+34/34 names "resolved against the live call graph" while four were unreachable by the organism.
+
+Five evidence kinds now: EXTRACTED 144, DISPATCH 13, ENTRY 3, TOOL 734, NONE 481. Half the tree is a
+CLI surface a person drives, which was hidden inside "183 live". ENTRY exists because a 13-agent
+audit proved entry seeding was a TAUTOLOGY - deleting all three call sites of `loop.aea:tick` left
+STEPS R3.4 reading DONE/EXTRACTED while the control on the same row flipped to PARTIAL/NONE.
+
+Seven more confirmed by construction and fixed: 2,835 call sites (14.3%) hit neither branch of
+`visit_Call` and were excluded from the published `unresolved_share`; relative imports bound nothing;
+`selfcheck.check_structure` returned the literal `True`; `selfcheck._scan` (the privacy guard)
+counted no files; `check_paths` walked an unasserted directory; `transfer._py_files` lacked the
+empty-tree guard its identical twin has carried since it was written; the page's honesty gate existed
+only as a sentence in `render.py`. 124 frozen behaviours, up from 96. FROZEN_FLOOR was stale at 89
+while the suite reported 117.
+
+**LOCKED.** A rung function is now graded by WHAT REACHES IT, not by whether the name exists. ENTRY
+means asserted-and-unmeasured and may never be counted as wiring. The page refuses to publish when
+`funcs_check` reports a missing or unwired name.
+
+**STILL OPEN - 21 findings reported by a finder and NEVER VERIFIED.** Verification was capped at 8
+by the audit script; these were dropped, so they are leads, not defects. Highest severity first:
+- `aea/tooling/xray.py:212` [high] import scan requires node.module.startswith('aea'), dropping relative imports and the __init__ re-export hop; the resulting false orphans are then muted by name
+- `aea/tooling/scope.py:96` [high] module-level scan handles only ast.Assign, so every annotated module constant is invisible to both mutable-module-state and the D48 import-bound-write check
+- `aea/lab/transfer.py:452` [high] d_unredirectable_store only recognises a bare open() call, so grid.atomic_save_json and grid.append_jsonl -- the repo's mandated write primitives -- can never trip the D48 detector
+- `aea/kernel/shadow.py:358` [high] gate()'s orphan arm returns pass:True whenever baseline is falsy, and the import-time-effects arm vanishes entirely
+- `aea/tooling/ladder.py:420` [high] R0's 72-hour gate measures the span from a WAKE line to the last line before the next WAKE, so process downtime is counted as uptime — the published 246.89h run contains a 176-hour hole
+- `aea/tooling/ladder.py:426` [high] `crashes == 0` counts "Traceback" only in lines that carry a UTC timestamp — the exact lines a Python traceback does not have
+- `aea/tooling/ladder.py:716` [high] measure_r15's `swallowed` is the literal 0 and its denominator is the sum of its own two success patterns, so R1.5's "none discarded silently" claim cannot be falsified
+- `aea/lab/redteam.py:281` [high] The printed containment bound still uses all boundary crossings as its denominator, pooling five enum-selected tools that cannot leak by construction with the one tool that can — it prints the retracted 0.267% figure
+- `aea/tooling/ladder.py:608` [high] R2's bound is accepted on the truthiness of the certificate's `alphabet` key, so an error payload or a proof taken over a disabled guard both read as "PROOF over the accepted language"
+- `aea/tooling/assembly.py:319` [medium] Attribute calls resolve by base NAME through the module-wide alias map, ignoring local rebinding - 43 false edges today, two of them onto rung-carrying functions
+- `aea/tooling/assembly.py:183` [medium] `prepare()` treats every module-level assignment as a dispatch table - 210 of the extracted 'tables' are not containers, and 24 call sites already dispatch through one
+- `aea/tooling/build_graph.py:35` [medium] build_graph keys modules by BASENAME, so colliding basenames silently drop modules from graph.json and misattribute import edges
+- `aea/tooling/scope.py:63` [medium] scope.audit returns files=0, findings=0 over a missing tree and the ratchet reads it as four defects fixed
+- `aea/lab/tests/test_golden.py:583` [medium] The NO_HANDS_UNDER containment guard reports ok over a directory that does not exist
+- `aea/lab/transfer.py:190` [medium] d_silent_default requires the except body to be exactly one Return, so any handler that logs before returning empty is invisible
+- `aea/tooling/assembly.py:215` [medium] _dispatch_table has no branch for a func that is itself an ast.Call, so TABLE.get(k, default)(args) draws no dispatch edge
+- `aea/tooling/selfcheck.py:225` [medium] check_paths cannot see the escaped Windows path - the exact form an absolute path takes in Python source
+- `aea/tooling/page/guard.py:27` [medium] The only gate on the publish write path does not match any API-key format this repo actually holds
+- `aea/tooling/_pubscan.py:22` [medium] _pubscan's absolute-path pattern misses the bare /Users/ form it claims to refuse
+- `aea/lab/tests/test_golden.py:581` [medium] check_second_dispatcher's import arm ships no control, on the exact logic that was already found blind once
+- `aea/lab/gate.py:480` [medium] `repeat_after_satisfied` returns 0.0 on a zero denominator, so the `settles` criterion — one of only two the file claims a coin flip cannot fake — passes on a run where consolidate never ran
+
+Several of those touch published numbers (R0's 72-hour span, R2's bound acceptance, redteam's
+containment denominator, `measure_r15`'s swallowed count), so they are the next honest sweep.
+
+**NEXT.** R4a is 0/8 chosen-with-reason with 1 distinct source. The perception receipt now records
+the wake's own sentence and the consumption marker stops replay, so the instrument is correct and
+the capability is what is missing: the wake must choose a DIFFERENT local source and say why, eight
+times. Then the 21 leads above.
