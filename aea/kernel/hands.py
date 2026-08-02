@@ -140,14 +140,132 @@ def _web_search(query: str = "", n: str = "5") -> str:
         k = max(1, min(10, int(str(n) or 5)))
     except Exception:
         k = 5
-    url = "https://lite.duckduckgo.com/lite/?q=" + urllib.parse.quote(q)
+    # ---------------------------------------------------------------------------------------------
+    # THE SCRAPER ROUTE IS DEAD AND THE TOOL COULD NOT SAY SO. MEASURED 2026-08-02:
+    #
+    #   lite.duckduckgo.com   HTTP 202, 14,313 bytes, the DuckDuckGo homepage - a challenge page
+    #   html.duckduckgo.com   HTTP 202, 14,302 bytes - the same
+    #   www.mojeek.com        HTTP 200, 5,819 bytes, <title>Captcha</title>
+    #
+    # Both engines are refusing a non-browser client. This function never checked the status and
+    # never looked at the title, so a 202 challenge and an empty result set were the same event to
+    # it: "NO RESULTS (the page returned 14313 bytes but nothing parsed)". Honest, and wrong about
+    # the cause - which is the failure that matters, because the fix for "nothing parsed" is a
+    # better regex and the fix for "we are blocked" is a different route entirely.
+    #
+    # It was never noticed because `web_search` HAD NEVER BEEN INVOKED. Zero calls across 121 ledger
+    # rows. The rung above it was being designed, certified and taken to a council while the tool it
+    # rests on had not run once.
+    #
+    # WHY APIS RATHER THAN A BROWSER. Getting past a captcha means defeating bot detection, and that
+    # is both a large build and the wrong build. These four are DOCUMENTED PUBLIC APIS that want to
+    # be called - no key, no drift, no adversary. And they are strictly better for the rung above:
+    # dispatch's five topics allowlist arxiv.org, github.com, news.ycombinator.com and
+    # huggingface.co, so results now come from an allowlisted domain BY CONSTRUCTION rather than by
+    # a filter applied afterwards. The allowlist stops being a claim about what was caught and
+    # becomes a property of the source, which is the same move as `plan()` preferring a finite
+    # domain over a sanitiser.
+    #
+    # A BROWSER IS A DIFFERENT RUNG. It executes third-party JavaScript, and the page then issues
+    # outbound requests nobody here authored - so "no byte of the request originates from model
+    # output" stops being the relevant claim, not because the model writes bytes but because the
+    # PAGE does. That needs its own bound and its own council. It is not this.
+    # ---------------------------------------------------------------------------------------------
+    hits, notes = [], []
+    for name, fn in (("arxiv", _s_arxiv), ("hn", _s_hn), ("hf", _s_hf), ("github", _s_github)):
+        try:
+            got = fn(q, k)
+            hits += got
+            notes.append("%s:%d" % (name, len(got)))
+        except Exception as e:
+            notes.append("%s:%s" % (name, type(e).__name__))
+    if hits:
+        out = []
+        for i, (u, title, snip, src) in enumerate(hits[:k]):
+            line = "%d. [%s] %s\n   %s" % (i + 1, src, title[:150], u[:160])
+            if snip:
+                line += "\n   %s" % snip[:220]
+            out.append(line)
+        return ("\n".join(out) + "\n\n(sources: %s)" % ", ".join(notes))[:4000]
+    # EVERY ROUTE FAILED, AND THE REASONS ARE THE ANSWER. Never "nothing parsed" again.
+    return "NO RESULTS from any route (%s). Each route reports its own failure; a blocked route " \
+           "and an empty one are different events." % ", ".join(notes)
+
+
+def _api_json(url: str, headers: dict = None):
+    """GET a documented JSON API. Refuses a non-200 explicitly - a challenge page is not a result.
+
+    No read deadline shorter than 300s and none infinite: a rod that thinks for minutes must
+    survive, and a peer that stops sending without closing must not hang the loop forever."""
+    req = urllib.request.Request(url, headers=dict({"User-Agent": _UA_BROWSER,
+                                                    "Accept": "application/json"}, **(headers or {})))
+    with urllib.request.urlopen(req, timeout=300) as r:
+        if r.status != 200:
+            raise RuntimeError("HTTP %s - not a result" % r.status)
+        return json.loads(r.read().decode("utf-8", "ignore"))
+
+
+def _s_arxiv(q: str, k: int) -> list:
+    """arxiv.org's own Atom API. Allowlisted for three of the five dispatch topics."""
+    u = ("http://export.arxiv.org/api/query?search_query=all:%s&max_results=%d"
+         % (urllib.parse.quote(q), k))
+    req = urllib.request.Request(u, headers={"User-Agent": _UA_BROWSER})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        if r.status != 200:
+            raise RuntimeError("HTTP %s" % r.status)
+        xml = r.read().decode("utf-8", "ignore")
+    ids = re.findall(r"<id>(https?://arxiv\.org/abs/[^<]+)</id>", xml)
+    titles = re.findall(r"<title>(.*?)</title>", xml, re.S)[1:]      # [0] is the feed's own title
+    out = []
+    for i, u2 in enumerate(ids[:k]):
+        t = re.sub(r"\s+", " ", titles[i]).strip() if i < len(titles) else ""
+        out.append((u2.replace("http://", "https://"), t, "", "arxiv"))
+    return out
+
+
+def _s_hn(q: str, k: int) -> list:
+    """Hacker News via Algolia's public index. news.ycombinator.com is allowlisted for three topics."""
+    d = _api_json("https://hn.algolia.com/api/v1/search?query=%s&hitsPerPage=%d"
+                  % (urllib.parse.quote(q), k))
+    out = []
+    for h in (d.get("hits") or [])[:k]:
+        u = h.get("url") or ("https://news.ycombinator.com/item?id=%s" % h.get("objectID", ""))
+        out.append((u, str(h.get("title") or h.get("story_title") or "")[:150], "", "hn"))
+    return out
+
+
+def _s_hf(q: str, k: int) -> list:
+    """Hugging Face's own model index. huggingface.co is allowlisted for two topics."""
+    d = _api_json("https://huggingface.co/api/models?search=%s&limit=%d"
+                  % (urllib.parse.quote(q), k))
+    return [("https://huggingface.co/" + m["id"], m["id"], "", "hf") for m in (d or [])[:k]
+            if isinstance(m, dict) and m.get("id")]
+
+
+def _s_github(q: str, k: int) -> list:
+    """GitHub's search API. Unauthenticated and rate-limited, so a 403/504 here is normal and is
+    reported as that route's failure rather than as the whole search failing."""
+    d = _api_json("https://api.github.com/search/repositories?q=%s&per_page=%d"
+                  % (urllib.parse.quote(q), k), {"Accept": "application/vnd.github+json"})
+    return [(it["html_url"], it.get("full_name", ""), (it.get("description") or "")[:200], "github")
+            for it in (d.get("items") or [])[:k]]
+
+
+def _web_search_scraper_dead(query: str = "", n: str = "5") -> str:
+    """KEPT AS A HEADSTONE, NOT AS A FALLBACK. This is what the scraper route did, and it is left
+    here unreferenced so the next author who reaches for lite.duckduckgo.com reads the measurement
+    first: HTTP 202, a challenge page, on 2026-08-02. Restoring it means re-measuring it."""
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": _UA_BROWSER,
-                                                   "Accept-Language": "en-US,en;q=0.9"})
-        with urllib.request.urlopen(req, timeout=20) as r:
-            html = r.read().decode("utf-8", "ignore")
+        req = urllib.request.Request(
+            "https://lite.duckduckgo.com/lite/?q=" + urllib.parse.quote((query or "").strip()),
+            headers={"User-Agent": _UA_BROWSER, "Accept-Language": "en-US,en;q=0.9"})
+        with urllib.request.urlopen(req, timeout=300) as r:
+            status, html = r.status, r.read().decode("utf-8", "ignore")
     except Exception as e:
         return "ERROR: %s" % e
+    if status != 200 or "<title>Captcha</title>" in html:
+        return "BLOCKED: HTTP %s (%d bytes). A challenge page is not an empty result." % (
+            status, len(html))
     # DDG lite wraps every hit in <a class="result-link" href="...">title</a> and puts the snippet
     # in the following <td class="result-snippet">. Parsed with a regex ON PURPOSE: the alternative
     # is a parser dependency for one page shape, and the failure mode here is ZERO results, which

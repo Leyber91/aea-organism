@@ -16,11 +16,11 @@ from __future__ import annotations
 import json
 import time
 
-from aea.tooling.page import (axes, climb, graph, layout, marks, panels, sources,
-                              style, template)
+from aea.tooling.page import (assets, axes, climb, graph, layout, marks, panels,
+                              sources, style, template)
 
 
-def build() -> str:
+def build_site() -> dict:
     lad = sources.load("ladder.json", {})
     cert = sources.load("redteam_cert.json", {})
     asm = sources.load("assembly.json", {})
@@ -44,19 +44,35 @@ def build() -> str:
     rungs, per_rung, rcum = axes.rung_series(lad, T)
     rest = axes.rung_rest(rungs)
 
-    return template.document(
+    caps = axes.hop_captions(T, maxd, per_hop)
+    rcaps = axes.rung_captions(rungs, T, per_rung, rcum)
+
+    html = template.document(
         stamp=time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
         org=org, T=T, _svg=marks.svg,
-        MAXD=maxd, RREST=rest,
+        MAXD=maxd,
         rail=axes.hop_rail(maxd, per_hop, cum),
         rrail=axes.rung_rail(rungs, per_rung, rcum, rest),
-        caps=axes.hop_captions(T, maxd, per_hop),
-        caps_js=json.dumps(axes.hop_captions(T, maxd, per_hop)),
-        rcaps=axes.rung_captions(rungs, T, per_rung, rcum),
-        frame_css=style.frame_rules(len(rungs), maxd, climb_css),
+        caps=caps,
         climb_html=climb_html, n_rungs=len(rungs),
         step_rows=panels.step_rows(asm),
         growth=panels.growth(sources.history()),
         live_n=len(org["live"]), fn_n=org["functions"], cen=cen,
         **dict(zip(("rod_rows", "rods", "frontier", "mx"), panels.fleet(cen))),
         **panels.certificate(cert))
+
+    # A SITE, NOT A FILE. Each part is written where it belongs and linked, so a copy change is a
+    # diff of the markup instead of a diff buried under 1,226 unchanged dots.
+    return {
+        "index.html": html,
+        "assets/base.css": assets.base_css(),
+        "assets/frames.css": style.frame_rules(len(rungs), maxd, climb_css),
+        "assets/page.js": assets.page_js(caps_js=json.dumps(caps), rcaps=rcaps,
+                                         MAXD=maxd, RREST=rest),
+        "assets/field.svg": marks.field(org, T),
+    }
+
+
+def build() -> str:
+    """The page alone, for callers that only want the document. The site is `build_site()`."""
+    return build_site()["index.html"]

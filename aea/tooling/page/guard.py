@@ -20,7 +20,20 @@ import re
 _SEP = "[" + chr(92) * 2 + "/]"
 _ROOTED = chr(47) + "(?:home|" + "Use" + "rs)" + chr(47)
 FORBIDDEN = (
-    re.compile("[A-Za-z]:" + _SEP + "[^\s\"']{2,}"),          # an absolute path with a body
+    # AN ABSOLUTE PATH, AND NOT A URL. The previous pattern could not tell a drive-letter path from
+    # a URL scheme: both are a letter, a colon and a slash, so it matched the `p:` of a web address
+    # followed by its slash. It never fired because this page had never emitted an address, and the
+    # first one it ever did emit was the namespace on a standalone SVG - which the guard promptly
+    # refused to publish. Two additions fix it and neither weakens it:
+    #   (?<![A-Za-z])  a drive letter is not preceded by a letter; the scheme's last letter always is
+    #   (?![\\/])      a filesystem path never has a second slash after the colon; a scheme always does
+    # It still catches every real form, including a drive path nested inside a local-file address.
+    #
+    # AND THE COMMENT ABOVE IS WRITTEN AROUND ITS OWN EXAMPLES ON PURPOSE. The first draft spelled
+    # out a sample path, which made this file fail the scan this file performs - the third instance
+    # today, and that one was inside the paragraph explaining the first two. A guard's source is the
+    # one place where naming the needle costs the most: describe it, never carry it.
+    re.compile("(?<![A-Za-z])[A-Za-z]:" + _SEP + "(?!" + _SEP + ")[^\s\"'<>]{2,}"),
     re.compile(_ROOTED + "[A-Za-z0-9._-]+"),                   # the posix equivalent
     re.compile("One" + "Drive|Indi" + "cia|ADM Gr" + "oup", re.I),   # client / employer
     re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+"),                    # any email

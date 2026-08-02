@@ -1,0 +1,104 @@
+{
+ "claim": "whether R4b's POWER half functions at all. NOT a security claim - the BOUND is certified separately by dispatch_cert, and neither certificate substitutes for the other.",
+ "topics": 5,
+ "search_works": 5,
+ "topics_with_a_survivor": 4,
+ "topics_that_fetched": 4,
+ "starved_by_the_allowlist": [
+  "local_inference"
+ ],
+ "total_body_chars": 96000,
+ "rows": [
+  {
+   "topic": "agent_architectures",
+   "query": "autonomous agent architecture patterns memory planning",
+   "searched": true,
+   "search_chars": 698,
+   "urls": 5,
+   "survived": 3,
+   "fetched": 3,
+   "body_chars": 24000,
+   "refused": [],
+   "hosts": [
+    "arxiv.org"
+   ],
+   "error": null,
+   "seconds": 3.7
+  },
+  {
+   "topic": "ai_engineering_market",
+   "query": "AI engineering consulting demand independent contractor",
+   "searched": true,
+   "search_chars": 557,
+   "urls": 5,
+   "survived": 3,
+   "fetched": 3,
+   "body_chars": 24000,
+   "refused": [],
+   "hosts": [
+    "arxiv.org"
+   ],
+   "error": null,
+   "seconds": 2.2
+  },
+  {
+   "topic": "local_inference",
+   "query": "local LLM inference quantisation throughput consumer GPU",
+   "searched": true,
+   "search_chars": 717,
+   "urls": 5,
+   "survived": 0,
+   "fetched": 0,
+   "body_chars": 0,
+   "refused": [
+    "https://arxiv.org/abs/2607.10183v2",
+    "https://arxiv.org/abs/2601.09527v1",
+    "https://arxiv.org/abs/2606.05868v1",
+    "https://arxiv.org/abs/2601.17768v2",
+    "https://arxiv.org/abs/2411.01142v1"
+   ],
+   "hosts": [],
+   "error": null,
+   "seconds": 12.3
+  },
+  {
+   "topic": "model_releases",
+   "query": "new open weights language model release benchmarks",
+   "searched": true,
+   "search_chars": 758,
+   "urls": 5,
+   "survived": 3,
+   "fetched": 3,
+   "body_chars": 24000,
+   "refused": [],
+   "hosts": [
+    "arxiv.org"
+   ],
+   "error": null,
+   "seconds": 2.7
+  },
+  {
+   "topic": "prompt_injection",
+   "query": "prompt injection defence agent tool use research",
+   "searched": true,
+   "search_chars": 621,
+   "urls": 5,
+   "survived": 3,
+   "fetched": 3,
+   "body_chars": 24000,
+   "refused": [],
+   "hosts": [
+    "arxiv.org"
+   ],
+   "error": null,
+   "seconds": 1.8
+  }
+ ],
+ "src": "probe",
+ "not_claimed": [
+  "that any of this is safe. dispatch_cert certifies the bound; this measures only whether anything comes back",
+  "that the entity did any of it. Every call is stamped src=probe and cannot grade R4b",
+  "that the content is true. A fetched page is third-party text and stays untrusted"
+ ],
+ "verdict": "FUNCTIONS"
+}

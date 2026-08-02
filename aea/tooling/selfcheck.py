@@ -133,7 +133,14 @@ FROZEN_FLOOR = 139         # +3: a decision is carried out once          # +10: 
 # freely and may not climb without someone deciding to raise this line. 130 of 169 modules are
 # reachable from nothing, which is the honest shape of this repo and was previously reported under a
 # hardcoded "pass": True.
-ORPHAN_FLOOR = 131
+ORPHAN_FLOOR = 133
+# +2 2026-08-02: `aea/tooling/page/assets.py` and the split of `marks.field()` out of `marks._svg()`.
+# The published page became a SITE - a document that links a stylesheet, a script and the dark field
+# instead of swallowing all three - and the generator grew the two modules that emit them. Every
+# module under `tooling/page/` is unreachable from the wake BY DESIGN: the organism does not draw
+# its own portrait, a person runs `python -m aea.tooling.page` and the output is uploaded. So the
+# rise is real, deliberate, and costs this acknowledged line rather than disappearing into a number
+# nobody reads.
 # +1 2026-08-02: `aea/lab/dispatch_cert.py`. R4b's dry certificate is a CLI instrument - a human or
 # the frozen suite runs it, and the ORGANISM must not reach it, because reaching dispatch is the
 # capability a council refused three times. So the orphan is deliberate and the ratchet firing on it

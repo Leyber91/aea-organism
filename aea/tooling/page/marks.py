@@ -22,6 +22,35 @@ def _lrb(T, child):
     return f' data-r="{k}"' if k is not None else ""
 
 
+def field(org: dict, T: dict) -> str:
+    """THE DARK FIELD AS ITS OWN DOCUMENT, because it is 1,226 marks that never change per frame.
+
+    MEASURED before it was moved: the published page was 2,328 lines and 1,226 of them were these
+    dots - 53 percent of the artefact, and not one of them is styled by the frame system. They made
+    every diff of the page unreadable and every read of it expensive, for marks that only say "here
+    is a function the organism cannot reach".
+
+    They stay a separate file and arrive as one `<image>`, so the page carries the ratio without
+    carrying the dots. What CANNOT move out are the standby marks: those ARE frame-styled (they
+    light on their own rung) and an external image cannot be reached by the parent stylesheet, so
+    they stay inline where the CSS can find them. That split is the honest one - by whether a mark
+    participates in the page's state, not by what is convenient to remove."""
+    secs = T.get("sectors") or {}
+    standby = T.get("standby") or {}
+    out = []
+    for n in org["dead"]:
+        if standby.get(n.replace("aea.", "", 1)) is not None:
+            continue                       # frame-styled: belongs inline, see _svg
+        h = int(hashlib.sha1(n.encode()).hexdigest()[:8], 16)
+        a0, a1 = secs.get(_pkg(n), (0.0, 2 * math.pi))
+        a = a0 + (h % 10000) / 10000 * (a1 - a0)
+        r = 430 + ((h >> 16) % 1000) / 1000 * 62
+        out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" r="1"/>')
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" '
+            'width="1000" height="1000"><g fill="#191d22">\n'
+            + "\n".join(out) + "\n</g></svg>\n")
+
+
 def _svg(org: dict, T: dict) -> str:
     pos, out = T["pos"], []
     if not pos:
@@ -43,20 +72,24 @@ def _svg(org: dict, T: dict) -> str:
     # 1,182 - so "not built" and "built and deliberately held" looked the same, which is the
     # difference between an empty rung and a fenced one. Brass, not amber: amber is the fired state
     # under the two-ink law and none of these has ever run in the loop.
+    # THE FIELD ARRIVES AS ONE MARK. `field()` wrote the 1,226 unstyled dots to their own file; this
+    # places that file at the same viewBox so every coordinate is unchanged. Only the standby dots
+    # remain inline, because they are the ones the frame rules light.
     standby = T.get("standby") or {}
     secs = T.get("sectors") or {}
+    out.append('<image href="assets/field.svg" x="0" y="0" width="1000" height="1000" '
+               'aria-hidden="true"/>')
     for n in org["dead"]:
+        k = standby.get(n.replace("aea.", "", 1))
+        if k is None:
+            continue
         h = int(hashlib.sha1(n.encode()).hexdigest()[:8], 16)
         a0, a1 = secs.get(_pkg(n), (0.0, 2 * math.pi))
         a = a0 + (h % 10000) / 10000 * (a1 - a0)
         r = 430 + ((h >> 16) % 1000) / 1000 * 62
-        k = standby.get(n.replace("aea.", "", 1))
-        if k is None:
-            out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" r="1" class="dead"/>')
-        else:
-            out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" '
-                       f'r="1" class="dead standby" data-r="{k}">'
-                       f'<title>{n.replace("aea.","")}  (written for rung {k}, zero callers)</title></circle>')
+        out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" '
+                   f'r="1" class="dead standby" data-r="{k}">'
+                   f'<title>{n.replace("aea.","")}  (written for rung {k}, zero callers)</title></circle>')
     # CROSS-LINKS - real calls that are not tree edges. Faint, so the tree stays readable.
     for a, b in T["cross"]:
         x1, y1 = pos[a]; x2, y2 = pos[b]
