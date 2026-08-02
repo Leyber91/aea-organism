@@ -249,6 +249,29 @@ def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
     site rather than here.
     """
     p = plan(topic)                                  # raises Refused before anything leaves
+
+    # THE BUDGET IS CHECKED HERE, ON THE ONE PATH, WITH NO BYPASS FLAG.
+    #
+    # R4b's bound cannot be zero - choosing one of five topics emits log2(5) bits by definition, so
+    # the channel IS the capability. What can be bounded is the RATE, and a council seat measured
+    # that it was not: channel capacity was an operator flag, `live.py --interval 1` taking the
+    # topic channel from ~124 to ~223,000 bits/day with no code change and no review.
+    #
+    # There is deliberately no `enforce=False`. A test that needs a clean budget points
+    # AEA_EGRESS_BUDGET at a temp file - the same mechanism `perceive` uses - because a bypass
+    # parameter is a second code path, and this module already shipped a certificate that covered
+    # the path which does not open sockets while missing the one that does.
+    #
+    # SPEND IS WRITTEN BEFORE THE REQUEST LEAVES. A crash between the socket opening and the ledger
+    # being written must COST the budget, never refund it; optimistic accounting on an irreversible
+    # act turns a ceiling into a suggestion.
+    from aea.kernel import egress
+    ok, why = egress.allow()
+    if not ok:
+        return dict(plan=p, results=[], fetched=[], refused=[], sent=[],
+                    error="egress refused: %s" % why, budget_refused=True)
+    egress.spend(topic)
+
     if invoke is None:
         from aea.kernel import hands
         def invoke(name, args):

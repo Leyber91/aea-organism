@@ -33,6 +33,7 @@ checker does not fail on it, the checker is not measuring anything and the certi
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 
@@ -82,6 +83,31 @@ def _breached_plan(topic: str, smuggled: str) -> dict:
 
 
 def certify() -> dict:
+    # A CLEAN BUDGET, IN A TEMP FILE, FOR THE SAME REASON `perceive` sandboxes its store: this drives
+    # the REAL `run` - which now spends the egress budget before composing - and a certificate that
+    # consumed the entity's production allowance every time it ran would be a measurement with a
+    # side effect on the thing it measures. `dispatch.run` has no bypass flag on purpose; the
+    # sandbox is the env var, so the certified path stays byte-identical to the executing one.
+    import tempfile as _t
+    _fd, _bud = _t.mkstemp(suffix=".json")
+    os.close(_fd)
+    os.unlink(_bud)
+    _keep = os.environ.get("AEA_EGRESS_BUDGET")
+    os.environ["AEA_EGRESS_BUDGET"] = _bud
+    try:
+        return _certify_inner()
+    finally:
+        if _keep is None:
+            os.environ.pop("AEA_EGRESS_BUDGET", None)
+        else:
+            os.environ["AEA_EGRESS_BUDGET"] = _keep
+        try:
+            os.unlink(_bud)
+        except Exception:
+            pass
+
+
+def _certify_inner() -> dict:
     serp = "\n".join(u for _lbl, u, _e in HOSTILE)
     rows, leaks, wrong = [], [], []
     for topic in dispatch.topics():
@@ -164,6 +190,11 @@ def certify() -> dict:
     run_leaks = []
     for topic in dispatch.topics():
         captured.clear()
+        from aea.kernel import egress as _eg
+        try:
+            os.unlink(_eg._path())          # each topic gets a fresh window; the FLOOR is proved
+        except Exception:                   # separately, by check_egress_budget's controls
+            pass
         r = dispatch.run(topic, invoke=_capture)
         assert not r.get("error"), "run errored under a capturing invoke: %s" % r.get("error")
         for tool, args in captured:
@@ -194,6 +225,11 @@ def certify() -> dict:
         return serp if tool == "web_search" else "body"
 
     captured.clear()
+    try:
+        from aea.kernel import egress as _eg2
+        os.unlink(_eg2._path())
+    except Exception:
+        pass
     dispatch.run("prompt_injection", invoke=_breached_invoke)
     run_control = any(CTX in str(v) for _t, a in captured for v in a.values())
 
