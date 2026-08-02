@@ -107,11 +107,14 @@ def check_imports() -> dict:
 # broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
 # alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
 # the suite must report at least this many. Raise it when behaviours are added on purpose.
-FROZEN_FLOOR = 127         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
+FROZEN_FLOOR = 139         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
 # +3 2026-08-02: every flag `live` ACCEPTS must be READ by live.main. `--once` was in KNOWN_FLAGS,
 # in the docstring, and read by nothing - it ran one tick then slept the full 1800s default, so
 # every caller hung or was killed and recorded as a failure. Unknown flags fail closed; a known
 # flag with no implementation failed OPEN, which is worse, because the refusal lists it as accepted.
+# +12 2026-08-02: R4b's dry certificate - 5 topics x 10 hostile search results, 0 bytes of any
+# outbound request from model output, 0 selection bits, no socket, no model call. Plus the three
+# rows asserting the rung stays SHUT: a computable half must never be reported as the whole gate.
 # +2 2026-08-02: a private heartbeat key read and never written (hb["_last_decision"] was read three
 # times and assigned nowhere for a day, while the frozen test passed because it exercised
 # decide.choose directly and never the line in live.py that must write the value).
@@ -130,7 +133,12 @@ FROZEN_FLOOR = 127         # +3: a decision is carried out once          # +10: 
 # freely and may not climb without someone deciding to raise this line. 130 of 169 modules are
 # reachable from nothing, which is the honest shape of this repo and was previously reported under a
 # hardcoded "pass": True.
-ORPHAN_FLOOR = 130
+ORPHAN_FLOOR = 131
+# +1 2026-08-02: `aea/lab/dispatch_cert.py`. R4b's dry certificate is a CLI instrument - a human or
+# the frozen suite runs it, and the ORGANISM must not reach it, because reaching dispatch is the
+# capability a council refused three times. So the orphan is deliberate and the ratchet firing on it
+# is the ratchet working: a new unreachable module now costs an acknowledged line rather than
+# disappearing into a number nobody reads. Every future rise needs the same sentence.
 # +8 2026-08-02: the dispatch edge, with a two-armed control (a planted dead detector and a planted
 # rubber stamp must each make it FAIL). The count on the other side is now COUNTED rather than
 # hand-summed - the comment below was true of this constant and false of the number it reads.

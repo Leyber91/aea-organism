@@ -193,6 +193,53 @@ def carry(plan_or_query: Any) -> str:
     return str(plan_or_query or "")
 
 
+def dry(topic: str, serp: str = "", max_fetch: int = MAX_FETCH) -> dict:
+    """THE REQUEST IT WOULD MAKE, WITH NO SOCKET OPENED. R4b's stated first condition.
+
+    R4b is shut behind "dispatch runs DRY - it returns the request it WOULD have made and opens no
+    socket - so the bound becomes provable while the decision stays closed". This is that function,
+    and it exists so the guarantee can be certified BEFORE the door opens rather than argued about.
+
+    `serp` is the search-result text a real call would have returned. Supplying it is the whole
+    point: the query is a literal from a table and is trivially safe, but THE FETCH URL COMES FROM
+    THE SEARCH RESULT, which is third-party text an attacker may have written. Two outbound writes,
+    two different origins, and only one of them was ever the easy one.
+
+    Returns every outbound argument, tagged with WHERE ITS BYTES CAME FROM:
+
+        origin="table"  copied out of TOPICS by this file. No model, no network
+        origin="serp"   present in the third-party text. Host allowlisted, PATH IS NOT
+        origin="model"  MUST NEVER APPEAR. Its presence is the breach this rung is about
+
+    No sanitiser, and there should never be one: a sanitiser is a claim about what it caught, and a
+    finite domain is a claim about what can exist."""
+    p = plan(topic)                                   # raises Refused before anything is composed
+    out = dict(plan=p, requests=[], refused=[], socket_opened=False)
+    out["requests"].append(dict(tool="web_search", args={"query": p["query"]},
+                                origin="table", bytes=p["query"]))
+    urls, seen = re.findall(r"https?://[^\s\)\]\"'<>]+", str(serp or "")), set()
+    keep = []
+    for u in urls:
+        if u in seen:
+            continue
+        seen.add(u)
+        h, why = _host_why(u)
+        if not allowed_host(u, p["domains"]):
+            out["refused"].append(dict(url=u[:160], host=h, why=why or "host not on the allowlist"))
+            continue
+        keep.append(u)
+    for u in keep[:max_fetch]:
+        out["requests"].append(dict(tool="web_fetch", args={"url": u}, origin="serp", bytes=u))
+    # SELECTION IS A CHANNEL, and this is where it would be. `run` takes the first N results in
+    # document order - a deterministic slice with no model involvement, so choosing WHICH result to
+    # fetch carries zero bits. The moment anything lets the wake pick among results, each fetch
+    # leaks log2(n) bits regardless of every allowlist above. Recorded so the next author sees the
+    # cost of that change before making it.
+    out["selection"] = dict(by="document order, first %d" % max_fetch, chooser="code",
+                            bits_leaked=0, candidates=len(keep))
+    return out
+
+
 def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
     """Execute a plan: search the literal query, keep only allowlisted hosts, fetch a few, fence.
 

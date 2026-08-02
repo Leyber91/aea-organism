@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 200,
+    "count": 201,
     "source": "aea/tooling/page/__main__.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 200
+    "count": 201
    },
    {
     "src": "THE_PROBE",
@@ -293,6 +293,12 @@
      "type": "module",
      "path": "aea/kernel/dispatch.py",
      "purpose": "dispatch.py - R2c: THE ENTITY LEARNS SOMETHING IT CHOSE, AND NEVER WRITES THE ADDRESS."
+    },
+    {
+     "id": "dispatch_cert",
+     "type": "module",
+     "path": "aea/lab/dispatch_cert.py",
+     "purpose": "dispatch_cert.py - R4b's FIRST CONDITION, CERTIFIED. No socket, no model, no rate."
     },
     {
      "id": "dna",
@@ -1884,6 +1890,16 @@
      "rel": "imports"
     },
     {
+     "src": "dispatch_cert",
+     "dst": "dispatch",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch_cert",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "dna",
      "dst": "base",
      "rel": "imports"
@@ -3086,6 +3102,21 @@
     {
      "src": "test_golden",
      "dst": "selfcheck",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "dispatch",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "dispatch_cert",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "ladder",
      "rel": "imports"
     },
     {

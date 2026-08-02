@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-02 06:09:18 UTC",
+ "generated": "2026-08-02 13:34:18 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -22,7 +22,7 @@
    "loop.live:main [ENTRY]"
   ],
   "measured": 33,
-  "known": 1378,
+  "known": 1383,
   "claim": "checked against reachability, not existence. `unwired` is a rung claiming a capability nothing can get to; `dispatch_only` is an upper bound and says so; `asserted_entries` are doors, where reachability is the assumption the walk begins from rather than anything this check measured."
  },
  "rungs": [
@@ -240,11 +240,30 @@
    "plain": "This is the first point at which something can leave the machine because the system decided it should. Four seats refused the obvious design unanimously, three times, and were right each time: the request itself is the way data gets out, and a call budget limits the number of doors rather than what fits through one.",
    "beat": "The fork. Let it choose what to look at and the query itself becomes a way out of the machine. A council refused this three times. It waits, and the waiting is the design.",
    "blocked_on": "dispatch running dry, then a reconvened council",
-   "measured": {},
-   "status": "future",
+   "measured": {
+    "condition_1": true,
+    "condition_2": false,
+    "leaks": 0,
+    "selection_bits": 0,
+    "met": false,
+    "condition_2_is": "a reconvened council, against the measured version. Not computable here, and it is a judgement rather than a number",
+    "misrouted": 0,
+    "requests": 16,
+    "controls": true
+   },
+   "status": "partial",
    "funcs": [],
-   "standby": [],
-   "standby_state": null
+   "standby": [
+    "kernel.dispatch:plan",
+    "kernel.dispatch:carry",
+    "kernel.dispatch:run",
+    "kernel.dispatch:dry",
+    "kernel.dispatch:allowed_host",
+    "kernel.dispatch:topics",
+    "kernel.dispatch:_host",
+    "kernel.dispatch:_host_why"
+   ],
+   "standby_state": "held: written, zero callers"
   },
   {
    "id": "R5",

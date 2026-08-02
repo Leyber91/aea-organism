@@ -321,6 +321,11 @@ RUNG_FUNCS = {
            "kernel.outcomes:verdict_for", "kernel.outcomes:suppressed", "kernel.outcomes:read",
            "kernel.cause:classify", "loop.live:_record_outcome"],
     "R4a": ["kernel.perceive:record", "kernel.perceive:verdict", "kernel.perceive:read"],
+    # R4b DECLARES NOTHING, AND THAT IS THE CORRECT ANSWER. `funcs` means "what this rung RUNS",
+    # and this rung does not run - the organism must not reach dispatch while the council's refusal
+    # stands. Declaring `dry` here made verify_funcs report four names UNWIRED, which was the check
+    # working: an organ nothing reaches is a defect, and these are not organs. They are STANDBY,
+    # which is a different bucket that already exists below. Moved rather than excused.
     "R4b": [], "R5": [], "R6": [], "R7": [], "R8": [], "R9": [],
 }
 
@@ -338,10 +343,14 @@ RUNG_FUNCS = {
 # THE ENTRY IS ONLY HONEST WHILE IT IS UNREACHABLE. A standby function that acquires a caller is no
 # longer standby - it is either the rung starting or a wire nobody meant to land. `standby_state`
 # reports which, per rung, measured against the live call graph rather than assumed.
+# THE KEY WAS STALE. This said "R4" and the ladder split into R4a/R4b on 2026-08-02, so
+# `standby_for("R4b")` returned nothing and the one rung whose whole story IS "built and held back"
+# rendered as "not built" - the exact collapse this table was added to prevent, caused by the rename
+# that created the rung. A lookup keyed on an id nobody emits fails silently and reads as absence.
 RUNG_STANDBY = {
-    "R4": ["kernel.dispatch:plan", "kernel.dispatch:carry", "kernel.dispatch:run",
-           "kernel.dispatch:allowed_host", "kernel.dispatch:topics", "kernel.dispatch:_host",
-           "kernel.dispatch:_host_why"],
+    "R4b": ["kernel.dispatch:plan", "kernel.dispatch:carry", "kernel.dispatch:run",
+            "kernel.dispatch:dry", "kernel.dispatch:allowed_host", "kernel.dispatch:topics",
+            "kernel.dispatch:_host", "kernel.dispatch:_host_why"],
 }
 
 
@@ -827,8 +836,43 @@ def measure_r4a() -> dict:
     return out
 
 
+def measure_r4b() -> dict:
+    """TWO CONDITIONS, AND ONLY ONE OF THEM IS MECHANICAL. Reporting both is the point.
+
+    R4b's gate names a sequence, not a threshold: dispatch runs DRY and the bound becomes provable,
+    THEN a council that refused this design three times is reconvened against the measured version
+    rather than against the proposal. The first is a certificate this file can read. The second is a
+    judgement no measurement can supply, and a rung that quietly counted the half it can compute
+    would be claiming the whole gate.
+
+    So `met` stays False while `condition_1` is True, and the rung reads PARTIAL - which is the
+    honest state: the argument that was missing now exists, and the decision has not been made."""
+    out = dict(condition_1=None, condition_2=False, leaks=None, selection_bits=None, met=False,
+               condition_2_is="a reconvened council, against the measured version. Not computable "
+                              "here, and it is a judgement rather than a number")
+    try:
+        cert = grid.load_json(os.path.join(grid.STATE, "dispatch_cert.json"), {}) or {}
+        if not cert:
+            out["condition_1"] = False
+            out["why"] = "no dispatch_cert.json - run python -m aea.lab.dispatch_cert --json"
+            return out
+        out["leaks"] = len(cert.get("leaks") or [])
+        out["misrouted"] = len(cert.get("misrouted") or [])
+        out["selection_bits"] = cert.get("selection_bits")
+        out["requests"] = cert.get("outbound_requests")
+        # A CERTIFICATE WITHOUT ITS CONTROLS IS A CLAIM. Both arms must have fired, or the verdict
+        # was produced by a scan that could not have failed.
+        out["controls"] = bool(cert.get("control_breached_planner_caught")
+                               and cert.get("control_honest_planner_clean"))
+        out["condition_1"] = bool(cert.get("verdict") == "CERTIFIED" and out["controls"]
+                                  and cert.get("socket_opened") is False)
+    except Exception as e:
+        out["error"] = "%s: %s" % (type(e).__name__, str(e)[:70])
+    return out
+
+
 MEASURE = {"R0": measure_r0, "R1": measure_r1, "R1.5": measure_r15,
-           "R2": measure_r2, "R3": measure_r3, "R4a": measure_r4a}
+           "R2": measure_r2, "R3": measure_r3, "R4a": measure_r4a, "R4b": measure_r4b}
 
 
 def status_for(rid: str, m: dict) -> str:
@@ -882,6 +926,11 @@ if __name__ == "__main__":
                 bits.append("reach %d/%d inv (%s exec), %s/%s tools | bound: %s"
                             % (m["invocations"], REACH_GATE[0], m.get("executions"),
                                m["tools"], REACH_GATE[1], str(m.get("bound_form"))[:34]))
+            if r["id"] == "R4b" and m.get("condition_1") is not None:
+                bits.append("dry certificate %s (%s outbound, %s leaks, %s selection bits) | "
+                            "council: NOT RECONVENED"
+                            % ("CERTIFIED" if m["condition_1"] else "FAILED", m.get("requests"),
+                               m.get("leaks"), m.get("selection_bits")))
             if r["id"] == "R4a" and m.get("changed_with_reason") is not None:
                 bits.append("%d/%d chosen-with-reason, %s distinct sources"
                             % (m["changed_with_reason"], PERCEPTION_GATE, m.get("distinct")))
