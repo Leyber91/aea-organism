@@ -57,12 +57,12 @@
   "cooled_at": 1784725408.0140953
  },
  "ollama/qwen2.5:7b": {
-  "calls": 503,
-  "ok": 503,
+  "calls": 504,
+  "ok": 504,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 5.2,
-  "last": "2026-08-02 00:17"
+  "ema_latency": 8.4,
+  "last": "2026-08-02 00:19"
  },
  "groq/llama-3.3-70b-versatile": {
   "calls": 76,
@@ -661,12 +661,12 @@
   "retired_why": "410 at reap"
  },
  "nvidia/nvidia/nemotron-3-ultra-550b-a55b": {
-  "calls": 311,
-  "ok": 286,
+  "calls": 312,
+  "ok": 287,
   "fail": 25,
   "consec_fail": 0,
-  "ema_latency": 55.5,
-  "last": "2026-08-02 00:17"
+  "ema_latency": 54.4,
+  "last": "2026-08-02 00:18"
  },
  "groq/qwen/qwen3-32b": {
   "calls": 0,

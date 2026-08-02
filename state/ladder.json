@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-02 00:06:10 UTC",
+ "generated": "2026-08-02 00:18:16 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -9,7 +9,7 @@
  "funcs_check": {
   "checked": 31,
   "missing": [],
-  "known": 1585
+  "known": 1588
  },
  "rungs": [
   {
@@ -26,10 +26,10 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 62,
-    "ticks": 465,
+    "boots": 64,
+    "ticks": 468,
     "first": "2026-07-10",
-    "last": "2026-08-01",
+    "last": "2026-08-02",
     "met": true
    },
    "status": "proven",
@@ -70,9 +70,9 @@
     "subset": true,
     "stale_limit_s": 5400,
     "last_why": "the wake chose NONE - no mechanical move is needed this tick",
-    "decision_rows": 63,
-    "comparable": 63,
-    "differed": 61,
+    "decision_rows": 64,
+    "comparable": 64,
+    "differed": 62,
     "met": true
    },
    "status": "proven",
@@ -96,9 +96,9 @@
    "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
    "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
    "measured": {
-    "valid": 83,
+    "valid": 84,
     "receipts": 3,
-    "ticks": 86,
+    "ticks": 87,
     "swallowed": 0,
     "met": true
    },
@@ -123,17 +123,17 @@
    "measured": {
     "wire": true,
     "bound_pct": null,
-    "invocations": 19,
+    "invocations": 20,
     "tools": 3,
     "situations": null,
-    "met": false,
-    "ledger_rows": 97,
-    "claimed_wake": 65,
-    "executions": 54,
+    "met": true,
+    "ledger_rows": 98,
+    "claimed_wake": 66,
+    "executions": 55,
     "situations_observed": 5,
     "bound_form": "PROOF over the accepted language"
    },
-   "status": "partial",
+   "status": "proven",
    "funcs": [
     "kernel.hands:invoke",
     "kernel.hands:allowed",
@@ -157,15 +157,15 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 130,
-    "graded": 92,
+    "outcomes": 132,
+    "graded": 94,
     "suppressions": 24,
     "not_repeated": 18,
     "bound": "PASS",
-    "bound_pairs": 57,
+    "bound_pairs": 58,
     "met": true,
-    "entity_rows": 114,
-    "disagreements": 3,
+    "entity_rows": 116,
+    "disagreements": 4,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
     "met_caveat": "power demonstrated and bound certified on arm B; arm A carries no traffic until R2-REACH is non-zero"
