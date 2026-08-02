@@ -1237,6 +1237,66 @@ def check_empty_scans():
     return fails
 
 
+
+# =================================================================================================
+# A FLAG THAT IS ACCEPTED AND NEVER READ FAILS OPEN, WHICH IS WORSE THAN ONE THAT FAILS CLOSED.
+#
+# `live.main` refuses any flag not in KNOWN_FLAGS, and that guard exists because
+# `python -m aea.loop.live --help` once STARTED THE REAL UNATTENDED DAEMON - an argument nobody
+# anticipated fell past every branch into the default. So unknown fails closed.
+#
+# `--once` was IN KNOWN_FLAGS, in the module docstring, and read by nothing. It ran one tick and
+# then slept the full 1800s default, so every caller either hung or was killed and recorded as a
+# failure. Measured: six rounds of a live R4a run, ten minutes each, all of them this flag. The
+# refusal message listed it as accepted the entire time.
+#
+# This is the fourth instance today of one defect class - a mechanism present and not connected:
+# a heartbeat key read and never written, a frozen check defined and never called, a publishing
+# gate written as a comment, and now a flag accepted and never read. Each was found by a different
+# accident. This one is checked.
+# =================================================================================================
+def check_flags_read():
+    import ast as _ast
+    import io as _io
+    import os as _o
+    fails = []
+    root = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+        _o.path.dirname(_o.path.abspath(__file__)))))
+    path = _o.path.join(root, "aea", "loop", "live.py")
+    src = _io.open(path, encoding="utf-8", errors="replace").read()
+    tree = _ast.parse(src)
+    flags = []
+    for n in tree.body:
+        if isinstance(n, _ast.Assign) and any(
+                isinstance(t, _ast.Name) and t.id == "KNOWN_FLAGS" for t in n.targets):
+            flags = [e.value for e in n.value.elts if isinstance(e, _ast.Constant)]
+    ok = len(flags) >= 3
+    print("  flagread  %-46s -> %-14s %s" % ("KNOWN_FLAGS was found and is non-trivial",
+                                             len(flags), "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("flagread:found", len(flags), ">=3"))
+    main = None
+    for n in tree.body:
+        if isinstance(n, _ast.FunctionDef) and n.name == "main":
+            main = n
+    body = _ast.get_source_segment(src, main) if main else ""
+    unread = [f for f in flags if body.count('"%s"' % f) + body.count("'%s'" % f) == 0]
+    ok = not unread
+    print("  flagread  %-46s -> %-14s %s" % ("every accepted flag is read by main",
+                                             unread or "none", "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("flagread:unread", unread, "none"))
+    # THE CONTROL: a flag that main does not mention must be caught.
+    planted = flags + ["--never-implemented"]
+    caught = "--never-implemented" in [f for f in planted
+                                       if body.count('"%s"' % f) + body.count("'%s'" % f) == 0]
+    print("  flagread  %-46s -> %-14s %s" % ("control: a planted unread flag is caught", caught,
+                                             "ok" if caught else "FAIL"))
+    if not caught:
+        fails.append(("flagread:control", caught, True))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -1249,7 +1309,8 @@ if __name__ == "__main__":
              + check_provenance() + check_verify_funcs()
              + check_page_honesty()
              + check_suite_wiring()
-             + check_entry_evidence() + check_empty_scans())
+             + check_entry_evidence() + check_empty_scans()
+             + check_flags_read())
     finally:
         sys.stdout = _counter.inner
     print()

@@ -835,6 +835,19 @@ def main():
 
     interval = int(a[a.index("--interval") + 1]) if "--interval" in a else 1800
     max_ticks = int(a[a.index("--ticks") + 1]) if "--ticks" in a else None
+    # `--once` WAS IN KNOWN_FLAGS, IN THE DOCSTRING, AND READ BY NOTHING.
+    #
+    # The guard above exists because `python -m aea.loop.live --help` once started the real
+    # unattended daemon: an argument nobody anticipated fell past every branch. So unknown flags now
+    # fail CLOSED - and a KNOWN flag with no implementation failed OPEN, which is worse, because the
+    # refusal message lists it as accepted. `--once` ran one tick and then slept the full 1800s
+    # default, so every caller that used it either hung or was killed by a timeout and recorded as
+    # a failure. Measured: six rounds of a live R4a run, ten minutes each, all of them the flag.
+    #
+    # Same class as everything else found today - a mechanism present and not connected - and the
+    # frozen check below now asserts that every accepted flag is read by this function.
+    if "--once" in a:
+        max_ticks = 1
     # BOUNDING THE RUN AND SUBSTITUTING THE ACTION ARE TWO DIFFERENT THINGS, and conflating them
     # into one variable is what let the harness fabricate evidence. `--ticks N` meant "demo", so
     # every bounded run silently swapped AWAKE:brief for a cheap consolidate slice and recorded the
