@@ -255,28 +255,36 @@ def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
             return hands.invoke(name, args, zone="public", allow=("web_search", "web_fetch"),
                                 src="dispatch")
 
+    # ONE COMPOSER. `run` EXECUTES WHAT `dry` BUILDS - it does not build its own copy.
+    #
+    # THE DEFECT THIS REMOVES, found by the fourth council seat and replicated by the first: the
+    # certificate called `dry` ten times and `run` ZERO times, so it certified a code path that does
+    # not open sockets. A breach placed in `run` alone - one extra args key carrying private state -
+    # printed CERTIFIED with 0 leaks while 1 of 1 captured calls put private bytes on the wire.
+    #
+    # The two functions also each carried their own copy of the URL-extraction regex, byte-identical
+    # and held by nothing, so they were one edit away from disagreeing about what a result is - and
+    # only one of them was measured. Composing through `dry` makes the certified path and the
+    # executing path THE SAME PATH, which is the only version of this claim worth making.
     out = dict(plan=p, results=[], fetched=[], refused=[], sent=[])
+    first = dry(topic, serp="", max_fetch=max_fetch)
+    search_req = first["requests"][0]
     try:
-        raw = invoke("web_search", {"query": p["query"]})
+        raw = invoke(search_req["tool"], search_req["args"])
     except Exception as e:
         out["error"] = f"search refused or failed: {str(e)[:120]}"
         return out
-    out["sent"].append(p["query"])
+    out["sent"].append(search_req["args"]["query"])
 
-    urls = re.findall(r"https?://[^\s\)\]\"'<>]+", str(raw))
-    seen = set()
-    for u in urls:
-        if u in seen:
-            continue
-        seen.add(u)
-        if not allowed_host(u, p["domains"]):
-            out["refused"].append(u[:120])
-            continue
-        out["results"].append(u)
+    d = dry(topic, serp=str(raw), max_fetch=max_fetch)
+    out["refused"] += [x["url"][:120] for x in d["refused"]]
+    fetches = [r for r in d["requests"] if r["tool"] == "web_fetch"]
+    out["results"] = [r["args"]["url"] for r in fetches]
 
-    for u in out["results"][:max_fetch]:
+    for r in fetches:
+        u = r["args"]["url"]
         try:
-            body = invoke("web_fetch", {"url": u})
+            body = invoke(r["tool"], r["args"])
             out["sent"].append(u)
         except Exception as e:
             out["refused"].append(f"{u[:80]} :: {str(e)[:60]}")

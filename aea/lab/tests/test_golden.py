@@ -1327,6 +1327,14 @@ def check_dispatch_dry():
             ("no model is called", c["model_calls"], 0),
             ("CONTROL: a breached planner IS caught", c["control_breached_planner_caught"], True),
             ("CONTROL: the honest planner is clean", c["control_honest_planner_clean"], True),
+            # THE ARM THAT DID NOT EXIST, AND WITHOUT WHICH NONE OF THE ABOVE MEANT ANYTHING.
+            # A council seat instrumented certify() and measured dry=10 calls, run=0. So the
+            # certificate covered a path that cannot reach the network, and a breach placed in run()
+            # alone printed CERTIFIED / 0 leaks while every captured call carried private bytes.
+            # These three rows are the difference between a measurement and a document.
+            ("the EXECUTING path is actually driven", c["run_calls_captured"] > 0, True),
+            ("no leak on the executing path", c["run_leaks"], 0),
+            ("CONTROL: a breach in run() IS caught", c["control_run_path_breach_caught"], True),
             ("verdict", c["verdict"], "CERTIFIED")):
         ok = got == want
         print("  dispdry   %-46s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))

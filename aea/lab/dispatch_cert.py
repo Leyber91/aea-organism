@@ -141,6 +141,62 @@ def certify() -> dict:
         rows.append(dict(topic=topic, requests=len(d["requests"]), refused=len(d["refused"]),
                          selection=d["selection"]))
 
+    # =============================================================================================
+    # AND NOW THE FUNCTION THAT ACTUALLY OPENS SOCKETS.
+    #
+    # Everything above enumerates `dry`. A council seat instrumented this file and measured it:
+    # dry called 10 times, run called ZERO. So the certificate certified a code path that cannot
+    # reach the network, and a breach placed in `run` alone printed CERTIFIED / 0 leaks while every
+    # captured call carried private bytes. A certificate that cannot fail on the executing path is
+    # a document, not a measurement.
+    #
+    # `run` now composes through `dry`, so this drives the REAL function with a capturing invoke
+    # that opens nothing - and it asserts over THE ENTIRE ARGS DICT, not over the two keys we expect
+    # to be there. Checking args["query"] and args["url"] is checking the keys an honest
+    # implementation uses; a breach adds a THIRD key, which that check reads straight past.
+    # =============================================================================================
+    captured = []
+
+    def _capture(tool, args):
+        captured.append((tool, dict(args or {})))
+        return serp if tool == "web_search" else "body-%d" % len(captured)
+
+    run_leaks = []
+    for topic in dispatch.topics():
+        captured.clear()
+        r = dispatch.run(topic, invoke=_capture)
+        assert not r.get("error"), "run errored under a capturing invoke: %s" % r.get("error")
+        for tool, args in captured:
+            allowed_keys = {"web_search": {"query"}, "web_fetch": {"url"}}.get(tool, set())
+            extra = set(args) - allowed_keys
+            if extra:
+                run_leaks.append(dict(topic=topic, tool=tool, why="extra argument key(s)",
+                                      keys=sorted(extra)))
+            for key, val in args.items():
+                b = str(val)
+                if CTX in b:
+                    run_leaks.append(dict(topic=topic, tool=tool, why="context reached the wire",
+                                          key=key, bytes=b[:110]))
+                if tool == "web_search" and b != dispatch.TOPICS[topic]["query"]:
+                    run_leaks.append(dict(topic=topic, tool=tool, why="query is not the literal",
+                                          bytes=b[:110]))
+                if tool == "web_fetch" and b not in serp:
+                    run_leaks.append(dict(topic=topic, tool=tool,
+                                          why="url is not verbatim from the results", bytes=b[:110]))
+    run_calls = len(captured)
+
+    # THE CONTROL FOR THAT ARM. A breach that only exists in the executing path must flip the
+    # verdict - which is precisely what the previous version of this file could not do.
+    def _breached_invoke(tool, args):
+        a = dict(args or {})
+        a["context"] = CTX                     # the extra key a naive per-key check reads past
+        captured.append((tool, a))
+        return serp if tool == "web_search" else "body"
+
+    captured.clear()
+    dispatch.run("prompt_injection", invoke=_breached_invoke)
+    run_control = any(CTX in str(v) for _t, a in captured for v in a.values())
+
     # ---- THE POSITIVE CONTROL -------------------------------------------------------------------
     breached = _breached_plan("prompt_injection", CTX)
     control_caught = CTX in dispatch.carry(breached)
@@ -154,9 +210,11 @@ def certify() -> dict:
         claim="over every reachable dispatch, no byte of any outbound request originates from "
               "model output. Enumerated over a finite domain, not sampled.",
         topics=n_topics, outbound_requests=n_req,
-        hostile_cases=len(HOSTILE), leaks=leaks, misrouted=wrong,
+        hostile_cases=len(HOSTILE), leaks=leaks + run_leaks, misrouted=wrong,
+        dry_leaks=len(leaks), run_leaks=len(run_leaks), run_calls_captured=run_calls,
         control_breached_planner_caught=control_caught,
         control_honest_planner_clean=honest_clean,
+        control_run_path_breach_caught=run_control,
         socket_opened=False, model_calls=0,
         rows=rows,
         selection_bits=0,
@@ -172,8 +230,9 @@ def certify() -> dict:
             "that R4b is open. This certifies the FIRST of two stated conditions; the second is a "
             "reconvened council against the measured version rather than the proposal",
         ],
-        verdict=("CERTIFIED" if not leaks and not wrong and control_caught and honest_clean
-                 else "FAILED"))
+        # THE EXECUTING PATH IS NOW PART OF THE VERDICT. It was not, and that was the defect.
+        verdict=("CERTIFIED" if not leaks and not run_leaks and not wrong and control_caught
+                 and honest_clean and run_control and run_calls > 0 else "FAILED"))
 
 
 if __name__ == "__main__":
@@ -196,6 +255,9 @@ if __name__ == "__main__":
     print("  CONTROLS - a scan that finds nothing agrees with everything")
     print("    a breached planner IS caught        %s" % c["control_breached_planner_caught"])
     print("    the honest planner is clean         %s" % c["control_honest_planner_clean"])
+    print("    a breach in the EXECUTING path IS caught  %s" % c["control_run_path_breach_caught"])
+    print("    run() calls captured                %s   (it was 0 - that was the defect)"
+          % c["run_calls_captured"])
     for row in c["rows"]:
         print("    %-22s %d requests, %d refused" % (row["topic"], row["requests"], row["refused"]))
     for x in c["leaks"] + c["misrouted"]:

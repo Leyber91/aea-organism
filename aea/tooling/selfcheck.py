@@ -107,7 +107,7 @@ def check_imports() -> dict:
 # broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
 # alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
 # the suite must report at least this many. Raise it when behaviours are added on purpose.
-FROZEN_FLOOR = 139         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
+FROZEN_FLOOR = 142         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
 # +3 2026-08-02: every flag `live` ACCEPTS must be READ by live.main. `--once` was in KNOWN_FLAGS,
 # in the docstring, and read by nothing - it ran one tick then slept the full 1800s default, so
 # every caller hung or was killed and recorded as a failure. Unknown flags fail closed; a known
@@ -115,6 +115,11 @@ FROZEN_FLOOR = 139         # +3: a decision is carried out once          # +10: 
 # +12 2026-08-02: R4b's dry certificate - 5 topics x 10 hostile search results, 0 bytes of any
 # outbound request from model output, 0 selection bits, no socket, no model call. Plus the three
 # rows asserting the rung stays SHUT: a computable half must never be reported as the whole gate.
+# +3 2026-08-02: the certificate must DRIVE run(), the function that opens sockets. A council seat
+# instrumented certify() and measured dry=10 calls, run=0 - so it certified a path that cannot
+# reach the network, and a breach in run() alone printed CERTIFIED with 0 leaks while every
+# captured call carried private bytes. run() now composes through dry(), so the certified path and
+# the executing path are the same path.
 # +2 2026-08-02: a private heartbeat key read and never written (hb["_last_decision"] was read three
 # times and assigned nowhere for a day, while the frozen test passed because it exercised
 # decide.choose directly and never the line in live.py that must write the value).

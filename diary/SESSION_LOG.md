@@ -2848,3 +2848,67 @@ by hand, so the rung is proven on a mind a human breathes for. Three pieces, in 
 3. clamped - floor 60s, a wakes-per-day budget the entity cannot raise, `state/STOP` before each wake
 
 Then the path object on top of a body that breathes. Then the 21 unverified audit findings.
+
+---
+
+## 2026-08-02 (close·3) · THE PAGE BECOMES A SITE: 2,328 lines -> 580 plus four linked files
+
+Luis: *"you cannot have one index HTML of two k lines ... needs to be modular, so you can keep
+evolving it without consuming a lot of context window."* Correct, and the split was made on a
+measurement rather than on instinct:
+
+    1,226   dark-field dots that no frame rule ever touches      53%
+      327   generated frame rules, one per (frame, layer)        14%
+      143   the hand-written stylesheet                           6%
+       64   the script                                            3%
+      108   the actual markup of the page                         5%
+
+**93 percent of the artefact was material nobody reads**, so a one-line copy change arrived buried
+under 1,226 unchanged dots and every diff was unreadable.
+
+**THE SPLIT IS BY WHETHER A MARK PARTICIPATES IN THE PAGE'S STATE**, not by what is convenient to
+move. The 1,226 dots are never styled per frame -> `assets/field.svg`, placed as one `<image>` at
+the same viewBox so every coordinate is unchanged. The **eight standby dots stay inline**, because
+they ARE frame-styled and an external image cannot be reached by the parent stylesheet. The tree
+stays inline for the same reason. `render.build_site()` now returns a dict of files; `build()`
+survives for callers that only want the document.
+
+**THE CONTROL, and the first version of it was confounded.** Comparing against an earlier screenshot
+could not work: the entity keeps running, so numbers move between builds and a pixel diff cannot
+separate a layout regression from a tick of live state - the same trap as comparing a self-measuring
+instrument across two tree states. The control is ONE `build_site()` call rendered two ways from
+those same bytes: as the split site, and with all four assets inlined back into one document.
+**Pixel-identical.**
+
+**THREE GUARD DEFECTS, ALL SURFACED BY THE SPLIT**
+
+1. **The privacy scan read one string, because there used to be one file.** A scan of `index.html`
+   alone would read a quarter of what it publishes while reporting on all of it - the same shape as
+   a scan over an empty tree agreeing with everything. Every file is scanned before any is written.
+2. **Its path pattern could not tell a filesystem path from a web address** - both are a letter, a
+   colon and a slash, so it matched the scheme. It had never fired because this page had never
+   emitted an address, and the first one it ever did emit was the namespace on the new standalone
+   SVG, which the guard then refused to publish. Fixed with a lookbehind and a negative lookahead,
+   and given a **two-armed control**: nine real path forms MUST be caught, six addresses MUST pass.
+3. **The comment explaining the fix contained the literal it described**, so the guard failed its own
+   scan again - the third instance in one day, and that one was inside the paragraph explaining the
+   first two. Describe the needle, never carry it.
+
+**THE ORPHAN RATCHET FIRED AND WAS RAISED WITH A SENTENCE, NOT SILENTLY.** 131 -> 133 for
+`page/assets.py` and the split of `marks.field()`. Every module under `tooling/page/` is unreachable
+from the wake BY DESIGN - the organism does not draw its own portrait; a person runs the command and
+uploads the output.
+
+**VERIFIED** `ALL INVARIANTS HOLD`, 139/139 frozen, privacy clean, honesty gate passing, split
+pixel-identical to the inlined form from one build.
+
+**PUBLISHED** `organism/main` at `2730e7b`. `index.html` is 579 lines on the remote.
+
+**AND THE README NOW ANSWERS WHAT RUNS WHERE**, because publishing the generator invites the wrong
+assumption. Luis asked it directly: *"how come you have Python code there that actually is functional
+with GitHub Pages?"* It is not, and it never was. Pages serves bytes and executes nothing; the
+browser runs `index.html` and the four assets. The Python ran here and produced them, and is
+published as provenance - source to read, never source that runs.
+
+**NEXT** - unchanged: the hero still opens on a call graph with nothing telling a stranger what it
+is, and item 4, the R4-R8 re-gate.

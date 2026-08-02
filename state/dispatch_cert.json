@@ -5,8 +5,12 @@
  "hostile_cases": 10,
  "leaks": [],
  "misrouted": [],
+ "dry_leaks": 0,
+ "run_leaks": 0,
+ "run_calls_captured": 4,
  "control_breached_planner_caught": true,
  "control_honest_planner_clean": true,
+ "control_run_path_breach_caught": true,
  "socket_opened": false,
  "model_calls": 0,
  "rows": [
