@@ -1,15 +1,15 @@
 {
  "schema": 1,
- "generated": "2026-08-02 00:18:16 UTC",
+ "generated": "2026-08-02 00:49:04 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
   3
  ],
  "funcs_check": {
-  "checked": 31,
+  "checked": 34,
   "missing": [],
-  "known": 1588
+  "known": 1604
  },
  "rungs": [
   {
@@ -26,8 +26,8 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 64,
-    "ticks": 468,
+    "boots": 74,
+    "ticks": 484,
     "first": "2026-07-10",
     "last": "2026-08-02",
     "met": true
@@ -70,9 +70,9 @@
     "subset": true,
     "stale_limit_s": 5400,
     "last_why": "the wake chose NONE - no mechanical move is needed this tick",
-    "decision_rows": 64,
-    "comparable": 64,
-    "differed": 62,
+    "decision_rows": 68,
+    "comparable": 68,
+    "differed": 65,
     "met": true
    },
    "status": "proven",
@@ -96,9 +96,9 @@
    "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
    "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
    "measured": {
-    "valid": 84,
+    "valid": 88,
     "receipts": 3,
-    "ticks": 87,
+    "ticks": 91,
     "swallowed": 0,
     "met": true
    },
@@ -123,13 +123,13 @@
    "measured": {
     "wire": true,
     "bound_pct": null,
-    "invocations": 20,
+    "invocations": 22,
     "tools": 3,
     "situations": null,
     "met": true,
-    "ledger_rows": 98,
-    "claimed_wake": 66,
-    "executions": 55,
+    "ledger_rows": 101,
+    "claimed_wake": 69,
+    "executions": 58,
     "situations_observed": 5,
     "bound_form": "PROOF over the accepted language"
    },
@@ -157,15 +157,15 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 132,
-    "graded": 94,
-    "suppressions": 24,
-    "not_repeated": 18,
+    "outcomes": 142,
+    "graded": 103,
+    "suppressions": 27,
+    "not_repeated": 20,
     "bound": "PASS",
-    "bound_pairs": 58,
+    "bound_pairs": 61,
     "met": true,
-    "entity_rows": 116,
-    "disagreements": 4,
+    "entity_rows": 126,
+    "disagreements": 6,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
     "met_caveat": "power demonstrated and bound certified on arm B; arm A carries no traffic until R2-REACH is non-zero"
@@ -185,27 +185,44 @@
    "standby_state": null
   },
   {
-   "id": "R4",
-   "title": "PERCEPTION BECOMES A CHOICE",
-   "power": "What the system looks at next is chosen by the previous tick, not fixed in advance.",
-   "bound": "THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound string while untrusted text is already in context. No byte of any outbound query may originate outside a closed topic table.",
-   "gate": "Across a week the queries are not near-duplicates; a hostile chooser driving the intent vocabulary cannot get a single byte of its own into an outbound request; and INHERITED FROM R2 on 2026-08-02, the entity reaches at least 8 distinct (tool, argument) situations - which only becomes possible once what it looks at is a choice.",
-   "beat": "The fork: let it choose what to look at, and the query itself becomes a way out of the machine. A council refused this design three times. It waits for a split dispatcher.",
-   "plain": "Fixed inputs are not perception. This is where the system starts deciding what it wants to know - which is also the first point at which it can send something out of the machine, and that is why it is fenced before it is built.",
-   "blocked_on": "dispatch (built, canary-gated, unwired)",
+   "id": "R4a",
+   "title": "PERCEPTION IS A CHOICE",
+   "power": "What the entity looks at next is chosen by the previous tick, from a closed set of local sources, rather than fixed in advance.",
+   "bound": "The source is SELECTED from a closed table, so no byte the entity wrote becomes a path or a query. Inherited from R2 and already proved: of 1,112,064 codepoints the argument language admits 697, and none of them is a letter.",
+   "gate": "ENTITY-ONLY, deliberately. At least 8 occasions where the entity looked at something other than it looked at last time AND stated why, recorded at the moment of choosing. It does NOT say 'queries are not near-duplicates across a week' - that needs a week and a reason to vary, and the reason comes from R5, one rung UP. R2 was gated on a capability produced above it for two days; this rung is not.",
+   "plain": "Fixed inputs are not perception. This is the step where what the system examines becomes something it decided - and it is deliberately the LOCAL half, because a system can choose what to look at long before it should be allowed to look outside the machine.",
+   "beat": "Fixed inputs are not perception. Here what it examines becomes something it chose - and choosing is not the same as rotating, which is why the record keeps the reason.",
+   "why_first": "Until what it examines is a choice, every situation it meets is one somebody else picked.",
+   "measured": {
+    "by_entity": 0,
+    "with_reason": 0,
+    "changed_with_reason": 0,
+    "distinct": 0,
+    "met": false
+   },
+   "status": "partial",
+   "funcs": [
+    "kernel.perceive:record",
+    "kernel.perceive:verdict",
+    "kernel.perceive:read"
+   ],
+   "standby": [],
+   "standby_state": null
+  },
+  {
+   "id": "R4b",
+   "title": "PERCEPTION REACHES THE WORLD",
+   "power": "The entity chooses an outbound topic, and something leaves the machine because of that choice.",
+   "bound": "THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound string while untrusted text is already in context. No byte of any outbound request may originate outside a closed topic table.",
+   "gate": "SHUT, with a stated condition rather than a feeling. First: dispatch runs DRY - it returns the request it WOULD have made and opens no socket - so the bound becomes provable while the decision stays closed. It opens only when that certificate exists AND the council that refused this design three times is reconvened against the measured version rather than the proposal.",
+   "plain": "This is the first point at which something can leave the machine because the system decided it should. Four seats refused the obvious design unanimously, three times, and were right each time: the request itself is the way data gets out, and a call budget limits the number of doors rather than what fits through one.",
+   "beat": "The fork. Let it choose what to look at and the query itself becomes a way out of the machine. A council refused this three times. It waits, and the waiting is the design.",
+   "blocked_on": "dispatch running dry, then a reconvened council",
    "measured": {},
    "status": "future",
    "funcs": [],
-   "standby": [
-    "kernel.dispatch:plan",
-    "kernel.dispatch:carry",
-    "kernel.dispatch:run",
-    "kernel.dispatch:allowed_host",
-    "kernel.dispatch:topics",
-    "kernel.dispatch:_host",
-    "kernel.dispatch:_host_why"
-   ],
-   "standby_state": "held: written, zero callers"
+   "standby": [],
+   "standby_state": null
   },
   {
    "id": "R5",

@@ -57,21 +57,21 @@
   "cooled_at": 1784725408.0140953
  },
  "ollama/qwen2.5:7b": {
-  "calls": 504,
-  "ok": 504,
+  "calls": 513,
+  "ok": 513,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 8.4,
-  "last": "2026-08-02 00:19"
+  "ema_latency": 6.5,
+  "last": "2026-08-02 00:33"
  },
  "groq/llama-3.3-70b-versatile": {
-  "calls": 76,
+  "calls": 77,
   "ok": 62,
-  "fail": 14,
-  "consec_fail": 14,
+  "fail": 15,
+  "consec_fail": 15,
   "ema_latency": 1.3,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629738.7362812
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630716.160705
  },
  "nvidia/abacusai/dracarys-llama-3.1-70b-instruct": {
   "calls": 5,
@@ -661,12 +661,12 @@
   "retired_why": "410 at reap"
  },
  "nvidia/nvidia/nemotron-3-ultra-550b-a55b": {
-  "calls": 312,
-  "ok": 287,
-  "fail": 25,
+  "calls": 321,
+  "ok": 295,
+  "fail": 26,
   "consec_fail": 0,
-  "ema_latency": 54.4,
-  "last": "2026-08-02 00:18"
+  "ema_latency": 75.9,
+  "last": "2026-08-02 00:33"
  },
  "groq/qwen/qwen3-32b": {
   "calls": 0,
@@ -687,12 +687,12 @@
   "cooled_at": 1785452948.8719401
  },
  "nvidia/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning": {
-  "calls": 81,
-  "ok": 80,
+  "calls": 83,
+  "ok": 82,
   "fail": 1,
   "consec_fail": 0,
-  "ema_latency": 7.6,
-  "last": "2026-08-01 21:17"
+  "ema_latency": 7.1,
+  "last": "2026-08-02 00:32"
  },
  "groq/qwen/qwen3.6-27b": {
   "calls": 1,
@@ -703,30 +703,30 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/nvidia/nemotron-3-nano-30b-a3b": {
-  "calls": 26,
+  "calls": 27,
   "ok": 11,
-  "fail": 15,
-  "consec_fail": 14,
+  "fail": 16,
+  "consec_fail": 15,
   "ema_latency": 4.9,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629738.2962062
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630715.775041
  },
  "nvidia/nvidia/nemotron-3-super-120b-a12b": {
-  "calls": 36,
-  "ok": 33,
+  "calls": 37,
+  "ok": 34,
   "fail": 3,
   "consec_fail": 0,
-  "ema_latency": 18.6,
-  "last": "2026-08-01 16:12"
+  "ema_latency": 20.4,
+  "last": "2026-08-02 00:27"
  },
  "nvidia/nvidia/nvidia-nemotron-nano-9b-v2": {
-  "calls": 28,
+  "calls": 29,
   "ok": 0,
-  "fail": 28,
-  "consec_fail": 28,
+  "fail": 29,
+  "consec_fail": 29,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629739.3355203
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630716.6380749
  },
  "nvidia/meta/llama-3.1-70b-instruct": {
   "calls": 3,
@@ -745,13 +745,13 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/nvidia/nemotron-mini-4b-instruct": {
-  "calls": 13,
+  "calls": 14,
   "ok": 0,
-  "fail": 13,
-  "consec_fail": 13,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629740.740184
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630717.9903553
  },
  "nvidia/nvidia/llama-3.3-nemotron-super-49b-v1": {
   "calls": 1,
@@ -770,22 +770,22 @@
   "last": "2026-07-30 18:00"
  },
  "groq/llama-3.1-8b-instant": {
-  "calls": 27,
+  "calls": 28,
   "ok": 0,
-  "fail": 27,
-  "consec_fail": 27,
+  "fail": 28,
+  "consec_fail": 28,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629741.060727
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630718.3417978
  },
  "groq/allam-2-7b": {
-  "calls": 27,
+  "calls": 28,
   "ok": 0,
-  "fail": 27,
-  "consec_fail": 27,
+  "fail": 28,
+  "consec_fail": 28,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629741.371517
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630718.6647706
  },
  "nvidia/poolside/laguna-xs-2.1": {
   "calls": 1,
@@ -804,13 +804,13 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/meta/llama-3.2-1b-instruct": {
-  "calls": 27,
+  "calls": 28,
   "ok": 0,
-  "fail": 27,
-  "consec_fail": 27,
+  "fail": 28,
+  "consec_fail": 28,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629743.0542123
+  "last": "2026-08-02 00:32",
+  "cooled_at": 1785630720.501632
  },
  "groq/openai/gpt-oss-120b": {
   "calls": 16,
@@ -847,30 +847,30 @@
   "last": "2026-07-30 18:11"
  },
  "nvidia/mistralai/mistral-nemotron": {
-  "calls": 13,
+  "calls": 14,
   "ok": 0,
-  "fail": 13,
-  "consec_fail": 13,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629740.263543
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630717.518567
  },
  "groq/openai/gpt-oss-20b": {
-  "calls": 13,
+  "calls": 14,
   "ok": 0,
-  "fail": 13,
-  "consec_fail": 13,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629741.7352028
+  "last": "2026-08-02 00:31",
+  "cooled_at": 1785630719.102336
  },
  "groq/groq/compound-mini": {
-  "calls": 13,
+  "calls": 14,
   "ok": 0,
-  "fail": 13,
-  "consec_fail": 13,
+  "fail": 14,
+  "consec_fail": 14,
   "ema_latency": null,
-  "last": "2026-08-02 00:15",
-  "cooled_at": 1785629743.3840022
+  "last": "2026-08-02 00:32",
+  "cooled_at": 1785630720.8176599
  }
 }

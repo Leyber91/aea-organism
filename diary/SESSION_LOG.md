@@ -2512,3 +2512,82 @@ Waiting on the roles-and-R2 research (15 agents) before choosing. Three candidat
    benchmark scores an agent that way - they supply the situations and measure the choice.
 3. **Roles as the source of situations.** Highest ceiling, slowest, and it is what Luis actually
    wants built.
+
+---
+
+## 2026-08-02 (later) · ITEM 2: THE SCANNER LEARNS DISPATCH TABLES - 83 false orphans, 13 of them live
+
+**DID**
+
+- **`assembly` follows the dispatch edge.** `visit_Call` recorded call SITES; a dispatch table holds
+  a function REFERENCE (`TOOLS = {"calc": dict(impl=_calc, ...)}`), so the implementations had no
+  caller anywhere in the graph. Measured across the tree before touching anything: **83 functions in
+  27 module-level containers**, every one a false orphan - including `selfcheck.CHECKS` (9),
+  `transfer.DETECTORS` (6) and `ladder.MEASURE` (5). The instruments this repo verifies itself with
+  were themselves reported as dead code.
+- **A pre-pass, because source order is not definition order.** `hands.TOOLS` sits 300 lines above
+  `invoke` and `selfcheck.CHECKS` sits BELOW every check it holds, so a visitor in source order sees
+  half of them. `_Scope.prepare()` reads bindings and containers first, then the call pass runs.
+- **THE EDGE IS NARROW ON PURPOSE.** Holding a reference is not calling it. The edge is drawn only
+  where a call is made on something taken OUT of the container - `TOOLS[k](...)`, `t["impl"](**kw)`
+  after `t = TOOLS.get(name)`, `fn(...)` inside `for fn in DETECTORS`. `TOOLS.get(...)` and
+  `.items()` are lookups and draw nothing. **`hands.schema` READS TOOLS to build a prompt and stays
+  dead**, which is the whole difference between this and a rubber stamp.
+- **It is an over-approximation and it is labelled as one.** Which entry a dispatch selects is a
+  runtime fact, so reaching the table means every entry is reachable THROUGH it.
+  `reachable(detail=True)` returns `via["direct"]` and `via["dispatch"]` separately;
+  `dispatch=False` gives the old strictly-direct floor. **Nothing may print the union as the direct
+  set** - the page prints `144 by a call edge, 13 only through a dispatch table`, draws those 13
+  HOLLOW on DASHED branches, and carries them in the legend.
+- **The tree hangs them under their dispatcher.** BFS takes direct calls first and dispatch second,
+  so a node reached both ways hangs off the direct caller. Without that pass the 13 fell through to
+  the `VIA-IMPORT` arc, whose label - "live only through a module body" - is false about all of them.
+- **`scan()` refuses to return nothing.** A scan of an empty tree agrees with everything; two guards
+  did exactly that yesterday. It now raises rather than reporting a clean empty world.
+- **R2's caption corrected itself.** Yesterday it read "3 declared functions not reachable from the
+  wake: `hands:_read_state`, `_what_to_try`, `_my_record`". Those three run 68 times in the ledger;
+  the claim was the scanner's artifact, and because the caption is derived rather than typed, fixing
+  the scanner deleted the sentence. R2 now declares 8 and draws 8.
+
+**THE CONTROL, TWO-ARMED, AND BOTH ARMS WERE MADE TO FAIL BEFORE THIS WAS BELIEVED**
+
+`check_dispatch_edges` in `test_golden.py`, on a synthetic module plus the real tree:
+
+    DISPATCHED   t = TOOLS.get(n); t["impl"]()    MUST become reachable
+    READ ONLY    list(CATALOGUE.keys())           MUST STAY DEAD
+    FLOOR        with dispatch=False the dispatched entry is dead again
+    EMPTY TREE   scan() raises rather than passing
+
+Verified by planting the two ways this goes wrong: with `_dispatch_table` stubbed to return None
+(a dead detector) the run fails on *dispatched entry is reached*; with the container-method guard
+removed (the rubber stamp) it fails on *read-only entry stays dead*. Shipped implementation: 0 fails.
+
+**AND THE COUNTER THAT COULD NOT COUNT.** `test_golden`'s published total was an expression adding
+eleven `len()`s and five bare integers by hand, and `selfcheck` gates on it under a comment reading
+*"the count is READ, not hardcoded"*. It was hardcoded in the only place that mattered: eight
+behaviours were added and the number a gate reads did not move. It is now COUNTED from the verdict
+lines the checks already print (no check had to change), with a floor so a check that goes silent
+fails loudly instead of lowering the number - **verified by planting a check that returns early:
+81 ran against a floor of 89, exit 1.** Hand sum 81, printed lines 89: the sum was right about the
+checks it knew and blind to the ones it did not, which is exactly what reading it cannot reveal.
+
+**VERIFIED** - `selfcheck` ALL INVARIANTS HOLD; 89/89 frozen behaviours; `transfer` 119 advisory,
+unchanged; publish twice, byte-identical modulo the timestamp, privacy scan clean; `build_graph`
+refreshed; screenshots read at hop 6 and R2. R2 measured 22/20 invocations, still PROVEN. The fenced
+dispatcher stays dead (asserted in the control), so R4's standby claim is intact.
+
+**LOCKED**
+
+- **A REFERENCE IS NOT A CALL, AND A DISPATCH IS NOT A READ.** Any widening of reachability draws
+  the edge only where a call is made on something taken out of the container.
+- **THE UNION MAY NOT BE PRINTED AS THE DIRECT SET.** Dispatch-reached is an upper bound and every
+  consumer states it as one.
+- **A COUNT THAT GATES SOMETHING IS COUNTED, NOT SUMMED.** A number that does not move when the
+  thing it measures changes is not a measurement.
+
+**NEXT**
+
+- **Item 4, the upper-ladder re-gate (R4-R8)** - now the thing that decides the path forward, and
+  the one place where getting the scope right matters more than getting it done, on the evidence of
+  R2 having borrowed from above twice.
+- Standing, unchanged: `dispatch.py` is still unwired and still R4's prerequisite.

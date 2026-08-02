@@ -1,16 +1,16 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-02 00:17 UTC",
- "seconds": 33.4,
+ "at": "2026-08-02 00:51 UTC",
+ "seconds": 51.7,
  "pass": true,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "156 modules, 32 reachable from a wake, 118 orphaned, 0 act at import",
+   "detail": "157 modules, 33 reachable from a wake, 118 orphaned, 0 act at import",
    "data": {
-    "modules": 156,
-    "wake": 32,
+    "modules": 157,
+    "wake": 33,
     "orphans": [
      "aea.energy.capacity",
      "aea.energy.extensive_census",
@@ -169,9 +169,9 @@
    "detail": "0 failures"
   },
   {
-   "check": "81 frozen behaviours",
+   "check": "89 frozen behaviours",
    "pass": true,
-   "detail": "all 81 hold"
+   "detail": "all 93 hold"
   },
   {
    "check": "house style",

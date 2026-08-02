@@ -70,6 +70,7 @@ GATE_HOURS = 72.0          # R0's gate, from diary/THE_WIRING_LADDER.md:45
 # agent on positions it occupies SPONTANEOUSLY either; they all supply the situation and measure the
 # choice. This now agrees with the field by accident of getting the scope right.
 REACH_GATE = (20, 3)       # invocations, distinct tools. Situations moved to R4.
+PERCEPTION_GATE = 8        # R4a: occasions it looked somewhere new AND said why
 
 
 # =================================================================================================
@@ -161,20 +162,45 @@ RUNGS = [
         why_first="A system that remembers intentions and not results cannot improve.",
     ),
     dict(
-        id="R4", title="PERCEPTION BECOMES A CHOICE",
-        power="What the system looks at next is chosen by the previous tick, not fixed in advance.",
+        id="R4a", title="PERCEPTION IS A CHOICE",
+        power="What the entity looks at next is chosen by the previous tick, from a closed set of "
+              "local sources, rather than fixed in advance.",
+        bound="The source is SELECTED from a closed table, so no byte the entity wrote becomes a "
+              "path or a query. Inherited from R2 and already proved: of 1,112,064 codepoints the "
+              "argument language admits 697, and none of them is a letter.",
+        gate="ENTITY-ONLY, deliberately. At least 8 occasions where the entity looked at something "
+             "other than it looked at last time AND stated why, recorded at the moment of choosing. "
+             "It does NOT say 'queries are not near-duplicates across a week' - that needs a week "
+             "and a reason to vary, and the reason comes from R5, one rung UP. R2 was gated on a "
+             "capability produced above it for two days; this rung is not.",
+        plain="Fixed inputs are not perception. This is the step where what the system examines "
+              "becomes something it decided - and it is deliberately the LOCAL half, because a "
+              "system can choose what to look at long before it should be allowed to look outside "
+              "the machine.",
+        beat="Fixed inputs are not perception. Here what it examines becomes something it chose - "
+             "and choosing is not the same as rotating, which is why the record keeps the reason.",
+        why_first="Until what it examines is a choice, every situation it meets is one somebody "
+                  "else picked.",
+    ),
+    dict(
+        id="R4b", title="PERCEPTION REACHES THE WORLD",
+        power="The entity chooses an outbound topic, and something leaves the machine because of "
+              "that choice.",
         bound="THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound "
-              "string while untrusted text is already in context. No byte of any outbound query may "
-              "originate outside a closed topic table.",
-        gate="Across a week the queries are not near-duplicates; a hostile chooser driving the "
-             "intent vocabulary cannot get a single byte of its own into an outbound request; and "
-             "INHERITED FROM R2 on 2026-08-02, the entity reaches at least 8 distinct (tool, "
-             "argument) situations - which only becomes possible once what it looks at is a choice.",
-        beat='The fork: let it choose what to look at, and the query itself becomes a way out of the machine. A council refused this design three times. It waits for a split dispatcher.',
-        plain="Fixed inputs are not perception. This is where the system starts deciding what it "
-              "wants to know - which is also the first point at which it can send something out of "
-              "the machine, and that is why it is fenced before it is built.",
-        blocked_on="dispatch (built, canary-gated, unwired)",
+              "string while untrusted text is already in context. No byte of any outbound request "
+              "may originate outside a closed topic table.",
+        gate="SHUT, with a stated condition rather than a feeling. First: dispatch runs DRY - it "
+             "returns the request it WOULD have made and opens no socket - so the bound becomes "
+             "provable while the decision stays closed. It opens only when that certificate exists "
+             "AND the council that refused this design three times is reconvened against the "
+             "measured version rather than the proposal.",
+        plain="This is the first point at which something can leave the machine because the system "
+              "decided it should. Four seats refused the obvious design unanimously, three times, "
+              "and were right each time: the request itself is the way data gets out, and a call "
+              "budget limits the number of doors rather than what fits through one.",
+        beat="The fork. Let it choose what to look at and the query itself becomes a way out of the "
+             "machine. A council refused this three times. It waits, and the waiting is the design.",
+        blocked_on="dispatch running dry, then a reconvened council",
     ),
     dict(
         id="R5", title="RESEARCH",
@@ -282,7 +308,8 @@ RUNG_FUNCS = {
     "R3": ["kernel.outcomes:build", "kernel.outcomes:write", "kernel.outcomes:require",
            "kernel.outcomes:verdict_for", "kernel.outcomes:suppressed", "kernel.outcomes:read",
            "kernel.cause:classify", "loop.live:_record_outcome"],
-    "R4": [], "R5": [], "R6": [], "R7": [], "R8": [], "R9": [],
+    "R4a": ["kernel.perceive:record", "kernel.perceive:verdict", "kernel.perceive:read"],
+    "R4b": [], "R5": [], "R6": [], "R7": [], "R8": [], "R9": [],
 }
 
 
@@ -691,8 +718,28 @@ def measure_r15() -> dict:
     return out
 
 
+def measure_r4a() -> dict:
+    """Occasions the entity looked at something new AND said why. Entity-only by construction.
+
+    `changed_with_reason` is the gate. `by_entity` and `distinct_sources` are reported because they
+    are true and useful, not because the rung must clear them - the R2 lesson about keeping an
+    observation without letting it become a bar."""
+    out = dict(by_entity=None, with_reason=None, changed_with_reason=None, distinct=None, met=None)
+    try:
+        from aea.kernel import perceive
+        v = perceive.verdict()
+        out["by_entity"] = v["by_entity"]
+        out["with_reason"] = v["with_reason"]
+        out["changed_with_reason"] = v["changed_with_reason"]
+        out["distinct"] = v["distinct_sources"]
+        out["met"] = bool(v["changed_with_reason"] >= PERCEPTION_GATE)
+    except Exception as e:
+        out["error"] = "%s: %s" % (type(e).__name__, str(e)[:70])
+    return out
+
+
 MEASURE = {"R0": measure_r0, "R1": measure_r1, "R1.5": measure_r15,
-           "R2": measure_r2, "R3": measure_r3}
+           "R2": measure_r2, "R3": measure_r3, "R4a": measure_r4a}
 
 
 def status_for(rid: str, m: dict) -> str:
@@ -746,6 +793,9 @@ if __name__ == "__main__":
                 bits.append("reach %d/%d inv (%s exec), %s/%s tools | bound: %s"
                             % (m["invocations"], REACH_GATE[0], m.get("executions"),
                                m["tools"], REACH_GATE[1], str(m.get("bound_form"))[:34]))
+            if r["id"] == "R4a" and m.get("changed_with_reason") is not None:
+                bits.append("%d/%d chosen-with-reason, %s distinct sources"
+                            % (m["changed_with_reason"], PERCEPTION_GATE, m.get("distinct")))
             if r["id"] == "R3" and m.get("outcomes") is not None:
                 bits.append("%d outcomes recorded" % m["outcomes"])
             print("  %-3s %-32s %-8s %s" % (r["id"], r["title"], r["status"].upper(),

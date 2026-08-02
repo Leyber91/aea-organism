@@ -15,6 +15,8 @@ Run: python -m aea.lab.tests.test_golden
 """
 from __future__ import annotations
 
+import sys
+
 from aea.lab.chain import Chain
 from aea.lab.organism import Organism
 from aea.lab.parts.fuel import ScriptedFuel
@@ -608,31 +610,207 @@ def check_second_dispatcher():
     return fails
 
 
+# =================================================================================================
+# THE DISPATCH EDGE, WITH A CONTROL THAT MUST FAIL.
+#
+# `assembly` now follows a call made on something taken OUT of a module-level container, because a
+# function referenced in a table has no call site and was reported dead while running - 83 of them
+# across 27 containers, including `hands._read_state` with 68 invocations in the ledger.
+#
+# The loose version of that change is a rubber stamp: mark anything a table mentions as reachable
+# and every number improves while meaning less. So the control is TWO-ARMED and the second arm must
+# FAIL if the first is implemented carelessly -
+#
+#     DISPATCHED   `t = TOOLS.get(n); t["impl"]()`   MUST become reachable
+#     READ ONLY    `list(CATALOGUE.keys())`          MUST STAY DEAD
+#
+# plus a floor arm: with dispatch following disabled the dispatched entry must go back to dead, or
+# the edge is coming from somewhere other than the mechanism under test. Written this way after
+# three vacuous passes were found in one guard on 2026-08-02 - a scan of an empty tree, an import
+# check blind to the repo's own import form, and a counter that counted itself. None of them was
+# found by the check failing. They were found by insisting on a probe that had to make it fail.
+# =================================================================================================
+_DISPATCH_PROBE = '''
+def _dispatched(): return 1
+def _read_only(): return 2
+def _never(): return 3
+
+TOOLS = {"a": {"impl": _dispatched}}
+CATALOGUE = {"b": _read_only}
+
+def entry(name):
+    t = TOOLS.get(name)
+    return t["impl"]()
+
+def describe():
+    return list(CATALOGUE.keys())
+'''
+
+
+def check_dispatch_edges():
+    import ast as _ast
+    from aea.tooling import assembly as _asm
+    fails = []
+    M = "probe.mod"
+    s = _asm._Scope(M)
+    tree = _ast.parse(_DISPATCH_PROBE)
+    s.prepare(tree)
+    s.visit(tree)
+    mods = {M: dict(path="probe.py", tables={k: sorted(v) for k, v in s.tables.items()},
+                    defs={k: {"line": v["line"], "calls": sorted(v["calls"]),
+                              "dcalls": sorted(v.get("dcalls") or ())}
+                          for k, v in s.defs.items()})}
+    ents = [f"{M}:entry", f"{M}:describe"]
+    live, _u = _asm.reachable(mods, entries=ents)
+    floor, _u2 = _asm.reachable(mods, entries=ents, dispatch=False)
+
+    for label, node, want, got in (
+            ("dispatched entry is reached", f"{M}:_dispatched", True, f"{M}:_dispatched" in live),
+            ("read-only entry stays dead", f"{M}:_read_only", False, f"{M}:_read_only" in live),
+            ("unreferenced stays dead", f"{M}:_never", False, f"{M}:_never" in live),
+            ("without dispatch it is dead", f"{M}:_dispatched", False,
+             f"{M}:_dispatched" in floor)):
+        ok = got == want
+        print("  disp-e    %-46s -> %-5s %s" % (label, got, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("dispatch:" + label, got, want))
+
+    # A SCAN THAT FINDS NOTHING MUST NOT PASS. The two guards that walked `aea/aea/` returned
+    # cleanly from an empty tree; this asserts the scanner refuses to.
+    import os as _os
+    real, loud = _asm._py_files, False
+    try:
+        _asm._py_files = lambda: []
+        try:
+            _asm.scan()
+        except RuntimeError:
+            loud = True
+    finally:
+        _asm._py_files = real
+    print("  disp-e    %-46s -> %-5s %s" % ("empty tree raises", loud, "ok" if loud else "FAIL"))
+    if not loud:
+        fails.append(("dispatch:empty tree", loud, True))
+
+    # AND THE REAL TREE, so the probe cannot pass while the thing it models is broken.
+    mods = _asm.scan()
+    live, _u, via = _asm.reachable(mods, detail=True)
+    for label, node, want in (("hands impl reached by dispatch", "aea.kernel.hands:_read_state", True),
+                              ("table READER stays dead", "aea.kernel.hands:schema", False),
+                              ("the fenced dispatcher stays dead", "aea.kernel.dispatch:run", False)):
+        got = node in live
+        ok = got == want
+        print("  disp-e    %-46s -> %-5s %s" % (label, got, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("dispatch:" + label, got, want))
+    return fails
+
+
+# THE PUBLISHED COUNT IS COUNTED, NOT SUMMED BY HAND.
+#
+# It was an expression adding eleven `len()`s and five bare integers, maintained by whoever last
+# added a check - and `selfcheck` gates on that number with a comment saying "the count is READ,
+# not hardcoded". It was hardcoded in the one place it mattered: eight behaviours were added here
+# and the number a gate reads did not move, which is the same shape as a detection that changes no
+# number. Measured at the moment of the change: the hand sum said 81 and the file printed 89
+# assertion lines. The sum happened to be right for the checks it knew about and blind to the ones
+# it did not, which is precisely the failure that cannot be seen by reading it.
+#
+# Now every check prints one line per assertion and the lines are counted. FLOOR catches the
+# opposite failure - a check quietly returning early, which would lower the count without failing
+# anything.
+FROZEN_FLOOR_HERE = 89
+
+
+class _CountedOut:
+    """Passthrough stdout that counts verdict lines. No check had to change to be counted."""
+
+    def __init__(self, inner):
+        self.inner, self.n, self._buf = inner, 0, ""
+
+    def write(self, s):
+        self._buf += s
+        while "\n" in self._buf:
+            line, _, self._buf = self._buf.partition("\n")
+            if line.rstrip().endswith(("ok", "FAIL")) and " -> " in line:
+                self.n += 1
+        return self.inner.write(s)
+
+    def flush(self):
+        return self.inner.flush()
+
+
+
+# =================================================================================================
+# R4a COUNTS CHOOSING, NOT ROTATING. The distinction is the whole rung.
+#
+# A gate counting distinct sources is satisfied perfectly by an entity cycling blindly through a
+# list. So a perceptual choice requires BOTH halves: it looked somewhere other than last time, AND
+# the wake said why. The reason is carried from the decision, not written by the instrument, so it
+# cannot be manufactured by the thing being measured.
+#
+# Frozen against a sandboxed store - AEA_PERCEPTION - so this never touches production. A path bound
+# at import cannot be sandboxed, which is why perceive._path() resolves at call time.
+# =================================================================================================
+def check_perception():
+    import os as _o
+    import tempfile as _t
+    fails = []
+    fd, path = _t.mkstemp(suffix=".jsonl")
+    _o.close(fd)
+    _o.environ["AEA_PERCEPTION"] = path
+    try:
+        import importlib
+        from aea.kernel import perceive as _p
+        importlib.reload(_p)
+        seq = [("read_state", {"n": "a"}, "because A", "wake"),
+               ("read_state", {"n": "a"}, "because A again", "wake"),   # same source: not a change
+               ("read_state", {"n": "b"}, "because B", "wake"),         # changed WITH reason
+               ("self_map", {"t": "laws"}, "", "wake"),                 # changed, NO reason
+               ("my_record", {}, "how did it go", "wake"),              # changed WITH reason
+               ("read_state", {"n": "c"}, "harness looking", "probe")]  # not the entity
+        for tool, args, why, src in seq:
+            _p.record(tool, args, why=why, src=src)
+        v = _p.verdict()
+        for label, got, want in (("rows written", v["total"], 6),
+                                 ("only the entity's count", v["by_entity"], 5),
+                                 ("a change needs a reason", v["changed_with_reason"], 2),
+                                 ("distinct sources", v["distinct_sources"], 4)):
+            ok = got == want
+            print("  percep    %-46s -> %-3s %s" % (label, got, "ok" if ok else "FAIL"))
+            if not ok:
+                fails.append(("percep:" + label, got, want))
+    finally:
+        _o.environ.pop("AEA_PERCEPTION", None)
+        try:
+            _o.unlink(path)
+        except Exception:
+            pass
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
-    f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
-         + check_kernel() + check_decision_chain() + check_consumption() + check_calc_bombs() + check_r2_measure() + check_second_dispatcher())
+    _counter = _CountedOut(sys.stdout)
+    sys.stdout = _counter
+    try:
+        f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
+             + check_kernel() + check_decision_chain() + check_consumption() + check_calc_bombs()
+             + check_r2_measure() + check_second_dispatcher() + check_dispatch_edges()
+             + check_perception())
+    finally:
+        sys.stdout = _counter.inner
     print()
     if f:
         print("%d FAILURES. Something changed what it does:" % len(f))
         for name, got, want in f:
             print("   %-28s got %s want %s" % (name, got, want))
         raise SystemExit(1)
-    total = (len(GOLDEN) + len(CHAIN_GOLDEN) + len(EXTRACTION_GOLDEN) + len(WORK_GOLDEN)
-             + len(CARRIED_GOLDEN) + 1
-             # the kernel contracts: every think_off case, every published-parameter case, plus
-             # unknown-model, the meter's ceiling, its slot release, and unmeasured's 410 rule
-             + len(THINK_GOLDEN) + len(PARAM_GOLDEN) + 4
-             # the decision chain, frozen end to end: three of these are hostile
-             + len(CHAIN_TO_TOOL_GOLDEN)
-             # a decision is carried out once, and the decline is distinguishable
-             + 3
-             # the calculator cannot be made to hang, and still computes
-             + len(CALC_BOMBS) + len(CALC_MUST_WORK)
-             # R2's measurement cannot inflate itself or pass on a retracted bound
-             + 6
-             # one dispatcher, and nothing that deliberates may reach it
-             + 1 + len(NO_HANDS_UNDER))
+    total = _counter.n
+    if total < FROZEN_FLOOR_HERE:
+        print("%d frozen behaviours ran, floor is %d - a check returned early or stopped "
+              "printing. Fewer assertions is a failure, not a quiet improvement."
+              % (total, FROZEN_FLOOR_HERE))
+        raise SystemExit(1)
     print("all %d frozen behaviours hold." % total)
     print("2 of them are frozen at a KNOWN-BAD value (METHOD defect 15). Fixing the reader is "
           "supposed to break this file.")

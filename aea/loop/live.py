@@ -661,6 +661,18 @@ def tick(hb: dict, demo: bool):
             verify = dict(pred="the gate permitted the call", result=False, detail=str(e)[:120])
         except Exception as e:
             ok, tail, exc = False, f"{type(e).__name__}: {str(e)[:140]}", e
+        # THE PERCEPTION RECEIPT, R4a's instrument. Every tool call here is the entity LOOKING at
+        # something, and this records WHAT, what preceded it, and the reason the wake gave. Built
+        # before the rung is claimed, because R1 sat "open" for weeks with a working wire that
+        # nothing wrote down - from outside, "never fired" and "nobody is recording it" are the same
+        # picture. The reason is carried verbatim from the decision: a choice with no reason is a
+        # rotation, and a rotation satisfies a variety counter while demonstrating nothing.
+        try:
+            from aea.kernel import perceive
+            perceive.record(pend["tool"], pend.get("args"), why=hb.get("last_wake_why") or "",
+                            decision=hb.get("_last_decision"), src="wake")
+        except Exception as e:
+            log("  (perception not recorded: %s: %s)" % (type(e).__name__, str(e)[:70]))
         _record_outcome(hb, action, "tool", ok, tail, verify=verify, exc=exc, args=pend.get("args"))
         el = round(time.time() - t0, 2)
         pulse.emit("life", "tool", f"#{hb['total_ticks']} {action} {pend['args']} "

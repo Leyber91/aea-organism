@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 187,
+    "count": 188,
     "source": "aea/tooling/_pages.py"
    },
    "plan": {
@@ -23,7 +23,7 @@
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
-    "count": 4,
+    "count": 5,
     "source": "references/README.md"
    }
   }
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 187
+    "count": 188
    },
    {
     "src": "THE_PROBE",
@@ -59,7 +59,7 @@
     "src": "THE_PROBE",
     "dst": "references",
     "rel": "contains",
-    "count": 4
+    "count": 5
    }
   ]
  },
@@ -209,6 +209,12 @@
      "type": "module",
      "path": "aea/lab/chain.py",
      "purpose": "A sequence runner. The unit is a CHAIN of steps, not a trial."
+    },
+    {
+     "id": "charset_proof",
+     "type": "module",
+     "path": "aea/lab/charset_proof.py",
+     "purpose": "charset_proof.py - THE CALC ALPHABET, PROVED BY EXHAUSTION. Not sampled, not bounded."
     },
     {
      "id": "checkpoint",
@@ -1576,6 +1582,16 @@
      "rel": "imports"
     },
     {
+     "src": "charset_proof",
+     "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "charset_proof",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
      "src": "checkpoint",
      "dst": "grid",
      "rel": "imports"
@@ -2526,6 +2542,11 @@
      "rel": "imports"
     },
     {
+     "src": "redteam",
+     "dst": "charset_proof",
+     "rel": "imports"
+    },
+    {
      "src": "reflect",
      "dst": "grid",
      "rel": "imports"
@@ -2823,6 +2844,21 @@
     {
      "src": "test_golden",
      "dst": "decide",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "ladder",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "assembly",
      "rel": "imports"
     },
     {
@@ -4509,6 +4545,12 @@
      "id": "VISUAL-LANGUAGE SPEC",
      "type": "reference",
      "title": "VISUAL-LANGUAGE SPEC — the locked look",
+     "path": "references/README.md"
+    },
+    {
+     "id": "EXTERNAL READING - books and papers, wit",
+     "type": "reference",
+     "title": "EXTERNAL READING - books and papers, with what they do NOT cover",
      "path": "references/README.md"
     },
     {

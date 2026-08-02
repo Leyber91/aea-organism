@@ -1,18 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 65,
-  "total_ticks": 246,
+  "boot_count": 74,
+  "total_ticks": 255,
   "last_brief_date": "2026-08-01",
   "consolidated_sessions": 22,
   "history": [
-    "2026-08-01 15:39:41 UTC REFLECT:self ok :: REFLECT t6: 'Create a 5â€‘item selfâ€‘diagnostic checklist to detect misalign' -",
-    "2026-08-01 15:44:10 UTC REFLECT:self ok :: REFLECT t6: 'Write a single-sentence decision rule that determines if a p' -> AC",
-    "2026-08-01 15:44:42 UTC REFLECT:self ok :: REFLECT t6: 'List three measurable indicators of mental clarity that can ' -> AC",
-    "2026-08-01 15:46:40 UTC LOOK:my_record ok :: {\"rows\": 91, \"mine\": 75, \"by_cause\": {\"UNATTRIBUTABLE\": 7, \"OK\": 64, \"VERIFY_FAI",
-    "2026-08-01 15:46:41 UTC LOOK:my_record ok :: {\"rows\": 92, \"mine\": 76, \"by_cause\": {\"UNATTRIBUTABLE\": 7, \"OK\": 65, \"VERIFY_FAI",
-    "2026-08-01 15:49:26 UTC LOOK:what_to_try ok :: 1. drop-to-the-primitive: Ask what the missing tool was going to do UNDERNEATH, ",
-    "2026-08-01 15:49:27 UTC LOOK:what_to_try ok :: 1. drop-to-the-primitive: Ask what the missing tool was going to do UNDERNEATH, ",
-    "2026-08-01 15:55:07 UTC REFLECT:self FAIL :: REFLECT t6: FAIL (no novel candidate posed)",
     "2026-08-01 15:55:48 UTC REFLECT:self ok :: REFLECT t6: 'Write a 2â€‘sentence daily mantra that reinforces the standing' -> ",
     "2026-08-01 15:57:54 UTC REFLECT:self ok :: REFLECT t6: 'Create a 30â€‘second mentalâ€‘clarity check consisting of three ' -",
     "2026-08-01 15:58:09 UTC REFLECT:self ok :: REFLECT t6: 'Draft a 4-step micro-framework that outlines how to evaluate' -> AC",
@@ -34,11 +26,19 @@
     "2026-08-01 21:17:58 UTC REFLECT:self FAIL :: REFLECT t6: 'Create a 5â€‘point textual checklist that you can run through ' -> ",
     "2026-08-02 00:15:58 UTC LOOK:my_record ok :: {\"rows\": 130, \"mine\": 114, \"by_cause\": {\"UNATTRIBUTABLE\": 22, \"OK\": 83, \"VERIFY_",
     "2026-08-02 00:18:01 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
-    "2026-08-02 00:19:54 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, "
+    "2026-08-02 00:19:54 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
+    "2026-08-02 00:21:58 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
+    "2026-08-02 00:23:24 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 82 memories from 32/23 sessions consolidate",
+    "2026-08-02 00:25:00 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:26:35 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 82 memories from 32/23 sessions consolidate",
+    "2026-08-02 00:27:24 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:28:57 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:29:51 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 82 memories from 32/23 sessions consolidate",
+    "2026-08-02 00:32:29 UTC REFLECT:self FAIL :: REFLECT t6: 'Write a concise 10â€‘word tagline that captures the essence of' -> "
   ],
   "last_wake_why": "the wake chose NONE - no mechanical move is needed this tick",
-  "brief_fails": 2,
-  "_brief_runs_seen": 106,
+  "brief_fails": 3,
+  "_brief_runs_seen": 107,
   "proposed_move": {
     "move": "raise_budget",
     "knob": "max_tokens",
@@ -46,9 +46,22 @@
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
   },
   "_r1_last": {
-    "wake": "LOOK:my_record",
-    "ladder": "AWAKE:brief",
+    "wake": "LOOK:what_to_try",
+    "ladder": "ASLEEP:consolidate",
     "differed": true,
-    "why": "the wake chose my_record (2s ago)"
+    "why": "the wake chose what_to_try (1s ago)"
+  },
+  "_r3_pending": {
+    "signature": "fail n -> hades=unverified sections_ok=true",
+    "move": {
+      "move": "raise_budget",
+      "knob": "max_tokens",
+      "to": 900,
+      "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
+    },
+    "part": null,
+    "applied": false,
+    "refused": "vary_own_knob is DRAFT - not granted",
+    "why": "unstick"
   }
 }

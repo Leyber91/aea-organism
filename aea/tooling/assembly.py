@@ -126,8 +126,124 @@ class _Scope(ast.NodeVisitor):
         self.mod = mod
         self.alias: dict = {}          # local name -> full module path
         self.direct: dict = {}         # local name -> "mod:func"  (from x import func)
-        self.defs: dict = {}           # func name -> {"line": n, "calls": set()}
+        self.defs: dict = {}           # func name -> {"line": n, "calls": set(), "dcalls": set()}
         self.stack: list = []
+        self.tables: dict = {}         # module-level container name -> {"mod:func", ...}
+        self.derived: dict = {}        # local name -> the table it was taken out of
+
+    # --- dispatch tables ----------------------------------------------------------------------
+    # THE EDGE THAT WAS NEVER DRAWN. `visit_Call` records call SITES, and a dispatch table holds a
+    # function REFERENCE - `TOOLS = {"calc": dict(impl=_calc, ...)}` - so `_calc` had no caller
+    # anywhere in the graph and was reported dead. It runs 68 times in the ledger. Measured across
+    # the tree: 83 functions in 27 module-level containers, every one of them a false orphan,
+    # including `selfcheck.CHECKS` (9), `transfer.DETECTORS` (6) and `ladder.MEASURE` (5) - the
+    # instruments this repo verifies itself with were themselves reported as dead code.
+    #
+    # WHAT IS AND IS NOT AN EDGE, because the loose version of this is a rubber stamp. Holding a
+    # reference is not calling it. `hands.schema` READS TOOLS to build a prompt and must not make
+    # nine implementations reachable. The edge is drawn only where a call is made on something
+    # taken OUT of the container - `TOOLS[k](...)`, `t["impl"](**kw)` after `t = TOOLS.get(name)`,
+    # or `fn(...)` inside `for fn in DETECTORS`. `TOOLS.get(...)` and `TOOLS.items()` are lookups
+    # and draw nothing.
+    #
+    # It is still an OVER-APPROXIMATION and it is labelled as one: which entry a dispatch selects
+    # is a runtime fact, so reaching the table means every entry is reachable THROUGH it. That is
+    # an upper bound, `reachable(detail=True)` separates it from the direct set, and the page draws
+    # the difference rather than absorbing it.
+    _CONTAINER_METHODS = {"get", "items", "keys", "values", "append", "extend", "pop", "index",
+                          "setdefault", "update", "copy", "count", "sort", "insert", "remove",
+                          "add", "discard", "join", "format", "split", "strip"}
+
+    def prepare(self, tree):
+        """Bindings and containers FIRST, in one pre-pass. A table is routinely defined below the
+        function that dispatches through it (`hands.TOOLS` is 300 lines above `invoke` and
+        `selfcheck.CHECKS` is below every check it holds), and a visitor in source order would see
+        half of them. Reading the whole module before answering is the difference."""
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Import):
+                for a in n.names:
+                    self.alias[a.asname or a.name.split(".")[-1]] = a.name
+            elif isinstance(n, ast.ImportFrom) and n.module:
+                for a in n.names:
+                    self.alias[a.asname or a.name] = f"{n.module}.{a.name}"
+                    self.direct[a.asname or a.name] = f"{n.module}:{a.name}"
+        top = {n.name for n in tree.body
+               if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+        for node in tree.body:
+            if isinstance(node, ast.Assign):
+                targets, value = node.targets, node.value
+            elif isinstance(node, ast.AnnAssign) and node.value is not None:
+                targets, value = [node.target], node.value
+            else:
+                continue
+            names = [t.id for t in targets if isinstance(t, ast.Name)]
+            if not names:
+                continue
+            entries = set()
+            for sub in ast.walk(value):
+                if isinstance(sub, ast.Name) and sub.id in top:
+                    entries.add(f"{self.mod}:{sub.id}")
+                elif isinstance(sub, ast.Name) and sub.id in self.direct:
+                    entries.add(self.direct[sub.id])
+                elif (isinstance(sub, ast.Attribute) and isinstance(sub.value, ast.Name)
+                      and sub.value.id in self.alias):
+                    entries.add(f"{self.alias[sub.value.id]}:{sub.attr}")
+            if entries:
+                self.tables[names[0]] = entries
+
+    def _table_root(self, node):
+        """The container a value was taken out of, following subscripts, attributes and calls."""
+        cur, hops = node, 0
+        while hops < 12:
+            hops += 1
+            if isinstance(cur, ast.Subscript):
+                cur = cur.value
+            elif isinstance(cur, ast.Attribute):
+                cur = cur.value
+            elif isinstance(cur, ast.Call):
+                cur = cur.func
+            else:
+                break
+        if isinstance(cur, ast.Name):
+            if cur.id in self.tables:
+                return cur.id
+            return self.derived.get(cur.id)
+        return None
+
+    def _dispatch_table(self, f):
+        """The table whose entries this call could be invoking, or None if it is a lookup."""
+        if isinstance(f, ast.Subscript):
+            return self._table_root(f)
+        if isinstance(f, ast.Name):
+            return self.derived.get(f.id)
+        if isinstance(f, ast.Attribute):
+            if f.attr in self._CONTAINER_METHODS:
+                return None
+            if isinstance(f.value, ast.Name):
+                return self.derived.get(f.value.id)
+            if isinstance(f.value, ast.Subscript):
+                return self._table_root(f.value)
+        return None
+
+    def _bind(self, target, table):
+        if isinstance(target, ast.Name):
+            self.derived[target.id] = table
+        elif isinstance(target, (ast.Tuple, ast.List)):
+            for e in target.elts:
+                self._bind(e, table)
+
+    def visit_Assign(self, n):
+        t = self._table_root(n.value)
+        if t:
+            for tgt in n.targets:
+                self._bind(tgt, t)
+        self.generic_visit(n)
+
+    def visit_For(self, n):
+        t = self._table_root(n.iter)
+        if t:
+            self._bind(n.target, t)
+        self.generic_visit(n)
 
     # --- bindings -----------------------------------------------------------------------------
     def visit_Import(self, n):
@@ -151,7 +267,7 @@ class _Scope(ast.NodeVisitor):
     # --- definitions --------------------------------------------------------------------------
     def _fn(self, n):
         name = ".".join([*self.stack, n.name]) if self.stack else n.name
-        self.defs.setdefault(name, {"line": n.lineno, "calls": set()})
+        self.defs.setdefault(name, {"line": n.lineno, "calls": set(), "dcalls": set()})
         self.stack.append(n.name)
         self.generic_visit(n)
         self.stack.pop()
@@ -193,8 +309,11 @@ class _Scope(ast.NodeVisitor):
     # --- calls --------------------------------------------------------------------------------
     def visit_Call(self, n):
         here = ".".join(self.stack) if self.stack else "<module>"
-        slot = self.defs.setdefault(here, {"line": 0, "calls": set()})
+        slot = self.defs.setdefault(here, {"line": 0, "calls": set(), "dcalls": set()})
         f = n.func
+        tbl = self._dispatch_table(f)
+        if tbl:
+            slot.setdefault("dcalls", set()).update(self.tables.get(tbl) or ())
         if isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name):
             base = f.value.id
             if base in self.alias:
@@ -219,18 +338,46 @@ def scan() -> dict:
             continue
         m = _modname(p)
         s = _Scope(m)
+        s.prepare(tree)
         s.visit(tree)
         mods[m] = dict(path=os.path.relpath(p, str(grid.ROOT)).replace("\\", "/"),
-                       defs={k: {"line": v["line"], "calls": sorted(v["calls"])}
+                       tables={k: sorted(v) for k, v in s.tables.items()},
+                       defs={k: {"line": v["line"], "calls": sorted(v["calls"]),
+                                 "dcalls": sorted(v.get("dcalls") or ())}
                              for k, v in s.defs.items()})
+    # A SCAN THAT FINDS NOTHING AGREES WITH EVERYTHING, and it must never do so quietly. Two guards
+    # in this repo walked `aea/aea/` - one dirname too deep - and reported ok having read an empty
+    # tree; the caller count came back 0 and the import scan passed, both vacuously. That failure
+    # is one wrong join away from every consumer of this function, all of which read "0 orphans,
+    # everything reachable" as good news.
+    if not mods:
+        raise RuntimeError("assembly.scan found no modules under %s - this is a broken scan, "
+                           "not an empty tree" % TREE)
     return mods
 
 
-def reachable(mods: dict, entries=None) -> tuple:
+def reachable(mods: dict, entries=None, detail: bool = False, dispatch: bool = True) -> tuple:
     """BFS over call edges from the entry functions. Returns (live set, unresolved count).
 
     A module-level call (`<module>`) is followed too: importing a module runs its body, so anything
-    it calls at import time IS reachable."""
+    it calls at import time IS reachable.
+
+    DISPATCH EDGES ARE FOLLOWED BY DEFAULT AND ARE SEPARABLE ON REQUEST. A function invoked out of
+    a module-level table has no call site to find, so before this it was reported dead while
+    running - `hands._read_state` has 68 invocations in the ledger. Following the edge is correct
+    and it is also weaker evidence than a direct call, because which entry a dispatch selects is a
+    runtime fact. `detail=True` returns a third element separating the two, and nothing in this
+    repo may print the union as though it were the direct set:
+
+        live, unresolved, via = reachable(mods, detail=True)
+        via["direct"]     reached by call edges alone
+        via["dispatch"]   reached ONLY through a table, i.e. an upper bound
+
+    `dispatch=False` gives the old, strictly-direct answer for anything that needs the floor."""
+    if detail:
+        direct, unres = reachable(mods, entries, dispatch=False)
+        allset, _u = reachable(mods, entries, dispatch=True)
+        return allset, unres, dict(direct=direct, dispatch=allset - direct)
     ents = entries or [e for v in ENTRIES.values() for e in v]
     known = {f"{m}:{d}" for m, info in mods.items() for d in info["defs"]}
     live, unresolved, q = set(), 0, list(ents)
@@ -248,7 +395,11 @@ def reachable(mods: dict, entries=None) -> tuple:
         modbody = f"{mod}:<module>"
         if modbody in known and modbody not in live:
             q.append(modbody)
-        for c in info["defs"].get(fn, {}).get("calls", []):
+        slot = info["defs"].get(fn, {})
+        edges = list(slot.get("calls", []))
+        if dispatch:
+            edges += list(slot.get("dcalls", []))
+        for c in edges:
             if c.startswith("?"):
                 unresolved += 1
                 continue

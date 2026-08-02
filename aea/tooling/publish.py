@@ -92,9 +92,14 @@ def organism(lr=None, standby=None) -> dict:
     """The live call graph, and the field it sits inside. Computed, not stored."""
     from aea.tooling import assembly
     mods = assembly.scan()
-    live, unresolved = assembly.reachable(mods)
+    # TWO STRENGTHS OF EVIDENCE, KEPT APART. A function invoked out of a module-level table has no
+    # call site, so it read as dead while running - `hands._read_state` has 68 ledger invocations
+    # and was drawn in the dark field. The edge is real and it is weaker than a direct call, because
+    # which entry a dispatch selects is a runtime fact. The picture draws both and marks which.
+    live, unresolved, via = assembly.reachable(mods, detail=True)
     allfns = {f"{m}:{d}" for m, i in mods.items() for d in i["defs"] if d not in ("<module>", "<main>")}
     live = {k for k in live if k in allfns}
+    dispatched = {k for k in via["dispatch"] if k in allfns}
 
     # DEPTH FROM THE ENTRY POINTS, by BFS over real call edges. Depth is the radius, so the picture
     # reads outward from the thing that starts: the wake.
@@ -105,7 +110,8 @@ def organism(lr=None, standby=None) -> dict:
         nxt = []
         for node in frontier:
             m, _, f = node.partition(":")
-            for c in mods.get(m, {}).get("defs", {}).get(f, {}).get("calls", []):
+            slot = mods.get(m, {}).get("defs", {}).get(f, {})
+            for c in list(slot.get("calls", [])) + list(slot.get("dcalls", [])):
                 if c in live and c not in depth:
                     depth[c] = depth[node] + 1
                     nxt.append(c)
@@ -113,7 +119,7 @@ def organism(lr=None, standby=None) -> dict:
     for k in live:
         depth.setdefault(k, max(depth.values(), default=0) + 1)
 
-    edges = []
+    edges, dedges = [], set()
     for m, i in mods.items():
         for f, d in i["defs"].items():
             src = f"{m}:{f}"
@@ -122,9 +128,14 @@ def organism(lr=None, standby=None) -> dict:
             for c in d["calls"]:
                 if c in live and c != src:
                     edges.append((src, c))
+            for c in d.get("dcalls", []):
+                if c in live and c != src:
+                    edges.append((src, c))
+                    dedges.add((src, c))
     return dict(lr=lr, standby=standby or {}, live=sorted(live), dead=sorted(allfns - live),
-                edges=edges, depth=depth,
-                modules=len(mods), functions=len(allfns), unresolved=unresolved)
+                edges=edges, dedges=dedges, dispatched=dispatched, depth=depth,
+                modules=len(mods), functions=len(allfns), unresolved=unresolved,
+                direct=len({k for k in via["direct"] if k in allfns}))
 
 
 def _pkg(node: str) -> str:
@@ -163,16 +174,25 @@ def _tree(org: dict) -> dict:
     # So: a synthetic ENTRY root, the REAL entry points as its children, BFS from all of them at
     # once. Anything still unreached is live only through a module body and is drawn in its own
     # arc, labelled as such, rather than borrowed by the wake.
+    # DIRECT CALLS FIRST, DISPATCH SECOND, and the order is the claim. A node reached both ways
+    # hangs off the direct caller, so a branch is only drawn as a dispatch when that is the only
+    # way the organism gets there. Without this pass the thirteen table-invoked functions would
+    # have fallen through to the `VIA-IMPORT` arc, which says "live only through a module body" -
+    # a label that is false about every one of them.
     root = "ENTRY"
     kids, seen = {root: list(entries)}, set(entries) | {root}
+    dbranch = set()
     frontier = list(entries)
     while frontier:
         nxt = []
-        for n in frontier:
-            m, _, f = n.partition(":")
-            for c in sorted(mods.get(m, {}).get("defs", {}).get(f, {}).get("calls", [])):
-                if c in live and c not in seen:
-                    seen.add(c); kids.setdefault(n, []).append(c); nxt.append(c)
+        for kind in ("calls", "dcalls"):
+            for n in frontier:
+                m, _, f = n.partition(":")
+                for c in sorted(mods.get(m, {}).get("defs", {}).get(f, {}).get(kind, [])):
+                    if c in live and c not in seen:
+                        seen.add(c); kids.setdefault(n, []).append(c); nxt.append(c)
+                        if kind == "dcalls":
+                            dbranch.add(c)
         frontier = nxt
     stray = sorted(n for n in live if n not in seen)
     if stray:
@@ -251,7 +271,8 @@ def _tree(org: dict) -> dict:
         if k is not None:
             rung[n] = k
     return dict(pos=pos, tree=tree, cross=cross, root=root, depth=depth, leaves=leaves,
-                sectors=secs, maxd=_maxd, rung=rung, lr=lr,
+                sectors=secs, maxd=_maxd, rung=rung, lr=lr, dbranch=dbranch,
+                dispatched=(org or {}).get("dispatched") or set(),
                 standby=(org or {}).get("standby") or {})
 
 
@@ -313,8 +334,9 @@ def _svg(org: dict, T: dict) -> str:
         if p not in pos or c not in pos:
             continue
         x1, y1 = pos[p]; x2, y2 = pos[c]
+        _dk = " dispatch" if c in (T.get("dbranch") or ()) else ""
         out.append(f'<path d="M{x1},{y1} Q{(x1+x2)/2:.0f},{(y1+y2)/2:.0f} {x2},{y2}" '
-                   f'class="branch" data-d="{T["depth"].get(c, 9)}"'
+                   f'class="branch{_dk}" data-d="{T["depth"].get(c, 9)}"'
                    f'{_lrb(T, c)}/>')
     for n, (x, y) in pos.items():
         d = T["depth"].get(n, 4)
@@ -322,6 +344,8 @@ def _svg(org: dict, T: dict) -> str:
         hue = PKG_HUE.get(_pkg(n), 40)
         r = 8 if d == 0 else (5.5 if synth else max(2.0, 5.2 - d * 0.75))
         cls = "node core" if d == 0 else ("node hub" if synth else "node")
+        if n in (T.get("dispatched") or ()):
+            cls += " viadisp"
         # NO PER-PACKAGE HUE ON THE FILL. Every live node was amber-ish, so amber meant "exists" -
         # the one property every mark shares - and the two-ink law reserves it for the FIRED state.
         # Resting nodes are structure grey; the frame CSS paints the arriving ring amber.
@@ -736,6 +760,11 @@ svg{{display:block;width:100%;height:auto}}
 .modes button.on{{color:var(--amber);background:#0e1114}}
 .modes button:hover{{color:#aeb5bd}}
 #cap{{margin:0;padding:11px 14px;border-top:1px solid #16191d;color:#8b939c;font-size:11.5px}}
+/* REACHED ONLY THROUGH A DISPATCH TABLE. Hollow, and its branch is dashed - the organism does get
+   here, and the edge is an upper bound rather than a call site, so the mark says so instead of
+   averaging the two into one dot. 13 of the 157. */
+.node.viadisp{{fill:#0a0c0e;stroke:#6d757e;stroke-width:1.4}}
+.branch.dispatch{{stroke-dasharray:3 3;opacity:.5}}
 .node.core{{fill:#fff;stroke:var(--amber);stroke-width:3}}
 .node.hub{{fill:#0a0c0e;stroke:var(--amber);stroke-width:2}}
 .halo{{fill:none;stroke:var(--amber);stroke-width:1;opacity:.32}}
@@ -806,6 +835,8 @@ from a file the running system wrote. {stamp}</p>
  tick begins</span>
 <span><i style="background:var(--amber)"></i>reached in 1–2 calls</span>
 <span><i style="background:var(--brass)"></i>reachable</span>
+<span><i style="background:#0a0c0e;box-shadow:0 0 0 1.4px #6d757e"></i>{len(org['dispatched'])}
+ reached only through a dispatch table</span>
 <span><i style="background:#1b1f24"></i>{len(org['dead'])} functions it cannot reach</span>
 </div>
 </div>
@@ -814,7 +845,10 @@ from a file the running system wrote. {stamp}</p>
 <div class="grid">
 <div class="card"><div class="cap">reachable from the wake</div>
  <div class="big">{live_n}<em> / {fn_n} functions</em></div>
- <div class="src">aea/tooling/assembly.py — real call edges, not imports</div></div>
+ <div class="src">{org['direct']} by a call edge, {len(org['dispatched'])} only through a dispatch
+ table (drawn hollow). aea/tooling/assembly.py. The second number was 0 until the scanner learned
+ that a function referenced in a table has no call site &mdash; they were reported dead while
+ running.</div></div>
 <div class="card"><div class="cap">modules</div><div class="big">{org['modules']}</div>
  <div class="src">{org['unresolved']} calls unresolvable statically, not counted as edges</div></div>
 <div class="card"><div class="cap">frontier rods</div><div class="big">{len(frontier)}<em> / {len(rods)}</em></div>
