@@ -1,15 +1,14 @@
 {
  "schema": 1,
- "at": "2026-08-01 20:02:06 UTC",
+ "at": "2026-08-02 00:05:50 UTC",
  "code": {
-  "commit": "e42f8f320ae4",
+  "commit": "7723235b91e9",
   "dirty": true
  },
  "payloads": 4120,
  "crossings": 1119,
  "ran": 1119,
  "leaks": [],
- "bound_pct": 0.267,
  "per_tool": {
   "read_state": 246,
   "self_map": 223,
@@ -18,10 +17,30 @@
   "my_record": 202,
   "what_to_try": 202
  },
+ "alphabet": {
+  "schema": 1,
+  "space": 1112064,
+  "admitted": 697,
+  "non_ascii": 669,
+  "alphabetic": 0,
+  "ascii_controls": [
+   "0x9",
+   "0xa",
+   "0xb",
+   "0xc",
+   "0xd",
+   "0x1c",
+   "0x1d",
+   "0x1e",
+   "0x1f"
+  ],
+  "classes_disagree_on": [],
+  "claim": "of 1112064 codepoints, exactly 697 are admitted by the calc character class, and 0 of them are alphabetic",
+  "why_not_a_percentage": "a character class accepts a string iff every character is a member, so membership is DECIDABLE over the whole space. A confidence interval answers 'how sure are we given a sample' about something with no sample in it."
+ },
  "exposed": {
   "calc": 23
  },
- "exposed_bound_pct": 12.212,
  "immune": {
   "read_state": 246,
   "self_map": 223,

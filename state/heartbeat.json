@@ -1,11 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 62,
-  "total_ticks": 243,
+  "boot_count": 64,
+  "total_ticks": 244,
   "last_brief_date": "2026-08-01",
   "consolidated_sessions": 22,
   "history": [
-    "2026-08-01 15:35:15 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
     "2026-08-01 15:35:57 UTC AWAKE:brief ok ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 1, ",
     "2026-08-01 15:39:21 UTC REFLECT:self ok :: REFLECT t6: 'Summarize the standing goal \"Enhance mental clarity\" into on' -> AC",
     "2026-08-01 15:39:41 UTC REFLECT:self ok :: REFLECT t6: 'Create a 5â€‘item selfâ€‘diagnostic checklist to detect misalign' -",
@@ -34,9 +33,10 @@
     "2026-08-01 16:09:59 UTC REFLECT:self FAIL :: REFLECT t6: 'Create a 3â€‘word mental cue phrase that instantly reminds you' -> ",
     "2026-08-01 16:10:35 UTC REFLECT:self FAIL :: REFLECT t6: 'Write a 2â€‘sentence personal commitment statement declaring y' -> ",
     "2026-08-01 16:12:05 UTC REFLECT:self FAIL :: REFLECT t6: 'Write a one-sentence definition of mental clarity that you c' -> AC",
-    "2026-08-01 21:17:58 UTC REFLECT:self FAIL :: REFLECT t6: 'Create a 5â€‘point textual checklist that you can run through ' -> "
+    "2026-08-01 21:17:58 UTC REFLECT:self FAIL :: REFLECT t6: 'Create a 5â€‘point textual checklist that you can run through ' -> ",
+    "2026-08-02 00:15:58 UTC LOOK:my_record ok :: {\"rows\": 130, \"mine\": 114, \"by_cause\": {\"UNATTRIBUTABLE\": 22, \"OK\": 83, \"VERIFY_"
   ],
-  "last_wake_why": "the wake chose NONE - no mechanical move is needed this tick",
+  "last_wake_why": "the wake chose my_record (2s ago)",
   "brief_fails": 0,
   "_brief_runs_seen": 103,
   "proposed_move": {
@@ -46,10 +46,10 @@
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
   },
   "_r1_last": {
-    "wake": "LOOK:read_state",
-    "ladder": "REFLECT:self",
+    "wake": "LOOK:my_record",
+    "ladder": "AWAKE:brief",
     "differed": true,
-    "why": "the wake chose read_your_state (4s ago)"
+    "why": "the wake chose my_record (2s ago)"
   },
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",

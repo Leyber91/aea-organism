@@ -98,7 +98,7 @@ PROTECTED = (
 # and never touched this one, so thirteen frozen behaviours could have been DELETED and a proposal
 # would still have passed this gate green. The ninth wrong-object edit of the day: I fixed the
 # constant I was looking at rather than every constant that means the same thing.
-FROZEN_FLOOR = 73
+FROZEN_FLOOR = 81
 
 GATE_FILES = (
     "aea/tooling/xray.py",

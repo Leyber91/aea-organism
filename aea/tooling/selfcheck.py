@@ -107,7 +107,7 @@ def check_imports() -> dict:
 # broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
 # alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
 # the suite must report at least this many. Raise it when behaviours are added on purpose.
-FROZEN_FLOOR = 73          # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
+FROZEN_FLOOR = 81          # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
 
 
 def check_frozen() -> dict:

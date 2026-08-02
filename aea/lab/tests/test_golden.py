@@ -465,10 +465,153 @@ def check_calc_bombs():
     return fails
 
 
+
+# =================================================================================================
+# R2's MEASUREMENT CANNOT INFLATE ITSELF, AND CANNOT PASS ON A RETRACTED BOUND.
+#
+# Both froze after the verdict FLIPPED on a correction: counting raw ledger rows gave 54 and cleared
+# a gate of 20; counting decisions gives 19 and does not. A measurement whose answer changes the
+# verdict is exactly the one that must be pinned.
+#
+# Each case carries its POSITIVE CONTROL - the input that must make it say NO. A check that has only
+# ever been shown to say yes is not a check, which is the lesson the calc bombs cost.
+# =================================================================================================
+def check_r2_measure():
+    from aea.tooling import ladder as _L
+    fails = []
+
+    def collapse(rows):
+        import json as _j
+        out, last = [], None
+        for r in rows:
+            k = (r.get("tool"), _j.dumps(r.get("args"), sort_keys=True))
+            at = float(r.get("at") or 0)
+            if last and last[0] == k and abs(at - last[1]) < 120.0:
+                continue
+            out.append(r)
+            last = (k, at)
+        return out
+
+    # replays collapse; genuinely separated calls do not
+    replays = [{"tool": "read_state", "args": {"n": "a"}, "at": t} for t in (0, 1, 2, 3, 4)]
+    spaced = [{"tool": "read_state", "args": {"n": "a"}, "at": t} for t in (0, 200, 400)]
+    for label, rows, want in (("five replays within seconds count once", replays, 1),
+                              ("three calls minutes apart count three", spaced, 3)):
+        got = len(collapse(rows))
+        ok = got == want
+        print("  r2meas    %-46s -> %-3d %s" % (label, got, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("r2meas:" + label, got, want))
+
+    # the bound-form gate, with its control: a published rate must make the rung FAIL
+    for label, cert, want_ok in (
+            ("a proof passes", {"alphabet": {"admitted": 697, "alphabetic": 0}}, True),
+            ("a published rate FAILS", {"alphabet": {"admitted": 697}, "bound_pct": 0.267}, False),
+            ("an exposed rate FAILS", {"alphabet": {"admitted": 697}, "exposed_bound_pct": 12.2}, False),
+            ("no certificate FAILS", {}, False)):
+        rates = [k for k in ("bound_pct", "exposed_bound_pct") if cert.get(k) is not None]
+        form = ("RATE" if rates else ("PROOF over the accepted language" if cert.get("alphabet")
+                                      else "no certificate"))
+        got = (form == "PROOF over the accepted language")
+        ok = got == want_ok
+        print("  r2meas    %-46s -> %-5s %s" % (label, got, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("r2meas:" + label, got, want_ok))
+    return fails
+
+
+
+# =================================================================================================
+# THERE IS ONLY ONE DISPATCHER, AND NOTHING THAT DELIBERATES MAY REACH IT.
+#
+# `hands.run` is the second path to a tool and it does NOT go through decide's closed tables: it
+# json.loads the model's own tool_calls.function.arguments and hands them to invoke, with an
+# allowlist read out of state/seats.json. So a RECORD IN A FILE is the permission, and the certified
+# enum boundary is not on that path at all. Latent today - no populated seats - and one entry away
+# from live.
+#
+# The guard is an ABSENCE, which is the point. `hands.py` does not import decide, so nothing on that
+# path can be re-routed through the tables; the containment therefore has to come from nothing that
+# DELIBERATES being able to call it. An absence cannot be forgotten the way a convention can, and
+# the realistic threat is not the entity - trust.CHARTER pins self_modify_code at level 0 and shadow
+# has no promote() - it is a maintainer adding one plausible line.
+#
+# This is also the exact shape the ROLE RULE must hold: a role may PROPOSE a widening, never PERFORM
+# one. A generated role lives where deliberation lives; if deliberation cannot reach a dispatcher,
+# a role cannot either, whatever its prompt says.
+# =================================================================================================
+DISPATCHER_CALLERS = 1              # seats.py. A second one is a new dispatcher, not a refactor.
+NO_HANDS_UNDER = ("aea/mind",)      # nothing that deliberates may import the dispatcher's module
+
+
+def check_second_dispatcher():
+    import ast as _ast
+    import os as _os
+    fails = []
+    # FOUR dirnames: tests -> lab -> aea -> the repo. Three landed on `aea/`, so every walk below
+    # was over `aea/aea/...` which does not exist - the caller count came back 0 and the import scan
+    # reported "ok" while scanning NOTHING. A vacuous pass, caught only because its sibling check
+    # was expected to be non-zero and was not. A check that walks an empty tree agrees with
+    # everything.
+    root = _os.path.dirname(_os.path.dirname(_os.path.dirname(
+        _os.path.dirname(_os.path.abspath(__file__)))))
+    if not _os.path.isdir(_os.path.join(root, "aea")):
+        return [("disp:root", root, "a path containing aea/")]   # never scan nothing silently
+
+    callers = 0
+    for dirpath, _d, files in _os.walk(_os.path.join(root, "aea")):
+        if "__pycache__" in dirpath:
+            continue
+        for fn in files:
+            if not fn.endswith(".py"):
+                continue
+            # THE NEEDLE IS BUILT FROM PARTS, because a scanner that spells out what it hunts
+            # CONTAINS what it hunts - this file counted itself and reported 2. Same shape as the
+            # privacy scanner, which assembles its patterns for exactly this reason.
+            needle = "hands" + "." + "run("
+            txt = open(_os.path.join(dirpath, fn), encoding="utf-8", errors="replace").read()
+            callers += txt.count(needle)
+    ok = callers == DISPATCHER_CALLERS
+    print("  disp      %-46s -> %-4d %s" % ("callers of hands.run", callers, "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("disp:callers", callers, DISPATCHER_CALLERS))
+
+    for rel in NO_HANDS_UNDER:
+        bad = []
+        for dirpath, _d, files in _os.walk(_os.path.join(root, rel)):
+            if "__pycache__" in dirpath:
+                continue
+            for fn in files:
+                if not fn.endswith(".py"):
+                    continue
+                path = _os.path.join(dirpath, fn)
+                try:
+                    tree = _ast.parse(open(path, encoding="utf-8", errors="replace").read())
+                except Exception:
+                    continue
+                for n in _ast.walk(tree):
+                    # BOTH THE MODULE AND THE NAMES. This checked n.module only, so
+                    # `from aea.kernel import hands` - the form used everywhere in this repo - was
+                    # invisible: the module is "aea.kernel" and the name is "hands". The positive
+                    # control planted exactly that import and the check reported ok. A guard that
+                    # misses the common case is not a guard, and only the control found it.
+                    if isinstance(n, _ast.ImportFrom):
+                        if "hands" in (n.module or "") or any("hands" in a.name for a in n.names):
+                            bad.append(fn)
+                    elif isinstance(n, _ast.Import) and any("hands" in a.name for a in n.names):
+                        bad.append(fn)
+        ok = not bad
+        print("  disp      %-46s -> %-4s %s" % ("%s imports hands" % rel, len(bad),
+                                                "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("disp:" + rel, bad, "no imports"))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
-         + check_kernel() + check_decision_chain() + check_consumption() + check_calc_bombs())
+         + check_kernel() + check_decision_chain() + check_consumption() + check_calc_bombs() + check_r2_measure() + check_second_dispatcher())
     print()
     if f:
         print("%d FAILURES. Something changed what it does:" % len(f))
@@ -485,7 +628,11 @@ if __name__ == "__main__":
              # a decision is carried out once, and the decline is distinguishable
              + 3
              # the calculator cannot be made to hang, and still computes
-             + len(CALC_BOMBS) + len(CALC_MUST_WORK))
+             + len(CALC_BOMBS) + len(CALC_MUST_WORK)
+             # R2's measurement cannot inflate itself or pass on a retracted bound
+             + 6
+             # one dispatcher, and nothing that deliberates may reach it
+             + 1 + len(NO_HANDS_UNDER))
     print("all %d frozen behaviours hold." % total)
     print("2 of them are frozen at a KNOWN-BAD value (METHOD defect 15). Fixing the reader is "
           "supposed to break this file.")

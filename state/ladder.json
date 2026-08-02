@@ -1,16 +1,15 @@
 {
  "schema": 1,
- "generated": "2026-08-01 22:26:51 UTC",
+ "generated": "2026-08-02 00:06:10 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
-  3,
-  8
+  3
  ],
  "funcs_check": {
   "checked": 31,
   "missing": [],
-  "known": 1578
+  "known": 1585
  },
  "rungs": [
   {
@@ -117,19 +116,22 @@
    "title": "THE DECISION IS A TOOL CALL",
    "power": "The wake's own decision causes a real tool to run, unattended, across distinct situations, with the call and its arguments recorded.",
    "bound": "No string the wake wrote reaches a tool argument. The tool surface is a closed read-only allow-list; the boundary holds against a hostile chooser.",
-   "gate": "WIRE readable from source; BOUND certified against a generated adversarial corpus; REACH at least 20 invocations across 3 tools and 8 distinct situations, each traceable from decision to argument to result to record.",
+   "gate": "WIRE readable from source; BOUND stated as a property of the accepted language rather than as a rate; REACH at least 20 invocations across 3 tools, each traceable from decision to argument to result to record. RE-SCOPED 2026-08-02: a requirement for 8 distinct SITUATIONS was moved to R4, because situation variety is produced by perception becoming a choice and R2 has no mechanism to make it - sense() fetches two hardcoded URLs. A rung may not be gated on a capability that lives above it.",
    "beat": "An intention is a sentence, and nothing executes a sentence. Here it becomes an instruction - and a wall goes up between what the system says and what it may hand to a tool.",
    "plain": "An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.",
    "why_first": "This is the door every dormant part of the system sits behind.",
    "measured": {
     "wire": true,
     "bound_pct": null,
-    "invocations": 54,
+    "invocations": 19,
     "tools": 3,
-    "situations": 5,
+    "situations": null,
     "met": false,
     "ledger_rows": 97,
-    "claimed_wake": 65
+    "claimed_wake": 65,
+    "executions": 54,
+    "situations_observed": 5,
+    "bound_form": "PROOF over the accepted language"
    },
    "status": "partial",
    "funcs": [
@@ -187,7 +189,7 @@
    "title": "PERCEPTION BECOMES A CHOICE",
    "power": "What the system looks at next is chosen by the previous tick, not fixed in advance.",
    "bound": "THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound string while untrusted text is already in context. No byte of any outbound query may originate outside a closed topic table.",
-   "gate": "Across a week the queries are not near-duplicates; and a hostile chooser driving the intent vocabulary cannot get a single byte of its own into an outbound request.",
+   "gate": "Across a week the queries are not near-duplicates; a hostile chooser driving the intent vocabulary cannot get a single byte of its own into an outbound request; and INHERITED FROM R2 on 2026-08-02, the entity reaches at least 8 distinct (tool, argument) situations - which only becomes possible once what it looks at is a choice.",
    "beat": "The fork: let it choose what to look at, and the query itself becomes a way out of the machine. A council refused this design three times. It waits for a split dispatcher.",
    "plain": "Fixed inputs are not perception. This is where the system starts deciding what it wants to know - which is also the first point at which it can send something out of the machine, and that is why it is fenced before it is built.",
    "blocked_on": "dispatch (built, canary-gated, unwired)",

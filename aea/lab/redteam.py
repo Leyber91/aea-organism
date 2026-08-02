@@ -318,7 +318,13 @@ def crossings(payloads=None, verbose: bool = True) -> dict:
         _exposed = {k: v for k, v in _per.items() if k in _free}
         _immune = {k: v for k, v in _per.items() if k not in _free}
         _en = sum(_exposed.values())
-        _eb = (1.0 - 0.05 ** (1.0 / _en)) if _en else None
+        # THE PROOF, not a rate. calc's guard is a character class, and a character class accepts a
+        # string iff every character is a member - so membership is DECIDABLE over the whole space.
+        try:
+            from aea.lab import charset_proof
+            _alphabet = charset_proof.prove()
+        except Exception as _e:
+            _alphabet = {"error": "%s: %s" % (type(_e).__name__, str(_e)[:70])}
         grid.atomic_save_json(
             os.path.join(grid.STATE, "redteam_cert.json"),
             dict(schema=1,
@@ -328,8 +334,22 @@ def crossings(payloads=None, verbose: bool = True) -> dict:
                  crossings=_n,
                  ran=len(ran),
                  leaks=leaks,
-                 bound_pct=(round(_bound * 100.0, 3) if _bound is not None else None),
+                 # NO RATES. bound_pct and exposed_bound_pct are DELETED, not annotated - a
+                 # warning beside a number does not survive a screenshot, and the field is what gets
+                 # quoted. Three figures were retracted from this estimator in three days (0.083,
+                 # 0.267, 12.212) and each time the arithmetic was right and the statistic was wrong.
+                 #
+                 # An authored attack corpus is not a sample of any population, so no binomial bound
+                 # can be about it; and the oracle here scores a breach only OUTSIDE the arithmetic
+                 # charset, which means it could not have failed on the resource bombs that were
+                 # actually present. A trial counts only if the instrument could have failed on the
+                 # defect class present.
+                 #
+                 # What replaces it: a PROOF over the accepted language, decided across the whole
+                 # codepoint space, plus coverage - a count of what happened rather than an
+                 # inference about what might.
                  per_tool=dict(_per),
+                 alphabet=_alphabet,
                  # THE POOLED NUMBER IS THE WRONG STATISTIC, and it was published before this was
                  # noticed. Five of the six tools take an argument SELECTED from a closed enum - the
                  # wake's string is a key into a table and the value handed over is the table's own -
@@ -341,7 +361,6 @@ def crossings(payloads=None, verbose: bool = True) -> dict:
                  # Same shape as the 0.083 percent retraction - a denominator that was not counting
                  # trials of the claim. Both numbers are reported now, and which is which is named.
                  exposed=dict(_exposed),
-                 exposed_bound_pct=(round(_eb * 100.0, 3) if _eb is not None else None),
                  immune=dict(_immune),
                  pooling_warning="bound_pct pools enum-selected tools, which cannot leak by "
                                  "construction, with the free-argument tool that can. Quote "

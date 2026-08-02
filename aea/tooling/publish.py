@@ -490,9 +490,10 @@ def build() -> str:
     cert_when = (cert.get("at") or "&mdash;")[:10]
     _ex = cert.get("exposed") or {}
     _im = cert.get("immune") or {}
-    cert_ecross = sum(_ex.values()) or "&mdash;"
-    cert_icross = sum(_im.values()) or "&mdash;"
-    cert_ebound = ("%.3f%%" % cert["exposed_bound_pct"]) if cert.get("exposed_bound_pct") is not None else "&mdash;"
+    _al = cert.get("alphabet") or {}
+    cert_alpha = _al.get("admitted") or "&mdash;"
+    cert_space = "{:,}".format(_al["space"]) if _al.get("space") else "&mdash;"
+    cert_letters = _al.get("alphabetic") if _al.get("alphabetic") is not None else "&mdash;"
     # THE NARRATION BEATS MOVED INTO THE RUNG CAPTIONS. They used to ride their own global and their
     # own writer, which is how they ended up printed under a graph that was not showing that rung.
     hist = []
@@ -820,29 +821,28 @@ from a file the running system wrote. {stamp}</p>
  <div class="src">state/capability_census.json — {cen.get('probe_contract','?')}</div></div>
 </div>
 
-<h2>THE ONE NUMBER THAT IS A CERTIFICATE</h2>
-<p class="sub">Every rung claims a POWER. Exactly one of them so far also carries a proven BOUND on
-the hazard that power creates: no byte the entity wrote reaches a tool argument. A hostile chooser
-drove {cert_payloads} generated payloads at the boundary; {cert_cross} of them actually crossed it.</p>
+<h2>WHAT HOLDS, AND HOW IT IS KNOWN</h2>
+<p class="sub">Five of the six tools take an argument SELECTED from a closed table: the entity writes
+a key, and the value handed to the tool is the table's own. A byte it wrote cannot reach those
+arguments, and that is a property of the code path rather than the outcome of any test. One tool
+takes a free expression. That one is guarded by a character class &mdash; and a character class can
+be DECIDED rather than sampled.</p>
 <div class="grid">
-<div class="card"><div class="cap">the channel that HAS exposure</div>
- <div class="big">{cert_ebound}<em> upper bound, n={cert_ecross}</em></div>
- <div class="src">Five of the six tools take an argument SELECTED from a closed table, so a byte the
- entity wrote cannot reach them by construction &mdash; their {cert_icross} crossings are not trials
- of anything. One tool takes a free argument. THAT is the number, and it is the honest one.</div></div>
-<div class="card"><div class="cap">pooled over all six</div>
- <div class="big">{cert_bound}<em> &mdash; do not quote this</em></div>
- <div class="src">{cert_leaks} leaks in {cert_cross} crossings. Arithmetically correct and the wrong
- statistic: it states a bound on channels that need none and hides the bound on the one that does.
- Published here for a day before it was caught &mdash; the same shape as an earlier 0.083% that was
- retracted for the same reason, a denominator not counting trials of the claim.</div></div>
-<div class="card"><div class="cap">tools actually attacked</div>
- <div class="big">{cert_tools}<em> of {cert_tools} covered</em></div>
- <div class="src">{cert_per} &mdash; per-tool, because a pooled number once read 0.2% while two
- tools had zero trials.</div></div>
-<div class="card"><div class="cap">certificate written</div><div class="big">{cert_when}</div>
- <div class="src">state/redteam_cert.json &mdash; <code>python -m aea.lab.redteam</code>. Until
- today this number lived in a docstring, which is a claim about a certificate rather than one.</div></div>
+<div class="card"><div class="cap">the guarded language, decided in full</div>
+ <div class="big">{cert_alpha}<em> of {cert_space} codepoints admitted</em></div>
+ <div class="src">{cert_letters} of them are letters. No letter means no name, so no import, no
+ attribute access and no builtin is expressible &mdash; and eval runs with builtins removed. This is
+ checked over the WHOLE codepoint space, not sampled, so it cannot be improved by more trials.</div></div>
+<div class="card"><div class="cap">hostile payloads driven at the boundary</div>
+ <div class="big">{cert_cross}<em> crossings, {cert_leaks} breaches</em></div>
+ <div class="src">{cert_per}. Reported as COVERAGE &mdash; what was reached and how often &mdash;
+ because an authored attack corpus is not a sample of any population, so no rate can honestly be
+ computed from it.</div></div>
+<div class="card"><div class="cap">what is NOT claimed</div><div class="big">no leak rate</div>
+ <div class="src">Three percentages were published here and retracted in three days: 0.083, 0.267,
+ 12.212. Each time the arithmetic was right and the statistic was wrong &mdash; a denominator that
+ was not counting trials of the claim, then an oracle that could not have failed on the defect that
+ was actually present. The estimator that produced them has been removed.</div></div>
 </div>
 
 <h2>THE CLIMB &mdash; ELEVEN RUNGS, AND WHAT EACH ONE COST</h2>

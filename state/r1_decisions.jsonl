@@ -61,3 +61,4 @@
 {"at": 1785600095.642037, "at_iso": "2026-08-01 16:01:35 UTC", "tick": 218, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (3s ago)", "src": "wake"}
 {"at": 1785600141.7051077, "at_iso": "2026-08-01 16:02:21 UTC", "tick": 219, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (2s ago)", "src": "wake"}
 {"at": 1785600143.3261619, "at_iso": "2026-08-01 16:02:23 UTC", "tick": 220, "wake": "LOOK:read_state", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose read_your_state (4s ago)", "src": "wake"}
+{"at": 1785629758.1861382, "at_iso": "2026-08-02 00:15:58 UTC", "tick": 244, "wake": "LOOK:my_record", "ladder": "AWAKE:brief", "differed": true, "why": "the wake chose my_record (2s ago)", "src": "wake"}
