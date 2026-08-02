@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 201,
+    "count": 203,
     "source": "aea/tooling/page/__main__.py"
    },
    "plan": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 201
+    "count": 203
    },
    {
     "src": "THE_PROBE",
@@ -70,7 +70,7 @@
      "id": "__main__",
      "type": "module",
      "path": "aea/tooling/page/__main__.py",
-     "purpose": "python -m aea.tooling.page - build the page, scan it, write it only if it is clean."
+     "purpose": "python -m aea.tooling.page - build the SITE, scan every file, write only if all of them pass."
     },
     {
      "id": "_pages",
@@ -119,6 +119,12 @@
      "type": "module",
      "path": "aea/tooling/assembly.py",
      "purpose": "assembly.py - IS THE ORGANISM ACTUALLY ASSEMBLED? The call tree from the entry points, and the"
+    },
+    {
+     "id": "assets",
+     "type": "module",
+     "path": "aea/tooling/page/assets.py",
+     "purpose": "assets.py - THE STYLESHEET AND THE SCRIPT, as files the page LINKS rather than swallows."
     },
     {
      "id": "autonomy",
@@ -299,6 +305,12 @@
      "type": "module",
      "path": "aea/lab/dispatch_cert.py",
      "purpose": "dispatch_cert.py - R4b's FIRST CONDITION, CERTIFIED. No socket, no model, no rate."
+    },
+    {
+     "id": "dispatch_power",
+     "type": "module",
+     "path": "aea/lab/dispatch_power.py",
+     "purpose": "dispatch_power.py - DOES THE OTHER HALF OF R4b ACTUALLY WORK? The POWER, measured."
     },
     {
      "id": "dna",
@@ -1260,11 +1272,6 @@
      "rel": "imports"
     },
     {
-     "src": "__main__",
-     "dst": "sources",
-     "rel": "imports"
-    },
-    {
      "src": "access",
      "dst": "grid",
      "rel": "imports"
@@ -1897,6 +1904,21 @@
     {
      "src": "dispatch_cert",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch_power",
+     "dst": "dispatch",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch_power",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch_power",
+     "dst": "hands",
      "rel": "imports"
     },
     {
@@ -2737,6 +2759,11 @@
     {
      "src": "relay",
      "dst": "swarm",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "assets",
      "rel": "imports"
     },
     {

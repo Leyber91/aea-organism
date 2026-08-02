@@ -2912,3 +2912,100 @@ published as provenance - source to read, never source that runs.
 
 **NEXT** - unchanged: the hero still opens on a call graph with nothing telling a stranger what it
 is, and item 4, the R4-R8 re-gate.
+
+---
+
+## 2026-08-02 (close·4) · THREE SCRIPTS, AND THE FIRST END-TO-END TEST ON THE REAL HOST
+
+Luis: *"we need many different scripts ... so it needs to work on GitHub pages end to end."*
+
+**DID**
+
+- **The script was one file and 5 KB of it was a single line of caption DATA** wedged into the middle
+  of the controller, so every rebuild rewrote the whole script and a behaviour change could not be
+  told from a caption moving. Split by what each part IS:
+
+      assets/captions.js     8 lines   the measured strings, and the ONLY file that changes on a tick
+      assets/instrument.js  48 lines   the controller: one integer, three controls that cannot disagree
+      assets/playback.js    18 lines   the narration, owned by the section it illustrates
+
+  They bind through one global in load order. Seven files now, none of them large.
+
+- **VERIFIED ON THE LIVE ORIGIN, which is the only test that means anything for a static host.**
+  Everything before this was `file://` - a protocol GitHub Pages does not use, with different rules
+  for relative references and MIME types. Served the built directory over HTTP first, resolved every
+  reference the document makes, then pushed and polled the real deploy until it carried the new
+  bytes: `index.html` and all six assets 200, with the right content types (`image/svg+xml` for the
+  field, `application/javascript` for the three scripts). Then DROVE it: a deep link to a rung sets
+  the graph frame, the caption populates from the data file, the climb list follows the same
+  integer, and three controls report `aria-current="step"` in agreement. Screenshot read.
+
+**THE LESSON, and it is the one this repo keeps paying for:** `file://` is a description of the
+product; the origin is what you actually have. A page that renders locally is evidence about a
+protocol nobody will use it over.
+
+**PUBLISHED** `organism/main` at `cd9ead5`, live at the Pages origin.
+
+**NEXT** unchanged: the hero still opens on a call graph with nothing telling a stranger what it is,
+and item 4, the R4-R8 re-gate.
+
+
+---
+
+## 2026-08-02 (close) - R4b's TWO CERTIFICATES, AND FIVE LABELS READ AS CLAIMS
+
+**DID.**
+
+*R4b condition 1, twice.* `dispatch.dry()` returns the request it would make with no socket, tagging
+every outbound argument by origin. `dispatch_cert` enumerates 5 topics x 10 hostile search results:
+**0 bytes from model output, 0 misrouted, 0 selection bits.** It FAILED on its first run with four
+defects, all four of them in the certificate - a global expectation asserted against per-topic
+allowlists. Then the council found the real one: `certify()` called `dry` ten times and `run` ZERO,
+so it certified a path that cannot reach the network. A breach in `run` alone printed CERTIFIED
+while every captured call carried private bytes. `run()` now composes THROUGH `dry()`, so the
+certified path and the executing path are one path, and a run-only breach flips the verdict.
+
+*The council, reconvened.* Four seats, four lenses, a cross-examination round, unanimity as the bar.
+**4/4 OPEN_WITH_CONDITIONS, zero refusals** - the first time this design has not been refused. Its
+conditions are recorded in the task output and are not yet met. Its brief understated the power half
+(it costed the capability at 1/5 fetching; it is now 4/5), so a re-run against current numbers is a
+separate act.
+
+*R4b's POWER, which nobody had measured.* A rung is POWER plus BOUND and a council was convened to
+judge opening a door while nothing had checked what is behind it. `web_search` had NEVER been
+invoked - 0 calls across 121 ledger rows. Measured: `lite.duckduckgo.com` HTTP 202 challenge page,
+`html.duckduckgo.com` the same, `mojeek.com` HTTP 200 `<title>Captcha</title>`. Both engines refuse
+a non-browser client, and the tool never checked the status, so "blocked" and "empty" were one
+event. Rebuilt onto the first-party APIs of the domains already allowlisted - arxiv, HN via Algolia,
+Hugging Face, GitHub. **1/5 topics fetching -> 4/5, 96,000 chars.** Strictly stronger for the bound:
+results now come from an allowlisted domain BY CONSTRUCTION rather than by a filter applied after.
+
+*`--once` was accepted, documented, and read by nothing.* One tick then an 1800s sleep. 600s
+timeouts -> 35.7s.
+
+*The evolution organs.* Reported as "wired and silent" in a boot-chain document, then measured and
+retracted: `_notice_and_propose` is on the tick path at live.py:743, zero organ functions lack a
+caller, and `impasse.scan` judges nine capabilities over the real record and finds one genuinely
+stuck. Nothing crystallises because `harvest` needs something that worked TWICE. Correct behaviour.
+
+**LOCKED.**
+- `diary/THE_STRUCTURE_CONVERSATION.md` sections 1-9, boot-sequence step 5. Section 8 is the SEVEN
+  QUESTIONS to answer in writing before any rung; section 9 is which locks and when.
+- Open doors before hard locks. Bot-detection evasion is not built. Authentication is normal API
+  usage with the credential CODE-SIDE ONLY, never in the entity's context. A browser is a later
+  stage because the PAGE issues requests nobody authored, which voids the bound's sentence.
+- The evolution trigger is the entity's own loop - impasse -> unstick -> crystal - not a separate
+  self-healing fetcher. A model SELECTING an untried technique from a human-authored set is
+  R4-shaped; a model WRITING the technique is R9.
+
+**NEXT**, in order:
+1. **The tool-outcome dimension.** One field: *did the tool do its job*, distinct from *did the call
+   complete* (`ran`) and from *is the capability failing* (impasse's nine). A capability degrades
+   gracefully around a dead tool, so the middle altitude cannot be inferred from the outer two. This
+   is what makes the existing loop see a dead `web_search`. Smallest thing on the list, largest reach.
+2. **The missing spawn.** `live` starts the wake when it has nothing to react to, then
+   `hb["next_wake_s"]` computed by the entity and clamped (floor 60s, daily budget it cannot raise,
+   `state/STOP` before each wake). R4a's eight occasions were caused by a script alternating the
+   loops by hand.
+3. **R4b's council conditions**, then the rung, then R5 which is blocked on its egress.
+4. The 21 audit findings reported and never verified, several touching published numbers.

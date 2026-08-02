@@ -67,8 +67,13 @@ def build_site() -> dict:
         "index.html": html,
         "assets/base.css": assets.base_css(),
         "assets/frames.css": style.frame_rules(len(rungs), maxd, climb_css),
-        "assets/page.js": assets.page_js(caps_js=json.dumps(caps), rcaps=rcaps,
-                                         MAXD=maxd, RREST=rest),
+        # THREE SCRIPTS, IN LOAD ORDER: what the page knows, what it does, how it narrates.
+        # Only the first changes when the entity ticks, so a behaviour change now has a
+        # readable history instead of arriving inside an 8 KB line of regenerated data.
+        "assets/captions.js": assets.captions_js(caps_js=json.dumps(caps), rcaps=rcaps,
+                                                 MAXD=maxd, RREST=rest),
+        "assets/instrument.js": assets.instrument_js(),
+        "assets/playback.js": assets.playback_js(),
         "assets/field.svg": marks.field(org, T),
     }
 

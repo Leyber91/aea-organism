@@ -2082,3 +2082,59 @@ a regression.**
 **THE STANDING RULE THIS ALL POINTS AT:** the instrument is usually the broken part, so every check
 gets a positive control on the defect class it claims, or it does not count. A detection that
 changes no number and fails no command is indistinguishable from no detection.
+
+
+---
+
+## D51 - A LABEL IS NOT A MEASUREMENT, AND THIS REPO KEEPS READING ONE AS THE OTHER
+
+*2026-08-02. Five instances in one session, each found by a different accident, all one shape.*
+
+Every defect below is a NAME that was true, read as a CLAIM that was not:
+
+| the label | what it actually asserts | what it was read as |
+|---|---|---|
+| `EXTRACTED` in the provenance table | a static call site exists | the function runs |
+| `certify()` returning CERTIFIED | `dry()` has no leaks | `run()` has no leaks |
+| `outcome: "ran"` in the hands ledger | the call completed | the tool did its job |
+| `--once` in `KNOWN_FLAGS` | the flag is accepted | the flag is implemented |
+| a comment in `render.py` | someone intended a gate | a gate exists |
+
+Each was correct as written. Each was load-bearing as read. And in four of the five the reader was
+the same person who wrote the label - so the failure is not carelessness about someone else's work,
+it is that **a name you chose yourself is the hardest thing to re-verify**, because re-reading it
+returns the meaning you had in mind rather than the meaning it carries.
+
+THE MEASUREMENTS THAT SETTLED EACH ONE, and none of them took more than one script:
+
+- `EXTRACTED`: `impasse.scan()` run against the real 140KB record returned nine capability verdicts
+  and found one genuinely stuck. The organs were wired the whole time; the doc said silent.
+- `certify()`: a council seat instrumented it - `dry` called 10 times, `run` 0 - then put a breach in
+  `run` alone and watched CERTIFIED print while 1 of 1 captured calls carried private bytes.
+- `"ran"`: `web_search` returned `"NO RESULTS (14313 bytes but nothing parsed)"` for weeks, recorded
+  as `ran`, successfully. The bytes were an HTTP 202 challenge page.
+- `--once`: timed. 600s, killed. After reading its own flag: 35.7s.
+- the comment: grep for consumers of `funcs_check`. One writer, zero readers.
+
+**HOW IT SHOULD HAVE BEEN BUILT.** A label that will be read as a claim must carry the claim's
+evidence beside it, in the same structure, so the two cannot drift:
+
+- `provenance()` returns five kinds now, and `ENTRY` exists precisely because seeding an entry into
+  `live` and then grading it is a check certifying its own axiom
+- `certify()` drives `run()` through a capturing invoke and asserts over the ENTIRE args dict - a
+  breach adds a THIRD key, which any per-key check reads straight past
+- the ledger needs one more dimension: **did the tool do its job**, distinct from *did the call
+  complete* and from *is the capability failing*. Three altitudes, and a capability degrades
+  gracefully around a dead tool, so the middle one cannot be inferred from the outer two
+
+**WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED** - the fourth part, the one that stops recurrence.
+`assembly.py`'s own docstring says *a module is wired when something IMPORTS it, a capability is
+wired when something CALLS it*. That sentence is the whole of D51, written before any of this, by
+the author who then read `EXTRACTED` as "it runs" - twice in one day, once inside the document
+written to prevent it. The knowledge was applied to the INTERESTING artefact (the label taxonomy,
+the certificate, the tool table) and not to the boring six-line membership test underneath it.
+Law M9: attention follows effort rather than risk. **Deliberately re-read the cheap part.**
+
+THE OPERATIONAL RULE: before quoting a label as evidence, run the thing once. Every instance above
+was one command away from the truth, and the command cost seconds against defects that had stood for
+days to weeks.

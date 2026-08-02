@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-02 13:34:18 UTC",
+ "generated": "2026-08-02 17:58:28 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -22,7 +22,7 @@
    "loop.live:main [ENTRY]"
   ],
   "measured": 33,
-  "known": 1383,
+  "known": 1400,
   "claim": "checked against reachability, not existence. `unwired` is a rung claiming a capability nothing can get to; `dispatch_only` is an upper bound and says so; `asserted_entries` are doors, where reachability is the assumption the walk begins from rather than anything this check measured."
  },
  "rungs": [
@@ -145,7 +145,7 @@
     "tools": 3,
     "situations": null,
     "met": true,
-    "ledger_rows": 121,
+    "ledger_rows": 146,
     "claimed_wake": 89,
     "executions": 78,
     "situations_observed": 5,

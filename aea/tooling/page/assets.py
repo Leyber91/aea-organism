@@ -120,8 +120,24 @@ a{{color:var(--brass)}}
 """
 
 
-def page_js(*, caps_js, rcaps, MAXD, RREST) -> str:
-    """The whole instrument: one integer of state over coordinates computed once."""
+def captions_js(*, caps_js, rcaps, MAXD, RREST) -> str:
+    """PURE DATA, and the only file that changes when the entity ticks.
+
+    It was one 8 KB line wedged into the middle of the controller, so every rebuild rewrote the
+    whole script and a behaviour change could not be told from a caption moving. Data and behaviour
+    in one file means neither has a readable history."""
+    return f"""/* GENERATED. Every string here was measured; none was written. */
+window.AEA={{
+  hop:{caps_js},
+  rung:{rcaps},
+  maxd:{MAXD},
+  rest:{RREST}
+}};
+"""
+
+
+def instrument_js() -> str:
+    """THE CONTROLLER. One integer of state, three controls that cannot disagree."""
     return f"""/* ONE INTEGER, TWO AXES, THREE CONTROLS THAT CANNOT DISAGREE.
    The entire state of this instrument is (mode, frame) over coordinates computed once and never
    recomputed, so going backward is exactly symmetric and free: clicking hop 2 after hop 6 removes
@@ -133,7 +149,8 @@ def page_js(*, caps_js, rcaps, MAXD, RREST) -> str:
    the landing view drew the climb's near-empty frame under a caption from a third source while the
    rail insisted it was showing HOP 6 of the full graph. Every path into a frame now goes through
    go(), and go() writes all three. */
-var CAPS={caps_js},RCAPS={rcaps},MAXD={MAXD},RMAX=RCAPS.length-1,RREST={RREST};
+var D=window.AEA||{{hop:[],rung:[],maxd:0,rest:0}};
+var CAPS=D.hop,RCAPS=D.rung,MAXD=D.maxd,RMAX=RCAPS.length-1,RREST=D.rest;
 var svg=document.getElementById('org'),cap=document.getElementById('cap'),
     rail=document.getElementById('rail'),rrail=document.getElementById('rrail'),
     mh=document.getElementById('m-hop'),mr=document.getElementById('m-rung'),
@@ -168,6 +185,12 @@ document.addEventListener('keydown',function(e){{
  if(e.key==='ArrowRight'){{stop();go(+svg.getAttribute('data-frame')+1);}}
  if(e.key==='ArrowLeft'){{stop();go(+svg.getAttribute('data-frame')-1);}}}});
 
+"""
+
+
+def playback_js() -> str:
+    """THE NARRATION. Owned by the section it illustrates, and it waits to be looked at."""
+    return f"""
 /* THE AUTOPLAY IS OWNED BY THE SECTION IT ILLUSTRATES, AND IT WAITS TO BE LOOKED AT.
    It used to run on load, which meant the first thing a visitor saw was the climb's frame 0 - a
    dark field with eight lit dots - instead of the organism, on a hero whose whole argument is the

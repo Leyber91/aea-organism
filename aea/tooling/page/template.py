@@ -152,5 +152,7 @@ because its wiring is. The ladder shows wiring; the proofs live in the repo.
 <br><br>github.com/Leyber91
 </div>
 </div>
-<script src="assets/page.js"></script>
+<script src="assets/captions.js"></script>
+<script src="assets/instrument.js"></script>
+<script src="assets/playback.js"></script>
 """

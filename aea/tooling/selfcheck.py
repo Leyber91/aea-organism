@@ -139,6 +139,16 @@ FROZEN_FLOOR = 142         # +3: a decision is carried out once          # +10: 
 # reachable from nothing, which is the honest shape of this repo and was previously reported under a
 # hardcoded "pass": True.
 ORPHAN_FLOOR = 133
+# +1 2026-08-02: `aea/lab/dispatch_power.py`. R4b's POWER certificate - the half nobody had measured
+# while a council deliberated on the BOUND. A CLI instrument, deliberately unreachable by the wake.
+# +1 2026-08-02: `aea/tooling/page/assets.py`, from the page split. A generator module, human-run.
+#
+# BOTH RISES WERE LEGITIMATE AND NEITHER CARRIED A SENTENCE. The line above went 130 -> 131 with a
+# reason, then 131 -> 133 in an edit that arrived from outside this session and was swept in by a
+# `git add -A`. A ratchet that can be raised without saying why is not a ratchet, it is a variable -
+# and the comment two lines below has said "every future rise needs the same sentence" the whole
+# time. Reconstructed after the fact here, which is strictly worse than writing it at the time:
+# the reason was still recoverable today and would not have been in a week.
 # +2 2026-08-02: `aea/tooling/page/assets.py` and the split of `marks.field()` out of `marks._svg()`.
 # The published page became a SITE - a document that links a stylesheet, a script and the dark field
 # instead of swallowing all three - and the generator grew the two modules that emit them. Every
