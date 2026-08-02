@@ -2138,3 +2138,60 @@ Law M9: attention follows effort rather than risk. **Deliberately re-read the ch
 THE OPERATIONAL RULE: before quoting a label as evidence, run the thing once. Every instance above
 was one command away from the truth, and the command cost seconds against defects that had stood for
 days to weeks.
+
+
+---
+
+## D52 - THE NUDGE IS PART OF THE MEASUREMENT, AND IT MUST BE IN THE RECORD
+
+*2026-08-03. R4b's condition 3 asks the entity to CHOOSE to look outside. It did, twice. Both times
+while a line I wrote was in its prompt.*
+
+THE MEASUREMENT. `standing()` carried "your record holds NOTHING from outside this machine: 0
+outward looks ever, 12 of 12 budget unspent today" - true, checkable, about the entity's own record,
+and placed SECOND in a block hard-capped at 620 characters. The line disappears once a dispatch has
+actually run. Across 89 rounds:
+
+    while the line was present     2 look_outward decisions
+    ~80 minutes after it vanished  0, with the budget open the whole time
+
+So the behaviour tracks the line's presence and absence almost exactly, and **condition 3 currently
+measures the nudge rather than the choosing**.
+
+WHY THE LINE IS STILL DEFENSIBLE, which is the part that makes this subtle rather than simple. It
+states a FACT about the entity's own record - the same class as "40 notes are undistilled", which
+`standing()` already carries because `decide.WHEN` asks a question the prompt otherwise leaves
+unanswerable. Omitting it would hide a real gap. The entity still had to pick a topic and spend
+thirty minutes of an irreversible budget. It is legitimate context, not a rigged prompt.
+
+AND IT IS STILL A THUMB ON THE SCALE. Both things are true at once, and that is exactly the state
+that produces a false green: a defensible prompt change, made by the person who also wrote the gate,
+in the same evening, on the rung it unblocks.
+
+THE RULE: **when you add context to make a capability reachable, the gate must be able to tell your
+addition from the entity's initiative - or the gate is measuring you.** Two mechanisms, and R4b now
+has one of each:
+
+  SHAPE, NOT COUNT     3 dispatches across >=2 DISTINCT topics. A count cannot tell choosing from a
+                       reflex that fires whenever a line appears; a spread can. It is a HARDER gate
+                       than the one it replaced, which is the only direction its own author may
+                       move it.
+  THE NUDGE EXPIRES    the line vanishes after the first success, so the second and third dispatch
+                       cannot be attributed to it. That property was accidental here; it should be
+                       deliberate next time.
+
+HOW IT SHOULD HAVE BEEN BUILT. State the intended nudge in the rung's own entry BEFORE running it,
+alongside how the gate distinguishes it - the same discipline as declaring a positive control before
+seeing the result. Then a reader can check whether the discrimination was designed or found.
+
+WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED. This repo's oldest law is that a gate must be
+satisfiable by the ENTITY ALONE, written into R4a's own gate text one rung down, and the whole
+session was spent applying it to capabilities produced by OTHER RUNGS - R2 needing situations from
+R4, R4b needing an outward need from R5. It was never applied to capabilities produced by THE
+AUTHOR, because the author is not on the ladder and so does not appear in the check. Attention
+followed the structure of the diagram. The prompt is part of the apparatus.
+
+THE STRUCTURAL FINDING UNDERNEATH, and it is the third instance of one pattern: the entity is not
+refusing to look outside, it has nothing outside that it NEEDS. A hypothesis it cannot settle from
+its own state is the first honest reason to go out, and that is R5's gate verbatim. Build R5 and
+condition 3 becomes satisfiable without any nudge at all.

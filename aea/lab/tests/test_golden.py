@@ -1480,12 +1480,31 @@ def check_egress_budget():
 
         # CONTROL 4: AN UNREADABLE LEDGER IS AN EMPTY ONE, NEVER AN UNLIMITED ONE. Absent input has
         # been read as good news three separate times in this repo; here it must still be bounded.
+        # A DESTROYED LEDGER IS NOT A FRESH ONE, and this row got STRICTER on 2026-08-03.
+        #
+        # It used to assert that a corrupt ledger still PERMITTED - reasoning that an unreadable
+        # file reads as empty, so the floor still applies and nothing is unbounded. True, and not
+        # enough: ABSENT and CORRUPT are opposite facts about a budget. Absent means nothing has
+        # been spent; corrupt means SPENDS MAY HAVE BEEN LOST, so the entity might have dispatched
+        # eleven times today while the ceiling reads zero. The floor alone does not bound that.
+        #
+        # The defect ratchet found the underlying silent default (32 -> 33) minutes after it
+        # shipped, and fixing it changed this behaviour - so this assertion broke on purpose, which
+        # is what a frozen test is for. Restated to the stricter truth, never deleted.
         open(bud, "w", encoding="utf-8").write("{ this is not json")
-        ok_g = _e.allow(now)[0]
-        print("  egress    %-46s -> %-14s %s" % ("a corrupt ledger still bounds (fails closed)",
-                                                 ok_g, "ok" if ok_g else "FAIL"))
-        if not ok_g:
-            fails.append(("egress:corrupt", ok_g, True))
+        ok_g, why_g = _e.allow(now)
+        hit = (ok_g is False) and "LEDGER" in why_g
+        print("  egress    %-46s -> %-14s %s" % ("a CORRUPT ledger refuses (spends may be lost)",
+                                                 hit, "ok" if hit else "FAIL"))
+        if not hit:
+            fails.append(("egress:corrupt", (ok_g, why_g), "refused, LEDGER in reason"))
+        # ...and an ABSENT one still permits, because those two must not collapse into one answer.
+        _o.unlink(bud)
+        ok_a = _e.allow(now)[0]
+        print("  egress    %-46s -> %-14s %s" % ("an ABSENT ledger still permits (nothing spent)",
+                                                 ok_a, "ok" if ok_a else "FAIL"))
+        if not ok_a:
+            fails.append(("egress:absent", ok_a, True))
     finally:
         for k, v in (("AEA_EGRESS_BUDGET", keep_b), ("AEA_EGRESS_STOP", keep_s)):
             if v is None:

@@ -1,16 +1,16 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-02 19:31 UTC",
- "seconds": 77.6,
- "pass": false,
+ "at": "2026-08-02 23:38 UTC",
+ "seconds": 105.9,
+ "pass": true,
  "checks": [
   {
    "check": "structure",
-   "pass": false,
-   "detail": "135 orphaned, above the 134 ratchet",
+   "pass": true,
+   "detail": "174 modules, 35 reachable from a wake, 133 orphaned (ratchet 134), 0 act at import",
    "data": {
     "modules": 174,
-    "wake": 33,
+    "wake": 35,
     "orphans": [
      "aea.energy.capacity",
      "aea.energy.extensive_census",
@@ -27,8 +27,6 @@
      "aea.io.listen",
      "aea.io.mixer",
      "aea.io.prosody",
-     "aea.kernel.dispatch",
-     "aea.kernel.egress",
      "aea.kernel.fit",
      "aea.kernel.goals",
      "aea.kernel.modality",
@@ -187,9 +185,9 @@
    "detail": "0 failures"
   },
   {
-   "check": "142 frozen behaviours",
+   "check": "172 frozen behaviours",
    "pass": true,
-   "detail": "all 142 hold"
+   "detail": "all 172 hold"
   },
   {
    "check": "house style",
@@ -221,8 +219,8 @@
   },
   {
    "check": "defect ratchet",
-   "pass": false,
-   "detail": "ROSE: silent-default 32->33 - a NEW instance of a known defect"
+   "pass": true,
+   "detail": "count-threshold 0, expiring-only-retry 0, global-write 7, import-bound-write 43, import-time-work 4, invented-ceiling 77 (was 80), mutable-module-state 6, scope-violation 0, silent-default 32, unredirectable-store 7"
   }
  ]
 }

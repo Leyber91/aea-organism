@@ -7,12 +7,12 @@
 <link rel="stylesheet" href="assets/overture.css">
 <link rel="stylesheet" href="assets/frames.css">
 <div class="wrap">
-<section class="overture"><p class="ov-eyebrow">an autonomous entity, drawn from its own state</p><h1 class="ov-h1">Almost all of it is dark.</h1><div class="ov-lede"><p>Below is a picture of a program that runs by itself on one machine. The bright marks in it are the parts its own loop can reach when it wakes: <b>178 of 1419 functions</b>, which is <b>12.5 per cent</b>. The other 1241 are written, committed, and cannot be reached by any call this scanner can follow &mdash; and 348 calls in the tree resolve to nothing it can name, so that percentage is a floor rather than a measurement of the whole.</p><p>That ratio is the story, and this page will not round it up. Every number here was read from a file the system wrote about itself &mdash; nothing is typed by hand, nothing is simulated, and a value that could not be measured is shown as a dash rather than a guess. It is telemetry from something you cannot see directly.</p></div><div class="ov-stage"><div class="ov-num">10.3<span class="ov-unit">days</span></div><p class="ov-sub">is the longest it has run unattended without falling over &mdash; 188 ticks in one stretch. Across <b>97 starts</b> since 10 July there have been <b>0 crashes</b>. That is the least impressive claim available and it is deliberately first: everything above it is worthless without it.</p></div><p class="ov-floor">7 of 12 subsystems are online. What that means, what each one cost, and what is deliberately shut &mdash; below. You can walk the picture yourself: one call at a time, or one subsystem at a time.</p><p class="ov-ceiling"><b>What this page does not claim.</b> That a reachable function does useful work. That the system understands anything. That a subsystem is finished because its wiring is. Every proof here is a receipt that something ran &mdash; never an assertion about what it is.</p></section>
+<section class="overture"><p class="ov-eyebrow">an autonomous entity, drawn from its own state</p><h1 class="ov-h1">Almost all of it is dark.</h1><div class="ov-lede"><p>Below is a picture of a program that runs by itself on one machine. The bright marks in it are the parts its own loop can reach when it wakes: <b>179 of 1426 functions</b>, which is <b>12.6 per cent</b>. The other 1247 are written, committed, and cannot be reached by any call this scanner can follow &mdash; and 363 calls in the tree resolve to nothing it can name, so that percentage is a floor rather than a measurement of the whole.</p><p>That ratio is the story, and this page will not round it up. Every number here was read from a file the system wrote about itself &mdash; nothing is typed by hand, nothing is simulated, and a value that could not be measured is shown as a dash rather than a guess. It is telemetry from something you cannot see directly.</p></div><div class="ov-stage"><div class="ov-num">10.3<span class="ov-unit">days</span></div><p class="ov-sub">is the longest it has run unattended without falling over &mdash; 188 ticks in one stretch. Across <b>269 starts</b> since 10 July there have been <b>0 crashes</b>. That is the least impressive claim available and it is deliberately first: everything above it is worthless without it.</p></div><p class="ov-floor">7 of 12 subsystems are online. What that means, what each one cost, and what is deliberately shut &mdash; below. You can walk the picture yourself: one call at a time, or one subsystem at a time.</p><p class="ov-ceiling"><b>What this page does not claim.</b> That a reachable function does useful work. That the system understands anything. That a subsystem is finished because its wiring is. Every proof here is a receipt that something ran &mdash; never an assertion about what it is.</p></section>
 
 <div class="hero"><div class="stage">
 <div class="rails">
 <p class="railhint">step through it &mdash; or use <kbd>&larr;</kbd> <kbd>&rarr;</kbd></p><div class="modes"><button id="m-hop" class="on">BY CALL HOP</button><button id="m-rung">BY RUNG</button></div>
-<nav id="rail" aria-label="reveal the graph one call-hop at a time"><button data-k="0" aria-current="false"><b>HOP 0</b><span>+0</span><em>0</em></button><button data-k="1" aria-current="false"><b>HOP 1</b><span>+5</span><em>5</em></button><button data-k="2" aria-current="false"><b>HOP 2</b><span>+39</span><em>44</em></button><button data-k="3" aria-current="false"><b>HOP 3</b><span>+51</span><em>95</em></button><button data-k="4" aria-current="false"><b>HOP 4</b><span>+47</span><em>142</em></button><button data-k="5" aria-current="false"><b>HOP 5</b><span>+27</span><em>169</em></button><button data-k="6" aria-current="false"><b>HOP 6</b><span>+8</span><em>177</em></button><button data-k="7" aria-current="step"><b>HOP 7</b><span>+1</span><em>178</em></button></nav>
+<nav id="rail" aria-label="reveal the graph one call-hop at a time"><button data-k="0" aria-current="false"><b>HOP 0</b><span>+0</span><em>0</em></button><button data-k="1" aria-current="false"><b>HOP 1</b><span>+5</span><em>5</em></button><button data-k="2" aria-current="false"><b>HOP 2</b><span>+39</span><em>44</em></button><button data-k="3" aria-current="false"><b>HOP 3</b><span>+52</span><em>96</em></button><button data-k="4" aria-current="false"><b>HOP 4</b><span>+52</span><em>148</em></button><button data-k="5" aria-current="false"><b>HOP 5</b><span>+24</span><em>172</em></button><button data-k="6" aria-current="false"><b>HOP 6</b><span>+6</span><em>178</em></button><button data-k="7" aria-current="step"><b>HOP 7</b><span>+1</span><em>179</em></button></nav>
 <nav id="rrail" hidden aria-label="reveal the graph one capability rung at a time"><button data-k="0" aria-current="false" data-st="proven"><b>R0</b><span>+7</span><em>7</em></button><button data-k="1" aria-current="false" data-st="proven"><b>R1</b><span>+5</span><em>12</em></button><button data-k="2" aria-current="false" data-st="proven"><b>R1.5</b><span>+3</span><em>15</em></button><button data-k="3" aria-current="false" data-st="proven"><b>R2</b><span>+8</span><em>23</em></button><button data-k="4" aria-current="false" data-st="proven"><b>R3</b><span>+8</span><em>31</em></button><button data-k="5" aria-current="false" data-st="proven"><b>R4a</b><span>+2</span><em>33</em></button><button data-k="6" aria-current="step" data-st="partial"><b>R4b</b><span>+0</span><em>33</em></button><button data-k="7" aria-current="false" data-st="future"><b>R5</b><span>+0</span><em>33</em></button><button data-k="8" aria-current="false" data-st="future"><b>R6</b><span>+0</span><em>33</em></button><button data-k="9" aria-current="false" data-st="future"><b>R7</b><span>+0</span><em>33</em></button><button data-k="10" aria-current="false" data-st="future"><b>R8</b><span>+0</span><em>33</em></button><button data-k="11" aria-current="false" data-st="future"><b>R9</b><span>+0</span><em>33</em></button></nav>
 </div>
 <div class="canvas">
@@ -21,225 +21,229 @@
 <circle cx="876.7" cy="763.3" r="1" class="dead standby" data-r="6"><title>kernel.dispatch:carry  (written for rung 6, zero callers)</title></circle>
 <path d="M410.0,368.4 Q500,500 513.6,341.2" class="cross" data-d="3"/>
 <path d="M417.7,363.5 Q500,500 410.0,368.4" class="cross" data-d="3"/>
-<path d="M236.0,469.7 Q500,500 531.7,343.7" class="cross" data-d="5"/>
-<path d="M236.0,469.7 Q500,500 347.0,544.9" class="cross" data-d="5"/>
-<path d="M288.8,475.8 Q500,500 417.7,363.5" class="cross" data-d="4"/>
-<path d="M290.5,463.8 Q500,500 236.0,469.7" class="cross" data-d="5"/>
-<path d="M290.5,463.8 Q500,500 417.7,363.5" class="cross" data-d="4"/>
-<path d="M287.8,487.9 Q500,500 417.7,363.5" class="cross" data-d="4"/>
+<path d="M238.2,545.3 Q500,500 531.7,343.7" class="cross" data-d="5"/>
+<path d="M238.2,545.3 Q500,500 365.9,586.2" class="cross" data-d="5"/>
+<path d="M290.5,536.2 Q500,500 417.7,363.5" class="cross" data-d="4"/>
+<path d="M288.8,524.2 Q500,500 238.2,545.3" class="cross" data-d="5"/>
+<path d="M288.8,524.2 Q500,500 417.7,363.5" class="cross" data-d="4"/>
+<path d="M293.0,548.1 Q500,500 417.7,363.5" class="cross" data-d="4"/>
 <path d="M402.6,373.7 Q500,500 335.4,365.4" class="cross" data-d="4"/>
-<path d="M343.7,468.3 Q500,500 440.0,412.3" class="cross" data-d="3"/>
-<path d="M343.7,468.3 Q500,500 604.7,518.1" class="cross" data-d="3"/>
-<path d="M241.2,439.8 Q500,500 513.6,341.2" class="cross" data-d="5"/>
-<path d="M662.3,710.4 Q500,500 365.9,413.8" class="cross" data-d="5"/>
-<path d="M662.3,710.4 Q500,500 604.7,518.1" class="cross" data-d="5"/>
-<path d="M406.3,629.0 Q500,500 604.7,518.1" class="cross" data-d="3"/>
-<path d="M707.0,548.1 Q500,500 513.6,341.2" class="cross" data-d="4"/>
-<path d="M700.2,571.4 Q500,500 758.8,560.2" class="cross" data-d="5"/>
-<path d="M700.2,571.4 Q500,500 531.7,343.7" class="cross" data-d="4"/>
-<path d="M638.8,578.4 Q500,500 707.0,548.1" class="cross" data-d="4"/>
-<path d="M638.8,578.4 Q500,500 700.2,571.4" class="cross" data-d="4"/>
-<path d="M638.8,578.4 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M638.8,578.4 Q500,500 582.3,636.5" class="cross" data-d="3"/>
-<path d="M646.9,562.1 Q500,500 707.0,548.1" class="cross" data-d="4"/>
-<path d="M646.9,562.1 Q500,500 629.0,593.7" class="cross" data-d="3"/>
-<path d="M646.9,562.1 Q500,500 582.3,636.5" class="cross" data-d="3"/>
-<path d="M629.0,593.7 Q500,500 707.0,548.1" class="cross" data-d="4"/>
-<path d="M629.0,593.7 Q500,500 700.2,571.4" class="cross" data-d="4"/>
-<path d="M356.9,570.3 Q500,500 314.9,604.5" class="cross" data-d="4"/>
-<path d="M685.2,309.4 Q500,500 678.8,385.1" class="cross" data-d="5"/>
+<path d="M341.2,513.6 Q500,500 440.0,412.3" class="cross" data-d="3"/>
+<path d="M341.2,513.6 Q500,500 605.6,487.9" class="cross" data-d="3"/>
+<path d="M234.7,515.2 Q500,500 513.6,341.2" class="cross" data-d="5"/>
+<path d="M715.0,656.2 Q500,500 365.9,413.8" class="cross" data-d="5"/>
+<path d="M715.0,656.2 Q500,500 605.6,487.9" class="cross" data-d="5"/>
+<path d="M446.4,650.2 Q500,500 605.6,487.9" class="cross" data-d="3"/>
+<path d="M712.2,487.9 Q500,500 513.6,341.2" class="cross" data-d="4"/>
+<path d="M712.2,512.1 Q500,500 765.3,484.8" class="cross" data-d="5"/>
+<path d="M712.2,512.1 Q500,500 531.7,343.7" class="cross" data-d="4"/>
+<path d="M655.3,536.1 Q500,500 712.2,487.9" class="cross" data-d="4"/>
+<path d="M655.3,536.1 Q500,500 712.2,512.1" class="cross" data-d="4"/>
+<path d="M655.3,536.1 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M655.3,536.1 Q500,500 617.5,607.8" class="cross" data-d="3"/>
+<path d="M658.4,518.2 Q500,500 712.2,487.9" class="cross" data-d="4"/>
+<path d="M658.4,518.2 Q500,500 650.2,553.6" class="cross" data-d="3"/>
+<path d="M658.4,518.2 Q500,500 617.5,607.8" class="cross" data-d="3"/>
+<path d="M650.2,553.6 Q500,500 712.2,487.9" class="cross" data-d="4"/>
+<path d="M650.2,553.6 Q500,500 712.2,512.1" class="cross" data-d="4"/>
+<path d="M382.5,607.8 Q500,500 351.9,652.4" class="cross" data-d="4"/>
+<path d="M685.2,309.4 Q500,500 672.0,375.1" class="cross" data-d="5"/>
 <path d="M743.6,218.9 Q500,500 694.7,247.5" class="cross" data-d="7"/>
 <path d="M668.2,294.3 Q500,500 685.2,309.4" class="cross" data-d="5"/>
-<path d="M731.4,369.3 Q500,500 746.8,298.2" class="cross" data-d="6"/>
-<path d="M695.8,320.3 Q500,500 731.4,369.3" class="cross" data-d="5"/>
-<path d="M695.8,320.3 Q500,500 738.5,382.8" class="cross" data-d="5"/>
-<path d="M695.8,320.3 Q500,500 744.8,396.6" class="cross" data-d="5"/>
-<path d="M705.7,331.8 Q500,500 731.4,369.3" class="cross" data-d="5"/>
-<path d="M705.7,331.8 Q500,500 744.8,396.6" class="cross" data-d="5"/>
-<path d="M705.7,331.8 Q500,500 531.7,343.7" class="cross" data-d="5"/>
-<path d="M693.4,411.7 Q500,500 695.8,320.3" class="cross" data-d="5"/>
+<path d="M648.1,347.6 Q500,500 304.2,417.3" class="cross" data-d="4"/>
+<path d="M304.2,417.3 Q500,500 293.0,451.9" class="cross" data-d="4"/>
+<path d="M304.2,417.3 Q500,500 296.0,440.1" class="cross" data-d="4"/>
+<path d="M304.2,417.3 Q500,500 299.8,428.6" class="cross" data-d="4"/>
+<path d="M695.8,320.3 Q500,500 293.0,451.9" class="cross" data-d="5"/>
+<path d="M695.8,320.3 Q500,500 241.2,439.8" class="cross" data-d="5"/>
+<path d="M695.8,320.3 Q500,500 299.8,428.6" class="cross" data-d="5"/>
+<path d="M695.8,320.3 Q500,500 531.7,343.7" class="cross" data-d="5"/>
 <path d="M473.0,397.2 Q500,500 365.9,413.8" class="cross" data-d="3"/>
-<path d="M531.7,343.7 Q500,500 349.8,553.6" class="cross" data-d="3"/>
-<path d="M513.6,341.2 Q500,500 349.8,553.6" class="cross" data-d="3"/>
-<path d="M347.0,544.9 Q500,500 349.8,553.6" class="cross" data-d="3"/>
-<path d="M249.7,410.7 Q500,500 513.6,341.2" class="cross" data-d="5"/>
+<path d="M531.7,343.7 Q500,500 371.0,593.7" class="cross" data-d="3"/>
+<path d="M513.6,341.2 Q500,500 371.0,593.7" class="cross" data-d="3"/>
+<path d="M365.9,586.2 Q500,500 371.0,593.7" class="cross" data-d="3"/>
+<path d="M234.7,484.8 Q500,500 513.6,341.2" class="cross" data-d="5"/>
 <path d="M478.9,395.8 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M296.0,440.1 Q500,500 365.9,413.8" class="cross" data-d="4"/>
-<path d="M296.0,440.1 Q500,500 299.8,428.6" class="cross" data-d="4"/>
+<path d="M287.4,500.0 Q500,500 365.9,413.8" class="cross" data-d="4"/>
+<path d="M287.4,500.0 Q500,500 287.8,487.9" class="cross" data-d="4"/>
+<path d="M614.3,388.9 Q500,500 349.8,446.4" class="cross" data-d="3"/>
 <path d="M590.0,368.4 Q500,500 566.2,355.0" class="cross" data-d="3"/>
 <path d="M590.0,368.4 Q500,500 574.4,359.0" class="cross" data-d="3"/>
 <path d="M590.0,368.4 Q500,500 582.3,363.5" class="cross" data-d="3"/>
-<path d="M590.0,368.4 Q500,500 629.0,406.3" class="cross" data-d="3"/>
+<path d="M590.0,368.4 Q500,500 614.3,388.9" class="cross" data-d="3"/>
+<path d="M590.0,368.4 Q500,500 634.1,413.8" class="cross" data-d="3"/>
+<path d="M590.0,368.4 Q500,500 638.8,421.6" class="cross" data-d="3"/>
+<path d="M590.0,368.4 Q500,500 643.1,429.7" class="cross" data-d="3"/>
+<path d="M590.0,368.4 Q500,500 646.9,437.9" class="cross" data-d="3"/>
+<path d="M590.0,368.4 Q500,500 650.2,446.4" class="cross" data-d="3"/>
 <path d="M590.0,368.4 Q500,500 653.0,455.1" class="cross" data-d="3"/>
-<path d="M590.0,368.4 Q500,500 655.3,463.9" class="cross" data-d="3"/>
-<path d="M590.0,368.4 Q500,500 657.1,472.8" class="cross" data-d="3"/>
-<path d="M590.0,368.4 Q500,500 658.4,481.8" class="cross" data-d="3"/>
-<path d="M590.0,368.4 Q500,500 659.2,490.9" class="cross" data-d="3"/>
-<path d="M590.0,368.4 Q500,500 659.4,500.0" class="cross" data-d="3"/>
-<path d="M657.1,472.8 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M655.3,463.9 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M659.4,500.0 Q500,500 617.5,607.8" class="cross" data-d="3"/>
-<path d="M653.0,455.1 Q500,500 344.7,536.1" class="cross" data-d="3"/>
-<path d="M653.0,455.1 Q500,500 342.9,527.2" class="cross" data-d="3"/>
-<path d="M566.2,355.0 Q500,500 607.8,617.5" class="cross" data-d="3"/>
-<path d="M623.4,600.9 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M643.1,429.7 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M638.8,421.6 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M653.0,455.1 Q500,500 643.1,570.3" class="cross" data-d="3"/>
+<path d="M634.1,413.8 Q500,500 361.2,578.4" class="cross" data-d="3"/>
+<path d="M634.1,413.8 Q500,500 356.9,570.3" class="cross" data-d="3"/>
+<path d="M588.3,306.6 Q500,500 513.6,341.2" class="cross" data-d="4"/>
+<path d="M588.3,306.6 Q500,500 605.6,487.9" class="cross" data-d="4"/>
+<path d="M566.2,355.0 Q500,500 636.5,582.3" class="cross" data-d="3"/>
+<path d="M646.9,562.1 Q500,500 513.6,341.2" class="cross" data-d="3"/>
 <path d="M361.2,421.6 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M361.2,421.6 Q500,500 623.4,600.9" class="cross" data-d="3"/>
-<path d="M537.8,763.0 Q500,500 513.6,341.2" class="cross" data-d="5"/>
-<path d="M522.7,764.7 Q500,500 531.7,343.7" class="cross" data-d="5"/>
-<path d="M522.7,764.7 Q500,500 545.4,815.6" class="cross" data-d="6"/>
-<path d="M624.0,735.0 Q500,500 552.8,760.4" class="cross" data-d="5"/>
-<path d="M530.3,710.4 Q500,500 624.0,735.0" class="cross" data-d="5"/>
-<path d="M463.9,655.3 Q500,500 398.9,532.8" class="cross" data-d="3"/>
-<path d="M342.9,527.2 Q500,500 344.7,536.1" class="cross" data-d="3"/>
-<path d="M344.7,536.1 Q500,500 457.8,708.3" class="cross" data-d="4"/>
-<path d="M704.0,440.1 Q500,500 344.7,536.1" class="cross" data-d="4"/>
-<path d="M658.4,518.2 Q500,500 659.2,509.1" class="cross" data-d="3"/>
-<path d="M605.9,509.1 Q500,500 398.9,532.8" class="cross" data-d="2"/>
-<path d="M657.1,527.2 Q500,500 347.0,544.9" class="cross" data-d="3"/>
-<path d="M639.2,660.7 Q500,500 513.6,341.2" class="cross" data-d="4"/>
-<path d="M620.0,675.5 Q500,500 531.7,343.7" class="cross" data-d="4"/>
-<path d="M629.8,668.3 Q500,500 531.7,343.7" class="cross" data-d="4"/>
-<path d="M629.8,668.3 Q500,500 365.9,413.8" class="cross" data-d="4"/>
-<path d="M629.8,668.3 Q500,500 513.6,341.2" class="cross" data-d="4"/>
-<path d="M629.8,668.3 Q500,500 604.7,518.1" class="cross" data-d="4"/>
-<path d="M593.7,629.0 Q500,500 347.0,544.9" class="cross" data-d="3"/>
-<path d="M593.7,629.0 Q500,500 604.7,518.1" class="cross" data-d="3"/>
-<path d="M593.7,629.0 Q500,500 648.1,652.4" class="cross" data-d="4"/>
-<path d="M593.7,629.0 Q500,500 639.2,660.7" class="cross" data-d="4"/>
-<path d="M593.7,629.0 Q500,500 607.8,617.5" class="cross" data-d="3"/>
+<path d="M361.2,421.6 Q500,500 646.9,562.1" class="cross" data-d="3"/>
 <path d="M610.4,741.7 Q500,500 513.6,341.2" class="cross" data-d="5"/>
-<path d="M610.4,741.7 Q500,500 577.1,698.1" class="cross" data-d="5"/>
-<path d="M588.3,693.4 Q500,500 599.2,688.0" class="cross" data-d="4"/>
-<path d="M554.0,705.6 Q500,500 513.6,341.2" class="cross" data-d="4"/>
-<path d="M554.0,705.6 Q500,500 678.8,614.9" class="cross" data-d="4"/>
-<path d="M565.7,702.2 Q500,500 554.0,705.6" class="cross" data-d="4"/>
-<path d="M562.1,646.9 Q500,500 623.4,600.9" class="cross" data-d="3"/>
-<path d="M562.1,646.9 Q500,500 582.3,636.5" class="cross" data-d="3"/>
-<path d="M540.5,654.2 Q500,500 531.7,343.7" class="cross" data-d="3"/>
-<path d="M540.5,654.2 Q500,500 678.8,614.9" class="cross" data-d="4"/>
-<path d="M540.5,654.2 Q500,500 582.3,636.5" class="cross" data-d="3"/>
-<path d="M410.6,442.5 Q500,500 343.7,468.3" class="cross" data-d="3"/>
-<path d="M407.5,447.7 Q500,500 653.0,544.9" class="cross" data-d="3"/>
-<path d="M407.5,447.7 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M407.5,447.7 Q500,500 344.7,536.1" class="cross" data-d="3"/>
-<path d="M407.5,447.7 Q500,500 342.9,527.2" class="cross" data-d="3"/>
-<path d="M407.5,447.7 Q500,500 503.0,393.8" class="cross" data-d="2"/>
-<path d="M472.6,454.5 Q500,500 451.0,479.3" class="cross" data-d="1"/>
-<path d="M509.1,394.1 Q500,500 467.2,601.1" class="cross" data-d="2"/>
-<path d="M515.1,394.8 Q500,500 467.2,601.1" class="cross" data-d="2"/>
-<path d="M394.4,512.1 Q500,500 503.0,393.8" class="cross" data-d="2"/>
-<path d="M394.4,512.1 Q500,500 417.7,567.3" class="cross" data-d="2"/>
-<path d="M393.9,506.1 Q500,500 394.4,512.1" class="cross" data-d="2"/>
-<path d="M449.0,515.0 Q500,500 604.7,518.1" class="cross" data-d="2"/>
-<path d="M449.0,515.0 Q500,500 515.1,394.8" class="cross" data-d="2"/>
-<path d="M449.0,515.0 Q500,500 467.2,601.1" class="cross" data-d="2"/>
-<path d="M522.7,657.8 Q500,500 604.7,518.1" class="cross" data-d="3"/>
-<path d="M522.7,657.8 Q500,500 515.1,394.8" class="cross" data-d="3"/>
-<path d="M569.6,580.3 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M569.6,580.3 Q500,500 604.7,518.1" class="cross" data-d="2"/>
-<path d="M569.6,580.3 Q500,500 515.1,394.8" class="cross" data-d="2"/>
-<path d="M437.5,586.0 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M437.5,586.0 Q500,500 604.7,518.1" class="cross" data-d="2"/>
-<path d="M437.5,586.0 Q500,500 515.1,394.8" class="cross" data-d="2"/>
-<path d="M437.5,586.0 Q500,500 467.2,601.1" class="cross" data-d="2"/>
-<path d="M410.6,557.5 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M484.9,605.2 Q500,500 604.7,518.1" class="cross" data-d="2"/>
-<path d="M484.9,605.2 Q500,500 515.1,394.8" class="cross" data-d="2"/>
-<path d="M543.0,531.2 Q500,500 449.0,515.0" class="cross" data-d="1"/>
-<path d="M543.0,531.2 Q500,500 503.0,393.8" class="cross" data-d="2"/>
-<path d="M543.0,531.2 Q500,500 515.1,394.8" class="cross" data-d="2"/>
-<path d="M543.0,531.2 Q500,500 503.0,393.8" class="cross" data-d="2"/>
-<path d="M506.1,447.2 Q500,500 543.0,531.2" class="cross" data-d="1"/>
+<path d="M596.4,747.6 Q500,500 531.7,343.7" class="cross" data-d="5"/>
+<path d="M596.4,747.6 Q500,500 632.5,790.0" class="cross" data-d="6"/>
+<path d="M685.2,690.6 Q500,500 624.0,735.0" class="cross" data-d="5"/>
+<path d="M588.3,693.4 Q500,500 685.2,690.6" class="cross" data-d="5"/>
+<path d="M509.1,659.2 Q500,500 412.3,560.0" class="cross" data-d="3"/>
+<path d="M356.9,570.3 Q500,500 361.2,578.4" class="cross" data-d="3"/>
+<path d="M361.2,578.4 Q500,500 518.2,711.8" class="cross" data-d="4"/>
+<path d="M678.8,385.1 Q500,500 361.2,578.4" class="cross" data-d="4"/>
+<path d="M657.1,472.8 Q500,500 655.3,463.9" class="cross" data-d="3"/>
+<path d="M604.2,478.9 Q500,500 412.3,560.0" class="cross" data-d="2"/>
+<path d="M658.4,481.8 Q500,500 365.9,586.2" class="cross" data-d="3"/>
+<path d="M678.8,614.9 Q500,500 513.6,341.2" class="cross" data-d="4"/>
+<path d="M664.6,634.6 Q500,500 531.7,343.7" class="cross" data-d="4"/>
+<path d="M672.0,624.9 Q500,500 531.7,343.7" class="cross" data-d="4"/>
+<path d="M672.0,624.9 Q500,500 365.9,413.8" class="cross" data-d="4"/>
+<path d="M672.0,624.9 Q500,500 513.6,341.2" class="cross" data-d="4"/>
+<path d="M672.0,624.9 Q500,500 605.6,487.9" class="cross" data-d="4"/>
+<path d="M626.3,597.4 Q500,500 365.9,586.2" class="cross" data-d="3"/>
+<path d="M626.3,597.4 Q500,500 605.6,487.9" class="cross" data-d="3"/>
+<path d="M626.3,597.4 Q500,500 685.1,604.5" class="cross" data-d="4"/>
+<path d="M626.3,597.4 Q500,500 678.8,614.9" class="cross" data-d="4"/>
+<path d="M626.3,597.4 Q500,500 636.5,582.3" class="cross" data-d="3"/>
+<path d="M674.0,700.8 Q500,500 513.6,341.2" class="cross" data-d="5"/>
+<path d="M674.0,700.8 Q500,500 629.8,668.3" class="cross" data-d="5"/>
+<path d="M639.2,660.7 Q500,500 648.1,652.4" class="cross" data-d="4"/>
+<path d="M609.8,682.0 Q500,500 513.6,341.2" class="cross" data-d="4"/>
+<path d="M609.8,682.0 Q500,500 704.0,559.9" class="cross" data-d="4"/>
+<path d="M620.0,675.5 Q500,500 609.8,682.0" class="cross" data-d="4"/>
+<path d="M600.9,623.4 Q500,500 646.9,562.1" class="cross" data-d="3"/>
+<path d="M600.9,623.4 Q500,500 617.5,607.8" class="cross" data-d="3"/>
+<path d="M582.3,636.5 Q500,500 531.7,343.7" class="cross" data-d="3"/>
+<path d="M582.3,636.5 Q500,500 704.0,559.9" class="cross" data-d="4"/>
+<path d="M582.3,636.5 Q500,500 617.5,607.8" class="cross" data-d="3"/>
+<path d="M410.6,442.5 Q500,500 341.2,513.6" class="cross" data-d="3"/>
+<path d="M401.0,461.4 Q500,500 659.4,500.0" class="cross" data-d="3"/>
+<path d="M401.0,461.4 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M401.0,461.4 Q500,500 361.2,578.4" class="cross" data-d="3"/>
+<path d="M401.0,461.4 Q500,500 356.9,570.3" class="cross" data-d="3"/>
+<path d="M401.0,461.4 Q500,500 503.0,393.8" class="cross" data-d="2"/>
+<path d="M472.6,454.5 Q500,500 448.6,486.5" class="cross" data-d="1"/>
+<path d="M509.1,394.1 Q500,500 497.0,606.2" class="cross" data-d="2"/>
+<path d="M515.1,394.8 Q500,500 497.0,606.2" class="cross" data-d="2"/>
+<path d="M402.1,541.4 Q500,500 503.0,393.8" class="cross" data-d="2"/>
+<path d="M402.1,541.4 Q500,500 440.0,587.7" class="cross" data-d="2"/>
+<path d="M399.9,535.7 Q500,500 402.1,541.4" class="cross" data-d="2"/>
+<path d="M455.3,528.7 Q500,500 605.6,487.9" class="cross" data-d="2"/>
+<path d="M455.3,528.7 Q500,500 515.1,394.8" class="cross" data-d="2"/>
+<path d="M455.3,528.7 Q500,500 497.0,606.2" class="cross" data-d="2"/>
+<path d="M566.2,645.0 Q500,500 605.6,487.9" class="cross" data-d="3"/>
+<path d="M566.2,645.0 Q500,500 515.1,394.8" class="cross" data-d="3"/>
+<path d="M589.4,557.5 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M589.4,557.5 Q500,500 605.6,487.9" class="cross" data-d="2"/>
+<path d="M589.4,557.5 Q500,500 515.1,394.8" class="cross" data-d="2"/>
+<path d="M464.3,600.1 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M464.3,600.1 Q500,500 605.6,487.9" class="cross" data-d="2"/>
+<path d="M464.3,600.1 Q500,500 515.1,394.8" class="cross" data-d="2"/>
+<path d="M464.3,600.1 Q500,500 497.0,606.2" class="cross" data-d="2"/>
+<path d="M430.4,580.3 Q500,500 513.6,341.2" class="cross" data-d="3"/>
+<path d="M515.1,605.2 Q500,500 605.6,487.9" class="cross" data-d="2"/>
+<path d="M515.1,605.2 Q500,500 515.1,394.8" class="cross" data-d="2"/>
+<path d="M547.0,524.8 Q500,500 455.3,528.7" class="cross" data-d="1"/>
+<path d="M547.0,524.8 Q500,500 503.0,393.8" class="cross" data-d="2"/>
+<path d="M547.0,524.8 Q500,500 515.1,394.8" class="cross" data-d="2"/>
+<path d="M547.0,524.8 Q500,500 503.0,393.8" class="cross" data-d="2"/>
+<path d="M506.1,447.2 Q500,500 547.0,524.8" class="cross" data-d="1"/>
 <path d="M504.6,340.6 Q500,500 513.6,341.2" class="cross" data-d="3"/>
 <path d="M419.7,430.4 Q500,500 365.9,413.8" class="cross" data-d="3"/>
 <path d="M490.9,394.1 Q500,500 478.9,395.8" class="cross" data-d="2"/>
 <path d="M490.9,394.1 Q500,500 365.9,413.8" class="cross" data-d="3"/>
 <path d="M490.9,394.1 Q500,500 513.6,341.2" class="cross" data-d="3"/>
-<path d="M371.0,406.3 Q500,500 296.0,440.1" class="cross" data-d="4"/>
+<path d="M371.0,406.3 Q500,500 287.4,500.0" class="cross" data-d="4"/>
 <path d="M388.9,385.7 Q500,500 343.4,356.3" class="cross" data-d="4"/>
 <path d="M497.0,393.8 Q500,500 365.9,413.8" class="cross" data-d="3"/>
 <path d="M500.0,500.0 Q503,474 506.1,447.2" class="branch" data-d="1" data-r="0"/>
-<path d="M500.0,500.0 Q522,516 543.0,531.2" class="branch" data-d="1" data-r="0"/>
-<path d="M500.0,500.0 Q474,508 449.0,515.0" class="branch" data-d="1" data-r="1"/>
-<path d="M500.0,500.0 Q476,490 451.0,479.3" class="branch" data-d="1"/>
+<path d="M500.0,500.0 Q524,512 547.0,524.8" class="branch" data-d="1" data-r="0"/>
+<path d="M500.0,500.0 Q478,514 455.3,528.7" class="branch" data-d="1" data-r="1"/>
+<path d="M500.0,500.0 Q474,493 448.6,486.5" class="branch" data-d="1"/>
 <path d="M500.0,500.0 Q486,477 472.6,454.5" class="branch" data-d="1"/>
 <path d="M500.0,500.0 Q495,474 490.9,447.6" class="branch" data-d="1"/>
 <path d="M506.1,447.2 Q505,420 503.0,393.8" class="branch" data-d="2"/>
 <path d="M506.1,447.2 Q508,421 509.1,394.1" class="branch" data-d="2" data-r="0"/>
 <path d="M506.1,447.2 Q511,421 515.1,394.8" class="branch" data-d="2" data-r="0"/>
 <path d="M506.1,447.2 Q514,422 521.1,395.8" class="branch" data-d="2" data-r="0"/>
-<path d="M543.0,531.2 Q535,464 527.0,397.2" class="branch" data-d="2"/>
-<path d="M543.0,531.2 Q564,484 586.0,437.5" class="branch" data-d="2" data-r="3"/>
-<path d="M543.0,531.2 Q574,520 605.9,509.1" class="branch" data-d="2" data-r="5"/>
-<path d="M543.0,531.2 Q574,525 604.7,518.1" class="branch" data-d="2"/>
-<path d="M543.0,531.2 Q556,556 569.6,580.3" class="branch" data-d="2"/>
-<path d="M543.0,531.2 Q523,569 503.0,606.2" class="branch" data-d="2" data-r="3"/>
-<path d="M543.0,531.2 Q514,568 484.9,605.2" class="branch" data-d="2" data-r="4"/>
-<path d="M543.0,531.2 Q505,566 467.2,601.1" class="branch" data-d="2" data-r="0"/>
-<path d="M543.0,531.2 Q502,565 461.4,599.0" class="branch" data-d="2" data-r="0"/>
-<path d="M543.0,531.2 Q490,559 437.5,586.0" class="branch" data-d="2"/>
-<path d="M543.0,531.2 Q480,549 417.7,567.3" class="branch" data-d="2"/>
-<path d="M543.0,531.2 Q478,547 414.0,562.5" class="branch dispatch" data-d="2"/>
-<path d="M543.0,531.2 Q477,544 410.6,557.5" class="branch dispatch" data-d="2"/>
-<path d="M449.0,515.0 Q428,532 406.0,549.6" class="branch" data-d="2" data-r="1"/>
-<path d="M449.0,515.0 Q426,528 402.1,541.4" class="branch" data-d="2" data-r="2"/>
-<path d="M449.0,515.0 Q424,524 398.9,532.8" class="branch" data-d="2"/>
-<path d="M449.0,515.0 Q422,518 395.8,521.1" class="branch" data-d="2" data-r="4"/>
-<path d="M449.0,515.0 Q422,514 394.4,512.1" class="branch" data-d="2" data-r="1"/>
-<path d="M449.0,515.0 Q421,511 393.9,506.1" class="branch" data-d="2" data-r="1"/>
-<path d="M451.0,479.3 Q422,490 393.7,500.0" class="branch" data-d="2"/>
-<path d="M451.0,479.3 Q423,479 395.8,478.9" class="branch" data-d="2"/>
-<path d="M451.0,479.3 Q427,469 402.1,458.6" class="branch" data-d="2" data-r="2"/>
-<path d="M451.0,479.3 Q428,466 404.6,453.1" class="branch" data-d="2"/>
-<path d="M451.0,479.3 Q429,464 407.5,447.7" class="branch" data-d="2"/>
-<path d="M451.0,479.3 Q431,461 410.6,442.5" class="branch" data-d="2"/>
-<path d="M451.0,479.3 Q435,455 419.7,430.4" class="branch" data-d="2"/>
+<path d="M547.0,524.8 Q537,461 527.0,397.2" class="branch" data-d="2"/>
+<path d="M547.0,524.8 Q562,475 576.2,425.9" class="branch" data-d="2" data-r="3"/>
+<path d="M547.0,524.8 Q576,502 604.2,478.9" class="branch" data-d="2" data-r="5"/>
+<path d="M547.0,524.8 Q576,506 605.6,487.9" class="branch" data-d="2"/>
+<path d="M547.0,524.8 Q568,541 589.4,557.5" class="branch" data-d="2"/>
+<path d="M547.0,524.8 Q540,563 532.8,601.1" class="branch" data-d="2" data-r="3"/>
+<path d="M547.0,524.8 Q531,565 515.1,605.2" class="branch" data-d="2" data-r="4"/>
+<path d="M547.0,524.8 Q522,566 497.0,606.2" class="branch" data-d="2" data-r="0"/>
+<path d="M547.0,524.8 Q519,565 490.9,605.9" class="branch" data-d="2" data-r="0"/>
+<path d="M547.0,524.8 Q506,562 464.3,600.1" class="branch" data-d="2"/>
+<path d="M547.0,524.8 Q494,556 440.0,587.7" class="branch" data-d="2"/>
+<path d="M547.0,524.8 Q491,554 435.1,584.2" class="branch dispatch" data-d="2"/>
+<path d="M547.0,524.8 Q489,553 430.4,580.3" class="branch dispatch" data-d="2"/>
+<path d="M455.3,528.7 Q440,551 423.8,574.1" class="branch" data-d="2" data-r="1"/>
+<path d="M455.3,528.7 Q436,548 417.7,567.3" class="branch" data-d="2" data-r="2"/>
+<path d="M455.3,528.7 Q434,544 412.3,560.0" class="branch" data-d="2"/>
+<path d="M455.3,528.7 Q431,539 406.0,549.6" class="branch" data-d="2" data-r="4"/>
+<path d="M455.3,528.7 Q429,535 402.1,541.4" class="branch" data-d="2" data-r="1"/>
+<path d="M455.3,528.7 Q428,532 399.9,535.7" class="branch" data-d="2" data-r="1"/>
+<path d="M448.6,486.5 Q423,508 398.0,529.9" class="branch" data-d="2"/>
+<path d="M448.6,486.5 Q421,498 394.1,509.1" class="branch" data-d="2"/>
+<path d="M448.6,486.5 Q422,487 394.4,487.9" class="branch" data-d="2" data-r="2"/>
+<path d="M448.6,486.5 Q422,484 395.3,481.9" class="branch" data-d="2"/>
+<path d="M448.6,486.5 Q425,474 401.0,461.4" class="branch" data-d="2"/>
+<path d="M448.6,486.5 Q430,464 410.6,442.5" class="branch" data-d="2"/>
+<path d="M448.6,486.5 Q434,458 419.7,430.4" class="branch" data-d="2"/>
 <path d="M472.6,454.5 Q456,433 440.0,412.3" class="branch" data-d="2"/>
 <path d="M472.6,454.5 Q464,429 455.8,403.3" class="branch" data-d="2"/>
 <path d="M472.6,454.5 Q467,428 461.4,401.0" class="branch" data-d="2"/>
 <path d="M503.0,393.8 Q504,367 504.6,340.6" class="branch" data-d="3"/>
 <path d="M509.1,394.1 Q511,368 513.6,341.2" class="branch" data-d="3"/>
 <path d="M521.1,395.8 Q526,370 531.7,343.7" class="branch" data-d="3"/>
-<path d="M586.0,437.5 Q568,393 549.3,348.4" class="branch" data-d="3" data-r="3"/>
-<path d="M586.0,437.5 Q572,394 557.8,351.4" class="branch" data-d="3"/>
-<path d="M586.0,437.5 Q576,396 566.2,355.0" class="branch" data-d="3" data-r="3"/>
-<path d="M586.0,437.5 Q580,398 574.4,359.0" class="branch dispatch" data-d="3"/>
-<path d="M586.0,437.5 Q584,400 582.3,363.5" class="branch dispatch" data-d="3"/>
-<path d="M586.0,437.5 Q588,403 590.0,368.4" class="branch dispatch" data-d="3"/>
-<path d="M586.0,437.5 Q608,422 629.0,406.3" class="branch dispatch" data-d="3"/>
-<path d="M586.0,437.5 Q620,446 653.0,455.1" class="branch dispatch" data-d="3" data-r="3"/>
-<path d="M586.0,437.5 Q621,451 655.3,463.9" class="branch dispatch" data-d="3" data-r="3"/>
-<path d="M586.0,437.5 Q622,455 657.1,472.8" class="branch dispatch" data-d="3"/>
-<path d="M586.0,437.5 Q622,460 658.4,481.8" class="branch dispatch" data-d="3"/>
-<path d="M586.0,437.5 Q623,464 659.2,490.9" class="branch dispatch" data-d="3"/>
-<path d="M586.0,437.5 Q623,469 659.4,500.0" class="branch dispatch" data-d="3" data-r="3"/>
-<path d="M605.9,509.1 Q633,509 659.2,509.1" class="branch" data-d="3"/>
-<path d="M605.9,509.1 Q632,514 658.4,518.2" class="branch" data-d="3" data-r="5"/>
-<path d="M604.7,518.1 Q631,523 657.1,527.2" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q611,563 653.0,544.9" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q608,571 646.9,562.1" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q604,579 638.8,578.4" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q599,587 629.0,593.7" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q596,591 623.4,600.9" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q594,594 617.5,607.8" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q589,599 607.8,617.5" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q582,605 593.7,629.0" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q576,608 582.3,636.5" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q566,614 562.1,646.9" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q555,617 540.5,654.2" class="branch" data-d="3"/>
-<path d="M569.6,580.3 Q546,619 522.7,657.8" class="branch" data-d="3"/>
-<path d="M484.9,605.2 Q486,632 486.4,658.8" class="branch" data-d="3" data-r="4"/>
-<path d="M484.9,605.2 Q474,630 463.9,655.3" class="branch" data-d="3" data-r="4"/>
-<path d="M437.5,586.0 Q422,608 406.3,629.0" class="branch" data-d="3"/>
-<path d="M406.0,549.6 Q384,564 361.2,578.4" class="branch" data-d="3" data-r="1"/>
-<path d="M406.0,549.6 Q381,560 356.9,570.3" class="branch" data-d="3" data-r="2"/>
-<path d="M398.9,532.8 Q374,543 349.8,553.6" class="branch" data-d="3"/>
-<path d="M398.9,532.8 Q373,539 347.0,544.9" class="branch" data-d="3"/>
-<path d="M395.8,521.1 Q370,529 344.7,536.1" class="branch" data-d="3" data-r="4"/>
-<path d="M395.8,521.1 Q369,524 342.9,527.2" class="branch" data-d="3" data-r="4"/>
-<path d="M395.8,478.9 Q370,474 343.7,468.3" class="branch" data-d="3"/>
-<path d="M407.5,447.7 Q384,435 361.2,421.6" class="branch" data-d="3"/>
+<path d="M576.2,425.9 Q563,387 549.3,348.4" class="branch" data-d="3" data-r="3"/>
+<path d="M576.2,425.9 Q567,389 557.8,351.4" class="branch" data-d="3"/>
+<path d="M576.2,425.9 Q571,390 566.2,355.0" class="branch" data-d="3" data-r="3"/>
+<path d="M576.2,425.9 Q575,392 574.4,359.0" class="branch dispatch" data-d="3"/>
+<path d="M576.2,425.9 Q579,395 582.3,363.5" class="branch dispatch" data-d="3"/>
+<path d="M576.2,425.9 Q583,397 590.0,368.4" class="branch dispatch" data-d="3"/>
+<path d="M576.2,425.9 Q595,407 614.3,388.9" class="branch dispatch" data-d="3"/>
+<path d="M576.2,425.9 Q605,420 634.1,413.8" class="branch dispatch" data-d="3" data-r="3"/>
+<path d="M576.2,425.9 Q608,424 638.8,421.6" class="branch dispatch" data-d="3" data-r="3"/>
+<path d="M576.2,425.9 Q610,428 643.1,429.7" class="branch dispatch" data-d="3"/>
+<path d="M576.2,425.9 Q612,432 646.9,437.9" class="branch dispatch" data-d="3"/>
+<path d="M576.2,425.9 Q613,436 650.2,446.4" class="branch dispatch" data-d="3"/>
+<path d="M576.2,425.9 Q615,440 653.0,455.1" class="branch dispatch" data-d="3" data-r="3"/>
+<path d="M604.2,478.9 Q630,471 655.3,463.9" class="branch" data-d="3"/>
+<path d="M604.2,478.9 Q631,476 657.1,472.8" class="branch" data-d="3" data-r="5"/>
+<path d="M605.6,487.9 Q632,485 658.4,481.8" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q624,529 659.4,500.0" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q624,538 658.4,518.2" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q622,547 655.3,536.1" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q620,556 650.2,553.6" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q618,560 646.9,562.1" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q616,564 643.1,570.3" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q613,570 636.5,582.3" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q608,577 626.3,597.4" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q603,583 617.5,607.8" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q595,590 600.9,623.4" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q586,597 582.3,636.5" class="branch" data-d="3"/>
+<path d="M589.4,557.5 Q578,601 566.2,645.0" class="branch" data-d="3"/>
+<path d="M515.1,605.2 Q523,631 531.7,656.3" class="branch" data-d="3" data-r="4"/>
+<path d="M515.1,605.2 Q512,632 509.1,659.2" class="branch" data-d="3" data-r="4"/>
+<path d="M464.3,600.1 Q455,625 446.4,650.2" class="branch" data-d="3"/>
+<path d="M423.8,574.1 Q406,594 388.9,614.3" class="branch" data-d="3" data-r="1"/>
+<path d="M423.8,574.1 Q403,591 382.5,607.8" class="branch" data-d="3" data-r="2"/>
+<path d="M412.3,560.0 Q392,577 371.0,593.7" class="branch" data-d="3"/>
+<path d="M412.3,560.0 Q389,573 365.9,586.2" class="branch" data-d="3"/>
+<path d="M406.0,549.6 Q384,564 361.2,578.4" class="branch" data-d="3" data-r="4"/>
+<path d="M406.0,549.6 Q381,560 356.9,570.3" class="branch" data-d="3" data-r="4"/>
+<path d="M394.1,509.1 Q368,511 341.2,513.6" class="branch" data-d="3"/>
+<path d="M401.0,461.4 Q375,454 349.8,446.4" class="branch" data-d="3"/>
+<path d="M401.0,461.4 Q381,442 361.2,421.6" class="branch" data-d="3"/>
 <path d="M410.6,442.5 Q388,428 365.9,413.8" class="branch" data-d="3"/>
 <path d="M419.7,430.4 Q395,418 371.0,406.3" class="branch" data-d="3"/>
 <path d="M419.7,430.4 Q400,413 379.5,395.6" class="branch" data-d="3"/>
@@ -250,87 +254,87 @@
 <path d="M440.0,412.3 Q429,388 417.7,363.5" class="branch" data-d="3"/>
 <path d="M440.0,412.3 Q433,386 425.6,359.0" class="branch" data-d="3"/>
 <path d="M549.3,348.4 Q558,323 565.7,297.8" class="branch" data-d="4" data-r="3"/>
-<path d="M653.0,544.9 Q680,546 707.0,548.1" class="branch" data-d="4"/>
-<path d="M653.0,544.9 Q678,552 704.0,559.9" class="branch" data-d="4"/>
-<path d="M653.0,544.9 Q677,558 700.2,571.4" class="branch" data-d="4"/>
-<path d="M638.8,578.4 Q665,586 690.8,593.8" class="branch" data-d="4"/>
-<path d="M638.8,578.4 Q662,591 685.1,604.5" class="branch" data-d="4"/>
-<path d="M638.8,578.4 Q659,597 678.8,614.9" class="branch" data-d="4"/>
-<path d="M623.4,600.9 Q644,618 664.6,634.6" class="branch" data-d="4"/>
-<path d="M607.8,617.5 Q628,635 648.1,652.4" class="branch" data-d="4"/>
-<path d="M607.8,617.5 Q624,639 639.2,660.7" class="branch" data-d="4"/>
-<path d="M593.7,629.0 Q612,649 629.8,668.3" class="branch" data-d="4"/>
-<path d="M593.7,629.0 Q607,652 620.0,675.5" class="branch" data-d="4"/>
-<path d="M562.1,646.9 Q581,667 599.2,688.0" class="branch" data-d="4"/>
-<path d="M562.1,646.9 Q575,670 588.3,693.4" class="branch" data-d="4"/>
-<path d="M562.1,646.9 Q570,672 577.1,698.1" class="branch" data-d="4"/>
-<path d="M562.1,646.9 Q564,675 565.7,702.2" class="branch" data-d="4"/>
-<path d="M540.5,654.2 Q547,680 554.0,705.6" class="branch" data-d="4"/>
-<path d="M522.7,657.8 Q526,684 530.3,710.4" class="branch" data-d="4"/>
-<path d="M486.4,658.8 Q487,686 487.9,712.2" class="branch" data-d="4" data-r="4"/>
-<path d="M486.4,658.8 Q478,685 469.7,710.4" class="branch" data-d="4"/>
-<path d="M463.9,655.3 Q461,682 457.8,708.3" class="branch" data-d="4"/>
-<path d="M463.9,655.3 Q455,680 446.0,705.6" class="branch" data-d="4" data-r="4"/>
-<path d="M406.3,629.0 Q409,661 411.7,693.4" class="branch" data-d="4"/>
-<path d="M406.3,629.0 Q404,658 400.8,688.0" class="branch" data-d="4"/>
-<path d="M406.3,629.0 Q396,654 385.1,678.8" class="branch" data-d="4"/>
-<path d="M406.3,629.0 Q388,649 370.2,668.3" class="branch" data-d="4"/>
-<path d="M406.3,629.0 Q384,645 360.8,660.7" class="branch" data-d="4"/>
-<path d="M406.3,629.0 Q379,641 351.9,652.4" class="branch" data-d="4"/>
-<path d="M406.3,629.0 Q375,636 343.4,643.7" class="branch" data-d="4"/>
-<path d="M361.2,578.4 Q338,591 314.9,604.5" class="branch" data-d="4"/>
-<path d="M342.9,527.2 Q317,532 290.5,536.2" class="branch" data-d="4"/>
-<path d="M343.7,468.3 Q316,478 287.8,487.9" class="branch" data-d="4"/>
-<path d="M343.7,468.3 Q316,472 288.8,475.8" class="branch" data-d="4"/>
-<path d="M343.7,468.3 Q317,466 290.5,463.8" class="branch" data-d="4"/>
-<path d="M343.7,468.3 Q318,460 293.0,451.9" class="branch" data-d="4"/>
-<path d="M343.7,468.3 Q320,454 296.0,440.1" class="branch" data-d="4"/>
-<path d="M343.7,468.3 Q322,448 299.8,428.6" class="branch" data-d="4"/>
+<path d="M566.2,355.0 Q577,331 588.3,306.6" class="branch" data-d="4"/>
+<path d="M659.4,500.0 Q686,494 712.2,487.9" class="branch" data-d="4"/>
+<path d="M659.4,500.0 Q686,500 712.6,500.0" class="branch" data-d="4"/>
+<path d="M659.4,500.0 Q686,506 712.2,512.1" class="branch" data-d="4"/>
+<path d="M655.3,536.1 Q682,536 709.5,536.2" class="branch" data-d="4"/>
+<path d="M655.3,536.1 Q681,542 707.0,548.1" class="branch" data-d="4"/>
+<path d="M655.3,536.1 Q680,548 704.0,559.9" class="branch" data-d="4"/>
+<path d="M646.9,562.1 Q671,572 695.8,582.7" class="branch" data-d="4"/>
+<path d="M636.5,582.3 Q661,593 685.1,604.5" class="branch" data-d="4"/>
+<path d="M636.5,582.3 Q658,599 678.8,614.9" class="branch" data-d="4"/>
+<path d="M626.3,597.4 Q649,611 672.0,624.9" class="branch" data-d="4"/>
+<path d="M626.3,597.4 Q645,616 664.6,634.6" class="branch" data-d="4"/>
+<path d="M600.9,623.4 Q624,638 648.1,652.4" class="branch" data-d="4"/>
+<path d="M600.9,623.4 Q620,642 639.2,660.7" class="branch" data-d="4"/>
+<path d="M600.9,623.4 Q615,646 629.8,668.3" class="branch" data-d="4"/>
+<path d="M600.9,623.4 Q610,649 620.0,675.5" class="branch" data-d="4"/>
+<path d="M582.3,636.5 Q596,659 609.8,682.0" class="branch" data-d="4"/>
+<path d="M566.2,645.0 Q577,669 588.3,693.4" class="branch" data-d="4"/>
+<path d="M531.7,656.3 Q540,682 548.1,707.0" class="branch" data-d="4" data-r="4"/>
+<path d="M531.7,656.3 Q531,683 530.3,710.4" class="branch" data-d="4"/>
+<path d="M509.1,659.2 Q514,686 518.2,711.8" class="branch" data-d="4"/>
+<path d="M509.1,659.2 Q508,686 506.1,712.5" class="branch" data-d="4" data-r="4"/>
+<path d="M446.4,650.2 Q458,680 469.7,710.4" class="branch" data-d="4"/>
+<path d="M446.4,650.2 Q452,679 457.8,708.3" class="branch" data-d="4"/>
+<path d="M446.4,650.2 Q443,677 440.1,704.0" class="branch" data-d="4"/>
+<path d="M446.4,650.2 Q435,674 422.9,698.1" class="branch" data-d="4"/>
+<path d="M446.4,650.2 Q429,672 411.7,693.4" class="branch" data-d="4"/>
+<path d="M446.4,650.2 Q424,669 400.8,688.0" class="branch" data-d="4"/>
+<path d="M446.4,650.2 Q418,666 390.2,682.0" class="branch" data-d="4"/>
+<path d="M388.9,614.3 Q370,633 351.9,652.4" class="branch" data-d="4"/>
+<path d="M356.9,570.3 Q333,582 309.2,593.8" class="branch" data-d="4"/>
+<path d="M341.2,513.6 Q317,531 293.0,548.1" class="branch" data-d="4"/>
+<path d="M341.2,513.6 Q316,525 290.5,536.2" class="branch" data-d="4"/>
+<path d="M341.2,513.6 Q315,519 288.8,524.2" class="branch" data-d="4"/>
+<path d="M341.2,513.6 Q314,513 287.8,512.1" class="branch" data-d="4"/>
+<path d="M341.2,513.6 Q314,507 287.4,500.0" class="branch" data-d="4"/>
+<path d="M341.2,513.6 Q314,501 287.8,487.9" class="branch" data-d="4"/>
+<path d="M349.8,446.4 Q321,449 293.0,451.9" class="branch" data-d="4"/>
+<path d="M349.8,446.4 Q323,443 296.0,440.1" class="branch" data-d="4"/>
+<path d="M349.8,446.4 Q325,438 299.8,428.6" class="branch" data-d="4"/>
+<path d="M349.8,446.4 Q327,432 304.2,417.3" class="branch" data-d="4"/>
+<path d="M349.8,446.4 Q330,426 309.2,406.2" class="branch" data-d="4"/>
 <path d="M379.5,395.6 Q357,380 335.4,365.4" class="branch" data-d="4"/>
 <path d="M379.5,395.6 Q361,376 343.4,356.3" class="branch" data-d="4"/>
 <path d="M395.6,379.5 Q378,359 360.8,339.3" class="branch" data-d="4"/>
 <path d="M574.4,359.0 Q587,336 599.2,312.0" class="branch" data-d="4"/>
-<path d="M629.0,406.3 Q641,379 652.4,351.9" class="branch" data-d="4"/>
-<path d="M629.0,406.3 Q654,396 678.8,385.1" class="branch" data-d="4"/>
-<path d="M629.0,406.3 Q661,409 693.4,411.7" class="branch" data-d="4"/>
-<path d="M653.0,455.1 Q678,448 704.0,440.1" class="branch" data-d="4"/>
-<path d="M655.3,463.9 Q681,458 707.0,451.9" class="branch" data-d="4"/>
-<path d="M657.1,472.8 Q683,468 709.5,463.8" class="branch" data-d="4"/>
-<path d="M707.0,548.1 Q733,554 758.8,560.2" class="branch" data-d="5"/>
-<path d="M629.8,668.3 Q646,689 662.3,710.4" class="branch" data-d="5"/>
-<path d="M599.2,688.0 Q612,712 624.0,735.0" class="branch" data-d="5"/>
+<path d="M614.3,388.9 Q631,368 648.1,347.6" class="branch" data-d="4"/>
+<path d="M614.3,388.9 Q643,382 672.0,375.1" class="branch" data-d="4"/>
+<path d="M634.1,413.8 Q656,399 678.8,385.1" class="branch" data-d="4"/>
+<path d="M638.8,421.6 Q662,409 685.1,395.5" class="branch" data-d="4"/>
+<path d="M643.1,429.7 Q667,418 690.8,406.2" class="branch" data-d="4"/>
+<path d="M712.2,487.9 Q739,486 765.3,484.8" class="branch" data-d="5"/>
+<path d="M672.0,624.9 Q694,641 715.0,656.2" class="branch" data-d="5"/>
+<path d="M648.1,652.4 Q667,672 685.2,690.6" class="branch" data-d="5"/>
+<path d="M639.2,660.7 Q657,681 674.0,700.8" class="branch" data-d="5"/>
+<path d="M588.3,693.4 Q606,714 624.0,735.0" class="branch" data-d="5"/>
 <path d="M588.3,693.4 Q599,718 610.4,741.7" class="branch" data-d="5"/>
-<path d="M530.3,710.4 Q542,735 552.8,760.4" class="branch" data-d="5"/>
+<path d="M588.3,693.4 Q592,720 596.4,747.6" class="branch" data-d="5"/>
+<path d="M548.1,707.0 Q558,732 567.5,757.0" class="branch" data-d="5"/>
+<path d="M548.1,707.0 Q550,734 552.8,760.4" class="branch" data-d="5"/>
 <path d="M530.3,710.4 Q534,737 537.8,763.0" class="branch" data-d="5"/>
-<path d="M530.3,710.4 Q526,738 522.7,764.7" class="branch" data-d="5"/>
-<path d="M487.9,712.2 Q490,739 492.4,765.6" class="branch" data-d="5"/>
-<path d="M487.9,712.2 Q483,738 477.3,764.7" class="branch" data-d="5"/>
-<path d="M469.7,710.4 Q466,737 462.2,763.0" class="branch" data-d="5"/>
-<path d="M446.0,705.6 Q439,731 432.5,757.0" class="branch" data-d="5"/>
-<path d="M385.1,678.8 Q374,703 362.8,727.5" class="branch" data-d="5"/>
-<path d="M385.1,678.8 Q368,699 350.0,719.3" class="branch" data-d="5"/>
-<path d="M360.8,660.7 Q343,681 326.0,700.8" class="branch" data-d="5"/>
-<path d="M288.8,475.8 Q262,473 236.0,469.7" class="branch" data-d="5"/>
+<path d="M506.1,712.5 Q507,739 507.6,765.6" class="branch" data-d="5"/>
+<path d="M440.1,704.0 Q436,730 432.5,757.0" class="branch" data-d="5"/>
+<path d="M440.1,704.0 Q429,728 417.9,752.7" class="branch" data-d="5"/>
+<path d="M411.7,693.4 Q401,718 389.6,741.7" class="branch" data-d="5"/>
+<path d="M290.5,536.2 Q264,541 238.2,545.3" class="branch" data-d="5"/>
+<path d="M287.8,512.1 Q261,514 234.7,515.2" class="branch" data-d="5"/>
+<path d="M287.4,500.0 Q261,500 234.3,500.0" class="branch" data-d="5"/>
+<path d="M287.8,487.9 Q261,486 234.7,484.8" class="branch" data-d="5"/>
 <path d="M293.0,451.9 Q267,446 241.2,439.8" class="branch" data-d="5"/>
-<path d="M296.0,440.1 Q270,433 245.0,425.1" class="branch" data-d="5"/>
-<path d="M299.8,428.6 Q275,420 249.7,410.7" class="branch" data-d="5"/>
-<path d="M652.4,351.9 Q660,323 668.2,294.3" class="branch" data-d="5"/>
-<path d="M652.4,351.9 Q669,331 685.2,309.4" class="branch" data-d="5"/>
-<path d="M652.4,351.9 Q674,336 695.8,320.3" class="branch" data-d="5"/>
-<path d="M652.4,351.9 Q679,342 705.7,331.8" class="branch" data-d="5"/>
-<path d="M652.4,351.9 Q684,348 715.0,343.8" class="branch" data-d="5"/>
-<path d="M693.4,411.7 Q712,390 731.4,369.3" class="branch" data-d="5"/>
-<path d="M693.4,411.7 Q716,397 738.5,382.8" class="branch" data-d="5"/>
-<path d="M693.4,411.7 Q719,404 744.8,396.6" class="branch" data-d="5"/>
-<path d="M693.4,411.7 Q722,411 750.3,410.7" class="branch" data-d="5"/>
+<path d="M309.2,406.2 Q285,394 261.5,382.8" class="branch" data-d="5"/>
+<path d="M648.1,347.6 Q658,321 668.2,294.3" class="branch" data-d="5"/>
+<path d="M648.1,347.6 Q667,328 685.2,309.4" class="branch" data-d="5"/>
+<path d="M648.1,347.6 Q672,334 695.8,320.3" class="branch" data-d="5"/>
+<path d="M648.1,347.6 Q677,340 705.7,331.8" class="branch" data-d="5"/>
+<path d="M674.0,700.8 Q691,721 708.8,741.0" class="branch" data-d="6"/>
 <path d="M610.4,741.7 Q621,766 632.5,790.0" class="branch" data-d="6"/>
-<path d="M537.8,763.0 Q542,789 545.4,815.6" class="branch" data-d="6"/>
-<path d="M350.0,719.3 Q335,741 320.0,763.2" class="branch" data-d="6"/>
-<path d="M245.0,425.1 Q220,418 194.1,410.2" class="branch" data-d="6"/>
+<path d="M417.9,752.7 Q410,778 401.5,803.3" class="branch" data-d="6"/>
+<path d="M234.3,500.0 Q208,500 181.1,500.0" class="branch" data-d="6"/>
 <path d="M668.2,294.3 Q681,271 694.7,247.5" class="branch" data-d="6"/>
 <path d="M668.2,294.3 Q688,277 708.8,259.0" class="branch" data-d="6"/>
-<path d="M705.7,331.8 Q726,315 746.8,298.2" class="branch" data-d="6"/>
-<path d="M750.3,410.7 Q775,402 800.3,392.8" class="branch" data-d="6"/>
 <path d="M708.8,259.0 Q726,239 743.6,218.9" class="branch" data-d="7"/>
 <path d="M490.9,447.6 Q479,423 467.2,398.9" class="branch" data-d="2"/>
 <path d="M490.9,447.6 Q482,422 473.0,397.2" class="branch" data-d="2"/>
@@ -347,151 +351,152 @@
 <circle cx="515.1" cy="394.8" r="3.7" class="node" data-d="2" data-r="0"><title>loop.live:log  (hop 2)</title></circle>
 <circle cx="521.1" cy="395.8" r="3.7" class="node" data-d="2" data-r="0"><title>loop.live:save_hb  (hop 2)</title></circle>
 <circle cx="531.7" cy="343.7" r="3.0" class="node" data-d="3"><title>kernel.grid:atomic_save_json  (hop 3)</title></circle>
-<circle cx="543.0" cy="531.2" r="4.5" class="node" data-d="1" data-r="0"><title>loop.live:tick  (hop 1)</title></circle>
+<circle cx="547.0" cy="524.8" r="4.5" class="node" data-d="1" data-r="0"><title>loop.live:tick  (hop 1)</title></circle>
 <circle cx="527.0" cy="397.2" r="3.7" class="node" data-d="2"><title>kernel.cause:looks_transient  (hop 2)</title></circle>
-<circle cx="586.0" cy="437.5" r="3.7" class="node" data-d="2" data-r="3"><title>kernel.hands:invoke  (hop 2)</title></circle>
+<circle cx="576.2" cy="425.9" r="3.7" class="node" data-d="2" data-r="3"><title>kernel.hands:invoke  (hop 2)</title></circle>
 <circle cx="549.3" cy="348.4" r="3.0" class="node" data-d="3" data-r="3"><title>kernel.hands:_ledger  (hop 3)</title></circle>
 <circle cx="565.7" cy="297.8" r="2.2" class="node" data-d="4" data-r="3"><title>kernel.hands:_ledger_path  (hop 4)</title></circle>
 <circle cx="557.8" cy="351.4" r="3.0" class="node" data-d="3"><title>kernel.hands:_unwrap_args  (hop 3)</title></circle>
 <circle cx="566.2" cy="355.0" r="3.0" class="node" data-d="3" data-r="3"><title>kernel.hands:allowed  (hop 3)</title></circle>
+<circle cx="588.3" cy="306.6" r="2.2" class="node" data-d="4"><title>kernel.hands:_zones_for  (hop 4)</title></circle>
 <circle cx="574.4" cy="359.0" r="3.0" class="node" data-d="3"><title>kernel.hands:_calc  (hop 3)</title></circle>
 <circle cx="599.2" cy="312.0" r="2.2" class="node" data-d="4"><title>kernel.hands:_explosive  (hop 4)</title></circle>
 <circle cx="582.3" cy="363.5" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_json_get  (hop 3)</title></circle>
 <circle cx="590.0" cy="368.4" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_list_tools  (hop 3)</title></circle>
-<circle cx="629.0" cy="406.3" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_look_outward  (hop 3)</title></circle>
-<circle cx="652.4" cy="351.9" r="2.2" class="node viadisp" data-d="4"><title>kernel.dispatch:run  (hop 4)</title></circle>
+<circle cx="614.3" cy="388.9" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_look_outward  (hop 3)</title></circle>
+<circle cx="648.1" cy="347.6" r="2.2" class="node viadisp" data-d="4"><title>kernel.dispatch:run  (hop 4)</title></circle>
 <circle cx="668.2" cy="294.3" r="2.0" class="node viadisp" data-d="5"><title>kernel.dispatch:dry  (hop 5)</title></circle>
 <circle cx="694.7" cy="247.5" r="2.0" class="node viadisp" data-d="6"><title>kernel.dispatch:_host_why  (hop 6)</title></circle>
 <circle cx="708.8" cy="259.0" r="2.0" class="node viadisp" data-d="6"><title>kernel.dispatch:allowed_host  (hop 6)</title></circle>
 <circle cx="743.6" cy="218.9" r="2.0" class="node viadisp" data-d="7"><title>kernel.dispatch:_host  (hop 7)</title></circle>
 <circle cx="685.2" cy="309.4" r="2.0" class="node viadisp" data-d="5"><title>kernel.dispatch:plan  (hop 5)</title></circle>
-<circle cx="695.8" cy="320.3" r="2.0" class="node viadisp" data-d="5"><title>kernel.egress:allow  (hop 5)</title></circle>
-<circle cx="705.7" cy="331.8" r="2.0" class="node viadisp" data-d="5"><title>kernel.egress:spend  (hop 5)</title></circle>
-<circle cx="746.8" cy="298.2" r="2.0" class="node viadisp" data-d="6"><title>kernel.egress:_path  (hop 6)</title></circle>
-<circle cx="715.0" cy="343.8" r="2.0" class="node viadisp" data-d="5"><title>kernel.hands:fence  (hop 5)</title></circle>
-<circle cx="678.8" cy="385.1" r="2.2" class="node viadisp" data-d="4"><title>kernel.dispatch:topics  (hop 4)</title></circle>
-<circle cx="693.4" cy="411.7" r="2.2" class="node viadisp" data-d="4"><title>kernel.egress:state  (hop 4)</title></circle>
-<circle cx="731.4" cy="369.3" r="2.0" class="node viadisp" data-d="5"><title>kernel.egress:_load  (hop 5)</title></circle>
-<circle cx="738.5" cy="382.8" r="2.0" class="node viadisp" data-d="5"><title>kernel.egress:_stop_path  (hop 5)</title></circle>
-<circle cx="744.8" cy="396.6" r="2.0" class="node viadisp" data-d="5"><title>kernel.egress:_window  (hop 5)</title></circle>
-<circle cx="750.3" cy="410.7" r="2.0" class="node viadisp" data-d="5"><title>kernel.egress:budget  (hop 5)</title></circle>
-<circle cx="800.3" cy="392.8" r="2.0" class="node viadisp" data-d="6"><title>kernel.egress:bits_per_dispatch  (hop 6)</title></circle>
-<circle cx="653.0" cy="455.1" r="3.0" class="node viadisp" data-d="3" data-r="3"><title>kernel.hands:_my_record  (hop 3)</title></circle>
-<circle cx="704.0" cy="440.1" r="2.2" class="node viadisp" data-d="4"><title>kernel.outcomes:tally  (hop 4)</title></circle>
-<circle cx="655.3" cy="463.9" r="3.0" class="node viadisp" data-d="3" data-r="3"><title>kernel.hands:_read_state  (hop 3)</title></circle>
-<circle cx="707.0" cy="451.9" r="2.2" class="node viadisp" data-d="4"><title>kernel.hands:_window  (hop 4)</title></circle>
-<circle cx="657.1" cy="472.8" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_self_map  (hop 3)</title></circle>
-<circle cx="709.5" cy="463.8" r="2.2" class="node viadisp" data-d="4"><title>kernel.laws:text  (hop 4)</title></circle>
-<circle cx="658.4" cy="481.8" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_web_fetch  (hop 3)</title></circle>
-<circle cx="659.2" cy="490.9" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_web_search  (hop 3)</title></circle>
-<circle cx="659.4" cy="500.0" r="3.0" class="node viadisp" data-d="3" data-r="3"><title>kernel.hands:_what_to_try  (hop 3)</title></circle>
-<circle cx="605.9" cy="509.1" r="3.7" class="node" data-d="2" data-r="5"><title>kernel.perceive:record  (hop 2)</title></circle>
-<circle cx="659.2" cy="509.1" r="3.0" class="node" data-d="3"><title>kernel.perceive:_path  (hop 3)</title></circle>
-<circle cx="658.4" cy="518.2" r="3.0" class="node" data-d="3" data-r="5"><title>kernel.perceive:read  (hop 3)</title></circle>
-<circle cx="604.7" cy="518.1" r="3.7" class="node" data-d="2"><title>kernel.pulse:emit  (hop 2)</title></circle>
-<circle cx="657.1" cy="527.2" r="3.0" class="node" data-d="3"><title>kernel.pulse:_rotate  (hop 3)</title></circle>
-<circle cx="569.6" cy="580.3" r="3.7" class="node" data-d="2"><title>loop.live:_notice_and_propose  (hop 2)</title></circle>
-<circle cx="653.0" cy="544.9" r="3.0" class="node" data-d="3"><title>kernel.crystal:applicable  (hop 3)</title></circle>
-<circle cx="707.0" cy="548.1" r="2.2" class="node" data-d="4"><title>kernel.crystal:_load  (hop 4)</title></circle>
-<circle cx="758.8" cy="560.2" r="2.0" class="node" data-d="5"><title>kernel.crystal:_lib_path  (hop 5)</title></circle>
-<circle cx="704.0" cy="559.9" r="2.2" class="node" data-d="4"><title>kernel.crystal:_rested  (hop 4)</title></circle>
-<circle cx="700.2" cy="571.4" r="2.2" class="node" data-d="4"><title>kernel.crystal:_save  (hop 4)</title></circle>
-<circle cx="646.9" cy="562.1" r="3.0" class="node" data-d="3"><title>kernel.crystal:carry_out  (hop 3)</title></circle>
-<circle cx="638.8" cy="578.4" r="3.0" class="node" data-d="3"><title>kernel.crystal:harvest  (hop 3)</title></circle>
-<circle cx="690.8" cy="593.8" r="2.2" class="node" data-d="4"><title>kernel.crystal:name_for  (hop 4)</title></circle>
-<circle cx="685.1" cy="604.5" r="2.2" class="node" data-d="4"><title>kernel.crystal:part_id  (hop 4)</title></circle>
-<circle cx="678.8" cy="614.9" r="2.2" class="node" data-d="4"><title>kernel.unstick:_exp_path  (hop 4)</title></circle>
-<circle cx="629.0" cy="593.7" r="3.0" class="node" data-d="3"><title>kernel.crystal:record_use  (hop 3)</title></circle>
-<circle cx="623.4" cy="600.9" r="3.0" class="node" data-d="3"><title>kernel.impasse:read  (hop 3)</title></circle>
-<circle cx="664.6" cy="634.6" r="2.2" class="node" data-d="4"><title>kernel.impasse:signature  (hop 4)</title></circle>
-<circle cx="617.5" cy="607.8" r="3.0" class="node" data-d="3"><title>kernel.recourse:steps  (hop 3)</title></circle>
-<circle cx="607.8" cy="617.5" r="3.0" class="node" data-d="3"><title>kernel.trust:check  (hop 3)</title></circle>
-<circle cx="648.1" cy="652.4" r="2.2" class="node" data-d="4"><title>kernel.trust:_entry  (hop 4)</title></circle>
-<circle cx="639.2" cy="660.7" r="2.2" class="node" data-d="4"><title>kernel.trust:_load  (hop 4)</title></circle>
-<circle cx="593.7" cy="629.0" r="3.0" class="node" data-d="3"><title>kernel.trust:record  (hop 3)</title></circle>
-<circle cx="629.8" cy="668.3" r="2.2" class="node" data-d="4"><title>kernel.trust:_alert  (hop 4)</title></circle>
-<circle cx="662.3" cy="710.4" r="2.0" class="node" data-d="5"><title>io.notify:call  (hop 5)</title></circle>
-<circle cx="620.0" cy="675.5" r="2.2" class="node" data-d="4"><title>kernel.trust:_save  (hop 4)</title></circle>
-<circle cx="582.3" cy="636.5" r="3.0" class="node" data-d="3"><title>kernel.unstick:check_invariants  (hop 3)</title></circle>
-<circle cx="562.1" cy="646.9" r="3.0" class="node" data-d="3"><title>kernel.unstick:propose  (hop 3)</title></circle>
-<circle cx="599.2" cy="688.0" r="2.2" class="node" data-d="4"><title>kernel.unstick:appliable  (hop 4)</title></circle>
-<circle cx="624.0" cy="735.0" r="2.0" class="node" data-d="5"><title>kernel.knobs:declared  (hop 5)</title></circle>
-<circle cx="588.3" cy="693.4" r="2.2" class="node" data-d="4"><title>kernel.unstick:moves_for  (hop 4)</title></circle>
-<circle cx="610.4" cy="741.7" r="2.0" class="node" data-d="5"><title>kernel.unstick:_rods_that_pass  (hop 5)</title></circle>
-<circle cx="632.5" cy="790.0" r="2.0" class="node" data-d="6"><title>kernel.unstick:is_local  (hop 6)</title></circle>
-<circle cx="577.1" cy="698.1" r="2.2" class="node" data-d="4"><title>kernel.unstick:plants_for  (hop 4)</title></circle>
-<circle cx="565.7" cy="702.2" r="2.2" class="node" data-d="4"><title>kernel.unstick:tried_for  (hop 4)</title></circle>
-<circle cx="540.5" cy="654.2" r="3.0" class="node" data-d="3"><title>kernel.unstick:record  (hop 3)</title></circle>
-<circle cx="554.0" cy="705.6" r="2.2" class="node" data-d="4"><title>kernel.unstick:_load_exp  (hop 4)</title></circle>
-<circle cx="522.7" cy="657.8" r="3.0" class="node" data-d="3"><title>loop.live:_apply_knob  (hop 3)</title></circle>
-<circle cx="530.3" cy="710.4" r="2.2" class="node" data-d="4"><title>kernel.knobs:set  (hop 4)</title></circle>
-<circle cx="552.8" cy="760.4" r="2.0" class="node" data-d="5"><title>kernel.knobs:_key  (hop 5)</title></circle>
-<circle cx="537.8" cy="763.0" r="2.0" class="node" data-d="5"><title>kernel.knobs:_load  (hop 5)</title></circle>
-<circle cx="545.4" cy="815.6" r="2.0" class="node" data-d="6"><title>kernel.knobs:_path  (hop 6)</title></circle>
-<circle cx="522.7" cy="764.7" r="2.0" class="node" data-d="5"><title>kernel.knobs:_save  (hop 5)</title></circle>
-<circle cx="503.0" cy="606.2" r="3.7" class="node" data-d="2" data-r="3"><title>loop.live:_post_for  (hop 2)</title></circle>
-<circle cx="484.9" cy="605.2" r="3.7" class="node" data-d="2" data-r="4"><title>loop.live:_record_outcome  (hop 2)</title></circle>
-<circle cx="486.4" cy="658.8" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:build  (hop 3)</title></circle>
-<circle cx="487.9" cy="712.2" r="2.2" class="node" data-d="4" data-r="4"><title>kernel.cause:classify  (hop 4)</title></circle>
-<circle cx="492.4" cy="765.6" r="2.0" class="node" data-d="5"><title>kernel.cause:_frame_under_aea  (hop 5)</title></circle>
-<circle cx="477.3" cy="764.7" r="2.0" class="node" data-d="5"><title>kernel.cause:_hint  (hop 5)</title></circle>
-<circle cx="469.7" cy="710.4" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_code  (hop 4)</title></circle>
-<circle cx="462.2" cy="763.0" r="2.0" class="node" data-d="5"><title>kernel.grid:code_stamp  (hop 5)</title></circle>
-<circle cx="463.9" cy="655.3" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:write  (hop 3)</title></circle>
-<circle cx="457.8" cy="708.3" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_path  (hop 4)</title></circle>
-<circle cx="446.0" cy="705.6" r="2.2" class="node" data-d="4" data-r="4"><title>kernel.outcomes:require  (hop 4)</title></circle>
-<circle cx="432.5" cy="757.0" r="2.0" class="node" data-d="5"><title>kernel.cause:counts  (hop 5)</title></circle>
-<circle cx="467.2" cy="601.1" r="3.7" class="node" data-d="2" data-r="0"><title>loop.live:now_iso  (hop 2)</title></circle>
-<circle cx="461.4" cy="599.0" r="3.7" class="node" data-d="2" data-r="0"><title>loop.live:run_script  (hop 2)</title></circle>
-<circle cx="437.5" cy="586.0" r="3.7" class="node" data-d="2"><title>loop.live:speak_brief  (hop 2)</title></circle>
-<circle cx="406.3" cy="629.0" r="3.0" class="node" data-d="3"><title>io.speak:speak  (hop 3)</title></circle>
-<circle cx="411.7" cy="693.4" r="2.2" class="node" data-d="4"><title>io.speak:_identity  (hop 4)</title></circle>
-<circle cx="400.8" cy="688.0" r="2.2" class="node" data-d="4"><title>io.speak:edge_available  (hop 4)</title></circle>
-<circle cx="385.1" cy="678.8" r="2.2" class="node" data-d="4"><title>io.speak:edge_speak  (hop 4)</title></circle>
-<circle cx="362.8" cy="727.5" r="2.0" class="node" data-d="5"><title>io.speak:edge_render  (hop 5)</title></circle>
-<circle cx="350.0" cy="719.3" r="2.0" class="node" data-d="5"><title>io.speak:play_mp3  (hop 5)</title></circle>
-<circle cx="320.0" cy="763.2" r="2.0" class="node" data-d="6"><title>io.speak:play_fast  (hop 6)</title></circle>
-<circle cx="370.2" cy="668.3" r="2.2" class="node" data-d="4"><title>io.speak:kokoro_available  (hop 4)</title></circle>
-<circle cx="360.8" cy="660.7" r="2.2" class="node" data-d="4"><title>io.speak:kokoro_render  (hop 4)</title></circle>
-<circle cx="326.0" cy="700.8" r="2.0" class="node" data-d="5"><title>io.speak:_engine  (hop 5)</title></circle>
-<circle cx="351.9" cy="652.4" r="2.2" class="node" data-d="4"><title>io.speak:play_wav  (hop 4)</title></circle>
-<circle cx="343.4" cy="643.7" r="2.2" class="node" data-d="4"><title>io.speak:sapi_speak  (hop 4)</title></circle>
-<circle cx="417.7" cy="567.3" r="3.7" class="node" data-d="2"><title>loop.live:today  (hop 2)</title></circle>
-<circle cx="414.0" cy="562.5" r="3.7" class="node viadisp" data-d="2"><title>loop.live:_brief_mtime  (hop 2)</title></circle>
-<circle cx="410.6" cy="557.5" r="3.7" class="node viadisp" data-d="2"><title>loop.live:_reflections  (hop 2)</title></circle>
-<circle cx="449.0" cy="515.0" r="4.5" class="node" data-d="1" data-r="1"><title>loop.live:choose_action  (hop 1)</title></circle>
-<circle cx="406.0" cy="549.6" r="3.7" class="node" data-d="2" data-r="1"><title>kernel.decide:choose  (hop 2)</title></circle>
-<circle cx="361.2" cy="578.4" r="3.0" class="node" data-d="3" data-r="1"><title>kernel.decide:latest  (hop 3)</title></circle>
-<circle cx="314.9" cy="604.5" r="2.2" class="node" data-d="4"><title>kernel.decide:_finite  (hop 4)</title></circle>
-<circle cx="356.9" cy="570.3" r="3.0" class="node" data-d="3" data-r="2"><title>kernel.decide:parse  (hop 3)</title></circle>
-<circle cx="402.1" cy="541.4" r="3.7" class="node" data-d="2" data-r="2"><title>kernel.decide:explain  (hop 2)</title></circle>
-<circle cx="398.9" cy="532.8" r="3.7" class="node" data-d="2"><title>kernel.grid:append_jsonl  (hop 2)</title></circle>
-<circle cx="349.8" cy="553.6" r="3.0" class="node" data-d="3"><title>kernel.grid:_state  (hop 3)</title></circle>
-<circle cx="347.0" cy="544.9" r="3.0" class="node" data-d="3"><title>kernel.grid:file_lock  (hop 3)</title></circle>
-<circle cx="395.8" cy="521.1" r="3.7" class="node" data-d="2" data-r="4"><title>kernel.outcomes:suppressed  (hop 2)</title></circle>
-<circle cx="344.7" cy="536.1" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:read  (hop 3)</title></circle>
-<circle cx="342.9" cy="527.2" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:verdict_for  (hop 3)</title></circle>
-<circle cx="290.5" cy="536.2" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_base  (hop 4)</title></circle>
-<circle cx="394.4" cy="512.1" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_fallback_ladder  (hop 2)</title></circle>
-<circle cx="393.9" cy="506.1" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_ladder_would_say  (hop 2)</title></circle>
-<circle cx="451.0" cy="479.3" r="4.5" class="node" data-d="1"><title>loop.aea:tick  (hop 1)</title></circle>
-<circle cx="393.7" cy="500.0" r="3.7" class="node" data-d="2"><title>loop.aea:_moves  (hop 2)</title></circle>
-<circle cx="395.8" cy="478.9" r="3.7" class="node" data-d="2"><title>loop.aea:core  (hop 2)</title></circle>
-<circle cx="343.7" cy="468.3" r="3.0" class="node" data-d="3"><title>energy.energy:draw  (hop 3)</title></circle>
-<circle cx="287.8" cy="487.9" r="2.2" class="node" data-d="4"><title>energy.energy:_cooling  (hop 4)</title></circle>
-<circle cx="288.8" cy="475.8" r="2.2" class="node" data-d="4"><title>energy.energy:_record_use  (hop 4)</title></circle>
-<circle cx="236.0" cy="469.7" r="2.0" class="node" data-d="5"><title>energy.energy:_save_usage  (hop 5)</title></circle>
-<circle cx="290.5" cy="463.8" r="2.2" class="node" data-d="4"><title>energy.energy:_retire  (hop 4)</title></circle>
-<circle cx="293.0" cy="451.9" r="2.2" class="node" data-d="4"><title>energy.rodprobe:facts  (hop 4)</title></circle>
-<circle cx="241.2" cy="439.8" r="2.0" class="node" data-d="5"><title>energy.rodprobe:load  (hop 5)</title></circle>
-<circle cx="296.0" cy="440.1" r="2.2" class="node" data-d="4"><title>kernel.grid:call_openai  (hop 4)</title></circle>
-<circle cx="245.0" cy="425.1" r="2.0" class="node" data-d="5"><title>kernel.grid:_read_stream  (hop 5)</title></circle>
-<circle cx="194.1" cy="410.2" r="2.0" class="node" data-d="6"><title>kernel.grid:_merge_tool_calls  (hop 6)</title></circle>
-<circle cx="299.8" cy="428.6" r="2.2" class="node" data-d="4"><title>kernel.grid:own_params  (hop 4)</title></circle>
-<circle cx="249.7" cy="410.7" r="2.0" class="node" data-d="5"><title>kernel.grid:_rod_facts  (hop 5)</title></circle>
-<circle cx="402.1" cy="458.6" r="3.7" class="node" data-d="2" data-r="2"><title>loop.aea:move_from  (hop 2)</title></circle>
-<circle cx="404.6" cy="453.1" r="3.7" class="node" data-d="2"><title>loop.aea:sense  (hop 2)</title></circle>
-<circle cx="407.5" cy="447.7" r="3.7" class="node" data-d="2"><title>loop.aea:standing  (hop 2)</title></circle>
+<circle cx="695.8" cy="320.3" r="2.0" class="node viadisp" data-d="5"><title>kernel.egress:spend  (hop 5)</title></circle>
+<circle cx="705.7" cy="331.8" r="2.0" class="node viadisp" data-d="5"><title>kernel.hands:fence  (hop 5)</title></circle>
+<circle cx="672.0" cy="375.1" r="2.2" class="node" data-d="4"><title>kernel.dispatch:topics  (hop 4)</title></circle>
+<circle cx="634.1" cy="413.8" r="3.0" class="node viadisp" data-d="3" data-r="3"><title>kernel.hands:_my_record  (hop 3)</title></circle>
+<circle cx="678.8" cy="385.1" r="2.2" class="node viadisp" data-d="4"><title>kernel.outcomes:tally  (hop 4)</title></circle>
+<circle cx="638.8" cy="421.6" r="3.0" class="node viadisp" data-d="3" data-r="3"><title>kernel.hands:_read_state  (hop 3)</title></circle>
+<circle cx="685.1" cy="395.5" r="2.2" class="node viadisp" data-d="4"><title>kernel.hands:_window  (hop 4)</title></circle>
+<circle cx="643.1" cy="429.7" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_self_map  (hop 3)</title></circle>
+<circle cx="690.8" cy="406.2" r="2.2" class="node viadisp" data-d="4"><title>kernel.laws:text  (hop 4)</title></circle>
+<circle cx="646.9" cy="437.9" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_web_fetch  (hop 3)</title></circle>
+<circle cx="650.2" cy="446.4" r="3.0" class="node viadisp" data-d="3"><title>kernel.hands:_web_search  (hop 3)</title></circle>
+<circle cx="653.0" cy="455.1" r="3.0" class="node viadisp" data-d="3" data-r="3"><title>kernel.hands:_what_to_try  (hop 3)</title></circle>
+<circle cx="604.2" cy="478.9" r="3.7" class="node" data-d="2" data-r="5"><title>kernel.perceive:record  (hop 2)</title></circle>
+<circle cx="655.3" cy="463.9" r="3.0" class="node" data-d="3"><title>kernel.perceive:_path  (hop 3)</title></circle>
+<circle cx="657.1" cy="472.8" r="3.0" class="node" data-d="3" data-r="5"><title>kernel.perceive:read  (hop 3)</title></circle>
+<circle cx="605.6" cy="487.9" r="3.7" class="node" data-d="2"><title>kernel.pulse:emit  (hop 2)</title></circle>
+<circle cx="658.4" cy="481.8" r="3.0" class="node" data-d="3"><title>kernel.pulse:_rotate  (hop 3)</title></circle>
+<circle cx="589.4" cy="557.5" r="3.7" class="node" data-d="2"><title>loop.live:_notice_and_propose  (hop 2)</title></circle>
+<circle cx="659.4" cy="500.0" r="3.0" class="node" data-d="3"><title>kernel.crystal:applicable  (hop 3)</title></circle>
+<circle cx="712.2" cy="487.9" r="2.2" class="node" data-d="4"><title>kernel.crystal:_load  (hop 4)</title></circle>
+<circle cx="765.3" cy="484.8" r="2.0" class="node" data-d="5"><title>kernel.crystal:_lib_path  (hop 5)</title></circle>
+<circle cx="712.6" cy="500.0" r="2.2" class="node" data-d="4"><title>kernel.crystal:_rested  (hop 4)</title></circle>
+<circle cx="712.2" cy="512.1" r="2.2" class="node" data-d="4"><title>kernel.crystal:_save  (hop 4)</title></circle>
+<circle cx="658.4" cy="518.2" r="3.0" class="node" data-d="3"><title>kernel.crystal:carry_out  (hop 3)</title></circle>
+<circle cx="655.3" cy="536.1" r="3.0" class="node" data-d="3"><title>kernel.crystal:harvest  (hop 3)</title></circle>
+<circle cx="709.5" cy="536.2" r="2.2" class="node" data-d="4"><title>kernel.crystal:name_for  (hop 4)</title></circle>
+<circle cx="707.0" cy="548.1" r="2.2" class="node" data-d="4"><title>kernel.crystal:part_id  (hop 4)</title></circle>
+<circle cx="704.0" cy="559.9" r="2.2" class="node" data-d="4"><title>kernel.unstick:_exp_path  (hop 4)</title></circle>
+<circle cx="650.2" cy="553.6" r="3.0" class="node" data-d="3"><title>kernel.crystal:record_use  (hop 3)</title></circle>
+<circle cx="646.9" cy="562.1" r="3.0" class="node" data-d="3"><title>kernel.impasse:read  (hop 3)</title></circle>
+<circle cx="695.8" cy="582.7" r="2.2" class="node" data-d="4"><title>kernel.impasse:signature  (hop 4)</title></circle>
+<circle cx="643.1" cy="570.3" r="3.0" class="node" data-d="3"><title>kernel.recourse:steps  (hop 3)</title></circle>
+<circle cx="636.5" cy="582.3" r="3.0" class="node" data-d="3"><title>kernel.trust:check  (hop 3)</title></circle>
+<circle cx="685.1" cy="604.5" r="2.2" class="node" data-d="4"><title>kernel.trust:_entry  (hop 4)</title></circle>
+<circle cx="678.8" cy="614.9" r="2.2" class="node" data-d="4"><title>kernel.trust:_load  (hop 4)</title></circle>
+<circle cx="626.3" cy="597.4" r="3.0" class="node" data-d="3"><title>kernel.trust:record  (hop 3)</title></circle>
+<circle cx="672.0" cy="624.9" r="2.2" class="node" data-d="4"><title>kernel.trust:_alert  (hop 4)</title></circle>
+<circle cx="715.0" cy="656.2" r="2.0" class="node" data-d="5"><title>io.notify:call  (hop 5)</title></circle>
+<circle cx="664.6" cy="634.6" r="2.2" class="node" data-d="4"><title>kernel.trust:_save  (hop 4)</title></circle>
+<circle cx="617.5" cy="607.8" r="3.0" class="node" data-d="3"><title>kernel.unstick:check_invariants  (hop 3)</title></circle>
+<circle cx="600.9" cy="623.4" r="3.0" class="node" data-d="3"><title>kernel.unstick:propose  (hop 3)</title></circle>
+<circle cx="648.1" cy="652.4" r="2.2" class="node" data-d="4"><title>kernel.unstick:appliable  (hop 4)</title></circle>
+<circle cx="685.2" cy="690.6" r="2.0" class="node" data-d="5"><title>kernel.knobs:declared  (hop 5)</title></circle>
+<circle cx="639.2" cy="660.7" r="2.2" class="node" data-d="4"><title>kernel.unstick:moves_for  (hop 4)</title></circle>
+<circle cx="674.0" cy="700.8" r="2.0" class="node" data-d="5"><title>kernel.unstick:_rods_that_pass  (hop 5)</title></circle>
+<circle cx="708.8" cy="741.0" r="2.0" class="node" data-d="6"><title>kernel.unstick:is_local  (hop 6)</title></circle>
+<circle cx="629.8" cy="668.3" r="2.2" class="node" data-d="4"><title>kernel.unstick:plants_for  (hop 4)</title></circle>
+<circle cx="620.0" cy="675.5" r="2.2" class="node" data-d="4"><title>kernel.unstick:tried_for  (hop 4)</title></circle>
+<circle cx="582.3" cy="636.5" r="3.0" class="node" data-d="3"><title>kernel.unstick:record  (hop 3)</title></circle>
+<circle cx="609.8" cy="682.0" r="2.2" class="node" data-d="4"><title>kernel.unstick:_load_exp  (hop 4)</title></circle>
+<circle cx="566.2" cy="645.0" r="3.0" class="node" data-d="3"><title>loop.live:_apply_knob  (hop 3)</title></circle>
+<circle cx="588.3" cy="693.4" r="2.2" class="node" data-d="4"><title>kernel.knobs:set  (hop 4)</title></circle>
+<circle cx="624.0" cy="735.0" r="2.0" class="node" data-d="5"><title>kernel.knobs:_key  (hop 5)</title></circle>
+<circle cx="610.4" cy="741.7" r="2.0" class="node" data-d="5"><title>kernel.knobs:_load  (hop 5)</title></circle>
+<circle cx="632.5" cy="790.0" r="2.0" class="node" data-d="6"><title>kernel.knobs:_path  (hop 6)</title></circle>
+<circle cx="596.4" cy="747.6" r="2.0" class="node" data-d="5"><title>kernel.knobs:_save  (hop 5)</title></circle>
+<circle cx="532.8" cy="601.1" r="3.7" class="node" data-d="2" data-r="3"><title>loop.live:_post_for  (hop 2)</title></circle>
+<circle cx="515.1" cy="605.2" r="3.7" class="node" data-d="2" data-r="4"><title>loop.live:_record_outcome  (hop 2)</title></circle>
+<circle cx="531.7" cy="656.3" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:build  (hop 3)</title></circle>
+<circle cx="548.1" cy="707.0" r="2.2" class="node" data-d="4" data-r="4"><title>kernel.cause:classify  (hop 4)</title></circle>
+<circle cx="567.5" cy="757.0" r="2.0" class="node" data-d="5"><title>kernel.cause:_frame_under_aea  (hop 5)</title></circle>
+<circle cx="552.8" cy="760.4" r="2.0" class="node" data-d="5"><title>kernel.cause:_hint  (hop 5)</title></circle>
+<circle cx="530.3" cy="710.4" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_code  (hop 4)</title></circle>
+<circle cx="537.8" cy="763.0" r="2.0" class="node" data-d="5"><title>kernel.grid:code_stamp  (hop 5)</title></circle>
+<circle cx="509.1" cy="659.2" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:write  (hop 3)</title></circle>
+<circle cx="518.2" cy="711.8" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_path  (hop 4)</title></circle>
+<circle cx="506.1" cy="712.5" r="2.2" class="node" data-d="4" data-r="4"><title>kernel.outcomes:require  (hop 4)</title></circle>
+<circle cx="507.6" cy="765.6" r="2.0" class="node" data-d="5"><title>kernel.cause:counts  (hop 5)</title></circle>
+<circle cx="497.0" cy="606.2" r="3.7" class="node" data-d="2" data-r="0"><title>loop.live:now_iso  (hop 2)</title></circle>
+<circle cx="490.9" cy="605.9" r="3.7" class="node" data-d="2" data-r="0"><title>loop.live:run_script  (hop 2)</title></circle>
+<circle cx="464.3" cy="600.1" r="3.7" class="node" data-d="2"><title>loop.live:speak_brief  (hop 2)</title></circle>
+<circle cx="446.4" cy="650.2" r="3.0" class="node" data-d="3"><title>io.speak:speak  (hop 3)</title></circle>
+<circle cx="469.7" cy="710.4" r="2.2" class="node" data-d="4"><title>io.speak:_identity  (hop 4)</title></circle>
+<circle cx="457.8" cy="708.3" r="2.2" class="node" data-d="4"><title>io.speak:edge_available  (hop 4)</title></circle>
+<circle cx="440.1" cy="704.0" r="2.2" class="node" data-d="4"><title>io.speak:edge_speak  (hop 4)</title></circle>
+<circle cx="432.5" cy="757.0" r="2.0" class="node" data-d="5"><title>io.speak:edge_render  (hop 5)</title></circle>
+<circle cx="417.9" cy="752.7" r="2.0" class="node" data-d="5"><title>io.speak:play_mp3  (hop 5)</title></circle>
+<circle cx="401.5" cy="803.3" r="2.0" class="node" data-d="6"><title>io.speak:play_fast  (hop 6)</title></circle>
+<circle cx="422.9" cy="698.1" r="2.2" class="node" data-d="4"><title>io.speak:kokoro_available  (hop 4)</title></circle>
+<circle cx="411.7" cy="693.4" r="2.2" class="node" data-d="4"><title>io.speak:kokoro_render  (hop 4)</title></circle>
+<circle cx="389.6" cy="741.7" r="2.0" class="node" data-d="5"><title>io.speak:_engine  (hop 5)</title></circle>
+<circle cx="400.8" cy="688.0" r="2.2" class="node" data-d="4"><title>io.speak:play_wav  (hop 4)</title></circle>
+<circle cx="390.2" cy="682.0" r="2.2" class="node" data-d="4"><title>io.speak:sapi_speak  (hop 4)</title></circle>
+<circle cx="440.0" cy="587.7" r="3.7" class="node" data-d="2"><title>loop.live:today  (hop 2)</title></circle>
+<circle cx="435.1" cy="584.2" r="3.7" class="node viadisp" data-d="2"><title>loop.live:_brief_mtime  (hop 2)</title></circle>
+<circle cx="430.4" cy="580.3" r="3.7" class="node viadisp" data-d="2"><title>loop.live:_reflections  (hop 2)</title></circle>
+<circle cx="455.3" cy="528.7" r="4.5" class="node" data-d="1" data-r="1"><title>loop.live:choose_action  (hop 1)</title></circle>
+<circle cx="423.8" cy="574.1" r="3.7" class="node" data-d="2" data-r="1"><title>kernel.decide:choose  (hop 2)</title></circle>
+<circle cx="388.9" cy="614.3" r="3.0" class="node" data-d="3" data-r="1"><title>kernel.decide:latest  (hop 3)</title></circle>
+<circle cx="351.9" cy="652.4" r="2.2" class="node" data-d="4"><title>kernel.decide:_finite  (hop 4)</title></circle>
+<circle cx="382.5" cy="607.8" r="3.0" class="node" data-d="3" data-r="2"><title>kernel.decide:parse  (hop 3)</title></circle>
+<circle cx="417.7" cy="567.3" r="3.7" class="node" data-d="2" data-r="2"><title>kernel.decide:explain  (hop 2)</title></circle>
+<circle cx="412.3" cy="560.0" r="3.7" class="node" data-d="2"><title>kernel.grid:append_jsonl  (hop 2)</title></circle>
+<circle cx="371.0" cy="593.7" r="3.0" class="node" data-d="3"><title>kernel.grid:_state  (hop 3)</title></circle>
+<circle cx="365.9" cy="586.2" r="3.0" class="node" data-d="3"><title>kernel.grid:file_lock  (hop 3)</title></circle>
+<circle cx="406.0" cy="549.6" r="3.7" class="node" data-d="2" data-r="4"><title>kernel.outcomes:suppressed  (hop 2)</title></circle>
+<circle cx="361.2" cy="578.4" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:read  (hop 3)</title></circle>
+<circle cx="356.9" cy="570.3" r="3.0" class="node" data-d="3" data-r="4"><title>kernel.outcomes:verdict_for  (hop 3)</title></circle>
+<circle cx="309.2" cy="593.8" r="2.2" class="node" data-d="4"><title>kernel.outcomes:_base  (hop 4)</title></circle>
+<circle cx="402.1" cy="541.4" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_fallback_ladder  (hop 2)</title></circle>
+<circle cx="399.9" cy="535.7" r="3.7" class="node" data-d="2" data-r="1"><title>loop.live:_ladder_would_say  (hop 2)</title></circle>
+<circle cx="448.6" cy="486.5" r="4.5" class="node" data-d="1"><title>loop.aea:tick  (hop 1)</title></circle>
+<circle cx="398.0" cy="529.9" r="3.7" class="node" data-d="2"><title>loop.aea:_moves  (hop 2)</title></circle>
+<circle cx="394.1" cy="509.1" r="3.7" class="node" data-d="2"><title>loop.aea:core  (hop 2)</title></circle>
+<circle cx="341.2" cy="513.6" r="3.0" class="node" data-d="3"><title>energy.energy:draw  (hop 3)</title></circle>
+<circle cx="293.0" cy="548.1" r="2.2" class="node" data-d="4"><title>energy.energy:_cooling  (hop 4)</title></circle>
+<circle cx="290.5" cy="536.2" r="2.2" class="node" data-d="4"><title>energy.energy:_record_use  (hop 4)</title></circle>
+<circle cx="238.2" cy="545.3" r="2.0" class="node" data-d="5"><title>energy.energy:_save_usage  (hop 5)</title></circle>
+<circle cx="288.8" cy="524.2" r="2.2" class="node" data-d="4"><title>energy.energy:_retire  (hop 4)</title></circle>
+<circle cx="287.8" cy="512.1" r="2.2" class="node" data-d="4"><title>energy.rodprobe:facts  (hop 4)</title></circle>
+<circle cx="234.7" cy="515.2" r="2.0" class="node" data-d="5"><title>energy.rodprobe:load  (hop 5)</title></circle>
+<circle cx="287.4" cy="500.0" r="2.2" class="node" data-d="4"><title>kernel.grid:call_openai  (hop 4)</title></circle>
+<circle cx="234.3" cy="500.0" r="2.0" class="node" data-d="5"><title>kernel.grid:_read_stream  (hop 5)</title></circle>
+<circle cx="181.1" cy="500.0" r="2.0" class="node" data-d="6"><title>kernel.grid:_merge_tool_calls  (hop 6)</title></circle>
+<circle cx="287.8" cy="487.9" r="2.2" class="node" data-d="4"><title>kernel.grid:own_params  (hop 4)</title></circle>
+<circle cx="234.7" cy="484.8" r="2.0" class="node" data-d="5"><title>kernel.grid:_rod_facts  (hop 5)</title></circle>
+<circle cx="394.4" cy="487.9" r="3.7" class="node" data-d="2" data-r="2"><title>loop.aea:move_from  (hop 2)</title></circle>
+<circle cx="395.3" cy="481.9" r="3.7" class="node" data-d="2"><title>loop.aea:sense  (hop 2)</title></circle>
+<circle cx="401.0" cy="461.4" r="3.7" class="node" data-d="2"><title>loop.aea:standing  (hop 2)</title></circle>
+<circle cx="349.8" cy="446.4" r="3.0" class="node" data-d="3"><title>kernel.egress:state  (hop 3)</title></circle>
+<circle cx="293.0" cy="451.9" r="2.2" class="node" data-d="4"><title>kernel.egress:_load  (hop 4)</title></circle>
+<circle cx="241.2" cy="439.8" r="2.0" class="node" data-d="5"><title>kernel.egress:_path  (hop 5)</title></circle>
+<circle cx="296.0" cy="440.1" r="2.2" class="node" data-d="4"><title>kernel.egress:_stop_path  (hop 4)</title></circle>
+<circle cx="299.8" cy="428.6" r="2.2" class="node" data-d="4"><title>kernel.egress:_window  (hop 4)</title></circle>
+<circle cx="304.2" cy="417.3" r="2.2" class="node" data-d="4"><title>kernel.egress:allow  (hop 4)</title></circle>
+<circle cx="309.2" cy="406.2" r="2.2" class="node" data-d="4"><title>kernel.egress:budget  (hop 4)</title></circle>
+<circle cx="261.5" cy="382.8" r="2.0" class="node" data-d="5"><title>kernel.egress:bits_per_dispatch  (hop 5)</title></circle>
 <circle cx="361.2" cy="421.6" r="3.0" class="node" data-d="3"><title>kernel.impasse:scan  (hop 3)</title></circle>
 <circle cx="410.6" cy="442.5" r="3.7" class="node" data-d="2"><title>loop.aea:structure  (hop 2)</title></circle>
 <circle cx="365.9" cy="413.8" r="3.0" class="node" data-d="3"><title>kernel.grid:key  (hop 3)</title></circle>
@@ -519,24 +524,24 @@
 <circle cx="490.9" cy="394.1" r="3.7" class="node" data-d="2"><title>mind.orchestrator:load_pool  (hop 2)</title></circle>
 <circle cx="497.0" cy="393.8" r="3.7" class="node" data-d="2"><title>server.controlroom:main  (hop 2)</title></circle>
 <text x="515" y="370" class="lbl" text-anchor="start" transform="rotate(-83 515 370)">main</text>
-<text x="606" y="577" class="lbl" text-anchor="start" transform="rotate(36 606 577)">tick</text>
-<text x="374" y="537" class="lbl" text-anchor="end" transform="rotate(344 374 537)">choose_action</text>
-<text x="379" y="449" class="lbl" text-anchor="end" transform="rotate(23 379 449)">tick</text>
+<text x="616" y="561" class="lbl" text-anchor="start" transform="rotate(28 616 561)">tick</text>
+<text x="390" y="571" class="lbl" text-anchor="end" transform="rotate(327 390 571)">choose_action</text>
+<text x="373" y="467" class="lbl" text-anchor="end" transform="rotate(15 373 467)">tick</text>
 <text x="432" y="388" class="lbl" text-anchor="end" transform="rotate(59 432 388)">main</text>
 <text x="478" y="371" class="lbl" text-anchor="end" transform="rotate(80 478 371)">VIA-IMPORT</text>
 <circle cx="500" cy="500" r="15" class="halo"/>
 <text x="500" y="474" class="rootlbl" text-anchor="middle">THE WAKE</text>
 </svg>
-<p id="cap" aria-live="polite" aria-atomic="true">HOP 7 — 1 function arrive — 178 of 178 reachable — first reach into -</p>
+<p id="cap" aria-live="polite" aria-atomic="true">HOP 7 — 1 function arrive — 179 of 179 reachable — first reach into -</p>
 </div></div>
 <div class="legend">
 <span><i style="background:#fff;box-shadow:0 0 0 2px var(--amber)"></i>the wake — where every
  tick begins</span>
 <span><i style="background:var(--amber)"></i>reached in 1–2 calls</span>
 <span><i style="background:var(--brass)"></i>reachable</span>
-<span><i style="background:#0a0c0e;box-shadow:0 0 0 1.4px #6d757e"></i>31
+<span><i style="background:#0a0c0e;box-shadow:0 0 0 1.4px #6d757e"></i>22
  reached only through a dispatch table</span>
-<span><i style="background:#1b1f24"></i>1241 functions it cannot reach</span>
+<span><i style="background:#1b1f24"></i>1247 functions it cannot reach</span>
 </div>
 </div>
 
@@ -544,13 +549,13 @@
 <p class="deck">The picture above, as three numbers. This is the whole claim of the page in its smallest form.</p>
 <div class="grid">
 <div class="card"><div class="cap">reachable from the wake</div>
- <div class="big">178<em> / 1419 functions</em></div>
- <div class="src">147 by a call edge, 31 only through a dispatch
+ <div class="big">179<em> / 1426 functions</em></div>
+ <div class="src">157 by a call edge, 22 only through a dispatch
  table (drawn hollow). aea/tooling/assembly.py. The second number was 0 until the scanner learned
  that a function referenced in a table has no call site &mdash; they were reported dead while
  running.</div></div>
 <div class="card"><div class="cap">modules</div><div class="big">179</div>
- <div class="src">348 calls unresolvable statically, not counted as edges</div></div>
+ <div class="src">363 calls unresolvable statically, not counted as edges</div></div>
 <div class="card"><div class="cap">frontier rods</div><div class="big">16<em> / 95</em></div>
  <div class="src">state/capability_census.json — no-ceiling/v2</div></div>
 </div>
@@ -590,7 +595,7 @@ chose. It is the order the parts are allowed to arrive in.</p>
 below is <b>two claims wearing one name</b>: a power it gains, and a bound on the hazard that power
 creates. A subsystem is only online when both have been shown &mdash; and every number under it is
 telemetry. Nobody has seen the spacecraft; there are only the signals it sent back.</p>
-<div class="climbwrap"><p class="youare"><b>7 of 12 online.</b> The climb stops at <b>R4b</b> &mdash; It could look outside the machine. Everything above that line is named so that nobody arrives at it by accident.</p><nav id="crail" aria-label="step through the subsystems"><button data-c="0" aria-current="false" data-st="proven">R0</button><button data-c="1" aria-current="false" data-st="proven">R1</button><button data-c="2" aria-current="false" data-st="proven">R1.5</button><button data-c="3" aria-current="false" data-st="proven">R2</button><button data-c="4" aria-current="false" data-st="proven">R3</button><button data-c="5" aria-current="false" data-st="proven">R4a</button><button data-c="6" aria-current="step" data-st="partial">R4b</button><button data-c="7" aria-current="false" data-st="future">R5</button><button data-c="8" aria-current="false" data-st="future">R6</button><button data-c="9" aria-current="false" data-st="future">R7</button><button data-c="10" aria-current="false" data-st="future">R8</button><button data-c="11" aria-current="false" data-st="future">R9</button></nav><ol id="climb" data-frame="6" data-rest="6"><li class="layer" data-k="0" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R0</span><span class="rhuman">It is still running tomorrow</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE LOOP SURVIVES</p><p class="rplain">Before anything can think, it has to still be there tomorrow. This rung is only about staying alive across being switched off - it adds no ability at all, and it is first because everything above it is worthless without it.</p><p class="rev">10.3 days unbroken, 188 ticks, 0 crashes - the gate is 3 days</p></div></li><li class="layer" data-k="1" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R1</span><span class="rhuman">The part that thinks is listened to</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS READ</p><p class="rplain">There were two loops here: one that thought and could not act, one that acted and could not think. This rung is the wire between them - the thinking loop&#x27;s answer is now read first. It is a small change and it is the moment deliberation stopped being decoration.</p><p class="rev">85 of 88 comparable ticks chose differently from the fallback ladder. The original gate was unsatisfiable - it asked for an action the fallback could not produce - and was restated as this one.</p></div></li><li class="layer" data-k="2" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R1.5</span><span class="rhuman">Nothing is lost in translation</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS PARSED</p><p class="rplain">Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.</p><p class="rev">108 parses, 3 receipts, 0 swallowed</p></div></li><li class="layer" data-k="3" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R2</span><span class="rhuman">It can actually press a button</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS A TOOL CALL</p><p class="rplain">An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.</p><p class="rev">35 invocations across 3 tools - the gate asked for 20 and 3. A fourth requirement, 8 distinct situations, was moved up to R4 on 2026-08-02: this rung has no mechanism to produce situation variety, so it could not have earned it.</p></div></li><li class="layer" data-k="4" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R3</span><span class="rhuman">It remembers whether that worked</span><span class="rstat s-proven">PROVEN (ONE ARM)</span></div><p class="rtitle">THE OUTCOME IS REMEMBERED</p><p class="rplain">Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.</p><p class="rev">125 graded outcomes, 23 not repeated. Bound: PASS over 70 paired witnesses, all of them on stored predictions. The other half of the bound - tool outcomes - has 0 pairs and is untested; nothing has driven traffic through it yet.</p></div></li><li class="layer" data-k="5" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R4a</span><span class="rhuman">It picks what to look at next</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">PERCEPTION IS A CHOICE</p><p class="rplain">Fixed inputs are not perception. This is the step where what the system examines becomes something it decided - and it is deliberately the LOCAL half, because a system can choose what to look at long before it should be allowed to look outside the machine.</p><p class="rev">20 looks chosen by the entity, 11 carried a reason, 8 changed what it examined, 3 distinct things looked at</p></div></li><li class="layer" data-k="6" data-st="partial"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R4b</span><span class="rhuman">It could look outside the machine</span><span class="rstat s-partial">PARTIAL</span></div><p class="rtitle">PERCEPTION REACHES THE WORLD</p><p class="rplain">This is the first point at which something can leave the machine because the system decided it should. Four seats refused the obvious design unanimously, three times, and were right each time: the request itself is the way data gets out, and a call budget limits the number of doors rather than what fits through one.</p><p class="rev">Nothing the system chose has left the machine. The outbound path ran 16 times without opening a socket - it returns the request it WOULD have sent - and nothing leaked, across 0 bits of selection channel. Separately, a probe run by a person - never the entity - opened real sockets and fetched 4/5 topics, to show something is behind the door. The last condition is not a number: four reviewers refused this design three times, and have not been asked again about the version that now exists.</p></div></li><li class="layer" data-k="7" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R5</span><span class="rhuman">It can be wrong on purpose, and find out</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">RESEARCH</p><p class="rplain">A summary cannot be wrong, which is exactly why it cannot be useful. Research means committing to something that reality is allowed to kill - so the test of this rung is not what it found, it is whether it ever admitted being wrong.</p><p class="rwait">not started &mdash; waiting on R4 (egress) and R3 (storing what came back)</p></div></li><li class="layer" data-k="8" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R6</span><span class="rhuman">It connects things it remembers</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">REFLECTION</p><p class="rplain">Storage and recall already work. This is the step where something notices what several memories mean together - and the hard requirement is that the new thought keeps a thread back to what produced it.</p><p class="rwait">not started &mdash; waiting on R5 (material worth linking)</p></div></li><li class="layer" data-k="9" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R7</span><span class="rhuman">It argues with itself before acting</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">THE COUNCIL ON ITS OWN PLANS</p><p class="rplain">This is what it means for a system to be able to disagree with itself. It is also the easiest thing in the whole ladder to fake, because a review that always approves looks exactly like a review that is never needed.</p><p class="rwait">not started &mdash; waiting on R3 through R6 running with a track record</p></div></li><li class="layer" data-k="10" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R8</span><span class="rhuman">It starts things nobody asked for</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">THE DRIVE</p><p class="rplain">Wanting something is not a feature you add; it is a target you can be tricked by. This rung stays shut, and the reason it stays shut is that nobody has solved it - not this project and not the published literature.</p><p class="rwait">not started &mdash; waiting on an unsolved research problem, not code</p></div></li><li class="layer" data-k="11" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R9</span><span class="rhuman">It rewires itself</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">SELF-MODIFICATION</p><p class="rplain">The top of the ladder, named here so that nobody arrives at it by accident. It is listed as closed rather than omitted, because a ladder that stops before its last rung invites someone to assume there is nothing above.</p><p class="rwait">not started &mdash; waiting on every rung below it, and a statable hazard</p></div></li></ol></div>
+<div class="climbwrap"><p class="youare"><b>7 of 12 online.</b> The climb stops at <b>R4b</b> &mdash; It could look outside the machine. Everything above that line is named so that nobody arrives at it by accident.</p><nav id="crail" aria-label="step through the subsystems"><button data-c="0" aria-current="false" data-st="proven">R0</button><button data-c="1" aria-current="false" data-st="proven">R1</button><button data-c="2" aria-current="false" data-st="proven">R1.5</button><button data-c="3" aria-current="false" data-st="proven">R2</button><button data-c="4" aria-current="false" data-st="proven">R3</button><button data-c="5" aria-current="false" data-st="proven">R4a</button><button data-c="6" aria-current="step" data-st="partial">R4b</button><button data-c="7" aria-current="false" data-st="future">R5</button><button data-c="8" aria-current="false" data-st="future">R6</button><button data-c="9" aria-current="false" data-st="future">R7</button><button data-c="10" aria-current="false" data-st="future">R8</button><button data-c="11" aria-current="false" data-st="future">R9</button></nav><ol id="climb" data-frame="6" data-rest="6"><li class="layer" data-k="0" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R0</span><span class="rhuman">It is still running tomorrow</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE LOOP SURVIVES</p><p class="rplain">Before anything can think, it has to still be there tomorrow. This rung is only about staying alive across being switched off - it adds no ability at all, and it is first because everything above it is worthless without it.</p><p class="rev">10.3 days unbroken, 188 ticks, 0 crashes - the gate is 3 days</p></div></li><li class="layer" data-k="1" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R1</span><span class="rhuman">The part that thinks is listened to</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS READ</p><p class="rplain">There were two loops here: one that thought and could not act, one that acted and could not think. This rung is the wire between them - the thinking loop&#x27;s answer is now read first. It is a small change and it is the moment deliberation stopped being decoration.</p><p class="rev">220 of 228 comparable ticks chose differently from the fallback ladder. The original gate was unsatisfiable - it asked for an action the fallback could not produce - and was restated as this one.</p></div></li><li class="layer" data-k="2" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R1.5</span><span class="rhuman">Nothing is lost in translation</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS PARSED</p><p class="rplain">Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.</p><p class="rev">248 parses, 3 receipts, 0 swallowed</p></div></li><li class="layer" data-k="3" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R2</span><span class="rhuman">It can actually press a button</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">THE DECISION IS A TOOL CALL</p><p class="rplain">An intention is a sentence, and nothing can execute a sentence. This rung turns a decision into an instruction a machine actually carries out - and at the same time puts a wall between what the system says and what it is allowed to hand to a tool.</p><p class="rev">112 invocations across 5 tools - the gate asked for 20 and 3. A fourth requirement, 8 distinct situations, was moved up to R4 on 2026-08-02: this rung has no mechanism to produce situation variety, so it could not have earned it.</p></div></li><li class="layer" data-k="4" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R3</span><span class="rhuman">It remembers whether that worked</span><span class="rstat s-proven">PROVEN (ONE ARM)</span></div><p class="rtitle">THE OUTCOME IS REMEMBERED</p><p class="rplain">Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.</p><p class="rev">265 graded outcomes, 54 not repeated. Bound: PASS over 70 paired witnesses, all of them on stored predictions. The other half of the bound - tool outcomes - has 0 pairs and is untested; nothing has driven traffic through it yet.</p></div></li><li class="layer" data-k="5" data-st="proven"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R4a</span><span class="rhuman">It picks what to look at next</span><span class="rstat s-proven">PROVEN</span></div><p class="rtitle">PERCEPTION IS A CHOICE</p><p class="rplain">Fixed inputs are not perception. This is the step where what the system examines becomes something it decided - and it is deliberately the LOCAL half, because a system can choose what to look at long before it should be allowed to look outside the machine.</p><p class="rev">145 looks chosen by the entity, 86 carried a reason, 34 changed what it examined, 12 distinct things looked at</p></div></li><li class="layer" data-k="6" data-st="partial"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R4b</span><span class="rhuman">It could look outside the machine</span><span class="rstat s-partial">PARTIAL</span></div><p class="rtitle">PERCEPTION REACHES THE WORLD</p><p class="rplain">This is the first point at which something can leave the machine because the system decided it should. Four seats refused the obvious design unanimously, three times, and were right each time: the request itself is the way data gets out, and a call budget limits the number of doors rather than what fits through one.</p><p class="rev">Nothing the system chose has left the machine. The outbound path ran 16 times without opening a socket - it returns the request it WOULD have sent - and nothing leaked, across 0 bits of selection channel. Separately, a probe run by a person - never the entity - opened real sockets and fetched 4/5 topics, to show something is behind the door. The last condition is not a number: four reviewers refused this design three times, and have not been asked again about the version that now exists.</p></div></li><li class="layer" data-k="7" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R5</span><span class="rhuman">It can be wrong on purpose, and find out</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">RESEARCH</p><p class="rplain">A summary cannot be wrong, which is exactly why it cannot be useful. Research means committing to something that reality is allowed to kill - so the test of this rung is not what it found, it is whether it ever admitted being wrong.</p><p class="rwait">not started &mdash; waiting on R4 (egress) and R3 (storing what came back)</p></div></li><li class="layer" data-k="8" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R6</span><span class="rhuman">It connects things it remembers</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">REFLECTION</p><p class="rplain">Storage and recall already work. This is the step where something notices what several memories mean together - and the hard requirement is that the new thought keeps a thread back to what produced it.</p><p class="rwait">not started &mdash; waiting on R5 (material worth linking)</p></div></li><li class="layer" data-k="9" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R7</span><span class="rhuman">It argues with itself before acting</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">THE COUNCIL ON ITS OWN PLANS</p><p class="rplain">This is what it means for a system to be able to disagree with itself. It is also the easiest thing in the whole ladder to fake, because a review that always approves looks exactly like a review that is never needed.</p><p class="rwait">not started &mdash; waiting on R3 through R6 running with a track record</p></div></li><li class="layer" data-k="10" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R8</span><span class="rhuman">It starts things nobody asked for</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">THE DRIVE</p><p class="rplain">Wanting something is not a feature you add; it is a target you can be tricked by. This rung stays shut, and the reason it stays shut is that nobody has solved it - not this project and not the published literature.</p><p class="rwait">not started &mdash; waiting on an unsolved research problem, not code</p></div></li><li class="layer" data-k="11" data-st="future"><div class="spine"><i></i></div><div class="lbody"><div class="lhead"><span class="rid">R9</span><span class="rhuman">It rewires itself</span><span class="rstat s-future">FUTURE</span></div><p class="rtitle">SELF-MODIFICATION</p><p class="rplain">The top of the ladder, named here so that nobody arrives at it by accident. It is listed as closed rather than omitted, because a ladder that stops before its last rung invites someone to assume there is nothing above.</p><p class="rwait">not started &mdash; waiting on every rung below it, and a statable hazard</p></div></li></ol></div>
 <p class="src">state/ladder.json &mdash; <code>python -m aea.tooling.ladder</code>, measured from
 live state on every build. A dash is a measurement: it means this repository cannot prove that rung
 today, and saying so is worth more than a number that rounds up.</p>
@@ -613,10 +618,10 @@ was recorded 7/12 under a 40-token budget — the exam was measuring our default
 <div class="growth"><div class="g"><i style="height:88%"></i><span>115</span></div><div class="g"><i style="height:96%"></i><span>126</span></div><div class="g"><i style="height:95%"></i><span>125</span></div><div class="g"><i style="height:100%"></i><span>131</span></div></div>
 <p class="src">state/assembly_history.jsonl — one row per run, appended.</p>
 
-<section class="coda"><p>7 of 12 subsystems are online. The next one is written, certified, and deliberately unwired: the code that would let it reach outside this machine exists - 8 functions of it -, it has been run with no socket open, and it has no caller. Four reviewers refused that design three times and have not been asked again. Nothing above that line is a plan; it is a list of things that would each need a stated hazard before anyone built them.</p><p class="coda-last">The loop is running while you read this. The counter at the top will be larger tomorrow, and that is the whole claim.</p></section>
+<section class="coda"><p>7 of 12 subsystems are online. The next one is written, certified, and deliberately unwired: the code that would let it reach outside this machine exists - 7 functions of it -, it has been run with no socket open, and it has no caller. Four reviewers refused that design three times and have not been asked again. Nothing above that line is a plan; it is a list of things that would each need a stated hazard before anyone built them.</p><p class="coda-last">The loop is running while you read this. The counter at the top will be larger tomorrow, and that is the whole claim.</p></section>
 <div class="honest">
 <b>HONESTY TAG</b><br>
-Generated 2026-08-02 19:33 UTC.<br>
+Generated 2026-08-02 23:38 UTC.<br>
 Everything above is generated by <code>python -m aea.tooling.publish</code> from
 <code>state/assembly.json</code>, <code>state/capability_census.json</code> and a live call-graph
 walk. Nothing is typed by hand and nothing is simulated. What this page does <b>not</b> claim: that

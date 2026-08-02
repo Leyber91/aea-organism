@@ -1,21 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 255,
-  "total_ticks": 438,
+  "boot_count": 269,
+  "total_ticks": 452,
   "last_brief_date": "2026-08-02",
   "consolidated_sessions": 23,
   "history": [
-    "2026-08-02 22:17:36 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 22:20:42 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
-    "2026-08-02 22:21:49 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 22:23:26 UTC LOOK:read_state ok :: KEYS: counts(238), set(22)\n\nset=\"2026-08-01 04:08 UTC\"\ncounts={\"unredirectable-s",
-    "2026-08-02 22:25:56 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 22:26:39 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 22:28:10 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 22:29:21 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
-    "2026-08-02 22:30:14 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 22:32:38 UTC AWAKE:brief ok ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 1, ",
-    "2026-08-02 22:33:29 UTC LOOK:read_state ok :: KEYS: surfaced(256717), memory(52170), tick(3)\n\ntick=492\nsurfaced (most recent) ",
     "2026-08-02 22:34:13 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 22:35:18 UTC LOOK:read_state ok :: KEYS: surfaced(259545), memory(52306), tick(3)\n\ntick=494\nsurfaced (most recent) ",
     "2026-08-02 22:38:02 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 84 memories from 33/23 sessions consolidate",
@@ -34,11 +23,22 @@
     "2026-08-02 22:57:24 UTC LOOK:read_state ok :: KEYS: surfaced(290272), memory(53734), tick(3)\n\ntick=515\nsurfaced (most recent) ",
     "2026-08-02 22:57:56 UTC LOOK:read_state ok :: KEYS: surfaced(291757), memory(53802), tick(3)\n\ntick=516\nsurfaced (most recent) ",
     "2026-08-02 22:58:42 UTC LOOK:self_map ok :: I am 145 Python modules, about 41,881 lines of code. 29 of them are reachable fr",
-    "2026-08-02 23:00:06 UTC LOOK:read_state ok :: KEYS: surfaced(294329), memory(53938), tick(3)\n\ntick=518\nsurfaced (most recent) "
+    "2026-08-02 23:00:06 UTC LOOK:read_state ok :: KEYS: surfaced(294329), memory(53938), tick(3)\n\ntick=518\nsurfaced (most recent) ",
+    "2026-08-02 23:02:53 UTC LOOK:read_state ok :: KEYS: surfaced(298104), memory(54074), tick(3)\n\ntick=520\nsurfaced (most recent) ",
+    "2026-08-02 23:03:55 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 23:05:17 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 23:06:31 UTC LOOK:read_state ok :: KEYS: surfaced(303779), memory(54346), tick(3)\n\ntick=524\nsurfaced (most recent) ",
+    "2026-08-02 23:09:33 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 23:11:19 UTC LOOK:read_state ok :: KEYS: surfaced(308981), memory(54618), tick(3)\n\ntick=528\nsurfaced (most recent) ",
+    "2026-08-02 23:12:21 UTC LOOK:read_state ok :: KEYS: surfaced(310294), memory(54686), tick(3)\n\ntick=529\nsurfaced (most recent) ",
+    "2026-08-02 23:13:07 UTC LOOK:read_state ok :: KEYS: surfaced(311602), memory(54754), tick(3)\n\ntick=530\nsurfaced (most recent) ",
+    "2026-08-02 23:13:56 UTC LOOK:read_state ok :: KEYS: surfaced(312954), memory(54822), tick(3)\n\ntick=531\nsurfaced (most recent) ",
+    "2026-08-02 23:15:06 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 23:18:37 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, "
   ],
-  "last_wake_why": "the wake chose NONE - no mechanical move is needed this tick",
-  "brief_fails": 1,
-  "_brief_runs_seen": 116,
+  "last_wake_why": "the wake chose brief (1s ago)",
+  "brief_fails": 2,
+  "_brief_runs_seen": 117,
   "proposed_move": {
     "move": "raise_budget",
     "knob": "max_tokens",
@@ -46,11 +46,11 @@
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
   },
   "_r1_last": {
-    "wake": "LOOK:read_state",
+    "wake": "AWAKE:brief",
     "ladder": "REFLECT:self",
     "differed": true,
-    "why": "the wake chose read_your_state (2s ago)"
+    "why": "the wake chose brief (1s ago)"
   },
-  "_last_decision": 518,
+  "_last_decision": 533,
   "_said": ""
 }

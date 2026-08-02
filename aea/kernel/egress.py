@@ -62,17 +62,30 @@ def _stop_path() -> str:
     return os.environ.get("AEA_EGRESS_STOP") or os.path.join(grid.STATE, STOP_FILE)
 
 
-def _load() -> dict:
+def _load() -> tuple:
+    """(ledger, why-it-is-empty). NEVER a bare {} - the defect ratchet caught this one live.
+
+    A MISSING LEDGER IS AN EMPTY ONE, NEVER AN UNLIMITED ONE: the failure mode of a budget file that
+    cannot be read must be "you have spent nothing and the floor still applies", not "no record,
+    therefore no limit". That much the first version got right, and it was still a silent default -
+    caught by `transfer` the moment it shipped, at 32 -> 33.
+
+    Because ABSENT and CORRUPT both returned `{}`, and they are opposite facts about a budget.
+    Absent means nothing has been spent. Corrupt means SPENDS MAY HAVE BEEN LOST - the entity might
+    have dispatched eleven times today and the ceiling would read zero. Fail-closed on the floor
+    still holds either way; what was missing is that a caller could not tell, so a destroyed ledger
+    looked exactly like a fresh one and nobody would ever know."""
+    p = _path()
+    if not os.path.exists(p):
+        return {}, "no ledger yet - nothing has been spent"
     try:
-        with open(_path(), encoding="utf-8") as f:
+        with open(p, encoding="utf-8") as f:
             d = json.load(f)
-        return d if isinstance(d, dict) else {}
-    except Exception:
-        # A MISSING LEDGER IS AN EMPTY ONE, NEVER AN UNLIMITED ONE. The failure mode of a budget file
-        # that cannot be read must be "you have spent nothing and the floor still applies", not "no
-        # record, therefore no limit" - which is how absent input has been read as good news three
-        # separate times in this repo.
-        return {}
+    except Exception as e:
+        return {}, "LEDGER UNREADABLE (%s) - spends may have been lost" % type(e).__name__
+    if not isinstance(d, dict):
+        return {}, "LEDGER IS NOT AN OBJECT (%s) - spends may have been lost" % type(d).__name__
+    return d, ""
 
 
 def bits_per_dispatch(n_topics: int = None) -> float:
@@ -116,7 +129,11 @@ def allow(now: float = None) -> tuple:
     now = time.time() if now is None else now
     if os.path.exists(_stop_path()):
         return False, "state/STOP exists - egress is halted and this survives a restart"
-    d = _load()
+    d, why = _load()
+    if why.startswith('LEDGER'):
+        # A DESTROYED LEDGER IS NOT A FRESH ONE. Refuse until a human looks: the
+        # ceiling cannot be enforced against a count that may have been lost.
+        return False, why
     recent = _window(d, now)
     last = max(recent) if recent else None
     if last is not None and (now - last) < FLOOR_S:
@@ -134,7 +151,7 @@ def spend(topic: str, now: float = None) -> dict:
     ledger being written must cost the budget, not refund it. Optimistic accounting on an
     irreversible act is how a ceiling becomes a suggestion."""
     now = time.time() if now is None else now
-    d = _load()
+    d, _why = _load()
     at = _window(d, now) + [now]
     d["at"] = sorted(at)[-(PER_DAY * 4):]
     d["last_topic"] = str(topic)[:60]
@@ -145,13 +162,14 @@ def spend(topic: str, now: float = None) -> dict:
 
 def state(now: float = None) -> dict:
     now = time.time() if now is None else now
-    d = _load()
+    d, load_why = _load()
     recent = _window(d, now)
     ok, why = allow(now)
     last = max(recent) if recent else None
     return dict(budget=budget(), spent_24h=len(recent), remaining=max(0, PER_DAY - len(recent)),
                 seconds_since_last=(round(now - last, 1) if last else None),
                 permitted_now=ok, refused_because=why or None,
+                ledger=load_why or 'ok',
                 stop_present=os.path.exists(_stop_path()))
 
 

@@ -56,6 +56,72 @@ def sub_code():
         txt = open(os.path.join(ROOT, cr), encoding="utf-8", errors="ignore").read()
         for ep in sorted(set(re.findall(r'self\.path(?:\.startswith\(|\s*==\s*)"(/[a-z_/]*)', txt))):
             nodes.append({"id": ep, "type": "endpoint", "served_by": cr})
+
+    # =============================================================================================
+    # CALL EDGES, WITH THE EVIDENCE THAT DREW THEM. The graph in the boot chain was an IMPORT graph.
+    #
+    # `assembly.py`'s own opening line says why that is not enough: A MODULE IS WIRED WHEN SOMETHING
+    # IMPORTS IT, A CAPABILITY IS WIRED WHEN SOMETHING CALLS IT. The repo's actual failure mode -
+    # many modules written, few reachable - hides in that gap, and until now the graph a reader
+    # loads at boot could not see it. 527 edges, two types, 522 of them `imports`.
+    #
+    # This is the Graphify EXTRACTED/INFERRED idea, generalised to five kinds and computed from the
+    # tree rather than from a vendor. Every call edge carries HOW IT WAS DRAWN, so a reader can tell
+    # a fact from a resolution without leaving the graph:
+    #
+    #   EXTRACTED  a call site exists in the source. A fact
+    #   DISPATCH   only through a module-level table. An UPPER BOUND by construction
+    #   ENTRY      where the walk starts. An assumption, never a measurement
+    #   TOOL       only from a __main__ guard. A human at a terminal
+    #   NONE       nothing reaches it by any route
+    #
+    # And each module node gains a `reach` summary, which is the number a reader most often wants
+    # and most expensively re-derives: is this thing the ORGANISM, or a command I type?
+    #
+    # FAILS LOUD, NOT SILENT. If assembly cannot run, the graph still builds from imports and says
+    # so in `code_note` - an absent layer that reads as an empty one is this repo's oldest defect.
+    try:
+        from aea.tooling import assembly
+        amods = assembly.scan()
+        prov = assembly.provenance(amods)
+        RANK = {"EXTRACTED": 0, "DISPATCH": 1, "ENTRY": 2, "TOOL": 3, "NONE": 4}
+        pairs = {}
+        for full, info in amods.items():
+            src = full.rsplit(".", 1)[-1]
+            for fn, slot in (info.get("defs") or {}).items():
+                for c in list(slot.get("calls", [])) + list(slot.get("dcalls") or ()):
+                    if c.startswith("?") or ":" not in c:
+                        continue
+                    tmod, _, tfn = c.partition(":")
+                    if tmod not in amods:
+                        continue
+                    dst = tmod.rsplit(".", 1)[-1]
+                    if dst == src or dst not in modset or src not in modset:
+                        continue
+                    ev = prov.get(c, "NONE")
+                    cur = pairs.get((src, dst))
+                    if cur is None or RANK.get(ev, 9) < RANK.get(cur[0], 9):
+                        pairs[(src, dst)] = (ev, (cur[1] if cur else 0) + 1)
+                    else:
+                        pairs[(src, dst)] = (cur[0], cur[1] + 1)
+        for (src, dst), (ev, n) in sorted(pairs.items()):
+            edges.append({"src": src, "dst": dst, "rel": "calls", "evidence": ev, "count": n})
+        by_mod = {}
+        for full, ev in prov.items():
+            by_mod.setdefault(full.split(":")[0].rsplit(".", 1)[-1], []).append(ev)
+        for nd in nodes:
+            evs = by_mod.get(nd.get("id"))
+            if nd.get("type") == "module" and evs:
+                live = sum(1 for e in evs if e in ("EXTRACTED", "DISPATCH", "ENTRY"))
+                nd["reach"] = ("organism" if live else
+                               "terminal-only" if any(e == "TOOL" for e in evs) else "unreached")
+                nd["fns"] = dict(total=len(evs), live=live,
+                                 tool=sum(1 for e in evs if e == "TOOL"),
+                                 dead=sum(1 for e in evs if e == "NONE"))
+    except Exception as e:
+        nodes.append({"id": "__code_note", "type": "note",
+                      "purpose": "call edges ABSENT: %s: %s - the graph shows imports only"
+                                 % (type(e).__name__, str(e)[:80])})
     return nodes, edges
 
 

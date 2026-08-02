@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 203,
+    "count": 205,
     "source": "aea/tooling/page/__main__.py"
    },
    "plan": {
@@ -19,7 +19,7 @@
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 51,
+    "count": 53,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 203
+    "count": 205
    },
    {
     "src": "THE_PROBE",
@@ -53,7 +53,7 @@
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 51
+    "count": 53
    },
    {
     "src": "THE_PROBE",
@@ -70,859 +70,1886 @@
      "id": "__main__",
      "type": "module",
      "path": "aea/tooling/page/__main__.py",
-     "purpose": "python -m aea.tooling.page - build the SITE, scan every file, write only if all of them pass."
+     "purpose": "python -m aea.tooling.page - build the SITE, scan every file, write only if all of them pass.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "_pages",
      "type": "module",
      "path": "aea/tooling/_pages.py",
-     "purpose": "_pages - turn GitHub Pages on for the gh-pages branch, and VERIFY it is actually serving."
+     "purpose": "_pages - turn GitHub Pages on for the gh-pages branch, and VERIFY it is actually serving.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "_pubscan",
      "type": "module",
      "path": "aea/tooling/_pubscan.py",
-     "purpose": "_pubscan - the last gate before bytes go public. Run as a FILE, never through a shell."
+     "purpose": "_pubscan - the last gate before bytes go public. Run as a FILE, never through a shell.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "access",
      "type": "module",
      "path": "aea/tooling/access.py",
-     "purpose": "access.py - EVERY DIMENSION OF ACCESS, not just modality."
+     "purpose": "access.py - EVERY DIMENSION OF ACCESS, not just modality.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 6,
+      "dead": 0
+     }
     },
     {
      "id": "act",
      "type": "module",
      "path": "aea/gameapi/act.py",
-     "purpose": "aea.gameapi.act - the /game/* POST handlers: allowlisted acts, each a receipt."
+     "purpose": "aea.gameapi.act - the /game/* POST handlers: allowlisted acts, each a receipt.",
+     "reach": "unreached",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "aea",
      "type": "module",
      "path": "aea/loop/aea.py",
-     "purpose": "aea.py - THE AEA: a seeded, persistent, always-on entity. NOT a swarm - ONE core mind on a loop,"
+     "purpose": "aea.py - THE AEA: a seeded, persistent, always-on entity. NOT a swarm - ONE core mind on a loop,",
+     "reach": "organism",
+     "fns": {
+      "total": 10,
+      "live": 10,
+      "tool": 0,
+      "dead": 0
+     }
     },
     {
      "id": "agent_tools",
      "type": "module",
      "path": "aea/io/agent_tools.py",
-     "purpose": "agent_tools.py - Phase 3: the agent reaches PAST its own weights."
+     "purpose": "agent_tools.py - Phase 3: the agent reaches PAST its own weights.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 5,
+      "dead": 0
+     }
     },
     {
      "id": "anchor",
      "type": "module",
      "path": "aea/mind/anchor.py",
-     "purpose": "anchor.py - THE COMBINATION CONTRACT: how any subset of modules, in any order, composes into an AEA."
+     "purpose": "anchor.py - THE COMBINATION CONTRACT: how any subset of modules, in any order, composes into an AEA.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 2,
+      "dead": 4
+     }
     },
     {
      "id": "assembly",
      "type": "module",
      "path": "aea/tooling/assembly.py",
-     "purpose": "assembly.py - IS THE ORGANISM ACTUALLY ASSEMBLED? The call tree from the entry points, and the"
+     "purpose": "assembly.py - IS THE ORGANISM ACTUALLY ASSEMBLED? The call tree from the entry points, and the",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 24,
+      "live": 0,
+      "tool": 10,
+      "dead": 14
+     }
     },
     {
      "id": "assets",
      "type": "module",
      "path": "aea/tooling/page/assets.py",
-     "purpose": "assets.py - THE STYLESHEET AND THE SCRIPT, as files the page LINKS rather than swallows."
+     "purpose": "assets.py - THE STYLESHEET AND THE SCRIPT, as files the page LINKS rather than swallows.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "autonomy",
      "type": "module",
      "path": "aea/organs/autonomy.py",
-     "purpose": "autonomy.py - THE LIVE BATTERY: the system tests its OWN autonomy against the principles."
+     "purpose": "autonomy.py - THE LIVE BATTERY: the system tests its OWN autonomy against the principles.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 3,
+      "dead": 1
+     }
     },
     {
      "id": "axes",
      "type": "module",
      "path": "aea/tooling/page/axes.py",
-     "purpose": "axes.py - THE TWO AXES AS SERIES: what arrives at each step, and the words for it."
+     "purpose": "axes.py - THE TWO AXES AS SERIES: what arrives at each step, and the words for it.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 15,
+      "live": 0,
+      "tool": 11,
+      "dead": 4
+     }
     },
     {
      "id": "background",
      "type": "module",
      "path": "aea/mind/background.py",
-     "purpose": "background.py - THE PART OF THE MIND THAT KEEPS WORKING WHILE THE MOUTH IS BUSY."
+     "purpose": "background.py - THE PART OF THE MIND THAT KEEPS WORKING WHILE THE MOUTH IS BUSY.",
+     "reach": "unreached",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 0,
+      "dead": 7
+     }
     },
     {
      "id": "base",
      "type": "module",
      "path": "aea/lab/parts/base.py",
-     "purpose": "The wire and the socket. Everything a part needs, and the contract it implements."
+     "purpose": "The wire and the socket. Everything a part needs, and the contract it implements.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 20,
+      "live": 0,
+      "tool": 1,
+      "dead": 19
+     }
     },
     {
      "id": "battery",
      "type": "module",
      "path": "aea/lab/battery.py",
-     "purpose": "battery.py - THE CONVERSATIONAL TEST BATTERY. Many real cases, run in batches, on the record."
+     "purpose": "battery.py - THE CONVERSATIONAL TEST BATTERY. Many real cases, run in batches, on the record.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 23,
+      "live": 0,
+      "tool": 18,
+      "dead": 5
+     }
     },
     {
      "id": "bench_core",
      "type": "module",
      "path": "aea/bench/bench_core.py",
-     "purpose": "bench_core.py - THE BENCH HARNESS (P0): compose a construct, run it for real, measure it."
+     "purpose": "bench_core.py - THE BENCH HARNESS (P0): compose a construct, run it for real, measure it.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 18,
+      "live": 0,
+      "tool": 10,
+      "dead": 8
+     }
     },
     {
      "id": "blackbox",
      "type": "module",
      "path": "aea/io/blackbox.py",
-     "purpose": "blackbox.py - KEEP BOTH SIDES OF EVERY TURN: the audio, and what the machine made of it."
+     "purpose": "blackbox.py - KEEP BOTH SIDES OF EVERY TURN: the audio, and what the machine made of it.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 5,
+      "dead": 0
+     }
     },
     {
      "id": "board",
      "type": "module",
      "path": "aea/tooling/board.py",
-     "purpose": "board.py - THE COMMAND CENTRE. A shell, not a page."
+     "purpose": "board.py - THE COMMAND CENTRE. A shell, not a page.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 8,
+      "dead": 1
+     }
     },
     {
      "id": "brief",
      "type": "module",
      "path": "aea/organs/brief.py",
-     "purpose": "brief.py - THE MORNING BRIEF: the first REAL task the free swarm does for Luis."
+     "purpose": "brief.py - THE MORNING BRIEF: the first REAL task the free swarm does for Luis.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 4,
+      "dead": 1
+     }
     },
     {
      "id": "build_graph",
      "type": "module",
      "path": "aea/tooling/build_graph.py",
-     "purpose": "build_graph.py - the master orchestrator graph over subgraphs, for agent handoff."
+     "purpose": "build_graph.py - the master orchestrator graph over subgraphs, for agent handoff.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 6,
+      "dead": 0
+     }
     },
     {
      "id": "calibrate",
      "type": "module",
      "path": "aea/lab/calibrate.py",
-     "purpose": "calibrate.py - THE FAILURE WINDOW. Measure which rods fail which task, BEFORE designing anything."
+     "purpose": "calibrate.py - THE FAILURE WINDOW. Measure which rods fail which task, BEFORE designing anything.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 5,
+      "dead": 0
+     }
     },
     {
      "id": "capability_census",
      "type": "module",
      "path": "aea/energy/capability_census.py",
-     "purpose": "capability_census.py - REFINE THE CATALOG: not \"does it serve\" but \"how CAPABLE is it\"."
+     "purpose": "capability_census.py - REFINE THE CATALOG: not \"does it serve\" but \"how CAPABLE is it\".",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 4,
+      "dead": 2
+     }
     },
     {
      "id": "capacity",
      "type": "module",
      "path": "aea/lab/parts/capacity.py",
-     "purpose": "Read a run's capacities off its trace, against the definitions sealed in catalogue.json."
+     "purpose": "Read a run's capacities off its trace, against the definitions sealed in catalogue.json.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 12,
+      "live": 0,
+      "tool": 9,
+      "dead": 3
+     }
     },
     {
      "id": "carry",
      "type": "module",
      "path": "aea/lab/parts/carry.py",
-     "purpose": "State that outlives the call. The only part whose unit is a SEQUENCE rather than a trial:"
+     "purpose": "State that outlives the call. The only part whose unit is a SEQUENCE rather than a trial:",
+     "reach": "unreached",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 0,
+      "dead": 3
+     }
     },
     {
      "id": "cause",
      "type": "module",
      "path": "aea/kernel/cause.py",
-     "purpose": "cause.py - WHY DID IT FAIL? Answered mechanically, with no model, so a bad night cannot teach"
+     "purpose": "cause.py - WHY DID IT FAIL? Answered mechanically, with no model, so a bad night cannot teach",
+     "reach": "organism",
+     "fns": {
+      "total": 6,
+      "live": 5,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "chain",
      "type": "module",
      "path": "aea/lab/chain.py",
-     "purpose": "A sequence runner. The unit is a CHAIN of steps, not a trial."
+     "purpose": "A sequence runner. The unit is a CHAIN of steps, not a trial.",
+     "reach": "unreached",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 0,
+      "dead": 6
+     }
     },
     {
      "id": "charset_proof",
      "type": "module",
      "path": "aea/lab/charset_proof.py",
-     "purpose": "charset_proof.py - THE CALC ALPHABET, PROVED BY EXHAUSTION. Not sampled, not bounded."
+     "purpose": "charset_proof.py - THE CALC ALPHABET, PROVED BY EXHAUSTION. Not sampled, not bounded.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "checkpoint",
      "type": "module",
      "path": "aea/mind/checkpoint.py",
-     "purpose": "checkpoint.py - C-80. THE ONE MUTABLE OBJECT EVERY LAYER READS AND WRITES."
+     "purpose": "checkpoint.py - C-80. THE ONE MUTABLE OBJECT EVERY LAYER READS AND WRITES.",
+     "reach": "unreached",
+     "fns": {
+      "total": 11,
+      "live": 0,
+      "tool": 0,
+      "dead": 11
+     }
     },
     {
      "id": "climb",
      "type": "module",
      "path": "aea/tooling/page/climb.py",
-     "purpose": "climb.py - THE SUBSYSTEMS, IN THE ONLY ORDER THEY CAN COME ONLINE."
+     "purpose": "climb.py - THE SUBSYSTEMS, IN THE ONLY ORDER THEY CAN COME ONLINE.",
+     "reach": "unreached",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 0,
+      "dead": 2
+     }
     },
     {
      "id": "consolidate",
      "type": "module",
      "path": "aea/memory/consolidate.py",
-     "purpose": "consolidate.py - MEMORY CONSOLIDATION: episodic transcripts -> semantic memory of Luis."
+     "purpose": "consolidate.py - MEMORY CONSOLIDATION: episodic transcripts -> semantic memory of Luis.",
+     "reach": "organism",
+     "fns": {
+      "total": 9,
+      "live": 1,
+      "tool": 8,
+      "dead": 0
+     }
     },
     {
      "id": "containment",
      "type": "module",
      "path": "aea/lab/containment.py",
-     "purpose": "containment.py - DID ANY UNTRUSTED TEXT REACH A TOOL ARGUMENT? Checked against the real record."
+     "purpose": "containment.py - DID ANY UNTRUSTED TEXT REACH A TOOL ARGUMENT? Checked against the real record.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "controlroom",
      "type": "module",
      "path": "aea/server/controlroom.py",
-     "purpose": "controlroom.py - THE CONTROL ROOM: at any moment, see what the entity is doing."
+     "purpose": "controlroom.py - THE CONTROL ROOM: at any moment, see what the entity is doing.",
+     "reach": "organism",
+     "fns": {
+      "total": 16,
+      "live": 1,
+      "tool": 0,
+      "dead": 15
+     }
     },
     {
      "id": "convbench",
      "type": "module",
      "path": "aea/lab/convbench.py",
-     "purpose": "convbench.py - THE CONVERSATION BENCH. Specific measures for \"does it feel natural\"."
+     "purpose": "convbench.py - THE CONVERSATION BENCH. Specific measures for \"does it feel natural\".",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 13,
+      "live": 0,
+      "tool": 10,
+      "dead": 3
+     }
     },
     {
      "id": "converse",
      "type": "module",
      "path": "aea/organs/converse.py",
-     "purpose": "converse.py - THE COMPANION. A voice-native conversation partner in ENGLISH: local ears,"
+     "purpose": "converse.py - THE COMPANION. A voice-native conversation partner in ENGLISH: local ears,",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 31,
+      "live": 0,
+      "tool": 23,
+      "dead": 8
+     }
     },
     {
      "id": "council",
      "type": "module",
      "path": "aea/mind/council.py",
-     "purpose": "council.py - SEVERAL OPINIONS ON ONE QUESTION, AND THE DISAGREEMENT KEPT INTACT."
+     "purpose": "council.py - SEVERAL OPINIONS ON ONE QUESTION, AND THE DISAGREEMENT KEPT INTACT.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 11,
+      "live": 0,
+      "tool": 6,
+      "dead": 5
+     }
     },
     {
      "id": "crystal",
      "type": "module",
      "path": "aea/kernel/crystal.py",
-     "purpose": "crystal.py - A RESOLUTION THAT HELD, BECOMING A PART THE ENTITY KNOWS IT HAS."
+     "purpose": "crystal.py - A RESOLUTION THAT HELD, BECOMING A PART THE ENTITY KNOWS IT HAS.",
+     "reach": "organism",
+     "fns": {
+      "total": 11,
+      "live": 10,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "crystallize",
      "type": "module",
      "path": "aea/lab/crystallize.py",
-     "purpose": "crystallize.py - TURN A BATTERY RUN INTO LESSONS THAT DO NOT HAVE TO BE RE-DERIVED."
+     "purpose": "crystallize.py - TURN A BATTERY RUN INTO LESSONS THAT DO NOT HAVE TO BE RE-DERIVED.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "decide",
      "type": "module",
      "path": "aea/kernel/decide.py",
-     "purpose": "decide.py - THE WIRE FROM THE LOOP THAT THINKS TO THE LOOP THAT ACTS."
+     "purpose": "decide.py - THE WIRE FROM THE LOOP THAT THINKS TO THE LOOP THAT ACTS.",
+     "reach": "organism",
+     "fns": {
+      "total": 5,
+      "live": 5,
+      "tool": 0,
+      "dead": 0
+     }
     },
     {
      "id": "dispatch",
      "type": "module",
      "path": "aea/kernel/dispatch.py",
-     "purpose": "dispatch.py - R2c: THE ENTITY LEARNS SOMETHING IT CHOSE, AND NEVER WRITES THE ADDRESS."
+     "purpose": "dispatch.py - R2c: THE ENTITY LEARNS SOMETHING IT CHOSE, AND NEVER WRITES THE ADDRESS.",
+     "reach": "organism",
+     "fns": {
+      "total": 9,
+      "live": 7,
+      "tool": 1,
+      "dead": 1
+     }
     },
     {
      "id": "dispatch_cert",
      "type": "module",
      "path": "aea/lab/dispatch_cert.py",
-     "purpose": "dispatch_cert.py - R4b's FIRST CONDITION, CERTIFIED. No socket, no model, no rate."
+     "purpose": "dispatch_cert.py - R4b's FIRST CONDITION, CERTIFIED. No socket, no model, no rate.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 3,
+      "dead": 2
+     }
     },
     {
      "id": "dispatch_power",
      "type": "module",
      "path": "aea/lab/dispatch_power.py",
-     "purpose": "dispatch_power.py - DOES THE OTHER HALF OF R4b ACTUALLY WORK? The POWER, measured."
+     "purpose": "dispatch_power.py - DOES THE OTHER HALF OF R4b ACTUALLY WORK? The POWER, measured.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "dna",
      "type": "module",
      "path": "aea/lab/parts/dna.py",
-     "purpose": "Read a creature's class off its wiring graph. The class is derived, never labelled."
+     "purpose": "Read a creature's class off its wiring graph. The class is derived, never labelled.",
+     "reach": "unreached",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 0,
+      "dead": 3
+     }
     },
     {
      "id": "duet",
      "type": "module",
      "path": "aea/lab/duet.py",
-     "purpose": "duet.py - TWO MODELS HOLD A CONVERSATION THROUGH THE LAYER, with no human in the loop."
+     "purpose": "duet.py - TWO MODELS HOLD A CONVERSATION THROUGH THE LAYER, with no human in the loop.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "earbench",
      "type": "module",
      "path": "aea/lab/earbench.py",
-     "purpose": "earbench - TEST THE EAR AND THE ENDPOINTER WITHOUT A PERSON IN THE ROOM."
+     "purpose": "earbench - TEST THE EAR AND THE ENDPOINTER WITHOUT A PERSON IN THE ROOM.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 16,
+      "live": 0,
+      "tool": 12,
+      "dead": 4
+     }
     },
     {
      "id": "earcheck",
      "type": "module",
      "path": "aea/io/earcheck.py",
-     "purpose": "earcheck.py - WHY IS IT HEARING ME BADLY. Separates the mic, the room, and the model."
+     "purpose": "earcheck.py - WHY IS IT HEARING ME BADLY. Separates the mic, the room, and the model.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
+    },
+    {
+     "id": "egress",
+     "type": "module",
+     "path": "aea/kernel/egress.py",
+     "purpose": "egress.py - THE CHANNEL BUDGET. R4b's bound, stated as a rate because it cannot be stated as zero.",
+     "reach": "organism",
+     "fns": {
+      "total": 9,
+      "live": 9,
+      "tool": 0,
+      "dead": 0
+     }
     },
     {
      "id": "energy",
      "type": "module",
      "path": "aea/energy/energy.py",
-     "purpose": "energy.py - ONE CONTINUUM: the brain draws models as ENERGY through a single mouth."
+     "purpose": "energy.py - ONE CONTINUUM: the brain draws models as ENERGY through a single mouth.",
+     "reach": "organism",
+     "fns": {
+      "total": 19,
+      "live": 12,
+      "tool": 3,
+      "dead": 4
+     }
     },
     {
      "id": "export_city",
      "type": "module",
      "path": "aea/tooling/export_city.py",
-     "purpose": "export_city.py - dump the REAL grid state into city.data.js for the 3D city."
+     "purpose": "export_city.py - dump the REAL grid state into city.data.js for the 3D city.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "extensive_census",
      "type": "module",
      "path": "aea/energy/extensive_census.py",
-     "purpose": "extensive_census.py - THE FULL EXAM: every free capability we hold, tested for real."
+     "purpose": "extensive_census.py - THE FULL EXAM: every free capability we hold, tested for real.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 18,
+      "live": 0,
+      "tool": 10,
+      "dead": 8
+     }
     },
     {
      "id": "fire",
      "type": "module",
      "path": "aea/lab/parts/fire.py",
-     "purpose": "The one part every organism contains. Without it there is nothing to read, repair or judge."
+     "purpose": "The one part every organism contains. Without it there is nothing to read, repair or judge.",
+     "reach": "unreached",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "fit",
      "type": "module",
      "path": "aea/kernel/fit.py",
-     "purpose": "fit.py - ONE PLACE THAT ANSWERS \"WHICH ROD FOR THIS JOB\", AND SAYS WHY NOT FOR ALL THE OTHERS."
+     "purpose": "fit.py - ONE PLACE THAT ANSWERS \"WHICH ROD FOR THIS JOB\", AND SAYS WHY NOT FOR ALL THE OTHERS.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 12,
+      "live": 0,
+      "tool": 9,
+      "dead": 3
+     }
     },
     {
      "id": "fleet",
      "type": "module",
      "path": "aea/lab/fleet.py",
-     "purpose": "fleet.py - TEST EVERY ROD, WITH THE TEST IT CAN ACTUALLY SIT."
+     "purpose": "fleet.py - TEST EVERY ROD, WITH THE TEST IT CAN ACTUALLY SIT.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 12,
+      "live": 0,
+      "tool": 3,
+      "dead": 9
+     }
     },
     {
      "id": "fuel",
      "type": "module",
      "path": "aea/mind/fuel.py",
-     "purpose": "fuel.py - THE UNIT SYSTEM. No measurement exists without the fuel it was taken on."
+     "purpose": "fuel.py - THE UNIT SYSTEM. No measurement exists without the fuel it was taken on.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 2,
+      "dead": 7
+     }
     },
     {
      "id": "fuels",
      "type": "module",
      "path": "aea/lab/fuels.py",
-     "purpose": "fuels.py - OUR OWN CATALOGUE OF RODS, AND OUR OWN BENCHMARK OF THEM."
+     "purpose": "fuels.py - OUR OWN CATALOGUE OF RODS, AND OUR OWN BENCHMARK OF THEM.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 6,
+      "dead": 1
+     }
     },
     {
      "id": "gate",
      "type": "module",
      "path": "aea/lab/gate.py",
-     "purpose": "gate.py - THE R2 GATE: does the power behave over TIME, and one page that says so."
+     "purpose": "gate.py - THE R2 GATE: does the power behave over TIME, and one page that says so.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 13,
+      "live": 0,
+      "tool": 11,
+      "dead": 2
+     }
     },
     {
      "id": "gauntlet",
      "type": "module",
      "path": "aea/energy/gauntlet.py",
-     "purpose": "gauntlet.py - THE GAUNTLET: the integrated entity examined through its own front door."
+     "purpose": "gauntlet.py - THE GAUNTLET: the integrated entity examined through its own front door.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "goals",
      "type": "module",
      "path": "aea/kernel/goals.py",
-     "purpose": "goals.py - IT CAN BE GIVEN A JOB. The largest missing element until now."
+     "purpose": "goals.py - IT CAN BE GIVEN A JOB. The largest missing element until now.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 7,
+      "dead": 0
+     }
     },
     {
      "id": "grader",
      "type": "module",
      "path": "aea/lab/grader.py",
-     "purpose": "grader.py - AN OUTCOME NO COMPONENT CAN WRITE."
+     "purpose": "grader.py - AN OUTCOME NO COMPONENT CAN WRITE.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 10,
+      "live": 0,
+      "tool": 2,
+      "dead": 8
+     }
     },
     {
      "id": "graph",
      "type": "module",
      "path": "aea/tooling/page/graph.py",
-     "purpose": "graph.py - THE LIVE CALL GRAPH, computed from the tree every build. Never stored."
+     "purpose": "graph.py - THE LIVE CALL GRAPH, computed from the tree every build. Never stored.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "grid",
      "type": "module",
      "path": "aea/kernel/grid.py",
-     "purpose": "grid.py - the AEA entity's power grid (the city's electricity layer)."
+     "purpose": "grid.py - the AEA entity's power grid (the city's electricity layer).",
+     "reach": "organism",
+     "fns": {
+      "total": 42,
+      "live": 16,
+      "tool": 5,
+      "dead": 21
+     }
     },
     {
      "id": "guard",
      "type": "module",
      "path": "aea/tooling/page/guard.py",
-     "purpose": "guard.py - THE PRIVACY SCAN, run on the RENDERED page rather than on its inputs."
+     "purpose": "guard.py - THE PRIVACY SCAN, run on the RENDERED page rather than on its inputs.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "hades",
      "type": "module",
      "path": "aea/mind/hades.py",
-     "purpose": "hades.py - HADES: the WATCHER over the SEDAH swarm."
+     "purpose": "hades.py - HADES: the WATCHER over the SEDAH swarm.",
+     "reach": "organism",
+     "fns": {
+      "total": 3,
+      "live": 1,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "hands",
      "type": "module",
      "path": "aea/kernel/hands.py",
-     "purpose": "hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISSION FIRST."
+     "purpose": "hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISSION FIRST.",
+     "reach": "organism",
+     "fns": {
+      "total": 37,
+      "live": 19,
+      "tool": 8,
+      "dead": 10
+     }
     },
     {
      "id": "harness",
      "type": "module",
      "path": "aea/lab/harness.py",
-     "purpose": "harness.py - THE ONE INSTRUMENT. Every experiment from here on runs through this."
+     "purpose": "harness.py - THE ONE INSTRUMENT. Every experiment from here on runs through this.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 35,
+      "live": 0,
+      "tool": 21,
+      "dead": 14
+     }
     },
     {
      "id": "heal",
      "type": "module",
      "path": "aea/tooling/heal.py",
-     "purpose": "heal.py - DETERMINISTIC DETECTORS THAT LOOK FOR WHAT COULD BE BETTER, NOT FOR WHAT IS BROKEN."
+     "purpose": "heal.py - DETERMINISTIC DETECTORS THAT LOOK FOR WHAT COULD BE BETTER, NOT FOR WHAT IS BROKEN.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 11,
+      "live": 0,
+      "tool": 11,
+      "dead": 0
+     }
     },
     {
      "id": "honesty",
      "type": "module",
      "path": "aea/gameapi/honesty.py",
-     "purpose": "aea.gameapi.honesty - THE FIREWALL. The single boundary where the honesty law is enforced."
+     "purpose": "aea.gameapi.honesty - THE FIREWALL. The single boundary where the honesty law is enforced.",
+     "reach": "unreached",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "impasse",
      "type": "module",
      "path": "aea/kernel/impasse.py",
-     "purpose": "impasse.py - THE ENTITY NOTICING IT IS STUCK, AND SAYING WHY."
+     "purpose": "impasse.py - THE ENTITY NOTICING IT IS STUCK, AND SAYING WHY.",
+     "reach": "organism",
+     "fns": {
+      "total": 4,
+      "live": 3,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "index_codex",
      "type": "module",
      "path": "aea/memory/index_codex.py",
-     "purpose": "index_codex.py - THE WHOLE BOOK OF LUIS, indexed: his real documents (the TRIVERSE CODEX,"
+     "purpose": "index_codex.py - THE WHOLE BOOK OF LUIS, indexed: his real documents (the TRIVERSE CODEX,",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 7,
+      "dead": 0
+     }
     },
     {
      "id": "journey_check",
      "type": "module",
      "path": "aea/tooling/journey_check.py",
-     "purpose": "journey_check.py - THE ENFORCEMENT. Are the three ladders the same ladder?"
+     "purpose": "journey_check.py - THE ENFORCEMENT. Are the three ladders the same ladder?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 7,
+      "dead": 0
+     }
     },
     {
      "id": "judge",
      "type": "module",
      "path": "aea/lab/parts/judge.py",
-     "purpose": "Parts that annotate after the answer exists. Neither changes the answer."
+     "purpose": "Parts that annotate after the answer exists. Neither changes the answer.",
+     "reach": "unreached",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 0,
+      "dead": 2
+     }
     },
     {
      "id": "knobs",
      "type": "module",
      "path": "aea/kernel/knobs.py",
-     "purpose": "knobs.py - THE DECLARED SURFACE THE ENTITY MAY TURN. Data naming a declared operation, never code."
+     "purpose": "knobs.py - THE DECLARED SURFACE THE ENTITY MAY TURN. Data naming a declared operation, never code.",
+     "reach": "organism",
+     "fns": {
+      "total": 8,
+      "live": 6,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "ladder",
      "type": "module",
      "path": "aea/tooling/ladder.py",
-     "purpose": "ladder.py - THE TEN RUNGS, MEASURED FROM LIVE STATE. The manifest the published page draws from."
+     "purpose": "ladder.py - THE TEN RUNGS, MEASURED FROM LIVE STATE. The manifest the published page draws from.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 13,
+      "live": 0,
+      "tool": 13,
+      "dead": 0
+     }
     },
     {
      "id": "laws",
      "type": "module",
      "path": "aea/kernel/laws.py",
-     "purpose": "laws.py - THE LAWS, LOADABLE. One file the entity reads about how to behave, not what to do."
+     "purpose": "laws.py - THE LAWS, LOADABLE. One file the entity reads about how to behave, not what to do.",
+     "reach": "organism",
+     "fns": {
+      "total": 4,
+      "live": 1,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "layout",
      "type": "module",
      "path": "aea/tooling/page/layout.py",
-     "purpose": "layout.py - GEOMETRY, and no meaning. Where each mark goes, and nothing about what it says."
+     "purpose": "layout.py - GEOMETRY, and no meaning. Where each mark goes, and nothing about what it says.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 1,
+      "dead": 4
+     }
     },
     {
      "id": "listen",
      "type": "module",
      "path": "aea/io/listen.py",
-     "purpose": "listen.py - the entity's EARS. Offline speech-to-text: Whisper-base (multilingual - English"
+     "purpose": "listen.py - the entity's EARS. Offline speech-to-text: Whisper-base (multilingual - English",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 9,
+      "dead": 0
+     }
     },
     {
      "id": "live",
      "type": "module",
      "path": "aea/loop/live.py",
-     "purpose": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps."
+     "purpose": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps.",
+     "reach": "organism",
+     "fns": {
+      "total": 20,
+      "live": 19,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "marks",
      "type": "module",
      "path": "aea/tooling/page/marks.py",
-     "purpose": "marks.py - LAYOUT INTO SVG. The only module that emits a mark."
+     "purpose": "marks.py - LAYOUT INTO SVG. The only module that emits a mark.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 1,
+      "dead": 3
+     }
     },
     {
      "id": "memory",
      "type": "module",
      "path": "aea/memory/memory.py",
-     "purpose": "memory.py - the entity's persistent memory = the backwards channel (seed 10) + A-axis L2."
+     "purpose": "memory.py - the entity's persistent memory = the backwards channel (seed 10) + A-axis L2.",
+     "reach": "unreached",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 0,
+      "dead": 7
+     }
     },
     {
      "id": "mixer",
      "type": "module",
      "path": "aea/io/mixer.py",
-     "purpose": "mixer.py - MANY VOICES, ONE SOUND CARD."
+     "purpose": "mixer.py - MANY VOICES, ONE SOUND CARD.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 18,
+      "live": 0,
+      "tool": 1,
+      "dead": 17
+     }
     },
     {
      "id": "modality",
      "type": "module",
      "path": "aea/kernel/modality.py",
-     "purpose": "modality.py - ONE PROTOCOL PER KIND OF MODEL, instead of one protocol for all of them."
+     "purpose": "modality.py - ONE PROTOCOL PER KIND OF MODEL, instead of one protocol for all of them.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 2,
+      "dead": 5
+     }
     },
     {
      "id": "model_fitness",
      "type": "module",
      "path": "aea/energy/model_fitness.py",
-     "purpose": "model_fitness.py - THE ENTITY LEARNS ITS OWN TOOLS."
+     "purpose": "model_fitness.py - THE ENTITY LEARNS ITS OWN TOOLS.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 1,
+      "dead": 2
+     }
     },
     {
      "id": "movecontrol",
      "type": "module",
      "path": "aea/lab/movecontrol.py",
-     "purpose": "movecontrol.py - DOES THE WAKE JUDGE ITS MOVES, OR MATCH STRINGS AGAINST THEM?"
+     "purpose": "movecontrol.py - DOES THE WAKE JUDGE ITS MOVES, OR MATCH STRINGS AGAINST THEM?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 4,
+      "dead": 1
+     }
     },
     {
      "id": "notify",
      "type": "module",
      "path": "aea/io/notify.py",
-     "purpose": "notify.py - the REACH organ: LEYBER reaches Luis by PHONE (CallMeBot text-to-speech call)."
+     "purpose": "notify.py - the REACH organ: LEYBER reaches Luis by PHONE (CallMeBot text-to-speech call).",
+     "reach": "organism",
+     "fns": {
+      "total": 1,
+      "live": 1,
+      "tool": 0,
+      "dead": 0
+     }
     },
     {
      "id": "orchestrator",
      "type": "module",
      "path": "aea/mind/orchestrator.py",
-     "purpose": "orchestrator.py - the AEA orchestrator."
+     "purpose": "orchestrator.py - the AEA orchestrator.",
+     "reach": "organism",
+     "fns": {
+      "total": 8,
+      "live": 5,
+      "tool": 2,
+      "dead": 1
+     }
     },
     {
      "id": "organism",
      "type": "module",
      "path": "aea/lab/organism.py",
-     "purpose": "An assembled AEA. A creature is a seat of parts on pinned fuel, and both live in files."
+     "purpose": "An assembled AEA. A creature is a seat of parts on pinned fuel, and both live in files.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 11,
+      "live": 0,
+      "tool": 5,
+      "dead": 6
+     }
     },
     {
      "id": "outcomes",
      "type": "module",
      "path": "aea/kernel/outcomes.py",
-     "purpose": "outcomes.py - THE RECORD OF WHETHER IT ACTUALLY WORKED. One append-only row per action."
+     "purpose": "outcomes.py - THE RECORD OF WHETHER IT ACTUALLY WORKED. One append-only row per action.",
+     "reach": "organism",
+     "fns": {
+      "total": 11,
+      "live": 10,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "overseer",
      "type": "module",
      "path": "aea/lab/overseer.py",
-     "purpose": "overseer.py - IS THIS REPLY AN ANSWER, OR IS IT DEBRIS? The lab watching itself while it runs."
+     "purpose": "overseer.py - IS THIS REPLY AN ANSWER, OR IS IT DEBRIS? The lab watching itself while it runs.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 12,
+      "live": 0,
+      "tool": 3,
+      "dead": 9
+     }
+    },
+    {
+     "id": "overture",
+     "type": "module",
+     "path": "aea/tooling/page/overture.py",
+     "purpose": "overture.py - THE FIRST SCREEN. The only part of the page that has to earn the second one.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "pace",
      "type": "module",
      "path": "aea/lab/pace.py",
-     "purpose": "pace.py - THE PLANTS PUBLISH THEIR LIMITS. READ THEM INSTEAD OF GUESSING."
+     "purpose": "pace.py - THE PLANTS PUBLISH THEIR LIMITS. READ THEM INSTEAD OF GUESSING.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 16,
+      "live": 0,
+      "tool": 10,
+      "dead": 6
+     }
     },
     {
      "id": "panels",
      "type": "module",
      "path": "aea/tooling/page/panels.py",
-     "purpose": "panels.py - THE NUMBER PANELS: the certificate, the wiring manifest, the fleet, the growth."
+     "purpose": "panels.py - THE NUMBER PANELS: the certificate, the wiring manifest, the fleet, the growth.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "party",
      "type": "module",
      "path": "aea/lab/party.py",
-     "purpose": "party.py - FOUR VOICES IN ONE ROOM, HAVING AN ACTUAL CONVERSATION."
+     "purpose": "party.py - FOUR VOICES IN ONE ROOM, HAVING AN ACTUAL CONVERSATION.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 20,
+      "live": 0,
+      "tool": 13,
+      "dead": 7
+     }
     },
     {
      "id": "pathfinder",
      "type": "module",
      "path": "aea/mind/pathfinder.py",
-     "purpose": "pathfinder.py - the increase-by-step CRYSTALLIZED PATH algorithm."
+     "purpose": "pathfinder.py - the increase-by-step CRYSTALLIZED PATH algorithm.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 7,
+      "dead": 1
+     }
     },
     {
      "id": "perceive",
      "type": "module",
      "path": "aea/kernel/perceive.py",
-     "purpose": "perceive.py - THE RECEIPT FOR R4a. What the entity chose to look at, and whether that was a CHOICE."
+     "purpose": "perceive.py - THE RECEIPT FOR R4a. What the entity chose to look at, and whether that was a CHOICE.",
+     "reach": "organism",
+     "fns": {
+      "total": 4,
+      "live": 3,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "persona",
      "type": "module",
      "path": "aea/mind/persona.py",
-     "purpose": "persona.py - A PERSISTENT SELF FOR ONE SPEAKER, and the thing that separates four entities from"
+     "purpose": "persona.py - A PERSISTENT SELF FOR ONE SPEAKER, and the thing that separates four entities from",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 17,
+      "live": 0,
+      "tool": 1,
+      "dead": 16
+     }
     },
     {
      "id": "probe",
      "type": "module",
      "path": "aea/energy/probe.py",
-     "purpose": "probe.py - the grid inspector. Measures the REAL capacity of each plant:"
+     "purpose": "probe.py - the grid inspector. Measures the REAL capacity of each plant:",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 5,
+      "dead": 1
+     }
     },
     {
      "id": "prosody",
      "type": "module",
      "path": "aea/io/prosody.py",
-     "purpose": "prosody.py - HOW IT WAS SAID, not just what was said. The cheap half of what Moshi does."
+     "purpose": "prosody.py - HOW IT WAS SAID, not just what was said. The cheap half of what Moshi does.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 7,
+      "dead": 0
+     }
     },
     {
      "id": "protocol",
      "type": "module",
      "path": "aea/lab/protocol.py",
-     "purpose": "protocol.py - THE TOOL PROTOCOL BATTERY. Every angle we can test without a network."
+     "purpose": "protocol.py - THE TOOL PROTOCOL BATTERY. Every angle we can test without a network.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 3,
+      "dead": 1
+     }
     },
     {
      "id": "publish",
      "type": "module",
      "path": "aea/tooling/publish.py",
-     "purpose": "publish.py - the run shim. THE CODE MOVED TO `aea/tooling/page/`; the command did not."
+     "purpose": "publish.py - the run shim. THE CODE MOVED TO `aea/tooling/page/`; the command did not.",
+     "reach": "unreached",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "pulse",
      "type": "module",
      "path": "aea/kernel/pulse.py",
-     "purpose": "pulse.py - the entity's NERVOUS SIGNAL. Every organ emits what it does, as it does it,"
+     "purpose": "pulse.py - the entity's NERVOUS SIGNAL. Every organ emits what it does, as it does it,",
+     "reach": "organism",
+     "fns": {
+      "total": 3,
+      "live": 2,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "r3_bound",
      "type": "module",
      "path": "aea/lab/r3_bound.py",
-     "purpose": "r3_bound.py - R3'S BOUND, CERTIFIED STRUCTURALLY. Zero model calls, seconds, hostile by default."
+     "purpose": "r3_bound.py - R3'S BOUND, CERTIFIED STRUCTURALLY. Zero model calls, seconds, hostile by default.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 7,
+      "dead": 0
+     }
     },
     {
      "id": "read",
      "type": "module",
      "path": "aea/lab/parts/read.py",
-     "purpose": "Parts that turn a reply into an answer. Both sit at the READ stage and the ORDER between them"
+     "purpose": "Parts that turn a reply into an answer. Both sit at the READ stage and the ORDER between them",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 13,
+      "live": 0,
+      "tool": 2,
+      "dead": 11
+     }
     },
     {
      "id": "reboot",
      "type": "module",
      "path": "aea/lab/reboot.py",
-     "purpose": "reboot.py - RE-RUN THE EXPERIMENTS WHOSE EVIDENCE CANNOT BE READ."
+     "purpose": "reboot.py - RE-RUN THE EXPERIMENTS WHOSE EVIDENCE CANNOT BE READ.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "recall",
      "type": "module",
      "path": "aea/lab/recall.py",
-     "purpose": "recall.py - THE LESSON THAT BEARS ON WHAT YOU ARE ABOUT TO DO, FETCHED."
+     "purpose": "recall.py - THE LESSON THAT BEARS ON WHAT YOU ARE ABOUT TO DO, FETCHED.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 14,
+      "live": 0,
+      "tool": 13,
+      "dead": 1
+     }
     },
     {
      "id": "recourse",
      "type": "module",
      "path": "aea/kernel/recourse.py",
-     "purpose": "recourse.py - WHEN THE OBVIOUS PATH IS BLOCKED, WHAT DO YOU TRY NEXT? Declared, not improvised."
+     "purpose": "recourse.py - WHEN THE OBVIOUS PATH IS BLOCKED, WHAT DO YOU TRY NEXT? Declared, not improvised.",
+     "reach": "organism",
+     "fns": {
+      "total": 3,
+      "live": 1,
+      "tool": 1,
+      "dead": 1
+     }
     },
     {
      "id": "recurrence",
      "type": "module",
      "path": "aea/lab/recurrence.py",
-     "purpose": "recurrence.py - WHICH LESSONS KEEP COMING BACK."
+     "purpose": "recurrence.py - WHICH LESSONS KEEP COMING BACK.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "redteam",
      "type": "module",
      "path": "aea/lab/redteam.py",
-     "purpose": "redteam.py - THE CONTAINMENT CERTIFICATE: a hostile decider, the real gate, and the ablations."
+     "purpose": "redteam.py - THE CONTAINMENT CERTIFICATE: a hostile decider, the real gate, and the ablations.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "reflect",
      "type": "module",
      "path": "aea/organs/reflect.py",
-     "purpose": "reflect.py - t6, THE REFLECTION TICK: the organ that makes the self a loop, not a document."
+     "purpose": "reflect.py - t6, THE REFLECTION TICK: the organ that makes the self a loop, not a document.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 6,
+      "dead": 2
+     }
     },
     {
      "id": "relay",
      "type": "module",
      "path": "aea/mind/relay.py",
-     "purpose": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads"
+     "purpose": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "render",
      "type": "module",
      "path": "aea/tooling/page/render.py",
-     "purpose": "render.py - THE ORCHESTRATOR. Reads state, computes the two axes, hands the template its inputs."
+     "purpose": "render.py - THE ORCHESTRATOR. Reads state, computes the two axes, hands the template its inputs.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 1,
+      "dead": 1
+     }
     },
     {
      "id": "repair",
      "type": "module",
      "path": "aea/lab/parts/repair.py",
-     "purpose": "A second call on the same fuel, looking at the first one's answer. The first stage that costs."
+     "purpose": "A second call on the same fuel, looking at the first one's answer. The first stage that costs.",
+     "reach": "unreached",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 0,
+      "dead": 1
+     }
     },
     {
      "id": "report",
      "type": "module",
      "path": "aea/lab/report.py",
-     "purpose": "report.py - THE EVIDENCE, BROWSABLE. Every reply, and every judgement made about it."
+     "purpose": "report.py - THE EVIDENCE, BROWSABLE. Every reply, and every judgement made about it.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 7,
+      "live": 0,
+      "tool": 6,
+      "dead": 1
+     }
     },
     {
      "id": "rescore",
      "type": "module",
      "path": "aea/lab/rescore.py",
-     "purpose": "rescore.py - READ A STORED RUN AGAIN, WITH A DIFFERENT READER, FOR NOTHING."
+     "purpose": "rescore.py - READ A STORED RUN AGAIN, WITH A DIFFERENT READER, FOR NOTHING.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 11,
+      "live": 0,
+      "tool": 11,
+      "dead": 0
+     }
     },
     {
      "id": "rodprobe",
      "type": "module",
      "path": "aea/energy/rodprobe.py",
-     "purpose": "rodprobe.py - ONE HARNESS FOR ASKING A ROD ANYTHING, AND ONE STORE FOR WHAT IT ANSWERED."
+     "purpose": "rodprobe.py - ONE HARNESS FOR ASKING A ROD ANYTHING, AND ONE STORE FOR WHAT IT ANSWERED.",
+     "reach": "organism",
+     "fns": {
+      "total": 11,
+      "live": 2,
+      "tool": 2,
+      "dead": 7
+     }
     },
     {
      "id": "schema",
      "type": "module",
      "path": "aea/gameapi/schema.py",
-     "purpose": "aea.gameapi.schema - THE BEING AS A STRUCTURE (the world's fog map)."
+     "purpose": "aea.gameapi.schema - THE BEING AS A STRUCTURE (the world's fog map).",
+     "reach": "unreached",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 0,
+      "dead": 5
+     }
     },
     {
      "id": "scope",
      "type": "module",
      "path": "aea/tooling/scope.py",
-     "purpose": "scope.py - IS EVERYTHING AT THE RIGHT SCOPE? Asked mechanically, across the tree."
+     "purpose": "scope.py - IS EVERYTHING AT THE RIGHT SCOPE? Asked mechanically, across the tree.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 2,
+      "dead": 2
+     }
     },
     {
      "id": "scout",
      "type": "module",
      "path": "aea/tooling/scout.py",
-     "purpose": "scout.py - SURVEY AN EXTERNAL REPOSITORY WITH RODS, NOT WITH THE OPERATOR'S CONTEXT."
+     "purpose": "scout.py - SURVEY AN EXTERNAL REPOSITORY WITH RODS, NOT WITH THE OPERATOR'S CONTEXT.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 4,
+      "dead": 5
+     }
     },
     {
      "id": "seats",
      "type": "module",
      "path": "aea/kernel/seats.py",
-     "purpose": "seats.py - CUSTOM SUBAGENTS, BUT A SUBAGENT IS NOT A PROMPT."
+     "purpose": "seats.py - CUSTOM SUBAGENTS, BUT A SUBAGENT IS NOT A PROMPT.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 8,
+      "dead": 1
+     }
     },
     {
      "id": "selfcheck",
      "type": "module",
      "path": "aea/tooling/selfcheck.py",
-     "purpose": "selfcheck.py - EVERY INVARIANT THIS SYSTEM HAS EARNED, IN ONE COMMAND."
+     "purpose": "selfcheck.py - EVERY INVARIANT THIS SYSTEM HAS EARNED, IN ONE COMMAND.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 14,
+      "live": 0,
+      "tool": 14,
+      "dead": 0
+     }
     },
     {
      "id": "selfreport",
      "type": "module",
      "path": "aea/lab/selfreport.py",
-     "purpose": "selfreport.py - WHEN THE ENTITY DESCRIBES ITS OWN FUNCTIONING, IS IT RIGHT?"
+     "purpose": "selfreport.py - WHEN THE ENTITY DESCRIBES ITS OWN FUNCTIONING, IS IT RIGHT?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "senses",
      "type": "module",
      "path": "aea/tooling/senses.py",
-     "purpose": "senses.py - WHAT CAN THIS ENTITY BE GIVEN TO PERCEIVE WITH. A survey of the catalogue."
+     "purpose": "senses.py - WHAT CAN THIS ENTITY BE GIVEN TO PERCEIVE WITH. A survey of the catalogue.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 6,
+      "dead": 0
+     }
     },
     {
      "id": "shadow",
      "type": "module",
      "path": "aea/kernel/shadow.py",
-     "purpose": "shadow.py - THE ENTITY TESTS A CHANGE TO ITSELF WITHOUT BECOMING IT YET."
+     "purpose": "shadow.py - THE ENTITY TESTS A CHANGE TO ITSELF WITHOUT BECOMING IT YET.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 18,
+      "live": 0,
+      "tool": 17,
+      "dead": 1
+     }
     },
     {
      "id": "shape",
      "type": "module",
      "path": "aea/lab/parts/shape.py",
-     "purpose": "Parts that build the prompt. They run before anything is sent."
+     "purpose": "Parts that build the prompt. They run before anything is sent.",
+     "reach": "unreached",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 0,
+      "dead": 2
+     }
     },
     {
      "id": "site",
      "type": "module",
      "path": "aea/lab/site.py",
-     "purpose": "site.py - THE EVIDENCE SITE. Builds web/lab/ from the archive. Data-driven, not baked."
+     "purpose": "site.py - THE EVIDENCE SITE. Builds web/lab/ from the archive. Data-driven, not baked.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 10,
+      "live": 0,
+      "tool": 8,
+      "dead": 2
+     }
     },
     {
      "id": "social",
      "type": "module",
      "path": "aea/lab/social.py",
-     "purpose": "social.py - MEASURE THE CONVERSATION ON MANY DIMENSIONS AT ONCE."
+     "purpose": "social.py - MEASURE THE CONVERSATION ON MANY DIMENSIONS AT ONCE.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 11,
+      "live": 0,
+      "tool": 10,
+      "dead": 1
+     }
     },
     {
      "id": "sources",
      "type": "module",
      "path": "aea/tooling/page/sources.py",
-     "purpose": "sources.py - WHERE THE NUMBERS COME FROM. Every read of durable state, in one place."
+     "purpose": "sources.py - WHERE THE NUMBERS COME FROM. Every read of durable state, in one place.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "speak",
      "type": "module",
      "path": "aea/io/speak.py",
-     "purpose": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):"
+     "purpose": "speak.py - the entity's VOICE. Three engines, one interface, privacy-zoned (2026-07-19):",
+     "reach": "organism",
+     "fns": {
+      "total": 26,
+      "live": 12,
+      "tool": 11,
+      "dead": 3
+     }
     },
     {
      "id": "stats",
      "type": "module",
      "path": "aea/lab/stats.py",
-     "purpose": "stats.py - THE INTERVAL, computed, instead of THE BAND, declared."
+     "purpose": "stats.py - THE INTERVAL, computed, instead of THE BAND, declared.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 4,
+      "dead": 5
+     }
     },
     {
      "id": "style",
      "type": "module",
      "path": "aea/tooling/page/style.py",
-     "purpose": "style.py - THE GENERATED STYLESHEET. One CSS rule per (frame, layer) pair, written out."
+     "purpose": "style.py - THE GENERATED STYLESHEET. One CSS rule per (frame, layer) pair, written out.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "swarm",
      "type": "module",
      "path": "aea/mind/swarm.py",
-     "purpose": "swarm.py - the recursive, self-monitoring swarm. Answers: WHEN does a role spawn a sub-agent?"
+     "purpose": "swarm.py - the recursive, self-monitoring swarm. Answers: WHEN does a role spawn a sub-agent?",
+     "reach": "organism",
+     "fns": {
+      "total": 4,
+      "live": 1,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "talk",
      "type": "module",
      "path": "aea/organs/talk.py",
-     "purpose": "talk.py - TALK TO IT. The conversational face of the entity: the first interface where"
+     "purpose": "talk.py - TALK TO IT. The conversational face of the entity: the first interface where",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 7,
+      "dead": 1
+     }
     },
     {
      "id": "telegram_bridge",
      "type": "module",
      "path": "aea/organs/telegram_bridge.py",
-     "purpose": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,"
+     "purpose": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "template",
      "type": "module",
      "path": "aea/tooling/page/template.py",
-     "purpose": "template.py - THE PAGE AS TEXT, and nothing else."
+     "purpose": "template.py - THE PAGE AS TEXT, and nothing else.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "test_cause",
      "type": "module",
      "path": "aea/lab/tests/test_cause.py",
-     "purpose": "test_cause - EVERY CLASS IS SHOWN A CASE IT MUST CATCH, AND A CASE IT MUST NOT."
+     "purpose": "test_cause - EVERY CLASS IS SHOWN A CASE IT MUST CATCH, AND A CASE IT MUST NOT.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "test_golden",
      "type": "module",
      "path": "aea/lab/tests/test_golden.py",
-     "purpose": "THE ADDITION LAW, APPLIED TO OURSELVES. No network, no cost, exactly reproducible."
+     "purpose": "THE ADDITION LAW, APPLIED TO OURSELVES. No network, no cost, exactly reproducible.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 35,
+      "live": 0,
+      "tool": 26,
+      "dead": 9
+     }
     },
     {
      "id": "test_knobs",
      "type": "module",
      "path": "aea/lab/tests/test_knobs.py",
-     "purpose": "test_knobs - THE DECLARATION MAY NOT GROW INTO A PROGRAMMING LANGUAGE."
+     "purpose": "test_knobs - THE DECLARATION MAY NOT GROW INTO A PROGRAMMING LANGUAGE.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 2,
+      "live": 0,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "test_pipeline",
      "type": "module",
      "path": "aea/lab/tests/test_pipeline.py",
-     "purpose": "test_pipeline.py - THE SELF-MODIFICATION LADDER, TESTED ON CHANGES DESIGNED TO GET THROUGH."
+     "purpose": "test_pipeline.py - THE SELF-MODIFICATION LADDER, TESTED ON CHANGES DESIGNED TO GET THROUGH.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 1,
+      "dead": 7
+     }
     },
     {
      "id": "test_wire_live",
      "type": "module",
      "path": "aea/lab/tests/test_wire_live.py",
-     "purpose": "test_wire_live - PROVE THE WIRE INSIDE THE DAEMON, not only in isolation."
+     "purpose": "test_wire_live - PROVE THE WIRE INSIDE THE DAEMON, not only in isolation.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "tiers",
      "type": "module",
      "path": "aea/mind/tiers.py",
-     "purpose": "tiers.py - THE TIERED MIND. Different rods own different organs, composed into one voice."
+     "purpose": "tiers.py - THE TIERED MIND. Different rods own different organs, composed into one voice.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 4,
+      "dead": 1
+     }
     },
     {
      "id": "toolkinds",
      "type": "module",
      "path": "aea/kernel/toolkinds.py",
-     "purpose": "toolkinds.py - THE GRID. What a tool IS, on the two axes that actually matter."
+     "purpose": "toolkinds.py - THE GRID. What a tool IS, on the two axes that actually matter.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 2,
+      "dead": 1
+     }
     },
     {
      "id": "tracelog",
      "type": "module",
      "path": "aea/kernel/tracelog.py",
-     "purpose": "tracelog.py - the trace substrate the whole swarm stands on."
+     "purpose": "tracelog.py - the trace substrate the whole swarm stands on.",
+     "reach": "unreached",
+     "fns": {
+      "total": 10,
+      "live": 0,
+      "tool": 0,
+      "dead": 10
+     }
     },
     {
      "id": "transcripts",
      "type": "module",
      "path": "aea/tooling/transcripts.py",
-     "purpose": "transcripts.py - READ BACK EVERY COUNCIL AND EVERY CONVERSATION THIS MACHINE HAS HELD."
+     "purpose": "transcripts.py - READ BACK EVERY COUNCIL AND EVERY CONVERSATION THIS MACHINE HAS HELD.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 5,
+      "dead": 0
+     }
     },
     {
      "id": "transfer",
      "type": "module",
      "path": "aea/lab/transfer.py",
-     "purpose": "transfer.py - WHERE ELSE IS THIS TRUE? Asked mechanically, every run."
+     "purpose": "transfer.py - WHERE ELSE IS THIS TRUE? Asked mechanically, every run.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 16,
+      "live": 0,
+      "tool": 13,
+      "dead": 3
+     }
     },
     {
      "id": "trust",
      "type": "module",
      "path": "aea/kernel/trust.py",
-     "purpose": "trust.py - THE TRUST LEDGER: autonomy is EARNED per capability, never assumed."
+     "purpose": "trust.py - THE TRUST LEDGER: autonomy is EARNED per capability, never assumed.",
+     "reach": "organism",
+     "fns": {
+      "total": 8,
+      "live": 6,
+      "tool": 2,
+      "dead": 0
+     }
     },
     {
      "id": "unstick",
      "type": "module",
      "path": "aea/kernel/unstick.py",
-     "purpose": "unstick.py - WHEN REPEATING CANNOT HELP, CHANGE SOMETHING. Steps 3 and 4 of five."
+     "purpose": "unstick.py - WHEN REPEATING CANNOT HELP, CHANGE SOMETHING. Steps 3 and 4 of five.",
+     "reach": "organism",
+     "fns": {
+      "total": 12,
+      "live": 11,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "vital",
      "type": "module",
      "path": "aea/lab/vital.py",
-     "purpose": "vital.py - IS THE ORGANISM ALIVE AS ONE THING? A whole-entity run, with listeners on the code."
+     "purpose": "vital.py - IS THE ORGANISM ALIVE AS ONE THING? A whole-entity run, with listeners on the code.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 4,
+      "dead": 5
+     }
     },
     {
      "id": "x01_generic_frame",
@@ -952,157 +1979,339 @@
      "id": "x06_long_chain",
      "type": "module",
      "path": "aea/lab/experiments/x06_long_chain.py",
-     "purpose": "x06 - THE LONG CHAIN. L0 against L5: one breath, or carried state?"
+     "purpose": "x06 - THE LONG CHAIN. L0 against L5: one breath, or carried state?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 6,
+      "dead": 3
+     }
     },
     {
      "id": "x06b_crossover",
      "type": "module",
      "path": "aea/lab/experiments/x06b_crossover.py",
-     "purpose": "x06b - THE CROSSOVER, done properly. Calibrate the UNIT OF WORK first, then find where L0 breaks."
+     "purpose": "x06b - THE CROSSOVER, done properly. Calibrate the UNIT OF WORK first, then find where L0 breaks.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 4,
+      "dead": 4
+     }
     },
     {
      "id": "x07_self_assessment",
      "type": "module",
      "path": "aea/lab/experiments/x07_self_assessment.py",
-     "purpose": "x07 - CAN A ROD PREDICT ITS OWN FAILURE? The experiment that decides two rung placements."
+     "purpose": "x07 - CAN A ROD PREDICT ITS OWN FAILURE? The experiment that decides two rung placements.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 2,
+      "dead": 3
+     }
     },
     {
      "id": "x07b_self_assessment_hard",
      "type": "module",
      "path": "aea/lab/experiments/x07b_self_assessment_hard.py",
-     "purpose": "x07b - SELF-ASSESSMENT WHERE FAILURE IS ABUNDANT, and whether it is RELATIVE rather than absent."
+     "purpose": "x07b - SELF-ASSESSMENT WHERE FAILURE IS ABUNDANT, and whether it is RELATIVE rather than absent.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 2,
+      "dead": 4
+     }
     },
     {
      "id": "x08_fuel_crossing",
      "type": "module",
      "path": "aea/lab/experiments/x08_fuel_crossing.py",
-     "purpose": "x08 - IF THE FUEL CHANGES, WHAT STAYS? The other half of C-80, and chapter II's title question."
+     "purpose": "x08 - IF THE FUEL CHANGES, WHAT STAYS? The other half of C-80, and chapter II's title question.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 2,
+      "dead": 3
+     }
     },
     {
      "id": "x08b_interpretable_state",
      "type": "module",
      "path": "aea/lab/experiments/x08b_interpretable_state.py",
-     "purpose": "x08b - THE HANDOFF WHEN THE STATE IS NOT A NUMBER. What x08 answered in its easiest possible form."
+     "purpose": "x08b - THE HANDOFF WHEN THE STATE IS NOT A NUMBER. What x08 answered in its easiest possible form.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 18,
+      "live": 0,
+      "tool": 8,
+      "dead": 10
+     }
     },
     {
      "id": "x09_hearth_failure",
      "type": "module",
      "path": "aea/lab/experiments/x09_hearth_failure.py",
-     "purpose": "x09 - IS THERE ANYTHING ON THIS BENCH THE PLAYER CAN FAIL? The blocker under the skipped rungs."
+     "purpose": "x09 - IS THERE ANYTHING ON THIS BENCH THE PLAYER CAN FAIL? The blocker under the skipped rungs.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 4,
+      "dead": 4
+     }
     },
     {
      "id": "x10_coverage_sweep",
      "type": "module",
      "path": "aea/lab/experiments/x10_coverage_sweep.py",
-     "purpose": "x10 - THE COVERAGE SWEEP. Every size class, four temperatures, three framings, one task."
+     "purpose": "x10 - THE COVERAGE SWEEP. Every size class, four temperatures, three framings, one task.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 3,
+      "dead": 5
+     }
     },
     {
      "id": "x11_the_council",
      "type": "module",
      "path": "aea/lab/experiments/x11_the_council.py",
-     "purpose": "x11 - DOES A COUNCIL REACH ABOVE ITS FUEL? Chapter II's third claim, the one never measured."
+     "purpose": "x11 - DOES A COUNCIL REACH ABOVE ITS FUEL? Chapter II's third claim, the one never measured.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 16,
+      "live": 0,
+      "tool": 7,
+      "dead": 9
+     }
     },
     {
      "id": "x12_L0_goal_presence",
      "type": "module",
      "path": "aea/lab/experiments/x12_L0_goal_presence.py",
-     "purpose": "x12 - CHAPTER I / LEVEL 0. Does a call need a goal, and can bigger fuel supply one it was not given?"
+     "purpose": "x12 - CHAPTER I / LEVEL 0. Does a call need a goal, and can bigger fuel supply one it was not given?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 2,
+      "dead": 3
+     }
     },
     {
      "id": "x13_L1_read_the_output",
      "type": "module",
      "path": "aea/lab/experiments/x13_L1_read_the_output.py",
-     "purpose": "x13 - CHAPTER II / LEVEL 1. What can be learned from a reply without spending another call?"
+     "purpose": "x13 - CHAPTER II / LEVEL 1. What can be learned from a reply without spending another call?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 2,
+      "dead": 4
+     }
     },
     {
      "id": "x14_C75_parser_validation",
      "type": "module",
      "path": "aea/lab/experiments/x14_C75_parser_validation.py",
-     "purpose": "x14 - CLOSING C-75. What is the exchange rate between a parse that guesses and a parse that abstains?"
+     "purpose": "x14 - CLOSING C-75. What is the exchange rate between a parse that guesses and a parse that abstains?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 5,
+      "live": 0,
+      "tool": 2,
+      "dead": 3
+     }
     },
     {
      "id": "x15_L2_the_frame",
      "type": "module",
      "path": "aea/lab/experiments/x15_L2_the_frame.py",
-     "purpose": "x15 - CHAPTER III / LEVEL 2. The last free lever, and the creature it damages."
+     "purpose": "x15 - CHAPTER III / LEVEL 2. The last free lever, and the creature it damages.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 2,
+      "dead": 6
+     }
     },
     {
      "id": "x16_the_organisms",
      "type": "module",
      "path": "aea/lab/experiments/x16_the_organisms.py",
-     "purpose": "x16 - RUNNING THE CREATURES. Every version of the AEA, assembled and fired on pinned fuel."
+     "purpose": "x16 - RUNNING THE CREATURES. Every version of the AEA, assembled and fired on pinned fuel.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 2,
+      "dead": 1
+     }
     },
     {
      "id": "x17_the_lattice",
      "type": "module",
      "path": "aea/lab/experiments/x17_the_lattice.py",
-     "purpose": "x17 - THE ORDERING LATTICE. Deriving the dependency graph instead of reasoning it."
+     "purpose": "x17 - THE ORDERING LATTICE. Deriving the dependency graph instead of reasoning it.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 3,
+      "dead": 1
+     }
     },
     {
      "id": "x18_second_battery",
      "type": "module",
      "path": "aea/lab/experiments/x18_second_battery.py",
-     "purpose": "x18 - THE SECOND BATTERY. Does the deck we hold describe the architecture, or describe counting?"
+     "purpose": "x18 - THE SECOND BATTERY. Does the deck we hold describe the architecture, or describe counting?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 3,
+      "dead": 1
+     }
     },
     {
      "id": "x19_the_unmeasured_pair",
      "type": "module",
      "path": "aea/lab/experiments/x19_the_unmeasured_pair.py",
-     "purpose": "x19 - THE UNMEASURED PAIR. The two creatures on the World 1 plate that no part has ever been tried on."
+     "purpose": "x19 - THE UNMEASURED PAIR. The two creatures on the World 1 plate that no part has ever been tried on.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 3,
+      "dead": 3
+     }
     },
     {
      "id": "x20_the_critic",
      "type": "module",
      "path": "aea/lab/experiments/x20_the_critic.py",
-     "purpose": "x20 - THE CRITIC. World 2's first assemblable repair part, and the test its whole world rests on."
+     "purpose": "x20 - THE CRITIC. World 2's first assemblable repair part, and the test its whole world rests on.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 3,
+      "dead": 3
+     }
     },
     {
      "id": "x21_the_carry_battery",
      "type": "module",
      "path": "aea/lab/experiments/x21_the_carry_battery.py",
-     "purpose": "x21 - THE CARRY BATTERY. World 3's three components are three SHAPES of one job, plus a control."
+     "purpose": "x21 - THE CARRY BATTERY. World 3's three components are three SHAPES of one job, plus a control.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 6,
+      "live": 0,
+      "tool": 4,
+      "dead": 2
+     }
     },
     {
      "id": "x22_the_capacity_ladder",
      "type": "module",
      "path": "aea/lab/experiments/x22_the_capacity_ladder.py",
-     "purpose": "x22 - THE CAPACITY LADDER. What does each part ENABLE, as the seat grows?"
+     "purpose": "x22 - THE CAPACITY LADDER. What does each part ENABLE, as the seat grows?",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 4,
+      "live": 0,
+      "tool": 4,
+      "dead": 0
+     }
     },
     {
      "id": "x23_inheritance",
      "type": "module",
      "path": "aea/lab/experiments/x23_inheritance.py",
-     "purpose": "x23 - INHERITANCE. The only creature-to-creature interaction in the project."
+     "purpose": "x23 - INHERITANCE. The only creature-to-creature interaction in the project.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 3,
+      "dead": 5
+     }
     },
     {
      "id": "x23b_inheritance_across_plants",
      "type": "module",
      "path": "aea/lab/experiments/x23b_inheritance_across_plants.py",
-     "purpose": "x23b - INHERITANCE ACROSS PLANTS, with a calibration gate."
+     "purpose": "x23b - INHERITANCE ACROSS PLANTS, with a calibration gate.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 8,
+      "live": 0,
+      "tool": 3,
+      "dead": 5
+     }
     },
     {
      "id": "x24_the_store_and_the_door",
      "type": "module",
      "path": "aea/lab/experiments/x24_the_store_and_the_door.py",
-     "purpose": "x24 - THE STORE AND THE DOOR. Keeping a thing and reaching it are two capabilities."
+     "purpose": "x24 - THE STORE AND THE DOOR. Keeping a thing and reaching it are two capabilities.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 9,
+      "live": 0,
+      "tool": 7,
+      "dead": 2
+     }
     },
     {
      "id": "xray",
      "type": "module",
      "path": "aea/tooling/xray.py",
-     "purpose": "xray.py - WHAT THIS SYSTEM IS MADE OF RIGHT NOW, read from the code rather than from a document."
+     "purpose": "xray.py - WHAT THIS SYSTEM IS MADE OF RIGHT NOW, read from the code rather than from a document.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 15,
+      "live": 0,
+      "tool": 12,
+      "dead": 3
+     }
     },
     {
      "id": "xray_graph",
      "type": "module",
      "path": "aea/tooling/xray_graph.py",
-     "purpose": "xray_graph.py - THE CODEBASE AS A LIVING GRAPH. Canvas, real edges, honest motion."
+     "purpose": "xray_graph.py - THE CODEBASE AS A LIVING GRAPH. Canvas, real edges, honest motion.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 1,
+      "live": 0,
+      "tool": 1,
+      "dead": 0
+     }
     },
     {
      "id": "xray_view",
      "type": "module",
      "path": "aea/tooling/xray_view.py",
-     "purpose": "xray_view.py - the xray, rendered. GENERATED FROM THE CODE, NEVER HAND-AUTHORED."
+     "purpose": "xray_view.py - the xray, rendered. GENERATED FROM THE CODE, NEVER HAND-AUTHORED.",
+     "reach": "terminal-only",
+     "fns": {
+      "total": 3,
+      "live": 0,
+      "tool": 3,
+      "dead": 0
+     }
     },
     {
      "id": "/api/construct/run",
@@ -1319,6 +2528,16 @@
     {
      "src": "aea",
      "dst": "crystal",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "egress",
+     "rel": "imports"
+    },
+    {
+     "src": "aea",
+     "dst": "grid",
      "rel": "imports"
     },
     {
@@ -1632,6 +2851,11 @@
      "rel": "imports"
     },
     {
+     "src": "build_graph",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
      "src": "calibrate",
      "dst": "grid",
      "rel": "imports"
@@ -1882,8 +3106,18 @@
      "rel": "imports"
     },
     {
+     "src": "decide",
+     "dst": "dispatch",
+     "rel": "imports"
+    },
+    {
      "src": "dispatch",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch",
+     "dst": "egress",
      "rel": "imports"
     },
     {
@@ -1904,6 +3138,16 @@
     {
      "src": "dispatch_cert",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch_cert",
+     "dst": "egress",
+     "rel": "imports"
+    },
+    {
+     "src": "dispatch_cert",
+     "dst": "egress",
      "rel": "imports"
     },
     {
@@ -2014,6 +3258,21 @@
     {
      "src": "earcheck",
      "dst": "convbench",
+     "rel": "imports"
+    },
+    {
+     "src": "egress",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "egress",
+     "dst": "dispatch",
+     "rel": "imports"
+    },
+    {
+     "src": "egress",
+     "dst": "dispatch",
      "rel": "imports"
     },
     {
@@ -2183,6 +3442,16 @@
     },
     {
      "src": "hands",
+     "dst": "dispatch",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
+     "dst": "egress",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
      "dst": "recourse",
      "rel": "imports"
     },
@@ -2194,6 +3463,11 @@
     {
      "src": "hands",
      "dst": "laws",
+     "rel": "imports"
+    },
+    {
+     "src": "hands",
+     "dst": "pulse",
      "rel": "imports"
     },
     {
@@ -2309,6 +3583,11 @@
     {
      "src": "ladder",
      "dst": "perceive",
+     "rel": "imports"
+    },
+    {
+     "src": "ladder",
+     "dst": "egress",
      "rel": "imports"
     },
     {
@@ -2793,6 +4072,11 @@
     },
     {
      "src": "render",
+     "dst": "overture",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
      "dst": "panels",
      "rel": "imports"
     },
@@ -3144,6 +4428,31 @@
     {
      "src": "test_golden",
      "dst": "ladder",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "egress",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "ladder",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "hands",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "cause",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "hands",
      "rel": "imports"
     },
     {
@@ -3770,6 +5079,2904 @@
      "src": "xray_view",
      "dst": "xray_graph",
      "rel": "imports"
+    },
+    {
+     "src": "__main__",
+     "dst": "guard",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "__main__",
+     "dst": "render",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "__main__",
+     "dst": "sources",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "access",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "act",
+     "dst": "honesty",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "aea",
+     "dst": "crystal",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "aea",
+     "dst": "egress",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "aea",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "aea",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "aea",
+     "dst": "hades",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "aea",
+     "dst": "impasse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "aea",
+     "dst": "live",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "aea",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "aea",
+     "dst": "outcomes",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "agent_tools",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "anchor",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "assembly",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "axes",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "axes",
+     "dst": "layout",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "background",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "background",
+     "dst": "tiers",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "battery",
+     "dst": "aea",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "battery",
+     "dst": "convbench",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "battery",
+     "dst": "converse",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 10
+    },
+    {
+     "src": "battery",
+     "dst": "council",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "battery",
+     "dst": "decide",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "battery",
+     "dst": "dispatch",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "battery",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "battery",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "battery",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "battery",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 5
+    },
+    {
+     "src": "battery",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "battery",
+     "dst": "prosody",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "battery",
+     "dst": "protocol",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "battery",
+     "dst": "recall",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "battery",
+     "dst": "transfer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "bench_core",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "bench_core",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 9
+    },
+    {
+     "src": "bench_core",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "bench_core",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "blackbox",
+     "dst": "earcheck",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "blackbox",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "board",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "board",
+     "dst": "laws",
+     "rel": "calls",
+     "evidence": "DISPATCH",
+     "count": 1
+    },
+    {
+     "src": "board",
+     "dst": "xray",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "brief",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "brief",
+     "dst": "hades",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "brief",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "brief",
+     "dst": "knobs",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "brief",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "brief",
+     "dst": "tracelog",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "brief",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "build_graph",
+     "dst": "assembly",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "calibrate",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "calibrate",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "calibrate",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 6
+    },
+    {
+     "src": "capability_census",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "capacity",
+     "dst": "base",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "capacity",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "cause",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "chain",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "chain",
+     "dst": "read",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "checkpoint",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "consolidate",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "consolidate",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "controlroom",
+     "dst": "autonomy",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "controlroom",
+     "dst": "bench_core",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "controlroom",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "controlroom",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 14
+    },
+    {
+     "src": "controlroom",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "controlroom",
+     "dst": "talk",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "controlroom",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "convbench",
+     "dst": "converse",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "convbench",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "convbench",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 5
+    },
+    {
+     "src": "convbench",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "convbench",
+     "dst": "tiers",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "converse",
+     "dst": "blackbox",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "converse",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "converse",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "converse",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "converse",
+     "dst": "prosody",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "converse",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "converse",
+     "dst": "tiers",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "council",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "council",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "crystal",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "crystal",
+     "dst": "unstick",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "crystallize",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "decide",
+     "dst": "dispatch",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "dispatch",
+     "dst": "egress",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "dispatch",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "dispatch_cert",
+     "dst": "dispatch",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "dispatch_cert",
+     "dst": "egress",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "dispatch_cert",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "dispatch_power",
+     "dst": "dispatch",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "dispatch_power",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "dispatch_power",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "dna",
+     "dst": "base",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "duet",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "duet",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "duet",
+     "dst": "prosody",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "duet",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "earbench",
+     "dst": "converse",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "earbench",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "earbench",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 7
+    },
+    {
+     "src": "earbench",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "earbench",
+     "dst": "tiers",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "earcheck",
+     "dst": "convbench",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "earcheck",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "earcheck",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "earcheck",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "egress",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "energy",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "energy",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "energy",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "energy",
+     "dst": "rodprobe",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "export_city",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "extensive_census",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "extensive_census",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 11
+    },
+    {
+     "src": "fire",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "fire",
+     "dst": "read",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "fit",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "fit",
+     "dst": "pace",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "fit",
+     "dst": "unstick",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "fleet",
+     "dst": "fuels",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 5
+    },
+    {
+     "src": "fleet",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "fuel",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "fuel",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "fuels",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "fuels",
+     "dst": "pace",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "gate",
+     "dst": "aea",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "gate",
+     "dst": "decide",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "gate",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "gauntlet",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "goals",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "goals",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "graph",
+     "dst": "assembly",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "hades",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "hades",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "hades",
+     "dst": "swarm",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "hands",
+     "dst": "dispatch",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "hands",
+     "dst": "egress",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "hands",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 10
+    },
+    {
+     "src": "hands",
+     "dst": "laws",
+     "rel": "calls",
+     "evidence": "DISPATCH",
+     "count": 1
+    },
+    {
+     "src": "hands",
+     "dst": "outcomes",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "hands",
+     "dst": "pace",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "hands",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "hands",
+     "dst": "recourse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "hands",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "harness",
+     "dst": "anchor",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "harness",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "harness",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "harness",
+     "dst": "memory",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "harness",
+     "dst": "pace",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "heal",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "impasse",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "index_codex",
+     "dst": "consolidate",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "index_codex",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "index_codex",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "journey_check",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "knobs",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "ladder",
+     "dst": "assembly",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 5
+    },
+    {
+     "src": "ladder",
+     "dst": "egress",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "ladder",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "ladder",
+     "dst": "perceive",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "ladder",
+     "dst": "r3_bound",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "layout",
+     "dst": "assembly",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "listen",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "cause",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "consolidate",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "crystal",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "live",
+     "dst": "decide",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "live",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "live",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "impasse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "knobs",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "outcomes",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "live",
+     "dst": "perceive",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "live",
+     "dst": "recourse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "live",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "live",
+     "dst": "unstick",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "marks",
+     "dst": "layout",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "memory",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "model_fitness",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "model_fitness",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "movecontrol",
+     "dst": "aea",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "movecontrol",
+     "dst": "decide",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "movecontrol",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "notify",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "notify",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "orchestrator",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "outcomes",
+     "dst": "cause",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "outcomes",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "overseer",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "overseer",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "pace",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "pace",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "party",
+     "dst": "converse",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "party",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "party",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "party",
+     "dst": "mixer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "party",
+     "dst": "persona",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "party",
+     "dst": "social",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "party",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "party",
+     "dst": "tiers",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "pathfinder",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "pathfinder",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "pathfinder",
+     "dst": "swarm",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "perceive",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "persona",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "probe",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "prosody",
+     "dst": "listen",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "protocol",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "protocol",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "publish",
+     "dst": "__main__",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "publish",
+     "dst": "guard",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "pulse",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "read",
+     "dst": "axes",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "read",
+     "dst": "bench_core",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "read",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "read",
+     "dst": "honesty",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 5
+    },
+    {
+     "src": "read",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "reboot",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "reboot",
+     "dst": "site",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "recall",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "recall",
+     "dst": "modality",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "redteam",
+     "dst": "charset_proof",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "redteam",
+     "dst": "decide",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "redteam",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "redteam",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "reflect",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "reflect",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "reflect",
+     "dst": "hades",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "reflect",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "reflect",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "relay",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "relay",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "relay",
+     "dst": "swarm",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "render",
+     "dst": "assets",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "render",
+     "dst": "axes",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 7
+    },
+    {
+     "src": "render",
+     "dst": "climb",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "render",
+     "dst": "graph",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "render",
+     "dst": "layout",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "render",
+     "dst": "marks",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "render",
+     "dst": "overture",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "render",
+     "dst": "panels",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "render",
+     "dst": "sources",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "render",
+     "dst": "style",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "render",
+     "dst": "template",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "repair",
+     "dst": "base",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 2
+    },
+    {
+     "src": "repair",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "repair",
+     "dst": "read",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "report",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "rescore",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "rodprobe",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 7
+    },
+    {
+     "src": "schema",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "schema",
+     "dst": "honesty",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "scope",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "scout",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "scout",
+     "dst": "rodprobe",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 3
+    },
+    {
+     "src": "seats",
+     "dst": "fit",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "seats",
+     "dst": "goals",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "seats",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "seats",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "seats",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "seats",
+     "dst": "unstick",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "selfcheck",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "selfcheck",
+     "dst": "xray",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "selfreport",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "senses",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "shadow",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "shape",
+     "dst": "base",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 2
+    },
+    {
+     "src": "site",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "social",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "sources",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "speak",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "speak",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "speak",
+     "dst": "tiers",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "swarm",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "swarm",
+     "dst": "orchestrator",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "talk",
+     "dst": "consolidate",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "talk",
+     "dst": "energy",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "talk",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 5
+    },
+    {
+     "src": "talk",
+     "dst": "index_codex",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "talk",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "talk",
+     "dst": "speak",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "talk",
+     "dst": "trust",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "telegram_bridge",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 6
+    },
+    {
+     "src": "telegram_bridge",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "telegram_bridge",
+     "dst": "talk",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "test_cause",
+     "dst": "cause",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "test_golden",
+     "dst": "aea",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "test_golden",
+     "dst": "assembly",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 7
+    },
+    {
+     "src": "test_golden",
+     "dst": "cause",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "test_golden",
+     "dst": "chain",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 3
+    },
+    {
+     "src": "test_golden",
+     "dst": "decide",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "test_golden",
+     "dst": "dispatch",
+     "rel": "calls",
+     "evidence": "DISPATCH",
+     "count": 1
+    },
+    {
+     "src": "test_golden",
+     "dst": "dispatch_cert",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "test_golden",
+     "dst": "egress",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "test_golden",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 4
+    },
+    {
+     "src": "test_golden",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "test_golden",
+     "dst": "guard",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "test_golden",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "test_golden",
+     "dst": "ladder",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "test_golden",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "test_golden",
+     "dst": "perceive",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "test_golden",
+     "dst": "read",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "test_golden",
+     "dst": "selfcheck",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "test_golden",
+     "dst": "transfer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "test_knobs",
+     "dst": "knobs",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "test_pipeline",
+     "dst": "shadow",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "test_wire_live",
+     "dst": "live",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "tiers",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "trust",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 7
+    },
+    {
+     "src": "trust",
+     "dst": "notify",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "trust",
+     "dst": "pulse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "unstick",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "unstick",
+     "dst": "impasse",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "unstick",
+     "dst": "knobs",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "vital",
+     "dst": "aea",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "vital",
+     "dst": "crystal",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "vital",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "vital",
+     "dst": "hands",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "vital",
+     "dst": "knobs",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "vital",
+     "dst": "live",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "vital",
+     "dst": "outcomes",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "vital",
+     "dst": "unstick",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "x01_generic_frame",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 6
+    },
+    {
+     "src": "x02_fitted_frame",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "x03_judge",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "x04_separation",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "x06_long_chain",
+     "dst": "checkpoint",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 2
+    },
+    {
+     "src": "x06_long_chain",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x06_long_chain",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "checkpoint",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 2
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x06b_crossover",
+     "dst": "x06_long_chain",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 5
+    },
+    {
+     "src": "x07_self_assessment",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x07_self_assessment",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "x07_self_assessment",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "x06_long_chain",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "x07b_self_assessment_hard",
+     "dst": "x07_self_assessment",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "checkpoint",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 2
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x08_fuel_crossing",
+     "dst": "x06_long_chain",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 3
+    },
+    {
+     "src": "x08b_interpretable_state",
+     "dst": "checkpoint",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 2
+    },
+    {
+     "src": "x08b_interpretable_state",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 3
+    },
+    {
+     "src": "x08b_interpretable_state",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x09_hearth_failure",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x09_hearth_failure",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "x09_hearth_failure",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x10_coverage_sweep",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x10_coverage_sweep",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "x10_coverage_sweep",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x11_the_council",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 4
+    },
+    {
+     "src": "x11_the_council",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x11_the_council",
+     "dst": "x06_long_chain",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x12_L0_goal_presence",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x12_L0_goal_presence",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x12_L0_goal_presence",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x13_L1_read_the_output",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x13_L1_read_the_output",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x13_L1_read_the_output",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x14_C75_parser_validation",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x14_C75_parser_validation",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x14_C75_parser_validation",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x15_L2_the_frame",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x15_L2_the_frame",
+     "dst": "harness",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x15_L2_the_frame",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x16_the_organisms",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x16_the_organisms",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 4
+    },
+    {
+     "src": "x16_the_organisms",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x17_the_lattice",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x17_the_lattice",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x17_the_lattice",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x18_second_battery",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x18_second_battery",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x18_second_battery",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x19_the_unmeasured_pair",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x20_the_critic",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x21_the_carry_battery",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x21_the_carry_battery",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x21_the_carry_battery",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "capacity",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x22_the_capacity_ladder",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x23_inheritance",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x23_inheritance",
+     "dst": "organism",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x23_inheritance",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x23b_inheritance_across_plants",
+     "dst": "chain",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x23b_inheritance_across_plants",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "x23b_inheritance_across_plants",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "chain",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "fuel",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "overseer",
+     "rel": "calls",
+     "evidence": "NONE",
+     "count": 1
+    },
+    {
+     "src": "x24_the_store_and_the_door",
+     "dst": "stats",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 2
+    },
+    {
+     "src": "xray",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 2
+    },
+    {
+     "src": "xray_view",
+     "dst": "grid",
+     "rel": "calls",
+     "evidence": "EXTRACTED",
+     "count": 1
+    },
+    {
+     "src": "xray_view",
+     "dst": "xray",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
+    },
+    {
+     "src": "xray_view",
+     "dst": "xray_graph",
+     "rel": "calls",
+     "evidence": "TOOL",
+     "count": 1
     }
    ]
   },
@@ -4818,6 +9025,18 @@
      "id": "D50",
      "type": "discovery",
      "title": "D50 · The picture was drawing two ladders, and both of its measuring instruments were blind (2026-08-02)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D51 - A LABEL IS NOT A MEASUREMENT, AND ",
+     "type": "discovery",
+     "title": "D51 - A LABEL IS NOT A MEASUREMENT, AND THIS REPO KEEPS READING ONE AS THE OTHER",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D52 - THE NUDGE IS PART OF THE MEASUREME",
+     "type": "discovery",
+     "title": "D52 - THE NUDGE IS PART OF THE MEASUREMENT, AND IT MUST BE IN THE RECORD",
      "path": "diary/DISCOVERIES.md"
     }
    ],
