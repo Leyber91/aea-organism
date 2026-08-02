@@ -244,24 +244,48 @@ because the page does. Any certificate built on that claim is void the moment a 
 path. It needs its own bound and its own council, and it is a real capability worth having later.
 
 **AND THE EVOLUTION TRIGGER IS THE ENTITY, NOT A SELF-HEALING SCRAPER.** Luis, same session: *"the
-tools need to evolve, but the trigger needs to be the autonomous entity architecture."* Correct, and
-the machinery already exists here, reachable, and silent:
+tools need to evolve, but the trigger needs to be the autonomous entity architecture."* Correct - and
+the machinery already exists here AND IS WIRED AND WORKING, which is not what this section said an
+hour ago.
 
-    kernel.impasse   131 lines   noticing it is stuck, and saying why      state/impasse.json ABSENT
-    kernel.unstick   416 lines   when repeating cannot help, change        state/unstick.json ABSENT
-    kernel.crystal   256 lines   what works twice becomes a part           state/crystal.json 40 bytes
+**RETRACTION, and it was in this file.** The first version of this section said the three organs were
+"reachable and silent", with "empty stores after 280 ticks", implying a wire that never fires. That
+was read off `EXTRACTED` in the provenance table plus the size of `crystal.json`. EXTRACTED means A
+STATIC CALL SITE EXISTS - it is not a claim that the function runs, and I published it as one. That
+is the same error as certifying dispatch's BOUND and assuming its POWER, one hour later, in the
+document written to prevent it.
 
-803 lines, statically EXTRACTED, empty stores after 280 ticks - against a 140KB outcome record they
-are meant to read. Building a separate self-improving fetcher would be building a fourth organ
-beside three that already exist unused, which is how this repo reached 1,500 functions with 160
-reachable.
+MEASURED instead of inferred:
 
-**THEY ARE SILENT FOR ONE REASON AND IT IS SMALL.** The ledger records `outcome` as
-`ran / refused / raised` - TRANSPORT level. `web_search` returning "NO RESULTS (14313 bytes but
-nothing parsed)" for weeks was recorded as `ran`, successfully. A tool that returns a captcha page
-SUCCEEDS by that definition, so no impasse is ever signalled, `unstick` is never asked, and nothing
-crystallises. The missing piece is a second outcome dimension - **did the tool do its job**, distinct
-from **did the call complete** - and then the loop runs on organs already built:
+    impasse.scan       <- aea.loop.aea:standing
+    unstick.propose    <- aea.loop.live:_notice_and_propose      live.py:743, ON THE TICK PATH
+    unstick.record     <- aea.loop.live:_notice_and_propose
+    crystal.harvest    <- aea.loop.live:_notice_and_propose
+    crystal.applicable <- aea.loop.aea:standing, live:_notice_and_propose
+    crystal.carry_out  <- aea.loop.live:_notice_and_propose
+
+    organ functions with no caller anywhere: 0
+
+And `impasse.scan()` over the real 140KB outcome record judges nine capabilities and finds one
+genuinely stuck - `produce_brief`, "3 of the last 4 failures share one cause" - with the other eight
+correctly `working`. `_notice_and_propose`'s own docstring records that it was built to close exactly
+the CLI-only gap this section claimed was still open.
+
+Nothing has crystallised because `crystal.harvest` requires something that worked TWICE and nothing
+has yet. That is the design behaving correctly, not a wire that never fires.
+
+**THE REAL GAP IS NARROWER AND IT IS AN ALTITUDE PROBLEM.** `impasse` watches nine CAPABILITIES -
+gather_public, produce_brief, send_outbound and so on. "web_search returns a captcha page" is not one
+of them, and cannot become one, because a capability degrades gracefully around a dead tool: the
+brief still gets produced, just worse. So a tool can be dead for weeks with every capability reading
+`working`.
+
+Underneath that sits the recording level: the hands ledger carries `outcome` on all 146 rows
+(`ran 125 / refused 11 / raised 10`) and it is TRANSPORT-level. `web_search` returning
+"NO RESULTS (14313 bytes but nothing parsed)" was recorded as `ran`, successfully, for weeks.
+
+So the missing piece is one dimension at one altitude - **did the TOOL do its job**, distinct from
+*did the call complete* and from *is the CAPABILITY failing* - fed into the loop that already runs:
 
     tool returns nothing usable  ->  impasse.signature   a named stuck-state
     impasse recorded             ->  unstick.propose     another route, from a CLOSED set
