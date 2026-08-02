@@ -367,7 +367,13 @@ def parse(decision: dict, known: dict = None) -> tuple:
                             break
                 args = {spec["arg"]: want}
             return dict(kind="tool", name=key, tool=spec["tool"], args=args,
-                        action=spec["action"], age_s=decision.get("_age_s")), ""
+                        action=spec["action"], age_s=decision.get("_age_s"),
+                        # THE WAKE'S OWN SENTENCE, carried through. Without this the only "reason"
+                        # downstream was decide.explain's mechanical note - "the wake chose X (1s
+                        # ago)" - which is the machinery describing itself. R4a's gate asks whether
+                        # the entity said WHY it looked somewhere, and boilerplate answers that
+                        # question with a green count and no content.
+                        said=str(decision.get("action") or "")[:300]), ""
         if key in known:
             action, argv, tmo = known[key]
             if not argv or not isinstance(argv, list) or not all(isinstance(x, str) for x in argv):

@@ -188,6 +188,19 @@ def choose_action(hb: dict) -> tuple[str, list[str], int]:
     cand, why = decide.choose(after=hb.get("_last_decision"))
     hb["last_wake_why"] = why                      # visible in --status either way
     if cand:
+        # MARK IT CARRIED OUT, AND CARRY ITS WORDS. Both of these were supposed to land in the
+        # consumption commit and NEITHER DID - a string-replace silently no-oped, so
+        # `_last_decision` was READ in three places and ASSIGNED IN NONE. decide.choose therefore
+        # received after=None on every tick and the replay it was written to stop never stopped.
+        #
+        # The frozen test passed the whole time, because it exercises decide.choose directly and
+        # never touches this line. A mechanism proved in isolation and absent from the path that
+        # runs is exactly the shape that left R1 sitting at "open" for weeks.
+        #
+        # Recorded BEFORE acting: a decision that dies mid-execution must not be retried forever.
+        if cand.get("decision_tick") is not None:
+            hb["_last_decision"] = cand["decision_tick"]
+        hb["_said"] = cand.get("said") or ""
         log(f"  {decide.explain(cand, why)}")
         pulse.emit("wake", "chose", f"{cand['action']} :: {why}")
         # R1'S REACHABLE GATE, INSTRUMENTED. The gate written in THE_WIRING_LADDER asks for "a tick
@@ -669,7 +682,12 @@ def tick(hb: dict, demo: bool):
         # rotation, and a rotation satisfies a variety counter while demonstrating nothing.
         try:
             from aea.kernel import perceive
-            perceive.record(pend["tool"], pend.get("args"), why=hb.get("last_wake_why") or "",
+            # THE WAKE'S SENTENCE, not the machinery's. `last_wake_why` is decide.explain's note -
+            # "the wake chose X (1s ago)" - and it was recorded as the reason for nine consecutive
+            # looks. A gate that accepts that can be passed by a system that understood nothing.
+            _said = hb.get("_said") or ""
+            perceive.record(pend["tool"], pend.get("args"), why=_said,
+                            why_from="wake" if _said else "machinery",
                             decision=hb.get("_last_decision"), src="wake")
         except Exception as e:
             log("  (perception not recorded: %s: %s)" % (type(e).__name__, str(e)[:70]))

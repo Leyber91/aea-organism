@@ -71,7 +71,8 @@ def read(path: str = None) -> list:
     return out
 
 
-def record(tool: str, args: dict, why: str = "", decision: int = None, src: str = "wake") -> dict:
+def record(tool: str, args: dict, why: str = "", decision: int = None, src: str = "wake",
+           why_from: str = "machinery") -> dict:
     """Write one perceptual choice, with what preceded it so `differed` is decided here.
 
     `src` FAILS CLOSED for the same reason `hands` does: a harness that looks at something is not
@@ -87,7 +88,13 @@ def record(tool: str, args: dict, why: str = "", decision: int = None, src: str 
                source=source,
                previous=(prev or {}).get("source"),
                differed=bool(prev and prev.get("source") != source),
-               why=str(why or "")[:200],
+               why=str(why or "")[:300],
+               # WHERE THE REASON CAME FROM, recorded structurally rather than sniffed from the
+               # text. The first version stored decide.explain's note - "the wake chose X (1s ago)"
+               # - and the gate counted nine reasons of which none was a reason. Pattern-matching
+               # boilerplate would be a guess about wording; the SOURCE is a fact, so it is the
+               # field. Only "wake" counts, and it fails closed.
+               why_from=str(why_from or "machinery"),
                decision=decision,
                src=src)
     grid.append_jsonl(_path(), row)
@@ -101,13 +108,15 @@ def verdict(rows=None) -> dict:
     reason is indistinguishable from a rotation, and this rung is about the difference."""
     rows = read() if rows is None else rows
     mine = [r for r in rows if r.get("src") == "wake"]
-    reasoned = [r for r in mine if (r.get("why") or "").strip()]
+    reasoned = [r for r in mine
+                if (r.get("why") or "").strip() and r.get("why_from") == "wake"]
     changed = [r for r in reasoned if r.get("differed")]
     sources = {tuple(r.get("source") or []) for r in mine}
     return dict(total=len(rows), by_entity=len(mine), with_reason=len(reasoned),
                 changed_with_reason=len(changed), distinct_sources=len(sources),
                 claim="a perceptual choice is one where the entity looked at something other than "
-                      "last time AND said why. Rotation satisfies a counter; it does not satisfy "
+                      "last time AND said why IN ITS OWN WORDS. Rotation satisfies a counter, and "
+                      "the machinery describing itself satisfies a reason field; neither satisfies "
                       "this.")
 
 

@@ -762,19 +762,28 @@ def check_perception():
         import importlib
         from aea.kernel import perceive as _p
         importlib.reload(_p)
-        seq = [("read_state", {"n": "a"}, "because A", "wake"),
-               ("read_state", {"n": "a"}, "because A again", "wake"),   # same source: not a change
-               ("read_state", {"n": "b"}, "because B", "wake"),         # changed WITH reason
-               ("self_map", {"t": "laws"}, "", "wake"),                 # changed, NO reason
-               ("my_record", {}, "how did it go", "wake"),              # changed WITH reason
-               ("read_state", {"n": "c"}, "harness looking", "probe")]  # not the entity
-        for tool, args, why, src in seq:
-            _p.record(tool, args, why=why, src=src)
+        # (tool, args, why, src, why_from)
+        seq = [("read_state", {"n": "a"}, "because A", "wake", "wake"),
+               ("read_state", {"n": "a"}, "because A again", "wake", "wake"),  # same source
+               ("read_state", {"n": "b"}, "because B", "wake", "wake"),        # CHANGED + reason
+               ("self_map", {"t": "laws"}, "", "wake", "wake"),                # changed, NO reason
+               ("my_record", {}, "how did it go", "wake", "wake"),             # CHANGED + reason
+               ("read_state", {"n": "c"}, "harness looking", "probe", "wake"),  # not the entity
+               # THE CONTROL, and it is the defect this field was added for: a source change
+               # carrying a fluent sentence the MACHINERY wrote about itself. Reads like a reason,
+               # is not one, must not count. Nine production rows looked exactly like this.
+               ("self_map", {"t": "rungs"}, "the wake chose self_map (1s ago)", "wake",
+                "machinery")]
+        for tool, args, why, src, why_from in seq:
+            _p.record(tool, args, why=why, src=src, why_from=why_from)
         v = _p.verdict()
-        for label, got, want in (("rows written", v["total"], 6),
-                                 ("only the entity's count", v["by_entity"], 5),
+        for label, got, want in (("rows written", v["total"], 7),
+                                 ("only the entity's count", v["by_entity"], 6),
                                  ("a change needs a reason", v["changed_with_reason"], 2),
-                                 ("distinct sources", v["distinct_sources"], 4)):
+                                 # 4, not 5: the machinery row is dropped even though it reads like
+                                 # a reason. Drop the why_from filter and this becomes 5.
+                                 ("machinery prose is not a reason", v["with_reason"], 4),
+                                 ("distinct sources", v["distinct_sources"], 5)):
             ok = got == want
             print("  percep    %-46s -> %-3s %s" % (label, got, "ok" if ok else "FAIL"))
             if not ok:
@@ -788,6 +797,53 @@ def check_perception():
     return fails
 
 
+
+# =================================================================================================
+# EVERY PRIVATE HEARTBEAT KEY THAT IS READ MUST BE WRITTEN SOMEWHERE.
+#
+# `_last_decision` was READ in three places and ASSIGNED IN NONE for a full day. decide.choose got
+# after=None on every tick, so the replay the consumption marker exists to stop never stopped - and
+# the frozen test passed the entire time, because it exercises decide.choose DIRECTLY and never
+# touches the line in live.py where the value has to be written.
+#
+# A mechanism proved in isolation and absent from the path that runs is exactly what left R1 sitting
+# at "open" for weeks. So this checks the WIRING rather than the mechanism: a key nobody writes is a
+# feature nobody has.
+#
+# Private keys only (leading underscore) - those are the loop's own scratch state, where a read with
+# no writer is unambiguously a defect rather than a value another module supplies.
+# =================================================================================================
+def check_hb_keys():
+    import ast as _ast
+    import os as _o
+    import re as _re
+    fails = []
+    root = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+        _o.path.dirname(_o.path.abspath(__file__)))))
+    path = _o.path.join(root, "aea", "loop", "live.py")
+    if not _o.path.isfile(path):
+        return [("hbkeys:file", path, "aea/loop/live.py")]
+    src = open(path, encoding="utf-8", errors="replace").read()
+    read = set(_re.findall(r'hb\.get\(\s*"(_[a-z_]+)"', src))
+    written = set(_re.findall(r'hb\[\s*"(_[a-z_]+)"\s*\]\s*=', src))
+    written |= set(_re.findall(r'hb\.pop\(\s*"(_[a-z_]+)"', src))
+    orphans = sorted(read - written)
+    ok = not orphans
+    print("  hbkeys    %-46s -> %-14s %s" % ("private keys read but never written",
+                                             orphans or "none", "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("hbkeys:orphans", orphans, "none"))
+    # the control: the check must be capable of finding one
+    probe = 'x = hb.get("_never_written_probe")'
+    r2 = set(_re.findall(r'hb\.get\(\s*"(_[a-z_]+)"', src + chr(10) + probe))
+    caught = "_never_written_probe" in (r2 - written)
+    print("  hbkeys    %-46s -> %-14s %s" % ("control: a planted orphan is caught", caught,
+                                             "ok" if caught else "FAIL"))
+    if not caught:
+        fails.append(("hbkeys:control", caught, True))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -796,7 +852,7 @@ if __name__ == "__main__":
         f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
              + check_kernel() + check_decision_chain() + check_consumption() + check_calc_bombs()
              + check_r2_measure() + check_second_dispatcher() + check_dispatch_edges()
-             + check_perception())
+             + check_perception() + check_hb_keys())
     finally:
         sys.stdout = _counter.inner
     print()
