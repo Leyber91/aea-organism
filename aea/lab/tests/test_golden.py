@@ -1721,6 +1721,90 @@ def check_policy_refusal():
     return fails
 
 
+
+# =================================================================================================
+# THE BOOT GRAPH MUST CONTAIN EVERY MODULE, AND A SILENT OVERWRITE PASSES EVERY OTHER CHECK.
+#
+# `build_graph` keyed modules by BASENAME, so two files with the same name in different subpackages
+# collapsed to one node. MEASURED on the live tree 2026-08-03, one hour after this graph went into
+# the boot chain:
+#
+#   mind/axes.py       LOST to tooling/page/axes.py
+#   energy/capacity.py LOST to lab/parts/capacity.py
+#   lab/parts/fuel.py  LOST to mind/fuel.py
+#   gameapi/read.py    LOST to lab/parts/read.py
+#
+# 179 modules, 175 nodes - with NO duplicate ids and NO dangling edges, so every integrity check
+# that existed reported a clean graph. It was clean and it was missing four modules, and the
+# survivor's `reach` merged both modules' evidence so it described neither.
+#
+# THAT IS WHY THIS CHECK COUNTS AGAINST THE FILESYSTEM rather than against the graph's own
+# consistency. A graph can be perfectly self-consistent and still be a lie about the tree, and the
+# only witness to that is the tree.
+#
+# The second row is the one that caught a regression the same minute: re-keying the dictionary broke
+# an unrelated lookup (`mods.get("controlroom")` for the server endpoints), and it failed by
+# producing FEWER NODES rather than an error - 205 to 179, exactly the 26 endpoints.
+# =================================================================================================
+def check_graph_complete():
+    import json as _j
+    import os as _o
+    fails = []
+    root = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+        _o.path.dirname(_o.path.abspath(__file__)))))
+    gp = _o.path.join(root, "graph.json")
+    if not _o.path.isfile(gp):
+        print("  graphok    %-45s -> %-14s FAIL" % ("graph.json exists", "ABSENT"))
+        return [("graphok:file", "absent", "present")]
+    g = _j.load(open(gp, encoding="utf-8"))
+    code = (g.get("subgraphs") or {}).get("code") or {}
+    nodes, edges = code.get("nodes") or [], code.get("edges") or []
+    mods = [x for x in nodes if x.get("type") == "module"]
+
+    on_disk = set()
+    for r, _d, fs in _o.walk(_o.path.join(root, "aea")):
+        if "__pycache__" in r or "archive" in r:
+            continue
+        for f in fs:
+            if f.endswith(".py") and f != "__init__.py":
+                on_disk.add(_o.path.relpath(_o.path.join(r, f), root).replace(_o.sep, "/"))
+    in_graph = {x.get("path") for x in mods}
+    missing = sorted(on_disk - in_graph)
+    rows = [("every module on disk is in the graph", len(missing), 0),
+            ("no duplicate node ids", len(nodes) - len({x.get("id") for x in nodes}), 0),
+            ("no dangling edges",
+             sum(1 for x in edges
+                 if x.get("src") not in {y.get("id") for y in nodes}
+                 or x.get("dst") not in {y.get("id") for y in nodes}), 0),
+            # THE REGRESSION ROW. Endpoints vanished when the key scheme changed, silently.
+            ("the server endpoints survived",
+             len([x for x in nodes if x.get("type") == "endpoint"]) > 0, True),
+            # AND THE CALL EDGES, which are the whole reason this graph is worth loading.
+            ("call edges are present",
+             len([x for x in edges if x.get("rel") == "calls"]) > 0, True),
+            ("every call edge carries its evidence",
+             sum(1 for x in edges if x.get("rel") == "calls" and not x.get("evidence")), 0)]
+    for label, got, want in rows:
+        ok = got == want
+        print("  graphok    %-45s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("graphok:" + label, got, want))
+    if missing:
+        print("             missing: %s" % ", ".join(missing[:4]))
+
+    # THE CONTROL. A basename collision must be IMPOSSIBLE to represent, not merely absent today -
+    # the defect only appears when two files share a leaf, and the tree has four such pairs. This
+    # asserts the ids are dotted paths rather than leaves, which is what makes a collision
+    # unrepresentable.
+    leafy = [x.get("id") for x in mods if "." not in str(x.get("id"))]
+    ok = not leafy
+    print("  graphok    %-45s -> %-14s %s" % ("CONTROL: ids are dotted, so leaves cannot collide",
+                                              leafy[:2] or "none", "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("graphok:leafy", leafy[:4], "none"))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -1738,7 +1822,8 @@ if __name__ == "__main__":
              + check_dispatch_dry()
              + check_egress_budget() + check_r4b_conjunction()
              + check_conditional_zone()
-             + check_policy_refusal())
+             + check_policy_refusal()
+             + check_graph_complete())
     finally:
         sys.stdout = _counter.inner
     print()

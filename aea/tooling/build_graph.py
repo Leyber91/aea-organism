@@ -27,13 +27,47 @@ def sub_code():
     """Walk the whole aea/ package (all subpackages) for modules + their import edges.
     After the 2026-07-22 subpackage reorg, internal imports are `from aea.<pkg> import <mod>` or
     `from aea.<pkg>.<mod> import <name>` - detect both against the set of module basenames."""
+    # =============================================================================================
+    # KEYED BY THE DOTTED PATH, NOT THE BASENAME. This silently deleted four modules.
+    #
+    # `mods[f[:-3]] = path` overwrites on collision, so a repo with two files of the same name in
+    # different subpackages loses one of them - with NO duplicate id, NO dangling edge, and every
+    # integrity check reporting a clean graph. MEASURED on the live tree, 2026-08-03:
+    #
+    #   axes      aea/mind/axes.py         LOST to aea/tooling/page/axes.py
+    #   capacity  aea/energy/capacity.py   LOST to aea/lab/parts/capacity.py
+    #   fuel      aea/lab/parts/fuel.py    LOST to aea/mind/fuel.py
+    #   read      aea/gameapi/read.py      LOST to aea/lab/parts/read.py
+    #
+    # 179 modules, 175 nodes. The graph was clean and it was missing four modules - and worse, the
+    # survivor's `reach` label merged both modules' evidence, so it described neither. This is a
+    # LABEL IS NOT A MEASUREMENT defect (D51) in the artefact that went into the boot chain an hour
+    # earlier, and the checks that would have caught it - duplicate ids, dangling edges - all pass,
+    # because a silent overwrite produces neither.
+    #
+    # The id is now the dotted path minus the package prefix - `kernel.grid`, `mind.axes` - which is
+    # also what `assembly`, `ladder.RUNG_FUNCS` and the published page already use. One vocabulary
+    # instead of two.
     nodes, edges = [], []
-    mods = {}                                              # basename -> repo-relative path
+    mods = {}                                              # dotted name -> repo-relative path
     for root, _dirs, files in os.walk(AEA):
+        if "__pycache__" in root or "archive" in root:
+            continue
         for f in sorted(files):
             if f.endswith(".py") and f != "__init__.py":
-                mods[f[:-3]] = os.path.relpath(os.path.join(root, f), ROOT).replace(os.sep, "/")
+                p = os.path.join(root, f)
+                rel = os.path.relpath(p, ROOT).replace(os.sep, "/")
+                dotted = os.path.relpath(p, AEA).replace(os.sep, ".")[:-3]
+                if dotted in mods:                          # cannot happen now; fail loud if it does
+                    raise RuntimeError("duplicate module key %r - %s and %s"
+                                       % (dotted, mods[dotted], rel))
+                mods[dotted] = rel
     modset = set(mods)
+    # basename -> the dotted names that share it, so an import naming only the leaf still resolves
+    by_leaf = {}
+    ambiguous = []
+    for d in mods:
+        by_leaf.setdefault(d.rsplit(".", 1)[-1], []).append(d)
     for m, rel in sorted(mods.items()):
         doc = ""
         try:
@@ -41,17 +75,35 @@ def sub_code():
             doc = (ast.get_docstring(tree) or "").split("\n")[0][:110]
             for n in ast.walk(tree):
                 if isinstance(n, ast.ImportFrom) and n.module and n.module.startswith("aea."):
-                    last = n.module.split(".")[-1]
-                    if last in modset:                     # from aea.<pkg>.<mod> import X
-                        edges.append({"src": m, "dst": last, "rel": "imports"})
+                    # `from aea.kernel.grid import X` -> the dotted name is everything after `aea.`
+                    dotted = n.module[4:]
+                    if dotted in modset:
+                        edges.append({"src": m, "dst": dotted, "rel": "imports"})
                     else:                                  # from aea.<pkg> import <mod>[, <mod2>]
                         for a in n.names:
-                            if a.name in modset:
-                                edges.append({"src": m, "dst": a.name, "rel": "imports"})
+                            cand = dotted + "." + a.name
+                            if cand in modset:
+                                edges.append({"src": m, "dst": cand, "rel": "imports"})
+                            else:
+                                # AMBIGUOUS ONLY IF THE LEAF COLLIDES, and then we draw NOTHING
+                                # rather than guessing. A wrong edge in a graph a reader trusts is
+                                # worse than a missing one, and the count of what was dropped is
+                                # reported below rather than swallowed.
+                                hits = by_leaf.get(a.name) or []
+                                if len(hits) == 1:
+                                    edges.append({"src": m, "dst": hits[0], "rel": "imports"})
+                                elif len(hits) > 1:
+                                    ambiguous.append("%s -> %s (%d candidates)"
+                                                     % (m, a.name, len(hits)))
         except Exception as e:
             doc = f"[parse error: {e}]"
         nodes.append({"id": m, "type": "module", "path": rel, "purpose": doc})
-    cr = mods.get("controlroom")
+    # RE-KEYED WITH THE REST, and this lookup silently returned None for one build. Changing the
+    # dictionary's key scheme changed every consumer of it, and this one failed by producing FEWER
+    # NODES rather than an error - 205 to 179, which is exactly the 26 endpoints. Caught by checking
+    # the total against the previous build rather than by anything in the code.
+    cr = mods.get("server.controlroom") or next(
+        (v for k, v in mods.items() if k.rsplit(".", 1)[-1] == "controlroom"), None)
     if cr:
         txt = open(os.path.join(ROOT, cr), encoding="utf-8", errors="ignore").read()
         for ep in sorted(set(re.findall(r'self\.path(?:\.startswith\(|\s*==\s*)"(/[a-z_/]*)', txt))):
@@ -87,7 +139,7 @@ def sub_code():
         RANK = {"EXTRACTED": 0, "DISPATCH": 1, "ENTRY": 2, "TOOL": 3, "NONE": 4}
         pairs = {}
         for full, info in amods.items():
-            src = full.rsplit(".", 1)[-1]
+            src = full[4:] if full.startswith("aea.") else full
             for fn, slot in (info.get("defs") or {}).items():
                 for c in list(slot.get("calls", [])) + list(slot.get("dcalls") or ()):
                     if c.startswith("?") or ":" not in c:
@@ -95,7 +147,7 @@ def sub_code():
                     tmod, _, tfn = c.partition(":")
                     if tmod not in amods:
                         continue
-                    dst = tmod.rsplit(".", 1)[-1]
+                    dst = tmod[4:] if tmod.startswith("aea.") else tmod
                     if dst == src or dst not in modset or src not in modset:
                         continue
                     ev = prov.get(c, "NONE")
@@ -108,7 +160,8 @@ def sub_code():
             edges.append({"src": src, "dst": dst, "rel": "calls", "evidence": ev, "count": n})
         by_mod = {}
         for full, ev in prov.items():
-            by_mod.setdefault(full.split(":")[0].rsplit(".", 1)[-1], []).append(ev)
+            _m = full.split(":")[0]
+            by_mod.setdefault(_m[4:] if _m.startswith("aea.") else _m, []).append(ev)
         for nd in nodes:
             evs = by_mod.get(nd.get("id"))
             if nd.get("type") == "module" and evs:
@@ -122,6 +175,10 @@ def sub_code():
         nodes.append({"id": "__code_note", "type": "note",
                       "purpose": "call edges ABSENT: %s: %s - the graph shows imports only"
                                  % (type(e).__name__, str(e)[:80])})
+    if ambiguous:
+        nodes.append({"id": "__ambiguous_imports", "type": "note",
+                      "purpose": "%d import edges NOT drawn - the leaf name is ambiguous and a wrong edge is worse than a missing one: %s"
+                                 % (len(ambiguous), "; ".join(sorted(set(ambiguous))[:6]))})
     return nodes, edges
 
 
