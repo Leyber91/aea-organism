@@ -57,12 +57,12 @@
   "cooled_at": 1784725408.0140953
  },
  "ollama/qwen2.5:7b": {
-  "calls": 688,
-  "ok": 688,
+  "calls": 693,
+  "ok": 693,
   "fail": 0,
   "consec_fail": 0,
-  "ema_latency": 4.5,
-  "last": "2026-08-02 22:56"
+  "ema_latency": 4.9,
+  "last": "2026-08-02 23:01"
  },
  "groq/llama-3.3-70b-versatile": {
   "calls": 94,
@@ -661,12 +661,12 @@
   "retired_why": "410 at reap"
  },
  "nvidia/nvidia/nemotron-3-ultra-550b-a55b": {
-  "calls": 496,
-  "ok": 462,
+  "calls": 501,
+  "ok": 467,
   "fail": 34,
   "consec_fail": 0,
-  "ema_latency": 50.7,
-  "last": "2026-08-02 22:56"
+  "ema_latency": 61.6,
+  "last": "2026-08-02 23:01"
  },
  "groq/qwen/qwen3-32b": {
   "calls": 0,
@@ -804,13 +804,13 @@
   "last": "2026-07-30 18:00"
  },
  "nvidia/meta/llama-3.2-1b-instruct": {
-  "calls": 44,
+  "calls": 45,
   "ok": 0,
-  "fail": 44,
-  "consec_fail": 44,
+  "fail": 45,
+  "consec_fail": 45,
   "ema_latency": null,
-  "last": "2026-08-02 22:41",
-  "cooled_at": 1785710509.6010447
+  "last": "2026-08-02 22:57",
+  "cooled_at": 1785711436.0759895
  },
  "groq/openai/gpt-oss-120b": {
   "calls": 16,
@@ -865,12 +865,12 @@
   "cooled_at": 1785711251.7312207
  },
  "groq/groq/compound-mini": {
-  "calls": 30,
+  "calls": 31,
   "ok": 0,
-  "fail": 30,
-  "consec_fail": 30,
+  "fail": 31,
+  "consec_fail": 31,
   "ema_latency": null,
-  "last": "2026-08-02 22:41",
-  "cooled_at": 1785710510.1808167
+  "last": "2026-08-02 22:57",
+  "cooled_at": 1785711436.8228154
  }
 }

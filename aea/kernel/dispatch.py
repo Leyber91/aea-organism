@@ -304,10 +304,32 @@ def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
     fetches = [r for r in d["requests"] if r["tool"] == "web_fetch"]
     out["results"] = [r["args"]["url"] for r in fetches]
 
-    for r in fetches:
+    # CONCURRENT WITHIN ONE DISPATCH, AND ORDER RESTORED AFTERWARDS.
+    #
+    # These fetches are ONE budget spend, one topic, one symbol. Firing them together changes the
+    # wall clock and nothing else - three sequential fetches at a 20s timeout is up to 60s that can
+    # be 20s. It may NEVER be done across dispatches: `egress.FLOOR_S` is the bound, not a
+    # performance limit, and three dispatches fired together would emit three symbols in one instant
+    # plus the information of which three.
+    #
+    # THE RESULT IS RE-SORTED INTO DOCUMENT ORDER. `as_completed` yields by finish time, so a naive
+    # version would make the fetched list depend on network jitter - and the certificate's claim
+    # that the selection channel carries ZERO bits rests on `run` taking results in document order
+    # with no model involvement. Letting the network decide the order hands that channel to whoever
+    # can influence latency.
+    import concurrent.futures as _cf
+    _done = {}
+    with _cf.ThreadPoolExecutor(max_workers=max(1, len(fetches) or 1)) as _ex:
+        _futs = {_ex.submit(invoke, r["tool"], dict(r["args"])): i for i, r in enumerate(fetches)}
+        for _f in _cf.as_completed(_futs, timeout=310):
+            _done[_futs[_f]] = _f
+    for _i, r in enumerate(fetches):
         u = r["args"]["url"]
+        _f = _done.get(_i)
         try:
-            body = invoke(r["tool"], r["args"])
+            if _f is None:
+                raise RuntimeError("fetch did not complete")
+            body = _f.result()
             out["sent"].append(u)
         except Exception as e:
             out["refused"].append(f"{u[:80]} :: {str(e)[:60]}")

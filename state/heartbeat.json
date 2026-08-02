@@ -1,14 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 250,
-  "total_ticks": 433,
+  "boot_count": 255,
+  "total_ticks": 438,
   "last_brief_date": "2026-08-02",
   "consolidated_sessions": 23,
   "history": [
-    "2026-08-02 22:13:47 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
-    "2026-08-02 22:14:46 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 22:15:40 UTC LOOK:my_record ok :: {\"rows\": 282, \"mine\": 266, \"by_cause\": {\"UNATTRIBUTABLE\": 44, \"OK\": 202, \"VERIFY",
-    "2026-08-02 22:17:06 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 22:17:36 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 22:20:42 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
     "2026-08-02 22:21:49 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
@@ -34,9 +30,13 @@
     "2026-08-02 22:52:07 UTC LOOK:read_state ok :: KEYS: surfaced(283507), memory(53394), tick(3)\n\ntick=510\nsurfaced (most recent) ",
     "2026-08-02 22:53:21 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 22:54:17 UTC LOOK:read_state ok :: KEYS: surfaced(286238), memory(53530), tick(3)\n\ntick=512\nsurfaced (most recent) ",
-    "2026-08-02 22:56:19 UTC LOOK:read_state ok :: KEYS: surfaced(288800), memory(53666), tick(3)\n\ntick=514\nsurfaced (most recent) "
+    "2026-08-02 22:56:19 UTC LOOK:read_state ok :: KEYS: surfaced(288800), memory(53666), tick(3)\n\ntick=514\nsurfaced (most recent) ",
+    "2026-08-02 22:57:24 UTC LOOK:read_state ok :: KEYS: surfaced(290272), memory(53734), tick(3)\n\ntick=515\nsurfaced (most recent) ",
+    "2026-08-02 22:57:56 UTC LOOK:read_state ok :: KEYS: surfaced(291757), memory(53802), tick(3)\n\ntick=516\nsurfaced (most recent) ",
+    "2026-08-02 22:58:42 UTC LOOK:self_map ok :: I am 145 Python modules, about 41,881 lines of code. 29 of them are reachable fr",
+    "2026-08-02 23:00:06 UTC LOOK:read_state ok :: KEYS: surfaced(294329), memory(53938), tick(3)\n\ntick=518\nsurfaced (most recent) "
   ],
-  "last_wake_why": "the wake chose read_your_state (1s ago)",
+  "last_wake_why": "the wake chose NONE - no mechanical move is needed this tick",
   "brief_fails": 1,
   "_brief_runs_seen": 116,
   "proposed_move": {
@@ -49,8 +49,8 @@
     "wake": "LOOK:read_state",
     "ladder": "REFLECT:self",
     "differed": true,
-    "why": "the wake chose read_your_state (1s ago)"
+    "why": "the wake chose read_your_state (2s ago)"
   },
-  "_last_decision": 514,
+  "_last_decision": 518,
   "_said": ""
 }

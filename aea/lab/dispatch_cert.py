@@ -183,8 +183,17 @@ def _certify_inner() -> dict:
     # =============================================================================================
     captured = []
 
+    # THREAD-SAFE, BECAUSE dispatch.run NOW FETCHES CONCURRENTLY. A capturing invoke that races drops
+    # calls, and a certificate that saw three of four outbound requests would report 0 leaks about
+    # a request it never looked at - the same shape as certifying  while  opened the
+    # sockets (dry vs run). list.append happens to be atomic under CPython; the lock is here so the guarantee
+    # does not rest on that.
+    import threading as _th
+    _lock = _th.Lock()
+
     def _capture(tool, args):
-        captured.append((tool, dict(args or {})))
+        with _lock:
+            captured.append((tool, dict(args or {})))
         return serp if tool == "web_search" else "body-%d" % len(captured)
 
     run_leaks = []

@@ -1,6 +1,6 @@
 {
- "at": 1785706483.9318767,
- "at_iso": "2026-08-02 21:34:43 UTC",
+ "at": 1785711680.965832,
+ "at_iso": "2026-08-02 23:01:20 UTC",
  "claim": "over every reachable dispatch, no byte of any outbound request originates from model output. Enumerated over a finite domain, not sampled.",
  "topics": 5,
  "outbound_requests": 16,

@@ -39,6 +39,7 @@ looks the same as one that refuses them. This one refuses them, out loud, with t
 """
 from __future__ import annotations
 
+import concurrent.futures
 import json
 import hashlib
 import os
@@ -171,14 +172,37 @@ def _web_search(query: str = "", n: str = "5") -> str:
     # output" stops being the relevant claim, not because the model writes bytes but because the
     # PAGE does. That needs its own bound and its own council. It is not this.
     # ---------------------------------------------------------------------------------------------
+    # CONCURRENT, AND THE REASON IT IS SAFE IS THE REASON IT IS ALLOWED HERE AND NOWHERE ELSE.
+    #
+    # These four are ONE search: one query, one budget spend, one symbol on the channel. Firing them
+    # together changes the wall clock and nothing else - the same four requests, the same bytes, the
+    # same instant on anybody's access log. Sequentially the cost is the SUM and the tail dominates:
+    # measured 2026-08-02, arxiv 1.73s, hf 0.59s, hn 0.97s, and github 11.42s returning a 504. So
+    # one dead route made every search wait for it.
+    #
+    # WHAT MUST NEVER BE MADE CONCURRENT is a dispatch. `egress.FLOOR_S` is not a performance limit,
+    # it is the bound: three dispatches fired together emit three symbols in one instant, plus the
+    # information of WHICH three, and 27.86 bits/day becomes a figure about nothing. Concurrency may
+    # live inside one budget spend and may never cross one.
     hits, notes = [], []
-    for name, fn in (("arxiv", _s_arxiv), ("hn", _s_hn), ("hf", _s_hf), ("github", _s_github)):
-        try:
-            got = fn(q, k)
-            hits += got
-            notes.append("%s:%d" % (name, len(got)))
-        except Exception as e:
-            notes.append("%s:%s" % (name, type(e).__name__))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as _ex:
+        futs = {_ex.submit(fn, q, k): name
+                for name, fn in (("arxiv", _s_arxiv), ("hn", _s_hn),
+                                 ("hf", _s_hf), ("github", _s_github))}
+        for fut in concurrent.futures.as_completed(futs, timeout=310):
+            name = futs[fut]
+            try:
+                got = fut.result()
+                hits += got
+                notes.append("%s:%d" % (name, len(got)))
+            except Exception as e:
+                notes.append("%s:%s" % (name, type(e).__name__))
+    # ORDER IS RESTORED AFTER THE RACE. `as_completed` yields by finish time, which would make the
+    # result list depend on network jitter - and `run` takes the first N in DOCUMENT ORDER precisely
+    # so that selection carries zero bits. A nondeterministic order would hand that channel back.
+    _rank = {"arxiv": 0, "hn": 1, "hf": 2, "github": 3}
+    hits.sort(key=lambda h: (_rank.get(h[3], 9), h[0]))
+    notes.sort()
     if hits:
         out = []
         for i, (u, title, snip, src) in enumerate(hits[:k]):
