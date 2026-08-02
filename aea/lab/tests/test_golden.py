@@ -844,6 +844,399 @@ def check_hb_keys():
     return fails
 
 
+
+# =================================================================================================
+# THE FOUR KINDS OF EVIDENCE, ON A TREE BUILT TO PRODUCE ALL FOUR.
+#
+# `ladder.verify_funcs()` claimed for months to check declared names "against the live call graph".
+# It built its known-set from `assembly.scan()` - which only PARSES DEFINITIONS - so it verified
+# SPELLING. 34 of 34 names passed while four were unreachable by the organism, including
+# `perceive.verdict`, whose only caller is a print inside its own __main__ guard.
+#
+# The distinction existed the whole time: `reachable(detail=True)` has separated direct from
+# dispatch since it was written, and assembly.py's docstring says nothing here may print the union
+# as though it were the direct set. Six call sites then did. A distinction available only as a tuple
+# element every caller drops is a comment, not a check.
+#
+# WHY A SYNTHETIC TREE. An assertion against the real repo drifts, and worse, it cannot prove the
+# classifier discriminates - if provenance collapsed all four kinds to EXTRACTED, "hands.invoke is
+# EXTRACTED" would still pass. Here each kind is constructed deliberately, so collapsing the
+# distinction breaks three of the four rows. That is the positive control.
+# =================================================================================================
+ENTRY_SRC = """from aea import parts
+
+TABLE = {"a": parts.dispatched}
+
+
+def main():
+    parts.extracted()
+    fn = TABLE["a"]
+    fn()
+
+
+if __name__ == "__main__":
+    parts.only_tool()
+"""
+
+PARTS_SRC = """def extracted():
+    return 1
+
+
+def dispatched():
+    return 2
+
+
+def only_tool():
+    return 3
+
+
+def orphan():
+    return 4
+"""
+
+
+def check_provenance():
+    import os as _o
+    import shutil as _sh
+    import tempfile as _t
+    fails = []
+    from aea.tooling import assembly as _a
+    tmp = _t.mkdtemp(prefix="prov")
+    keep = _a.TREE
+    try:
+        pkg = _o.path.join(tmp, "aea")
+        _o.makedirs(pkg)
+        open(_o.path.join(pkg, "entry.py"), "w", encoding="utf-8").write(ENTRY_SRC)
+        open(_o.path.join(pkg, "parts.py"), "w", encoding="utf-8").write(PARTS_SRC)
+        _a.TREE = pkg
+        mods = _a.scan()
+        prov = _a.provenance(mods, entries=["aea.entry:main"])
+        for fn, want in (("aea.parts:extracted", "EXTRACTED"),   # a real call site
+                         ("aea.parts:dispatched", "DISPATCH"),   # only through the table
+                         ("aea.parts:only_tool", "TOOL"),        # only from __main__
+                         ("aea.parts:orphan", "NONE")):          # nothing at all
+            got = prov.get(fn)
+            ok = got == want
+            print("  prov      %-46s -> %-14s %s" % (fn.split(":")[-1], got,
+                                                     "ok" if ok else "FAIL"))
+            if not ok:
+                fails.append(("prov:" + fn, got, want))
+        # THE CONTROL FOR THE CONTROL: four distinct labels must actually have been produced.
+        kinds = len({prov.get(f) for f in ("aea.parts:extracted", "aea.parts:dispatched",
+                                           "aea.parts:only_tool", "aea.parts:orphan")})
+        ok = kinds == 4
+        print("  prov      %-46s -> %-14s %s" % ("four kinds are actually distinguished", kinds,
+                                                 "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("prov:distinct", kinds, 4))
+        # AND THE SCAN MUST REFUSE TO BE EMPTY. A scan over nothing agrees with everything, and this
+        # repo has already shipped two guards that walked a path one dirname too deep and passed.
+        _a.TREE = _o.path.join(tmp, "does_not_exist")
+        try:
+            _a.scan()
+            raised = False
+        except RuntimeError:
+            raised = True
+        except Exception:
+            raised = False
+        print("  prov      %-46s -> %-14s %s" % ("an empty tree raises instead of agreeing", raised,
+                                                 "ok" if raised else "FAIL"))
+        if not raised:
+            fails.append(("prov:emptyscan", raised, True))
+    finally:
+        _a.TREE = keep
+        _sh.rmtree(tmp, ignore_errors=True)
+    return fails
+
+
+# =================================================================================================
+# verify_funcs MUST BE ABLE TO SAY NO. Planted defects, one per output class it claims to report.
+#
+# The old implementation could not produce a non-empty `unwired` for any input, because it had no
+# such concept - it asked whether a name was spelled correctly. A check with no reachable negative
+# case is indistinguishable from `return True`, which is the single most expensive defect class in
+# this repository's history.
+# =================================================================================================
+def check_verify_funcs():
+    fails = []
+    from aea.tooling import assembly as _a
+    from aea.tooling import ladder as _l
+    keep_prov, keep_funcs = _a.provenance, dict(_l.RUNG_FUNCS)
+    try:
+        _l.RUNG_FUNCS = {"TEST": ["k.m:organ_ok", "k.m:organ_dead", "k.m:organ_cli",
+                                  "k.m:organ_table", "k.m:reader", "k.m:absent"]}
+        _l.RUNG_FUNC_ROLE = dict(_l.RUNG_FUNC_ROLE)
+        _l.RUNG_FUNC_ROLE["k.m:reader"] = "instrument"
+        _a.provenance = lambda *a, **k: {"aea.k.m:organ_ok": "EXTRACTED",
+                                         "aea.k.m:organ_dead": "NONE",
+                                         "aea.k.m:organ_cli": "TOOL",
+                                         "aea.k.m:organ_table": "DISPATCH",
+                                         "aea.k.m:reader": "TOOL"}
+        v = _l.verify_funcs()
+        for label, got, want in (
+                ("a name that does not exist is missing", v["missing"], ["k.m:absent"]),
+                ("an organ nothing reaches is unwired",
+                 [x for x in v["unwired"] if x.startswith("k.m:organ_dead")],
+                 ["k.m:organ_dead [NONE]"]),
+                ("an organ only a terminal reaches is unwired",
+                 [x for x in v["unwired"] if x.startswith("k.m:organ_cli")],
+                 ["k.m:organ_cli [TOOL]"]),
+                ("a table-only organ is an upper bound, not a pass",
+                 v["dispatch_only"], ["k.m:organ_table"]),
+                ("an INSTRUMENT reached by a terminal is correct, not a defect",
+                 v["instruments"], ["k.m:reader [TOOL]"])):
+            ok = got == want
+            print("  vfuncs    %-46s -> %-14s %s" % (label, str(got)[:14],
+                                                     "ok" if ok else "FAIL"))
+            if not ok:
+                fails.append(("vfuncs:" + label, got, want))
+        # AND IT MUST REFUSE AN EMPTY GRAPH RATHER THAN CLEARING EVERY NAME.
+        _a.provenance = lambda *a, **k: {}
+        v2 = _l.verify_funcs()
+        ok = bool(v2.get("error")) and not v2.get("missing")
+        print("  vfuncs    %-46s -> %-14s %s" % ("an empty graph errors, does not clear",
+                                                 bool(v2.get("error")), "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("vfuncs:emptygraph", v2, "error"))
+    finally:
+        _a.provenance = keep_prov
+        _l.RUNG_FUNCS = keep_funcs
+    return fails
+
+
+# =================================================================================================
+# THE PUBLISHING GATE THAT EXISTED AS A SENTENCE.
+#
+# render.py has carried this comment since the split: "Names are checked against the live call graph
+# by ladder.verify_funcs(); a non-empty funcs_check.missing means the build is describing code that
+# is not there." `funcs_check` was computed, written into ladder.json, and read by NOBODY. The
+# privacy scan is a guard because main() returns 1 on it. The honesty scan was a guard because
+# someone wrote a sentence saying it was.
+#
+# Six rows: one clean, five refusals. A gate with no exercised negative case is `return []`.
+# =================================================================================================
+def check_page_honesty():
+    from aea.tooling.page import guard as _g
+    fails = []
+    cases = [
+        ("clean ladder passes", {"funcs_check": {"checked": 34, "missing": [], "unwired": []}}, False),
+        ("absent funcs_check is refused, not assumed", {}, True),
+        ("a declared name that does not exist",
+         {"funcs_check": {"checked": 34, "missing": ["k.m:ghost"], "unwired": []}}, True),
+        ("a capability nothing can reach",
+         {"funcs_check": {"checked": 34, "missing": [], "unwired": ["k.m:dead [NONE]"]}}, True),
+        ("a scan that examined nothing",
+         {"funcs_check": {"checked": 0, "missing": [], "unwired": []}}, True),
+        ("an unreadable call graph",
+         {"funcs_check": {"checked": 34, "error": "boom"}}, True),
+    ]
+    for label, lad, want_refusal in cases:
+        got = bool(_g.honesty(lad))
+        ok = got == want_refusal
+        print("  pagehon   %-46s -> %-14s %s" % (label, "REFUSED" if got else "clean",
+                                                 "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("pagehon:" + label, got, want_refusal))
+    return fails
+
+
+
+# =================================================================================================
+# THE SUITE MUST CHECK THAT THE SUITE IS WIRED. This failed twice in one day.
+#
+#   · `check_perception` was written, committed, and never added to the aggregation. The suite
+#     printed "all 89 frozen behaviours hold" without ever running it.
+#   · `check_page_honesty` was written into the file INSIDE a triple-quoted fixture, because the
+#     patch anchored on `if __name__ == "__main__":` and an earlier fixture's synthetic module
+#     source contained that exact line. It existed only as characters in a string. The file parsed.
+#     The suite passed.
+#
+# Both are the same defect as the ones this file exists to catch, one level up: a mechanism that is
+# present and not connected. A test suite is the last thing that should be able to grow dead code,
+# because its greenness is the evidence everything else is judged by.
+#
+# THE CONTROL matters more than usual here - this check reads its own source, so a bug in it makes
+# it agree with itself. The planted name proves it can still say no.
+# =================================================================================================
+def check_suite_wiring():
+    import ast as _ast
+    import io as _io
+    fails = []
+    src = _io.open(__file__, encoding="utf-8").read()
+    tree = _ast.parse(src)
+    defined = {n.name for n in tree.body
+               if isinstance(n, _ast.FunctionDef) and n.name.startswith("check_")}
+    called = {n.func.id for n in _ast.walk(tree)
+              if isinstance(n, _ast.Call) and isinstance(n.func, _ast.Name)
+              and n.func.id.startswith("check_")}
+    orphans = sorted(defined - called)
+    ok = not orphans
+    print("  wiring    %-46s -> %-14s %s" % ("every check_* defined here is called here",
+                                             orphans or "none", "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("wiring:orphans", orphans, "none"))
+    # a suite that found no checks agrees with everything
+    enough = len(defined) >= 10
+    print("  wiring    %-46s -> %-14s %s" % ("the scan found the checks at all", len(defined),
+                                             "ok" if enough else "FAIL"))
+    if not enough:
+        fails.append(("wiring:count", len(defined), ">=10"))
+    # THE CONTROL: a defined-but-uncalled name must be caught
+    planted = _ast.parse(src + "\n\ndef check_planted_orphan():\n    return []\n")
+    d2 = {n.name for n in planted.body
+          if isinstance(n, _ast.FunctionDef) and n.name.startswith("check_")}
+    caught = "check_planted_orphan" in (d2 - called)
+    print("  wiring    %-46s -> %-14s %s" % ("control: a planted orphan check is caught", caught,
+                                             "ok" if caught else "FAIL"))
+    if not caught:
+        fails.append(("wiring:control", caught, True))
+    return fails
+
+
+
+# =================================================================================================
+# AN ENTRY POINT MUST NOT GRADE ITS OWN AXIOM.
+#
+# `reachable()` seeds the entry set straight into `live`, and the only test before `live.add` is that
+# the function is DEFINED. So `provenance()` stamped every entry EXTRACTED - the label documented as
+# "a call site exists in the source... the only kind that is a fact rather than a resolution" -
+# whether or not one line of code called it. An audit proved it by construction: deleting all three
+# call sites of `aea.loop.aea:tick` left STEPS R3.4 reading DONE with both names EXTRACTED, while the
+# control (`impasse:scan`, same step, not an entry) correctly flipped to PARTIAL/NONE. Five declared
+# names across STEPS and RUNG_FUNCS are entries; for those, both wiring checks were unfalsifiable.
+#
+# THE CURE IS NARROW ON PURPOSE. ENTRY means asserted AND unmeasured. An entry WITH callers is not a
+# tautology - demoting it would trade a false pass for a false fail - so the label only fires where
+# the seed is the entire evidence. Which is exactly what restores falsifiability: remove the callers
+# and the label changes.
+#
+# These two rows are the same tree with one edge different. If the distinction ever collapses, they
+# cannot both pass.
+# =================================================================================================
+UNCALLED_SRC = """def helper():
+    return 1
+
+
+def main():
+    helper()
+"""
+
+CALLED_SRC = """from aea import lonely
+
+
+def wrapper():
+    lonely.main()
+"""
+
+
+def check_entry_evidence():
+    import os as _o
+    import shutil as _sh
+    import tempfile as _t
+    fails = []
+    from aea.tooling import assembly as _a
+    keep = _a.TREE
+    for label, extra, want in (("an entry nothing calls is ENTRY, not a fact", None, "ENTRY"),
+                               ("the same entry WITH a caller is EXTRACTED", CALLED_SRC,
+                                "EXTRACTED")):
+        tmp = _t.mkdtemp(prefix="entry")
+        try:
+            pkg = _o.path.join(tmp, "aea")
+            _o.makedirs(pkg)
+            open(_o.path.join(pkg, "lonely.py"), "w", encoding="utf-8").write(UNCALLED_SRC)
+            if extra:
+                open(_o.path.join(pkg, "caller.py"), "w", encoding="utf-8").write(extra)
+            _a.TREE = pkg
+            mods = _a.scan()
+            prov = _a.provenance(mods, entries=["aea.lonely:main"])
+            got = prov.get("aea.lonely:main")
+            ok = got == want
+            print("  entryev   %-46s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))
+            if not ok:
+                fails.append(("entryev:" + label, got, want))
+            # the function it calls stays EXTRACTED either way - the fix must not demote the tree
+            h = prov.get("aea.lonely:helper")
+            ok2 = h == "EXTRACTED"
+            print("  entryev   %-46s -> %-14s %s" % ("what the entry calls stays EXTRACTED", h,
+                                                     "ok" if ok2 else "FAIL"))
+            if not ok2:
+                fails.append(("entryev:helper", h, "EXTRACTED"))
+        finally:
+            _a.TREE = keep
+            _sh.rmtree(tmp, ignore_errors=True)
+    return fails
+
+
+# =================================================================================================
+# THE SCANNERS THAT AGREED WITH AN EMPTY TREE.
+#
+# `assembly.scan` has raised on an empty tree since it was written, because two guards in this repo
+# walked `aea/aea/` - one dirname too deep - and reported ok having read nothing. The lesson was
+# recorded and applied to ONE of the copies. Its twin `transfer._py_files` walks the same tree with
+# the same code and feeds the defect ratchet, so an empty scan there reports "0 defects" and the
+# ratchet records a clean sweep of nothing. `selfcheck._scan` is the privacy guard standing between
+# this repo and a permanent public leak, and it counted no files. `selfcheck.check_paths` walked a
+# directory it never asserted exists.
+#
+# Three copies of one idea, one of which had the guard. That is the "second time you write it,
+# extract it" rule failing at the fourth copy.
+# =================================================================================================
+def check_empty_scans():
+    import os as _o
+    import shutil as _sh
+    import tempfile as _t
+    fails = []
+    from aea.lab import transfer as _tr
+    from aea.tooling import selfcheck as _sc
+
+    tmp = _t.mkdtemp(prefix="empty")
+    keep_tr, keep_sc = _tr.TREE, _sc.ROOT
+    try:
+        # transfer over a tree with no modules
+        _tr.TREE = _o.path.join(tmp, "nothing")
+        try:
+            _tr._py_files()
+            raised = False
+        except RuntimeError:
+            raised = True
+        except Exception:
+            raised = False
+        print("  emptyscan %-46s -> %-14s %s" % ("transfer refuses an empty tree", raised,
+                                                 "ok" if raised else "FAIL"))
+        if not raised:
+            fails.append(("emptyscan:transfer", raised, True))
+        _tr.TREE = keep_tr
+
+        # the privacy scan over a tree with no tracked files
+        _sc.ROOT = _o.path.join(tmp, "nothing")
+        _sc._SCAN_CACHE.clear()
+        try:
+            _sc._scan(_sc.ALL_RULES)
+            raised = False
+        except RuntimeError:
+            raised = True
+        except Exception:
+            raised = False
+        print("  emptyscan %-46s -> %-14s %s" % ("the privacy scan refuses an unread tree", raised,
+                                                 "ok" if raised else "FAIL"))
+        if not raised:
+            fails.append(("emptyscan:leaks", raised, True))
+        _sc._SCAN_CACHE.clear()
+
+        # check_paths over a root with no aea/
+        r = _sc.check_paths()
+        ok = r["pass"] is False and "broken scan" in (r.get("detail") or "")
+        print("  emptyscan %-46s -> %-14s %s" % ("check_paths fails on a missing tree",
+                                                 str(r["pass"]), "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("emptyscan:paths", r, "pass=False, broken scan"))
+    finally:
+        _tr.TREE, _sc.ROOT = keep_tr, keep_sc
+        _sc._SCAN_CACHE.clear()
+        _sh.rmtree(tmp, ignore_errors=True)
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -852,7 +1245,11 @@ if __name__ == "__main__":
         f = (check_seats() + check_chains() + check_extraction() + check_carried() + check_probe()
              + check_kernel() + check_decision_chain() + check_consumption() + check_calc_bombs()
              + check_r2_measure() + check_second_dispatcher() + check_dispatch_edges()
-             + check_perception() + check_hb_keys())
+             + check_perception() + check_hb_keys()
+             + check_provenance() + check_verify_funcs()
+             + check_page_honesty()
+             + check_suite_wiring()
+             + check_entry_evidence() + check_empty_scans())
     finally:
         sys.stdout = _counter.inner
     print()

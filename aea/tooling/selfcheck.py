@@ -107,7 +107,26 @@ def check_imports() -> dict:
 # broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
 # alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
 # the suite must report at least this many. Raise it when behaviours are added on purpose.
-FROZEN_FLOOR = 89          # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
+FROZEN_FLOOR = 124         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
+# +2 2026-08-02: a private heartbeat key read and never written (hb["_last_decision"] was read three
+# times and assigned nowhere for a day, while the frozen test passed because it exercised
+# decide.choose directly and never the line in live.py that must write the value).
+# +12 2026-08-02: the four kinds of evidence on a synthetic tree that produces all four, and
+# verify_funcs' ability to say no - it had checked SPELLING, not reachability, since it was written.
+# +6 2026-08-02: the publishing honesty gate, which existed only as a comment in render.py.
+# +3 2026-08-02: every check_* defined in the suite must be CALLED by the suite. Two checks were
+# written and never wired IN ONE DAY - one appended without an aggregation entry, one spliced into a
+# triple-quoted fixture because the patch anchored on a `__main__` line that appears inside data.
+# +7 2026-08-02: an entry point may not grade its own axiom (proved falsifiable by the same
+# construction that exposed it), and the three scanners that agreed with an empty tree.
+# THE FLOOR WAS ALSO STALE: it read 89 while the suite reported 117, so this check had been passing
+# on a 28-behaviour margin - the same "raised one floor and not the other" defect it exists to stop.
+
+# WHERE THE ORPHAN COUNT WAS WHEN IT WAS FIRST MEASURED. A ratchet, not a goal: the number may fall
+# freely and may not climb without someone deciding to raise this line. 130 of 169 modules are
+# reachable from nothing, which is the honest shape of this repo and was previously reported under a
+# hardcoded "pass": True.
+ORPHAN_FLOOR = 130
 # +8 2026-08-02: the dispatch edge, with a two-armed control (a planted dead detector and a planted
 # rubber stamp must each make it FAIL). The count on the other side is now COUNTED rather than
 # hand-summed - the comment below was true of this constant and false of the number it reads.
@@ -133,10 +152,22 @@ def check_structure() -> dict:
     from aea.tooling import xray
     d = xray.build()
     c = d["counts"]
-    return {"check": "structure", "pass": True,
-            "detail": "%d modules, %d reachable from a wake, %d orphaned, %d act at import"
-                      % (c["modules"], c["reachable_from_wake"], c["orphaned"],
-                         len(d["import_time_effects"])),
+    # THE VERDICT WAS THE LITERAL `True`. This printed PASS for months while reporting 130 of 169
+    # modules orphaned, and it would have printed PASS over a scan that read zero modules - the
+    # strongest possible statement made on the weakest possible evidence. A check whose result does
+    # not depend on its input is a label, not a check.
+    #
+    # ORPHAN_FLOOR is a RATCHET, not a target: it records where the number was when it was first
+    # measured, so the count can fall and cannot quietly climb. Lower it when work lands.
+    ok = c["modules"] > 0 and c["orphaned"] <= ORPHAN_FLOOR
+    why = ("scanned 0 modules - a broken scan, not a clean tree" if not c["modules"]
+           else "%d orphaned, above the %d ratchet" % (c["orphaned"], ORPHAN_FLOOR)
+           if c["orphaned"] > ORPHAN_FLOOR else None)
+    return {"check": "structure", "pass": ok,
+            "detail": ("%d modules, %d reachable from a wake, %d orphaned (ratchet %d), "
+                       "%d act at import"
+                       % (c["modules"], c["reachable_from_wake"], c["orphaned"], ORPHAN_FLOOR,
+                          len(d["import_time_effects"]))) if ok else why,
             "data": {"modules": c["modules"], "wake": c["reachable_from_wake"],
                      "orphans": d["orphans"], "effects": d["import_time_effects"]}}
 
@@ -156,6 +187,7 @@ def _scan(patterns: dict) -> list:
         out = [h for h in _scan(ALL_RULES) if h.rpartition(": ")[2] in want]
         return _SCAN_CACHE.setdefault(key, out)
     hits = []
+    n_read = 0
     for root, dirs, files in os.walk(ROOT):
         dirs[:] = [x for x in dirs if x not in (".git", "node_modules", "__pycache__", "archive",
                                                 "voice", "state")]
@@ -170,9 +202,19 @@ def _scan(patterns: dict) -> list:
                 s = io.open(p, encoding="utf-8", errors="ignore").read()
             except Exception:
                 continue
+            n_read += 1
             for name, pat in patterns.items():
                 if re.search(pat, s):
                     hits.append("%s: %s" % (rel, name))
+    # A PRIVACY GUARD THAT READ NOTHING REPORTS CLEAN. This walked ROOT and counted no files, so a
+    # wrong root, an over-eager skip list, or a rename would have produced a green "no private data
+    # in tracked files" over an unexamined tree - and this is the guard standing between the repo and
+    # a permanent public leak. Nothing here asserted the scan had a subject until an audit pointed
+    # at it. The floor is deliberately far below the real count (~400) so it fails on a broken scan,
+    # never on a normal deletion.
+    if n_read < 50:
+        raise RuntimeError("selfcheck._scan read %d files under %s - a broken scan, not a clean "
+                           "repo" % (n_read, ROOT))
     return _SCAN_CACHE.setdefault(key, sorted(set(hits)))
 
 
@@ -224,8 +266,18 @@ def check_paths() -> dict:
     # a checker that cries wolf is a checker nobody reads.
     pat = re.compile(r"(?<![A-Za-z])[A-Za-z]:[\\/][^\s\"'\\]{2,}"
                      r"|(?:^|[\s\"'(=])/(?:home|Users)/", re.I)
-    hits = []
-    for root, dirs, files in os.walk(os.path.join(ROOT, "aea")):
+    # THE SCAN ROOT IS ASSERTED BEFORE IT IS WALKED. `os.walk` on a path that does not exist yields
+    # nothing and raises nothing, so this returned "every path anchors on ROOT or HOME" over an
+    # empty tree - the identical failure as the two guards that walked `aea/aea/`, in the guard that
+    # protects the repo's hardest privacy rule. `assembly.scan` has carried this guard since it was
+    # written; copying it here cost two lines and was never done.
+    tree = os.path.join(ROOT, "aea")
+    if not os.path.isdir(tree):
+        return {"check": "no absolute paths in code", "pass": False,
+                "detail": "no aea/ under %s - a broken scan, not a clean tree" % ROOT,
+                "data": {"hits": []}}
+    hits, n_read = [], 0
+    for root, dirs, files in os.walk(tree):
         dirs[:] = [x for x in dirs if x not in ("__pycache__", "site_assets")]
         for f in files:
             if not f.endswith(".py"):
@@ -238,13 +290,18 @@ def check_paths() -> dict:
                 s = io.open(p, encoding="utf-8", errors="ignore").read()
             except Exception:
                 continue
+            n_read += 1
             for i, line in enumerate(s.splitlines(), 1):
                 if pat.search(line) and "grid.external" not in line:
                     hits.append("%s:%d" % (rel, i))
+    if n_read < 50:
+        return {"check": "no absolute paths in code", "pass": False,
+                "detail": "read %d python files under %s - a broken scan, not a clean tree"
+                          % (n_read, tree), "data": {"hits": hits}}
     return {"check": "no absolute paths in code", "pass": not hits,
-            "detail": "every path anchors on ROOT or HOME" if not hits
+            "detail": "every path anchors on ROOT or HOME (%d files)" % n_read if not hits
                       else "%d literal path(s): %s" % (len(hits), ", ".join(hits[:6])),
-            "data": {"hits": hits}}
+            "data": {"hits": hits, "files": n_read}}
 
 
 # STORES THAT MUST NEVER BE COMMITTABLE. Not their CONTENT - their IGNORE COVERAGE. Adopted from

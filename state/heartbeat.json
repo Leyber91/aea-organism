@@ -1,20 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 74,
-  "total_ticks": 255,
+  "boot_count": 85,
+  "total_ticks": 268,
   "last_brief_date": "2026-08-01",
   "consolidated_sessions": 22,
   "history": [
-    "2026-08-01 15:55:48 UTC REFLECT:self ok :: REFLECT t6: 'Write a 2â€‘sentence daily mantra that reinforces the standing' -> ",
-    "2026-08-01 15:57:54 UTC REFLECT:self ok :: REFLECT t6: 'Create a 30â€‘second mentalâ€‘clarity check consisting of three ' -",
-    "2026-08-01 15:58:09 UTC REFLECT:self ok :: REFLECT t6: 'Draft a 4-step micro-framework that outlines how to evaluate' -> AC",
-    "2026-08-01 15:59:15 UTC LOOK:read_state ok :: {\"tick\": 305, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 15:59:16 UTC LOOK:read_state ok :: {\"tick\": 305, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 16:00:15 UTC LOOK:read_state ok :: {\"tick\": 307, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 16:00:17 UTC LOOK:read_state ok :: {\"tick\": 307, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 16:01:34 UTC LOOK:read_state ok :: {\"tick\": 309, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 16:01:35 UTC LOOK:read_state ok :: {\"tick\": 309, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
-    "2026-08-01 16:02:22 UTC LOOK:read_state ok :: {\"tick\": 311, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
     "2026-08-01 16:02:23 UTC LOOK:read_state ok :: {\"tick\": 311, \"memory\": [\"tick1: Prioritize closing revenue loops over open lab ",
     "2026-08-01 16:04:31 UTC REFLECT:self ok :: REFLECT t6: 'Create a 3â€‘item priority matrix that categorizes daily tasks' -> ",
     "2026-08-01 16:04:49 UTC REFLECT:self ok :: REFLECT t6: 'Create a 3â€‘point textual rating scale (1â€‘5) to evaluate how ' -",
@@ -34,9 +24,19 @@
     "2026-08-02 00:27:24 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 00:28:57 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 00:29:51 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 82 memories from 32/23 sessions consolidate",
-    "2026-08-02 00:32:29 UTC REFLECT:self FAIL :: REFLECT t6: 'Write a concise 10â€‘word tagline that captures the essence of' -> "
+    "2026-08-02 00:32:29 UTC REFLECT:self FAIL :: REFLECT t6: 'Write a concise 10â€‘word tagline that captures the essence of' -> ",
+    "2026-08-02 00:53:01 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:53:51 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:54:48 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:55:39 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:56:19 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:56:51 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:58:00 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:58:28 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 00:58:56 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
+    "2026-08-02 01:27:41 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D"
   ],
-  "last_wake_why": "the wake chose NONE - no mechanical move is needed this tick",
+  "last_wake_why": "decision #350 was already carried out - nothing new since",
   "brief_fails": 3,
   "_brief_runs_seen": 107,
   "proposed_move": {
@@ -63,5 +63,7 @@
     "applied": false,
     "refused": "vary_own_knob is DRAFT - not granted",
     "why": "unstick"
-  }
+  },
+  "_last_decision": 350,
+  "_said": "run `what_to_try bad_response`, apply the first alternative, then retry `produce_brief`"
 }

@@ -81,6 +81,7 @@ PERCEPTION_GATE = 8        # R4a: occasions it looked somewhere new AND said why
 RUNGS = [
     dict(
         id="R0", title="THE LOOP SURVIVES",
+        human="It is still running tomorrow",
         power="One process holds a heartbeat, advances it every tick, and resumes at the right tick "
               "after being stopped.",
         bound="A stop leaves a clean recorded state rather than a crash; nothing is lost by being "
@@ -95,6 +96,7 @@ RUNGS = [
     ),
     dict(
         id="R1", title="THE DECISION IS READ",
+        human="The part that thinks is listened to",
         power="The deliberating loop's chosen action is read by the acting loop before its own "
               "fallback ladder runs.",
         bound="A malformed or stale decision cannot crash the loop or bypass the staleness limit; "
@@ -116,6 +118,7 @@ RUNGS = [
         # no opposition - adds R1.5 at line 119 and it was never removed. Shipping a ten-rung ladder
         # would have contradicted the repo's own revised source while claiming to be drawn from it.
         id="R1.5", title="THE DECISION IS PARSED",
+        human="What it said is understood exactly",
         power="The wake's prose is parsed into a candidate tool call and validated against the "
               "declared schema before anything can act on it - and it does nothing else.",
         bound="An invalid parse is logged as a receipt, never swallowed. A decision that could not "
@@ -131,6 +134,7 @@ RUNGS = [
     ),
     dict(
         id="R2", title="THE DECISION IS A TOOL CALL",
+        human="It can actually press a button",
         power="The wake's own decision causes a real tool to run, unattended, across distinct "
               "situations, with the call and its arguments recorded.",
         bound="No string the wake wrote reaches a tool argument. The tool surface is a closed "
@@ -149,6 +153,7 @@ RUNGS = [
     ),
     dict(
         id="R3", title="THE OUTCOME IS REMEMBERED",
+        human="It remembers whether that worked",
         power="After each action the system stores what it decided, what it called, what came back, "
               "and whether those matched - and a later decision demonstrably uses that record.",
         bound="A stored outcome may not disagree with the ledger. A false 'it worked' is worse than "
@@ -163,6 +168,7 @@ RUNGS = [
     ),
     dict(
         id="R4a", title="PERCEPTION IS A CHOICE",
+        human="It picks what to look at next",
         power="What the entity looks at next is chosen by the previous tick, from a closed set of "
               "local sources, rather than fixed in advance.",
         bound="The source is SELECTED from a closed table, so no byte the entity wrote becomes a "
@@ -184,6 +190,7 @@ RUNGS = [
     ),
     dict(
         id="R4b", title="PERCEPTION REACHES THE WORLD",
+        human="It could look outside the machine",
         power="The entity chooses an outbound topic, and something leaves the machine because of "
               "that choice.",
         bound="THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound "
@@ -204,6 +211,7 @@ RUNGS = [
     ),
     dict(
         id="R5", title="RESEARCH",
+        human="It can be wrong on purpose, and find out",
         power="A falsifiable hypothesis stated before searching, sources kept with what they said, "
               "summarised against the hypothesis, ending in survives, dies, or forks - with a "
               "numeric stopping rule.",
@@ -220,6 +228,7 @@ RUNGS = [
     ),
     dict(
         id="R6", title="REFLECTION",
+        human="It connects things it remembers",
         power="Derive a memory from several memories, store it competing with its own sources, and "
               "retrieve it later in a real decision.",
         bound="UNTRACEABLE PROVENANCE. A derived memory that cannot name where it came from is an "
@@ -234,6 +243,7 @@ RUNGS = [
     ),
     dict(
         id="R7", title="THE COUNCIL ON ITS OWN PLANS",
+        human="It argues with itself before acting",
         power="Low confidence or flagged stakes convene an adversarial review of the system's own "
               "plan before it acts, with the adversary as a held seat.",
         bound="THEATRE. A council that never stops anything, or one that fails whenever its subject "
@@ -250,6 +260,7 @@ RUNGS = [
     ),
     dict(
         id="R8", title="THE DRIVE",
+        human="It starts things nobody asked for",
         power="Something that makes it start, rather than waiting to be started.",
         bound="NOT WRITEABLE YET. Any measurable proxy for a goal that the system can influence, it "
               "will eventually optimise instead of the goal. Specification gaming is the "
@@ -267,6 +278,7 @@ RUNGS = [
     ),
     dict(
         id="R9", title="SELF-MODIFICATION",
+        human="It rewires itself",
         power="It changes its own wiring.",
         bound="NOT WRITEABLE YET. A system that edits its own code can edit the thing that judges "
               "the edit.",
@@ -341,12 +353,14 @@ def standby_for(rid: str) -> tuple:
     try:
         from aea.tooling import assembly
         mods = assembly.scan()
-        live, _ = assembly.reachable(mods)
-        known = set()
-        for mod, d in (mods or {}).items():
-            for fn in ((d or {}).get("defs") or {}):
-                known.add("%s:%s" % (mod.replace("aea.", "", 1), fn))
-        live = {k.replace("aea.", "", 1) for k in live}
+        prov = {k.replace("aea.", "", 1): v for k, v in assembly.provenance(mods).items()}
+        known = set(prov)
+        # "NO LONGER STANDBY" IS A CLAIM AND IT NEEDS THE FIRM KIND. This read the union, so a
+        # standby function reachable only through a dispatch table - an upper bound by construction
+        # - would announce itself as wired. A rung leaving standby on a maybe is the overclaim this
+        # file exists to prevent. TOOL does not count either: a person typing the command is not
+        # the organism reaching it, which is precisely what standby means.
+        live = {k for k, v in prov.items() if v == "EXTRACTED"}
     except Exception as e:
         return names, "unverified: %s" % type(e).__name__
     gone = [n for n in names if n not in known]
@@ -359,29 +373,100 @@ def standby_for(rid: str) -> tuple:
     return held, "held: written, zero callers"
 
 
-def verify_funcs() -> dict:
-    """Every declared name resolved against the live call graph. Misses are RETURNED, not dropped.
+# =================================================================================================
+# WHAT A DECLARED FUNCTION IS FOR - and it is not one thing.
+#
+# A rung's declared surface mixes two categories that need OPPOSITE tests, and treating them alike
+# is a category error in both directions:
+#
+#   ORGAN       the organism must reach it. `hands.invoke` is a rung's capability. If the wake
+#               cannot get to it, the rung claims something that does not happen
+#   INSTRUMENT  a person reads the receipt through it. `perceive.verdict` computes the R4a verdict
+#               for a human or a tool. Demanding that the WAKE call it would push a reader into the
+#               tick purely to satisfy a checker - which is inventing work to make a number go green
+#
+# The names here are INSTRUMENTS. Everything not listed is an organ, so the default is the strict
+# test and adding a function cannot silently opt out of it.
+# =================================================================================================
+RUNG_FUNC_ROLE = {
+    "kernel.perceive:verdict": "instrument",
+    "kernel.perceive:read": "instrument",
+    "kernel.outcomes:read": "instrument",
+    "kernel.hands:_ledger_path": "instrument",
+}
 
-    A rung that claims a function which does not exist is making a claim about code that is not
-    there, and that is exactly the kind of quiet decay this whole file exists to catch."""
+
+def verify_funcs() -> dict:
+    """Every declared name checked against WHAT REACHES IT, not against whether it is spelled right.
+
+    WHAT THIS USED TO DO, and why it never once verified a wiring claim. It built `known` from
+    `assembly.scan()` - which only PARSES DEFINITIONS - and asserted membership. So a function that
+    exists in a file and is called by absolutely nothing passed cleanly, and 34 of 34 names
+    "resolved against the live call graph" while four of them were unreachable by the organism.
+    `scan()` is the parse. `reachable()` is the graph. This called the first one and reported the
+    second one's answer.
+
+    That is assembly.py's own opening warning - A MODULE IS WIRED WHEN SOMETHING IMPORTS IT, A
+    CAPABILITY IS WIRED WHEN SOMETHING CALLS IT - reproduced inside the ladder's integrity check,
+    by the same author, on the same day it was quoted. The knowledge was present and applied to the
+    declarations rather than to the checker, because attention follows effort: the RUNG_FUNCS table
+    was the hard part to write, so it got the scrutiny, and the six-line membership test underneath
+    it got none.
+
+    FOUR OUTPUTS, and they are four different problems:
+
+        missing        the name does not exist anywhere. A claim about absent code
+        unwired        it exists and NOTHING reaches it - or only a terminal does, for an organ.
+                       This is the R1 defect: a capability written and never connected
+        dispatch_only  reachable only through a module-level table. An UPPER BOUND, honest as such.
+                       Where a receipt exists it is the stronger claim, so these are surfaced with
+                       their ledger count rather than demoted
+        instruments    readers, correctly reachable from a tool and not from the wake
+    """
     try:
         from aea.tooling import assembly
-        # THE MODULE VALUE IS {path, defs}, NOT A MAP OF FUNCTIONS. The first version iterated the
-        # outer dict and built keys from "path" and "defs", so all 31 declared names reported
-        # missing - a 31-of-31 miss is a format mismatch announcing itself, which is exactly why the
-        # check reports the names instead of quietly returning a count.
-        #
-        # Graph keys carry the  prefix; the page strips it for display, and the declarations
-        # above are written in the DISPLAY form because that is what a reader of the page sees.
-        known = set()
-        for mod, d in (assembly.scan() or {}).items():
-            for fn in ((d or {}).get("defs") or {}):
-                known.add("%s:%s" % (mod.replace("aea.", "", 1), fn))
+        # Graph keys carry the package prefix; the declarations above are written in the DISPLAY
+        # form because that is what a reader of the page sees.
+        prov = {k.replace("aea.", "", 1): v for k, v in assembly.provenance().items()}
     except Exception as e:
-        return dict(checked=0, missing=[], error="%s: %s" % (type(e).__name__, str(e)[:90]))
-    missing = [n for names in RUNG_FUNCS.values() for n in names if n not in known]
-    return dict(checked=sum(len(v) for v in RUNG_FUNCS.values()), missing=sorted(missing),
-                known=len(known))
+        return dict(checked=0, missing=[], unwired=[], dispatch_only=[],
+                    error="%s: %s" % (type(e).__name__, str(e)[:90]))
+    if not prov:
+        # A SCAN THAT FINDS NOTHING AGREES WITH EVERYTHING. Two guards in this repo already passed
+        # vacuously on an empty tree; this check will not be the third.
+        return dict(checked=0, missing=[], unwired=[], dispatch_only=[],
+                    error="provenance returned nothing - broken scan, not an empty tree")
+    missing, unwired, disp, instr, asserted = [], [], [], [], []
+    declared = [n for names in RUNG_FUNCS.values() for n in names]
+    for n in declared:
+        kind = prov.get(n)
+        role = RUNG_FUNC_ROLE.get(n, "organ")
+        if kind is None:
+            missing.append(n)
+        elif kind == "EXTRACTED":
+            continue
+        elif kind == "DISPATCH":
+            disp.append(n)
+        elif kind == "ENTRY":
+            # THE DOOR IS NOT EVIDENCE THAT THE DOOR IS USED. An entry with no caller anywhere is
+            # where the walk STARTS, so declaring it and then checking it is grading your own axiom.
+            # It is not a defect - `loop.live:main` genuinely is the organism's door and R0 is
+            # entitled to name it - but it must never be counted as measured wiring. Reported in its
+            # own bucket so the number of names carrying real evidence stays honest.
+            asserted.append("%s [%s]" % (n, kind))
+        elif kind == "TOOL":
+            (instr if role == "instrument" else unwired).append("%s [%s]" % (n, kind))
+        else:                                    # NONE
+            unwired.append("%s [%s]" % (n, kind))
+    return dict(checked=len(declared), missing=sorted(missing), unwired=sorted(unwired),
+                dispatch_only=sorted(disp), instruments=sorted(instr),
+                asserted_entries=sorted(asserted),
+                measured=len(declared) - len(missing) - len(unwired) - len(asserted),
+                known=len(prov),
+                claim="checked against reachability, not existence. `unwired` is a rung claiming a "
+                      "capability nothing can get to; `dispatch_only` is an upper bound and says "
+                      "so; `asserted_entries` are doors, where reachability is the assumption the "
+                      "walk begins from rather than anything this check measured.")
 
 
 # =================================================================================================
@@ -591,9 +676,13 @@ def measure_r2() -> dict:
                                           for r in real})
     try:
         from aea.tooling import assembly
-        mods = assembly.scan()
-        live, _ = assembly.reachable(mods)
-        out["wire"] = any(":invoke" in f for f in live)
+        # EXACT NAME, FIRM EVIDENCE. This was `any(":invoke" in f for f in live)` over the UNION:
+        # a substring test that any function whose name merely contains "invoke" satisfies, decided
+        # on an upper bound. R2's whole claim is that the wake's decision REACHES A TOOL, so the
+        # check is whether hands.invoke has a real call site - nothing looser can carry it.
+        prov = assembly.provenance()
+        out["wire"] = prov.get("aea.kernel.hands:invoke") == "EXTRACTED"
+        out["wire_evidence"] = prov.get("aea.kernel.hands:invoke")
     except Exception as e:
         out["wire_error"] = f"{type(e).__name__}: {str(e)[:80]}"
     # THE BOUND IS PART OF THE RUNG, and this function never looked at it. R2 = WIRE + BOUND +

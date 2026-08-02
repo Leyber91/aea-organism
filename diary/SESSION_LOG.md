@@ -2591,3 +2591,95 @@ dispatcher stays dead (asserted in the control), so R4's standby claim is intact
   the one place where getting the scope right matters more than getting it done, on the evidence of
   R2 having borrowed from above twice.
 - Standing, unchanged: `dispatch.py` is still unwired and still R4's prerequisite.
+
+---
+
+## 2026-08-02 (close) · THE GENERATOR BECOMES A PACKAGE, proved byte-identical
+
+**DID**
+
+- **`aea/tooling/page/`** - `publish.py` was 997 lines holding five jobs with a `build()` of 494 at
+  the centre, the second-largest function in the tree. It is now eleven modules with one job each:
+  `sources` (every read of durable state) · `graph` (the call graph, direct kept apart from
+  dispatch) · `layout` (geometry, no meaning) · `marks` (the only module that emits a mark) ·
+  `axes` (both axes as series - arrivals, accumulation, rails, captions) · `climb` · `style` (one
+  generated rule per frame) · `panels` · `template` (the page as text) · `render` (the orchestrator,
+  allowed to contain none of the above) · `guard`. `publish.py` stays as the run shim, because
+  moving code is not a reason to break a documented command.
+- **THE CONTROL, and a refactor of a generator has exactly one honest one available:** the monolith
+  and the package built at the SAME TREE STATE, compared byte for byte. **Identical.**
+- **THE FIRST RUN OF THAT CONTROL WAS A FALSE ALARM, and the reason is worth keeping.** It showed
+  36 added lines and looked like a defect. It was not: the instrument is part of the tree it
+  measures, so creating 13 new files added 36 unreachable functions to the dark field it draws.
+  **A control on a self-measuring instrument must be taken at the same tree state**, or the tool's
+  own footprint reads as a regression.
+- **THE SPLIT PAID FOR ITSELF BEFORE IT WAS FINISHED.** `template.document()`'s parameter list is
+  DERIVED from the template rather than typed, and the first build failed with an unexpected keyword
+  argument: four certificate values (`payloads`, `bound_pct`, the tool count, the certificate date)
+  were being formatted on every build and printed nowhere, left behind when that section was
+  rewritten around the alphabet proof. Nothing could see it while the producer and the consumer sat
+  four hundred lines apart in one function. A value with no reader is now a TypeError.
+- **AND THE RATCHET CAUGHT ME.** Lifting the history read out of `build()` turned an inline
+  `except: pass` into `except Exception: return []` - silent-default 32 -> 33, `SOMETHING IS BROKEN`.
+  The count was not massaged: `sources.history()` now treats a missing file as the knowable state it
+  is, counts unparseable rows and says so, and renders the rest. **`pass` inside a long function and
+  `return []` from a short one are the same defect wearing different clothes, and only one of them
+  is detectable** - which is an argument for small functions that has nothing to do with taste.
+- **`diary/DISCOVERIES.md` D50** - the three days in one entry: two rung vocabularies on one page,
+  the third undeclared control, the wire tested as characters, the 83 false orphans, the count that
+  could not count, and the control-at-the-same-tree-state trap.
+- **`CLAUDE.md`** gains the `page/` map line. The repo SHAPE changed, which is the only thing that
+  file changes for.
+
+**VERIFIED** - byte-identical build at the same tree state; `publish` twice, identical modulo the
+timestamp; privacy scan CLEAN on the exact bytes; `_scan` still answers under its old name; every
+module imports (0 failures); no absolute paths; defect ratchet back to GREEN; graph rebuilt;
+screenshot read at R4a - twelve rungs, the new rung lit, and its caption naming
+`kernel.perceive:verdict` as declared-but-not-yet-reachable.
+
+**NOT VERIFIED, and it is not mine:** `test_golden` currently has a syntax error at line 829 and one
+failing `percep` behaviour, from an in-flight edit on `decide.py` / `perceive.py` / `live.py` /
+`test_golden.py`. I did not touch those files. The frozen suite therefore could not be run to green
+this session; every other invariant was.
+
+**LOCKED**
+
+- **A CONTROL ON A SELF-MEASURING INSTRUMENT IS TAKEN AT THE SAME TREE STATE.** Otherwise the
+  tool's own footprint is indistinguishable from a regression.
+- **THE TEMPLATE'S INPUTS ARE A DERIVED SIGNATURE.** A value the page does not print may not be
+  computed in silence.
+- **`__init__.py` STAYS THIN.** `assembly.scan()` skips it, so code living there is invisible to the
+  organism's own map - the last place to put anything.
+
+**NEXT**
+
+- **Push `docs/index.html` to the `organism` remote.** It is six commits behind: everything since
+  "RETRACTION: the containment bound was the wrong statistic" is unpublished - the single rung
+  vocabulary from R0, R2 closed, the R4a/R4b split, standby, the dispatch split, the alphabet proof.
+  Prepared and privacy-scanned; the push itself was declined at the sandbox and is left to Luis.
+- **Item 4, the upper-ladder re-gate (R4-R8)**, unchanged as the thing that decides the path.
+- Untouched on purpose, with reasons: `converse` (2205), `battery` (1661), `grid` (1274), `hands`
+  (1220). They are bigger than `publish` was, and **none of them has an exact output control** - so
+  splitting them costs the one thing that made this refactor safe. Do them when there is a
+  behaviour freeze to check them against, not before.
+
+**THE PUBLISH PATH HAD A HOLE THE PRIVACY GUARD CANNOT SEE, and it was one command from being
+permanent.** The organism commit was staged, the tree scanned CLEAN, and the author line read
+`[real name] <[work address]>` - a fresh clone inherits a system-level git identity,
+and the repo-local one in `aea-city` (`Leyber91 <the repo-local address>`) does not travel with it.
+
+Both guards in this repo scan **file contents**: `selfcheck`'s leak check reads tracked files, and
+`page/guard.py` reads the rendered HTML. **Neither reads commit metadata**, which is published to a
+public remote just as permanently as a file is and cannot be removed by a later commit. Caught by
+reading `git show --stat` before pushing rather than by any instrument.
+
+Amended to the public identity, with the co-author trailer, before anything left the machine.
+
+- **LOCKED: any repository this project commits to has its identity set explicitly before the first
+  commit, and the author line is read back before a push.** A guard that scans content and not
+  metadata is not a privacy guard, it is half of one.
+- **Also fixed on the way:** `page/guard.py` failed its own scan. Three of its four patterns are
+  assembled from fragments precisely so a detector does not contain what it hunts; the credential
+  pattern was written as a literal and matched itself. Assembled like the rest, and verified BOTH
+  ways - it still detects `api_key=`, `Bearer `, `client_secret:` and any email, and it now reads
+  itself clean.

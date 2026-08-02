@@ -130,6 +130,24 @@ class _Scope(ast.NodeVisitor):
         self.stack: list = []
         self.tables: dict = {}         # module-level container name -> {"mod:func", ...}
         self.derived: dict = {}        # local name -> the table it was taken out of
+        self.n_calls = 0               # EVERY Call node seen - the honest denominator
+        self.n_unhandled = 0           # ...of which this resolver has no branch for at all
+        self.n_methods = 0             # defs nested inside a ClassDef: a stated blind spot
+        self.in_class = 0
+
+    def _rel(self, module, level) -> str:
+        """`from . import x` and `from .kernel import grid` resolved against THIS module's package.
+
+        Both forms were dropped: `prepare` required `n.module` and `visit_ImportFrom` returned early
+        without it, so a relative import bound nothing and every call through it resolved to a key
+        that exists nowhere in the tree. This repo writes absolute imports by convention, so the
+        defect is latent rather than active - which is exactly the kind that survives, because
+        nothing fails until the day someone writes the idiom Python has always allowed."""
+        if not level:
+            return module or ""
+        parts = self.mod.split(".")
+        base = parts[:max(0, len(parts) - level)]
+        return ".".join(base + ([module] if module else []))
 
     # --- dispatch tables ----------------------------------------------------------------------
     # THE EDGE THAT WAS NEVER DRAWN. `visit_Call` records call SITES, and a dispatch table holds a
@@ -163,10 +181,13 @@ class _Scope(ast.NodeVisitor):
             if isinstance(n, ast.Import):
                 for a in n.names:
                     self.alias[a.asname or a.name.split(".")[-1]] = a.name
-            elif isinstance(n, ast.ImportFrom) and n.module:
+            elif isinstance(n, ast.ImportFrom):
+                mod = self._rel(n.module, n.level)
+                if not mod:
+                    continue
                 for a in n.names:
-                    self.alias[a.asname or a.name] = f"{n.module}.{a.name}"
-                    self.direct[a.asname or a.name] = f"{n.module}:{a.name}"
+                    self.alias[a.asname or a.name] = f"{mod}.{a.name}"
+                    self.direct[a.asname or a.name] = f"{mod}:{a.name}"
         top = {n.name for n in tree.body
                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
         for node in tree.body:
@@ -252,21 +273,30 @@ class _Scope(ast.NodeVisitor):
         self.generic_visit(n)
 
     def visit_ImportFrom(self, n):
-        if not n.module:
+        mod = self._rel(n.module, n.level)
+        if not mod:
             return self.generic_visit(n)
         for a in n.names:
-            full = f"{n.module}.{a.name}"
+            full = f"{mod}.{a.name}"
             local = a.asname or a.name
             # `from aea.kernel import cause` binds a MODULE; `from x import func` binds a FUNCTION.
             # Both are common here and they resolve differently, so record both readings and let
             # the resolver prefer whichever exists.
             self.alias[local] = full
-            self.direct[local] = f"{n.module}:{a.name}"
+            self.direct[local] = f"{mod}:{a.name}"
         self.generic_visit(n)
 
     # --- definitions --------------------------------------------------------------------------
     def _fn(self, n):
         name = ".".join([*self.stack, n.name]) if self.stack else n.name
+        if self.in_class:
+            # A STATED BLIND SPOT, COUNTED RATHER THAN FABRICATED. `visit_Call` resolves a bare name
+            # and an attribute-on-an-imported-module. It resolves NO method call, because the type of
+            # a receiver is a runtime fact - so every method in the tree reads NONE, including the
+            # handler methods that ARE `controlroom:main`. The honest move is to publish the number
+            # and the limitation; inventing an edge from "exactly one class defines this name" would
+            # be a guess dressed as a graph, which is the failure this whole file is written against.
+            self.n_methods += 1
         self.defs.setdefault(name, {"line": n.lineno, "calls": set(), "dcalls": set()})
         self.stack.append(n.name)
         self.generic_visit(n)
@@ -277,7 +307,9 @@ class _Scope(ast.NodeVisitor):
 
     def visit_ClassDef(self, n):
         self.stack.append(n.name)
+        self.in_class += 1
         self.generic_visit(n)
+        self.in_class -= 1
         self.stack.pop()
 
     def visit_If(self, n):
@@ -311,6 +343,7 @@ class _Scope(ast.NodeVisitor):
         here = ".".join(self.stack) if self.stack else "<module>"
         slot = self.defs.setdefault(here, {"line": 0, "calls": set(), "dcalls": set()})
         f = n.func
+        self.n_calls += 1
         tbl = self._dispatch_table(f)
         if tbl:
             slot.setdefault("dcalls", set()).update(self.tables.get(tbl) or ())
@@ -325,6 +358,16 @@ class _Scope(ast.NodeVisitor):
                 slot["calls"].add(self.direct[f.id])
             else:
                 slot["calls"].add(f"{self.mod}:{f.id}")          # same-module call
+        else:
+            # THE THIRD CASE, WHICH FELL THROUGH SILENTLY. `obj.attr.method()`, `f()()`,
+            # `things[i].run()`, a lambda call - every form whose func is neither a bare Name nor an
+            # Attribute-on-a-Name hit NEITHER branch and recorded nothing at all: no edge AND no `?`.
+            # Measured at 2,825 sites, 14.3% of every Call node in the tree, and the published
+            # `unresolved_share` was computed over the `?` set, so it excluded all of them. The
+            # module's honest claim - "it REPORTS the count it could not resolve rather than quietly
+            # treating unresolved as absent" - was true of one blind spot and false of the larger one.
+            self.n_unhandled += 1
+            slot["calls"].add(f"?<{type(f).__name__}>")
         self.generic_visit(n)
 
 
@@ -341,6 +384,7 @@ def scan() -> dict:
         s.prepare(tree)
         s.visit(tree)
         mods[m] = dict(path=os.path.relpath(p, str(grid.ROOT)).replace("\\", "/"),
+                       calls_seen=s.n_calls, calls_unhandled=s.n_unhandled, methods=s.n_methods,
                        tables={k: sorted(v) for k, v in s.tables.items()},
                        defs={k: {"line": v["line"], "calls": sorted(v["calls"]),
                                  "dcalls": sorted(v.get("dcalls") or ())}
@@ -418,21 +462,178 @@ def reachable(mods: dict, entries=None, detail: bool = False, dispatch: bool = T
     return live, unresolved
 
 
+# =================================================================================================
+# WHAT KIND OF EVIDENCE REACHES THIS FUNCTION. The distinction this module always computed and never
+# handed anybody in a usable form.
+#
+# `reachable(detail=True)` has separated direct from dispatch since it was written, and this file's
+# own docstring says nothing here may print the union as though it were the direct set. Then
+# `report()` did exactly that, and so did five other call sites, because the split was available
+# only as a tuple element that every caller dropped. A distinction nobody can reach is not a
+# distinction; it is a comment.
+#
+# MEASURED at the time this was added: 6,470 call edges, 120 dispatch edges, and 2,699 call sites
+# the resolver could not resolve at all - 29% of every call in the tree is invisible to it. A
+# consumer reading `live` as fact is reading an upper bound built on top of a 71% view.
+#
+# THE FOUR KINDS, and the fourth is the one that changes an answer:
+#
+#   EXTRACTED  a call site exists in the source and its target is unambiguous. The organism reaches
+#              this. The only kind that is a fact rather than a resolution
+#   DISPATCH   reachable only by following a module-level container something calls THROUGH. An
+#              upper bound BY CONSTRUCTION - which entry a dispatch selects is a runtime fact - so
+#              it is honest evidence of "could be reached", never of "is reached". Where a receipt
+#              exists (`hands._read_state` has 62 ledger invocations) the receipt is the stronger
+#              claim and the static graph simply cannot see it
+#   TOOL       reachable only from a `__main__` guard: A HUMAN AT A TERMINAL, not the organism. This
+#              is a legitimate and necessary kind - `perceive.verdict` is a READER, and demanding
+#              the wake call it would push an instrument into the tick to satisfy a checker. It is
+#              also the exact disguise `impasse.scan` wore when this tool first reported R3.4 DONE
+#   ENTRY      IT IS WHERE THE WALK STARTS. Its reachability is an ASSUMPTION, not a measurement,
+#              and the first version of this labelling got that wrong. `reachable()` seeds the entry
+#              set straight into `live`, and the only test before `live.add` is that the function
+#              is DEFINED - so an entry was stamped EXTRACTED whether or not one line of code called
+#              it. Proved by construction: deleting all three call sites of `aea.loop.aea:tick`
+#              left STEPS R3.4 reading DONE with both functions EXTRACTED, while the control
+#              (`impasse:scan`, same step, not an entry) correctly flipped to PARTIAL/NONE. Five
+#              declared names across STEPS and RUNG_FUNCS are entries, so for those the wiring
+#              check was unfalsifiable. Three entries - `live:main`, `aea:main`,
+#              `controlroom:main` - have ZERO callers anywhere but their own `<main>` guard
+#   NONE       nothing anywhere reaches it, by any route
+#
+# Naming TOOL separately is what stops the two opposite errors: counting a human-typed command as
+# organism capability, and calling a working instrument dead because the wake does not read it.
+# Naming ENTRY separately is what stops a check from grading its own axiom.
+# =================================================================================================
+EVIDENCE = ("EXTRACTED", "DISPATCH", "ENTRY", "TOOL", "NONE")
+
+
+def tool_entries(mods: dict) -> list:
+    """Every `__main__` bucket - the CLI surface. `visit_If` files those calls under `<main>`, so
+    they are already segregated from the organism walk; this is the entry set that walks them ON
+    PURPOSE, to tell "a person can run it" apart from "nothing reaches it"."""
+    return sorted("%s:<main>" % m for m, info in mods.items() if "<main>" in (info.get("defs") or {}))
+
+
+def incoming(mods: dict) -> dict:
+    """target -> how many REAL call sites point at it, excluding `<main>` buckets and self-calls.
+
+    This is what makes ENTRY honest rather than merely separate: an entry with callers and an entry
+    with none are different situations, and collapsing them would trade one blind spot for another.
+    `<main>` is excluded because a person typing the command is the very thing `visit_If` segregates.
+    """
+    n = {}
+    for m, info in mods.items():
+        for d, slot in (info.get("defs") or {}).items():
+            if d == "<main>" or d.startswith("<main>."):
+                continue
+            here = "%s:%s" % (m, d)
+            for c in list(slot.get("calls", [])) + list(slot.get("dcalls") or ()):
+                if c.startswith("?") or c == here:
+                    continue
+                n[c] = n.get(c, 0) + 1
+    return n
+
+
+def provenance(mods: dict = None, entries=None) -> dict:
+    """{function -> one of EVIDENCE} for every function defined in the tree.
+
+    Kinds are assigned STRONGEST FIRST, so a function reachable both directly and through a table
+    reads EXTRACTED. Precedence is the point: the label answers "what is the best evidence for
+    this", and a weaker route never weakens a fact.
+
+    ENTRY OUTRANKS EVERYTHING, because it is not evidence at all - it is the axiom the walk begins
+    from. A check that grades a name it also assumed is not a check, and that is exactly what this
+    function did until an audit deleted every caller of an entry and watched the row stay green."""
+    mods = mods or scan()
+    # ENTRY MEANS ASSERTED **AND** UNMEASURED. An entry with real call sites is not a tautology -
+    # `loop.aea:tick` has three callers, and demoting it would trade a false pass for a false fail.
+    # The tautology is only ever an entry that NOTHING calls, where the seed IS the whole evidence.
+    # This is also what restores falsifiability: strip tick's three callers and `incoming` drops to
+    # zero, so it becomes ENTRY and its STEPS row flips to PARTIAL - the exact behaviour the audit
+    # proved was impossible before.
+    inc = incoming(mods)
+    ents = {e for e in (entries or [x for v in ENTRIES.values() for x in v]) if not inc.get(e)}
+    direct, _u = reachable(mods, entries, dispatch=False)
+    union, _u2 = reachable(mods, entries, dispatch=True)
+    viacli, _u3 = reachable(mods, entries=tool_entries(mods), dispatch=True)
+    out = {}
+    for m, info in mods.items():
+        for d in (info.get("defs") or {}):
+            if d == "<module>" or d.startswith("<main>"):
+                continue
+            f = "%s:%s" % (m, d)
+            out[f] = ("ENTRY" if f in ents else
+                      "EXTRACTED" if f in direct else
+                      "DISPATCH" if f in union else
+                      "TOOL" if f in viacli else "NONE")
+    return out
+
+
+def evidence_census(mods: dict = None) -> dict:
+    """The counts, plus the resolver's own blindness. Both belong to any claim built on this graph.
+
+    `unresolved_share` is reported because it bounds every other number here: a graph that cannot
+    see 29% of the call sites cannot honestly present "dead" as "never called". It is the difference
+    between a measurement and an assertion, and it was not on the page."""
+    mods = mods or scan()
+    prov = provenance(mods)
+    counts = {k: 0 for k in EVIDENCE}
+    for v in prov.values():
+        counts[v] = counts.get(v, 0) + 1
+    n_call = n_disp = n_unres = 0
+    for _m, info in mods.items():
+        for _d, slot in (info.get("defs") or {}).items():
+            for c in slot.get("calls", []):
+                if c.startswith("?"):
+                    n_unres += 1
+                else:
+                    n_call += 1
+            n_disp += len(slot.get("dcalls") or ())
+    # THE DENOMINATOR IS CALL SITES, NOT DEDUPLICATED EDGES. Counting `?` entries in an edge SET
+    # under-reports twice: identical unresolved forms in one function collapse to one entry, and
+    # until the terminal `else` above existed, 2,825 sites produced no entry at all. `calls_seen` is
+    # every ast.Call node the visitor walked, which is the quantity the share claims to be about.
+    seen = sum(int(i.get("calls_seen") or 0) for i in mods.values())
+    unhandled = sum(int(i.get("calls_unhandled") or 0) for i in mods.values())
+    methods = sum(int(i.get("methods") or 0) for i in mods.values())
+    return dict(functions=len(prov), by_evidence=counts,
+                call_edges=n_call, dispatch_edges=n_disp, unresolved_edges=n_unres,
+                call_sites=seen, unhandled_sites=unhandled, method_defs=methods,
+                unresolved_share=(round(100.0 * unhandled / seen, 1) if seen else None),
+                note="unresolved_share is the fraction of ast.Call SITES this resolver has no "
+                     "branch for at all. It bounds every other number here, and two further blind "
+                     "spots are not in it: %d method definitions (a receiver's type is a runtime "
+                     "fact, so no method call resolves - every method reads NONE, including the "
+                     "handlers that ARE the server entry), and getattr/callables-passed-as-"
+                     "arguments. DEAD means 'no static caller found', never 'never runs'."
+                     % methods)
+
+
 def report(mods=None) -> dict:
     mods = mods or scan()
     live, unresolved = reachable(mods)
+    # EVERY STEP FUNCTION NOW CARRIES THE KIND OF EVIDENCE THAT REACHES IT, not a boolean. A step
+    # reported DONE on three dispatch edges and a step reported DONE on three call sites are not the
+    # same claim, and until now they printed identically.
+    prov = provenance(mods)
     steps = []
     for title, need in STEPS:
-        rows = [(f, f in live) for f in need]
-        got = sum(1 for _f, ok in rows if ok)
-        steps.append(dict(step=title, have=got, need=len(rows),
+        rows = [(f, prov.get(f, "NONE")) for f in need]
+        got = sum(1 for _f, k in rows if k in ("EXTRACTED", "DISPATCH"))
+        firm = sum(1 for _f, k in rows if k == "EXTRACTED")
+        steps.append(dict(step=title, have=got, need=len(rows), extracted=firm,
                           state=("DONE" if got == len(rows) else
                                  "PARTIAL" if got else "NOT STARTED"),
-                          functions=[dict(fn=f, live=ok) for f, ok in rows]))
+                          upper_bound=bool(got == len(rows) and firm < len(rows)),
+                          functions=[dict(fn=f, live=k in ("EXTRACTED", "DISPATCH"), evidence=k)
+                                     for f, k in rows]))
     allfns = {f"{m}:{d}" for m, info in mods.items() for d in info["defs"] if d != "<module>"}
+    cen = evidence_census(mods)
     return dict(at=time.time(), at_iso=time.strftime("%Y-%m-%d %H:%M:%S"),
                 modules=len(mods), functions=len(allfns), live=len(live & allfns),
                 unresolved_calls=unresolved, steps=steps,
+                evidence=cen["by_evidence"], census=cen,
                 dead=sorted(allfns - live))
 
 
@@ -496,17 +697,36 @@ if __name__ == "__main__":
     print("=" * 100)
     print("ASSEMBLY - is the organism actually wired, function by function?")
     print("=" * 100)
-    print(f"  {r['modules']} modules, {r['functions']} functions, "
-          f"{r['live']} reachable from an entry point")
-    print(f"  {r['unresolved_calls']} calls could not be resolved statically and are NOT counted "
-          f"as edges")
+    c = r["census"]
+    e = r["evidence"]
+    print(f"  {r['modules']} modules, {r['functions']} functions")
+    print()
+    inc = incoming(mods)
+    print("  BY WHAT KIND OF EVIDENCE - the union was printed as the direct set for months")
+    print(f"    EXTRACTED  {e['EXTRACTED']:5d}   a call site exists in the source. A fact")
+    print(f"    DISPATCH   {e['DISPATCH']:5d}   only through a table. An UPPER BOUND by construction")
+    print(f"    ENTRY      {e['ENTRY']:5d}   where the walk STARTS. An assumption, never a measurement")
+    print(f"    TOOL       {e['TOOL']:5d}   only from a __main__ guard. A human at a terminal")
+    print(f"    NONE       {e['NONE']:5d}   nothing reaches it by any route")
+    print()
+    print("  THE ENTRIES, and how many real callers each actually has:")
+    for en in sorted(set(x for v in ENTRIES.values() for x in v)):
+        print(f"    {inc.get(en, 0):3d}  {en}" + ("   <- asserted only" if not inc.get(en) else ""))
+    print()
+    print(f"  {c['call_sites']} call sites walked; {c['call_edges']} edges drawn, "
+          f"{c['dispatch_edges']} dispatch edges, {c['unhandled_sites']} sites this resolver has")
+    print(f"  no branch for at all ({c['unresolved_share']}%).")
+    print(f"  Two further blind spots are NOT in that share: {c['method_defs']} method definitions")
+    print("  (no method call resolves - a receiver's type is a runtime fact) and getattr. DEAD")
+    print("  means 'no static caller found', never 'never runs'.")
     print()
     for s in r["steps"]:
         mark = {"DONE": "DONE      ", "PARTIAL": "PARTIAL   ", "NOT STARTED": "NOT STARTED"}[s["state"]]
-        print(f"  {mark} {s['have']}/{s['need']}  {s['step']}")
+        bound = "  (UPPER BOUND - not every function has a call site)" if s["upper_bound"] else ""
+        print(f"  {mark} {s['have']}/{s['need']}  {s['step']}{bound}")
         for f in s["functions"]:
-            if not f["live"]:
-                print(f"                    DEAD  {f['fn']}")
+            if f["evidence"] != "EXTRACTED":
+                print(f"                    {f['evidence']:<10s} {f['fn']}")
     print()
     bad = [s for s in r["steps"] if s["state"] != "DONE"]
     print("  A step is DONE only when every function in it has a caller reachable from an entry.")

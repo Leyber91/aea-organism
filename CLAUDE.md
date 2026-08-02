@@ -72,6 +72,10 @@ aea/       ALL runtime Python — 10 domain subpackages, inward-only deps (impor
              organs/  autonomy · brief · talk · telegram_bridge · reflect
              loop/    aea (heartbeat/tick) · live        server/  controlroom (the server)
              tooling/ build_graph (regenerates graph.json, deterministic) · export_city
+                      page/    THE PUBLISHED ORGANISM, one job per module: sources · graph · layout ·
+                               marks · axes · climb · style · panels · template · render · guard.
+                               `publish.py` is the run shim; the command did not move. Split proved
+                               byte-identical against the monolith at the same tree state.
 state/     ALL runtime state (grid_state, journey_save = the sacred save, self, heartbeat, memory...).
              Resolved by grid.STATE. Private stores are gitignored, never committed.
 web/       front-end: world.html (mission loop), game/ (the bench UI), tracker/game.html, three.js libs. Served via grid.WEB

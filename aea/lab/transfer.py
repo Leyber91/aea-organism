@@ -104,6 +104,15 @@ def _py_files() -> list:
             if fn.endswith(".py"):
                 p = os.path.join(dp, fn)
                 out.append((os.path.relpath(p, TREE).replace("\\", "/"), p))
+    # THE GUARD ITS TWIN HAS CARRIED SINCE IT WAS WRITTEN. `assembly._py_files` raises on an empty
+    # tree because two guards in this repo walked one dirname too deep and reported ok having read
+    # nothing. This is the same function, over the same tree, feeding the defect ratchet - so an
+    # empty scan here reports "0 defects found" and the ratchet records a clean sweep of nothing.
+    # The lesson was written down, applied to one of the two copies, and not to the other: the
+    # SECOND time you write it, extract it.
+    if not out:
+        raise RuntimeError("transfer scanned no modules under %s - a broken scan, not a clean tree"
+                           % TREE)
     return sorted(out)
 
 

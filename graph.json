@@ -7,8 +7,8 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 188,
-    "source": "aea/tooling/_pages.py"
+    "count": 200,
+    "source": "aea/tooling/page/__main__.py"
    },
    "plan": {
     "count": 81,
@@ -19,7 +19,7 @@
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 50,
+    "count": 51,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -35,7 +35,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 188
+    "count": 200
    },
    {
     "src": "THE_PROBE",
@@ -53,7 +53,7 @@
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 50
+    "count": 51
    },
    {
     "src": "THE_PROBE",
@@ -66,6 +66,12 @@
  "subgraphs": {
   "code": {
    "nodes": [
+    {
+     "id": "__main__",
+     "type": "module",
+     "path": "aea/tooling/page/__main__.py",
+     "purpose": "python -m aea.tooling.page - build the page, scan it, write it only if it is clean."
+    },
     {
      "id": "_pages",
      "type": "module",
@@ -123,8 +129,8 @@
     {
      "id": "axes",
      "type": "module",
-     "path": "aea/mind/axes.py",
-     "purpose": "axes.py - C-11, THE POSITION RECORD: where the entity actually stands in the 5-D growth space."
+     "path": "aea/tooling/page/axes.py",
+     "purpose": "axes.py - THE TWO AXES AS SERIES: what arrives at each step, and the words for it."
     },
     {
      "id": "background",
@@ -221,6 +227,12 @@
      "type": "module",
      "path": "aea/mind/checkpoint.py",
      "purpose": "checkpoint.py - C-80. THE ONE MUTABLE OBJECT EVERY LAYER READS AND WRITES."
+    },
+    {
+     "id": "climb",
+     "type": "module",
+     "path": "aea/tooling/page/climb.py",
+     "purpose": "climb.py - THE LADDER AS ACCUMULATING LAYERS, and the stylesheet that stacks them."
     },
     {
      "id": "consolidate",
@@ -379,10 +391,22 @@
      "purpose": "grader.py - AN OUTCOME NO COMPONENT CAN WRITE."
     },
     {
+     "id": "graph",
+     "type": "module",
+     "path": "aea/tooling/page/graph.py",
+     "purpose": "graph.py - THE LIVE CALL GRAPH, computed from the tree every build. Never stored."
+    },
+    {
      "id": "grid",
      "type": "module",
      "path": "aea/kernel/grid.py",
      "purpose": "grid.py - the AEA entity's power grid (the city's electricity layer)."
+    },
+    {
+     "id": "guard",
+     "type": "module",
+     "path": "aea/tooling/page/guard.py",
+     "purpose": "guard.py - THE PRIVACY SCAN, run on the RENDERED page rather than on its inputs."
     },
     {
      "id": "hades",
@@ -457,6 +481,12 @@
      "purpose": "laws.py - THE LAWS, LOADABLE. One file the entity reads about how to behave, not what to do."
     },
     {
+     "id": "layout",
+     "type": "module",
+     "path": "aea/tooling/page/layout.py",
+     "purpose": "layout.py - GEOMETRY, and no meaning. Where each mark goes, and nothing about what it says."
+    },
+    {
      "id": "listen",
      "type": "module",
      "path": "aea/io/listen.py",
@@ -467,6 +497,12 @@
      "type": "module",
      "path": "aea/loop/live.py",
      "purpose": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps."
+    },
+    {
+     "id": "marks",
+     "type": "module",
+     "path": "aea/tooling/page/marks.py",
+     "purpose": "marks.py - LAYOUT INTO SVG. The only module that emits a mark."
     },
     {
      "id": "memory",
@@ -535,6 +571,12 @@
      "purpose": "pace.py - THE PLANTS PUBLISH THEIR LIMITS. READ THEM INSTEAD OF GUESSING."
     },
     {
+     "id": "panels",
+     "type": "module",
+     "path": "aea/tooling/page/panels.py",
+     "purpose": "panels.py - THE NUMBER PANELS: the certificate, the wiring manifest, the fleet, the growth."
+    },
+    {
      "id": "party",
      "type": "module",
      "path": "aea/lab/party.py",
@@ -545,6 +587,12 @@
      "type": "module",
      "path": "aea/mind/pathfinder.py",
      "purpose": "pathfinder.py - the increase-by-step CRYSTALLIZED PATH algorithm."
+    },
+    {
+     "id": "perceive",
+     "type": "module",
+     "path": "aea/kernel/perceive.py",
+     "purpose": "perceive.py - THE RECEIPT FOR R4a. What the entity chose to look at, and whether that was a CHOICE."
     },
     {
      "id": "persona",
@@ -574,7 +622,7 @@
      "id": "publish",
      "type": "module",
      "path": "aea/tooling/publish.py",
-     "purpose": "publish.py - DRAW THE ORGANISM. The living picture, generated from the real state, for the web."
+     "purpose": "publish.py - the run shim. THE CODE MOVED TO `aea/tooling/page/`; the command did not."
     },
     {
      "id": "pulse",
@@ -635,6 +683,12 @@
      "type": "module",
      "path": "aea/mind/relay.py",
      "purpose": "relay.py - the GENETIC-MEMORY pipeline. Proves dynamic pathing: a fresh model each step reads"
+    },
+    {
+     "id": "render",
+     "type": "module",
+     "path": "aea/tooling/page/render.py",
+     "purpose": "render.py - THE ORCHESTRATOR. Reads state, computes the two axes, hands the template its inputs."
     },
     {
      "id": "repair",
@@ -727,6 +781,12 @@
      "purpose": "social.py - MEASURE THE CONVERSATION ON MANY DIMENSIONS AT ONCE."
     },
     {
+     "id": "sources",
+     "type": "module",
+     "path": "aea/tooling/page/sources.py",
+     "purpose": "sources.py - WHERE THE NUMBERS COME FROM. Every read of durable state, in one place."
+    },
+    {
      "id": "speak",
      "type": "module",
      "path": "aea/io/speak.py",
@@ -737,6 +797,12 @@
      "type": "module",
      "path": "aea/lab/stats.py",
      "purpose": "stats.py - THE INTERVAL, computed, instead of THE BAND, declared."
+    },
+    {
+     "id": "style",
+     "type": "module",
+     "path": "aea/tooling/page/style.py",
+     "purpose": "style.py - THE GENERATED STYLESHEET. One CSS rule per (frame, layer) pair, written out."
     },
     {
      "id": "swarm",
@@ -755,6 +821,12 @@
      "type": "module",
      "path": "aea/organs/telegram_bridge.py",
      "purpose": "telegram_bridge.py - the CONVERSATION organ: Leyber reachable on the phone, FREE + UNLIMITED,"
+    },
+    {
+     "id": "template",
+     "type": "module",
+     "path": "aea/tooling/page/template.py",
+     "purpose": "template.py - THE PAGE AS TEXT, and nothing else."
     },
     {
      "id": "test_cause",
@@ -1167,6 +1239,26 @@
    ],
    "edges": [
     {
+     "src": "__main__",
+     "dst": "guard",
+     "rel": "imports"
+    },
+    {
+     "src": "__main__",
+     "dst": "sources",
+     "rel": "imports"
+    },
+    {
+     "src": "__main__",
+     "dst": "render",
+     "rel": "imports"
+    },
+    {
+     "src": "__main__",
+     "dst": "sources",
+     "rel": "imports"
+    },
+    {
      "src": "access",
      "dst": "grid",
      "rel": "imports"
@@ -1263,7 +1355,7 @@
     },
     {
      "src": "axes",
-     "dst": "grid",
+     "dst": "layout",
      "rel": "imports"
     },
     {
@@ -2022,6 +2114,11 @@
      "rel": "imports"
     },
     {
+     "src": "graph",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
      "src": "hades",
      "dst": "grid",
      "rel": "imports"
@@ -2172,8 +2269,18 @@
      "rel": "imports"
     },
     {
+     "src": "ladder",
+     "dst": "perceive",
+     "rel": "imports"
+    },
+    {
      "src": "laws",
      "dst": "grid",
+     "rel": "imports"
+    },
+    {
+     "src": "layout",
+     "dst": "assembly",
      "rel": "imports"
     },
     {
@@ -2258,7 +2365,17 @@
     },
     {
      "src": "live",
+     "dst": "perceive",
+     "rel": "imports"
+    },
+    {
+     "src": "live",
      "dst": "recourse",
+     "rel": "imports"
+    },
+    {
+     "src": "marks",
+     "dst": "layout",
      "rel": "imports"
     },
     {
@@ -2427,6 +2544,11 @@
      "rel": "imports"
     },
     {
+     "src": "perceive",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "persona",
      "dst": "grid",
      "rel": "imports"
@@ -2453,17 +2575,32 @@
     },
     {
      "src": "publish",
-     "dst": "grid",
+     "dst": "guard",
      "rel": "imports"
     },
     {
      "src": "publish",
-     "dst": "assembly",
+     "dst": "graph",
      "rel": "imports"
     },
     {
      "src": "publish",
-     "dst": "assembly",
+     "dst": "guard",
+     "rel": "imports"
+    },
+    {
+     "src": "publish",
+     "dst": "render",
+     "rel": "imports"
+    },
+    {
+     "src": "publish",
+     "dst": "sources",
+     "rel": "imports"
+    },
+    {
+     "src": "publish",
+     "dst": "__main__",
      "rel": "imports"
     },
     {
@@ -2584,6 +2721,51 @@
     {
      "src": "relay",
      "dst": "swarm",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "axes",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "climb",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "graph",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "layout",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "marks",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "panels",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "sources",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "style",
+     "rel": "imports"
+    },
+    {
+     "src": "render",
+     "dst": "template",
      "rel": "imports"
     },
     {
@@ -2717,6 +2899,11 @@
      "rel": "imports"
     },
     {
+     "src": "sources",
+     "dst": "grid",
+     "rel": "imports"
+    },
+    {
      "src": "speak",
      "dst": "grid",
      "rel": "imports"
@@ -2734,6 +2921,11 @@
     {
      "src": "speak",
      "dst": "pulse",
+     "rel": "imports"
+    },
+    {
+     "src": "style",
+     "dst": "climb",
      "rel": "imports"
     },
     {
@@ -2859,6 +3051,46 @@
     {
      "src": "test_golden",
      "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "ladder",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "guard",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "assembly",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "transfer",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "selfcheck",
+     "rel": "imports"
+    },
+    {
+     "src": "test_golden",
+     "dst": "perceive",
      "rel": "imports"
     },
     {
@@ -4522,6 +4754,12 @@
      "id": "D49",
      "type": "discovery",
      "title": "D49 · R3 closes, and the day's lesson is that a fix lands on the object you name, not the one you meant (2026-07-31)",
+     "path": "diary/DISCOVERIES.md"
+    },
+    {
+     "id": "D50",
+     "type": "discovery",
+     "title": "D50 · The picture was drawing two ladders, and both of its measuring instruments were blind (2026-08-02)",
      "path": "diary/DISCOVERIES.md"
     }
    ],

@@ -2010,3 +2010,75 @@ blessing it with a registry. A number nobody chose does not become chosen by bei
 tidier. `None` now means omit the field; `set(knob, None)` clears back to it, because the first
 version could RAISE a budget and never REMOVE one - a one-way ratchet toward always having a limit,
 which is this module's own purpose inverted.
+
+---
+
+## D50 · The picture was drawing two ladders, and both of its measuring instruments were blind (2026-08-02)
+
+Three days of work on the published organism, and every hard defect was in an INSTRUMENT rather
+than in a capability. Not one of them was found by reading code. Every one was found by rendering
+the page and reading the image, or by insisting on a control that had to fail.
+
+**ONE PAGE, TWO RUNG VOCABULARIES.** The hero's BY RUNG rail was built from `assembly.STEPS` - five
+entries, R2 / R3.1 / R3.2 / R3.3 / R3.4 - while THE CLIMB below it was built from `ladder.json` -
+eleven rungs, R0 through R9. **They agreed about 12 of the 29 functions they between them named**,
+so a single circle could be R3.2 on one axis and R2 on the other. This is D14 - the architecture
+describing the same climb four times with nothing checking the descriptions against each other -
+reproduced INSIDE one instrument, six days after D14 was written.
+
+**AND A THIRD CONTROL NOBODY DECLARED.** A `climb` mode with its own attribute and its own copy of
+the accumulation rules, driven by an autoplay that ran on load. Measured on the landing screenshot:
+the hero drew the climb's near-empty frame under a caption from a third source while the rail said
+HOP 6 and the mode button said BY CALL HOP. Three controls, three answers, one picture. *Two readers
+on one attribute is worse than two detached things - not detached, over-attached.*
+
+**A WIRE IS A CALL EDGE. TEST IT AS ONE.** `measure_r1` certified R1's wire with
+`"decide.choose()" in source`. A commit gave that call an argument and the literal stopped matching,
+so **R1 flipped PROVEN to PARTIAL on a rung whose wire had just been improved** - and the next
+publish would have printed that downgrade on a page whose entire claim is that its numbers are true.
+The fourth part of the record is the one that matters: *the docstring six lines below the defect
+describes the same defect in the same function*, caught once and written up, and the fix that time
+was aimed at the string that had broken rather than at string-matching as the technique.
+
+**AND THE SCANNER COULD NOT SEE A DISPATCH TABLE.** `visit_Call` recorded call SITES; a table holds
+a function REFERENCE, so `TOOLS = {"calc": dict(impl=_calc, ...)}` gave `_calc` no caller anywhere
+in the graph. **83 functions in 27 module-level containers, every one a false orphan** - including
+`selfcheck.CHECKS` (9), `transfer.DETECTORS` (6) and `ladder.MEASURE` (5). The instruments this repo
+verifies itself with were themselves reported as dead code, and `hands._read_state` was drawn in the
+dark field with 68 invocations in the ledger.
+
+The fix is narrow on purpose, because the loose version is a rubber stamp that improves every number
+while meaning less: an edge is drawn only where a call is made on something taken OUT of the
+container. `hands.schema` READS the same table to build a prompt and stays dead. It is still an
+over-approximation - which entry a dispatch selects is a runtime fact - so it is SEPARABLE
+(`reachable(detail=True)`) and the page prints `144 by a call edge, 13 only through a dispatch
+table`, draws those 13 hollow, and never states the union as the direct set.
+
+**THE COUNT THAT COULD NOT COUNT.** `test_golden`'s published total was an expression adding eleven
+`len()`s and five bare integers by hand, and `selfcheck` gates on that number under a comment reading
+*"the count is READ, not hardcoded"*. It was hardcoded in the only place that mattered: eight
+behaviours were added and the number a gate reads did not move. Hand sum 81, printed verdict lines
+89. The sum was right about the checks it knew and blind to the ones it did not - which is exactly
+what reading it cannot reveal.
+
+**WHAT MAKES THIS ENTRY DIFFERENT FROM ITS OWN LESSON.** Every fix above was accepted only against a
+control built to fail:
+
+    the dispatch edge     one arm MUST become reachable, a second arm MUST STAY DEAD. Verified by
+                          planting both defects - a dead detector, then a rubber stamp - and
+                          watching a different arm fail each time.
+    the derived count     verified by planting a check that returns early: 81 ran against a floor
+                          of 89, exit 1.
+    the empty scan        `assembly.scan()` now raises rather than reporting a clean empty world,
+                          because two guards had walked `aea/aea/` and passed vacuously.
+    the refactor          the monolith and the package built at the SAME TREE STATE, byte-identical.
+
+**AND THE CONTROL ITSELF HAS A TRAP, WHICH COST ONE FALSE ALARM.** The first refactor control showed
+36 added lines and looked like a defect. It was not: the instrument is part of the tree it measures,
+so creating 13 new files added 36 unreachable functions to the dark field it draws. **A control on a
+self-measuring instrument must be taken at the same tree state, or the tool's own footprint reads as
+a regression.**
+
+**THE STANDING RULE THIS ALL POINTS AT:** the instrument is usually the broken part, so every check
+gets a positive control on the defect class it claims, or it does not count. A detection that
+changes no number and fails no command is indistinguishable from no detection.

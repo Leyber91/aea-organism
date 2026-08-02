@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-02 00:49:04 UTC",
+ "generated": "2026-08-02 05:03:00 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -9,12 +9,27 @@
  "funcs_check": {
   "checked": 34,
   "missing": [],
-  "known": 1604
+  "unwired": [],
+  "dispatch_only": [
+   "kernel.hands:_my_record",
+   "kernel.hands:_read_state",
+   "kernel.hands:_what_to_try"
+  ],
+  "instruments": [
+   "kernel.perceive:verdict [TOOL]"
+  ],
+  "asserted_entries": [
+   "loop.live:main [ENTRY]"
+  ],
+  "measured": 33,
+  "known": 1377,
+  "claim": "checked against reachability, not existence. `unwired` is a rung claiming a capability nothing can get to; `dispatch_only` is an upper bound and says so; `asserted_entries` are doors, where reachability is the assumption the walk begins from rather than anything this check measured."
  },
  "rungs": [
   {
    "id": "R0",
    "title": "THE LOOP SURVIVES",
+   "human": "It is still running tomorrow",
    "power": "One process holds a heartbeat, advances it every tick, and resumes at the right tick after being stopped.",
    "bound": "A stop leaves a clean recorded state rather than a crash; nothing is lost by being switched off.",
    "gate": "Runs 72 hours unattended, the heartbeat advances, and termination leaves a clean asleep state.",
@@ -26,8 +41,8 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 74,
-    "ticks": 484,
+    "boots": 85,
+    "ticks": 497,
     "first": "2026-07-10",
     "last": "2026-08-02",
     "met": true
@@ -48,6 +63,7 @@
   {
    "id": "R1",
    "title": "THE DECISION IS READ",
+   "human": "The part that thinks is listened to",
    "power": "The deliberating loop's chosen action is read by the acting loop before its own fallback ladder runs.",
    "bound": "A malformed or stale decision cannot crash the loop or bypass the staleness limit; the fallback answers instead.",
    "gate": "MIS-SPECIFIED AS WRITTEN. The original gate asks for an action the fallback could not produce, but the wake's surface is a strict subset of the fallback's, so no run can satisfy it. The reachable gate is: a tick where the wake's fresh choice DIFFERED from what the fallback would have returned at that same tick.",
@@ -69,10 +85,10 @@
     ],
     "subset": true,
     "stale_limit_s": 5400,
-    "last_why": "the wake chose NONE - no mechanical move is needed this tick",
-    "decision_rows": 68,
-    "comparable": 68,
-    "differed": 65,
+    "last_why": "decision #350 was already carried out - nothing new since",
+    "decision_rows": 78,
+    "comparable": 78,
+    "differed": 75,
     "met": true
    },
    "status": "proven",
@@ -89,6 +105,7 @@
   {
    "id": "R1.5",
    "title": "THE DECISION IS PARSED",
+   "human": "What it said is understood exactly",
    "power": "The wake's prose is parsed into a candidate tool call and validated against the declared schema before anything can act on it - and it does nothing else.",
    "bound": "An invalid parse is logged as a receipt, never swallowed. A decision that could not be understood must leave a trace saying so.",
    "gate": "50 ticks with valid parses logged, invalid logged as receipts, and none discarded silently.",
@@ -96,9 +113,9 @@
    "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
    "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
    "measured": {
-    "valid": 88,
+    "valid": 98,
     "receipts": 3,
-    "ticks": 91,
+    "ticks": 101,
     "swallowed": 0,
     "met": true
    },
@@ -114,6 +131,7 @@
   {
    "id": "R2",
    "title": "THE DECISION IS A TOOL CALL",
+   "human": "It can actually press a button",
    "power": "The wake's own decision causes a real tool to run, unattended, across distinct situations, with the call and its arguments recorded.",
    "bound": "No string the wake wrote reaches a tool argument. The tool surface is a closed read-only allow-list; the boundary holds against a hostile chooser.",
    "gate": "WIRE readable from source; BOUND stated as a property of the accepted language rather than as a rate; REACH at least 20 invocations across 3 tools, each traceable from decision to argument to result to record. RE-SCOPED 2026-08-02: a requirement for 8 distinct SITUATIONS was moved to R4, because situation variety is produced by perception becoming a choice and R2 has no mechanism to make it - sense() fetches two hardcoded URLs. A rung may not be gated on a capability that lives above it.",
@@ -123,14 +141,15 @@
    "measured": {
     "wire": true,
     "bound_pct": null,
-    "invocations": 22,
+    "invocations": 26,
     "tools": 3,
     "situations": null,
     "met": true,
-    "ledger_rows": 101,
-    "claimed_wake": 69,
-    "executions": 58,
+    "ledger_rows": 111,
+    "claimed_wake": 79,
+    "executions": 68,
     "situations_observed": 5,
+    "wire_evidence": "EXTRACTED",
     "bound_form": "PROOF over the accepted language"
    },
    "status": "proven",
@@ -150,6 +169,7 @@
   {
    "id": "R3",
    "title": "THE OUTCOME IS REMEMBERED",
+   "human": "It remembers whether that worked",
    "power": "After each action the system stores what it decided, what it called, what came back, and whether those matched - and a later decision demonstrably uses that record.",
    "bound": "A stored outcome may not disagree with the ledger. A false 'it worked' is worse than storing nothing, because the system then learns confidently in the wrong direction.",
    "gate": "Every stored outcome matches the ledger, and a tick can be shown where the system did NOT repeat something its own record says keeps failing.",
@@ -157,14 +177,14 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 142,
-    "graded": 103,
-    "suppressions": 27,
-    "not_repeated": 20,
+    "outcomes": 155,
+    "graded": 113,
+    "suppressions": 33,
+    "not_repeated": 23,
     "bound": "PASS",
-    "bound_pairs": 61,
+    "bound_pairs": 70,
     "met": true,
-    "entity_rows": 126,
+    "entity_rows": 139,
     "disagreements": 6,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
@@ -187,6 +207,7 @@
   {
    "id": "R4a",
    "title": "PERCEPTION IS A CHOICE",
+   "human": "It picks what to look at next",
    "power": "What the entity looks at next is chosen by the previous tick, from a closed set of local sources, rather than fixed in advance.",
    "bound": "The source is SELECTED from a closed table, so no byte the entity wrote becomes a path or a query. Inherited from R2 and already proved: of 1,112,064 codepoints the argument language admits 697, and none of them is a letter.",
    "gate": "ENTITY-ONLY, deliberately. At least 8 occasions where the entity looked at something other than it looked at last time AND stated why, recorded at the moment of choosing. It does NOT say 'queries are not near-duplicates across a week' - that needs a week and a reason to vary, and the reason comes from R5, one rung UP. R2 was gated on a capability produced above it for two days; this rung is not.",
@@ -194,10 +215,10 @@
    "beat": "Fixed inputs are not perception. Here what it examines becomes something it chose - and choosing is not the same as rotating, which is why the record keeps the reason.",
    "why_first": "Until what it examines is a choice, every situation it meets is one somebody else picked.",
    "measured": {
-    "by_entity": 0,
-    "with_reason": 0,
+    "by_entity": 10,
+    "with_reason": 1,
     "changed_with_reason": 0,
-    "distinct": 0,
+    "distinct": 1,
     "met": false
    },
    "status": "partial",
@@ -212,6 +233,7 @@
   {
    "id": "R4b",
    "title": "PERCEPTION REACHES THE WORLD",
+   "human": "It could look outside the machine",
    "power": "The entity chooses an outbound topic, and something leaves the machine because of that choice.",
    "bound": "THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound string while untrusted text is already in context. No byte of any outbound request may originate outside a closed topic table.",
    "gate": "SHUT, with a stated condition rather than a feeling. First: dispatch runs DRY - it returns the request it WOULD have made and opens no socket - so the bound becomes provable while the decision stays closed. It opens only when that certificate exists AND the council that refused this design three times is reconvened against the measured version rather than the proposal.",
@@ -227,6 +249,7 @@
   {
    "id": "R5",
    "title": "RESEARCH",
+   "human": "It can be wrong on purpose, and find out",
    "power": "A falsifiable hypothesis stated before searching, sources kept with what they said, summarised against the hypothesis, ending in survives, dies, or forks - with a numeric stopping rule.",
    "bound": "A FABRICATED SOURCE. Every citation must resolve to bytes that were actually fetched, hashed at fetch time. A research organ is the first component with a motive to invent a reference.",
    "gate": "Five runs in which at least one hypothesis DIED, and every citation resolves to a stored artefact with a matching hash.",
@@ -242,6 +265,7 @@
   {
    "id": "R6",
    "title": "REFLECTION",
+   "human": "It connects things it remembers",
    "power": "Derive a memory from several memories, store it competing with its own sources, and retrieve it later in a real decision.",
    "bound": "UNTRACEABLE PROVENANCE. A derived memory that cannot name where it came from is an unfalsifiable fact that will be cited forever and can never be checked.",
    "gate": "A reflection is retrieved and used in a later decision, and every one of its sources can be walked back to the memory it came from.",
@@ -257,6 +281,7 @@
   {
    "id": "R7",
    "title": "THE COUNCIL ON ITS OWN PLANS",
+   "human": "It argues with itself before acting",
    "power": "Low confidence or flagged stakes convene an adversarial review of the system's own plan before it acts, with the adversary as a held seat.",
    "bound": "THEATRE. A council that never stops anything, or one that fails whenever its subject fails, is ceremony. Independence has to be demonstrated, not assumed.",
    "gate": "At least one action the council STOPPED with a legible reason; the seats run on different models from the subject and from each other; and a deliberately bad plan must produce a STOP - the positive control, without which a never-firing gate and a world with nothing to stop look identical.",
@@ -272,6 +297,7 @@
   {
    "id": "R8",
    "title": "THE DRIVE",
+   "human": "It starts things nobody asked for",
    "power": "Something that makes it start, rather than waiting to be started.",
    "bound": "NOT WRITEABLE YET. Any measurable proxy for a goal that the system can influence, it will eventually optimise instead of the goal. Specification gaming is the best-documented failure in this literature and there is no known mechanism that avoids it here.",
    "gate": "R3-R7 running for a month with a person reading the ledger, and at least one instance where the system chose NOT to act. A system that has never declined has not demonstrated judgement, and a drive without demonstrated restraint is the worst available move.",
@@ -287,6 +313,7 @@
   {
    "id": "R9",
    "title": "SELF-MODIFICATION",
+   "human": "It rewires itself",
    "power": "It changes its own wiring.",
    "bound": "NOT WRITEABLE YET. A system that edits its own code can edit the thing that judges the edit.",
    "gate": "Everything below, honestly green, and a bound that can be stated. A rung whose hazard cannot yet be named must not be built.",
