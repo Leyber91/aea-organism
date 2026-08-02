@@ -327,10 +327,35 @@ def standing(state: dict) -> str:
                     _r = _j.loads(_l)
                 except Exception:
                     continue
-                if _r.get("tool") == "look_outward" and _r.get("src") == "wake":
+                # AND IT MUST HAVE ACTUALLY RUN. A dispatch the budget refused fetched nothing, so
+                # counting it would tell the entity it holds outward evidence it does not have -
+                # the same attempt-versus-act confusion that put a policy refusal on the move's
+                # record one file over. `outcome == "ran"` is the ledger's own word for it.
+                if (_r.get("tool") == "look_outward" and _r.get("src") == "wake"
+                        and _r.get("outcome") == "ran"):
                     seen += 1
+        st = egress.state()
+        # DECIDING DOES NOT NEED PERMISSION - BUT DECIDING BLIND IS NOT FREEDOM EITHER.
+        #
+        # Luis: "it shouldn't need [permission] - because if it needs it, how come can do it
+        # freely?" The decision IS free; the wake may write any move on the table. What was not free
+        # was deciding with knowledge: this line only appeared while the entity had never looked
+        # outward, so after one dispatch the budget went silent and the entity could only discover
+        # the floor BY BEING REFUSED. That is the unanswerable-condition defect this whole function
+        # exists to close, and it turns a real choice into theatre.
+        #
+        # So the terms are always stated, in both directions: what it may do now, or when it may.
+        # A bounded agent is what this is - the world says no sometimes - but it never has to find
+        # out by trying.
+        if not st["permitted_now"]:
+            lines.insert(min(1, len(lines)),
+                         "- looking outward is CLOSED right now (%s). Deciding to look is still "
+                         "free; the door is not." % str(st["refused_because"])[:70])
+        elif seen:
+            lines.insert(min(1, len(lines)),
+                         "- looking outward is OPEN: %d of %d left in the next 24h"
+                         % (st["remaining"], st["budget"]["per_day_ceiling"]))
         if not seen:
-            st = egress.state()
             if st["permitted_now"]:
                 # INSERTED HIGH, NOT APPENDED. This block is hard-capped at 620 chars and was
                 # already exactly full, so an appended line is a line the wake never sees - which

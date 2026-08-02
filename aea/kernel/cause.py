@@ -43,6 +43,7 @@ has not been tested, it has only been run (D18). They arrive the first time one 
 from __future__ import annotations
 
 import os
+import re
 import sys
 import traceback
 
@@ -57,7 +58,29 @@ VERIFY_FAILED = "VERIFY_FAILED"
 UNATTRIBUTABLE = "UNATTRIBUTABLE"
 OK = "OK"                    # the post-condition was evaluated and it HELD
 
-CLASSES = (OK, TRANSIENT_EXTERNAL, CODE_FAULT, VERIFY_FAILED, UNATTRIBUTABLE)
+# =================================================================================================
+# DECIDING TO DO A THING IS NOT DOING IT, AND A POLICY REFUSAL GRADES NEITHER.
+#
+# Named by Luis, 2026-08-02: "but deciding to explore doesn't need permission." He is right, and the
+# omission was actively poisoning the rung it was aimed at.
+#
+# MEASURED. The entity chose `look_outward`, `hands.allowed` refused it - correctly, the zone rule
+# was doing its job - and the row landed as VERIFY_FAILED with counts_toward_move=True. So
+# `verdict_for("LOOK:look_outward")` already showed streak=1 against a decision that was CORRECT.
+# The refusal was about the ACT and about this moment; the record filed it against the CHOICE.
+#
+# AND IT WOULD HAVE BEEN SELF-DEFEATING, which is what makes it structural rather than cosmetic.
+# `egress` enforces a 1800s floor and a 12/day ceiling, so MOST decisions to look outward are
+# refused by the budget by design - eleven of every twelve, at the ceiling. Each one grading the
+# move would suppress `look_outward` within hours, and R4b's own gate would have made its own
+# condition 3 unreachable. A rung that punishes the choice it is asking for cannot be climbed.
+#
+# So a refusal by a GATE or a BUDGET is its own class: the system declining, now, on policy. It is
+# not the entity choosing badly and it is not the system breaking. It says nothing about the move,
+# which is exactly why it must not grade it.
+REFUSED_BY_POLICY = "REFUSED_BY_POLICY"
+
+CLASSES = (OK, TRANSIENT_EXTERNAL, CODE_FAULT, VERIFY_FAILED, UNATTRIBUTABLE, REFUSED_BY_POLICY)
 
 # ONLY THESE TWO MAY CREDIT OR DISCREDIT A MOVE. Everything else is evidence about the SYSTEM.
 # OK is in the set deliberately: a design that records only failures can discredit a move and never
@@ -165,8 +188,23 @@ def classify(result=None, verify=None, exc=None, note: str = "") -> dict:
                     counts_toward_move=(cls in GRADES_THE_MOVE))
 
 
-    # 1. OUR OWN CODE RAISED. Checked FIRST: a crash in the tool implementation is not the entity
-    #    choosing badly, and it outranks every other reading of the same failure.
+    # 0. A GATE OR A BUDGET SAID NOT NOW. Checked FIRST, ahead even of a code fault, because it is
+    #    the only class decided BEFORE anything ran - nothing was attempted, so nothing about the
+    #    attempt can be evidence. Deciding to do a thing is not doing it, and a refusal on policy
+    #    grades neither the entity nor the system.
+    #
+    #    Matched on the refusal's own words, which are written by exactly two places: `hands.allowed`
+    #    ("may not be called from the X zone", "not in this seat's allowlist", "FORBIDDEN in the
+    #    charter") and `egress.allow` ("egress refused: floor/ceiling/STOP"). Both are ours and both
+    #    are stable; this is not sniffing an arbitrary error string.
+    _txt = "%s %s" % (str((verify or {}).get("detail") or ""), str(note or ""))
+    if re.search(r"may not be called from the \w+ zone|not in this seat's allowlist"
+                 r"|FORBIDDEN in the charter|egress refused|state/STOP exists", _txt):
+        return out(REFUSED_BY_POLICY, CERTAIN, "gate-or-budget-refusal", _txt.strip()[:160])
+
+    # 1. OUR OWN CODE RAISED. Checked FIRST among the classes that describe an ATTEMPT: a crash in
+    #    the tool implementation is not the entity choosing badly, and it outranks every other
+    #    reading of the same failure.
     frame = _frame_under_aea(exc)
     if frame:
         return out(CODE_FAULT, CERTAIN, "traceback-frame-under-aea", frame)

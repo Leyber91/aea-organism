@@ -1632,6 +1632,76 @@ def check_conditional_zone():
     return fails
 
 
+
+# =================================================================================================
+# DECIDING TO DO A THING IS NOT DOING IT, AND A POLICY REFUSAL GRADES NEITHER.
+#
+# Named by Luis: "but deciding to explore doesn't need permission." The omission was actively
+# poisoning the rung it was aimed at.
+#
+# MEASURED. The entity chose `look_outward`, `hands.allowed` refused it - correctly - and the row
+# landed as VERIFY_FAILED with counts_toward_move=True, so `verdict_for("LOOK:look_outward")` showed
+# streak=1 against a decision that was RIGHT. The refusal was about the ACT and about that moment;
+# the record filed it against the CHOICE.
+#
+# AND IT WAS SELF-DEFEATING, which is why this is structural. `egress` enforces an 1800s floor and a
+# 12/day ceiling, so most decisions to look outward are refused BY DESIGN - eleven of twelve at the
+# ceiling. Each one grading the move would suppress `look_outward` within hours and R4b's own gate
+# would have made its condition 3 unreachable. A rung that punishes the choice it asks for cannot be
+# climbed.
+#
+# THE ROW THAT MATTERS MOST IS THE LAST ONE. A class that never grades anything is not a
+# discrimination, it is an amnesty - so a genuine post-condition failure must still count, or this
+# whole change is a way of never being wrong.
+# =================================================================================================
+def check_policy_refusal():
+    from aea.kernel import cause as _c
+    from aea.kernel import hands as _h
+    fails = []
+    # THE REAL STRINGS, taken from the functions that write them rather than typed here. A frozen
+    # test that invents the message it matches is testing its own copy - and this exact check was
+    # written once with "seat's" mistyped, which passed the regex and failed the fixture.
+    live = [("gate: wrong zone", _h.allowed("look_outward", "private_x_not_a_zone")["why"]),
+            ("gate: not in allowlist", _h.allowed("calc", "public", allow=("read_state",))["why"])]
+    synthetic = [("budget: floor", "egress refused: floor: 3s since the last dispatch, "
+                                   "1800s required"),
+                 ("budget: ceiling", "egress refused: ceiling: 12 dispatches in the last 24h, "
+                                     "12 permitted"),
+                 ("budget: STOP", "state/STOP exists - egress is halted and this survives a restart")]
+    for label, detail in live + synthetic:
+        c = _c.classify(verify={"pred": "the gate permitted the call", "result": False,
+                                "detail": detail})
+        ok = (c["class"] == _c.REFUSED_BY_POLICY) and c["counts_toward_move"] is False
+        print("  policy    %-46s -> %-14s %s" % (label, c["class"], "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("policy:" + label, (c["class"], c["counts_toward_move"]),
+                          (_c.REFUSED_BY_POLICY, False)))
+
+    # THE CONTROL, and it is the whole point: a real failure must STILL grade the move.
+    for label, detail in (("a real post-condition failure",
+                           "the tool returned but the result was ignored"),
+                          ("a wrong answer", "expected 415105827, got 42")):
+        c = _c.classify(verify={"pred": "the answer was used", "result": False, "detail": detail})
+        ok = (c["class"] == _c.VERIFY_FAILED) and c["counts_toward_move"] is True
+        print("  policy    %-46s -> %-14s %s" % ("CONTROL: " + label, c["class"],
+                                                 "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("policy:control:" + label, (c["class"], c["counts_toward_move"]),
+                          (_c.VERIFY_FAILED, True)))
+
+    # AND A POLICY REFUSAL IS NOT SILENT EITHER. It must still be a recorded row with a reason -
+    # "the system declined" and "nothing happened" are different states, and this repo has paid for
+    # confusing them in `decide` already.
+    c = _c.classify(verify={"pred": "the gate permitted the call", "result": False,
+                            "detail": "egress refused: floor"})
+    ok = bool(c.get("evidence"))
+    print("  policy    %-46s -> %-14s %s" % ("a refusal still carries its reason", ok,
+                                             "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("policy:evidence", c.get("evidence"), "non-empty"))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -1648,7 +1718,8 @@ if __name__ == "__main__":
              + check_flags_read()
              + check_dispatch_dry()
              + check_egress_budget() + check_r4b_conjunction()
-             + check_conditional_zone())
+             + check_conditional_zone()
+             + check_policy_refusal())
     finally:
         sys.stdout = _counter.inner
     print()

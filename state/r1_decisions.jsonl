@@ -167,3 +167,7 @@
 {"at": 1785703864.8038428, "at_iso": "2026-08-02 20:51:04 UTC", "tick": 361, "wake": "LOOK:what_to_try", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose what_to_try (1s ago)", "src": "wake"}
 {"at": 1785703909.047553, "at_iso": "2026-08-02 20:51:49 UTC", "tick": 362, "wake": "REFLECT:self", "ladder": "REFLECT:self", "differed": false, "why": "the wake chose reflect (2s ago)", "src": "wake"}
 {"at": 1785704021.4309225, "at_iso": "2026-08-02 20:53:41 UTC", "tick": 363, "wake": "REFLECT:self", "ladder": "REFLECT:self", "differed": false, "why": "the wake chose reflect (2s ago)", "src": "wake"}
+{"at": 1785706647.7325583, "at_iso": "2026-08-02 21:37:27 UTC", "tick": 364, "wake": "REFLECT:self", "ladder": "REFLECT:self", "differed": false, "why": "the wake chose reflect (1s ago)", "src": "wake"}
+{"at": 1785706710.5844579, "at_iso": "2026-08-02 21:38:30 UTC", "tick": 365, "wake": "REFLECT:self", "ladder": "REFLECT:self", "differed": false, "why": "the wake chose reflect (2s ago)", "src": "wake"}
+{"at": 1785707560.827065, "at_iso": "2026-08-02 21:52:40 UTC", "tick": 379, "wake": "LOOK:my_record", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose my_record (1s ago)", "src": "wake"}
+{"at": 1785707665.215414, "at_iso": "2026-08-02 21:54:25 UTC", "tick": 381, "wake": "AWAKE:brief", "ladder": "REFLECT:self", "differed": true, "why": "the wake chose brief (1s ago)", "src": "wake"}

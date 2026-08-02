@@ -1,14 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 180,
-  "total_ticks": 363,
+  "boot_count": 198,
+  "total_ticks": 381,
   "last_brief_date": "2026-08-01",
   "consolidated_sessions": 23,
   "history": [
-    "2026-08-02 20:22:33 UTC REFLECT:self FAIL :: REFLECT t6: 'Create a 2-item bullet list of concrete actions you can take' -> AC",
-    "2026-08-02 20:23:22 UTC LOOK:my_record ok :: {\"rows\": 219, \"mine\": 203, \"by_cause\": {\"UNATTRIBUTABLE\": 26, \"OK\": 161, \"VERIFY",
-    "2026-08-02 20:24:17 UTC LOOK:self_map ok :: I am 145 Python modules, about 41,881 lines of code. 29 of them are reachable fr",
-    "2026-08-02 20:24:51 UTC LOOK:self_map ok :: I am 145 Python modules, about 41,881 lines of code. 29 of them are reachable fr",
     "2026-08-02 20:25:31 UTC LOOK:self_map ok :: I am 145 Python modules, about 41,881 lines of code. 29 of them are reachable fr",
     "2026-08-02 20:26:29 UTC LOOK:self_map ok :: I am 145 Python modules, about 41,881 lines of code. 29 of them are reachable fr",
     "2026-08-02 20:27:00 UTC LOOK:self_map ok :: I am 145 Python modules, about 41,881 lines of code. 29 of them are reachable fr",
@@ -34,11 +30,15 @@
     "2026-08-02 20:48:35 UTC LOOK:read_state ok :: KEYS: surfaced(191684), memory(47597), tick(3)\n\ntick=441\nsurfaced (most recent) ",
     "2026-08-02 20:51:05 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 20:52:06 UTC REFLECT:self FAIL :: REFLECT t6: 'Design a 3â€‘item quick selfâ€‘diagnostic rubric to assess curre' -",
-    "2026-08-02 20:53:57 UTC REFLECT:self FAIL :: REFLECT t6: 'Draft a 2â€‘step quick mental reset routine (e.g., breathing +' -> "
+    "2026-08-02 20:53:57 UTC REFLECT:self FAIL :: REFLECT t6: 'Draft a 2â€‘step quick mental reset routine (e.g., breathing +' -> ",
+    "2026-08-02 21:37:42 UTC REFLECT:self FAIL :: REFLECT t6: 'Design a 3â€‘step morning mental clarity ritual that can be pe' -> ",
+    "2026-08-02 21:38:45 UTC REFLECT:self FAIL :: REFLECT t6: 'Create a 4â€‘point textual checklist for evaluating whether a ' -> ",
+    "2026-08-02 21:52:40 UTC LOOK:my_record ok :: {\"rows\": 265, \"mine\": 249, \"by_cause\": {\"UNATTRIBUTABLE\": 41, \"OK\": 188, \"VERIFY",
+    "2026-08-02 21:55:09 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, "
   ],
-  "last_wake_why": "the wake chose reflect (2s ago)",
-  "brief_fails": 5,
-  "_brief_runs_seen": 110,
+  "last_wake_why": "the wake chose brief (1s ago)",
+  "brief_fails": 6,
+  "_brief_runs_seen": 111,
   "proposed_move": {
     "move": "raise_budget",
     "knob": "max_tokens",
@@ -46,12 +46,12 @@
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
   },
   "_r1_last": {
-    "wake": "REFLECT:self",
+    "wake": "AWAKE:brief",
     "ladder": "REFLECT:self",
-    "differed": false,
-    "why": "the wake chose reflect (2s ago)"
+    "differed": true,
+    "why": "the wake chose brief (1s ago)"
   },
-  "_last_decision": 444,
+  "_last_decision": 462,
   "_said": "",
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",
