@@ -71,7 +71,10 @@ GATE_HOURS = 72.0          # R0's gate, from diary/THE_WIRING_LADDER.md:45
 # choice. This now agrees with the field by accident of getting the scope right.
 REACH_GATE = (20, 3)       # invocations, distinct tools. Situations moved to R4.
 PERCEPTION_GATE = 8        # R4a: occasions it looked somewhere new AND said why
-EGRESS_GATE = 3            # R4b: dispatches the ENTITY chose, src=wake, graded
+EGRESS_GATE = 3            # R4b: dispatches that RAN - the entity chose and something left
+EGRESS_TOPICS = 2          # ...across at least this many DISTINCT topics. The count proves the
+                           # wire; the spread proves a choice. Added after Luis asked why the gate
+                           # was 3, and the honest answer was that 30 minutes x 8 is four hours.
 
 
 # =================================================================================================
@@ -239,8 +242,11 @@ RUNGS = [
              "from state that survives a restart - a floor between dispatches that REFUSES rather "
              "than delays, a daily ceiling, and a stop file checked before every dispatch - and the "
              "published bits/day is computed from that floor, never from the tick rate. (3) POWER: "
-             "the ENTITY chose an outbound topic and something left the machine because of that "
-             "choice, at least 3 times, each recorded with src=wake and a graded outcome.",
+             "the ENTITY chose an outbound topic and something ACTUALLY LEFT the machine "
+             "because of that choice - at least 3 such dispatches ACROSS AT LEAST 2 DISTINCT "
+             "TOPICS, each recorded with src=wake and a graded outcome. The count proves the wire; "
+             "the spread proves a choice, because a count alone cannot tell choosing from a reflex "
+             "that fires whenever a line appears in the prompt - and a line was put there.",
         plain="This is the first point at which something can leave the machine because the system "
               "decided it should. Four seats refused the obvious design unanimously, three times, "
               "and were right each time: the request itself is the way data gets out, and a call "
@@ -950,13 +956,39 @@ def measure_r4b() -> dict:
                     r = json.loads(line)
                 except ValueError:
                     continue
-                if r.get("tool") == "look_outward" and r.get("src") == "wake":
+                # AND IT MUST HAVE ACTUALLY RUN. THIRD INSTANCE OF ONE CONFUSION IN ONE NIGHT.
+                #
+                # R4b's power is "something LEAVES the machine because of that choice". A dispatch
+                # the budget or the gate refused left NOTHING - the decision was real and the act
+                # did not happen. Counting it would credit the rung for an attempt, which is the
+                # same attempt-versus-act error that put a policy refusal on the move's record in
+                # `cause`, and that counted a refused dispatch as outward evidence in `standing`.
+                #
+                # Both of those made the system too harsh on itself. This one made it too kind, and
+                # it is in the GATE - so it was the expensive direction. Found while reading the
+                # entity's real dispatches: 2 rows, 1 refused, and the counter said 2 of 3.
+                if (r.get("tool") == "look_outward" and r.get("src") == "wake"
+                        and r.get("outcome") == "ran"):
                     rows.append(r)
+        # SHAPE, NOT JUST COUNT - and the count alone was mine to answer for.
+        #
+        # Luis: "why only three conditions?" The honest answer was bad: 3 was chosen because the
+        # 1800s floor makes each dispatch cost thirty minutes, so 8 would be four hours. R4a's gate
+        # is 8 occasions and R2's is 20 invocations; this one was 3 because of the clock. That is
+        # the "lower the bar to what fits in an evening" defect, in a gate I wrote the same evening.
+        #
+        # A count cannot tell CHOOSING from a REFLEX that fires whenever a line appears in the
+        # prompt - and a line did appear, put there by me. So the gate now asks for the property the
+        # claim actually needs: more than one topic. Three dispatches of the same topic prove the
+        # wire; two different topics prove a choice. It is a HARDER gate than the one it replaces,
+        # which is the only direction a gate may be rewritten by its own author.
         out["entity_dispatches"] = len(rows)
-        out["entity_topics"] = sorted({json.dumps(r.get("args") or {}, sort_keys=True)
-                                       for r in rows})[:6]
-        out["condition_3"] = bool(len(rows) >= EGRESS_GATE)
-        out["gate_3"] = EGRESS_GATE
+        topics = sorted({(r.get("args") or {}).get("topic") for r in rows if (r.get("args") or {})})
+        out["entity_topics"] = [t for t in topics if t][:6]
+        out["distinct_topics"] = len(out["entity_topics"])
+        out["condition_3"] = bool(len(rows) >= EGRESS_GATE
+                                  and out["distinct_topics"] >= EGRESS_TOPICS)
+        out["gate_3"] = "%d dispatches across %d topics" % (EGRESS_GATE, EGRESS_TOPICS)
     except Exception as e:
         out["condition_3"] = False
         out["why_3"] = "%s: %s" % (type(e).__name__, str(e)[:70])

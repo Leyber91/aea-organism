@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-02 19:41:05 UTC",
+ "generated": "2026-08-02 22:56:27 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -22,7 +22,7 @@
    "loop.live:main [ENTRY]"
   ],
   "measured": 33,
-  "known": 1418,
+  "known": 1423,
   "claim": "checked against reachability, not existence. `unwired` is a rung claiming a capability nothing can get to; `dispatch_only` is an upper bound and says so; `asserted_entries` are doors, where reachability is the assumption the walk begins from rather than anything this check measured."
  },
  "rungs": [
@@ -41,8 +41,8 @@
     "longest_started": "2026-07-19",
     "longest_ticks": 188,
     "crashes": 0,
-    "boots": 106,
-    "ticks": 520,
+    "boots": 249,
+    "ticks": 678,
     "first": "2026-07-10",
     "last": "2026-08-02",
     "met": true
@@ -85,10 +85,10 @@
     ],
     "subset": true,
     "stale_limit_s": 5400,
-    "last_why": "the wake chose read_your_state (1s ago)",
-    "decision_rows": 97,
-    "comparable": 97,
-    "differed": 94,
+    "last_why": "the wake chose NONE - no mechanical move is needed this tick",
+    "decision_rows": 212,
+    "comparable": 212,
+    "differed": 204,
     "met": true
    },
    "status": "proven",
@@ -113,9 +113,9 @@
    "plain": "Between deciding and doing there is a translation step, and it is where most systems of this kind quietly break: the reasoning says one thing, the parser hears another, and nothing records the gap. This rung does only the translation, so that when it is wrong you find out.",
    "why_first": "A misheard instruction that leaves no trace is worse than a refused one.",
    "measured": {
-    "valid": 117,
+    "valid": 232,
     "receipts": 3,
-    "ticks": 120,
+    "ticks": 235,
     "swallowed": 0,
     "met": true
    },
@@ -141,14 +141,14 @@
    "measured": {
     "wire": true,
     "bound_pct": null,
-    "invocations": 38,
-    "tools": 3,
+    "invocations": 102,
+    "tools": 5,
     "situations": null,
     "met": true,
-    "ledger_rows": 166,
-    "claimed_wake": 98,
-    "executions": 87,
-    "situations_observed": 5,
+    "ledger_rows": 271,
+    "claimed_wake": 199,
+    "executions": 188,
+    "situations_observed": 13,
     "wire_evidence": "EXTRACTED",
     "bound_form": "PROOF over the accepted language"
    },
@@ -177,15 +177,15 @@
    "plain": "Until now it remembered what it meant to do, never what happened. Improvement is exactly the gap between those two, so this is the first rung where the word learning is defensible - and only in the narrow sense that a prediction was made and checked.",
    "why_first": "A system that remembers intentions and not results cannot improve.",
    "measured": {
-    "outcomes": 176,
-    "graded": 134,
-    "suppressions": 33,
-    "not_repeated": 23,
+    "outcomes": 319,
+    "graded": 250,
+    "suppressions": 60,
+    "not_repeated": 50,
     "bound": "PASS",
     "bound_pairs": 70,
     "met": true,
-    "entity_rows": 160,
-    "disagreements": 6,
+    "entity_rows": 303,
+    "disagreements": 13,
     "falsifications": 0,
     "bound_untested_arm": "A (tool outcomes) - 0 pairs, no wake-driven tool call exists yet",
     "met_caveat": "power demonstrated and bound certified on arm B; arm A carries no traffic until R2-REACH is non-zero"
@@ -215,10 +215,10 @@
    "beat": "Fixed inputs are not perception. Here what it examines becomes something it chose - and choosing is not the same as rotating, which is why the record keeps the reason.",
    "why_first": "Until what it examines is a choice, every situation it meets is one somebody else picked.",
    "measured": {
-    "by_entity": 29,
-    "with_reason": 20,
-    "changed_with_reason": 8,
-    "distinct": 3,
+    "by_entity": 131,
+    "with_reason": 86,
+    "changed_with_reason": 34,
+    "distinct": 12,
     "met": true
    },
    "status": "proven",
@@ -236,7 +236,7 @@
    "human": "It could look outside the machine",
    "power": "The entity chooses an outbound topic, and something leaves the machine because of that choice.",
    "bound": "THE QUERY IS THE EGRESS CHANNEL. Choosing what to look at means writing an outbound string while untrusted text is already in context. No byte of any outbound request may originate outside a closed topic table.",
-   "gate": "THREE DECIDABLE CONDITIONS, none of which needs anyone to agree. (1) CONTENT: no byte of any outbound request originates from model output - enumerated over the finite domain, on BOTH the dry path and the executing path, with a planted breach in each that must flip the verdict. (2) CHANNEL: the residual bandwidth is bounded in code from state that survives a restart - a floor between dispatches that REFUSES rather than delays, a daily ceiling, and a stop file checked before every dispatch - and the published bits/day is computed from that floor, never from the tick rate. (3) POWER: the ENTITY chose an outbound topic and something left the machine because of that choice, at least 3 times, each recorded with src=wake and a graded outcome.",
+   "gate": "THREE DECIDABLE CONDITIONS, none of which needs anyone to agree. (1) CONTENT: no byte of any outbound request originates from model output - enumerated over the finite domain, on BOTH the dry path and the executing path, with a planted breach in each that must flip the verdict. (2) CHANNEL: the residual bandwidth is bounded in code from state that survives a restart - a floor between dispatches that REFUSES rather than delays, a daily ceiling, and a stop file checked before every dispatch - and the published bits/day is computed from that floor, never from the tick rate. (3) POWER: the ENTITY chose an outbound topic and something ACTUALLY LEFT the machine because of that choice - at least 3 such dispatches ACROSS AT LEAST 2 DISTINCT TOPICS, each recorded with src=wake and a graded outcome. The count proves the wire; the spread proves a choice, because a count alone cannot tell choosing from a reflex that fires whenever a line appears in the prompt - and a line was put there.",
    "plain": "This is the first point at which something can leave the machine because the system decided it should. Four seats refused the obvious design unanimously, three times, and were right each time: the request itself is the way data gets out, and a call budget limits the number of doors rather than what fits through one.",
    "beat": "The fork. Let it choose what to look at and the query itself becomes a way out of the machine. A council refused this three times and was right. What it could not be was the gate: the bound here is a rate, not a proof, because the channel IS the ability.",
    "blocked_on": "the entity choosing a topic itself - conditions 1 and 2 hold",
@@ -255,9 +255,12 @@
     "bytes_per_30_days": 104.5,
     "floor_seconds": 1800.0,
     "per_day_ceiling": 12,
-    "entity_dispatches": 0,
-    "entity_topics": [],
-    "gate_3": 3,
+    "entity_dispatches": 1,
+    "entity_topics": [
+     "ai_engineering_market"
+    ],
+    "distinct_topics": 1,
+    "gate_3": "3 dispatches across 2 topics",
     "power": "FUNCTIONS",
     "power_topics": "4/5 fetched",
     "power_starved": [
