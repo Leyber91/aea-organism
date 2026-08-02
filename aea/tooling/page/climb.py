@@ -70,7 +70,24 @@ def _evidence(r: dict, gate: tuple) -> str:
     # `distinct` and this function asked for `distinct_sources`, so a PARTIAL rung carrying four
     # real numbers rendered as untouched. A dash must mean the repository cannot prove it - never
     # that the reader of the measurement guessed at its shape. Checked against the manifest below.
-    if (r.get("measured") or {}) and i not in ("R0", "R1", "R1.5", "R2", "R3", "R4a"):
+    # R4b IS THE FIRST RUNG WHOSE TWO HALVES ARE MEASURED SEPARATELY, and it is drawn that way on
+    # purpose. A rung is POWER plus BOUND, and this one had its BOUND certified and taken to a
+    # council while nobody had checked whether anything was behind the door - so a line that
+    # reported only the certificate would repeat the mistake in the place most people read.
+    #
+    # `condition_2` is the council, and it is never inferred from the numbers. It stays false until
+    # a human records that it happened, because a gate whose last condition is a judgement cannot be
+    # closed by arithmetic.
+    if i == "R4b" and m.get("condition_1") is not None:
+        bits = ["bound: %s, %s outbound request%s, %s leak%s, %s bits of selection channel" % (
+            "certified" if m["condition_1"] else "FAILED", m.get("requests"),
+            "" if m.get("requests") == 1 else "s", m.get("leaks"),
+            "" if m.get("leaks") == 1 else "s", m.get("selection_bits"))]
+        if m.get("power"):
+            bits.append("power: %s, %s" % (str(m["power"]).lower(), m.get("power_topics")))
+        bits.append("council: not reconvened against these numbers")
+        return "; ".join(bits)
+    if (r.get("measured") or {}) and i not in ("R0", "R1", "R1.5", "R2", "R3", "R4a", "R4b"):
         return "measured, but this page has no reader for %s yet" % i
     return ""
 

@@ -848,8 +848,27 @@ def measure_r4b() -> dict:
     So `met` stays False while `condition_1` is True, and the rung reads PARTIAL - which is the
     honest state: the argument that was missing now exists, and the decision has not been made."""
     out = dict(condition_1=None, condition_2=False, leaks=None, selection_bits=None, met=False,
+               power=None, power_topics=None, power_starved=None,
                condition_2_is="a reconvened council, against the measured version. Not computable "
                               "here, and it is a judgement rather than a number")
+    # THE POWER HALF IS REPORTED HERE OR IT IS REPORTED NOWHERE.
+    #
+    # `dispatch_power.json` was written, and read by NOBODY - the same defect as `funcs_check`,
+    # produced and consumed by no one, found the same day. A certificate nothing reads is a file.
+    #
+    # It is NOT part of `met`, deliberately: R4b's gate names two conditions and neither of them is
+    # "the capability works". Folding a third in would be re-writing the gate to match what I
+    # happened to measure, which is the opposite of a gate. It is reported because a rung is POWER
+    # plus BOUND and a reader is entitled to both numbers - and because a council was convened on
+    # this rung while nobody had checked whether anything is behind the door.
+    try:
+        pw = grid.load_json(os.path.join(grid.STATE, "dispatch_power.json"), {}) or {}
+        if pw:
+            out["power"] = pw.get("verdict")
+            out["power_topics"] = "%s/%s fetched" % (pw.get("topics_that_fetched"), pw.get("topics"))
+            out["power_starved"] = pw.get("starved_by_the_allowlist")
+    except Exception as e:
+        out["power"] = "unreadable: %s" % type(e).__name__
     try:
         cert = grid.load_json(os.path.join(grid.STATE, "dispatch_cert.json"), {}) or {}
         if not cert:
@@ -927,10 +946,15 @@ if __name__ == "__main__":
                             % (m["invocations"], REACH_GATE[0], m.get("executions"),
                                m["tools"], REACH_GATE[1], str(m.get("bound_form"))[:34]))
             if r["id"] == "R4b" and m.get("condition_1") is not None:
-                bits.append("dry certificate %s (%s outbound, %s leaks, %s selection bits) | "
-                            "council: NOT RECONVENED"
+                bits.append("BOUND: dry certificate %s (%s outbound, %s leaks, %s selection bits)"
                             % ("CERTIFIED" if m["condition_1"] else "FAILED", m.get("requests"),
                                m.get("leaks"), m.get("selection_bits")))
+                if m.get("power"):
+                    bits.append("POWER: %s, %s%s"
+                                % (m["power"], m.get("power_topics"),
+                                   (" | starved: " + ", ".join(m["power_starved"]))
+                                   if m.get("power_starved") else ""))
+                bits.append("council: NOT RECONVENED against these numbers")
             if r["id"] == "R4a" and m.get("changed_with_reason") is not None:
                 bits.append("%d/%d chosen-with-reason, %s distinct sources"
                             % (m["changed_with_reason"], PERCEPTION_GATE, m.get("distinct")))

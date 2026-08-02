@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated": "2026-08-02 17:58:28 UTC",
+ "generated": "2026-08-02 18:32:10 UTC",
  "gate_hours": 72.0,
  "reach_gate": [
   20,
@@ -246,6 +246,11 @@
     "leaks": 0,
     "selection_bits": 0,
     "met": false,
+    "power": "FUNCTIONS",
+    "power_topics": "4/5 fetched",
+    "power_starved": [
+     "local_inference"
+    ],
     "condition_2_is": "a reconvened council, against the measured version. Not computable here, and it is a judgement rather than a number",
     "misrouted": 0,
     "requests": 16,

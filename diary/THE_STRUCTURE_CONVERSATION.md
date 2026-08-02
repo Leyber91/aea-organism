@@ -295,3 +295,63 @@ So the missing piece is one dimension at one altitude - **did the TOOL do its jo
 **What must never be in that loop:** a model-GENERATED parser or URL shape that then executes. The
 entity selecting an untried technique from a human-authored set is R4-shaped and safe; the entity
 writing the technique is R9 and voids every bound below it.
+
+
+---
+
+## 10 · THE PROCESS DECODER - AND WHY IT IS ALREADY HALF HERE
+
+*Luis, 2026-08-02: "spaghetti code is not [maintainable]. It's not flexible enough, because the code
+has to allow for this flexibility to be possible. So I figured the best will be like a reader that
+there is JSON files - like a decoder of processes, and it executes the paths."*
+
+**THE DIAGNOSIS IS CORRECT AND IT IS MEASURED.** 177 modules, 33 reachable from a wake, 133
+orphaned. One function in nine is alive. That is the shape of a codebase that grew by addition
+rather than by composition, and it is exactly what a process-decoder answers.
+
+**AND THE PATTERN IS ALREADY THE REPO'S ARCHITECTURE, four times over, unnamed:**
+
+| the declaration | the executor | who may write the declaration |
+|---|---|---|
+| `dispatch.TOPICS` - 5 topics, literal queries | `dispatch.run` | a human edit, reviewed as a diff |
+| `hands.TOOLS` - 11 tools, impl per name | `hands.invoke` | a human edit |
+| `hands.READABLE_STATES` - 16 filenames | `_read_state` | a human edit |
+| `ladder.RUNG_FUNCS` / `RUNG_STANDBY` | `verify_funcs` | a human edit |
+
+Every one is the same move: **the entity selects a KEY, the table supplies the VALUE, one executor
+walks it.** That is the process decoder, and R2's whole certified bound rests on it - of 1,112,064
+codepoints the argument language admits 697, none alphabetic, precisely because nothing the model
+writes ever becomes a path.
+
+**SO THE WORK IS NOT TO BUILD A DECODER. IT IS TO NAME THE PATTERN AND STOP DEVIATING FROM IT.**
+Adding a framework layer to a tree with 133 orphaned modules adds a 134th. The repo does not need a
+new engine; it needs the four tables above to be recognisably one idea, so the fifth is written that
+way without being told.
+
+**THE LINE THAT DECIDES WHETHER A DECODER IS SAFE, and it is the only one that matters:**
+
+    declaration HUMAN-AUTHORED + executor in code   ->  this is R2/R4-shaped. Certified. Safe.
+    declaration MODEL-GENERATED + executed          ->  this is R9. Voids every bound below it.
+
+A JSON file that describes a process is data. The same file emitted by a model and then executed is
+a program the model wrote, and the review surface stops being a diff. `dispatch.py`'s docstring
+already states the test: *the entity chooses WHEN and WHICH, never WHAT in its own words. Adding a
+topic is a human edit to this file, and that is the point - the review surface is a diff, not a
+prompt.*
+
+**WHAT FLEXIBILITY ACTUALLY REQUIRES**, since the complaint is that the code must permit it:
+
+- **one executor per shape, never two.** `run` composing through `dry` was this: two copies of one
+  URL regex, byte-identical, one edit from disagreeing, and only one of them measured
+- **the declaration carries its own evidence.** `RUNG_FUNCS` names functions AND `verify_funcs`
+  grades them by what reaches them; a table that cannot be checked against the tree goes stale
+  silently
+- **a missing reader must be visible.** `climb._evidence` renders *"measured, but this page has no
+  reader for R4b yet"* rather than a dash - the gap announces itself instead of looking like absence
+- **every store needs a named writer AND reader.** `dispatch_power.json` was written and read by
+  nobody for an hour, which is the same defect as `funcs_check`, found the same day
+
+**THE NEXT STEP THAT IS ACTUALLY THIS, and it is small.** The path object in section 4 is a process
+declaration with a cursor, executed by one loop, every step validated by `decide.parse`. Build that
+and the decoder exists - as the fifth instance of a pattern already here, rather than as a framework
+sitting above four things that already work.

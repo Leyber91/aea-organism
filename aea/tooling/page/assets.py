@@ -23,15 +23,29 @@ from __future__ import annotations
 def base_css() -> str:
     """The hand-written stylesheet. The GENERATED frame rules are a separate file - they are
     machine output with one rule per frame, and mixing them here hid 327 lines inside 143."""
-    return f""":root{{--void:#08090b;--grey:#3a3f46;--dim:#171a1e;--ink:#c8ccd2;--amber:#ffb000;--brass:#d4a24c}}
+    return f""":root{{--void:#08090b;--grey:#3a3f46;--dim:#171a1e;--ink:#c8ccd2;--amber:#ffb000;--brass:#d4a24c;
+/* TWO TYPE ROLES, AND THE DIFFERENCE CARRIES MEANING RATHER THAN TASTE.
+   PROSE is a person explaining. MONO is the machine's measured output - an id, a count, a receipt.
+   Setting the whole page in mono made every word look like output, which is the exact costume every
+   dashboard on the internet is wearing, and it wasted the one signal that should mean "this number
+   was measured". Measured on the field: `ourworldindata` pairs a serif display with a humanist sans
+   and reserves Menlo for figures; `distill.pub` sets its body in Georgia at a 700-800px measure;
+   `quanta` runs a 520px column of near-black with a single orange accent. None of them sets an
+   article in a terminal face. No webfont is loaded - a page whose claim is that it needs nothing
+   from anywhere should not open a connection to fetch a letterform. */
+--prose:"Iowan Old Style",Palatino,"Palatino Linotype",Georgia,"Times New Roman",serif;
+--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}}
 *{{box-sizing:border-box}}
 body{{margin:0;background:var(--void);color:var(--ink);
- font:13px/1.55 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}}
+ font:16px/1.62 var(--prose);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}}
 .wrap{{max-width:1180px;margin:0 auto;padding:34px 20px 90px}}
-h1{{font-size:15px;letter-spacing:.20em;font-weight:600;margin:0 0 2px;color:#eef1f4}}
-h2{{font-size:11px;letter-spacing:.20em;color:#7d858e;font-weight:600;margin:44px 0 12px;
+/* MEASURE. 74ch of 13px mono is a wall; the sites that are read for pleasure sit
+   between 520 and 800px. Prose narrows, the instrument keeps the whole width. */
+.sub,.rplain,.youare,.honest{{max-width:64ch}}
+h1{{font:600 15px/1.4 var(--mono);letter-spacing:.20em;margin:0 0 2px;color:#eef1f4}}
+h2{{font:600 11px/1.4 var(--mono);letter-spacing:.20em;color:#7d858e;margin:52px 0 14px;
  border-top:1px solid #1c2025;padding-top:12px}}
-.sub{{color:#6d757e;margin:0 0 26px}}
+.sub{{color:#96a0aa;margin:0 0 24px;max-width:62ch;font-size:16.5px;line-height:1.66}}
 .hero{{position:relative;border:1px solid #16191d;background:
  radial-gradient(circle at 50% 50%,#0c0e11 0%,#08090b 68%)}}
 svg{{display:block;width:100%;height:auto}}
@@ -82,7 +96,7 @@ svg{{display:block;width:100%;height:auto}}
  vertical-align:middle}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:14px}}
 .card{{border:1px solid #16191d;padding:14px 15px;background:#0a0c0e}}
-.big{{font-size:30px;color:#eef1f4;letter-spacing:-.01em}}
+.big{{font:30px/1.2 var(--mono);color:#eef1f4;letter-spacing:-.02em}}
 .big em{{font-size:13px;color:#5c646d;font-style:normal}}
 .cap{{font-size:10px;letter-spacing:.17em;color:#6d757e;text-transform:uppercase;margin-bottom:7px}}
 .src{{font-size:10px;color:#4b525a;margin-top:8px}}
