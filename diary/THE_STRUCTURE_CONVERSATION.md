@@ -201,3 +201,73 @@ council. R5-R9 future.
 
 The honest asterisk on R4a: its eight occasions were caused by a script alternating the two loops by
 hand. Section 5 is what removes the asterisk, and it is the next thing built.
+
+---
+
+## 9 · REACHING CONTENT: WHICH LOCKS, AND WHEN
+
+*Added 2026-08-02 after `web_search` was found dead. Luis: "Don't go to the hard locks. Go to what's
+open, and that's the key. But if something that is on a hard lock we need it, we need to get a way
+through it - probably the latest stages."*
+
+**THE PRIORITY: FIND DOORS THAT ARE OPEN, DO NOT GET BETTER AT PICKING LOCKS.** Measured 2026-08-02:
+`lite.duckduckgo.com` HTTP 202 challenge page, `html.duckduckgo.com` the same, `www.mojeek.com`
+HTTP 200 with `<title>Captcha</title>`. Both general engines refuse a non-browser client. Meanwhile
+`export.arxiv.org`, `hn.algolia.com` and `huggingface.co` returned 200 with real results in under
+two seconds, keyless. The open door was faster, more reliable, and STRICTLY SAFER for the rung above
+- results come from an allowlisted domain by construction rather than by a filter applied after.
+
+"Hard lock" is four different things and they have four different answers:
+
+| lock | a way through | stage |
+|---|---|---|
+| bot detection / captcha | defeating detection | **NOT BUILT.** Also the least necessary - a site that captchas an automated client almost always publishes a feed or an API that does not |
+| authentication we are entitled to | a credential, used properly | **NOW**, under the constraint below |
+| paywall / licence | paying, or an institutional route | a business decision, not a rung |
+| JS-rendered content | a headless browser | **LATER STAGE. Own bound, own council** |
+
+**THE CREDENTIAL CONSTRAINT, AND IT IS NOT NEGOTIABLE.** An authenticated route is normal API usage,
+not evasion - but the credential lives CODE-SIDE ONLY and never enters the entity's context. `.env`
+at ROOT holds 16 live provider credentials and the wake has no measured read path to them; that
+property must survive every route we add. The entity chooses a topic NAME, code attaches the header.
+Same shape as `plan()`: the entity picks the key, the table supplies the value.
+
+Concrete and outstanding: unauthenticated `api.github.com` returned 504 with 0 results and is what
+starves `local_inference`, the one dispatch topic still producing nothing. A token fixes it,
+code-side.
+
+**WHY THE BROWSER IS A LATER STAGE, stated as a property rather than as caution.** A headless browser
+executes third-party JavaScript, so THE PAGE issues outbound requests nobody here authored -
+beacons, third-party fetches, anything. R4b's claim - "no byte of the outbound request originates
+from model output" - stops being the relevant sentence, not because the model writes bytes but
+because the page does. Any certificate built on that claim is void the moment a browser is in the
+path. It needs its own bound and its own council, and it is a real capability worth having later.
+
+**AND THE EVOLUTION TRIGGER IS THE ENTITY, NOT A SELF-HEALING SCRAPER.** Luis, same session: *"the
+tools need to evolve, but the trigger needs to be the autonomous entity architecture."* Correct, and
+the machinery already exists here, reachable, and silent:
+
+    kernel.impasse   131 lines   noticing it is stuck, and saying why      state/impasse.json ABSENT
+    kernel.unstick   416 lines   when repeating cannot help, change        state/unstick.json ABSENT
+    kernel.crystal   256 lines   what works twice becomes a part           state/crystal.json 40 bytes
+
+803 lines, statically EXTRACTED, empty stores after 280 ticks - against a 140KB outcome record they
+are meant to read. Building a separate self-improving fetcher would be building a fourth organ
+beside three that already exist unused, which is how this repo reached 1,500 functions with 160
+reachable.
+
+**THEY ARE SILENT FOR ONE REASON AND IT IS SMALL.** The ledger records `outcome` as
+`ran / refused / raised` - TRANSPORT level. `web_search` returning "NO RESULTS (14313 bytes but
+nothing parsed)" for weeks was recorded as `ran`, successfully. A tool that returns a captcha page
+SUCCEEDS by that definition, so no impasse is ever signalled, `unstick` is never asked, and nothing
+crystallises. The missing piece is a second outcome dimension - **did the tool do its job**, distinct
+from **did the call complete** - and then the loop runs on organs already built:
+
+    tool returns nothing usable  ->  impasse.signature   a named stuck-state
+    impasse recorded             ->  unstick.propose     another route, from a CLOSED set
+    that route works twice       ->  crystal.harvest     it becomes a part
+    part applies next time       ->  crystal.applicable  learning, and measurable
+
+**What must never be in that loop:** a model-GENERATED parser or URL shape that then executes. The
+entity selecting an untried technique from a human-authored set is R4-shaped and safe; the entity
+writing the technique is R9 and voids every bound below it.
