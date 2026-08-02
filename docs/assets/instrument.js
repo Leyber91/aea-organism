@@ -20,7 +20,10 @@ function stop(){if(timer){clearInterval(timer);timer=null;}}
 function go(k){var max=mode==='hop'?MAXD:RMAX,r=mode==='hop'?rail:rrail;
  k=Math.max(0,Math.min(max,k));
  svg.setAttribute('data-frame',k);svg.setAttribute('data-mode',mode);
- cap.textContent=(mode==='hop'?CAPS:RCAPS)[k];
+ var _t=(mode==='hop'?CAPS:RCAPS)[k]||'';cap.textContent=_t;
+ /* THE PICTURE MUST SAY WHAT CHANGED. A static label across 7 hops and 12 rungs
+    means a keyboard user operates 32 controls and is told nothing. */
+ svg.setAttribute('aria-label',_t);
  [].forEach.call(r.querySelectorAll('button'),function(b){
    b.setAttribute('aria-current',+b.dataset.k===k?'step':'false');});
  /* THE CLIMB IS THE SAME INTEGER. The list below the fold and the graph above it are one axis, so

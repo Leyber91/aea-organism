@@ -38,6 +38,14 @@ def main() -> int:
                 print("   %s: %s" % (name, p))
         return 1
 
+    # WELL-FORMEDNESS: every file must parse as the type its name claims. See guard.parses.
+    broken = [msg for name, text in site.items() for msg in guard.parses(name, text)]
+    if broken:
+        print("REFUSING TO WRITE - the build produced a file that is not what its name says:")
+        for b in broken:
+            print("   " + b)
+        return 1
+
     # THE HONESTY GATE, which existed as a comment in render.py and as nothing else. A rung drawn in
     # the climb while nothing in the tree reaches its functions is a hand-typed claim in generated
     # clothes, and the page's whole standing is that nothing on it is typed by hand.

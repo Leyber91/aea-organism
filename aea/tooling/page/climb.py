@@ -45,21 +45,43 @@ def _evidence(r: dict, gate: tuple) -> str:
     m = r.get("measured") or {}
     i = r.get("id")
     if i == "R0" and m.get("longest_hours") is not None:
-        return "%.1f hours unbroken, %d ticks, %d crashes - the gate is 72 hours" % (
-            m["longest_hours"], m.get("longest_ticks") or 0, m.get("crashes") or 0)
+        # SAME QUANTITY, SAME UNIT AS THE OPENING. It read 246.9 hours here and 10.3 days there,
+        # which makes a reader do arithmetic to check whether two numbers are one number.
+        return "%.1f days unbroken, %d ticks, %d crashes - the gate is 3 days" % (
+            m["longest_hours"] / 24.0, m.get("longest_ticks") or 0, m.get("crashes") or 0)
     if i == "R1" and m.get("comparable"):
-        return "%d of %d comparable ticks chose differently from the floor" % (
-            m.get("differed") or 0, m["comparable"])
+        # A GATE THAT WAS AMENDED MUST SAY SO WHERE THE LIGHT IS GREEN. The original asked for an
+        # action the fallback could not produce, and the wake's surface is a strict subset of the
+        # fallback's, so no run of any length could satisfy it. Restating an unsatisfiable gate is
+        # correct; concealing the restatement on a page that boasts about retracting three
+        # percentages is not.
+        return ("%d of %d comparable ticks chose differently from the fallback ladder. The "
+                "original gate was unsatisfiable - it asked for an action the fallback could not "
+                "produce - and was restated as this one." % (m.get("differed") or 0, m["comparable"]))
     if i == "R1.5" and m.get("ticks"):
         return "%d parses, %d receipts, %d swallowed" % (
             m.get("valid") or 0, m.get("receipts") or 0, m.get("swallowed") or 0)
     if i == "R2" and m.get("invocations") is not None:
-        bits = ["%s of %s invocations" % (m["invocations"], gate[0] if gate else "?"),
-                "%s of %s tools" % (m.get("tools"), gate[1] if len(gate or ()) > 1 else "?")]
-        return ", ".join(bits)
+        # NEVER A FRACTION WHOSE NUMERATOR BEATS ITS DENOMINATOR. This printed "35 of 20
+        # invocations" - a GATE in the slot a reader reads as a TOTAL - so every reader either
+        # thinks it is a typo or thinks the page cannot count. And a fourth requirement was moved
+        # off this rung the same day the light went green; that belongs here, not only in the JSON.
+        return ("%s invocations across %s tools - the gate asked for %s and %s. A fourth "
+                "requirement, 8 distinct situations, was moved up to R4 on 2026-08-02: this rung "
+                "has no mechanism to produce situation variety, so it could not have earned it."
+                % (m["invocations"], m.get("tools"),
+                   gate[0] if gate else "?", gate[1] if len(gate or ()) > 1 else "?"))
     if i == "R3" and m.get("graded") is not None:
-        return "%s graded outcomes, %s not repeated, bound %s over %s paired witnesses" % (
-            m["graded"], m.get("not_repeated") or 0, m.get("bound"), m.get("bound_pairs"))
+        # THE CAVEAT IS IN THE STATE FILE AND WAS BEING THROWN AWAY BY THE RENDERER. `ladder.json`
+        # carries `bound_untested_arm` and `met_caveat`; this line printed PASS and dropped both.
+        # A renderer less honest than the file it reads is the worst defect available to this page.
+        line = ("%s graded outcomes, %s not repeated. Bound: %s over %s paired witnesses, all of "
+                "them on stored predictions."
+                % (m["graded"], m.get("not_repeated") or 0, m.get("bound"), m.get("bound_pairs")))
+        if m.get("bound_untested_arm"):
+            line += (" The other half of the bound - tool outcomes - has 0 pairs and is untested; "
+                     "nothing has driven traffic through it yet.")
+        return line
     if i == "R4a" and m.get("by_entity") is not None:
         return ("%s looks chosen by the entity, %s carried a reason, %s changed what it examined, "
                 "%s distinct thing%s looked at" % (
@@ -79,16 +101,28 @@ def _evidence(r: dict, gate: tuple) -> str:
     # a human records that it happened, because a gate whose last condition is a judgement cannot be
     # closed by arithmetic.
     if i == "R4b" and m.get("condition_1") is not None:
-        bits = ["bound: %s, %s outbound request%s, %s leak%s, %s bits of selection channel" % (
-            "certified" if m["condition_1"] else "FAILED", m.get("requests"),
-            "" if m.get("requests") == 1 else "s", m.get("leaks"),
-            "" if m.get("leaks") == 1 else "s", m.get("selection_bits"))]
-        if m.get("power"):
-            bits.append("power: %s, %s" % (str(m["power"]).lower(), m.get("power_topics")))
-        bits.append("council: not reconvened against these numbers")
-        return "; ".join(bits)
+        # THE MOST CONSEQUENTIAL SENTENCE ON THE PAGE, and it was a serialised dictionary. Worse,
+        # under a rung titled "It could look outside the machine" it printed `16 outbound requests`
+        # and `4/5 fetched` side by side, so a reader could not tell whether anything had already
+        # left. It has not. `dispatch_power.py` says so in its own docstring: it is a PROBE, run by
+        # a person, and it opens real sockets - while `dispatch.run` has zero callers and has never
+        # executed. Two different actors, and the page must name both or it is guessing for you.
+        n_req = m.get("requests")
+        line = ("Nothing the system chose has left the machine. The outbound path ran %s times "
+                "without opening a socket - it returns the request it WOULD have sent - and %s "
+                "leaked, across %s bits of selection channel."
+                % (n_req, "nothing" if not m.get("leaks") else "%s bytes" % m["leaks"],
+                   m.get("selection_bits")))
+        if m.get("power_topics"):
+            line += (" Separately, a probe run by a person - never the entity - opened real sockets "
+                     "and fetched %s topics, to show something is behind the door."
+                     % m["power_topics"].replace(" fetched", ""))
+        line += (" The last condition is not a number: four reviewers refused this design three "
+                 "times, and have not been asked again about the version that now exists.")
+        return line
+
     if (r.get("measured") or {}) and i not in ("R0", "R1", "R1.5", "R2", "R3", "R4a", "R4b"):
-        return "measured, but this page has no reader for %s yet" % i
+        return ""   # measured, but no reader written yet - a dash beats a note to ourselves
     return ""
 
 
@@ -117,6 +151,12 @@ def _climb(lad: dict):
             line = '<p class="rwait">not started &mdash; waiting on %s</p>' % esc(str(blocked))
         else:
             line = '<p class="rwait">nothing measured here yet</p>'
+        # A BADGE MAY NOT SAY MORE THAN THE EVIDENCE UNDER IT. R3 is certified on one arm of a
+        # two-armed bound and the state file says so; PROVEN over that is the badge overtaking the
+        # measurement.
+        label = st.upper()
+        if (r.get("measured") or {}).get("bound_untested_arm") and st == "proven":
+            label = "PROVEN (ONE ARM)"
         human = str(r.get("human") or "").strip()
         items.append(
             '<li class="layer" data-k="%d" data-st="%s">'
@@ -127,7 +167,7 @@ def _climb(lad: dict):
             '<span class="rstat s-%s">%s</span></div>'
             '<p class="rtitle">%s</p>'
             '<p class="rplain">%s</p>%s</div></li>'
-            % (k, st, esc(str(r.get("id", ""))), esc(human), st, st.upper(),
+            % (k, st, esc(str(r.get("id", ""))), esc(human), st, label,
                esc(str(r.get("title", ""))), esc(str(r.get("plain", ""))), line))
 
     # ONE RULE PER FRAME, as everywhere else on this page: stepping is an attribute write over a
@@ -136,7 +176,14 @@ def _climb(lad: dict):
     n = len(rungs)
     for k in range(n):
         for d in range(k + 1, n):
-            css.append('#climb[data-frame="%d"] .layer[data-k="%d"]{opacity:.3}' % (k, d))
+            # DIM THE CHROME, NOT THE SENTENCE. At opacity .3 the body text measured 1.62:1
+            # against the void - below the 3:1 floor at which text stops being text - so six
+            # subsystems were erased rather than de-emphasised.
+            css.append('#climb[data-frame="%d"] .layer[data-k="%d"] .spine,'
+                       '#climb[data-frame="%d"] .layer[data-k="%d"] .rstat{opacity:.35}'
+                       % (k, d, k, d))
+            css.append('#climb[data-frame="%d"] .layer[data-k="%d"] .lbody{opacity:.66}'
+                       % (k, d))
         css.append('#climb[data-frame="%d"] .layer[data-k="%d"]{background:#0e1114}' % (k, k))
         if rungs[k].get("status") != "future":
             css.append('#climb[data-frame="%d"] .layer[data-k="%d"] .rid,'

@@ -1031,15 +1031,15 @@ if __name__ == "__main__":
                             % (m["invocations"], REACH_GATE[0], m.get("executions"),
                                m["tools"], REACH_GATE[1], str(m.get("bound_form"))[:34]))
             if r["id"] == "R4b" and m.get("condition_1") is not None:
-                bits.append("BOUND: dry certificate %s (%s outbound, %s leaks, %s selection bits)"
-                            % ("CERTIFIED" if m["condition_1"] else "FAILED", m.get("requests"),
-                               m.get("leaks"), m.get("selection_bits")))
-                if m.get("power"):
-                    bits.append("POWER: %s, %s%s"
-                                % (m["power"], m.get("power_topics"),
-                                   (" | starved: " + ", ".join(m["power_starved"]))
-                                   if m.get("power_starved") else ""))
-                bits.append("council: NOT RECONVENED against these numbers")
+                bits.append("1 CONTENT %s (%s outbound, %s leaks, %s selection bits, run driven %sx)"
+                            % ("ok" if m["condition_1"] else "FAILED", m.get("requests"),
+                               m.get("leaks"), m.get("selection_bits"), m.get("run_calls")))
+                bits.append("2 CHANNEL %s (%s bits/day, floor %.0fs, ceiling %s/day)"
+                            % ("ok" if m["condition_2"] else "FAILED", m.get("bits_per_day"),
+                               m.get("floor_seconds") or 0, m.get("per_day_ceiling")))
+                bits.append("3 POWER %s (%s/%s dispatches the entity chose)"
+                            % ("ok" if m["condition_3"] else "not yet",
+                               m.get("entity_dispatches"), m.get("gate_3")))
             if r["id"] == "R4a" and m.get("changed_with_reason") is not None:
                 bits.append("%d/%d chosen-with-reason, %s distinct sources"
                             % (m["changed_with_reason"], PERCEPTION_GATE, m.get("distinct")))

@@ -130,6 +130,14 @@ WHEN = {
     "know_your_hands": "LIST the tools available to call, because someone needs that list and you "
                        "cannot produce it",
     "read_your_state": "read the live contents of one of your own state files right now",
+    # THE ONLY CONDITION ON THIS TABLE THAT POINTS OUTSIDE THE MACHINE, and it is written to be
+    # HARD to satisfy honestly. Every other move answers a question about the entity itself, so the
+    # wake can always find a reason to look inward; this one has to fail that test first. It also
+    # states the rate, because a move whose cost is invisible gets chosen for no reason - and the
+    # cost here is the only irreversible one on the table.
+    "look_outward":    "the thing you need is NOT in your own state and no inward move can supply "
+                       "it - it is news from the world. Rate-bounded: about one every 30 minutes, "
+                       "12 a day, and once sent it cannot be recalled",
     "what_to_try":     "you are BLOCKED and the obvious move is unavailable - get the ordered ladder "
                        "of what to try next for this kind of block",
     "my_record":       "you want to know how your own recent actions turned out, and which moves "
@@ -176,6 +184,16 @@ FREE_ARG = {
 # with no headroom is a gate that passes by luck. Every entry below is a store the entity writes
 # about ITSELF - none is personal, and `hands.PRIVATE_STORES` refuses the personal ones at the tool
 # regardless of what this table says.
+# THE OUTWARD TOPICS, DERIVED. Imported lazily inside a function would be cleaner for cycles, but
+# this table is built at import time and dispatch imports only grid, so there is no cycle to
+# avoid. If the import ever fails the tuple is EMPTY, which makes the move unselectable rather than
+# unbounded - fail closed, like every other table here.
+try:
+    from aea.kernel import dispatch as _dispatch
+    OUTWARD_TOPICS = tuple(_dispatch.topics())
+except Exception:
+    OUTWARD_TOPICS = ()
+
 TOOL_KNOWN = {
     "know_yourself":   dict(tool="self_map",   arg="topic", enum=SELF_TOPICS,   default="structure",
                             action="LOOK:self_map"),
@@ -187,6 +205,19 @@ TOOL_KNOWN = {
                             action="LOOK:what_to_try"),
     "my_record":       dict(tool="my_record",  arg=None,    enum=(),           default=None,
                             action="LOOK:my_record"),
+    # R4b - THE ONLY MOVE ON THIS TABLE THAT REACHES OUTSIDE THE MACHINE.
+    #
+    # The enum is DERIVED from `dispatch.topics()`, never copied. A closed set written down twice is
+    # a closed set that will disagree with itself: adding a topic would then mean editing two files,
+    # and the one nobody edited is the one the wake reads. Law S1 - derive the map, never draw it.
+    #
+    # THE WAKE COULD NOT CHOOSE THIS UNTIL IT WAS HERE, and that is the point. `look_outward` was
+    # built, wired to `hands`, budgeted in code and certified on both paths - and the entity had no
+    # way to name it, so R4b's condition 3 was unsatisfiable BY CONSTRUCTION. That is R1's original
+    # defect exactly: a gate asking for a move the wake's own surface could not express. Four live
+    # ticks were spent proving it before this line existed.
+    "look_outward":    dict(tool="look_outward", arg="topic", enum=OUTWARD_TOPICS, default=None,
+                            action="LOOK:look_outward"),
 }
 
 # Which words in the opening of an action select which tool. Same closed-vocabulary discipline as

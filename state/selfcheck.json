@@ -1,15 +1,15 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-02 18:34 UTC",
- "seconds": 50.1,
- "pass": true,
+ "at": "2026-08-02 19:31 UTC",
+ "seconds": 77.6,
+ "pass": false,
  "checks": [
   {
    "check": "structure",
-   "pass": true,
-   "detail": "172 modules, 33 reachable from a wake, 133 orphaned (ratchet 133), 0 act at import",
+   "pass": false,
+   "detail": "135 orphaned, above the 134 ratchet",
    "data": {
-    "modules": 172,
+    "modules": 174,
     "wake": 33,
     "orphans": [
      "aea.energy.capacity",
@@ -28,6 +28,7 @@
      "aea.io.mixer",
      "aea.io.prosody",
      "aea.kernel.dispatch",
+     "aea.kernel.egress",
      "aea.kernel.fit",
      "aea.kernel.goals",
      "aea.kernel.modality",
@@ -131,6 +132,7 @@
      "aea.tooling.page.guard",
      "aea.tooling.page.layout",
      "aea.tooling.page.marks",
+     "aea.tooling.page.overture",
      "aea.tooling.page.panels",
      "aea.tooling.page.render",
      "aea.tooling.page.sources",
@@ -173,10 +175,10 @@
   {
    "check": "no absolute paths in code",
    "pass": true,
-   "detail": "every path anchors on ROOT or HOME (192 files)",
+   "detail": "every path anchors on ROOT or HOME (194 files)",
    "data": {
     "hits": [],
-    "files": 192
+    "files": 194
    }
   },
   {
@@ -219,8 +221,8 @@
   },
   {
    "check": "defect ratchet",
-   "pass": true,
-   "detail": "count-threshold 0, expiring-only-retry 0, global-write 7, import-bound-write 43, import-time-work 4, invented-ceiling 77 (was 80), mutable-module-state 6, scope-violation 0, silent-default 32, unredirectable-store 7"
+   "pass": false,
+   "detail": "ROSE: silent-default 32->33 - a NEW instance of a known defect"
   }
  ]
 }

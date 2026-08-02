@@ -107,7 +107,7 @@ def check_imports() -> dict:
 # broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
 # alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
 # the suite must report at least this many. Raise it when behaviours are added on purpose.
-FROZEN_FLOOR = 142         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
+FROZEN_FLOOR = 156         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
 # +3 2026-08-02: every flag `live` ACCEPTS must be READ by live.main. `--once` was in KNOWN_FLAGS,
 # in the docstring, and read by nothing - it ran one tick then slept the full 1800s default, so
 # every caller hung or was killed and recorded as a failure. Unknown flags fail closed; a known
@@ -138,7 +138,12 @@ FROZEN_FLOOR = 142         # +3: a decision is carried out once          # +10: 
 # freely and may not climb without someone deciding to raise this line. 130 of 169 modules are
 # reachable from nothing, which is the honest shape of this repo and was previously reported under a
 # hardcoded "pass": True.
-ORPHAN_FLOOR = 133
+ORPHAN_FLOOR = 134
+# +1 2026-08-02: `aea/tooling/page/overture.py`. The page's first screen - the only part that has to
+# earn the second one - became its own module because it answers a different question from every
+# other section: not "what is true" but "who is arriving and what do they leave with". Unreachable
+# from the wake for the same reason the rest of `page/` is: the organism does not draw its own
+# portrait.
 # +1 2026-08-02: `aea/lab/dispatch_power.py`. R4b's POWER certificate - the half nobody had measured
 # while a council deliberated on the BOUND. A CLI instrument, deliberately unreachable by the wake.
 # +1 2026-08-02: `aea/tooling/page/assets.py`, from the page split. A generator module, human-run.

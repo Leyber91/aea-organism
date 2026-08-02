@@ -83,3 +83,48 @@ def honesty(lad: dict) -> list:
     for n in fc.get("unwired") or []:
         bad.append("a rung declares a capability nothing can reach: %s" % n)
     return bad
+
+
+# =================================================================================================
+# THE THIRD GATE, AND IT EXISTS BECAUSE THE GENERATOR SHIPPED AN UNPARSEABLE ASSET.
+#
+# A stylesheet block was appended to the wrong function and landed inside the CAPTIONS payload, so
+# `captions.js` began with a CSS rule. A SyntaxError aborts the whole script, `window.AEA` was never
+# assigned, and every one of the 32 controls clamped to frame 0 while the caption strip rendered
+# empty - on a page whose law is that an unmeasurable value shows a dash rather than a blank. It was
+# published. Two gates passed it: the privacy scan reads for leaks and the honesty gate reads the
+# ladder, and NEITHER OF THEM ASKS WHETHER THE THING IS A VALID FILE OF ITS OWN TYPE.
+#
+# The file was the symptom. The defect is a build that can emit a broken asset and report success,
+# so the check is structural: every emitted file must parse as what its extension claims.
+# =================================================================================================
+_CSS_START = ("/*", ".", "#", "@", "}", "-")
+
+
+def parses(name: str, text: str) -> list:
+    """What is wrong with this file AS THE TYPE ITS NAME CLAIMS. Empty means it is well formed."""
+    bad = []
+    if name.endswith(".js"):
+        # The failure mode that actually happened: CSS in a JS payload. A full JS parser is not
+        # available here, so detect the shape that broke it - a statement beginning like a selector.
+        for i, line in enumerate(text.splitlines(), 1):
+            t = line.strip()
+            if not t or t.startswith(("//", "/*", "*")):
+                continue
+            if t[0] in (".", "#", "@") and t.rstrip().endswith(("{", "}", ";")):
+                bad.append("%s:%d looks like CSS inside JavaScript: %s" % (name, i, t[:60]))
+                break
+        if text.count("{") != text.count("}"):
+            bad.append("%s: unbalanced braces (%d open, %d close)"
+                       % (name, text.count("{"), text.count("}")))
+    if name.endswith(".css"):
+        if text.count("{") != text.count("}"):
+            bad.append("%s: unbalanced braces (%d open, %d close)"
+                       % (name, text.count("{"), text.count("}")))
+        for kw in ("function ", "var ", "document.getElementById", "addEventListener"):
+            if kw in text:
+                bad.append("%s: looks like JavaScript inside a stylesheet (%s)" % (name, kw.strip()))
+                break
+    if name.endswith((".html", ".svg")) and text.count("<") < text.count(">") - 2:
+        bad.append("%s: markup looks truncated" % name)
+    return bad

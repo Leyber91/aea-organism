@@ -1,22 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 97,
-  "total_ticks": 280,
+  "boot_count": 109,
+  "total_ticks": 292,
   "last_brief_date": "2026-08-01",
   "consolidated_sessions": 23,
   "history": [
-    "2026-08-02 00:21:58 UTC AWAKE:brief FAIL ::   trust ledger     : produce_brief -> produce_brief: level 1 (DRAFT), streak 0, ",
-    "2026-08-02 00:23:24 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 82 memories from 32/23 sessions consolidate",
-    "2026-08-02 00:25:00 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:26:35 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 82 memories from 32/23 sessions consolidate",
-    "2026-08-02 00:27:24 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:28:57 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:29:51 UTC ASLEEP:consolidate FAIL ::   +0 semantic memories  |  store now 82 memories from 32/23 sessions consolidate",
-    "2026-08-02 00:32:29 UTC REFLECT:self FAIL :: REFLECT t6: 'Write a concise 10â€‘word tagline that captures the essence of' -> ",
-    "2026-08-02 00:53:01 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:53:51 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:54:48 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:55:39 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 00:56:19 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 00:56:51 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 00:58:00 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
@@ -34,9 +22,21 @@
     "2026-08-02 06:06:29 UTC LOOK:read_state ok :: KEYS: surfaced(148092), memory(35865), tick(3)\n\ntick=358\nsurfaced (most recent) ",
     "2026-08-02 06:07:07 UTC LOOK:my_record ok :: {\"rows\": 164, \"mine\": 148, \"by_cause\": {\"UNATTRIBUTABLE\": 26, \"OK\": 108, \"VERIFY",
     "2026-08-02 06:08:27 UTC LOOK:my_record ok :: {\"rows\": 165, \"mine\": 149, \"by_cause\": {\"UNATTRIBUTABLE\": 26, \"OK\": 109, \"VERIFY",
-    "2026-08-02 06:08:55 UTC LOOK:read_state ok :: KEYS: surfaced(149672), memory(36308), tick(3)\n\ntick=361\nsurfaced (most recent) "
+    "2026-08-02 06:08:55 UTC LOOK:read_state ok :: KEYS: surfaced(149672), memory(36308), tick(3)\n\ntick=361\nsurfaced (most recent) ",
+    "2026-08-02 19:33:56 UTC LOOK:read_state ok :: KEYS: surfaced(150169), memory(36442), tick(3)\n\ntick=362\nsurfaced (most recent) ",
+    "2026-08-02 19:34:40 UTC LOOK:read_state ok :: KEYS: surfaced(150649), memory(36598), tick(3)\n\ntick=363\nsurfaced (most recent) ",
+    "2026-08-02 19:35:11 UTC LOOK:read_state ok :: KEYS: surfaced(151182), memory(36673), tick(3)\n\ntick=364\nsurfaced (most recent) ",
+    "2026-08-02 19:35:49 UTC LOOK:read_state ok :: KEYS: surfaced(151719), memory(36783), tick(3)\n\ntick=365\nsurfaced (most recent) ",
+    "2026-08-02 19:36:59 UTC LOOK:read_state ok :: KEYS: surfaced(152159), memory(36907), tick(3)\n\ntick=366\nsurfaced (most recent) ",
+    "2026-08-02 19:37:31 UTC LOOK:read_state ok :: KEYS: surfaced(152739), memory(37090), tick(3)\n\ntick=367\nsurfaced (most recent) ",
+    "2026-08-02 19:38:50 UTC LOOK:read_state ok :: KEYS: surfaced(153199), memory(37121), tick(3)\n\ntick=368\nsurfaced (most recent) ",
+    "2026-08-02 19:39:20 UTC LOOK:read_state ok :: KEYS: surfaced(153793), memory(37281), tick(3)\n\ntick=369\nsurfaced (most recent) ",
+    "2026-08-02 19:40:33 UTC LOOK:read_state ok :: KEYS: surfaced(154269), memory(37403), tick(3)\n\ntick=370\nsurfaced (most recent) ",
+    "2026-08-02 19:41:14 UTC LOOK:read_state ok :: KEYS: surfaced(154817), memory(37543), tick(3)\n\ntick=371\nsurfaced (most recent) ",
+    "2026-08-02 19:41:26 UTC LOOK:read_state ok :: KEYS: surfaced(154980), memory(37556), tick(3)\n\ntick=372\nsurfaced (most recent) ",
+    "2026-08-02 19:42:21 UTC LOOK:read_state ok :: KEYS: checks(5375), at(22), schema(17), pass(5), seconds(4)\n\nseconds=77.6\npass=f"
   ],
-  "last_wake_why": "the wake chose read_your_state (1s ago)",
+  "last_wake_why": "the wake chose read_your_state (2s ago)",
   "brief_fails": 3,
   "_brief_runs_seen": 107,
   "proposed_move": {
@@ -49,7 +49,7 @@
     "wake": "LOOK:read_state",
     "ladder": "REFLECT:self",
     "differed": true,
-    "why": "the wake chose read_your_state (1s ago)"
+    "why": "the wake chose read_your_state (2s ago)"
   },
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",
@@ -64,6 +64,6 @@
     "refused": "vary_own_knob is DRAFT - not granted",
     "why": "unstick"
   },
-  "_last_decision": 361,
-  "_said": "Read the exact hades config from `aea_state.json`, fix it surgically to make `hades=verified`, then run `produce_brief`."
+  "_last_decision": 373,
+  "_said": "Read `selfcheck.json` for the `hades` verdict, then act on it."
 }

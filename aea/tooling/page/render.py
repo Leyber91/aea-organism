@@ -16,8 +16,8 @@ from __future__ import annotations
 import json
 import time
 
-from aea.tooling.page import (assets, axes, climb, graph, layout, marks, panels,
-                              sources, style, template)
+from aea.tooling.page import (assets, axes, climb, graph, layout, marks, overture,
+                              panels, sources, style, template)
 
 
 def build_site() -> dict:
@@ -55,6 +55,8 @@ def build_site() -> dict:
         rrail=axes.rung_rail(rungs, per_rung, rcum, rest),
         caps=caps,
         climb_html=climb_html, n_rungs=len(rungs),
+        overture=overture.overture(lad, org, T),
+        coda=overture.coda(lad),
         step_rows=panels.step_rows(asm),
         growth=panels.growth(sources.history()),
         live_n=len(org["live"]), fn_n=org["functions"], cen=cen,
@@ -66,6 +68,7 @@ def build_site() -> dict:
     return {
         "index.html": html,
         "assets/base.css": assets.base_css(),
+        "assets/overture.css": overture.OVERTURE_CSS,
         "assets/frames.css": style.frame_rules(len(rungs), maxd, climb_css),
         # THREE SCRIPTS, IN LOAD ORDER: what the page knows, what it does, how it narrates.
         # Only the first changes when the entity ticks, so a behaviour change now has a

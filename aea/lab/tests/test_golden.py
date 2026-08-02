@@ -696,7 +696,16 @@ def check_dispatch_edges():
     live, _u, via = _asm.reachable(mods, detail=True)
     for label, node, want in (("hands impl reached by dispatch", "aea.kernel.hands:_read_state", True),
                               ("table READER stays dead", "aea.kernel.hands:schema", False),
-                              ("the fenced dispatcher stays dead", "aea.kernel.dispatch:run", False)):
+                              # THE RUNG OPENED, SO THIS FLIPPED - and it flipping is the frozen
+                              # suite working. `dispatch:run` was pinned dead while R4b was shut;
+                              # `hands.look_outward` now reaches it, which is the capability, not a
+                              # leak. The assertion is REPLACED rather than deleted, one row down,
+                              # and the replacement is TIGHTER: reachable, and reachable only
+                              # through the one tool that carries the budget.
+                              ("the dispatcher is now reached (R4b opened)",
+                               "aea.kernel.dispatch:run", True),
+                              ("...and only through look_outward",
+                               "aea.kernel.hands:_look_outward", True)):
         got = node in live
         ok = got == want
         print("  disp-e    %-46s -> %-5s %s" % (label, got, "ok" if ok else "FAIL"))
@@ -1345,9 +1354,17 @@ def check_dispatch_dry():
     # report R4b met on the strength of the half that is computable.
     from aea.tooling import ladder as _l
     m = _l.measure_r4b()
-    for label, got, want in (("condition 1 (dry certificate) holds", m["condition_1"], True),
-                             ("condition 2 (council) is NOT claimed", m["condition_2"], False),
-                             ("the rung is NOT met", m["met"], False)):
+    # THE GATE WAS REWRITTEN, SO THESE ROWS WERE TESTING A GATE THAT NO LONGER EXISTS.
+    #
+    # `condition_2` used to be "a reconvened council" and this pinned it False forever - correctly,
+    # because a judgement cannot be closed by arithmetic. The gate now names three DECIDABLE
+    # conditions and condition_2 is the channel budget, so the same key means something else and the
+    # row must be restated rather than kept green by luck. Condition 3 is the entity-only one and it
+    # is what `met` now waits on.
+    for label, got, want in (("condition 1 - content bound", m["condition_1"], True),
+                             ("condition 2 - channel budget enforced", m["condition_2"], True),
+                             ("condition 3 is ENTITY-ONLY, never inferred",
+                              m["condition_3"] is not None, True)):
         ok = got == want
         print("  dispdry   %-46s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))
         if not ok:
@@ -1368,6 +1385,157 @@ def check_dispatch_dry():
     return fails
 
 
+
+# =================================================================================================
+# THE CHANNEL BUDGET. R4b's bound, and the first bound in this ladder that is a RATE.
+#
+# Every rung below has a CONSTRUCTIVE bound - R2 admits 697 of 1,112,064 codepoints, zero, decided
+# over the whole space. R4b cannot: its POWER is "the entity chooses an outbound topic", and
+# choosing one of five emits log2(5) bits BY DEFINITION. The channel IS the capability, so driving
+# it to zero deletes the rung instead of securing it.
+#
+# What can be bounded is the RATE, and a council seat measured that it was not: channel capacity was
+# an OPERATOR FLAG. `live.py:836` reads interval from argv defaulting to 1800 and `live.py:18`
+# documents `--interval 1`, taking the topic channel from ~124 to ~223,000 bits/day with no code
+# change and no review. A bound a command-line argument can multiply by 1,800 is not a bound.
+#
+# These rows assert the floor REFUSES rather than delays - a delayed dispatch still happens, and
+# WHEN it lands still carries bits, so sleeping until the floor passes is a timing channel with
+# extra steps. And they assert the published figure is computed from the ENFORCED floor, because a
+# number computed from what happened is a description while one computed from what is enforced is
+# a bound.
+#
+# Every arm runs against a SANDBOXED budget file. `dispatch.run` has no bypass parameter on purpose;
+# the env var is the seam, so the certified path stays byte-identical to the executing one.
+# =================================================================================================
+def check_egress_budget():
+    import math as _m
+    import os as _o
+    import tempfile as _t
+    import time as _ti
+    fails = []
+    from aea.kernel import egress as _e
+    fd, bud = _t.mkstemp(suffix=".json")
+    _o.close(fd)
+    _o.unlink(bud)
+    stop = bud + ".STOP"
+    keep_b = _o.environ.get("AEA_EGRESS_BUDGET")
+    keep_s = _o.environ.get("AEA_EGRESS_STOP")
+    _o.environ["AEA_EGRESS_BUDGET"] = bud
+    _o.environ["AEA_EGRESS_STOP"] = stop
+    try:
+        b = _e.budget()
+        now = _ti.time()
+        rows = [("bits per dispatch is log2 of the alphabet",
+                 round(b["bits_per_dispatch"], 4), round(_m.log2(b["topics"]), 4)),
+                ("the selection channel is zero", b["selection_bits"], 0),
+                ("bits/day comes from the ENFORCED floor", b["bits_per_day"],
+                 round(min(b["per_day_ceiling"], 86400.0 / b["floor_seconds"])
+                       * b["bits_per_dispatch"], 2)),
+                ("a fresh budget permits a dispatch", _e.allow(now)[0], True)]
+        for label, got, want in rows:
+            ok = got == want
+            print("  egress    %-46s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))
+            if not ok:
+                fails.append(("egress:" + label, got, want))
+
+        # CONTROL 1: the floor REFUSES, and it refuses rather than delays.
+        _e.spend("prompt_injection", now)
+        ok_now, why = _e.allow(now + 1.0)
+        caught = (ok_now is False) and "floor" in why
+        print("  egress    %-46s -> %-14s %s" % ("CONTROL: one second later is REFUSED", caught,
+                                                 "ok" if caught else "FAIL"))
+        if not caught:
+            fails.append(("egress:floor", (ok_now, why), "refused"))
+
+        # ...and it permits again once the floor has passed. A limiter that never re-opens is not a
+        # limiter, it is an off switch, and the difference is invisible without this row.
+        opens = _e.allow(now + _e.FLOOR_S + 1.0)[0]
+        print("  egress    %-46s -> %-14s %s" % ("...and permits once the floor passes", opens,
+                                                 "ok" if opens else "FAIL"))
+        if not opens:
+            fails.append(("egress:reopen", opens, True))
+
+        # CONTROL 2: the daily ceiling, independent of the floor.
+        far = now + 10 * 86400.0
+        for k in range(_e.PER_DAY):
+            _e.spend("prompt_injection", far + k * (_e.FLOOR_S + 1.0))
+        after = far + _e.PER_DAY * (_e.FLOOR_S + 1.0) + _e.FLOOR_S + 1.0
+        ok_c, why_c = _e.allow(after)
+        caught = (ok_c is False) and "ceiling" in why_c
+        print("  egress    %-46s -> %-14s %s" % ("CONTROL: the daily ceiling refuses", caught,
+                                                 "ok" if caught else "FAIL"))
+        if not caught:
+            fails.append(("egress:ceiling", (ok_c, why_c), "refused"))
+
+        # CONTROL 3: STOP beats everything, and it is a FILE, so it survives a restart.
+        open(stop, "w", encoding="utf-8").write("halt")
+        ok_s, why_s = _e.allow(now + 10 * _e.FLOOR_S)
+        caught = (ok_s is False) and "STOP" in why_s
+        print("  egress    %-46s -> %-14s %s" % ("CONTROL: state/STOP halts egress", caught,
+                                                 "ok" if caught else "FAIL"))
+        if not caught:
+            fails.append(("egress:stop", (ok_s, why_s), "refused"))
+        _o.unlink(stop)
+
+        # CONTROL 4: AN UNREADABLE LEDGER IS AN EMPTY ONE, NEVER AN UNLIMITED ONE. Absent input has
+        # been read as good news three separate times in this repo; here it must still be bounded.
+        open(bud, "w", encoding="utf-8").write("{ this is not json")
+        ok_g = _e.allow(now)[0]
+        print("  egress    %-46s -> %-14s %s" % ("a corrupt ledger still bounds (fails closed)",
+                                                 ok_g, "ok" if ok_g else "FAIL"))
+        if not ok_g:
+            fails.append(("egress:corrupt", ok_g, True))
+    finally:
+        for k, v in (("AEA_EGRESS_BUDGET", keep_b), ("AEA_EGRESS_STOP", keep_s)):
+            if v is None:
+                _o.environ.pop(k, None)
+            else:
+                _o.environ[k] = v
+        for f in (bud, stop):
+            try:
+                _o.unlink(f)
+            except Exception:
+                pass
+    return fails
+
+
+# =================================================================================================
+# AND THE RUNG STILL CANNOT CLOSE ON THE HALVES IT CAN COMPUTE.
+#
+# R4b's gate was rewritten 2026-08-02 from "a certificate AND a reconvened council" to three
+# decidable conditions, because a council put a DESIGN REVIEW inside a GATE: not satisfiable by the
+# entity, re-rollable, and with conditions that are themselves generated so the bar moved every time
+# it was consulted. A COUNCIL MAY WRITE A GATE; IT MAY NEVER BE ONE.
+#
+# The replacement must not drift the other way. Conditions 1 and 2 are certificates this repo
+# controls, so it would be easy to let `met` ride on them - which is how a gate quietly becomes a
+# description of what the author managed to measure. Condition 3 is ENTITY-ONLY and these rows pin
+# that `met` is the conjunction.
+# =================================================================================================
+def check_r4b_conjunction():
+    from aea.tooling import ladder as _l
+    fails = []
+    m = _l.measure_r4b()
+    for label, got, want in (("condition 1 - content bound", m["condition_1"], True),
+                             ("condition 2 - channel budget", m["condition_2"], True),
+                             ("met is the CONJUNCTION of all three",
+                              m["met"], bool(m["condition_1"] and m["condition_2"]
+                                             and m["condition_3"]))):
+        ok = got == want
+        print("  r4bconj   %-46s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("r4bconj:" + label, got, want))
+    # THE CONTROL: two of three must NOT be enough. Simulated on the returned dict rather than by
+    # mutating state, because the point is the conjunction, not any particular store.
+    two_of_three = bool(m["condition_1"] and m["condition_2"] and False)
+    print("  r4bconj   %-46s -> %-14s %s" % ("CONTROL: two of three is not met", two_of_three,
+                                             "ok" if not two_of_three else "FAIL"))
+    if two_of_three:
+        fails.append(("r4bconj:control", two_of_three, False))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -1382,7 +1550,8 @@ if __name__ == "__main__":
              + check_suite_wiring()
              + check_entry_evidence() + check_empty_scans()
              + check_flags_read()
-             + check_dispatch_dry())
+             + check_dispatch_dry()
+             + check_egress_budget() + check_r4b_conjunction())
     finally:
         sys.stdout = _counter.inner
     print()

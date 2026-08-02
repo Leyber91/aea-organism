@@ -297,6 +297,44 @@ def _web_search_scraper_dead(query: str = "", n: str = "5") -> str:
     return "\n".join(out)[:4000]
 
 
+def _look_outward(topic: str = "") -> str:
+    """R4b: the entity picks a topic NAME, code supplies the query. Never the other way round.
+
+    Called with no topic it returns the menu - which is how a closed table stays discoverable
+    without anything hardcoding its contents in a prompt (law S1: derive the map, never draw it).
+    Called with a name it dispatches, and `dispatch.run` checks the egress budget before anything
+    leaves and REFUSES rather than delays.
+
+    `max_fetch` is deliberately NOT a parameter. A model-supplied count is unary encoding read
+    straight off the other end's access log - log2(MAX_FETCH+1) bits per dispatch - and it is the
+    one-line change a future author is most likely to make. The stated POWER says the entity chooses
+    the topic; it never says it chooses the second thing."""
+    from aea.kernel import dispatch, egress
+    names = dispatch.topics()
+    t = str(topic or "").strip()
+    if not t:
+        st = egress.state()
+        return ("Topics I may look at: %s." + chr(10) + "Right now: %s%s. Budget: %d of %d used "
+                "in 24h, %.2f bits/day maximum.") % (
+                    ", ".join(names),
+                    "permitted" if st["permitted_now"] else "REFUSED",
+                    "" if st["permitted_now"] else " - " + str(st["refused_because"]),
+                    st["spent_24h"], st["budget"]["per_day_ceiling"], st["budget"]["bits_per_day"])
+    try:
+        r = dispatch.run(t)
+    except dispatch.Refused as e:
+        return "REFUSED: %s" % e
+    if r.get("error"):
+        return "no result: %s" % r["error"]
+    got = r.get("fetched") or []
+    head = "%s - searched %r, %d allowlisted result%s, %d fetched" % (
+        r["plan"]["topic"], r["plan"]["query"], len(r.get("results") or []),
+        "" if len(r.get("results") or []) == 1 else "s", len(got))
+    nl = chr(10)
+    body = (nl + nl).join("%s%s%s" % (x["url"], nl, str(x["text"])[:1200]) for x in got[:3])
+    return (head + ((nl + nl) + body if body else ""))[:6000]
+
+
 def _list_tools(_unused: str = "", _zone: str = "public", _allow=None) -> str:
     """THE ENTITY READS ITS OWN HANDS. What it can do, what it may do here, and what is refused.
 
@@ -746,6 +784,31 @@ TOOLS = {
         params={"topic": "structure | laws | capabilities | invariants"}, required=[],
         note="local read of stores the system already maintains; the seam that lets a person talk "
              "TO the architecture instead of to a companion that happens to run beside it"),
+    # =============================================================================================
+    # R4b's TOOL. THE ENTITY CHOOSES *WHICH* AND *WHEN*, NEVER *WHAT* IN ITS OWN WORDS.
+    #
+    # `web_search` above is the widest outbound channel here: the model writes a free-text query, so
+    # anything in its context can leave in the query string (law B3). Four council seats refused that
+    # shape for the unattended wake, unanimously, three times, and were right each time.
+    #
+    # This is the narrow form. The argument is a topic NAME selected from `dispatch.TOPICS` - five
+    # entries, each a literal query typed by a human, no interpolation and no slots. `dispatch.plan`
+    # raises `Refused` for anything not in the table, and there is no sanitising branch: a sanitiser
+    # is a claim about what it caught, a finite domain is a claim about what can exist.
+    #
+    # The bound is a RATE and that is the honest shape - choosing one of five topics emits log2(5)
+    # bits by definition, so the channel IS the capability. `egress.py` enforces the floor and the
+    # daily ceiling from on-disk state, which is what makes 27.86 bits/day a bound and not a
+    # description.
+    # =============================================================================================
+    "look_outward": dict(
+        capability="gather_public", zones=("public",), outbound=True, impl=_look_outward,
+        desc="Look outside the machine on ONE of a fixed list of topics. You choose WHICH topic and "
+             "WHEN; you never write the query. Call it with no argument to see the list.",
+        params={"topic": "one of the topic names; call with none to list them"}, required=[],
+        note="PUBLIC ONLY and rate-bounded in code: the query is a literal from a closed table, so "
+             "no byte you wrote can leave in it. What CAN leave is which topic and when, which is "
+             "why egress.py enforces a floor and a daily ceiling that survive a restart"),
     "list_tools": dict(
         capability=None, zones=ZONES, outbound=False, impl=_list_tools, wants_context=True,
         desc="List your own tools: what you can actually do in this seat right now, and what is "
