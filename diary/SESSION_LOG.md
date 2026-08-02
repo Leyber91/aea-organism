@@ -2815,3 +2815,36 @@ byte for byte, and neither `ELEVEN` nor `None/8` survives in the published bytes
   1,187 dark ones with nothing telling a stranger what they are looking at. The probe frame currently
   lives only in the climb's intro; the open question is whether it should carry the top of the page.
 - Item 4, the upper-ladder re-gate (R4-R8), unchanged as the thing that decides the path.
+
+---
+
+## 2026-08-02 (later) - R4a PROVEN, AND THE STRUCTURE CONTRACT WRITTEN DOWN
+
+**DID.** R4a PERCEPTION IS A CHOICE closed at **8/8 chosen-with-reason, 3 distinct sources**. Six
+rungs proven: R0, R1, R1.5, R2, R3, R4a.
+
+It was never a capability problem. The wake produced ONE decision (#350), live carried it out, and
+nothing ever restarted the deliberating loop - `controlroom.py:699` spawns `aea.loop.live` and
+NOTHING anywhere spawns `aea.loop.aea`. R0's 246.9 hours certified a body whose mind had spoken
+once. Alternating the two loops took the counter 0 -> 8 in six rounds.
+
+Two blockers removed on the way: `--once` was in KNOWN_FLAGS, in the docstring, and read by nothing,
+so it ran one tick and slept the full 1800s default (six rounds of a live run, ten minutes each,
+all of them the flag). And two 400-token ceilings in the rod grader that scored a truncated
+reasoning rod as `no_call: cannot call tools`; `_chat` now omits the field entirely and
+`finish_reason` travels with the grade.
+
+**LOCKED.** `diary/THE_STRUCTURE_CONVERSATION.md` - the engineering contract between a model's
+output and code that trusts it. Measured, not asserted: structure enforcement across 3 models x 4
+modes (11/12 valid first try), the validator's three stages, the write-ahead ordering, the four
+memory stores with their lifetimes, and **the seven questions to answer in writing before starting
+any rung**. Read it at the start of a rung.
+
+**NEXT.** Remove R4a's asterisk. Its eight occasions were caused by a script alternating the loops
+by hand, so the rung is proven on a mind a human breathes for. Three pieces, in order:
+1. `live` spawns the wake when it has nothing to react to - the one missing call site
+2. `hb["next_wake_s"]`, computed by the entity from state it already keeps (107 briefs seen against
+   22 consolidated is an unused sleep-pressure signal)
+3. clamped - floor 60s, a wakes-per-day budget the entity cannot raise, `state/STOP` before each wake
+
+Then the path object on top of a body that breathes. Then the 21 unverified audit findings.

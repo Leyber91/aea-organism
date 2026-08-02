@@ -1,7 +1,7 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-02 05:12 UTC",
- "seconds": 43.3,
+ "at": "2026-08-02 06:15 UTC",
+ "seconds": 53.2,
  "pass": true,
  "checks": [
   {
@@ -182,9 +182,9 @@
    "detail": "0 failures"
   },
   {
-   "check": "124 frozen behaviours",
+   "check": "127 frozen behaviours",
    "pass": true,
-   "detail": "all 124 hold"
+   "detail": "all 127 hold"
   },
   {
    "check": "house style",
@@ -217,7 +217,7 @@
   {
    "check": "defect ratchet",
    "pass": true,
-   "detail": "count-threshold 0, expiring-only-retry 0, global-write 7, import-bound-write 43, import-time-work 4, invented-ceiling 80, mutable-module-state 6, scope-violation 0, silent-default 32, unredirectable-store 7"
+   "detail": "count-threshold 0, expiring-only-retry 0, global-write 7, import-bound-write 43, import-time-work 4, invented-ceiling 77 (was 80), mutable-module-state 6, scope-violation 0, silent-default 32, unredirectable-store 7"
   }
  ]
 }
