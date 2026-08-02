@@ -107,7 +107,7 @@ def check_imports() -> dict:
 # broke the gate - a maintenance trap that punishes the exact thing we want to happen. A regex
 # alone would let a candidate DELETE behaviours and still pass, so the floor is the real check:
 # the suite must report at least this many. Raise it when behaviours are added on purpose.
-FROZEN_FLOOR = 156         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
+FROZEN_FLOOR = 163         # +3: a decision is carried out once          # +10: the decision chain, frozen end to end 2026-08-01
 # +3 2026-08-02: every flag `live` ACCEPTS must be READ by live.main. `--once` was in KNOWN_FLAGS,
 # in the docstring, and read by nothing - it ran one tick then slept the full 1800s default, so
 # every caller hung or was killed and recorded as a failure. Unknown flags fail closed; a known

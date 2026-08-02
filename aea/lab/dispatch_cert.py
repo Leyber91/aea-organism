@@ -242,7 +242,13 @@ def _certify_inner() -> dict:
 
     n_topics = len(dispatch.topics())
     n_req = sum(r["requests"] for r in rows)
+    import time as _time
     return dict(
+        # WHEN IT WAS TAKEN. A certificate with no timestamp cannot be checked for staleness, so
+        # anything that keys a permission on it must treat it as expired - which is exactly what
+        # hands._zones_for did on the first run, correctly, and it is how this omission was found.
+        at=_time.time(),
+        at_iso=_time.strftime('%Y-%m-%d %H:%M:%S UTC', _time.gmtime()),
         claim="over every reachable dispatch, no byte of any outbound request originates from "
               "model output. Enumerated over a finite domain, not sampled.",
         topics=n_topics, outbound_requests=n_req,

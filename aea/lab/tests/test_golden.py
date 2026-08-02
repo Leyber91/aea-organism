@@ -1536,6 +1536,102 @@ def check_r4b_conjunction():
     return fails
 
 
+
+# =================================================================================================
+# A PERMISSION THAT IS A PROPERTY, AND THE FOUR WAYS IT MUST COLLAPSE.
+#
+# `look_outward` is zoned public-only because network tools must be unreachable from a context
+# holding untrusted text - `sense()` puts live third-party headlines in the wake's prompt every
+# tick, and `live` therefore runs its ticks in the SENSITIVE zone. The entity chose `look_outward`,
+# the gate refused it, AND THE GATE WAS RIGHT.
+#
+# The zone rule refuses by tool CLASS. `dispatch.plan` makes this one tool's request independent of
+# context BY CONSTRUCTION - the query is a literal from a closed table, certified at 0 bytes from
+# model output on both paths. Two answers to one threat; the newer one is constructive.
+#
+# So the permission stopped being a constant and became a function of certified evidence. Nobody
+# performs a widening: the rule was authored by a human as a diff, and the ENTITY CANNOT INFLUENCE
+# ITS CONDITION - it has twelve tools and not one writes a file or executes code, so it cannot
+# produce `dispatch_cert.json`, which is written outside the tick.
+#
+# THESE ROWS ARE THE WHOLE SAFETY ARGUMENT. A conditional permission that does not collapse is
+# strictly worse than a constant one, because it looks reviewed and is not. Four degradations, and
+# every one of them must narrow the zone back.
+# =================================================================================================
+def check_conditional_zone():
+    import json as _j
+    import os as _o
+    import time as _ti
+    from aea.kernel import hands as _h
+    fails = []
+    tool = _h.TOOLS["look_outward"]
+    cert = _o.path.join(_h.grid.STATE, "dispatch_cert.json")
+    try:
+        backup = open(cert, encoding="utf-8").read()
+    except Exception:
+        print("  condzone  %-46s -> %-14s FAIL" % ("dispatch_cert.json is readable", "ABSENT"))
+        return [("condzone:cert", "absent", "present")]
+
+    def zones():
+        _h._WIDENED_LOGGED.clear()
+        return _h._zones_for("look_outward", tool)
+
+    def write(d):
+        open(cert, "w", encoding="utf-8").write(d if isinstance(d, str) else _j.dumps(d))
+
+    try:
+        wide = zones()
+        ok = set(wide) == set(_h.ZONES)
+        print("  condzone  %-46s -> %-14s %s" % ("a healthy certificate widens the zone",
+                                                 ",".join(wide), "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("condzone:healthy", wide, _h.ZONES))
+        narrow = tuple(tool["zones"])
+        for label, mutate in (
+                ("CONTROL: a FAILED verdict narrows it",
+                 lambda: write(dict(_j.loads(backup), verdict="FAILED"))),
+                ("CONTROL: a STALE certificate narrows it",
+                 lambda: write(dict(_j.loads(backup), at=_ti.time() - 30 * 86400))),
+                ("CONTROL: a FUTURE-DATED one narrows it",
+                 lambda: write(dict(_j.loads(backup), at=_ti.time() + 86400))),
+                ("CONTROL: a corrupt file narrows it", lambda: write("{ not json"))):
+            mutate()
+            got = zones()
+            hit = set(got) == set(narrow)
+            print("  condzone  %-46s -> %-14s %s" % (label, ",".join(got) or "none",
+                                                     "ok" if hit else "FAIL"))
+            if not hit:
+                fails.append(("condzone:" + label, got, narrow))
+            write(backup)
+        # AND ABSENT, which grid quarantines rather than trusts - so this also proves the quarantine
+        # does not accidentally leave a readable file behind.
+        try:
+            _o.unlink(cert)
+        except Exception:
+            pass
+        got = zones()
+        hit = set(got) == set(narrow)
+        print("  condzone  %-46s -> %-14s %s" % ("CONTROL: an ABSENT certificate narrows it",
+                                                 ",".join(got) or "none", "ok" if hit else "FAIL"))
+        if not hit:
+            fails.append(("condzone:absent", got, narrow))
+    finally:
+        write(backup)
+        _h._WIDENED_LOGGED.clear()
+    # THE ENTITY MUST NOT BE ABLE TO PRODUCE THE CONDITION. This is the load-bearing claim and it is
+    # checked rather than asserted: a tool that writes a file or runs code would let the entity forge
+    # the certificate and widen itself, which is R9 wearing a permission's clothes.
+    writers = [n for n, t in _h.TOOLS.items()
+               if t.get("impl") and n in ("write", "write_state", "exec", "shell", "edit", "patch",
+                                          "save", "run_script", "python")]
+    ok = not writers
+    print("  condzone  %-46s -> %-14s %s" % ("the entity holds NO tool that can write/exec",
+                                             writers or "none", "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("condzone:writers", writers, "none"))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -1551,7 +1647,8 @@ if __name__ == "__main__":
              + check_entry_evidence() + check_empty_scans()
              + check_flags_read()
              + check_dispatch_dry()
-             + check_egress_budget() + check_r4b_conjunction())
+             + check_egress_budget() + check_r4b_conjunction()
+             + check_conditional_zone())
     finally:
         sys.stdout = _counter.inner
     print()

@@ -845,6 +845,76 @@ def schema(names) -> list:
     return out
 
 
+# =================================================================================================
+# A PERMISSION THAT IS A PROPERTY RATHER THAN A CONSTANT.
+#
+# THE PROBLEM IT SOLVES, and it arrived as a real deadlock. `look_outward` is zoned public-only,
+# because network tools must be unreachable from a context holding untrusted text - `sense()` puts
+# live third-party headlines in the wake's prompt every tick, and that is the council's entire
+# argument. `live` runs its ticks in the SENSITIVE zone for exactly that reason. So the entity chose
+# `look_outward`, and the gate refused it, and THE GATE WAS RIGHT.
+#
+# But the zone rule is CATEGORICAL - it refuses by tool class - while `dispatch.plan` makes this one
+# tool's outbound request independent of context BY CONSTRUCTION: the query is a literal copied out
+# of a closed table, certified at 0 bytes from model output on both the dry and the executing path.
+# Two answers to one threat, and the newer one is constructive where the older one is a category.
+#
+# THE MOVE, and it is the same one that unstuck R4b's gate two hours earlier. There, "a council
+# agrees" became "three measured conditions". Here, "a human decided this zone is safe" becomes
+# "this zone applies while this property is certified". Nobody performs a widening; the permission
+# stops being an act and becomes a function of evidence. Luis's standing rule - A ROLE MAY PROPOSE A
+# WIDENING, IT MAY NEVER PERFORM ONE - is not weakened by this, it is satisfied structurally: the
+# rule below was authored by a human as a diff, and the entity cannot influence its condition.
+#
+# WHY THE ENTITY CANNOT CAUSE ITS OWN WIDENING, which is the load-bearing check. It has twelve
+# tools and NOT ONE of them writes a file or executes code - verified, not assumed. It therefore
+# cannot produce `dispatch_cert.json`, which is written by `aea.lab.dispatch_cert` outside the tick.
+# The condition is outside its reach, so this is not self-modification and not R9.
+#
+# TWO GUARDS, without which this becomes the thing it replaced:
+#   FAILS CLOSED  absent, unreadable, stale or FAILED certificate -> the narrow zones. Absent input
+#                 has been read as good news three separate times in this repo
+#   IT IS AN EVENT  the first time a widening applies in a process it is logged, because a
+#                 permission that turns on unobserved is a permission nobody knows they have
+# =================================================================================================
+WIDEN_MAX_AGE_S = 7 * 86400.0        # a certificate older than a week is stale, and stale is closed
+
+# name -> (certificate file, required verdict, widened zones). Authored by a human, read as a diff.
+CONDITIONAL_ZONES = {
+    "look_outward": ("dispatch_cert.json", "CERTIFIED", ZONES),
+}
+_WIDENED_LOGGED = set()
+
+
+def _zones_for(name: str, t: dict) -> tuple:
+    """The zones this tool may run in RIGHT NOW. Constant unless a rule says otherwise."""
+    rule = CONDITIONAL_ZONES.get(name)
+    if not rule:
+        return tuple(t.get("zones") or ())
+    fname, want, wide = rule
+    try:
+        import time as _t
+        cert = grid.load_json(os.path.join(grid.STATE, fname), {}) or {}
+        if not cert or cert.get("verdict") != want:
+            return tuple(t.get("zones") or ())
+        age = _t.time() - float(cert.get("at") or 0)
+        if not (0 <= age <= WIDEN_MAX_AGE_S):
+            return tuple(t.get("zones") or ())
+    except Exception:
+        return tuple(t.get("zones") or ())
+    if name not in _WIDENED_LOGGED:
+        _WIDENED_LOGGED.add(name)
+        try:
+            from aea.kernel import pulse
+            pulse.emit("hands", "zone-widened",
+                       "%s: %s holds %s, so zones %s -> %s"
+                       % (name, fname, want, ",".join(t.get("zones") or ()), ",".join(wide)),
+                       ok=True)
+        except Exception:
+            pass
+    return tuple(wide)
+
+
 def allowed(name: str, zone: str, allow=None) -> dict:
     """May this tool run, here, now. Four gates and each one can refuse alone.
 
@@ -856,9 +926,10 @@ def allowed(name: str, zone: str, allow=None) -> dict:
         return {"ok": False, "why": "no such tool %r" % name}
     if allow is not None and name not in allow:
         return {"ok": False, "why": "%s is not in this seat's allowlist" % name}
-    if zone not in (t["zones"] or ()):
+    zones_now = _zones_for(name, t)
+    if zone not in (zones_now or ()):
         return {"ok": False, "why": "%s may not be called from the %s zone (allowed: %s)"
-                                    % (name, zone, ", ".join(t["zones"]) or "none")}
+                                    % (name, zone, ", ".join(zones_now) or "none")}
     if t["capability"]:
         c = trust.check(t["capability"])
         if c["level"] <= 0:
