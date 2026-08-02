@@ -287,6 +287,65 @@ def standing(state: dict) -> str:
             line += f" | a part resolved this before: {str(parts[0].get('name'))[:40]}"
         lines.append(line)
 
+    # THE THIRD UNANSWERABLE CONDITION, closed the same way as the two below it.
+    #
+    # `decide.WHEN["look_outward"]` says: choose this when what you need is NOT in your own state.
+    # That is a question about the record, and the record was not in the prompt - so the entity was
+    # being asked to judge a quantity it could not see, which is the exact defect this function was
+    # written to close for `brief` and `consolidate`. MEASURED before this line existed: 14
+    # consecutive wake decisions, every one `read_your_state`, and ZERO of them mentioning anything
+    # outside the machine. It was not declining to look outward; it had no way to notice the option
+    # applied.
+    #
+    # THIS SURFACES A FACT, NOT AN INSTRUCTION, and the distinction is the whole justification. "You
+    # hold no evidence from outside" is true, checkable, and about the entity's own record - the
+    # same class as "40 notes are undistilled". It does not say to look, and the entity still has to
+    # decide a topic is worth thirty minutes of an irreversible budget. Hiding a real gap in its
+    # record would be the dishonest option, not surfacing it.
+    #
+    # It disappears the moment there IS outward evidence, so it cannot become a standing nag.
+    try:
+        import os as _os
+        from aea.kernel import egress, grid as _g
+        seen = 0
+        _p = _os.path.join(str(_g.STATE), "hands_ledger.jsonl")
+        if _os.path.exists(_p):
+            import json as _j
+            for _l in open(_p, encoding="utf-8", errors="replace"):
+                # PARSED, NOT SUBSTRING-MATCHED, and the first two versions were both wrong.
+                #
+                # v1 tested `'"look_outward"' in line`, which counted probes I ran while building
+                # the tool - so it would have told the entity it held outward evidence somebody else
+                # fetched. v2 added `'"src": "wake"' in line` and got WORSE: a substring matches
+                # anywhere in the row, so any tick whose RESULT TEXT mentions look_outward - a
+                # `list_tools` listing, a `read_state` of a file naming it - counted as a dispatch.
+                # It reported 11 when the true answer was 0.
+                #
+                # A substring test standing in for a structured one, in the line written to close a
+                # gap discovered the same way. The fields are `tool` and `src`; test those.
+                try:
+                    _r = _j.loads(_l)
+                except Exception:
+                    continue
+                if _r.get("tool") == "look_outward" and _r.get("src") == "wake":
+                    seen += 1
+        if not seen:
+            st = egress.state()
+            if st["permitted_now"]:
+                # INSERTED HIGH, NOT APPENDED. This block is hard-capped at 620 chars and was
+                # already exactly full, so an appended line is a line the wake never sees - which
+                # would have made the whole edit a no-op that looked applied. The cap is correct and
+                # the instruction beside it is "replace noise with signal instead of buying more
+                # room": an entire CLASS of evidence the record lacks outranks a scheduling detail
+                # like the date of the last brief. Second position, behind a genuine stuck
+                # capability, which is the only thing more urgent than a structural gap.
+                lines.insert(min(1, len(lines)),
+                             "- your record holds NOTHING from outside this machine: 0 outward "
+                             "looks ever, %d of %d budget unspent today"
+                             % (st["remaining"], st["budget"]["per_day_ceiling"]))
+    except Exception:
+        pass
+
     # THE TWO QUANTITIES `decide.WHEN` ASKS ABOUT. Without these the conditions are unanswerable.
     try:
         from aea.loop import live

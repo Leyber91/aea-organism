@@ -1,16 +1,10 @@
 {
   "alive_since": "2026-07-10 20:08:57 UTC",
-  "boot_count": 109,
-  "total_ticks": 292,
+  "boot_count": 115,
+  "total_ticks": 298,
   "last_brief_date": "2026-08-01",
   "consolidated_sessions": 23,
   "history": [
-    "2026-08-02 00:56:19 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:56:51 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:58:00 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:58:28 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 00:58:56 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
-    "2026-08-02 01:27:41 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 05:11:30 UTC LOOK:my_record ok :: {\"rows\": 155, \"mine\": 139, \"by_cause\": {\"UNATTRIBUTABLE\": 26, \"OK\": 100, \"VERIFY",
     "2026-08-02 05:22:03 UTC LOOK:what_to_try ok :: 1. read-the-error-do-not-count-it: Read the message, not the status. Quote it. D",
     "2026-08-02 05:32:38 UTC LOOK:my_record ok :: {\"rows\": 157, \"mine\": 141, \"by_cause\": {\"UNATTRIBUTABLE\": 26, \"OK\": 102, \"VERIFY",
@@ -34,9 +28,15 @@
     "2026-08-02 19:40:33 UTC LOOK:read_state ok :: KEYS: surfaced(154269), memory(37403), tick(3)\n\ntick=370\nsurfaced (most recent) ",
     "2026-08-02 19:41:14 UTC LOOK:read_state ok :: KEYS: surfaced(154817), memory(37543), tick(3)\n\ntick=371\nsurfaced (most recent) ",
     "2026-08-02 19:41:26 UTC LOOK:read_state ok :: KEYS: surfaced(154980), memory(37556), tick(3)\n\ntick=372\nsurfaced (most recent) ",
-    "2026-08-02 19:42:21 UTC LOOK:read_state ok :: KEYS: checks(5375), at(22), schema(17), pass(5), seconds(4)\n\nseconds=77.6\npass=f"
+    "2026-08-02 19:42:21 UTC LOOK:read_state ok :: KEYS: checks(5375), at(22), schema(17), pass(5), seconds(4)\n\nseconds=77.6\npass=f",
+    "2026-08-02 19:43:51 UTC LOOK:self_map ok :: INVARIANTS (last run 2026-08-02 19:31 UTC, overall pass=False): None=None; None=",
+    "2026-08-02 19:44:17 UTC LOOK:read_state ok :: KEYS: surfaced(156592), memory(38002), tick(3)\n\ntick=375\nsurfaced (most recent) ",
+    "2026-08-02 19:44:53 UTC LOOK:self_map ok :: INVARIANTS (last run 2026-08-02 19:31 UTC, overall pass=False): None=None; None=",
+    "2026-08-02 19:45:32 UTC LOOK:self_map ok :: INVARIANTS (last run 2026-08-02 19:31 UTC, overall pass=False): None=None; None=",
+    "2026-08-02 19:46:27 UTC LOOK:self_map ok :: INVARIANTS (last run 2026-08-02 19:31 UTC, overall pass=False): None=None; None=",
+    "2026-08-02 19:47:03 UTC LOOK:self_map ok :: INVARIANTS (last run 2026-08-02 19:31 UTC, overall pass=False): None=None; None="
   ],
-  "last_wake_why": "the wake chose read_your_state (2s ago)",
+  "last_wake_why": "the wake chose know_yourself (2s ago)",
   "brief_fails": 3,
   "_brief_runs_seen": 107,
   "proposed_move": {
@@ -46,10 +46,10 @@
     "why": "a reasoning rod spends its budget thinking and emits content only afterwards; at 300 tokens it never reaches the answer"
   },
   "_r1_last": {
-    "wake": "LOOK:read_state",
+    "wake": "LOOK:self_map",
     "ladder": "REFLECT:self",
     "differed": true,
-    "why": "the wake chose read_your_state (2s ago)"
+    "why": "the wake chose know_yourself (2s ago)"
   },
   "_r3_pending": {
     "signature": "fail n -> hades=unverified sections_ok=true",
@@ -64,6 +64,6 @@
     "refused": "vary_own_knob is DRAFT - not granted",
     "why": "unstick"
   },
-  "_last_decision": 373,
-  "_said": "Read `selfcheck.json` for the `hades` verdict, then act on it."
+  "_last_decision": 379,
+  "_said": "know_yourself invariants to retrieve the invariant definitions and extract the exact clause causing hades=unverified"
 }
