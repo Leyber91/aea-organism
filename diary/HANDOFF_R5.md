@@ -1,7 +1,8 @@
 # HANDOFF TO THE R5 CONVERSATION
 
-*Written 2026-08-03 at the close of the R4 session. Every number here was measured on this machine
-in the session that produced it. Read this, then `diary/THE_STRUCTURE_CONVERSATION.md`, then start.*
+*Rewritten 2026-08-03 at the close of the R4 session, after six graph defects were fixed. Every
+number was measured on this machine in the session that produced it. Read this, then
+`diary/THE_STRUCTURE_CONVERSATION.md`. Then answer section 6 in writing before building anything.*
 
 ---
 
@@ -14,200 +15,211 @@ R1.5  THE DECISION IS PARSED         PROVEN
 R2    THE DECISION IS A TOOL CALL    PROVEN   35/20 inv, 3/3 tools | bound: PROOF
 R3    THE OUTCOME IS REMEMBERED      PROVEN   167 outcomes
 R4a   PERCEPTION IS A CHOICE         PROVEN   34/8 chosen-with-reason, 12 sources
-R4b   PERCEPTION REACHES THE WORLD   PARTIAL  1 CONTENT ok · 2 CHANNEL ok · 3 POWER 1/3
+R4b   PERCEPTION REACHES THE WORLD   PARTIAL  1 ok · 2 ok · 3 at 1/3 across 1 topic
 R5    RESEARCH                       FUTURE   <- you are here
 R6-R9                                FUTURE
 ```
 
-**R4b's three conditions, all decidable, none needing anyone to agree:**
+**R4b's three conditions** (the gate was rewritten from "a council agrees" to three decidable ones):
 
 1. **CONTENT** — no byte of any outbound request originates from model output. Enumerated over the
-   finite domain, on the dry path AND the executing path, with a planted breach in each that flips
-   the verdict. Live-verified on a real dispatch: `web_search keys=['query']` the table literal,
-   three `web_fetch keys=['url']` all allowlisted, **no extra keys on the wire**.
-2. **CHANNEL** — `aea/kernel/egress.py`. Floor 1800s, ceiling 12/day, both from on-disk state so a
-   restart cannot reset them; refuses rather than delays; `state/STOP` checked every dispatch.
+   finite domain, on the dry path AND the executing path, controls firing on both.
+   *Live-verified*: `web_search keys=['query']` the table literal, 3× `web_fetch keys=['url']` all
+   allowlisted, **no extra keys on the wire**.
+2. **CHANNEL** — `aea/kernel/egress.py`. Floor 1800s, ceiling 12/day, from on-disk state so a
+   restart cannot reset them. Refuses rather than delays. `state/STOP` checked every dispatch.
    **27.86 bits/day, 104.5 bytes per 30 days**, computed from the enforced floor.
-3. **POWER** — 3 dispatches that RAN, across ≥2 DISTINCT topics, each graded. **Currently 1/3
-   across 1 topic.**
+3. **POWER** — 3 dispatches that RAN, across ≥2 DISTINCT topics, each graded. **1/3 across 1.**
 
 ---
 
-## 2 · WHY R5 IS THE UNBLOCK FOR R4b, NOT A DETOUR
+## 2 · WHY R5 UNBLOCKS R4b, RATHER THAN BEING A DETOUR
 
-R4b's condition 3 asks the entity to choose to look outside. It did, twice — and **both times while
-the standing block carried the line "your record holds NOTHING from outside this machine", which I
-wrote and placed second.** That line vanishes after the first successful dispatch. In the ~80
-minutes after it vanished, with the budget open, the entity chose it **zero times**.
+R4b needs the entity to *choose* to look outside. It did, twice — and **both times while a line the
+previous session wrote was in its prompt** (*"your record holds NOTHING from outside this machine"*,
+placed second in a 620-char block). That line vanishes after the first successful dispatch. In the
+**~80 minutes after it vanished**, with the budget open, the entity chose it **zero times**.
 
-So condition 3 currently measures the nudge, not the choosing. That is the honest reading and it is
-the **third instance of one pattern** in this repo:
+So condition 3 currently measures the nudge. That is D52, and it is the **third instance of one
+pattern**:
 
-| rung | needed | produced by |
+| rung | needs | produced by |
 |---|---|---|
 | R2 | situation variety | R4 |
-| R4a | a reason to look elsewhere | its own state changing (satisfiable) |
+| R4a | a reason to look elsewhere | its own state changing — satisfiable |
 | **R4b** | **an outward NEED** | **R5, or R8** |
 
-The entity is not refusing to look outside. It genuinely has nothing outside that it needs. **A
-hypothesis it cannot settle from its own state is the first honest reason to go out** — and that is
-R5's gate verbatim: *five runs in which at least one hypothesis DIED, and every citation resolves to
-a stored artefact with a matching hash.*
-
-Build R5 and R4b's condition 3 becomes satisfiable without a nudge. That is the order.
+The entity is not refusing. **It has nothing outside that it needs.** A hypothesis it cannot settle
+from its own state is the first honest reason to go out — and that is R5's gate verbatim.
 
 ---
 
-## 3 · WHAT EXISTS AND WORKS, THAT R5 SHOULD USE
+## 3 · R5's GATE AND BOUND, AS DECLARED
+
+**GATE** — five runs in which at least one hypothesis **DIED**, and every citation resolves to a
+stored artefact with a matching hash.
+**BOUND** — **a fabricated source.** Every citation must resolve to bytes actually fetched, hashed
+at fetch time. *A research organ is the first component with a motive to invent a reference.*
+
+Both halves are the entity's own. Keep it that way — see section 6, question 5.
+
+---
+
+## 4 · WHAT EXISTS AND WORKS
 
 | thing | where | state |
 |---|---|---|
 | the outward tool | `hands.look_outward(topic)` | live, rate-bounded, fenced |
-| the closed topic table | `dispatch.TOPICS` — 5 topics, literal queries | certified |
-| search | `hands._web_search` — arxiv, HN/Algolia, HuggingFace, GitHub APIs | **2.5s concurrent** |
+| the closed topic table | `dispatch.TOPICS` — 5 literal queries | certified |
+| search | `hands._web_search` — arxiv, HN/Algolia, HF, GitHub APIs | **2.5s concurrent** |
+| a full dispatch | search + 3 fetches | **1.4s** |
 | the budget | `aea/kernel/egress.py` | enforced on production state |
-| the certificate | `python -m aea.lab.dispatch_cert --json` | CERTIFIED, drives `run` |
-| the power probe | `python -m aea.lab.dispatch_power --json` | FUNCTIONS, 4/5 topics |
+| content certificate | `python -m aea.lab.dispatch_cert --json` | CERTIFIED, drives `run` |
+| power probe | `python -m aea.lab.dispatch_power --json` | FUNCTIONS, 4/5 topics |
 | outcome memory | `outcomes.write` / `verdict_for` / `suppressed` | R3, proven |
-| the evolution loop | `impasse.scan` → `unstick.propose` → `crystal.harvest` | **wired, running, on the tick path** |
+| the evolution loop | `impasse.scan` → `unstick.propose` → `crystal.harvest` | **wired, on the tick path** |
 
-**A full dispatch — search plus three fetches — costs 1.4 seconds.** It was up to 60s before
-concurrency landed inside the dispatch boundary.
+**Concurrency rule, earned:** it may live *inside* one budget spend and may **never** cross one.
+Across dispatches the floor IS the bound. Both concurrent sites re-sort deterministically, because
+`as_completed` yields by finish time and the zero-bit selection claim rests on document order.
 
 ---
 
-## 4 · THE RETRIEVAL LAYER — AND THE HONEST ANSWER ABOUT GRAPHIFY
-
-**We do not have Graphify.** What we have, measured:
+## 5 · THE GRAPH — HOW TO LOAD CONTEXT WITHOUT READING THE TREE
 
 ```
-graph.json        527 edges, TWO types: imports 522, contains 5     <- an IMPORT graph
-assembly.json     the CALL graph, five evidence kinds               <- the strong one
-recall.py         hybrid lexical+semantic, measured 7/12 hit@5      <- the retrieval tool
-transfer.py       the same question asked mechanically across the tree
+graph.json            THE INDEX. every node, one line each. NO edges, no detail.
+                      ~16k tokens (was 52k). A module node's id IS its path:
+                      kernel.grid -> aea/kernel/grid.py
+graph/code.json       209 nodes, 933 edges. Every call edge labelled by HOW IT WAS DRAWN
+graph/discoveries.json  53 lessons, 42 `about` edges INTO the code they were learned on
+graph/reflections.json  54 sparks, `touches` edges
+graph/plan.json · graph/references.json
 ```
 
-**`graph.json` is the weak one and it is the one in the boot chain.** `assembly.py`'s own docstring
-explains why: *a module is wired when something IMPORTS it, a capability is wired when something
-CALLS it.* The graph loaded at boot answers the first question; the one that answers the second is
-`assembly.provenance()`, and nothing points a reader at it.
+**Read the index, find your node, fetch ONE file.** Loading the whole graph is as expensive as
+reading the tree, which is the trap the split exists to avoid.
 
-**The five evidence kinds** — this is the Graphify EXTRACTED/INFERRED idea, generalised, and it is
-the single most useful thing for a new conversation to know:
+**The five evidence kinds** — this is the Graphify EXTRACTED/INFERRED idea generalised, computed
+from our own tree:
 
 ```
-EXTRACTED   154   a call site exists in the source. A fact
+EXTRACTED   157   a call site exists. A fact
 DISPATCH     22   only through a table. An UPPER BOUND by construction
-ENTRY         3   where the walk STARTS. An assumption, never a measurement
-TOOL        753   only from a __main__ guard. A human at a terminal
-NONE        491   nothing reaches it by any route
+ENTRY         6   where the walk STARTS. An assumption, never a measurement
+TOOL        816   only from a __main__ guard. A human at a terminal
+NONE        431   nothing reaches it
 ```
 
-**Half the tree is a CLI surface a person drives.** And 2,931 of 20,630 call sites (14.2%) the
-resolver has no branch for at all — that share BOUNDS every number above it.
+**Half the tree is a CLI surface a person drives.** And 2,980 of 20,890 call sites (14.3%) hit no
+branch of the resolver — a figure that **bounds every number above it**, and is itself a floor:
+`graph.json`'s `_meta.known_wrong` says what is still not counted.
 
-**THE OPEN WORK HERE**, and it is worth doing early because it pays for itself every session:
-`build_graph` should emit typed, provenance-labelled edges from `assembly.provenance()` rather than
-imports alone. Then the boot-chain graph answers the question that matters. Do not adopt Graphify
-as a dependency — a second graph with a different vocabulary beside `graph.json` is the
-two-readers-one-attribute defect at repo scale.
-
-**Before any non-trivial change: `python -m aea.lab.recall "what you are about to do"`.** It is one
-command, it costs seconds, and it is in the boot sequence because six lessons were re-learned in a
-single day while correctly recorded within arm's reach of the defect.
+**Six defects were found by a six-lens stress test and fixed on 2026-08-03**; 26 more are recorded
+unverified in `diary/GRAPH_STRESS_FINDINGS.json`. Before trusting any number here, read
+`known_wrong`.
 
 ---
 
-## 5 · THE LESSONS THAT COST TIME THIS SESSION
+## 6 · THE SEVEN QUESTIONS — ANSWER THESE IN WRITING BEFORE BUILDING
+
+*From `THE_STRUCTURE_CONVERSATION.md` §8. R5-specific prompts underneath each.*
+
+1. **POWER** — what can it do that it could not? *No bundling.* R2 twice carried another rung's
+   claim. Is "state a hypothesis" and "search for evidence" and "decide it died" one rung or three?
+2. **BOUND** — what must remain impossible, and where is that enforced *in code*? The declared bound
+   is a fabricated source. **Where does the hash get taken, and can the entity influence it?**
+3. **STRUCTURE** — what does the model emit, against what schema, and what happens when it is
+   invalid? *Invalid means not used.* Measured: 11 of 12 model×mode combinations return valid JSON
+   first try, and **nothing in this repo retries on an invalid parse.**
+4. **INSTRUMENT** — what artefact records this, and **is it built before the capability?** R1 sat
+   open for weeks with a working wire because nothing wrote the comparison down.
+5. **GATE** — satisfiable by the entity ALONE? Does it need something a rung ABOVE produces?
+   *R5 is the rung that finally has no excuse here — so check it hardest.*
+6. **CONTROL** — what input makes this say NO, and is it exercised?
+7. **MEMORY** — what is kept, who writes it, who reads it, how long does it live?
+
+### The open questions R5 must actually answer
+
+- **Where does a hypothesis come from?** From R3's record (a repeated failure, a contradiction), or
+  from Luis? If from Luis, the gate measures Luis. If from the record, R4b's condition 3 closes for
+  free — *that is the prize*.
+- **What kills a hypothesis?** The gate demands one DIED. Death must be **mechanical** — a stated
+  stopping condition checked in code — or "it died" is a vibe with a budget.
+- **How does a citation survive?** Hash at fetch time, stored beside the bytes. If the hash is taken
+  later, the bound is unprovable and R5's only real hazard is unguarded.
+- **How many fetches does one hypothesis need**, against a floor of 1800s and 12/day? If a research
+  run needs more than 12 fetches, R5 and the channel budget are in direct conflict and **that
+  conflict is a design decision, not an accident to discover at 3am.**
+- **Does the fenced third-party text reach the hypothesis?** It must, or research is pointless. It
+  must not reach memory unfenced. **The two-cycle poisoning path is still untested** —
+  `dispatch.py`'s docstring says a one-tick check proves nothing.
+
+---
+
+## 7 · THE LESSONS THAT COST TIME. Each was paid for.
 
 **D51 — A LABEL IS NOT A MEASUREMENT.** Five instances in one day, each found by a different
-accident, all one shape — a name that was true, read as a claim that was not:
+accident: `EXTRACTED` read as "it runs"; `CERTIFIED` read as covering the executing path; `ran` read
+as "the tool worked"; a flag in `KNOWN_FLAGS` read as implemented; a comment read as a gate. **In
+four of five the reader wrote the label.** A name you chose yourself is the hardest thing to
+re-verify. **Before quoting a label as evidence, run the thing once.**
 
-| the label | what it asserts | what it was read as |
-|---|---|---|
-| `EXTRACTED` | a static call site exists | the function runs |
-| `CERTIFIED` | the DRY path has no leaks | the EXECUTING path has none |
-| `outcome: "ran"` | the call completed | the tool did its job |
-| `--once` in KNOWN_FLAGS | the flag is accepted | the flag is implemented |
-| a comment in `render.py` | someone intended a gate | a gate exists |
+**D52 — THE NUDGE IS PART OF THE MEASUREMENT.** When you add context to make a capability reachable,
+the gate must be able to tell your addition from the entity's initiative — or it is measuring you.
 
-In four of five the reader wrote the label. **A name you chose yourself is the hardest thing to
-re-verify**, because re-reading returns the meaning you had in mind rather than the one it carries.
-Every one was ONE COMMAND from the truth. **Before quoting a label as evidence, run the thing once.**
+**A COUNCIL MAY WRITE A GATE. IT MAY NEVER BE ONE.** A design review inside a gate is not satisfiable
+by the entity, is re-rollable, and its conditions are themselves generated, so the bar moves every
+time it is consulted. Sibling to: **a role may PROPOSE a widening and may never PERFORM one.**
 
-**A COUNCIL MAY WRITE A GATE. IT MAY NEVER BE ONE.** R4b's gate said "the certificate exists AND the
-council is reconvened", which put a DESIGN REVIEW inside a GATE. Not satisfiable by the entity,
-re-rollable, and with conditions that are themselves generated — so the bar moved every time it was
-consulted. The council stays as a design instrument (it found the dry/run divergence no measurement
-had); it is never the bar. Sibling to the standing rule that **a role may PROPOSE a widening and may
-never PERFORM one.**
+**SOME BOUNDS ARE RATES.** Every rung below R4b has a constructive bound. R4b cannot: choosing one of
+five topics emits log2(5) bits by definition — **the channel IS the capability.** We spent a day
+reaching for a certificate saying zero about something that is not zero.
 
-**SOME BOUNDS ARE RATES, AND REFUSING THAT IS WHY R4b WAS STUCK.** Every rung below has a
-CONSTRUCTIVE bound — R2 admits 697 of 1,112,064 codepoints, zero, over the whole space. R4b cannot:
-its POWER is *the entity chooses an outbound topic*, and choosing one of five emits log2(5) bits by
-definition. **The channel IS the capability.** We kept reaching for a certificate saying zero about
-something that is not zero. The honest bound is a budget, computed from an enforced floor.
+**A PERMISSION CAN BE A PROPERTY, NOT A CONSTANT.** `look_outward`'s zone widens while the
+certificate holds, fails closed on FAILED/stale/future-dated/corrupt/absent, and the entity cannot
+forge the condition — checked, not assumed: **twelve tools, not one writes a file or executes code.**
 
-**A PERMISSION CAN BE A PROPERTY RATHER THAN A CONSTANT.** `look_outward` was zoned public-only and
-`live` ticks in the SENSITIVE zone, so the entity chose it and the gate refused — correctly. The
-zone rule refuses by tool CLASS; `dispatch.plan` makes this tool's request independent of context by
-CONSTRUCTION. So the zone now applies while the certificate holds. Nobody performs a widening. It
-fails closed on FAILED / stale / future-dated / corrupt / absent, and the entity cannot forge the
-condition — checked, not assumed: **twelve tools, not one writes a file or executes code.**
+**DECIDING IS NOT DOING.** A policy refusal grades neither the entity nor the system. With an 1800s
+floor, eleven of twelve decisions are refused BY DESIGN — grading them would have suppressed the
+very choice the rung asks for. And **deciding blind is not freedom**: the terms are always stated.
 
-**DECIDING IS NOT DOING, AND A POLICY REFUSAL GRADES NEITHER.** The entity chose `look_outward`, the
-gate refused, and the row landed as `VERIFY_FAILED` with `counts_toward_move=True` — a failure
-streak against a correct decision. With an 1800s floor, eleven of twelve decisions are refused BY
-DESIGN, so the rung would have suppressed the very choice it was asking for. New class
-`REFUSED_BY_POLICY`, checked FIRST, grading nothing. **And deciding blind is not freedom either** —
-the terms are now always stated, open or closed.
+**MECHANICAL, AND EXPENSIVE.** Never anchor a source edit on a token that can appear in DATA — four
+patches anchored on `if __name__ == "__main__":` and one landed inside a triple-quoted fixture.
+**Never build source with escapes through a shell heredoc**: it happened **eight times in one day**,
+ate `\n` four times, executed backticks in comments three times, and once turned a regex word
+boundary into a literal backspace so a matcher silently matched nothing. **Never cap tokens.**
 
-**CONCURRENCY MAY LIVE INSIDE ONE BUDGET SPEND AND MAY NEVER CROSS ONE.** Inside a dispatch it
-changes only the wall clock. Across dispatches it emits several symbols in one instant plus the
-information of which ones, and 27.86 bits/day becomes a figure about nothing. Both concurrent sites
-**re-sort deterministically after the race**, because `as_completed` yields by finish time and the
-zero-bit selection claim rests on document order.
-
-**MECHANICAL THINGS THAT COST HOURS.** Never anchor a source edit on a token that can appear in DATA
-(four patches anchored on `if __name__ == "__main__":`; one landed inside a triple-quoted fixture and
-the suite printed green for a function that existed only as characters in a string) — anchor on the
-LAST occurrence and assert with `ast`. Never build source with escapes through a shell heredoc; it
-ate `\n` four times and executed backticks inside a comment twice. **Never cap tokens** — a
-`max_tokens=400` produced a false finding about provider enforcement and was live in the rod grader,
-scoring truncated reasoning models as *cannot call tools*.
+**AND ONE PRIVACY BREACH.** A machine-generated findings file was committed and pushed without a
+privacy scan; it carried an absolute path with a personal identifier. Redacted at `d289d82`, still
+in history at `0ae28cb`. **Scan every file you did not write by hand, before the commit.**
 
 ---
 
-## 6 · WHAT R5 MUST NOT REPEAT
+## 8 · WHAT IS STILL OPEN
 
-- **Do not gate R5 on a capability produced above it.** Its gate is five runs with a dead hypothesis
-  and hash-resolvable citations. Both halves are the entity's. Keep it that way.
-- **Build the instrument BEFORE the capability.** R1 sat "open" for weeks with a working wire
-  because nothing wrote the comparison down. R4a's receipt was built first, deliberately.
-- **Every check gets a positive control**, or it does not count. 171 frozen behaviours hold and
-  every one added this session shipped with the input that makes it say no.
-- **R5's stated bound is A FABRICATED SOURCE** — every citation must resolve to bytes actually
-  fetched, hashed at fetch time. A research organ is the first component with a motive to invent a
-  reference. Build the hash at fetch time or the bound is unprovable later.
+- **The missing spawn.** Nothing anywhere starts `aea.loop.aea`. `controlroom` spawns the ACTING
+  loop; the MIND runs only when a person types. R0's 246.9 hours certified a body. **Every rung
+  above R0 is measured on an entity a human breathes for.**
+- **The tool-outcome dimension.** *Did the tool do its job* — distinct from *did the call complete*
+  (`ran`) and from *is the capability failing* (impasse's nine). A capability degrades gracefully
+  around a dead tool, so the middle altitude cannot be inferred from the outer two. **This is what
+  lets the already-running evolution loop see a dead `web_search`.** Smallest thing, largest reach.
+- **26 unverified graph findings** in `diary/GRAPH_STRESS_FINDINGS.json`.
+- **21 unverified audit findings** in `diary/SESSION_LOG.md`, several touching published numbers.
+- **The two-cycle poisoning canary** for R4b's inbound half.
 
----
-
-## 7 · THE COMMANDS
+## 9 · THE COMMANDS
 
 ```
 python -m aea.lab.recall "what you are about to do"     BEFORE any non-trivial change
 python -m aea.tooling.ladder                            the rungs, measured
-python -m aea.tooling.assembly                          five evidence kinds, the blindness share
-python -m aea.lab.tests.test_golden                     171 frozen behaviours
+python -m aea.tooling.assembly                          five evidence kinds + the blindness share
+python -m aea.lab.tests.test_golden                     191 frozen behaviours
 python -m aea.tooling.selfcheck                         whole-system invariants
 python -m aea.kernel.egress                             the channel budget
 python -m aea.lab.dispatch_cert --json                  R4b's content bound
 python -m aea.lab.dispatch_power --json                 R4b's power half
-python -m aea.tooling.build_graph                       refresh graph.json
+python -m aea.tooling.build_graph                       refresh the index + graph/*.json
 python -m aea.tooling.publish                           the site, privacy-gated
 ```
-
-**Still open, carried forward:** the 21 audit findings reported and never verified (in
-`diary/SESSION_LOG.md`), several touching published numbers; the tool-outcome dimension (*did the
-tool do its job*, distinct from *did the call complete*); the missing spawn — nothing anywhere
-starts `aea.loop.aea`, so every rung above R0 is measured on an entity a human breathes for.

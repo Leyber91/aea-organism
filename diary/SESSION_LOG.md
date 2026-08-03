@@ -3062,3 +3062,49 @@ first honest reason, and that is R5's gate verbatim. Build R5 and condition 3 ne
 
 Also carried: the 21 unverified audit findings; the tool-outcome dimension; the missing spawn -
 nothing anywhere starts `aea.loop.aea`.
+
+
+---
+
+## 2026-08-03 (final) - SIX GRAPH DEFECTS FIXED, AND THE HANDOFF TO R5
+
+**DID.** Luis asked for the graph to be tested hard, to the limit. Six adversarial lenses built real
+Python and ran it: 8 findings confirmed by independent reproduction (6 distinct defects), 26 more
+recorded unverified. Then he asked for them fixed, and they are - each checked against the number
+the finder predicted before it was believed.
+
+  1 an unparseable module no longer vanishes; scan(report=True) returns what was skipped
+  2 `derived` saved/restored per function - DISPATCH 22 -> 20, dispatch edges 123 -> 113
+  3 nested defs resolve innermost-out - EXTRACTED 154 -> 160, the exact prediction
+  4 lambda bodies get their own scope - the DISPATCH-into-EXTRACTED collapse is undone
+  5 incoming() only counts witnesses the run grades reachable - entries 3 -> 6 correctly ENTRY
+  6 an edge is labelled by HOW IT WAS DRAWN, floored at the source - EXTRACTED edges out of
+    unreached nodes 5 -> 0, and call-edge EXTRACTED 216 -> 53, the honest number
+
+Deliberately NOT done: marking a nested def reachable because its parent is. The def statement
+executing is not the body running.
+
+Before that, the graph became usable as a context loader: graph.json is now an INDEX (~16k tokens,
+was 52k) with the subgraphs in graph/*.json, and the knowledge subgraphs gained edges INTO the code
+(D51 -> tooling.assembly; R24 -> io.agent_tools). The matcher that builds them was dead on arrival -
+a shell heredoc turned its word boundary into a literal backspace - and now has a build-time
+self-test.
+
+**THE RATCHET CAUGHT THREE OF MY OWN CHANGES** within a minute of each shipping: import-time-work
+4 -> 10, silent-default 32 -> 33 twice, global-write 7 -> 8. Every one fixed honestly rather than
+worked around; the obvious dodge for the last (clear-and-update in place, so the keyword disappears)
+would have gamed the detector without changing the fact.
+
+**AND ONE PRIVACY BREACH, MINE.** diary/GRAPH_STRESS_FINDINGS.json was committed and pushed without
+a scan and carried an absolute path with a personal identifier. Redacted at d289d82; still present
+in history at 0ae28cb - removing it needs a history rewrite and force-push to a public branch, which
+is Luis's call. The rule: scan every file you did not write by hand, BEFORE the commit.
+
+**LOCKED.** `diary/HANDOFF_R5.md` - rewritten against current numbers, with the seven questions and
+the five open questions R5 must actually answer. D51 a label is not a measurement · D52 the nudge is
+part of the measurement. 191 frozen behaviours; FROZEN_FLOOR 191; ORPHAN_FLOOR 133.
+
+**NEXT: R5, and it is the unblock for R4b rather than a detour.** R4b condition 3 stands at 1/3
+across 1 topic, and both choices happened while a line I wrote was in the prompt. A hypothesis the
+entity cannot settle from its own state is the first honest reason to go outside - R5's gate
+verbatim. Build R5 and condition 3 closes without any nudge.
