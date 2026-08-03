@@ -1540,9 +1540,9 @@
      "purpose": "THE ADDITION LAW, APPLIED TO OURSELVES. No network, no cost, exactly reproducible.",
      "reach": "terminal-only",
      "fns": {
-      "total": 35,
+      "total": 36,
       "live": 0,
-      "tool": 26,
+      "tool": 27,
       "dead": 9
      }
     },
@@ -2008,9 +2008,9 @@
      "purpose": "build_graph.py - the master orchestrator graph over subgraphs, for agent handoff.",
      "reach": "terminal-only",
      "fns": {
-      "total": 6,
+      "total": 9,
       "live": 0,
-      "tool": 6,
+      "tool": 9,
       "dead": 0
      }
     },
@@ -8814,7 +8814,43 @@
      "path": "diary/REFLECTIONS.md"
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "src": "R4",
+     "dst": "loop.aea",
+     "rel": "touches"
+    },
+    {
+     "src": "R7",
+     "dst": "tooling.build_graph",
+     "rel": "touches"
+    },
+    {
+     "src": "R10",
+     "dst": "bench.bench_core",
+     "rel": "touches"
+    },
+    {
+     "src": "R24",
+     "dst": "io.agent_tools",
+     "rel": "touches"
+    },
+    {
+     "src": "R24",
+     "dst": "loop.aea",
+     "rel": "touches"
+    },
+    {
+     "src": "R31",
+     "dst": "kernel.grid",
+     "rel": "touches"
+    },
+    {
+     "src": "R44",
+     "dst": "kernel.grid",
+     "rel": "touches"
+    }
+   ]
   },
   "discoveries": {
    "nodes": [
@@ -9137,7 +9173,218 @@
      "path": "diary/DISCOVERIES.md"
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "src": "D3",
+     "dst": "io.agent_tools",
+     "rel": "about"
+    },
+    {
+     "src": "D3",
+     "dst": "loop.aea",
+     "rel": "about"
+    },
+    {
+     "src": "D10",
+     "dst": "server.controlroom",
+     "rel": "about"
+    },
+    {
+     "src": "D12",
+     "dst": "energy.model_fitness",
+     "rel": "about"
+    },
+    {
+     "src": "D12",
+     "dst": "kernel.grid",
+     "rel": "about"
+    },
+    {
+     "src": "D12",
+     "dst": "organs.autonomy",
+     "rel": "about"
+    },
+    {
+     "src": "THE SHORTEST PATH FROM INSTRUMENT TO GAM",
+     "dst": "bench.bench_core",
+     "rel": "about"
+    },
+    {
+     "src": "D13",
+     "dst": "io.listen",
+     "rel": "about"
+    },
+    {
+     "src": "D13",
+     "dst": "organs.converse",
+     "rel": "about"
+    },
+    {
+     "src": "D14",
+     "dst": "bench.bench_core",
+     "rel": "about"
+    },
+    {
+     "src": "D14",
+     "dst": "tooling.journey_check",
+     "rel": "about"
+    },
+    {
+     "src": "D15",
+     "dst": "bench.bench_core",
+     "rel": "about"
+    },
+    {
+     "src": "D15",
+     "dst": "lab.harness",
+     "rel": "about"
+    },
+    {
+     "src": "D20",
+     "dst": "lab.social",
+     "rel": "about"
+    },
+    {
+     "src": "D26",
+     "dst": "mind.council",
+     "rel": "about"
+    },
+    {
+     "src": "D28",
+     "dst": "energy.capability_census",
+     "rel": "about"
+    },
+    {
+     "src": "D28",
+     "dst": "lab.parts.fuel",
+     "rel": "about"
+    },
+    {
+     "src": "D28",
+     "dst": "mind.fuel",
+     "rel": "about"
+    },
+    {
+     "src": "D29",
+     "dst": "loop.aea",
+     "rel": "about"
+    },
+    {
+     "src": "D30",
+     "dst": "mind.tiers",
+     "rel": "about"
+    },
+    {
+     "src": "D35",
+     "dst": "kernel.grid",
+     "rel": "about"
+    },
+    {
+     "src": "D35",
+     "dst": "lab.battery",
+     "rel": "about"
+    },
+    {
+     "src": "D35",
+     "dst": "lab.transfer",
+     "rel": "about"
+    },
+    {
+     "src": "D35",
+     "dst": "mind.background",
+     "rel": "about"
+    },
+    {
+     "src": "D36",
+     "dst": "lab.transfer",
+     "rel": "about"
+    },
+    {
+     "src": "D37",
+     "dst": "kernel.impasse",
+     "rel": "about"
+    },
+    {
+     "src": "D37",
+     "dst": "server.controlroom",
+     "rel": "about"
+    },
+    {
+     "src": "D39",
+     "dst": "lab.recall",
+     "rel": "about"
+    },
+    {
+     "src": "D39",
+     "dst": "lab.transfer",
+     "rel": "about"
+    },
+    {
+     "src": "D41",
+     "dst": "loop.live",
+     "rel": "about"
+    },
+    {
+     "src": "D44",
+     "dst": "memory.consolidate",
+     "rel": "about"
+    },
+    {
+     "src": "D45",
+     "dst": "lab.selfreport",
+     "rel": "about"
+    },
+    {
+     "src": "D46",
+     "dst": "lab.containment",
+     "rel": "about"
+    },
+    {
+     "src": "D46",
+     "dst": "memory.consolidate",
+     "rel": "about"
+    },
+    {
+     "src": "D47",
+     "dst": "lab.redteam",
+     "rel": "about"
+    },
+    {
+     "src": "D48",
+     "dst": "lab.redteam",
+     "rel": "about"
+    },
+    {
+     "src": "D48",
+     "dst": "lab.transfer",
+     "rel": "about"
+    },
+    {
+     "src": "D49",
+     "dst": "kernel.knobs",
+     "rel": "about"
+    },
+    {
+     "src": "D49",
+     "dst": "loop.aea",
+     "rel": "about"
+    },
+    {
+     "src": "D49",
+     "dst": "organs.brief",
+     "rel": "about"
+    },
+    {
+     "src": "D51 - A LABEL IS NOT A MEASUREMENT, AND ",
+     "dst": "tooling.assembly",
+     "rel": "about"
+    },
+    {
+     "src": "D51 - A LABEL IS NOT A MEASUREMENT, AND ",
+     "dst": "tooling.page.render",
+     "rel": "about"
+    }
+   ]
   },
   "references": {
    "nodes": [

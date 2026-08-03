@@ -202,18 +202,90 @@ def _headings(path, pat):
     return out
 
 
-def sub_discoveries():
-    heads = _headings(os.path.join(ROOT, "diary", "DISCOVERIES.md"), r"^##\s+(.+)")
-    nodes = [{"id": h.split("·")[0].strip() if "·" in h else h[:40], "type": "discovery",
-              "title": h, "path": "diary/DISCOVERIES.md"} for h in heads]
-    return nodes, []
+def sub_discoveries(modset=None):
+    secs = _sections(os.path.join(ROOT, "diary", "DISCOVERIES.md"), r"^##\s+(.+)$")
+    nodes, edges = [], []
+    for h, body in secs:
+        nid = h.split("·")[0].strip() if "·" in h else h[:40]
+        nodes.append({"id": nid, "type": "discovery", "title": h, "path": "diary/DISCOVERIES.md"})
+        for m in _mentions(body, modset or set()):
+            edges.append({"src": nid, "dst": m, "rel": "about"})
+    return nodes, edges
 
 
-def sub_reflections():
-    heads = _headings(os.path.join(ROOT, "diary", "REFLECTIONS.md"), r"^##\s+(.+)")
-    nodes = [{"id": h.split("·")[0].strip() if "·" in h else h[:40], "type": "reflection",
-              "title": h, "path": "diary/REFLECTIONS.md"} for h in heads]
-    return nodes, []
+def sub_reflections(modset=None):
+    secs = _sections(os.path.join(ROOT, "diary", "REFLECTIONS.md"), r"^##\s+(.+)$")
+    nodes, edges = [], []
+    for h, body in secs:
+        nid = h.split("·")[0].strip() if "·" in h else h[:40]
+        nodes.append({"id": nid, "type": "reflection", "title": h, "path": "diary/REFLECTIONS.md"})
+        for m in _mentions(body, modset or set()):
+            edges.append({"src": nid, "dst": m, "rel": "touches"})
+    return nodes, edges
+
+
+# =================================================================================================
+# CROSS-SUBGRAPH EDGES: FROM A LESSON TO THE CODE IT IS ABOUT.
+#
+# MEASURED 2026-08-03, by using the graph the way a fresh conversation would rather than by asking
+# whether it was correct: the CODE subgraph had 946 edges and every knowledge subgraph had ZERO. An
+# agent could find that D51 exists and could not traverse from D51 to the code it is about, or from
+# a module to the lesson learned on it. Five node-lists and one graph, in a file whose whole purpose
+# is that a new conversation does not have to explore the tree.
+#
+# The edges are DERIVED from what each section actually names - a dotted module path, or a
+# repo-relative .py path - so they cannot drift from the prose. A lesson that names no module gets
+# no edge, which is honest: not every discovery is about a file.
+# =================================================================================================
+def _sections(path, pat):
+    """[(heading, body)] - the body is what the heading owns, up to the next heading."""
+    try:
+        txt = open(path, encoding="utf-8", errors="replace").read()
+    except Exception:
+        return []
+    # CRLF DEFEATS $ IN MULTILINE MODE, and this returned ZERO sections for REFLECTIONS.md on the
+    # first run while DISCOVERIES.md worked - the two files simply had different line endings. A
+    # silent zero, in a graph builder, on a Windows checkout. Normalise before matching.
+    txt = txt.replace(chr(13) + chr(10), chr(10)).replace(chr(13), chr(10))
+    parts = re.split(pat, txt, flags=re.M)
+    out = []
+    for i in range(1, len(parts) - 1, 2):
+        out.append((parts[i].strip(), parts[i + 1]))
+    return out
+
+
+def _mentions(body, modset):
+    """Which modules this text NAMES. Longest-first, so kernel.hands wins over a bare hands.
+
+    THE WORD BOUNDARY WAS A BACKSPACE CHARACTER. Written through a shell heredoc, the regex escape
+    arrived as 0x08, so every pattern matched a control byte that never occurs - and this returned
+    [] for a body that plainly names render.py, cause and assembly. 11 edges across 53 discoveries,
+    and the checks that existed could not tell a low count from a broken matcher.
+
+    The boundary is now built with chr(92) so nothing between here and the file can eat it, and the
+    module has a self-test below that fails loudly if it ever stops matching a known string.
+    """
+    B = chr(92) + "b"
+    hit = set()
+    for m in sorted(modset, key=len, reverse=True):
+        leaf = m.rsplit(".", 1)[-1]
+        pats = (B + re.escape(m) + B,
+                "aea/" + re.escape(m.replace(".", "/") + ".py"),
+                B + re.escape(leaf + ".py") + B)
+        if any(re.search(p, body) for p in pats):
+            hit.add(m)
+    return sorted(hit)
+
+
+def _selftest_mentions():
+    """A MATCHER MUST BE ABLE TO MATCH. Runs at build time, costs microseconds, and would have
+    caught the backspace immediately - the defect was invisible because a low count and a dead
+    pattern look identical from outside."""
+    probe = "we fixed tooling/page/render.py and kernel.cause, see aea/kernel/hands.py"
+    got = _mentions(probe, {"tooling.page.render", "kernel.cause", "kernel.hands", "loop.live"})
+    want = ["kernel.cause", "kernel.hands", "tooling.page.render"]
+    if got != want:
+        raise RuntimeError("_mentions is broken: got %r want %r" % (got, want))
 
 
 def sub_references():
@@ -225,9 +297,16 @@ def sub_references():
 
 SUBS = {"code": sub_code, "plan": sub_plan, "reflections": sub_reflections,
         "discoveries": sub_discoveries, "references": sub_references}
+_selftest_mentions()                 # a matcher must be able to match
+
 subgraphs, master_edges = {}, []
+_code_nodes, _ = SUBS["code"]()
+MODSET = {x["id"] for x in _code_nodes if x.get("type") == "module"}
 for name, fn in SUBS.items():
-    n, e = fn()
+    try:
+        n, e = fn(MODSET)
+    except TypeError:
+        n, e = fn()
     subgraphs[name] = {"nodes": n, "edges": e}
     master_edges.append({"src": "THE_PROBE", "dst": name, "rel": "contains", "count": len(n)})
 
