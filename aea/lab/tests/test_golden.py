@@ -1145,9 +1145,22 @@ def check_entry_evidence():
     fails = []
     from aea.tooling import assembly as _a
     keep = _a.TREE
-    for label, extra, want in (("an entry nothing calls is ENTRY, not a fact", None, "ENTRY"),
-                               ("the same entry WITH a caller is EXTRACTED", CALLED_SRC,
-                                "EXTRACTED")):
+    # THREE ROWS, AND THE MIDDLE ONE IS THE FIX. The old pair asserted "an entry WITH a caller is
+    # EXTRACTED" using a caller unreachable from the entry set - which is precisely the hole that
+    # was closed on 2026-08-03: incoming() counted every call site, including ones inside functions
+    # the same run grades TOOL or NONE, so DEAD CODE COULD VOUCH FOR AN ENTRY and promote it out of
+    # "asserted and unmeasured" into "a fact".
+    #
+    # So the caller now has to be part of the organism for its testimony to count, and the entry set
+    # differs per row to make that true rather than assumed. Falsifiability is preserved by row 3
+    # and the fix is pinned by row 2; either alone would be half a test.
+    for label, extra, ents, want in (
+            ("an entry nothing calls is ENTRY, not a fact", None,
+             ["aea.lonely:main"], "ENTRY"),
+            ("an entry called only by UNREACHED code stays ENTRY", CALLED_SRC,
+             ["aea.lonely:main"], "ENTRY"),
+            ("an entry called by REACHABLE code is EXTRACTED", CALLED_SRC,
+             ["aea.caller:wrapper"], "EXTRACTED")):
         tmp = _t.mkdtemp(prefix="entry")
         try:
             pkg = _o.path.join(tmp, "aea")
@@ -1157,7 +1170,7 @@ def check_entry_evidence():
                 open(_o.path.join(pkg, "caller.py"), "w", encoding="utf-8").write(extra)
             _a.TREE = pkg
             mods = _a.scan()
-            prov = _a.provenance(mods, entries=["aea.lonely:main"])
+            prov = _a.provenance(mods, entries=ents)
             got = prov.get("aea.lonely:main")
             ok = got == want
             print("  entryev   %-46s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))

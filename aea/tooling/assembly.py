@@ -133,6 +133,7 @@ class _Scope(ast.NodeVisitor):
         self.n_calls = 0               # EVERY Call node seen - the honest denominator
         self.n_unhandled = 0           # ...of which this resolver has no branch for at all
         self.n_methods = 0             # defs nested inside a ClassDef: a stated blind spot
+        self.localdefs = set()         # every QUALIFIED def name, prepassed - see visit_Call
         self.in_class = 0
 
     def _rel(self, module, level) -> str:
@@ -176,7 +177,24 @@ class _Scope(ast.NodeVisitor):
         """Bindings and containers FIRST, in one pre-pass. A table is routinely defined below the
         function that dispatches through it (`hands.TOOLS` is 300 lines above `invoke` and
         `selfcheck.CHECKS` is below every check it holds), and a visitor in source order would see
-        half of them. Reading the whole module before answering is the difference."""
+        half of them. Reading the whole module before answering is the difference.
+
+        THE SAME ARGUMENT APPLIES TO NESTED DEFS, and that is why they are prepassed here too: a
+        nested function may be defined BELOW the call that uses it, and a bare name must resolve
+        against the enclosing scopes innermost-out, exactly as Python resolves it. Without this,
+        every call to a nested function produced an edge to a key that does not exist."""
+        def _walk_defs(node, path):
+            for ch in ast.iter_child_nodes(node):
+                if isinstance(ch, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    q = path + [ch.name]
+                    self.localdefs.add(".".join(q))
+                    _walk_defs(ch, q)
+                elif isinstance(ch, ast.ClassDef):
+                    _walk_defs(ch, path + [ch.name])
+                else:
+                    _walk_defs(ch, path)
+        _walk_defs(tree, [])
+
         for n in ast.walk(tree):
             if isinstance(n, ast.Import):
                 for a in n.names:
@@ -299,11 +317,38 @@ class _Scope(ast.NodeVisitor):
             self.n_methods += 1
         self.defs.setdefault(name, {"line": n.lineno, "calls": set(), "dcalls": set()})
         self.stack.append(n.name)
+        # `derived` IS A FUNCTION-LOCAL FACT AND WAS KEPT PER-MODULE.
+        #
+        # `visit_Assign` records "this local name came out of that table", and the binding then
+        # LEAKED FORWARD into every later function that happened to reuse the name. So a DISPATCH
+        # label could rest on nothing but a naming coincidence between two unrelated functions -
+        # the resolver had no evidence for the edge, it had a collision. Confirmed by construction
+        # 2026-08-03; on the real tree it removes 2 DISPATCH labels and 10 dispatch edges, and both
+        # removals are honest: the resolver cannot follow a table value through a return, so it
+        # never had grounds for them.
+        _derived_outer = dict(self.derived)
         self.generic_visit(n)
+        self.derived = _derived_outer
         self.stack.pop()
 
     visit_FunctionDef = _fn
     visit_AsyncFunctionDef = _fn
+
+    def visit_Lambda(self, n):
+        """A LAMBDA BODY IS ITS OWN SCOPE, AND WAS CREDITED TO THE SCOPE THAT DEFINED IT.
+
+        Confirmed by construction 2026-08-03. A module-level table of lambdas - `IMPL = {"calc":
+        lambda a: calc(a)}` - had every lambda body attributed to `<module>`, so the calls inside
+        them became MODULE-LEVEL calls. A module body is followed by `reachable` (importing runs
+        it), so every function reachable only through the table was promoted to EXTRACTED.
+
+        That collapses DISPATCH into EXTRACTED - an UPPER BOUND printed as a fact - which is the one
+        thing this module's own docstring says may never happen: "nothing in this repo may print the
+        union as though it were the direct set". The lambda body now lands in its own frame, so its
+        calls belong to the lambda and not to whoever wrote it down."""
+        self.stack.append("<lambda@%d>" % getattr(n, "lineno", 0))
+        self.generic_visit(n)
+        self.stack.pop()
 
     def visit_ClassDef(self, n):
         self.stack.append(n.name)
@@ -354,7 +399,30 @@ class _Scope(ast.NodeVisitor):
             else:
                 slot["calls"].add(f"?{base}:{f.attr}")          # unresolved, and counted as such
         elif isinstance(f, ast.Name):
-            if f.id in self.direct:
+            # A BARE NAME IS RESOLVED AGAINST THE ENCLOSING SCOPES FIRST, INNERMOST OUT.
+            #
+            # THE DEFECT THIS CLOSES, confirmed by construction and then measured on the real tree:
+            # `_fn` keys a nested def as "outer.inner", and this branch wrote the bare call as
+            # "module:inner". THE TWO KEYSPACES NEVER MET. So every call to a nested function
+            # produced an edge to a name that does not exist, silently - not counted as unresolved
+            # either, because it took this branch rather than the `?` one.
+            #
+            # Consequence: all 111 nested defs in the tree read NONE, the label documented as
+            # "nothing reaches it by any route", and 19 top-level functions were false-dead through
+            # the same mechanism. About 23% of the published dead list was a resolver artifact.
+            #
+            # Python resolves a bare name innermost-out, so this does too - `self.localdefs` was
+            # prepassed for exactly this reason, since a nested def may be defined BELOW the call
+            # that uses it.
+            local = None
+            for k in range(len(self.stack), 0, -1):
+                cand = ".".join(self.stack[:k] + [f.id])
+                if cand in self.localdefs:
+                    local = cand
+                    break
+            if local:
+                slot["calls"].add(f"{self.mod}:{local}")
+            elif f.id in self.direct:
                 slot["calls"].add(self.direct[f.id])
             else:
                 slot["calls"].add(f"{self.mod}:{f.id}")          # same-module call
@@ -371,13 +439,27 @@ class _Scope(ast.NodeVisitor):
         self.generic_visit(n)
 
 
-def scan() -> dict:
-    mods = {}
+def scan(report: bool = False):
+    """Every module, parsed. A file that CANNOT be parsed is reported, never dropped.
+
+    THE DEFECT THIS CLOSES, confirmed by construction 2026-08-03: the old `except Exception:
+    continue` deleted an unreadable module from the analysis entirely - and every function it called
+    then read NONE, the label documented as "nothing reaches it by any route". So NONE meant two
+    different things, "measured, nothing reaches it" and "never measured", and a reader could not
+    tell them apart. In a tool that sits in the boot chain, that is the whole defect class this repo
+    is built against.
+
+    Failures are collected under the `__scan__` key rather than raised, because one broken file in
+    `archive/` must not take down the graph - but the count travels with every consumer, and
+    `report()` prints it above the evidence table."""
+    mods, skipped = {}, []
     for p in _py_files():
+        rel = os.path.relpath(p, str(grid.ROOT)).replace("\\", "/")
         try:
             src = open(p, encoding="utf-8").read()
             tree = ast.parse(src)
-        except Exception:
+        except Exception as e:
+            skipped.append(dict(path=rel, error="%s: %s" % (type(e).__name__, str(e)[:90])))
             continue
         m = _modname(p)
         s = _Scope(m)
@@ -397,7 +479,14 @@ def scan() -> dict:
     if not mods:
         raise RuntimeError("assembly.scan found no modules under %s - this is a broken scan, "
                            "not an empty tree" % TREE)
-    return mods
+    # WHAT WAS READ AND WHAT WAS NOT, recorded BESIDE the result rather than inside it.
+    #
+    # The obvious move - a reserved key in `mods` - would have been a defect of its own: every
+    # consumer iterates this dict and `reachable` does `info["defs"]` unguarded, so a sentinel entry
+    # raises KeyError. Caught before writing it, by asking what iterates the thing rather than by
+    # running it.
+    return (mods, dict(files_seen=len(_py_files()), files_parsed=len(mods),
+                       skipped=skipped)) if report else mods
 
 
 def reachable(mods: dict, entries=None, detail: bool = False, dispatch: bool = True) -> tuple:
@@ -507,6 +596,19 @@ def reachable(mods: dict, entries=None, detail: bool = False, dispatch: bool = T
 # =================================================================================================
 EVIDENCE = ("EXTRACTED", "DISPATCH", "ENTRY", "TOOL", "NONE")
 
+# WHAT THE LAST scan() READ, AND WHAT IT COULD NOT. Set by scan(), read by report() and the census.
+# NONE must never mean two different things - "measured, and nothing reaches it" versus "never
+# measured at all" - and before this existed it meant both, because an unparseable module was
+# dropped in silence and every function it called then read NONE.
+# NO MODULE-LEVEL SCAN RECORD, AND THE RATCHET IS WHY.
+#
+# The first version stashed it in a global that scan() rebound - `global-write 7 -> 8`, caught the
+# minute it shipped. A global mutated by a function is shared state between every caller, and the
+# obvious dodge (clear-and-update in place, so the `global` keyword disappears) would game the
+# detector without changing the fact. So the record is RETURNED: `scan(report=True)` gives
+# (mods, {files_seen, files_parsed, skipped}), and plain `scan()` is unchanged for every existing
+# caller.
+
 
 def tool_entries(mods: dict) -> list:
     """Every `__main__` bucket - the CLI surface. `visit_If` files those calls under `<main>`, so
@@ -515,7 +617,7 @@ def tool_entries(mods: dict) -> list:
     return sorted("%s:<main>" % m for m, info in mods.items() if "<main>" in (info.get("defs") or {}))
 
 
-def incoming(mods: dict) -> dict:
+def incoming(mods: dict, only_from=None) -> dict:
     """target -> how many REAL call sites point at it, excluding `<main>` buckets and self-calls.
 
     This is what makes ENTRY honest rather than merely separate: an entry with callers and an entry
@@ -528,6 +630,12 @@ def incoming(mods: dict) -> dict:
             if d == "<main>" or d.startswith("<main>."):
                 continue
             here = "%s:%s" % (m, d)
+            # only_from RESTRICTS THE WITNESSES. Without it this counted call sites inside
+            # functions the same run grades TOOL or NONE, so dead code could vouch for an entry and
+            # promote it out of ENTRY into EXTRACTED. A caller that nothing reaches is not evidence
+            # that its callee is reached.
+            if only_from is not None and here not in only_from:
+                continue
             for c in list(slot.get("calls", [])) + list(slot.get("dcalls") or ()):
                 if c.startswith("?") or c == here:
                     continue
@@ -552,15 +660,34 @@ def provenance(mods: dict = None, entries=None) -> dict:
     # This is also what restores falsifiability: strip tick's three callers and `incoming` drops to
     # zero, so it becomes ENTRY and its STEPS row flips to PARTIAL - the exact behaviour the audit
     # proved was impossible before.
-    inc = incoming(mods)
-    ents = {e for e in (entries or [x for v in ENTRIES.values() for x in v]) if not inc.get(e)}
+    #
+    # AND THE CALLER MUST ITSELF BE PART OF THE ORGANISM, which the first version did not require.
+    #
+    # Confirmed by construction 2026-08-03: `incoming()` counted EVERY call site, including ones
+    # inside functions this same run grades TOOL or NONE. So an entry could be promoted out of ENTRY
+    # - out of "asserted and unmeasured" and into "a fact" - by a caller the tool itself says nothing
+    # reaches. The falsifiability fix had a hole exactly the width of its own dead code.
+    #
+    # Resolved in two passes rather than by circular reasoning: seed EVERY entry, compute what is
+    # reachable from that, and only then count callers whose OWNING function survived that pass. One
+    # pass is enough here - a caller that is itself only reachable through the entry it vouches for
+    # is not independent evidence, and this drops that case.
+    all_ents = list(entries or [x for v in ENTRIES.values() for x in v])
+    seeded, _u0 = reachable(mods, all_ents, dispatch=True)
+    inc = incoming(mods, only_from=seeded - set(all_ents))
+    ents = {e for e in all_ents if not inc.get(e)}
     direct, _u = reachable(mods, entries, dispatch=False)
     union, _u2 = reachable(mods, entries, dispatch=True)
     viacli, _u3 = reachable(mods, entries=tool_entries(mods), dispatch=True)
     out = {}
     for m, info in mods.items():
         for d in (info.get("defs") or {}):
-            if d == "<module>" or d.startswith("<main>"):
+            # A LAMBDA FRAME IS A SCOPE MARKER, NOT A FUNCTION ANYONE CAN CALL, so it is excluded
+            # exactly as <module> and <main> are. Giving lambdas their own scope added 114 frames
+            # and every one read NONE, inflating the dead list by 124 - a fix creating the very
+            # artifact it was removing. Counted as functions, they would also be uncallable by
+            # construction, which is not the same fact as unreached code.
+            if d == "<module>" or d.startswith("<main>") or "<lambda@" in d:
                 continue
             f = "%s:%s" % (m, d)
             out[f] = ("ENTRY" if f in ents else

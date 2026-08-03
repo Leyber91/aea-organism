@@ -9,8 +9,8 @@
    "fns": {
     "total": 18,
     "live": 0,
-    "tool": 10,
-    "dead": 8
+    "tool": 11,
+    "dead": 7
    }
   },
   {
@@ -22,8 +22,8 @@
    "fns": {
     "total": 6,
     "live": 0,
-    "tool": 4,
-    "dead": 2
+    "tool": 3,
+    "dead": 3
    }
   },
   {
@@ -47,9 +47,9 @@
    "reach": "organism",
    "fns": {
     "total": 19,
-    "live": 12,
-    "tool": 3,
-    "dead": 4
+    "live": 16,
+    "tool": 2,
+    "dead": 1
    }
   },
   {
@@ -61,8 +61,8 @@
    "fns": {
     "total": 18,
     "live": 0,
-    "tool": 10,
-    "dead": 8
+    "tool": 5,
+    "dead": 13
    }
   },
   {
@@ -178,8 +178,8 @@
    "fns": {
     "total": 5,
     "live": 0,
-    "tool": 5,
-    "dead": 0
+    "tool": 2,
+    "dead": 3
    }
   },
   {
@@ -281,9 +281,9 @@
    "reach": "organism",
    "fns": {
     "total": 6,
-    "live": 5,
+    "live": 6,
     "tool": 0,
-    "dead": 1
+    "dead": 0
    }
   },
   {
@@ -320,9 +320,9 @@
    "reach": "organism",
    "fns": {
     "total": 9,
-    "live": 7,
+    "live": 8,
     "tool": 1,
-    "dead": 1
+    "dead": 0
    }
   },
   {
@@ -347,8 +347,8 @@
    "fns": {
     "total": 12,
     "live": 0,
-    "tool": 9,
-    "dead": 3
+    "tool": 10,
+    "dead": 2
    }
   },
   {
@@ -385,9 +385,9 @@
    "reach": "organism",
    "fns": {
     "total": 37,
-    "live": 19,
+    "live": 21,
     "tool": 8,
-    "dead": 10
+    "dead": 8
    }
   },
   {
@@ -581,8 +581,8 @@
    "fns": {
     "total": 23,
     "live": 0,
-    "tool": 18,
-    "dead": 5
+    "tool": 22,
+    "dead": 1
    }
   },
   {
@@ -646,8 +646,8 @@
    "fns": {
     "total": 13,
     "live": 0,
-    "tool": 10,
-    "dead": 3
+    "tool": 11,
+    "dead": 2
    }
   },
   {
@@ -711,8 +711,8 @@
    "fns": {
     "total": 16,
     "live": 0,
-    "tool": 12,
-    "dead": 4
+    "tool": 14,
+    "dead": 2
    }
   },
   {
@@ -774,8 +774,8 @@
    "fns": {
     "total": 5,
     "live": 0,
-    "tool": 2,
-    "dead": 3
+    "tool": 3,
+    "dead": 2
    }
   },
   {
@@ -787,8 +787,8 @@
    "fns": {
     "total": 6,
     "live": 0,
-    "tool": 2,
-    "dead": 4
+    "tool": 3,
+    "dead": 3
    }
   },
   {
@@ -800,8 +800,8 @@
    "fns": {
     "total": 5,
     "live": 0,
-    "tool": 2,
-    "dead": 3
+    "tool": 3,
+    "dead": 2
    }
   },
   {
@@ -813,8 +813,8 @@
    "fns": {
     "total": 18,
     "live": 0,
-    "tool": 8,
-    "dead": 10
+    "tool": 10,
+    "dead": 8
    }
   },
   {
@@ -826,8 +826,8 @@
    "fns": {
     "total": 8,
     "live": 0,
-    "tool": 4,
-    "dead": 4
+    "tool": 5,
+    "dead": 3
    }
   },
   {
@@ -839,8 +839,8 @@
    "fns": {
     "total": 8,
     "live": 0,
-    "tool": 3,
-    "dead": 5
+    "tool": 4,
+    "dead": 4
    }
   },
   {
@@ -852,8 +852,8 @@
    "fns": {
     "total": 16,
     "live": 0,
-    "tool": 7,
-    "dead": 9
+    "tool": 13,
+    "dead": 3
    }
   },
   {
@@ -865,8 +865,8 @@
    "fns": {
     "total": 5,
     "live": 0,
-    "tool": 2,
-    "dead": 3
+    "tool": 3,
+    "dead": 2
    }
   },
   {
@@ -904,8 +904,8 @@
    "fns": {
     "total": 8,
     "live": 0,
-    "tool": 2,
-    "dead": 6
+    "tool": 4,
+    "dead": 4
    }
   },
   {
@@ -917,8 +917,8 @@
    "fns": {
     "total": 3,
     "live": 0,
-    "tool": 2,
-    "dead": 1
+    "tool": 3,
+    "dead": 0
    }
   },
   {
@@ -930,8 +930,8 @@
    "fns": {
     "total": 4,
     "live": 0,
-    "tool": 3,
-    "dead": 1
+    "tool": 4,
+    "dead": 0
    }
   },
   {
@@ -943,8 +943,8 @@
    "fns": {
     "total": 4,
     "live": 0,
-    "tool": 3,
-    "dead": 1
+    "tool": 4,
+    "dead": 0
    }
   },
   {
@@ -956,8 +956,8 @@
    "fns": {
     "total": 6,
     "live": 0,
-    "tool": 3,
-    "dead": 3
+    "tool": 5,
+    "dead": 1
    }
   },
   {
@@ -969,8 +969,8 @@
    "fns": {
     "total": 6,
     "live": 0,
-    "tool": 3,
-    "dead": 3
+    "tool": 6,
+    "dead": 0
    }
   },
   {
@@ -982,8 +982,8 @@
    "fns": {
     "total": 6,
     "live": 0,
-    "tool": 4,
-    "dead": 2
+    "tool": 6,
+    "dead": 0
    }
   },
   {
@@ -1047,8 +1047,8 @@
    "fns": {
     "total": 12,
     "live": 0,
-    "tool": 3,
-    "dead": 9
+    "tool": 4,
+    "dead": 8
    }
   },
   {
@@ -1073,8 +1073,8 @@
    "fns": {
     "total": 13,
     "live": 0,
-    "tool": 11,
-    "dead": 2
+    "tool": 13,
+    "dead": 0
    }
   },
   {
@@ -1086,8 +1086,8 @@
    "fns": {
     "total": 10,
     "live": 0,
-    "tool": 2,
-    "dead": 8
+    "tool": 3,
+    "dead": 7
    }
   },
   {
@@ -1151,8 +1151,8 @@
    "fns": {
     "total": 16,
     "live": 0,
-    "tool": 10,
-    "dead": 6
+    "tool": 11,
+    "dead": 5
    }
   },
   {
@@ -1294,8 +1294,8 @@
    "fns": {
     "total": 20,
     "live": 0,
-    "tool": 13,
-    "dead": 7
+    "tool": 12,
+    "dead": 8
    }
   },
   {
@@ -1307,8 +1307,8 @@
    "fns": {
     "total": 4,
     "live": 0,
-    "tool": 3,
-    "dead": 1
+    "tool": 4,
+    "dead": 0
    }
   },
   {
@@ -1346,8 +1346,8 @@
    "fns": {
     "total": 14,
     "live": 0,
-    "tool": 13,
-    "dead": 1
+    "tool": 14,
+    "dead": 0
    }
   },
   {
@@ -1385,8 +1385,8 @@
    "fns": {
     "total": 7,
     "live": 0,
-    "tool": 6,
-    "dead": 1
+    "tool": 7,
+    "dead": 0
    }
   },
   {
@@ -1424,8 +1424,8 @@
    "fns": {
     "total": 10,
     "live": 0,
-    "tool": 8,
-    "dead": 2
+    "tool": 10,
+    "dead": 0
    }
   },
   {
@@ -1437,8 +1437,8 @@
    "fns": {
     "total": 11,
     "live": 0,
-    "tool": 10,
-    "dead": 1
+    "tool": 11,
+    "dead": 0
    }
   },
   {
@@ -1476,8 +1476,8 @@
    "fns": {
     "total": 37,
     "live": 0,
-    "tool": 28,
-    "dead": 9
+    "tool": 31,
+    "dead": 6
    }
   },
   {
@@ -1528,8 +1528,8 @@
    "fns": {
     "total": 16,
     "live": 0,
-    "tool": 13,
-    "dead": 3
+    "tool": 14,
+    "dead": 2
    }
   },
   {
@@ -1566,9 +1566,9 @@
    "reach": "organism",
    "fns": {
     "total": 20,
-    "live": 19,
+    "live": 17,
     "tool": 0,
-    "dead": 1
+    "dead": 3
    }
   },
   {
@@ -1580,8 +1580,8 @@
    "fns": {
     "total": 9,
     "live": 1,
-    "tool": 8,
-    "dead": 0
+    "tool": 7,
+    "dead": 1
    }
   },
   {
@@ -1723,8 +1723,8 @@
    "fns": {
     "total": 8,
     "live": 0,
-    "tool": 7,
-    "dead": 1
+    "tool": 8,
+    "dead": 0
    }
   },
   {
@@ -1775,8 +1775,8 @@
    "fns": {
     "total": 5,
     "live": 0,
-    "tool": 4,
-    "dead": 1
+    "tool": 5,
+    "dead": 0
    }
   },
   {
@@ -1788,8 +1788,8 @@
    "fns": {
     "total": 4,
     "live": 0,
-    "tool": 3,
-    "dead": 1
+    "tool": 4,
+    "dead": 0
    }
   },
   {
@@ -1801,8 +1801,8 @@
    "fns": {
     "total": 5,
     "live": 0,
-    "tool": 4,
-    "dead": 1
+    "tool": 5,
+    "dead": 0
    }
   },
   {
@@ -1814,8 +1814,8 @@
    "fns": {
     "total": 31,
     "live": 0,
-    "tool": 23,
-    "dead": 8
+    "tool": 29,
+    "dead": 2
    }
   },
   {
@@ -1827,8 +1827,8 @@
    "fns": {
     "total": 8,
     "live": 0,
-    "tool": 6,
-    "dead": 2
+    "tool": 8,
+    "dead": 0
    }
   },
   {
@@ -1840,8 +1840,8 @@
    "fns": {
     "total": 8,
     "live": 0,
-    "tool": 7,
-    "dead": 1
+    "tool": 8,
+    "dead": 0
    }
   },
   {
@@ -1916,10 +1916,10 @@
    "purpose": "assembly.py - IS THE ORGANISM ACTUALLY ASSEMBLED? The call tree from the entry points, and the",
    "reach": "terminal-only",
    "fns": {
-    "total": 24,
+    "total": 26,
     "live": 0,
     "tool": 10,
-    "dead": 14
+    "dead": 16
    }
   },
   {
@@ -1931,8 +1931,8 @@
    "fns": {
     "total": 9,
     "live": 0,
-    "tool": 8,
-    "dead": 1
+    "tool": 9,
+    "dead": 0
    }
   },
   {
@@ -1944,8 +1944,8 @@
    "fns": {
     "total": 11,
     "live": 0,
-    "tool": 10,
-    "dead": 1
+    "tool": 11,
+    "dead": 0
    }
   },
   {
@@ -2204,8 +2204,8 @@
    "fns": {
     "total": 4,
     "live": 0,
-    "tool": 2,
-    "dead": 2
+    "tool": 4,
+    "dead": 0
    }
   },
   {
@@ -2269,8 +2269,8 @@
    "fns": {
     "total": 15,
     "live": 0,
-    "tool": 12,
-    "dead": 3
+    "tool": 14,
+    "dead": 1
    }
   },
   {
@@ -5115,42 +5115,42 @@
    "src": "bench.bench_core",
    "dst": "energy.energy",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "bench.bench_core",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 9
   },
   {
    "src": "bench.bench_core",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
    "src": "bench.bench_core",
    "dst": "kernel.trust",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "energy.capability_census",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 6
   },
   {
    "src": "energy.capacity",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 5
   },
   {
@@ -5192,35 +5192,35 @@
    "src": "energy.extensive_census",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 11
   },
   {
    "src": "energy.gauntlet",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "energy.model_fitness",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "energy.model_fitness",
    "dst": "mind.orchestrator",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
    "src": "energy.probe",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
@@ -5241,7 +5241,7 @@
    "src": "gameapi.read",
    "dst": "bench.bench_core",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -5255,21 +5255,21 @@
    "src": "gameapi.read",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "gameapi.read",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "gameapi.read",
    "dst": "mind.axes",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 3
   },
   {
@@ -5283,14 +5283,14 @@
    "src": "gameapi.schema",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "io.agent_tools",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -5304,8 +5304,8 @@
    "src": "io.blackbox",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 2
+   "evidence": "TOOL",
+   "count": 1
   },
   {
    "src": "io.earcheck",
@@ -5325,7 +5325,7 @@
    "src": "io.earcheck",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -5339,7 +5339,7 @@
    "src": "io.listen",
    "dst": "io.speak",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -5357,17 +5357,10 @@
    "count": 1
   },
   {
-   "src": "io.prosody",
-   "dst": "io.listen",
-   "rel": "calls",
-   "evidence": "TOOL",
-   "count": 1
-  },
-  {
    "src": "io.speak",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -5381,14 +5374,7 @@
    "src": "io.speak",
    "dst": "mind.tiers",
    "rel": "calls",
-   "evidence": "TOOL",
-   "count": 1
-  },
-  {
-   "src": "kernel.cause",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -5416,35 +5402,35 @@
    "src": "kernel.dispatch",
    "dst": "kernel.egress",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "DISPATCH",
    "count": 2
   },
   {
    "src": "kernel.dispatch",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "DISPATCH",
    "count": 2
   },
   {
    "src": "kernel.egress",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "DISPATCH",
    "count": 1
   },
   {
    "src": "kernel.fit",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "kernel.fit",
    "dst": "kernel.unstick",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
@@ -5458,28 +5444,28 @@
    "src": "kernel.goals",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "kernel.goals",
    "dst": "kernel.trust",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "kernel.hands",
    "dst": "kernel.dispatch",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "DISPATCH",
    "count": 2
   },
   {
    "src": "kernel.hands",
    "dst": "kernel.egress",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "DISPATCH",
    "count": 1
   },
   {
@@ -5487,7 +5473,7 @@
    "dst": "kernel.grid",
    "rel": "calls",
    "evidence": "EXTRACTED",
-   "count": 10
+   "count": 9
   },
   {
    "src": "kernel.hands",
@@ -5500,7 +5486,7 @@
    "src": "kernel.hands",
    "dst": "kernel.outcomes",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "DISPATCH",
    "count": 3
   },
   {
@@ -5514,7 +5500,7 @@
    "src": "kernel.hands",
    "dst": "kernel.recourse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "DISPATCH",
    "count": 1
   },
   {
@@ -5543,7 +5529,7 @@
    "dst": "kernel.grid",
    "rel": "calls",
    "evidence": "EXTRACTED",
-   "count": 3
+   "count": 2
   },
   {
    "src": "kernel.outcomes",
@@ -5591,35 +5577,35 @@
    "src": "kernel.seats",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "kernel.seats",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "kernel.seats",
    "dst": "kernel.trust",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
    "src": "kernel.seats",
    "dst": "kernel.unstick",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "kernel.shadow",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 5
   },
   {
@@ -5668,7 +5654,7 @@
    "src": "lab.battery",
    "dst": "energy.energy",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 6
   },
   {
@@ -5689,28 +5675,28 @@
    "src": "lab.battery",
    "dst": "kernel.decide",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
    "src": "lab.battery",
    "dst": "kernel.dispatch",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
    "src": "lab.battery",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.battery",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -5745,7 +5731,7 @@
    "src": "lab.battery",
    "dst": "loop.aea",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -5759,7 +5745,7 @@
    "src": "lab.battery",
    "dst": "mind.orchestrator",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -5773,7 +5759,7 @@
    "src": "lab.calibrate",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -5801,7 +5787,7 @@
    "src": "lab.chain",
    "dst": "lab.parts.read",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -5815,7 +5801,7 @@
    "src": "lab.convbench",
    "dst": "io.speak",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
@@ -5843,49 +5829,35 @@
    "src": "lab.crystallize",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.dispatch_cert",
    "dst": "kernel.dispatch",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 6
   },
   {
    "src": "lab.dispatch_cert",
    "dst": "kernel.egress",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 1
-  },
-  {
-   "src": "lab.dispatch_cert",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.dispatch_power",
    "dst": "kernel.dispatch",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
-  },
-  {
-   "src": "lab.dispatch_power",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 1
   },
   {
    "src": "lab.dispatch_power",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -5906,7 +5878,7 @@
    "src": "lab.duet",
    "dst": "io.speak",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
@@ -5927,14 +5899,14 @@
    "src": "lab.earbench",
    "dst": "io.speak",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.earbench",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -5983,7 +5955,7 @@
    "src": "lab.experiments.x06_long_chain",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
@@ -6004,7 +5976,7 @@
    "src": "lab.experiments.x06b_crossover",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -6018,7 +5990,7 @@
    "src": "lab.experiments.x06b_crossover",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -6039,14 +6011,14 @@
    "src": "lab.experiments.x07_self_assessment",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.experiments.x07_self_assessment",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -6060,7 +6032,7 @@
    "src": "lab.experiments.x07b_self_assessment_hard",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -6081,7 +6053,7 @@
    "src": "lab.experiments.x07b_self_assessment_hard",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -6095,7 +6067,7 @@
    "src": "lab.experiments.x08_fuel_crossing",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -6109,7 +6081,7 @@
    "src": "lab.experiments.x08_fuel_crossing",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -6123,14 +6095,14 @@
    "src": "lab.experiments.x08b_interpretable_state",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.experiments.x08b_interpretable_state",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -6144,14 +6116,14 @@
    "src": "lab.experiments.x09_hearth_failure",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.experiments.x09_hearth_failure",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -6165,14 +6137,14 @@
    "src": "lab.experiments.x10_coverage_sweep",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.experiments.x10_coverage_sweep",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -6186,7 +6158,7 @@
    "src": "lab.experiments.x11_the_council",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
@@ -6200,21 +6172,21 @@
    "src": "lab.experiments.x11_the_council",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.experiments.x12_L0_goal_presence",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.experiments.x12_L0_goal_presence",
    "dst": "lab.overseer",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -6228,14 +6200,14 @@
    "src": "lab.experiments.x13_L1_read_the_output",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.experiments.x13_L1_read_the_output",
    "dst": "lab.overseer",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -6249,14 +6221,14 @@
    "src": "lab.experiments.x14_C75_parser_validation",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.experiments.x14_C75_parser_validation",
    "dst": "lab.overseer",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -6270,14 +6242,14 @@
    "src": "lab.experiments.x15_L2_the_frame",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.experiments.x15_L2_the_frame",
    "dst": "lab.overseer",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -6515,7 +6487,7 @@
    "src": "lab.fleet",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -6523,48 +6495,48 @@
    "dst": "lab.fuels",
    "rel": "calls",
    "evidence": "TOOL",
-   "count": 5
+   "count": 3
   },
   {
    "src": "lab.fuels",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 5
   },
   {
    "src": "lab.fuels",
    "dst": "lab.pace",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.gate",
    "dst": "kernel.decide",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.gate",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.gate",
    "dst": "loop.aea",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.harness",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 5
   },
   {
@@ -6599,42 +6571,42 @@
    "src": "lab.movecontrol",
    "dst": "kernel.decide",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.movecontrol",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.movecontrol",
    "dst": "loop.aea",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.overseer",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 4
   },
   {
    "src": "lab.overseer",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.pace",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
@@ -6655,35 +6627,35 @@
    "src": "lab.parts.dna",
    "dst": "lab.parts.base",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "lab.parts.fire",
    "dst": "lab.overseer",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.parts.fire",
    "dst": "lab.parts.read",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.parts.fuel",
    "dst": "lab.harness",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.parts.repair",
    "dst": "lab.overseer",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -6697,7 +6669,7 @@
    "src": "lab.parts.repair",
    "dst": "lab.parts.read",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -6725,29 +6697,22 @@
    "src": "lab.party",
    "dst": "io.speak",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "lab.party",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 4
-  },
-  {
-   "src": "lab.party",
-   "dst": "lab.social",
-   "rel": "calls",
    "evidence": "TOOL",
-   "count": 1
+   "count": 4
   },
   {
    "src": "lab.party",
    "dst": "mind.persona",
    "rel": "calls",
-   "evidence": "TOOL",
-   "count": 3
+   "evidence": "NONE",
+   "count": 2
   },
   {
    "src": "lab.party",
@@ -6767,21 +6732,21 @@
    "src": "lab.protocol",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
    "src": "lab.protocol",
    "dst": "kernel.trust",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.reboot",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -6795,7 +6760,7 @@
    "src": "lab.recall",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -6809,21 +6774,21 @@
    "src": "lab.redteam",
    "dst": "kernel.decide",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.redteam",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.redteam",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -6837,91 +6802,91 @@
    "src": "lab.report",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.rescore",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.selfreport",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.site",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.social",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.tests.test_cause",
    "dst": "kernel.cause",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.tests.test_golden",
    "dst": "kernel.cause",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.tests.test_golden",
    "dst": "kernel.decide",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.tests.test_golden",
    "dst": "kernel.dispatch",
    "rel": "calls",
-   "evidence": "DISPATCH",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.tests.test_golden",
    "dst": "kernel.egress",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.tests.test_golden",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.tests.test_golden",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "lab.tests.test_golden",
    "dst": "kernel.perceive",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -6970,7 +6935,7 @@
    "src": "lab.tests.test_golden",
    "dst": "loop.aea",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7005,42 +6970,42 @@
    "src": "lab.tests.test_knobs",
    "dst": "kernel.knobs",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.tests.test_pipeline",
    "dst": "kernel.shadow",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "lab.tests.test_wire_live",
    "dst": "loop.live",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "lab.vital",
    "dst": "kernel.crystal",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.vital",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.vital",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7054,28 +7019,28 @@
    "src": "lab.vital",
    "dst": "kernel.outcomes",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.vital",
    "dst": "kernel.unstick",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.vital",
    "dst": "loop.aea",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "lab.vital",
    "dst": "loop.live",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -7131,7 +7096,7 @@
    "src": "loop.aea",
    "dst": "mind.hades",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "ENTRY",
    "count": 1
   },
   {
@@ -7152,7 +7117,7 @@
    "src": "loop.live",
    "dst": "kernel.cause",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "ENTRY",
    "count": 1
   },
   {
@@ -7166,7 +7131,7 @@
    "src": "loop.live",
    "dst": "kernel.decide",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "ENTRY",
    "count": 2
   },
   {
@@ -7180,7 +7145,7 @@
    "src": "loop.live",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "ENTRY",
    "count": 1
   },
   {
@@ -7208,7 +7173,7 @@
    "src": "loop.live",
    "dst": "kernel.perceive",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "ENTRY",
    "count": 1
   },
   {
@@ -7257,21 +7222,21 @@
    "src": "memory.consolidate",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "memory.index_codex",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "memory.index_codex",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -7279,69 +7244,69 @@
    "dst": "memory.consolidate",
    "rel": "calls",
    "evidence": "TOOL",
-   "count": 3
+   "count": 2
   },
   {
    "src": "memory.memory",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "mind.anchor",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 3
   },
   {
    "src": "mind.axes",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "mind.background",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "mind.background",
    "dst": "mind.tiers",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "mind.checkpoint",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "mind.council",
    "dst": "energy.energy",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "mind.council",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
    "src": "mind.fuel",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -7374,30 +7339,23 @@
   },
   {
    "src": "mind.pathfinder",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "NONE",
-   "count": 1
-  },
-  {
-   "src": "mind.pathfinder",
    "dst": "mind.orchestrator",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 5
+   "evidence": "TOOL",
+   "count": 4
   },
   {
    "src": "mind.pathfinder",
    "dst": "mind.swarm",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "mind.persona",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 2
   },
   {
@@ -7411,21 +7369,14 @@
    "src": "mind.relay",
    "dst": "mind.orchestrator",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
    "src": "mind.relay",
    "dst": "mind.swarm",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 1
-  },
-  {
-   "src": "mind.swarm",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "NONE",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7433,13 +7384,13 @@
    "dst": "mind.orchestrator",
    "rel": "calls",
    "evidence": "EXTRACTED",
-   "count": 5
+   "count": 4
   },
   {
    "src": "mind.tiers",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7453,7 +7404,7 @@
    "src": "organs.brief",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7474,7 +7425,7 @@
    "src": "organs.brief",
    "dst": "kernel.trust",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7516,21 +7467,21 @@
    "src": "organs.converse",
    "dst": "io.speak",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 5
+   "evidence": "TOOL",
+   "count": 4
   },
   {
    "src": "organs.converse",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 6
   },
   {
    "src": "organs.converse",
    "dst": "kernel.hands",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 3
   },
   {
@@ -7544,70 +7495,70 @@
    "src": "organs.reflect",
    "dst": "energy.energy",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "organs.reflect",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "organs.reflect",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "organs.reflect",
    "dst": "mind.hades",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "organs.reflect",
    "dst": "mind.orchestrator",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "organs.talk",
    "dst": "energy.energy",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "organs.talk",
    "dst": "io.speak",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "organs.talk",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 5
   },
   {
    "src": "organs.talk",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "organs.talk",
    "dst": "kernel.trust",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
@@ -7628,14 +7579,14 @@
    "src": "organs.telegram_bridge",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 6
+   "evidence": "TOOL",
+   "count": 5
   },
   {
    "src": "organs.telegram_bridge",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7649,77 +7600,70 @@
    "src": "server.controlroom",
    "dst": "bench.bench_core",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "server.controlroom",
    "dst": "energy.energy",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 2
   },
   {
    "src": "server.controlroom",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "ENTRY",
    "count": 14
   },
   {
    "src": "server.controlroom",
    "dst": "kernel.pulse",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 5
   },
   {
    "src": "server.controlroom",
    "dst": "kernel.trust",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "server.controlroom",
    "dst": "organs.autonomy",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
    "src": "server.controlroom",
    "dst": "organs.talk",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 3
   },
   {
    "src": "tooling.access",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
-  },
-  {
-   "src": "tooling.assembly",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 2
   },
   {
    "src": "tooling.board",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "tooling.board",
    "dst": "kernel.laws",
    "rel": "calls",
-   "evidence": "DISPATCH",
+   "evidence": "TOOL",
    "count": 1
   },
   {
@@ -7740,35 +7684,28 @@
    "src": "tooling.export_city",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 1
-  },
-  {
-   "src": "tooling.heal",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "tooling.journey_check",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "tooling.ladder",
    "dst": "kernel.egress",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "tooling.ladder",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 4
   },
   {
@@ -7831,7 +7768,7 @@
    "src": "tooling.page.layout",
    "dst": "tooling.assembly",
    "rel": "calls",
-   "evidence": "TOOL",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -7922,13 +7859,6 @@
    "src": "tooling.page.sources",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 1
-  },
-  {
-   "src": "tooling.publish",
-   "dst": "tooling.page.__main__",
-   "rel": "calls",
    "evidence": "TOOL",
    "count": 1
   },
@@ -7936,14 +7866,7 @@
    "src": "tooling.publish",
    "dst": "tooling.page.guard",
    "rel": "calls",
-   "evidence": "TOOL",
-   "count": 1
-  },
-  {
-   "src": "tooling.scope",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "NONE",
    "count": 1
   },
   {
@@ -7957,15 +7880,15 @@
    "src": "tooling.scout",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 1
   },
   {
    "src": "tooling.selfcheck",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 4
+   "evidence": "TOOL",
+   "count": 3
   },
   {
    "src": "tooling.selfcheck",
@@ -7978,26 +7901,12 @@
    "src": "tooling.senses",
    "dst": "kernel.grid",
    "rel": "calls",
-   "evidence": "EXTRACTED",
+   "evidence": "TOOL",
    "count": 2
   },
   {
    "src": "tooling.xray",
    "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 2
-  },
-  {
-   "src": "tooling.xray_view",
-   "dst": "kernel.grid",
-   "rel": "calls",
-   "evidence": "EXTRACTED",
-   "count": 1
-  },
-  {
-   "src": "tooling.xray_view",
-   "dst": "tooling.xray",
    "rel": "calls",
    "evidence": "TOOL",
    "count": 1

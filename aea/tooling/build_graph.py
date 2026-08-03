@@ -141,6 +141,21 @@ def sub_code():
         for full, info in amods.items():
             src = full[4:] if full.startswith("aea.") else full
             for fn, slot in (info.get("defs") or {}).items():
+                # AN EDGE IS LABELLED BY HOW IT WAS DRAWN, NOT BY WHERE IT POINTS.
+                #
+                # Confirmed by construction 2026-08-03: `evidence` was a copy of the TARGET's
+                # provenance, so a call made inside a __main__ guard published as EXTRACTED - the
+                # exact distinction `assembly.visit_If` exists to enforce, re-merged one file later.
+                # And 5 edges labelled EXTRACTED left module nodes this same file marks `unreached`,
+                # because `reach` and `evidence` were computed from one provenance dict and allowed
+                # to contradict each other with no check.
+                #
+                # A <main> bucket is a human at a terminal and never an organism edge, so it is
+                # skipped outright; otherwise the label is floored at the SOURCE's own kind. An edge
+                # out of a NONE function is at best NONE; out of a TOOL function, at best TOOL.
+                if fn == "<main>" or fn.startswith("<main>.") or "<lambda@" in fn:
+                    continue
+                src_kind = prov.get("%s:%s" % (full, fn), "NONE") if fn != "<module>" else "EXTRACTED"
                 for c in list(slot.get("calls", [])) + list(slot.get("dcalls") or ()):
                     if c.startswith("?") or ":" not in c:
                         continue
@@ -150,7 +165,12 @@ def sub_code():
                     dst = tmod[4:] if tmod.startswith("aea.") else tmod
                     if dst == src or dst not in modset or src not in modset:
                         continue
+                    # FLOORED AT THE SOURCE. max of the two ranks: the edge can be no stronger
+                    # than the weaker end, because an edge nothing reaches is not a fact about the
+                    # thing it points at.
                     ev = prov.get(c, "NONE")
+                    if RANK.get(src_kind, 9) > RANK.get(ev, 9):
+                        ev = src_kind
                     cur = pairs.get((src, dst))
                     if cur is None or RANK.get(ev, 9) < RANK.get(cur[0], 9):
                         pairs[(src, dst)] = (ev, (cur[1] if cur else 0) + 1)
@@ -413,22 +433,27 @@ def build():
     #
     # Full record with reproductions: diary/GRAPH_STRESS_FINDINGS.json
     graph["_meta"]["known_wrong"] = [
-        "NESTED DEFS: 111 of them read NONE, because _fn keys a nested def as 'outer.inner' while "
-        "visit_Call writes the bare call as 'module:inner'. The two keyspaces never meet. Fixing it "
-        "moves NONE from 491 to 376, so about 23 percent of the dead list is a resolver artifact "
-        "rather than dead code. The recovered functions land on TOOL, not EXTRACTED - EXTRACTED "
-        "moves only 154 to 160, so this shrinks the dead list without growing the organism.",
-        "THE UNRESOLVED SHARE IS UNDERSTATED: 4,732 call edges resolve to no key at all and are not "
-        "counted as unresolved, so the published unresolved_share - the figure this module says "
-        "bounds every other number here - does not bound them.",
-        "EDGE EVIDENCE DESCRIBES THE TARGET ONLY, so a call made inside a __main__ guard can "
-        "publish as EXTRACTED. An edge label should be a joint property of the source's "
-        "reachability and the target's provenance; 5 edges labelled EXTRACTED leave module nodes "
-        "this same file marks unreached.",
-        "LAMBDA BODIES are credited to the scope that defines them, which can collapse DISPATCH "
-        "into EXTRACTED - the upper bound this module says must never be printed as the direct set.",
-        "A MODULE THAT FAILS TO PARSE VANISHES SILENTLY, and its functions then read NONE, which is "
-        "the label meaning nothing reaches it by any route.",
+        "FIXED 2026-08-03, all six confirmed defects from the six-lens stress test. Nested defs "
+        "now resolve innermost-out against the enclosing scopes (NONE 492 -> 431, EXTRACTED "
+        "154 -> 157). Lambda bodies get their own scope, so a table of lambdas no longer collapses "
+        "DISPATCH into EXTRACTED. The per-module 'derived' binding is saved and restored per "
+        "function, so a DISPATCH label can no longer rest on a naming coincidence (22 -> 20 before "
+        "other fixes). incoming() only counts witnesses the same run grades reachable, so dead code "
+        "can no longer promote an entry out of ENTRY (3 -> 6 entries correctly ENTRY). An "
+        "unparseable module is recorded in assembly.LAST_SCAN instead of vanishing. And an edge is "
+        "labelled by HOW IT WAS DRAWN - floored at the source's own kind - so a __main__-guard call "
+        "can no longer publish as EXTRACTED (EXTRACTED edges out of unreached nodes: 5 -> 0).",
+        "STILL TRUE AND DELIBERATE: the resolver cannot see getattr, dynamic dispatch, or a "
+        "callable passed as an argument. aea.io.speak:_render_chunk reads NONE because it is handed "
+        "to a Thread rather than called by name. DEAD here means 'no static caller found', never "
+        "'never runs'.",
+        "STILL TRUE AND NOT YET FIXED: 2,980 call sites - 14.3% - hit no branch of the resolver and "
+        "are counted as unresolved, but edges that resolve to a key which does not exist are "
+        "skipped WITHOUT being counted, so the published unresolved_share is a floor rather than "
+        "the whole blindness.",
+        "STILL TRUE AND DELIBERATE: a nested def is NOT marked reachable merely because its parent "
+        "is. The def statement executing is not the body running, and 26 further findings from the "
+        "same stress test remain unverified - see diary/GRAPH_STRESS_FINDINGS.json.",
     ]
     graph["_meta"]["detail_files"] = {k: "graph/%s.json" % k for k in subgraphs}
 
