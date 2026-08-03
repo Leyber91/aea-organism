@@ -27,6 +27,13 @@
     "source": "references/README.md"
    }
   },
+  "known_wrong": [
+   "NESTED DEFS: 111 of them read NONE, because _fn keys a nested def as 'outer.inner' while visit_Call writes the bare call as 'module:inner'. The two keyspaces never meet. Fixing it moves NONE from 491 to 376, so about 23 percent of the dead list is a resolver artifact rather than dead code. The recovered functions land on TOOL, not EXTRACTED - EXTRACTED moves only 154 to 160, so this shrinks the dead list without growing the organism.",
+   "THE UNRESOLVED SHARE IS UNDERSTATED: 4,732 call edges resolve to no key at all and are not counted as unresolved, so the published unresolved_share - the figure this module says bounds every other number here - does not bound them.",
+   "EDGE EVIDENCE DESCRIBES THE TARGET ONLY, so a call made inside a __main__ guard can publish as EXTRACTED. An edge label should be a joint property of the source's reachability and the target's provenance; 5 edges labelled EXTRACTED leave module nodes this same file marks unreached.",
+   "LAMBDA BODIES are credited to the scope that defines them, which can collapse DISPATCH into EXTRACTED - the upper bound this module says must never be printed as the direct set.",
+   "A MODULE THAT FAILS TO PARSE VANISHES SILENTLY, and its functions then read NONE, which is the label meaning nothing reaches it by any route."
+  ],
   "detail_files": {
    "code": "graph/code.json",
    "plan": "graph/plan.json",

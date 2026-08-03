@@ -406,6 +406,30 @@ def build():
         "reflections, plan, references). Enter at master.root (THE_PROBE), find your node in _index, "
         "then pull the ONE file that holds it. Never re-scan the tree. "
         "Regenerate: python -m aea.tooling.build_graph")
+    # WHAT THIS GRAPH IS KNOWN TO GET WRONG. Six adversarial lenses stress-tested the resolver on
+    # 2026-08-03 and confirmed eight defects by construction, several in code shipped the same day.
+    # The numbers below are published anyway - because a graph with stated caveats is usable and a
+    # graph with hidden ones is a trap - but a reader must not take them as measurements.
+    #
+    # Full record with reproductions: diary/GRAPH_STRESS_FINDINGS.json
+    graph["_meta"]["known_wrong"] = [
+        "NESTED DEFS: 111 of them read NONE, because _fn keys a nested def as 'outer.inner' while "
+        "visit_Call writes the bare call as 'module:inner'. The two keyspaces never meet. Fixing it "
+        "moves NONE from 491 to 376, so about 23 percent of the dead list is a resolver artifact "
+        "rather than dead code. The recovered functions land on TOOL, not EXTRACTED - EXTRACTED "
+        "moves only 154 to 160, so this shrinks the dead list without growing the organism.",
+        "THE UNRESOLVED SHARE IS UNDERSTATED: 4,732 call edges resolve to no key at all and are not "
+        "counted as unresolved, so the published unresolved_share - the figure this module says "
+        "bounds every other number here - does not bound them.",
+        "EDGE EVIDENCE DESCRIBES THE TARGET ONLY, so a call made inside a __main__ guard can "
+        "publish as EXTRACTED. An edge label should be a joint property of the source's "
+        "reachability and the target's provenance; 5 edges labelled EXTRACTED leave module nodes "
+        "this same file marks unreached.",
+        "LAMBDA BODIES are credited to the scope that defines them, which can collapse DISPATCH "
+        "into EXTRACTED - the upper bound this module says must never be printed as the direct set.",
+        "A MODULE THAT FAILS TO PARSE VANISHES SILENTLY, and its functions then read NONE, which is "
+        "the label meaning nothing reaches it by any route.",
+    ]
     graph["_meta"]["detail_files"] = {k: "graph/%s.json" % k for k in subgraphs}
 
     # THE WRITE IS GUARDED; THE SCAN ABOVE IS NOT, AND THAT IS THE DELIBERATE SPLIT.
