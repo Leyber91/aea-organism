@@ -1,8 +1,8 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-03 00:39 UTC",
- "seconds": 78.5,
- "pass": false,
+ "at": "2026-08-03 00:45 UTC",
+ "seconds": 95.9,
+ "pass": true,
  "checks": [
   {
    "check": "structure",
@@ -156,12 +156,10 @@
   },
   {
    "check": "no private data in tracked files",
-   "pass": false,
-   "detail": "absolute windows path x1 (diary/GRAPH_STRESS_FINDINGS.json)",
+   "pass": true,
+   "detail": "clean",
    "data": {
-    "hits": [
-     "diary/GRAPH_STRESS_FINDINGS.json: absolute windows path"
-    ]
+    "hits": []
    }
   },
   {
