@@ -333,6 +333,59 @@ graph = {
     "master": {"root": "THE_PROBE", "edges": master_edges},
     "subgraphs": subgraphs,
 }
+
+# =================================================================================================
+# THE INDEX. ENTERING THE GRAPH MUST BE CHEAP OR NOBODY WILL ENTER IT.
+#
+# MEASURED 2026-08-03 by using the graph the way a fresh conversation would: graph.json was 204 KB,
+# about 52,000 tokens - a quarter of a context window to load, which is MORE than reading the six
+# files a focused task actually needs. A graph containing everything, loaded whole, is worse than no
+# graph: it has the cost of exhaustive reading with none of the depth.
+#
+# What makes a graph fast is not completeness, it is SELECTIVITY - a small entry point, stable
+# addressable ids, and the content staying in the files while the graph carries pointers. We had the
+# ids and the pointers and no small entry point, so nothing forced selective pulling.
+#
+# So: `graph.json` is now the INDEX - every node in the repo, one line each, and which file holds
+# its detail. The subgraphs move to `graph/<name>.json` and are pulled ONLY when needed. A new
+# conversation reads the index, learns what exists, and fetches one file.
+#
+# THE INDEX IS DERIVED, never hand-kept - it is built from the same `subgraphs` dict the detail
+# files are written from, in the same pass, so the two cannot disagree.
+# =================================================================================================
+def _one_line(n):
+    for k in ("purpose", "title", "served_by"):
+        v = n.get(k)
+        if v:
+            return str(v)[:72]
+    return n.get("type", "")
+
+
+index = {}
+for _name, _sg in subgraphs.items():
+    rows = []
+    for n in _sg["nodes"]:
+        row = {"id": n.get("id"), "t": n.get("type"), "s": _one_line(n)}
+        if n.get("reach"):
+            row["reach"] = n["reach"]
+        # PATH ONLY WHEN IT IS NOT DERIVABLE. For a module the dotted id IS the path -
+        # kernel.grid is aea/kernel/grid.py - so repeating it costs ~40 bytes x 179 nodes to say
+        # something the reader can compute. Everything else (a design doc, a discovery) carries it,
+        # because there the id and the file are genuinely different facts. Law S1: derive the map.
+        if n.get("path") and n.get("type") != "module":
+            row["path"] = n["path"]
+        rows.append(row)
+    index[_name] = rows
+
+graph["_index"] = index
+graph["_meta"]["how_to_use"] = (
+    "graph.json IS THE INDEX and is cheap to load - every node, one line each. It does NOT carry "
+    "edges or detail. When you need a subgraph's edges, read graph/<name>.json (code, discoveries, "
+    "reflections, plan, references). Enter at master.root (THE_PROBE), find your node in _index, "
+    "then pull the ONE file that holds it. Never re-scan the tree. "
+    "Regenerate: python -m aea.tooling.build_graph")
+graph["_meta"]["detail_files"] = {k: "graph/%s.json" % k for k in subgraphs}
+
 # THE WRITE IS GUARDED; THE SCAN ABOVE IS NOT, AND THAT IS THE DELIBERATE SPLIT.
 #
 # Every line above builds `graph` in memory and is harmless to run on import. This line REWRITES A
@@ -340,7 +393,16 @@ graph = {
 # test sweep or an editor regenerated graph.json. Found by importing all 86 runtime modules rather
 # than by reading them: an import that writes is invisible to code review and obvious to execution.
 if __name__ == "__main__":
-    json.dump(graph, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    # THE DETAIL FILES FIRST, THEN THE INDEX. If a detail write fails the index is not rewritten, so
+    # a reader never sees an index pointing at a file that does not exist - the same write-ahead
+    # discipline the path object and the egress ledger use, for the same reason.
+    _dir = os.path.join(ROOT, "graph")
+    os.makedirs(_dir, exist_ok=True)
+    for _k, _v in subgraphs.items():
+        json.dump(_v, open(os.path.join(_dir, _k + ".json"), "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=1)
+    _light = {k: v for k, v in graph.items() if k != "subgraphs"}
+    json.dump(_light, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     tot = sum(len(v["nodes"]) for v in subgraphs.values())
     print(f"graph.json: master + {len(subgraphs)} subgraphs, {tot} nodes total -> {OUT}")
     for k, v in subgraphs.items():

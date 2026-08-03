@@ -23,9 +23,17 @@ changes is when the *methodology* or the *repo shape* genuinely changes.
 
 ## 0 · BOOT SEQUENCE (every session starts here)
 
-1. **`graph.json`** — the master orchestrator graph. Enter at root `THE_PROBE`, follow one `contains`
-   edge into the subgraph you need (`code` / `plan` / `discoveries` / `references`), pull that node +
-   its edges. Never re-scan the tree; that's what burns tokens. Refresh: `python -m aea.tooling.build_graph`.
+1. **`graph.json` — THE INDEX, and it is cheap on purpose (~16k tokens, was 52k).** Every node in the
+   repo, one line each: what exists, what it is, and for a module whether it is `organism` or
+   `terminal-only`. It carries NO edges and NO detail. **A module node's id IS its path** —
+   `kernel.grid` is `aea/kernel/grid.py`.
+   When you need edges, pull exactly ONE detail file: `graph/code.json` (946 edges, every call edge
+   labelled `EXTRACTED` / `DISPATCH` / `ENTRY` / `TOOL` / `NONE` — a fact, an upper bound, an
+   assumption, a human at a terminal, or nothing), `graph/discoveries.json` (lessons, with `about`
+   edges INTO the code they were learned on), `graph/reflections.json` (Luis's sparks, with
+   `touches` edges), `graph/plan.json`, `graph/references.json`.
+   **Read the index, find your node, fetch one file. Never re-scan the tree** — that is what burns a
+   context window, and so is loading the whole graph. Refresh: `python -m aea.tooling.build_graph`.
 2. **`diary/SESSION_LOG.md`** — the latest entry: current state, what's `LOCKED` (do not re-litigate),
    and the exact `NEXT` task. Build from `NEXT`; don't re-decide what's under `LOCKED`.
 3. **`diary/OPEN_LOOPS.md`** - THE PENDING WORK. Every step carries a verdict (FINISH/LATER/KILL)

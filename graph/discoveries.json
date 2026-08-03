@@ -1,0 +1,534 @@
+{
+ "nodes": [
+  {
+   "id": "D1",
+   "type": "discovery",
+   "title": "D1 · THE PROBE is not yet a game (measured, not opinion)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D2",
+   "type": "discovery",
+   "title": "D2 · The elements a game is made of (reconciled)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D3",
+   "type": "discovery",
+   "title": "D3 · The one idea → IGNITION (the thesis)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D4",
+   "type": "discovery",
+   "title": "D4 · What makes a game spread with no marketing",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D5",
+   "type": "discovery",
+   "title": "D5 · Reachability is the structural blocker",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D6",
+   "type": "discovery",
+   "title": "D6 · Form ruling, the city is an instrument, not decoration",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D7",
+   "type": "discovery",
+   "title": "D7 · The corpus was the risk",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D8",
+   "type": "discovery",
+   "title": "D8 · Reorg lesson, continuity lives in the files",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D9",
+   "type": "discovery",
+   "title": "D9 · Missions are scaffolding, not spine; viability is empirical and IS the teaching (DECIDED 2026-07-22)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D10",
+   "type": "discovery",
+   "title": "D10 · Cold-read audit, legible in the parts, ambiguous in the CANON (measured 2026-07-22)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D11",
+   "type": "discovery",
+   "title": "D11 · The vision crystallized, backward-designed, genre-welded, clean-architected (2026-07-22)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D12",
+   "type": "discovery",
+   "title": "D12 · Expert panel, GREENLIT masterpiece seed; three execution flaws; SHIP THE VERB (2026-07-22)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "THE SHORTEST PATH FROM INSTRUMENT TO GAM",
+   "type": "discovery",
+   "title": "THE SHORTEST PATH FROM INSTRUMENT TO GAME (~5 evenings, all wiring what exists)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D13",
+   "type": "discovery",
+   "title": "D13 · A real-time pipeline fails at the seams you did not measure (built + measured 2026-07-24/25)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D14",
+   "type": "discovery",
+   "title": "D14 · The architecture has FOUR ladders and nothing checked them against each other (found + enforced 2026-07-25)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D15",
+   "type": "discovery",
+   "title": "D15 · n=8 was n=1: the harness measured its own determinism and called it power (found 2026-07-25)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D16",
+   "type": "discovery",
+   "title": "D16 · The form does not encode the state, it decides WHAT GETS WRITTEN AT ALL (measured 2026-07-25, x08b)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D17",
+   "type": "discovery",
+   "title": "D17 · The ladder is not a size ladder, the frame HARMS rods that don't need it, and the readout is the only lever that generalises (measured 2026-07-25, x10)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D18",
+   "type": "discovery",
+   "title": "D18 · The instrument is wrong more often than the model (counted 2026-07-28)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D19",
+   "type": "discovery",
+   "title": "D19 · The wake could not choose, then chose everything, then chose nothing - and each fix was correct (built + measured 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D20",
+   "type": "discovery",
+   "title": "D20 · Four instrument defects in one control, and the fourth was the repo's own law",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D21",
+   "type": "discovery",
+   "title": "D21 · The ladder keeps the heartbeat alive and cannot keep the judgement alive",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D22",
+   "type": "discovery",
+   "title": "D22 · The frontier ladder's top rod was a corpse, and the repo already knew (found 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D23",
+   "type": "discovery",
+   "title": "D23 · R2c was REFUSED by a unanimous council, and redefined (2026-07-30, before building)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D24",
+   "type": "discovery",
+   "title": "D24 · The entity had 94 rods and could reach one, because growing the exam shrank the ladder (measured 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D25",
+   "type": "discovery",
+   "title": "D25 · R2a measured on the fleet's deepest rod: SAFE, not yet USEFUL (measured 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D26",
+   "type": "discovery",
+   "title": "D26 · The lesson was applied where it was found and nowhere else (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D27",
+   "type": "discovery",
+   "title": "D27 · \"Verified with a real draw\" verified ONE property, and the fix had three defects left (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D28",
+   "type": "discovery",
+   "title": "D28 · The census measured our harness, not the rods - and the 550b was an 11/12 recorded as 7/12 (measured 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D29",
+   "type": "discovery",
+   "title": "D29 · Every token ceiling in this repo was invented, and the diagnosis had been sitting two hundred lines above the defect for two days (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D30",
+   "type": "discovery",
+   "title": "D30 · The council was seated from a table measured for SPEECH LATENCY, and the module says so about itself (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D31",
+   "type": "discovery",
+   "title": "D31 · Removing the cap turned the census into a contention test, and the capable council changed nothing but the reasoning (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D32",
+   "type": "discovery",
+   "title": "D32 · Streaming is what makes \"think as long as you like, but die in a minute\" expressible (measured 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D33",
+   "type": "discovery",
+   "title": "D33 · A single blocking read threw away every question worth asking about a rod (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D34",
+   "type": "discovery",
+   "title": "D34 · The honest census: the 550b is 12/12, and the exemption built to rescue it admitted nothing (measured 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D35",
+   "type": "discovery",
+   "title": "D35 · The transfer failure has a mechanism now, and it caught four more instances on its first run (built 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D36",
+   "type": "discovery",
+   "title": "D36 · Recorded is not retrieved - and hybrid beats both parents, measured (built 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D37",
+   "type": "discovery",
+   "title": "D37 · The same tombstone blindness in two more selectors, and a panel calling a corpse healthy (found by the sweep, 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D38",
+   "type": "discovery",
+   "title": "D38 · Two capabilities wired, and both corrected me on the way in (measured 2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D39",
+   "type": "discovery",
+   "title": "D39 · THE RECAP LUIS ASKED FOR: lessons I saw today and did not apply (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D40",
+   "type": "discovery",
+   "title": "D40 · What the 100 ticks are actually FOR, and why the criteria are written first (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D41",
+   "type": "discovery",
+   "title": "D41 · The first gate run measured MY HARNESS, and the entity had been asking for the fix 25 times (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D42",
+   "type": "discovery",
+   "title": "D42 · The gate was 9/10 plumbing, and METHOD.md had the check that would have said so (2026-07-30)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D43",
+   "type": "discovery",
+   "title": "D43 · Monitor DURING, not after - and the first watch found the R3 gap live (2026-07-31)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D44",
+   "type": "discovery",
+   "title": "D44 · THE R2 GATE, 100 ticks executed: 10/12, and the two failures are the only two that matter (2026-07-31)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D45",
+   "type": "discovery",
+   "title": "D45 · The entity reports its own failures at 96% accuracy, and nothing was listening (measured 2026-07-31)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D46",
+   "type": "discovery",
+   "title": "D46 · The R2 gate is VOID, not FAIL - and three instruments were blind to the rung they measured (2026-07-31)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D47",
+   "type": "discovery",
+   "title": "D47 · A rung is POWER + BOUND, the bound half is nearly free, and I bounded it on the wrong denominator (2026-07-31)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D48",
+   "type": "discovery",
+   "title": "D48 · The instrument wrote 4,925 fictions into the entity's history, and R3's hazard arrived before R3 (2026-07-31)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D49",
+   "type": "discovery",
+   "title": "D49 · R3 closes, and the day's lesson is that a fix lands on the object you name, not the one you meant (2026-07-31)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D50",
+   "type": "discovery",
+   "title": "D50 · The picture was drawing two ladders, and both of its measuring instruments were blind (2026-08-02)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D51 - A LABEL IS NOT A MEASUREMENT, AND ",
+   "type": "discovery",
+   "title": "D51 - A LABEL IS NOT A MEASUREMENT, AND THIS REPO KEEPS READING ONE AS THE OTHER",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D52 - THE NUDGE IS PART OF THE MEASUREME",
+   "type": "discovery",
+   "title": "D52 - THE NUDGE IS PART OF THE MEASUREMENT, AND IT MUST BE IN THE RECORD",
+   "path": "diary/DISCOVERIES.md"
+  }
+ ],
+ "edges": [
+  {
+   "src": "D3",
+   "dst": "io.agent_tools",
+   "rel": "about"
+  },
+  {
+   "src": "D3",
+   "dst": "loop.aea",
+   "rel": "about"
+  },
+  {
+   "src": "D10",
+   "dst": "server.controlroom",
+   "rel": "about"
+  },
+  {
+   "src": "D12",
+   "dst": "energy.model_fitness",
+   "rel": "about"
+  },
+  {
+   "src": "D12",
+   "dst": "kernel.grid",
+   "rel": "about"
+  },
+  {
+   "src": "D12",
+   "dst": "organs.autonomy",
+   "rel": "about"
+  },
+  {
+   "src": "THE SHORTEST PATH FROM INSTRUMENT TO GAM",
+   "dst": "bench.bench_core",
+   "rel": "about"
+  },
+  {
+   "src": "D13",
+   "dst": "io.listen",
+   "rel": "about"
+  },
+  {
+   "src": "D13",
+   "dst": "organs.converse",
+   "rel": "about"
+  },
+  {
+   "src": "D14",
+   "dst": "bench.bench_core",
+   "rel": "about"
+  },
+  {
+   "src": "D14",
+   "dst": "tooling.journey_check",
+   "rel": "about"
+  },
+  {
+   "src": "D15",
+   "dst": "bench.bench_core",
+   "rel": "about"
+  },
+  {
+   "src": "D15",
+   "dst": "lab.harness",
+   "rel": "about"
+  },
+  {
+   "src": "D20",
+   "dst": "lab.social",
+   "rel": "about"
+  },
+  {
+   "src": "D26",
+   "dst": "mind.council",
+   "rel": "about"
+  },
+  {
+   "src": "D28",
+   "dst": "energy.capability_census",
+   "rel": "about"
+  },
+  {
+   "src": "D28",
+   "dst": "lab.parts.fuel",
+   "rel": "about"
+  },
+  {
+   "src": "D28",
+   "dst": "mind.fuel",
+   "rel": "about"
+  },
+  {
+   "src": "D29",
+   "dst": "loop.aea",
+   "rel": "about"
+  },
+  {
+   "src": "D30",
+   "dst": "mind.tiers",
+   "rel": "about"
+  },
+  {
+   "src": "D35",
+   "dst": "kernel.grid",
+   "rel": "about"
+  },
+  {
+   "src": "D35",
+   "dst": "lab.battery",
+   "rel": "about"
+  },
+  {
+   "src": "D35",
+   "dst": "lab.transfer",
+   "rel": "about"
+  },
+  {
+   "src": "D35",
+   "dst": "mind.background",
+   "rel": "about"
+  },
+  {
+   "src": "D36",
+   "dst": "lab.transfer",
+   "rel": "about"
+  },
+  {
+   "src": "D37",
+   "dst": "kernel.impasse",
+   "rel": "about"
+  },
+  {
+   "src": "D37",
+   "dst": "server.controlroom",
+   "rel": "about"
+  },
+  {
+   "src": "D39",
+   "dst": "lab.recall",
+   "rel": "about"
+  },
+  {
+   "src": "D39",
+   "dst": "lab.transfer",
+   "rel": "about"
+  },
+  {
+   "src": "D41",
+   "dst": "loop.live",
+   "rel": "about"
+  },
+  {
+   "src": "D44",
+   "dst": "memory.consolidate",
+   "rel": "about"
+  },
+  {
+   "src": "D45",
+   "dst": "lab.selfreport",
+   "rel": "about"
+  },
+  {
+   "src": "D46",
+   "dst": "lab.containment",
+   "rel": "about"
+  },
+  {
+   "src": "D46",
+   "dst": "memory.consolidate",
+   "rel": "about"
+  },
+  {
+   "src": "D47",
+   "dst": "lab.redteam",
+   "rel": "about"
+  },
+  {
+   "src": "D48",
+   "dst": "lab.redteam",
+   "rel": "about"
+  },
+  {
+   "src": "D48",
+   "dst": "lab.transfer",
+   "rel": "about"
+  },
+  {
+   "src": "D49",
+   "dst": "kernel.knobs",
+   "rel": "about"
+  },
+  {
+   "src": "D49",
+   "dst": "loop.aea",
+   "rel": "about"
+  },
+  {
+   "src": "D49",
+   "dst": "organs.brief",
+   "rel": "about"
+  },
+  {
+   "src": "D51 - A LABEL IS NOT A MEASUREMENT, AND ",
+   "dst": "tooling.assembly",
+   "rel": "about"
+  },
+  {
+   "src": "D51 - A LABEL IS NOT A MEASUREMENT, AND ",
+   "dst": "tooling.page.render",
+   "rel": "about"
+  }
+ ]
+}

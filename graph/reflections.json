@@ -1,0 +1,365 @@
+{
+ "nodes": [
+  {
+   "id": "R1",
+   "type": "reflection",
+   "title": "R1 · A playable 3D city, and a voice that sounds alive",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R2",
+   "type": "reflection",
+   "title": "R2 · Call it Leyber; tokens are energy; run a conscious self-improving loop",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R3",
+   "type": "reflection",
+   "title": "R3 · Build ON the AEA, not from scratch",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R4",
+   "type": "reflection",
+   "title": "R4 · Autonomy = press play; a scheduled loop that checks its own systems",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R5",
+   "type": "reflection",
+   "title": "R5 · Tokens are energy, models are accelerators — crystallize",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R6",
+   "type": "reflection",
+   "title": "R6 · Show the mind as one navigable 3D brain",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R7",
+   "type": "reflection",
+   "title": "R7 · A Claude-level entity fused with my thinking — and a knowledge graph so it doesn't burn context",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R8",
+   "type": "reflection",
+   "title": "R8 · A real battery of tests to prove autonomy",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R9",
+   "type": "reflection",
+   "title": "R9 · A self-building timeline of every bifurcation and tool call",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R10",
+   "type": "reflection",
+   "title": "R10 · A building tab — watch it assembled like a puzzle",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R11",
+   "type": "reflection",
+   "title": "R11 · Reframe the whole thing as a GAME",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R12",
+   "type": "reflection",
+   "title": "R12 · A guided level journey with an inventory — token limits are resources you grow",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R13",
+   "type": "reflection",
+   "title": "R13 · A discovery map of the AEA as a concentric field",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R14",
+   "type": "reflection",
+   "title": "R14 · A game is not one markdown",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R15",
+   "type": "reflection",
+   "title": "R15 · The core loop: assemble AEA combinations that act on the world",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R16",
+   "type": "reflection",
+   "title": "R16 · Every AEA part becomes a journey — and the assistant can run in the wild",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R17",
+   "type": "reflection",
+   "title": "R17 · Magic out of the real — a pop-culture game that demystifies AI",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R18",
+   "type": "reflection",
+   "title": "R18 · This is the WirthForge we needed, finally realized",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R19",
+   "type": "reflection",
+   "title": "R19 · Define the world through concept art",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R20",
+   "type": "reflection",
+   "title": "R20 · Spread on quality, not marketing",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R21",
+   "type": "reflection",
+   "title": "R21 · Premium low-resource 3D — and the render doctrine (solid = what it IS, hologram = what it SHOWS)",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R22",
+   "type": "reflection",
+   "title": "R22 · Ignite independent organisms that run on tokens",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R23",
+   "type": "reflection",
+   "title": "R23 · Assemble brains from Lego pieces — readable or they quit at step one",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R24",
+   "type": "reflection",
+   "title": "R24 · Minimal Viable Organism — aliveness = how often it queries on its own",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R25",
+   "type": "reflection",
+   "title": "R25 · Entities are proofs of AEA combinations; the masters ARE the AEA",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R26",
+   "type": "reflection",
+   "title": "R26 · Missions -> an open world where your entity acts on the real internet",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R27",
+   "type": "reflection",
+   "title": "R27 · Continuity lives in files — any conversation can take over from the repo",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R28",
+   "type": "reflection",
+   "title": "R28 · The game's dynamics come from the ENTITIES, not from authored content",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R29",
+   "type": "reflection",
+   "title": "R29 · Entities are typed by which AEA parts they embody -> a combinatorial tier-space",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R30",
+   "type": "reflection",
+   "title": "R30 · The game GENERATES AEA-combination entities — and non-viability is the point",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R31",
+   "type": "reflection",
+   "title": "R31 · A real carrying capacity — creatures bounded by loops, frequency, and connected sources",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R32",
+   "type": "reflection",
+   "title": "R32 · Rebuild the game CLIENT clean, backward from success, at the concept-art bar",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R33",
+   "type": "reflection",
+   "title": "R33 · The missing work is GAME-DNA, not more AEA",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R34",
+   "type": "reflection",
+   "title": "R34 · The catalogue is a POKEDEX of shadows; tiers of combinations = levels of autonomy",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R35",
+   "type": "reflection",
+   "title": "R35 · Design it backward as a 90s–2000s strategy guide (Zelda-style)",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R36",
+   "type": "reflection",
+   "title": "R36 · Three modes = three APERTURES on one engine (defied: don't fragment; add a stakes axis)",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R37",
+   "type": "reflection",
+   "title": "R37 · The world: a living concentric INSTRUMENT with EARNED (metroidvania) openness",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R38",
+   "type": "reflection",
+   "title": "R38 · Crystallization makes creatures do MORE — but it is a bridge, not the destination",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R39",
+   "type": "reflection",
+   "title": "R39 · The world is a STRUCTURAL MAP of the being, not a city",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R40",
+   "type": "reflection",
+   "title": "R40 · The PROGRESSION should feel like SPORE — compose a being, it lives, each more complete until the whole",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R41",
+   "type": "reflection",
+   "title": "R41 · The combinations must be NAMED (marketable, on-theme), and we build the vocabulary ground-up",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R42",
+   "type": "reflection",
+   "title": "R42 · Generate the reference images FIRST - the ones we have aren't helping",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R43",
+   "type": "reflection",
+   "title": "R43 · The refs are all ONE moment - the game's PROGRESSION and META are unreferenced",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R44",
+   "type": "reflection",
+   "title": "R44 · The entity economy is Cities-Skylines-class: many interlocking variables to stay viable",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R45",
+   "type": "reflection",
+   "title": "R45 · Advance by deepening, top to bottom — stack -> language -> file structure -> functionality -> functions",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R46",
+   "type": "reflection",
+   "title": "R46 · The studio is a real talking team - agents discuss in sessions, and the tracking reflects TRUE status",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R47",
+   "type": "reflection",
+   "title": "R47 · The studio is a LEARNING team - it accumulates experience and pushes as hard as Luis does",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R48",
+   "type": "reflection",
+   "title": "R48 · The world is a POWER INSTALLATION · players may beat the AEA · danger must be real",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "R49",
+   "type": "reflection",
+   "title": "R49 · THE CREATURE GAME — the missing piece is LIFE, and the reward must be FELT",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "2026-07-25",
+   "type": "reflection",
+   "title": "2026-07-25 · FIELD LESSON 10 — A NUMBER IN AN IMAGE PROMPT IS A CLAIM",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "2026-07-28 — RESOURCE-AWARE EVOLUTION, N",
+   "type": "reflection",
+   "title": "2026-07-28 — RESOURCE-AWARE EVOLUTION, NO HALF-SOLUTIONS, AND CHAMBERS OF ORIGINAL THOUGHT",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "2026-08-01",
+   "type": "reflection",
+   "title": "2026-08-01 · WE ARE CODING WAYS OF THINKING, AND YOU CANNOT HARD-CODE A WAY OF THINKING",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "2026-08-01b",
+   "type": "reflection",
+   "title": "2026-08-01b · THE SITUATION IS THE UNIT — and a situation with no tool is the interesting one",
+   "path": "diary/REFLECTIONS.md"
+  },
+  {
+   "id": "2026-08-02",
+   "type": "reflection",
+   "title": "2026-08-02 · ROLES ARE THE UNIT. And the capability is not making one - it is making the next one",
+   "path": "diary/REFLECTIONS.md"
+  }
+ ],
+ "edges": [
+  {
+   "src": "R4",
+   "dst": "loop.aea",
+   "rel": "touches"
+  },
+  {
+   "src": "R7",
+   "dst": "tooling.build_graph",
+   "rel": "touches"
+  },
+  {
+   "src": "R10",
+   "dst": "bench.bench_core",
+   "rel": "touches"
+  },
+  {
+   "src": "R24",
+   "dst": "io.agent_tools",
+   "rel": "touches"
+  },
+  {
+   "src": "R24",
+   "dst": "loop.aea",
+   "rel": "touches"
+  },
+  {
+   "src": "R31",
+   "dst": "kernel.grid",
+   "rel": "touches"
+  },
+  {
+   "src": "R44",
+   "dst": "kernel.grid",
+   "rel": "touches"
+  }
+ ]
+}

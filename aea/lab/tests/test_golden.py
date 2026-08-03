@@ -1756,8 +1756,14 @@ def check_graph_complete():
     if not _o.path.isfile(gp):
         print("  graphok    %-45s -> %-14s FAIL" % ("graph.json exists", "ABSENT"))
         return [("graphok:file", "absent", "present")]
-    g = _j.load(open(gp, encoding="utf-8"))
-    code = (g.get("subgraphs") or {}).get("code") or {}
+    # READS THE DETAIL FILE, because graph.json is now an INDEX and carries no subgraph blob.
+    # This check reported all 179 modules MISSING the moment the split landed - which is the frozen
+    # suite doing its job on a shape change, and the reason the migration was safe to make.
+    cp = _o.path.join(root, "graph", "code.json")
+    if not _o.path.isfile(cp):
+        print("  graphok    %-45s -> %-14s FAIL" % ("graph/code.json exists", "ABSENT"))
+        return [("graphok:detail", "absent", "present")]
+    code = _j.load(open(cp, encoding="utf-8"))
     nodes, edges = code.get("nodes") or [], code.get("edges") or []
     mods = [x for x in nodes if x.get("type") == "module"]
 
@@ -1805,6 +1811,93 @@ def check_graph_complete():
     return fails
 
 
+
+# =================================================================================================
+# THE INDEX MUST NEVER POINT AT SOMETHING THE DETAIL FILES DO NOT HAVE.
+#
+# graph.json was 204 KB / ~52,000 tokens - a quarter of a context window to ENTER, which is more
+# than reading the six files a focused task needs. A graph containing everything and loaded whole is
+# worse than no graph: the cost of exhaustive reading with none of the depth. What makes a graph
+# fast is SELECTIVITY, and nothing forced it.
+#
+# So graph.json is now an INDEX (~16k tokens) and the subgraphs live in graph/<name>.json. That
+# split introduces exactly one new way to lie: an index that disagrees with the detail. These rows
+# check the two against each other, in both directions, because a stale index is worse than no
+# index - a reader trusts it and fetches a file that does not contain what was promised.
+# =================================================================================================
+def check_graph_index():
+    import json as _j
+    import os as _o
+    fails = []
+    root = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+        _o.path.dirname(_o.path.abspath(__file__)))))
+    gp = _o.path.join(root, "graph.json")
+    if not _o.path.isfile(gp):
+        print("  gindex     %-45s -> %-14s FAIL" % ("graph.json exists", "ABSENT"))
+        return [("gindex:file", "absent", "present")]
+    g = _j.load(open(gp, encoding="utf-8"))
+    idx = g.get("_index") or {}
+
+    rows = [("the index exists and is non-empty", bool(idx), True),
+            ("graph.json carries NO subgraph blob", "subgraphs" not in g, True),
+            ("entry cost stays under 30k tokens",
+             _o.path.getsize(gp) // 4 < 30000, True)]
+    for label, got, want in rows:
+        ok = got == want
+        print("  gindex     %-45s -> %-14s %s" % (label, got, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("gindex:" + label, got, want))
+
+    # BOTH DIRECTIONS. A detail file with a node the index omits is invisible to a reader; an index
+    # entry with no detail sends them to a file that cannot answer.
+    for name, rows_ in sorted(idx.items()):
+        dp = _o.path.join(root, "graph", name + ".json")
+        if not _o.path.isfile(dp):
+            print("  gindex     %-45s -> %-14s FAIL" % ("detail file for " + name, "ABSENT"))
+            fails.append(("gindex:detail:" + name, "absent", "present"))
+            continue
+        det = _j.load(open(dp, encoding="utf-8"))
+        dids = {n.get("id") for n in (det.get("nodes") or [])}
+        iids = {r.get("id") for r in rows_}
+        missing_from_index = len(dids - iids)
+        missing_from_detail = len(iids - dids)
+        ok = missing_from_index == 0 and missing_from_detail == 0
+        print("  gindex     %-45s -> %-14s %s"
+              % ("%s: index and detail agree" % name,
+                 "%d/%d" % (missing_from_index, missing_from_detail), "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("gindex:agree:" + name,
+                          (missing_from_index, missing_from_detail), (0, 0)))
+
+    # A MODULE ID MUST BE ITS PATH, because the index drops `path` for modules on that promise. If
+    # the promise breaks, a reader computes a filename that does not exist - and the index will
+    # look perfectly consistent while doing it.
+    bad = []
+    for r in idx.get("code", []):
+        if r.get("t") == "module":
+            p = _o.path.join(root, "aea", *str(r["id"]).split(".")) + ".py"
+            if not _o.path.isfile(p):
+                bad.append(r["id"])
+    ok = not bad
+    print("  gindex     %-45s -> %-14s %s" % ("every module id resolves to a real file",
+                                              bad[:2] or "none", "ok" if ok else "FAIL"))
+    if not ok:
+        fails.append(("gindex:paths", bad[:4], "none"))
+
+    # AND THE LESSONS REACH THE CODE. This is the whole reason the knowledge subgraphs exist: a new
+    # conversation must be able to go from what was learned to where it was learned.
+    dd = _o.path.join(root, "graph", "discoveries.json")
+    if _o.path.isfile(dd):
+        det = _j.load(open(dd, encoding="utf-8"))
+        n_about = len([e for e in (det.get("edges") or []) if e.get("rel") == "about"])
+        ok = n_about >= 20
+        print("  gindex     %-45s -> %-14s %s" % ("discoveries carry `about` edges into code",
+                                                  n_about, "ok" if ok else "FAIL"))
+        if not ok:
+            fails.append(("gindex:about", n_about, ">=20"))
+    return fails
+
+
 if __name__ == "__main__":
     print("GOLDEN TRACE - scripted fuel, no network\n")
     _counter = _CountedOut(sys.stdout)
@@ -1823,7 +1916,8 @@ if __name__ == "__main__":
              + check_egress_budget() + check_r4b_conjunction()
              + check_conditional_zone()
              + check_policy_refusal()
-             + check_graph_complete())
+             + check_graph_complete()
+             + check_graph_index())
     finally:
         sys.stdout = _counter.inner
     print()

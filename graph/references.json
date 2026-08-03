@@ -1,0 +1,35 @@
+{
+ "nodes": [
+  {
+   "id": "AEA FRAMEWORK",
+   "type": "reference",
+   "title": "AEA FRAMEWORK — the architecture the game implements",
+   "path": "references/README.md"
+  },
+  {
+   "id": "SITE AEA EXPLAINER / POSITIONING",
+   "type": "reference",
+   "title": "SITE AEA EXPLAINER / POSITIONING — how the AEA is framed publicly",
+   "path": "references/README.md"
+  },
+  {
+   "id": "VISUAL-LANGUAGE SPEC",
+   "type": "reference",
+   "title": "VISUAL-LANGUAGE SPEC — the locked look",
+   "path": "references/README.md"
+  },
+  {
+   "id": "EXTERNAL READING - books and papers, wit",
+   "type": "reference",
+   "title": "EXTERNAL READING - books and papers, with what they do NOT cover",
+   "path": "references/README.md"
+  },
+  {
+   "id": "PRIVACY GUARD (standing)",
+   "type": "reference",
+   "title": "PRIVACY GUARD (standing)",
+   "path": "references/README.md"
+  }
+ ],
+ "edges": []
+}
