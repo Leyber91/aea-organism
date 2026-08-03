@@ -1,8 +1,8 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-03 00:26 UTC",
- "seconds": 145.0,
- "pass": false,
+ "at": "2026-08-03 00:33 UTC",
+ "seconds": 69.2,
+ "pass": true,
  "checks": [
   {
    "check": "structure",
@@ -219,8 +219,8 @@
   },
   {
    "check": "defect ratchet",
-   "pass": false,
-   "detail": "ROSE: import-time-work 4->10; silent-default 32->33 - a NEW instance of a known defect"
+   "pass": true,
+   "detail": "count-threshold 0, expiring-only-retry 0, global-write 7, import-bound-write 43, import-time-work 4, invented-ceiling 77 (was 80), mutable-module-state 6, scope-violation 0, silent-default 32, unredirectable-store 7"
   }
  ]
 }

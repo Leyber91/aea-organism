@@ -239,10 +239,15 @@ def sub_reflections(modset=None):
 # =================================================================================================
 def _sections(path, pat):
     """[(heading, body)] - the body is what the heading owns, up to the next heading."""
+    # FAILS LOUD. A swallowed read here empties an entire knowledge subgraph, and a reader would
+    # see a graph with no discoveries and no way to tell that from a repo with no discoveries. The
+    # ratchet flagged the silent version the minute it shipped (32 -> 33). These files are required;
+    # if one is gone the graph is wrong and the build should say so.
     try:
         txt = open(path, encoding="utf-8", errors="replace").read()
-    except Exception:
-        return []
+    except Exception as e:
+        raise RuntimeError("build_graph cannot read %s (%s) - the subgraph it feeds would be "
+                           "silently empty" % (path, type(e).__name__))
     # CRLF DEFEATS $ IN MULTILINE MODE, and this returned ZERO sections for REFLECTIONS.md on the
     # first run while DISCOVERIES.md worked - the two files simply had different line endings. A
     # silent zero, in a graph builder, on a Windows checkout. Normalise before matching.
@@ -297,102 +302,124 @@ def sub_references():
 
 SUBS = {"code": sub_code, "plan": sub_plan, "reflections": sub_reflections,
         "discoveries": sub_discoveries, "references": sub_references}
-_selftest_mentions()                 # a matcher must be able to match
-
-subgraphs, master_edges = {}, []
-_code_nodes, _ = SUBS["code"]()
-MODSET = {x["id"] for x in _code_nodes if x.get("type") == "module"}
-for name, fn in SUBS.items():
-    try:
-        n, e = fn(MODSET)
-    except TypeError:
-        n, e = fn()
-    subgraphs[name] = {"nodes": n, "edges": e}
-    master_edges.append({"src": "THE_PROBE", "dst": name, "rel": "contains", "count": len(n)})
-
-# access guarantee: every declared subgraph is present and non-empty
-missing = [k for k, v in subgraphs.items() if not v["nodes"]]
-assert not missing, f"ACCESS NOT GUARANTEED - empty subgraph(s): {missing}"
-
-graph = {
-    "_meta": {
-        "what": "Master orchestrator graph over subgraphs of the THE PROBE / aea-city repo, for handoff.",
-        "entry_point": "CLAUDE.md - the stable introduction (auto-loaded in Claude Code): HOW to work "
-                       "here + WHERE everything is. It sends you here (the graph) and to diary/SESSION_LOG "
-                       "(the state). Method+map live in CLAUDE.md; state lives in the diary.",
-        "how_to_use": "Enter at master.root (THE_PROBE); follow a 'contains' edge into one subgraph; "
-                      "query the node you need + its edges. Never re-scan the tree. "
-                      "Regenerate: python aea/tooling/build_graph.py",
-        "run_the_game": "python controlroom.py  (root shim -> `python -m aea.server.controlroom`, serves :7799)",
-        "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, "
-                      "WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ "
-                      "subpackages: kernel mind energy memory bench io organs loop server tooling.",
-        "subgraphs": {k: {"count": len(v["nodes"]), "source": v["nodes"][0]["path"] if v["nodes"] and "path" in v["nodes"][0] else "scanned"}
-                      for k, v in subgraphs.items()},
-    },
-    "master": {"root": "THE_PROBE", "edges": master_edges},
-    "subgraphs": subgraphs,
-}
 
 # =================================================================================================
-# THE INDEX. ENTERING THE GRAPH MUST BE CHEAP OR NOBODY WILL ENTER IT.
+# EVERYTHING BELOW RUNS ONLY WHEN CALLED. NOTHING HAPPENS ON IMPORT.
 #
-# MEASURED 2026-08-03 by using the graph the way a fresh conversation would: graph.json was 204 KB,
-# about 52,000 tokens - a quarter of a context window to load, which is MORE than reading the six
-# files a focused task actually needs. A graph containing everything, loaded whole, is worse than no
-# graph: it has the cost of exhaustive reading with none of the depth.
+# THE RATCHET CAUGHT THIS THE MINUTE IT SHIPPED - import-time-work 4 -> 10. Adding the index and the
+# matcher self-test at module level meant that merely IMPORTING this module ran a full AST scan of
+# 179 files plus assembly.provenance(): seconds of work, and a hard dependency on the tree being
+# parseable, for anyone who so much as named it.
 #
-# What makes a graph fast is not completeness, it is SELECTIVITY - a small entry point, stable
-# addressable ids, and the content staying in the files while the graph carries pointers. We had the
-# ids and the pointers and no small entry point, so nothing forced selective pulling.
-#
-# So: `graph.json` is now the INDEX - every node in the repo, one line each, and which file holds
-# its detail. The subgraphs move to `graph/<name>.json` and are pulled ONLY when needed. A new
-# conversation reads the index, learns what exists, and fetches one file.
-#
-# THE INDEX IS DERIVED, never hand-kept - it is built from the same `subgraphs` dict the detail
-# files are written from, in the same pass, so the two cannot disagree.
+# The docstring below already warned about the stronger form. Until 2026-07-28 the WRITE ran on
+# import too, so naming this module from a test sweep regenerated a tracked file. That was fixed by
+# guarding the WRITE and leaving the SCAN unguarded - and I then piled the index and the self-test
+# onto the unguarded half. Half a fix invites the other half back.
 # =================================================================================================
-def _one_line(n):
-    for k in ("purpose", "title", "served_by"):
-        v = n.get(k)
-        if v:
-            return str(v)[:72]
-    return n.get("type", "")
+def build():
+    """Assemble the master index and every subgraph. Pure - reads the tree, writes nothing."""
+
+    _selftest_mentions()                 # a matcher must be able to match
+
+    subgraphs, master_edges = {}, []
+    _code_nodes, _ = SUBS["code"]()
+    MODSET = {x["id"] for x in _code_nodes if x.get("type") == "module"}
+    for name, fn in SUBS.items():
+        try:
+            n, e = fn(MODSET)
+        except TypeError:
+            n, e = fn()
+        subgraphs[name] = {"nodes": n, "edges": e}
+        master_edges.append({"src": "THE_PROBE", "dst": name, "rel": "contains", "count": len(n)})
+
+    # access guarantee: every declared subgraph is present and non-empty
+    missing = [k for k, v in subgraphs.items() if not v["nodes"]]
+    assert not missing, f"ACCESS NOT GUARANTEED - empty subgraph(s): {missing}"
+
+    graph = {
+        "_meta": {
+            "what": "Master orchestrator graph over subgraphs of the THE PROBE / aea-city repo, for handoff.",
+            "entry_point": "CLAUDE.md - the stable introduction (auto-loaded in Claude Code): HOW to work "
+                           "here + WHERE everything is. It sends you here (the graph) and to diary/SESSION_LOG "
+                           "(the state). Method+map live in CLAUDE.md; state lives in the diary.",
+            "how_to_use": "Enter at master.root (THE_PROBE); follow a 'contains' edge into one subgraph; "
+                          "query the node you need + its edges. Never re-scan the tree. "
+                          "Regenerate: python aea/tooling/build_graph.py",
+            "run_the_game": "python controlroom.py  (root shim -> `python -m aea.server.controlroom`, serves :7799)",
+            "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, "
+                          "WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ "
+                          "subpackages: kernel mind energy memory bench io organs loop server tooling.",
+            "subgraphs": {k: {"count": len(v["nodes"]), "source": v["nodes"][0]["path"] if v["nodes"] and "path" in v["nodes"][0] else "scanned"}
+                          for k, v in subgraphs.items()},
+        },
+        "master": {"root": "THE_PROBE", "edges": master_edges},
+        "subgraphs": subgraphs,
+    }
+
+    # =================================================================================================
+    # THE INDEX. ENTERING THE GRAPH MUST BE CHEAP OR NOBODY WILL ENTER IT.
+    #
+    # MEASURED 2026-08-03 by using the graph the way a fresh conversation would: graph.json was 204 KB,
+    # about 52,000 tokens - a quarter of a context window to load, which is MORE than reading the six
+    # files a focused task actually needs. A graph containing everything, loaded whole, is worse than no
+    # graph: it has the cost of exhaustive reading with none of the depth.
+    #
+    # What makes a graph fast is not completeness, it is SELECTIVITY - a small entry point, stable
+    # addressable ids, and the content staying in the files while the graph carries pointers. We had the
+    # ids and the pointers and no small entry point, so nothing forced selective pulling.
+    #
+    # So: `graph.json` is now the INDEX - every node in the repo, one line each, and which file holds
+    # its detail. The subgraphs move to `graph/<name>.json` and are pulled ONLY when needed. A new
+    # conversation reads the index, learns what exists, and fetches one file.
+    #
+    # THE INDEX IS DERIVED, never hand-kept - it is built from the same `subgraphs` dict the detail
+    # files are written from, in the same pass, so the two cannot disagree.
+    # =================================================================================================
+    def _one_line(n):
+        for k in ("purpose", "title", "served_by"):
+            v = n.get(k)
+            if v:
+                return str(v)[:72]
+        return n.get("type", "")
 
 
-index = {}
-for _name, _sg in subgraphs.items():
-    rows = []
-    for n in _sg["nodes"]:
-        row = {"id": n.get("id"), "t": n.get("type"), "s": _one_line(n)}
-        if n.get("reach"):
-            row["reach"] = n["reach"]
-        # PATH ONLY WHEN IT IS NOT DERIVABLE. For a module the dotted id IS the path -
-        # kernel.grid is aea/kernel/grid.py - so repeating it costs ~40 bytes x 179 nodes to say
-        # something the reader can compute. Everything else (a design doc, a discovery) carries it,
-        # because there the id and the file are genuinely different facts. Law S1: derive the map.
-        if n.get("path") and n.get("type") != "module":
-            row["path"] = n["path"]
-        rows.append(row)
-    index[_name] = rows
+    index = {}
+    for _name, _sg in subgraphs.items():
+        rows = []
+        for n in _sg["nodes"]:
+            row = {"id": n.get("id"), "t": n.get("type"), "s": _one_line(n)}
+            if n.get("reach"):
+                row["reach"] = n["reach"]
+            # PATH ONLY WHEN IT IS NOT DERIVABLE. For a module the dotted id IS the path -
+            # kernel.grid is aea/kernel/grid.py - so repeating it costs ~40 bytes x 179 nodes to say
+            # something the reader can compute. Everything else (a design doc, a discovery) carries it,
+            # because there the id and the file are genuinely different facts. Law S1: derive the map.
+            if n.get("path") and n.get("type") != "module":
+                row["path"] = n["path"]
+            rows.append(row)
+        index[_name] = rows
 
-graph["_index"] = index
-graph["_meta"]["how_to_use"] = (
-    "graph.json IS THE INDEX and is cheap to load - every node, one line each. It does NOT carry "
-    "edges or detail. When you need a subgraph's edges, read graph/<name>.json (code, discoveries, "
-    "reflections, plan, references). Enter at master.root (THE_PROBE), find your node in _index, "
-    "then pull the ONE file that holds it. Never re-scan the tree. "
-    "Regenerate: python -m aea.tooling.build_graph")
-graph["_meta"]["detail_files"] = {k: "graph/%s.json" % k for k in subgraphs}
+    graph["_index"] = index
+    graph["_meta"]["how_to_use"] = (
+        "graph.json IS THE INDEX and is cheap to load - every node, one line each. It does NOT carry "
+        "edges or detail. When you need a subgraph's edges, read graph/<name>.json (code, discoveries, "
+        "reflections, plan, references). Enter at master.root (THE_PROBE), find your node in _index, "
+        "then pull the ONE file that holds it. Never re-scan the tree. "
+        "Regenerate: python -m aea.tooling.build_graph")
+    graph["_meta"]["detail_files"] = {k: "graph/%s.json" % k for k in subgraphs}
 
-# THE WRITE IS GUARDED; THE SCAN ABOVE IS NOT, AND THAT IS THE DELIBERATE SPLIT.
-#
-# Every line above builds `graph` in memory and is harmless to run on import. This line REWRITES A
-# TRACKED REPO FILE, and until 2026-07-28 it ran on import too - so merely naming this module from a
-# test sweep or an editor regenerated graph.json. Found by importing all 86 runtime modules rather
-# than by reading them: an import that writes is invisible to code review and obvious to execution.
+    # THE WRITE IS GUARDED; THE SCAN ABOVE IS NOT, AND THAT IS THE DELIBERATE SPLIT.
+    #
+    # Every line above builds `graph` in memory and is harmless to run on import. This line REWRITES A
+    # TRACKED REPO FILE, and until 2026-07-28 it ran on import too - so merely naming this module from a
+    # test sweep or an editor regenerated graph.json. Found by importing all 86 runtime modules rather
+    # than by reading them: an import that writes is invisible to code review and obvious to execution.
+
+    return graph, subgraphs
+
+
 if __name__ == "__main__":
+    graph, subgraphs = build()
     # THE DETAIL FILES FIRST, THEN THE INDEX. If a detail write fails the index is not rewritten, so
     # a reader never sees an index pointing at a file that does not exist - the same write-ahead
     # discipline the path object and the egress ledger use, for the same reason.

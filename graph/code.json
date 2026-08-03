@@ -1474,9 +1474,9 @@
    "purpose": "THE ADDITION LAW, APPLIED TO OURSELVES. No network, no cost, exactly reproducible.",
    "reach": "terminal-only",
    "fns": {
-    "total": 36,
+    "total": 37,
     "live": 0,
-    "tool": 27,
+    "tool": 28,
     "dead": 9
    }
   },
@@ -1942,10 +1942,10 @@
    "purpose": "build_graph.py - the master orchestrator graph over subgraphs, for agent handoff.",
    "reach": "terminal-only",
    "fns": {
-    "total": 10,
+    "total": 11,
     "live": 0,
     "tool": 10,
-    "dead": 0
+    "dead": 1
    }
   },
   {
