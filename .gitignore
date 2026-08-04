@@ -134,3 +134,18 @@ state/armed_run.json
 state/awareness_run.json
 # HADES verdict text quotes the wake's own output, which quotes his priorities.
 state/hades.jsonl
+
+# ---- 2026-08-04 SECURITY SWEEP: files carrying private circumstances or absolute paths --------
+# Found by a full scan of the tree AND the pushed history. Untracked here so nothing further is
+# published; the copies already in history are purged separately, because a gitignore does nothing
+# to a commit that has already been pushed.
+#
+# data.js carries the employer folder name inside absolute evidence paths, dozens of times. The
+# project's own notes already record it being excluded from a backup for this reason - it was still
+# tracked under archive/.
+archive/orphaned-data/data.js
+# These carry the operator's employment and financial circumstances in plain words, written by the
+# entity while reasoning about what matters to him.
+state/lab/gate_ledger.jsonl
+state/lab/battery/facts.json
+state/outcomes.jsonl
