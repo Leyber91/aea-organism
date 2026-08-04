@@ -149,3 +149,5 @@ archive/orphaned-data/data.js
 state/lab/gate_ledger.jsonl
 state/lab/battery/facts.json
 state/outcomes.jsonl
+# Machine-specific permission paths spell out the operator's home directory.
+.claude/settings.json

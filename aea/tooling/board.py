@@ -105,9 +105,18 @@ def parse_loops() -> dict:
 def usage() -> dict:
     """MY OWN COST, from the transcripts, because a control centre that cannot see its own spend is
     asking you to trust it. Real records, never an estimate; absent means absent."""
+    # THE PROJECT SLUG IS DERIVED, NOT WRITTEN DOWN. It was the literal
+    # "c--REDACTED-<name>-dev-aea-city", which is the operator's home directory spelled out in a
+    # tracked file - a privacy-guard breach on every push, and it also broke for anyone whose repo
+    # sits anywhere else. The slug is just the absolute repo path with the separators and the colon
+    # replaced, which is the rule the transcript directory itself uses, so deriving it is both
+    # safer and more correct than the constant it replaces.
     d = os.path.dirname(os.path.dirname(grid.STATE))
-    pat = os.path.join(os.path.expanduser("~"), ".claude", "projects",
-                       "c--REDACTED-dev-aea-city", "*.jsonl")
+    _slug = re.sub(r"[:\\/]", "-", os.path.abspath(grid.ROOT)).replace("--", "--", 1).lower()
+    pat = os.path.join(os.path.expanduser("~"), ".claude", "projects", _slug, "*.jsonl")
+    if not glob.glob(pat):                       # tolerate a differing slug convention
+        alt = os.path.join(os.path.expanduser("~"), ".claude", "projects", "*aea-city", "*.jsonl")
+        pat = alt if glob.glob(alt) else pat
     tot = {"records": 0, "in": 0, "out": 0, "cache_read": 0, "cache_write": 0, "sessions": 0}
     per_day = {}
     for f in glob.glob(pat):
