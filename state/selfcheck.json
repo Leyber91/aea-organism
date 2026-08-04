@@ -1,16 +1,16 @@
 {
  "schema": "aea.selfcheck/1",
- "at": "2026-08-03 01:08 UTC",
- "seconds": 84.5,
- "pass": true,
+ "at": "2026-08-04 19:55 UTC",
+ "seconds": 740.9,
+ "pass": false,
  "checks": [
   {
    "check": "structure",
    "pass": true,
-   "detail": "174 modules, 35 reachable from a wake, 133 orphaned (ratchet 134), 0 act at import",
+   "detail": "191 modules, 41 reachable from a wake, 141 orphaned (ratchet 141), 0 act at import",
    "data": {
-    "modules": 174,
-    "wake": 35,
+    "modules": 191,
+    "wake": 41,
     "orphans": [
      "aea.energy.capacity",
      "aea.energy.extensive_census",
@@ -33,7 +33,10 @@
      "aea.kernel.seats",
      "aea.kernel.shadow",
      "aea.kernel.toolkinds",
+     "aea.lab.armed",
+     "aea.lab.awareness",
      "aea.lab.battery",
+     "aea.lab.blockers",
      "aea.lab.calibrate",
      "aea.lab.chain",
      "aea.lab.charset_proof",
@@ -118,6 +121,7 @@
      "aea.tooling.assembly",
      "aea.tooling.board",
      "aea.tooling.build_graph",
+     "aea.tooling.dossier",
      "aea.tooling.export_city",
      "aea.tooling.heal",
      "aea.tooling.journey_check",
@@ -125,14 +129,18 @@
      "aea.tooling.page.__main__",
      "aea.tooling.page.assets",
      "aea.tooling.page.axes",
+     "aea.tooling.page.chapters",
      "aea.tooling.page.climb",
      "aea.tooling.page.graph",
      "aea.tooling.page.guard",
+     "aea.tooling.page.invariants",
      "aea.tooling.page.layout",
      "aea.tooling.page.marks",
      "aea.tooling.page.overture",
      "aea.tooling.page.panels",
      "aea.tooling.page.render",
+     "aea.tooling.page.rung",
+     "aea.tooling.page.rungsite",
      "aea.tooling.page.sources",
      "aea.tooling.page.style",
      "aea.tooling.page.template",
@@ -173,10 +181,10 @@
   {
    "check": "no absolute paths in code",
    "pass": true,
-   "detail": "every path anchors on ROOT or HOME (194 files)",
+   "detail": "every path anchors on ROOT or HOME (213 files)",
    "data": {
     "hits": [],
-    "files": 194
+    "files": 213
    }
   },
   {
@@ -219,8 +227,8 @@
   },
   {
    "check": "defect ratchet",
-   "pass": true,
-   "detail": "count-threshold 0, expiring-only-retry 0, global-write 7, import-bound-write 43, import-time-work 4, invented-ceiling 77 (was 80), mutable-module-state 6, scope-violation 0, silent-default 32, unredirectable-store 7"
+   "pass": false,
+   "detail": "could not run aea.tooling.scope: Command '['<path>"
   }
  ]
 }

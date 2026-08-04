@@ -72,6 +72,28 @@ LEAK_SKIP = ("state/", "archive/", "node_modules/", ".git/", "voice/", "web/thre
              "aea/tooling/selfcheck.py")
 
 
+
+# EXCEPTION TEXT IS NOT SAFE TO PUBLISH, and this file publishes it. `selfcheck.json` is read by
+# the page builder and lands in `docs/index.html`, which is GitHub Pages - so a subprocess error
+# carrying `C:\Users\<name>\AppData\...` went live on the web. Found 2026-08-04 by a full
+# privacy sweep, in an invariant whose own name is "no private data in tracked files".
+#
+# The invariant was not lying. It checks tracked FILES for private data; the leak arrived later,
+# through a generated artefact built FROM a file it had already passed. A guard that runs before
+# the value exists cannot see it.
+def _safe(msg) -> str:
+    """Any exception text that may reach a published page. Absolute paths become a marker."""
+    t = str(msg)
+    # THE CHARACTER CLASS NEEDS THE BACKSLASH, and the first version of this line lost it to a
+    # shell heredoc - which is the standing rule in CLAUDE.md, paid for again in the very function
+    # written to stop a path being published. `[\/]` matches only a forward slash; Windows paths
+    # use the other one, so the guard read clean while doing nothing. Verified by running it on a
+    # real backslash path rather than by reading it.
+    t = re.sub(r"[A-Za-z]:[\\/]{1,2}Users[\\/]{1,2}[^\s\"']*", "<path>", t)
+    t = re.sub(r"/(?:home|Users)/[^\s\"']*", "<path>", t)
+    return t
+
+
 def _py(args, timeout=900):
     p = subprocess.run([sys.executable, "-X", "utf8"] + args, cwd=ROOT, capture_output=True,
                        text=True, timeout=timeout, encoding="utf-8", errors="replace",
@@ -138,7 +160,13 @@ FROZEN_FLOOR = 191         # +3: a decision is carried out once          # +10: 
 # freely and may not climb without someone deciding to raise this line. 130 of 169 modules are
 # reachable from nothing, which is the honest shape of this repo and was previously reported under a
 # hardcoded "pass": True.
-ORPHAN_FLOOR = 134
+ORPHAN_FLOOR = 141
+# +7 2026-08-04: R5 landed. `kernel/hypotheses.py`, `kernel/artefacts.py`, `lab/research_cert.py`,
+# `lab/fleet_check.py` and their siblings are instruments and certificates - a person runs them, and
+# six of the seven hypothesis functions the rung declares ARE reachable from the wake. The seventh,
+# `hypotheses.state`, is a read-only fold called from its own command line and nothing else, so it
+# is declared an INSTRUMENT rather than wired into the tick to satisfy a checker. The rise is the
+# cost of a rung arriving with its own measuring equipment, and it costs this sentence.
 # +1 2026-08-02: `aea/tooling/page/overture.py`. The page's first screen - the only part that has to
 # earn the second one - became its own module because it answers a different question from every
 # other section: not "what is true" but "who is arriving and what do they leave with". Unreachable
@@ -424,7 +452,7 @@ def check_ratchet() -> dict:
                     cur[p[0]] = int(p[1])
         except Exception as e:
             return {"check": "defect ratchet", "pass": False,
-                    "detail": f"could not run {mod}: {str(e)[:60]}"}
+                    "detail": f"could not run {mod}: {_safe(e)[:60]}"}
     if not cur:
         return {"check": "defect ratchet", "pass": False,
                 "detail": "no counts parsed - the detectors changed their output shape"}
@@ -464,7 +492,7 @@ def run(quick: bool = False) -> dict:
             out.append(fn())
         except Exception as e:
             out.append({"check": name, "pass": False, "detail": "check itself failed: %s"
-                                                                % str(e)[:150]})
+                                                                % _safe(e)[:150]})
     return {"schema": "aea.selfcheck/1",
             "at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
             "seconds": round(time.time() - t0, 1),
