@@ -995,3 +995,87 @@ That last one is a standing instruction about how to work, not about this task. 
 anything structural. A wrong mode call wastes the session, and a wrong ARCHITECTURE call wastes more
 than that.
 
+
+---
+
+## 2026-08-03 · R5 IS WHERE THE HYPOTHESIS LEADS TO ANOTHER PATH - AND WITHOUT THE EXTERIOR IT NEVER FINDS THE ERROR
+
+*Said while approving the R5 contract, after pushing back on a design whose research loop ended in a
+note. His words:*
+
+> "I think we are good on this approach, R5 is where the hypothesis leads to another path otherwise,
+> if we didn't check exterior beyond what I type for the entity, it wouldn't have found the error."
+
+**TWO CLAIMS, AND BOTH OF THEM CORRECT ABOUT A GAP THAT WAS LIVE IN THE DESIGN AN HOUR EARLIER.**
+
+**ONE - A HYPOTHESIS THAT DOES NOT CHANGE A PATH IS A DIARY ENTRY.** The contract's loop ended with
+"the result returns to R3's record". That is the R1 defect exactly: a working wire with no reader,
+open for weeks. The death of a claim has to make the system take a route it would not otherwise have
+taken, or R5 is a note-taker with a budget. The route already exists and already runs -
+`impasse.scan -> unstick.propose -> crystal.harvest` on the tick path at `live.py:743` - and it is
+currently blind at exactly one altitude. R5's output is what it is blind to.
+
+**TWO - THE ERROR WAS ONLY FINDABLE FROM OUTSIDE, AND THIS IS THE PURPOSE STATED IN ONE LINE.**
+Everything the entity believes today is self-referential. `web_search` returned a captcha page for
+weeks; `hands.invoke` recorded `outcome="ran"` because a string came back; every capability read
+`working` because a capability degrades gracefully around a dead tool. Nothing internal was wrong.
+The sentence that would have caught it - "the route is dead upstream" - is a claim about the WORLD,
+and the machine had no way to hold one. Until R5, the only exterior in the system is what Luis types.
+
+**WHAT IT CHANGES IN THE BUILD.** H5 (the cost of being wrong) moves from HOLD to REQUIRED. The
+target is no longer "five hypotheses died"; it is **one dead hypothesis that makes `unstick` propose
+a route it would not otherwise have proposed.** And the line that keeps it below R9 is unchanged:
+the entity chooses WHICH claim and WHEN, the code decides WHAT a death changes, from a closed
+human-authored table reviewed as a diff.
+
+---
+
+## 2026-08-04 · IT KNOWS AND IT IGNORES - Luis, verbatim, across one long night
+
+Captured mess-first, in his words, in the order he said them. The distilled version is D54.
+
+**On what the traces showed.** *"So it's not what it did wrong. So the problem is not that, hey.
+This is an hypothesis is wrong. It is there. It's more about... it knows. That is wrong. You know
+that it's there. It knows that it is fixed, but it ignores it... It's like someone that is
+unmotivated and doesn't follow. So there's a disconnect between what agents observe and how they
+act. So it will know, but it will just ignore it."*
+
+**On principles, and the pile.** *"If we are model agnostic, it means that every time it has a
+query, we need to enforce principles. It needs to have, like, a list of principles that must follow.
+But at the end of the day, we might have, like, a pile of principles... How do we make an LLM
+motivated?"*
+
+**On the imperative.** *"It needs to be an imperative. Humans, we are built on experiences, on
+memories that made those principles that guide our behavior to be core of us. So the way of acting,
+not just an option, cannot be an option. It does have to sound like an option, but at the end, it's
+not. Maybe."*
+
+**On personality and the past.** *"Do we have to make the LLM aware that it has a past? It has
+memories that justified every principle. When someone is traumatized about an event or someone
+learned - because it's built by the experiences it's made of. And some experiences shape behavior
+for lives."*
+
+**THE ONE THAT CHANGED THE DESIGN - the compile error and the bystander.** *"It doesn't have an
+indicator that says, this is not done, this is not settled. It has to be accountable for what is
+left open, not just for observing it like it dies on the streets. It can act, and it can just see,
+but it needs to correct what is not right, it cannot continue if something is left open. Because it
+sees it, it recognizes it, but chooses to ignore it, like a person going on the street and ignoring
+someone being attacked or needing assistance. It needs to believe, to know, the consequences, make
+the task unfinished, the job undone, because the journey well done is the goal. This looks like the
+journey is the goal of life. It needs to see it like when in code, we have a function that does not
+compile, we solve it, we cannot leave it corrupted."*
+
+**And the three questions he ended on, which are the guardrails on all of it.** *"Do we need another
+figure, do we have a good system to make this happen, does it have room to wonder, does it have time
+to be flexible?"*
+
+**On the road ahead.** *"As we go up the ladder deeper psychological questions will be needed, models
+are blackboxes, small imitations on how a human mind works, and we found even more about that today."*
+
+**WHY THE COMPILE-ERROR LINE IS THE LOAD-BEARING ONE.** It defeated the objection I had been holding
+all night. I had argued that anything blocking is enforcement, and that enforcement is measured to
+backfire here - the nudge suppressed its own target behaviour five-fold. A compiler is the
+counterexample: it enforces nothing, judges no intent, tells you nothing to write, and cannot be
+satisfied by writing more defensible code. It reports a STATE - this does not run. That is a
+different object from a critic, and it is the only version of "mandatory" that survives what we
+measured today.

@@ -18,6 +18,7 @@ Stdlib only - no pip install. Python 3.8+.
 """
 
 from __future__ import annotations
+import itertools
 import json, os, time, threading, urllib.request, urllib.error
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -45,7 +46,57 @@ def _find_root(start):
 
 
 ROOT = _find_root(HERE)
-STATE = os.path.join(ROOT, "state")          # the one home for runtime state on disk
+
+# THE ONE HOME FOR RUNTIME STATE - AND IT CAN BE REDIRECTED, PER PROCESS.
+#
+# WHY THIS ENV VAR EXISTS, added 2026-08-04. Sixteen individual stores already honour their own
+# override (AEA_ARTEFACT_DIR, AEA_EGRESS_BUDGET, AEA_KNOBS, AEA_OUTCOMES...), each added the day a
+# test needed to stop writing into production. The mind's own `aea_state.json`, the decision log,
+# the heartbeat, `self.json` and both logs had none - so nothing could run a SECOND entity without
+# trampling the first.
+#
+# That blocked the only experiment design that answers a behavioural question quickly: run control
+# and treatment CONCURRENTLY in sandboxes instead of sequentially against the live entity. Four
+# replicates an arm, forty ticks each, is under an hour of wall clock when the arms overlap and
+# most of a day when they do not.
+#
+# IMPORT-TIME RESOLUTION IS CORRECT HERE, and that is not a contradiction of D48. D48 says a path
+# bound at import cannot be sandboxed BY A TEST IN THE SAME PROCESS - true, and why the sixteen
+# per-store helpers resolve at call time. This one is different: the isolation unit is a PROCESS.
+# Each spawned wake imports `grid` fresh with its own environment, so import-time is exactly when
+# the answer is known and cannot later drift. The per-store call-time overrides stay for in-process
+# tests; this one serves out-of-process replicates.
+#
+# RESOLVED AT ATTRIBUTE ACCESS, NOT AT IMPORT - via PEP 562 module `__getattr__` below.
+#
+# The first version wrote `STATE = os.environ.get("AEA_STATE") or ...` at module level, and the
+# defect ratchet flagged it within a minute: `import-time-work 4 -> 5`. Law S3 says nothing acts at
+# import time, and the fact that reading an env var is cheap is not the point - the rule exists so
+# that merely NAMING a module cannot change what a later reader sees.
+#
+# `__getattr__` is the fix that costs nothing: `grid.STATE` is not defined as a module global, so
+# every access falls through to the function below and re-reads the environment. No call site
+# changes - the whole tree already says `grid.STATE` rather than importing the name - and verified:
+# nothing anywhere does `from aea.kernel.grid import STATE`, which would bind once and defeat it.
+#
+# PRODUCTION IS UNCHANGED. With AEA_STATE unset - every real run - this returns exactly the path it
+# always did.
+
+
+def _state_dir() -> str:
+    """The state directory, resolved NOW. The in-module counterpart of `grid.STATE`.
+
+    PEP 562's `__getattr__` only fires for attribute access from OUTSIDE the module, so bare
+    `STATE` inside grid.py would raise NameError - which it did, immediately, on the first import
+    after the constant was removed. Every in-module site calls this instead."""
+    return os.environ.get("AEA_STATE") or os.path.join(ROOT, "state")
+
+
+def __getattr__(name: str):
+    """Module-level attribute resolution (PEP 562), so `grid.STATE` is a CALL, not a constant."""
+    if name == "STATE":
+        return _state_dir()
+    raise AttributeError("module %r has no attribute %r" % (__name__, name))
 
 
 def ensure_state() -> str:
@@ -56,8 +107,8 @@ def ensure_state() -> str:
     import inside a test, which is the same class of defect as `build_graph` rewriting tracked files
     on import - the one that made the analyser parse instead of import in the first place.
     """
-    os.makedirs(STATE, exist_ok=True)
-    return STATE
+    os.makedirs(_state_dir(), exist_ok=True)
+    return _state_dir()
 WEB = os.path.join(ROOT, "web")              # the front-end: html + js + game/ served from here
 
 
@@ -66,7 +117,7 @@ HOME = os.path.expanduser("~")               # resolved, never typed
 
 def _state(path: str) -> str:
     """A bare filename -> under STATE/. An already-qualified path -> unchanged."""
-    return os.path.join(STATE, path) if os.path.dirname(path) == "" else path
+    return os.path.join(_state_dir(), path) if os.path.dirname(path) == "" else path
 
 
 def external(env_key: str, *parts, default_under_home: str = None) -> str | None:
@@ -495,7 +546,7 @@ def _rod_facts(model: str) -> dict:
     """What `aea.energy.rodprobe` measured about this rod, read from the store rather than imported,
     because the kernel may not depend on a package above it. Absent store means an empty dict, which
     is the fail-closed reading: no fact rather than an invented one."""
-    doc = load_json(os.path.join(STATE, "rods.json"), {})
+    doc = load_json(os.path.join(_state_dir(), "rods.json"), {})
     return (doc.get("rods") or {}).get(model) or {}
 
 
@@ -516,7 +567,7 @@ def is_retired(plant: str, model: str) -> bool:
     retirement AND for a fifteen-minute cooldown, so promoting it would let a transient throttle
     delete a rod from a pool the way a withdrawal must. A permanent fact and a temporary one need
     different answers - conflating them is the defect in the other direction."""
-    e = (load_json(os.path.join(STATE, "energy_usage.json"), {}) or {}).get(f"{plant}/{model}")
+    e = (load_json(os.path.join(_state_dir(), "energy_usage.json"), {}) or {}).get(f"{plant}/{model}")
     return bool(isinstance(e, dict) and e.get("retired_at"))
 
 
@@ -560,7 +611,7 @@ class Meter:
     Any number of Meter instances anywhere now share one truth; construction is free."""
 
     def __init__(self, state_path: str | None = None):
-        self.state_path = state_path or os.path.join(STATE, "grid_state.json")
+        self.state_path = state_path or os.path.join(_state_dir(), "grid_state.json")
         self.lock = threading.Lock()          # in-process threads; file_lock covers processes
 
     # -- state plumbing -----------------------------------------------------------------
@@ -621,7 +672,7 @@ class Meter:
         a declared `max_inflight` of 20. The constant came from a 2026-07-25 run that no longer
         reproduces, and being 5x too high is why every burst today earned a 429 the meter believed
         was impossible. A ceiling nobody re-measures is a number, not a limit."""
-        doc = load_json(os.path.join(STATE, "plant_ceiling.json"), {})
+        doc = load_json(os.path.join(_state_dir(), "plant_ceiling.json"), {})
         got = ((doc.get("plants") or {}).get(plant) or {}).get("clean_at")
         if isinstance(got, int) and got > 0:
             return got
@@ -829,8 +880,28 @@ def _read_stream(r):
     # working and we gave up" produce the identical record - which is the exact conflation this
     # whole rung keeps paying for. `deltas > 0` on a stalled read says the rod WAS alive; `deltas
     # == 0` says nothing ever came. Different diagnoses, different fixes.
+    # THE FIRST LINE IS PUT BACK, AND IT WAS BEING EATEN.
+    #
+    # `first = r.readline()` above consumes one line to decide whether this is SSE, and the loop
+    # then iterated `r` - starting at line TWO. The first `data:` frame carries the first content
+    # delta, so EVERY STREAMED CALL IN THIS SYSTEM LOST ITS FIRST TOKEN. Not an edge case: the
+    # streamed path is the default on every plant.
+    #
+    # MEASURED 2026-08-04, two different rods, byte-identical output, which is what gave it away -
+    # a model failure does not reproduce to the character across vendors:
+    #     streamed through call_openai   'ok": true}'
+    #     raw, unstreamed, same payload  '{"ok": true}'
+    # Two characters, and they were the two that made it parse. It cost three FALSE hypothesis
+    # deaths in an R5 run minutes ago: the record said those rods passed their fitness probes, the
+    # probe said they could not return valid JSON, and the record was right.
+    #
+    # WHY IT SURVIVED SO LONG: the loss is silent and small. A prose answer missing its first token
+    # reads as a slightly clipped sentence and nothing downstream cares. It only becomes visible
+    # where the first character is STRUCTURAL - the `{` of a JSON object - which is exactly the
+    # path that was also broken by the malformed response_format (D53), so one defect wore the
+    # other's costume. Fixing the schema is what exposed this.
     try:
-        for raw in r:                              # each iteration is one blocking read = one clock reset
+        for raw in itertools.chain([first], r):    # each iteration is one blocking read = one clock reset
             line = raw.decode("utf-8", "ignore").strip()
             if not line.startswith("data:"):
                 continue
@@ -887,7 +958,17 @@ def _read_stream(r):
     # path's long-standing fallback (three field names, not two - ollama and cerebras use
     # `reasoning`). A rod that returned pure deliberation is still a non-answer and must fall
     # through the ladder, and it does, because the ladder tests for empty TEXT.
-    msg = {"content": text or "".join(reasoning), "tool_calls": tool_calls}
+    # THE TRACE IS KEPT NOW, IN ITS OWN FIELD. It was read for liveness, counted into
+    # `reason_chars`, and then dropped - so 195 wakes of a 550b's deliberation exist nowhere on this
+    # machine and every analysis of this entity has been scored on its conclusions alone. Measured
+    # 2026-08-04: `reasoning_content` appears zero times in 445KB of wake.log.
+    #
+    # This does NOT reopen D13. D13 says never SPEAK a rod's private deliberation aloud and never
+    # let it stand in for an answer; both hold - it stays out of `content` exactly as before, the
+    # ladder still tests empty TEXT, and no caller may print it. Storing for measurement and
+    # speaking to a human are different acts, and only the second was ever forbidden.
+    msg = {"content": text or "".join(reasoning), "tool_calls": tool_calls,
+           "reasoning": "".join(reasoning)}
     return dict(choices=[{"message": msg, "finish_reason": finish}], usage=usage,
                 telemetry=tel), msg
 
@@ -1033,8 +1114,28 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
     if seed is not None:
         payload_out["seed"] = int(seed)
     if schema is not None:
+        # DISCRIMINATE ON THE VALUE OF `type`, NOT ON ITS PRESENCE. This read
+        # `isinstance(schema, dict) and "type" in schema`, meaning "the caller already handed me a
+        # whole response_format object, pass it through". EVERY JSON SCHEMA HAS A `type` KEY - the
+        # wake's own STRUCT_SCHEMA is `{"type": "object", ...}` - so the guard was true for every
+        # real schema and the wrapping branch was unreachable. The raw schema went out AS the
+        # response_format and every plant rejected it, measured 2026-08-04 on 8 rods across 2
+        # plants, 8 of 8 HTTP 400: `unknown variant 'object', expected one of 'text', 'json_object',
+        # 'json_schema'`.
+        #
+        # WHAT IT COST, because a wrong parameter looked like dead rods: phase 2 of the wake asks
+        # the reflex tier with a schema, so every rod there failed, hit COOL_AFTER, cooled, retried
+        # and failed again - five rods sat at 0 successes in 96 to 111 calls. The only survivor was
+        # the local ollama floor, which ignores response_format and answers prose, so `json.loads`
+        # raised into `structure`'s bare `except Exception: pass` and fell to the one hardcoded
+        # unladdered call, which 429s. The fallback then wrote its own error into `note_to_self`,
+        # and `tick` copies note_to_self into persistent memory: 430 of 739 memory entries were the
+        # string "(structuring failed: HTTP Error 429: Too Many Requests)" and the wake's entire
+        # six-entry memory window was error text. An entity that deliberates for 9,000 characters a
+        # tick and remembers nothing, from one `in` where a value test belonged.
+        _rf = schema.get("type") if isinstance(schema, dict) else None
         payload_out["response_format"] = (
-            schema if isinstance(schema, dict) and "type" in schema
+            schema if _rf in ("text", "json_object", "json_schema")
             else {"type": "json_schema",
                   "json_schema": {"name": "out", "strict": True, "schema": schema}})
     if tools:
@@ -1071,9 +1172,13 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
         toks = usage.get("completion_tokens", 0) or 0
         ptoks = usage.get("prompt_tokens")
         ttoks = usage.get("total_tokens")
+        # `reasoning` rides beside `text`, never inside it. Streamed, `_read_stream` already joined
+        # the deltas; unstreamed, the raw message carries the vendor's field under one of two names.
+        # A caller that ignores the key behaves exactly as it did before this line existed.
         return dict(ok=True, latency=dt, text=text, tokens=toks, transport=_srv_err,
                     prompt_tokens=ptoks, total_tokens=ttoks,
                     tool_calls=(m.get("tool_calls") or None),
+                    reasoning=(m.get("reasoning") or m.get("reasoning_content") or ""),
                     telemetry=(payload.get("telemetry") or {}),   # {} on the unstreamed fallback
                     deprecation=dep, status=200, error=None)
     except urllib.error.HTTPError as e:
@@ -1081,7 +1186,46 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
         # `stream_options` (or on `stream` itself) rather than ignoring it, and recording that as
         # the model answering badly is defect 19 again - a transport condition stored as a
         # capability. One retry with the flags removed, then the normal labelling applies.
-        if e.code in (400, 422) and payload_out.get("stream"):
+        # A MODEL THAT CANNOT DO `json_schema` CAN USUALLY STILL DO `json_object`, AND THE ENDPOINT
+        # SAYS SO ITSELF. Measured 2026-08-04 after the response_format wrapping was fixed: groq
+        # answers "This model does not support response format `json_schema`" and nvidia's
+        # nemotron-mini answers "Input should be 'text' or 'json_object'" - both naming the weaker
+        # mode they DO accept, and groq's json_object was then verified to return clean JSON.
+        # Downgrade once, driven by the endpoint's own words rather than a per-model table that
+        # would rot the first time a plant shipped support. Without this the rod fails, cools after
+        # three, and joins the tier that took the wake's memory down for 430 ticks - the difference
+        # between a rod that cannot answer and a rod asked in a dialect it does not speak.
+        _dg = False
+        if e.code in (400, 422) and isinstance(payload_out.get("response_format"), dict) \
+                and payload_out["response_format"].get("type") == "json_schema":
+            try:
+                _msg = e.read().decode("utf-8", "replace")[:600].lower()
+            except Exception:
+                _msg = ""
+            if "response_format" in _msg or "json_schema" in _msg or "json_object" in _msg:
+                payload_out["response_format"] = {"type": "json_object"}
+                # THE SHAPE MOVES FROM THE ENVELOPE INTO THE WORDS. `json_object` guarantees valid
+                # JSON and nothing about its KEYS, so a bare downgrade returns
+                # `{"field1": "value1", ...}` - measured on groq/llama-3.3-70b - which parses and is
+                # useless, the exact silent-wrong-answer this codebase keeps paying for. And groq
+                # refuses the mode outright unless the messages contain the word "json":
+                # 400 "'messages' must contain the word 'json' in some form". One appended line
+                # answers both, and it says the same thing the schema said.
+                try:
+                    _keys = list((schema.get("properties") or {}).keys()) or list(schema.get("required") or [])
+                except Exception:
+                    _keys = []
+                _ask = ("Reply with a single JSON object"
+                        + (" with exactly these keys: " + ", ".join(_keys) if _keys else "")
+                        + ". No prose, no code fence.")
+                _ms = [dict(x) if isinstance(x, dict) else x for x in payload_out.get("messages") or []]
+                if _ms and isinstance(_ms[-1], dict):
+                    _ms[-1]["content"] = "%s\n\n%s" % (_ms[-1].get("content") or "", _ask)
+                else:
+                    _ms.append({"role": "user", "content": _ask})
+                payload_out["messages"] = _ms
+                _dg = True
+        if e.code in (400, 422) and (payload_out.get("stream") or _dg):
             for k in ("stream", "stream_options"):
                 payload_out.pop(k, None)
             try:
@@ -1100,6 +1244,7 @@ def call_openai(plant: str, model: str, messages, max_tokens=None, temperature=N
                             prompt_tokens=usage.get("prompt_tokens"),
                             total_tokens=usage.get("total_tokens"),
                             tool_calls=(m.get("tool_calls") or None),
+                            reasoning=(m.get("reasoning") or m.get("reasoning_content") or ""),
                             deprecation=dep, status=200, error=None)
             except Exception:
                 pass                              # fall through to the normal error labelling

@@ -93,21 +93,29 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 def _web_fetch(url: str = "") -> str:
+    """THE BYTES ARE HASHED WHERE THEY ARRIVE, and nothing else here changed.
+
+    `artefacts.read` carries the redirect policy and the deadline IN, so this function's behaviour -
+    no-redirect, 20s, no status check, utf-8 ignore, cut at 8000 - is byte-for-byte what it was. The
+    only addition is that the raw response is now on disk under its own digest before a single
+    truncation happens, which is the difference between a citation that can be checked and one that
+    can only be quoted back. See `artefacts.py`: the sha this repo already had measures the summary."""
     if not str(url).startswith(("http://", "https://")):
         return "ERROR: url must be http(s)"
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "aea-hands/1"})
-        opener = urllib.request.build_opener(_NoRedirect)
-        with opener.open(req, timeout=20) as r:
-            return r.read().decode("utf-8", "ignore")[:8000]
+        from aea.kernel import artefacts
+        raw, _row = artefacts.read(url, headers={"User-Agent": "aea-hands/1"}, timeout=20,
+                                   opener=urllib.request.build_opener(_NoRedirect))
+        return raw.decode("utf-8", "ignore")[:8000]
     except Exception as e:
         return "ERROR: %s" % e
 
 
 def _json_get(url: str = "", key: str = "") -> str:
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "aea-hands/1"})
-        d = json.loads(urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "ignore"))
+        from aea.kernel import artefacts
+        raw, _row = artefacts.read(url, headers={"User-Agent": "aea-hands/1"}, timeout=20)
+        d = json.loads(raw.decode("utf-8", "ignore"))
         for k in str(key).split("."):
             d = d[int(k)] if isinstance(d, list) else d[k]
         return str(d)
@@ -186,7 +194,12 @@ def _web_search(query: str = "", n: str = "5") -> str:
     # live inside one budget spend and may never cross one.
     hits, notes = [], []
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as _ex:
-        futs = {_ex.submit(fn, q, k): name
+        # THE READ CONTEXT IS CARRIED INTO THE WORKERS. A thread-local does not cross a
+        # ThreadPoolExecutor boundary, so without `artefacts.carry` these four reads would be
+        # marked with the worker's default (`tool`) and dispatch's own search would become
+        # uncitable - a bound failing closed, which is still a bug.
+        from aea.kernel import artefacts as _art
+        futs = {_ex.submit(_art.carry(fn), q, k): name
                 for name, fn in (("arxiv", _s_arxiv), ("hn", _s_hn),
                                  ("hf", _s_hf), ("github", _s_github))}
         for fut in concurrent.futures.as_completed(futs, timeout=310):
@@ -221,23 +234,34 @@ def _api_json(url: str, headers: dict = None):
 
     No read deadline shorter than 300s and none infinite: a rod that thinks for minutes must
     survive, and a peer that stops sending without closing must not hang the loop forever."""
-    req = urllib.request.Request(url, headers=dict({"User-Agent": _UA_BROWSER,
-                                                    "Accept": "application/json"}, **(headers or {})))
-    with urllib.request.urlopen(req, timeout=300) as r:
-        if r.status != 200:
-            raise RuntimeError("HTTP %s - not a result" % r.status)
-        return json.loads(r.read().decode("utf-8", "ignore"))
+    from aea.kernel import artefacts
+    raw, row = artefacts.read(url, headers=dict({"User-Agent": _UA_BROWSER,
+                                                 "Accept": "application/json"}, **(headers or {})),
+                              timeout=300)
+    # THE STATUS CHECK MOVED AFTER THE READ, AND THAT IS THE ONE INTENDED CHANGE IN THIS REFACTOR.
+    # A 2xx-but-not-200 is how both general engines refuse a non-browser client - measured
+    # 2026-08-02, `lite.duckduckgo.com` HTTP 202 with 14,313 bytes of challenge page. Reading the
+    # body before refusing it means the challenge is now ON DISK, hashed, instead of being a status
+    # code in an exception message. "A blocked route and an empty one are different events" was
+    # already the rule here; this is the first version where the difference leaves evidence.
+    if row.get("status") != 200:
+        raise RuntimeError("HTTP %s - not a result" % row.get("status"))
+    return json.loads(raw.decode("utf-8", "ignore"))
 
 
 def _s_arxiv(q: str, k: int) -> list:
     """arxiv.org's own Atom API. Allowlisted for three of the five dispatch topics."""
     u = ("http://export.arxiv.org/api/query?search_query=all:%s&max_results=%d"
          % (urllib.parse.quote(q), k))
-    req = urllib.request.Request(u, headers={"User-Agent": _UA_BROWSER})
-    with urllib.request.urlopen(req, timeout=300) as r:
-        if r.status != 200:
-            raise RuntimeError("HTTP %s" % r.status)
-        xml = r.read().decode("utf-8", "ignore")
+    # ITS OWN COPY OF `_api_json`'s OPEN IS GONE. Two byte-identical socket reads held by nothing
+    # are one edit away from disagreeing, and only one of them would ever be measured - the exact
+    # defect `dispatch.dry`/`run` already paid for. arxiv returns Atom rather than JSON, so it keeps
+    # its own PARSE and shares the READ.
+    from aea.kernel import artefacts
+    raw, row = artefacts.read(u, headers={"User-Agent": _UA_BROWSER}, timeout=300)
+    if row.get("status") != 200:
+        raise RuntimeError("HTTP %s" % row.get("status"))
+    xml = raw.decode("utf-8", "ignore")
     ids = re.findall(r"<id>(https?://arxiv\.org/abs/[^<]+)</id>", xml)
     titles = re.findall(r"<title>(.*?)</title>", xml, re.S)[1:]      # [0] is the feed's own title
     out = []
@@ -351,11 +375,28 @@ def _look_outward(topic: str = "") -> str:
     if r.get("error"):
         return "no result: %s" % r["error"]
     got = r.get("fetched") or []
-    head = "%s - searched %r, %d allowlisted result%s, %d fetched" % (
+    head = "%s - searched %r, %d allowlisted result%s, %d fetched  [run %s]" % (
         r["plan"]["topic"], r["plan"]["query"], len(r.get("results") or []),
-        "" if len(r.get("results") or []) == 1 else "s", len(got))
+        "" if len(r.get("results") or []) == 1 else "s", len(got), r.get("run_id") or "-")
     nl = chr(10)
-    body = (nl + nl).join("%s%s%s" % (x["url"], nl, str(x["text"])[:1200]) for x in got[:3])
+    # THE FENCE IS APPLIED AFTER THE CUT, NOT BEFORE IT. Measured 2026-08-03: this used to slice
+    # `x["text"]` - already fenced by `dispatch.run`, roughly 4,141 characters - at 1200, so the
+    # closing `<<<END TOOL-OUTPUT>>>` was removed every single time. Three opening markers, zero
+    # closing. A fence that never closes is worse than none, because the consumer that honours the
+    # label has no way to know where third-party text stops.
+    #
+    # AND THE ARTEFACT ID IS PRINTED, which is the only reason a citation can exist: the entity has
+    # to copy a hash it has actually been shown.
+    parts = []
+    for x in got[:3]:
+        cut = str(x.get("raw") if x.get("raw") is not None else x.get("text") or "")[:1200]
+        try:
+            fenced = fence(x["url"], cut)
+        except Exception:
+            fenced = "[untrusted content from %s]%s%s" % (x["url"], nl, cut)
+        parts.append("[artefact %s] %s%s%s" % (x.get("artefact") or "unrecorded", x["url"], nl,
+                                               fenced))
+    body = (nl + nl).join(parts)
     return (head + ((nl + nl) + body if body else ""))[:6000]
 
 
@@ -743,6 +784,54 @@ def _my_record(_: str = "") -> str:
                        "per_move": verdicts})[:4000]
 
 
+def _check_a_belief(subject: str = "") -> str:
+    """Take one thing the record claims about the world and go find out whether it is true.
+
+    THIS TOOL IS R5's WIRE, and it exists because the wiring check said so. `ladder.verify_funcs`
+    reported eight of R5's functions UNWIRED the moment R5 declared them: the hypothesis store, the
+    probe and the settlement were reachable from a terminal a human types at, and from nothing the
+    organism runs. That is the R1 defect exactly - a capability written and never connected - and
+    R5's own gate would have read PARTIAL forever while the work sat one import away from the wake.
+
+    NO ARGUMENT, deliberately, the same shape as `my_record`. The claim is not chosen by the model;
+    it is taken from `energy_usage.json`, oldest unchecked first. That matters for more than safety:
+    `artefacts.CITABLE_SRC` only admits evidence whose ADDRESS was not chosen by the thing under
+    test, so a model-selected rod would produce bytes that cannot ground a citation, and
+    `hypotheses.settle` would refuse the verdict. The closed shape is what makes the evidence
+    admissible, not merely what makes the tool safe.
+
+    It runs ONE claim per invocation. A tool that quietly ran ten would put ten rows in the store
+    for one decision, and the gate counts runs in which something died - so a single call could
+    manufacture a gate. One call, one claim, one verdict."""
+    from aea.lab import fleet_check
+    rods = fleet_check.believed_dead()
+    if not rods:
+        return json.dumps({"checked": 0,
+                           "why": "the record asserts nothing about a dead rod right now"})
+    # THE CALLER'S SUBJECT WINS, AND IGNORING IT COST SIX WASTED CHECKS. This read `rods[0]`
+    # unconditionally. Production, 2026-08-04: the wake named `mistral-small-4-119b-2603` and
+    # `dracarys-llama-3.1-70b-instruct` in its own words, five times, and every one of them tested
+    # `compound-mini` - the same claim six times running, while the two the entity actually
+    # doubted went unasked. A tool that discards its argument answers a question nobody asked.
+    #
+    # Matched on SUFFIX so the wake may name the rod without its plant prefix, which is how it
+    # writes them. An unmatched subject falls back to the first rather than failing: the enum is
+    # derived and could go stale between the prompt being built and the move being executed, and
+    # checking SOMETHING beats refusing on a name that was valid one tick ago.
+    want = str(subject or "").strip().lower()
+    pick = rods[0]
+    if want:
+        for r in rods:
+            k = r["key"].lower()
+            if k == want or k.endswith(want) or want.endswith(k) or want in k:
+                pick = r
+                break
+    out = fleet_check.run_one(pick)
+    out["asked_for"] = want or "(none - first doubted claim)"
+    out["matched"] = pick["key"]
+    return json.dumps(out)[:4000]
+
+
 # ---------------------------------------------------------------------------------------------
 # THE REGISTRY. Every tool declares what it costs in permission, not just what it does.
 #
@@ -787,6 +876,19 @@ TOOLS = {
         desc="How your own recent actions were classified, and which moves the record holds back.",
         params={}, required=[],
         note="local and pure; acquired from aea.kernel.outcomes, takes no argument at all"),
+    "check_a_belief": dict(
+        capability="reason_private_local", zones=ZONES, outbound=False, impl=_check_a_belief,
+        desc="Take one thing your own record claims about the world - a rod it says cannot answer - "
+             "state it as a hypothesis, then go find out. Returns DIED or CORROBORATED.",
+        params={"subject": "which doubted claim to settle - one of the rods your record says "
+                           "cannot answer"},
+        required=[],
+        note="the SUBJECT is yours to choose from a closed set your record derives; the claim "
+             "itself is not yours to write. That is "
+             "what makes the evidence citable - a source you picked could not have refuted you. "
+             "Not outbound: it asks a rod already on your own ladder, the same channel you think "
+             "through, and sends it four words",
+        why="R5's wire. Until this existed the hypothesis store was reachable only from a terminal"),
     "read_state": dict(
         capability="reason_private_local", zones=ZONES, outbound=False, impl=_read_state,
         desc="Read one of the entity's own state files by filename, e.g. 'heartbeat.json'.",
@@ -910,6 +1012,27 @@ CONDITIONAL_ZONES = {
 _WIDENED_LOGGED = set()
 
 
+def cert_path(fname: str) -> str:
+    """Where the conditional certificate lives, RESOLVED AT CALL TIME (D48).
+
+    THE DEFECT THIS CLOSES, found 2026-08-03 while verifying something else. `test_golden`'s
+    condzone controls prove the zone fails closed on a FAILED, STALE, FUTURE-DATED, CORRUPT and
+    ABSENT certificate - which is exactly the right set of controls - by MUTATING THE PRODUCTION
+    FILE and restoring it afterwards. Two costs, and the second is the serious one:
+
+      it litters       every run leaves `state/dispatch_cert.json.corrupt.<ts>` behind, because
+                       `grid.load_json` quarantines rather than deletes. THIRTY-FOUR of them had
+                       accumulated, all exactly ten bytes of `{ not json`
+      it degrades      while the suite runs, the live entity's certificate IS corrupt, so
+                       `look_outward` fails closed for real. The direction is safe and the
+                       mechanism is not: a test may not reach into the running system's state
+
+    The fix is the pattern this repo already uses twice - `AEA_EGRESS_BUDGET`, `AEA_ARTEFACT_DIR` -
+    a path resolved at call time so a test can point it somewhere else. A path bound at import
+    cannot be sandboxed, which is D48 in one sentence."""
+    return os.environ.get("AEA_DISPATCH_CERT") or os.path.join(grid.STATE, fname)
+
+
 def _zones_for(name: str, t: dict) -> tuple:
     """The zones this tool may run in RIGHT NOW. Constant unless a rule says otherwise."""
     rule = CONDITIONAL_ZONES.get(name)
@@ -918,7 +1041,7 @@ def _zones_for(name: str, t: dict) -> tuple:
     fname, want, wide = rule
     try:
         import time as _t
-        cert = grid.load_json(os.path.join(grid.STATE, fname), {}) or {}
+        cert = grid.load_json(cert_path(fname), {}) or {}
         if not cert or cert.get("verdict") != want:
             return tuple(t.get("zones") or ())
         age = _t.time() - float(cert.get("at") or 0)

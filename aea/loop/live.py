@@ -106,10 +106,20 @@ def corpus_state() -> tuple[int, int]:
         # The store is ~1MB and this runs once per tick (default 1800s), so reading it is cheaper
         # than the branch it unblocks. The META fast path stays for display; it is the wrong
         # instrument for THIS question and that is now written down rather than implied.
-        alive = {os.path.basename(p)[:-6] for p in paths}
-        proc = consolidate.load_store().get("processed", [])
-        done = sum(1 for p in proc if str(p) in alive)
-        return done, total
+        # THE DENOMINATOR EXCLUDES THE EPISODE STILL BEING LIVED, and until 2026-08-03 it did not.
+        #
+        # `consolidate` skips any session touched in the last 600s - the active conversation - and
+        # that rule lived as a comment inside a list comprehension where this function could not
+        # see it. So this counted the file Luis was typing into as OWED, the ladder chose
+        # ASLEEP:consolidate, the module correctly processed nothing and exited 0, and the declared
+        # post-condition recorded VERIFY_FAILED. Twice an hour at the old 1800s tick; TWELVE times
+        # an hour at 300s, for as long as anyone is working - and `outcomes.verdict_for` would have
+        # suppressed a healthy capability on a streak of failures the instrument manufactured.
+        #
+        # `consolidate.pending()` is now the single implementation and this is one of its two
+        # readers. One executor per shape, never two.
+        p = consolidate.pending()
+        return p["consolidated"], p["eligible"]
     except Exception:
         return 0, 0
 
@@ -558,13 +568,88 @@ def _brief_mtime():
     return os.path.getmtime(os.path.join(str(grid.STATE), "brief_output.md"))
 
 
+def _consolidate_owed() -> int:
+    """How many sessions are actually pending consolidation RIGHT NOW.
+
+    `consolidate.pending()` is the single definition of owed work - the same one `corpus_state`
+    reads - so the post-condition and the chooser can never disagree about what counts."""
+    try:
+        from aea.memory import consolidate
+        return int(consolidate.pending().get("todo") or 0)
+    except Exception:
+        # UNKNOWN IS NOT ZERO. Returning 0 here would make every consolidate pass vacuously, which
+        # is a worse failure than the one this fixes. -1 means "could not tell", and the evaluator
+        # treats anything other than a clean 0 as "work was owed, so the count must increase".
+        return -1
+
+
 def _reflections():
-    return len(grid.load_json("self.json", {}).get("reflection_log") or [])
+    """How many reflections EXIST - counted from the append-only record, not the display list.
+
+    THE DEFECT THIS CLOSES, found 2026-08-03 after seventeen consecutive false failures.
+
+    This counted `self.json`'s `reflection_log`, and `reflect.py:182` writes that list as:
+
+        self_["reflection_log"] = (self_["reflection_log"] + [{...}])[-30:]
+
+    IT IS CAPPED AT THIRTY. The declared post-condition is "a reflection was appended to
+    self.json", observed as a strictly increasing count - so the moment the thirtieth reflection
+    landed, the check became MATHEMATICALLY UNSATISFIABLE. Every reflection since has succeeded and
+    been recorded as a failure.
+
+    The proof was sitting in the data: the newest `reflection_log` entry is stamped
+    `2026-08-03 14:02:04 UTC`, which is the exact timestamp of tick 518 - the tick the loop logged
+    as `REFLECT:self FAIL (30 -> 30)`. It worked. The instrument called it broken, seventeen times,
+    until `outcomes.verdict_for` correctly suppressed a capability that was never failing.
+
+    `reflections.jsonl` is the append-only record and is uncapped - 52 rows against the display
+    list's 30. THAT is the thing that grows when a reflection happens.
+
+    THE CLASS, and it is the second instance today: a post-condition that measures a DISPLAY
+    ARTEFACT rather than the work. `consolidate` failed the same way this morning because its
+    denominator counted a session the doer was right to skip. In both cases the capability was
+    healthy, the check was wrong, and the record accumulated own-fault failures that R3 then acted
+    on - which is the most expensive direction for an instrument to be wrong in, because the system
+    responds correctly to a false signal."""
+    p = os.path.join(grid.STATE, "reflections.jsonl")
+    try:
+        with open(p, encoding="utf-8", errors="replace") as f:
+            return sum(1 for line in f if line.strip())
+    except OSError:
+        # ONLY OSError, AND THE NARROWNESS IS THE POINT. The first version caught bare `Exception`
+        # and fell back to the capped list - so when this function referenced `io`, which live.py
+        # does not import, the NameError was swallowed and the fix silently returned the exact
+        # broken value it was written to replace. A blanket except in a fallback turns a CODE bug
+        # into a plausible-looking answer, which is the same defect this whole function exists to
+        # fix, one layer in. A missing file is an IO condition; a missing import is a bug and must
+        # be loud.
+        #
+        # NOT ZERO on a genuine IO failure either: an unreadable record is not an empty one, and
+        # returning 0 would make the count DROP, which reads as "reflections were deleted" and
+        # fails the post-condition for a third wrong reason.
+        return len(grid.load_json("self.json", {}).get("reflection_log") or [])
 
 
+# A THIRD ELEMENT, OPTIONAL: how many units of work were OWED before the run.
+#
+# WHY, found live 2026-08-04 and it is the SECOND half of a fix I made this morning and called done.
+# The evaluator asks `after > before` and nothing else, so a move that CORRECTLY does nothing -
+# because nothing was pending - is recorded as a failure. This morning I fixed the CHOOSER, so the
+# fallback ladder stops selecting consolidate when nothing is owed. Then the MIND chose it directly,
+# bypassing that check, the organ correctly processed zero, and the post-condition called it a
+# failure anyway: `consolidated session count strictly increases (23 -> 23)`.
+#
+# It is the same shape as `reflect`'s capped list, and I named "distinguish nothing-to-do from
+# failed" as a standing principle four hours before rebuilding the violation. A post-condition that
+# cannot express an empty queue will retire a healthy capability the moment its work runs out.
+#
+# WHEN `owed()` RETURNS 0, NOT-INCREASING IS THE CORRECT OUTCOME and the verdict is a pass with the
+# reason recorded. It is not a skip and not a silent pass: `detail` says "nothing was owed", so the
+# record can tell a real success from a vacuous one.
 POST = {
     "ASLEEP:consolidate": ("consolidated session count strictly increases",
-                           lambda: corpus_state()[0]),
+                           lambda: corpus_state()[0],
+                           lambda: _consolidate_owed()),
     # ADDED AFTER AN AUDIT MEASURED THE HOLE. With only consolidate declared, `AWAKE:brief` and
     # `REFLECT:self` had no post-condition, so their rows were UNATTRIBUTABLE whether the action
     # succeeded perfectly or died - 97 of the wake's 227 recorded decisions, and the current steady
@@ -778,9 +863,20 @@ def tick(hb: dict, demo: bool):
     if spec:
         try:
             after = spec[1]()
-            verify = dict(pred=spec[0], result=bool(after is not None and before is not None
-                                                    and after > before),
-                          detail=f"{before} -> {after}")
+            grew = bool(after is not None and before is not None and after > before)
+            owed = None
+            if len(spec) > 2 and callable(spec[2]):
+                try:
+                    owed = spec[2]()
+                except Exception:
+                    owed = None
+            if not grew and owed == 0:
+                # NOTHING WAS PENDING, so not increasing is the correct outcome. Recorded as a pass
+                # WITH ITS REASON, never as a silent one - a vacuous success must stay legible.
+                verify = dict(pred=spec[0], result=True,
+                              detail=f"{before} -> {after} (nothing was owed)")
+            else:
+                verify = dict(pred=spec[0], result=grew, detail=f"{before} -> {after}")
         except Exception:
             verify = None
     from aea.kernel import cause as _cause
@@ -875,6 +971,29 @@ def main():
     except ImportError:
         pass
 
+    # THE PROCESS THAT KNOWS ITS OWN PID IS THE ONE THAT RECORDS IT.
+    #
+    # THE DEFECT THIS CLOSES, visible on every console check for a full day. `live_pid.json` was
+    # written by exactly one caller - `controlroom`'s PLAY command - so a loop started any other way
+    # (a terminal, a script, a restart after a fix) left the file naming a DEAD process. It held pid
+    # 55376 from 2026-07-19 for two weeks, and pid 57080 through six restarts today while three
+    # different processes actually ran.
+    #
+    # That file is not decorative: `controlroom`'s `stop` command taskkills whatever pid it names.
+    # A stale entry means the stop button either does nothing or, once the OS reuses the number,
+    # kills something else entirely.
+    #
+    # The writer belonged here from the start. This function has just acquired the single-instance
+    # lock, so at this line exactly one process in the world is the live loop and it knows its own
+    # pid - which is the only moment the fact is certain. `controlroom` still writes it on PLAY,
+    # harmlessly, since both write the same truth about the same process.
+    try:
+        grid.atomic_save_json(os.path.join(grid.STATE, "live_pid.json"),
+                              {"pid": os.getpid(), "started": now_iso(),
+                               "started_by": "aea.loop.live"}, indent=1)
+    except Exception as e:
+        log(f"could not record the pid (survived, the loop runs anyway): {str(e)[:70]}")
+
     hb = load_hb()
     hb["boot_count"] += 1                            # every start = a WAKE; proves survival across sleep
     save_hb(hb)
@@ -901,6 +1020,37 @@ def main():
             save_hb(hb)                               # persist EVERY tick -> asleep-still-alive
         except Exception as e:
             log(f"heartbeat save failed (survived, will retry next tick): {str(e)[:80]}")
+        # ============================================================================================
+        # THE MISSING CALL SITE. Measured 2026-08-03: this file spawns nothing, `controlroom` spawns
+        # only `aea.loop.live`, and NOTHING ANYWHERE STARTS `aea.loop.aea`. The body ran unattended
+        # for 246.9 hours; the MIND ran when a person typed. `r1_decisions`, `perception` and
+        # `sensed` all stop at the same instant, which is a human standing up, not a rhythm.
+        #
+        # So R0 was proven for the wrong loop, and two rungs sat behind it: R4b's condition 3 cannot
+        # accumulate occasions, and R5's gate spans multiple ticks across 90+ minutes of enforced
+        # egress floor. This one call is what makes both measurable without a person present.
+        #
+        # THE ENTITY DECIDES THE CADENCE, `wake` CLAMPS IT, AND THIS EXECUTES IT - a cron job is not
+        # an oscillator. `wake.spawn` refuses rather than delays, checks `state/STOP` first, holds a
+        # per-day budget the entity cannot raise, and asks the LIVE METER whether any rod can be
+        # spent against before burning one: a wake with no fuel produces a tick that could not think
+        # and lands in the record as the entity failing rather than as the fleet being empty.
+        #
+        # DEMO NEVER SPAWNS. A substituted tick must not start the real mind (`--demo` exists so
+        # bounded runs cannot fabricate evidence, and this would hand it a way to).
+        if not demo:
+            try:
+                from aea.kernel import wake as _wake
+                _w = _wake.spawn(1, hb=hb)
+                if _w["spawned"]:
+                    log(f"wake spawned (pid {_w.get('pid')}) - next in "
+                        f"{_w['decision']['seconds']:.0f}s by {_w['decision']['by']}")
+                elif "interval" not in (_w["why"] or ""):
+                    # An interval refusal is the normal case every tick and would drown the log.
+                    # Every OTHER refusal - STOP, ceiling, no fuel, corrupt ledger - is news.
+                    log(f"wake not spawned: {_w['why'][:150]}")
+            except Exception as e:
+                log(f"wake spawn error (survived): {type(e).__name__}: {str(e)[:90]}")
         n += 1
         if max_ticks and n >= max_ticks:
             break

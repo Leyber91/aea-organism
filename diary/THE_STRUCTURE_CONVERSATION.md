@@ -9,6 +9,270 @@ the crash.** Each clause is a section below.
 
 ---
 
+## 0 · THE PRINCIPLE, AND THE THREE RELATIONS THE LADDER ACTUALLY HAS
+
+*Added 2026-08-03, during R5's contract. Luis: "we have to make sure that our logic model - that's
+where it should have started from the very beginning - to have the logic sound. The logic more than
+the code, more than anything." He is right that there is one, and it was not invented for this note:
+it is EXTRACTED from laws this repo already paid for, one at a time, without noticing they were one
+law.*
+
+### The principle
+
+> **A SYSTEM MAY ONLY ASSERT WHAT SOMETHING OUTSIDE IT COULD HAVE REFUTED.**
+
+Six rules already in force here, and every one is this sentence in a different costume:
+
+```
+the entity        a hypothesis reality is permitted to kill                          R5
+the instruments   every check gets a positive control, or it does not count
+the bounds        a planted breach must FLIP the verdict - constructible, exercised
+the rungs         a rung does not count until measured, and the measurement can say NO
+the record        absent -> a dash, never a guess. Invalid means not used. Fail closed
+the numbers       computed from what is ENFORCED, never from what was OBSERVED
+```
+
+**It generates the ordering by itself.** External refutation needs reach (R4b); reach is only safe
+behind a closed argument language (R2); an argument language needs the decision to arrive intact
+(R1.5, R1); all of it needs something that keeps running (R0). **The ladder is what this sentence
+looks like when you unfold it** - which is why the logic retrofits cleanly onto rungs that were
+derived empirically.
+
+**AND THAT FIT IS CORROBORATION, NOT EVIDENCE. Corrected 2026-08-03.** The first version called it
+"EVIDENCE THE ORDERING WAS RIGHT", which is the exact move this file names as a fallacy 190 lines
+below: *if the principle generates the ladder the fit appears; the fit appeared; therefore the
+principle generates the ladder* is affirming the consequent. The fit was also **retrodicted onto a
+ladder that already existed**, so it carried no risk of failing to appear. Its honest status is the
+one this file's own vocabulary mandates - **CORROBORATED, not yet dead, and nothing downstream may
+treat it as true.** Which specifically means the derivation is not a licence to renumber the shipped
+ladder; see the status note at the end of the walked ladder below.
+
+It also decides a question that had been open: **the drive is not a rung**, because *wanting* is not
+a thing anything outside the system could refute. It is an axis off the ladder, permanently visible
+and permanently closed.
+
+**AND THE HONEST WARNING THAT COMES WITH IT.** The rungs that are PROVEN are the ones built against
+a defect that had already cost something. The rungs designed from theory - R7, R8, R9 - are the ones
+that moved twice in a single conversation on 2026-08-03. So this principle's job is to gate the
+UNBUILT half. Applying it backwards, as a reason to re-derive what already measures, is
+infrastructure-as-avoidance wearing the best costume it has ever had.
+
+### The derivation - the whole ladder from the one sentence
+
+*Written as a DERIVATION rather than a description, because that makes it a test: if the principle
+generates the ladder, the chain closes; where it fails to reach a rung, that rung is not doing
+logical work. One rung failed. See the note at the end.*
+
+A system may only assert what something outside it could have refuted. Everything else here follows
+from taking that sentence seriously and asking, at each step, what it presupposes.
+
+**Downward, the sentence has no slack in it.** Refutation from outside requires that the system can
+reach outside; that is R4b. But reaching outside means composing a request, and a request composed
+inside a context that already holds untrusted text is itself the way data escapes - so reach is
+admissible only if nothing the system wrote can become the address. That is R2's bound, rehearsed
+locally at R4a, where the source is SELECTED from a closed table rather than written. Composing
+anything at all presupposes that the decision survived the passage from the part that thinks to the
+part that acts, and survived it legibly, because a misheard decision produces an act nobody can
+attribute: R1.5, and R1 beneath it. And all of it presupposes something that keeps running when
+nobody is watching, or every number above describes a session rather than a system: R0. Remove any
+one of these and the principle stops being checkable.
+
+**Upward, reach is not enough.** A system that looks outside and changes course has not been refuted
+- it has been STEERED, and being steered by third-party text is the failure every rung below was
+built to prevent. Refutation requires a claim that PREDATES the evidence, which is R5, and which is
+why R5 is a hinge rather than a step: it is the first place the principle is applied to the entity
+itself rather than to its instruments. A claim that predates evidence has to come from somewhere,
+and the only honest source is the record of what has already happened - R3. So R3 supplies the
+claim, R4 supplies the reach, R5 supplies the commitment that makes the arrival of evidence mean
+anything, and no one of the three is sufficient alone.
+
+**Above the hinge the principle turns inward and the certainty falls.** Refutations accumulate, and
+the pattern across them is new content with no external referent - the system's own generalisation,
+defeasible by construction. That is R6, and it is admissible only because R5 installed something
+outside the system that cannot be edited from within it. A generalisation is worth no more than its
+premises, so when a premise dies its conclusions must be withdrawn: that is RETRACTION, and it is
+what lineage is actually for - not an audit trail, the index of what to take back. Withdrawing a
+conclusion drawn by a rule eventually requires the rules themselves to be nameable objects rather
+than the code the system is made of; and only then may a rule be changed at all, judged necessarily
+from a level the change cannot reach. **That level is the hashed artefact R5 put on disk. The top of
+the ladder does not rest on the rung beneath it - it rests on the hinge.**
+
+**WHAT THE DERIVATION FOUND BY OMISSION, which is why it was worth writing.** The chain reaches R0,
+R1, R1.5, R2, R3, R4a, R4b, R5, R6, retraction, legibility and R9 - and **never once needs the
+council.** An adversarial review does not fall out of the principle, and the reason is exact: **a
+council is outside the MODEL but inside the SYSTEM.** It reduces correlated error, which is
+valuable, but it cannot ground an assertion, because nothing inside the system can be the thing
+outside it that could have refuted. So the council is a RELIABILITY mechanism, not a logical rung -
+the same status the drive now has, and arrived at by the same test.
+
+This is also the derivation of a law this repo already earned the expensive way: **a council may
+WRITE a gate, it may never BE one.** That was learned by watching a gate become unfalsifiable. It is
+now a consequence of the principle rather than a scar.
+
+### THE LADDER, WALKED - and it reads in both directions
+
+*Each rung carries a BECAUSE and a THEREFORE. Read the `because` clauses downward and you get the
+presupposition chain - what must already be true. Read the `therefore` clauses upward and you get
+the construction chain - what each rung hands to the next. One text, two directions, and neither is
+a summary of the other.*
+
+**R0 · THE LOOP SURVIVES**
+BECAUSE nothing is beneath it; this is the floor. A measurement of a system that runs only while
+watched is a measurement of the watching.
+THEREFORE something persists between decisions, so what it decides can be heard by something else.
+
+**R1 · THE DECISION IS READ**
+BECAUSE there must be something that keeps running, or there is nothing for a decision to be heard by.
+THEREFORE the part that thinks reaches the part that acts - which makes a MISHEARING possible, and
+therefore worth detecting.
+
+**R1.5 · THE DECISION IS PARSED**
+BECAUSE a decision must be read before the way it is understood can matter.
+THEREFORE what arrives is either the decision or a recorded failure to understand it, and an act can
+be attributed to one or the other.
+
+**R2 · THE DECISION IS A TOOL CALL**
+BECAUSE an act can only be attributed if the decision reached the actor intact.
+THEREFORE the system acts in the world - and because nothing it wrote may become an argument, acting
+cannot itself become a channel out.
+
+**R3 · THE OUTCOME IS REMEMBERED**
+BECAUSE there must be acts before there can be outcomes.
+THEREFORE it holds a record of what HAPPENED rather than what was meant - the only honest material
+from which a claim about itself can later be generated.
+
+**R4a · PERCEPTION IS A CHOICE**
+BECAUSE choosing where to look means nothing until a record exists that could make one place worth
+more than another.
+THEREFORE what it examines is its own, SELECTED from a closed table, so that choosing never becomes
+writing.
+
+**R4b · PERCEPTION REACHES THE WORLD**
+BECAUSE local choice is the rehearsal, and the bound that makes selection safe is the same bound
+that makes reach admissible.
+THEREFORE something can leave the machine - and because the request is itself the escape, the bound
+here stops being a proof and becomes a rate.
+
+**R5 · RESEARCH  — THE HINGE**
+BECAUSE a claim can be refuted from outside only if the outside can be reached (R4b), and generated
+honestly only from a record of what already happened (R3). *And R4b needs R5 in return, for a reason
+to fire at all - this is the fixed point, and the only one on the ladder.*
+THEREFORE the outside can change its direction only by killing something it said first, and the
+DEATH - never the content of a page - is what moves it. **This is the first object in the system that
+nothing inside the system can forge.**
+
+**R6 · REFLECTION**
+BECAUSE a generalisation needs refutations to generalise over, and needs something unforgeable to be
+anchored to.
+THEREFORE it holds claims that were in neither its record nor the world - its own, defeasible by
+construction, carrying both lineage and the taint of whatever third-party bytes they descend from.
+
+**R7 · RETRACTION**
+BECAUSE there must be derived claims before there is anything to withdraw, and deaths before there
+is a reason to.
+THEREFORE nothing outlives its grounds - which is what makes lineage load-bearing rather than
+decorative, and what stops one undetected contradiction from making everything derivable.
+
+**R8 · THE RULES ARE NAMEABLE**
+BECAUSE you cannot withdraw what a rule produced without being able to say which rule produced it.
+THEREFORE the protocol is an object the system can denote - READ, never written, because on this
+ladder the reader always precedes the writer.
+
+**R9 · IT EVOLVES ITS OWN PROTOCOL**
+BECAUSE a rule can be changed safely only by something that can name it, evaluate what it produced,
+and take back what depended on it.
+THEREFORE it changes a rule it runs by - having stated beforehand what the change should improve and
+what would count as the change having failed - judged from a level the change cannot reach. **That
+level is R5's artefact. The ladder closes on its hinge, not on its top.**
+
+**The two readings, each in one line.**
+
+```
+DOWNWARD  assert only what could be refuted -> requires reach -> requires a closed argument
+          language -> requires a decision that arrives intact -> requires something that runs
+UPWARD    survive -> be heard -> be understood -> act -> remember -> choose where to look ->
+          reach outside -> be wrong on purpose -> generalise -> take it back -> name your own
+          rules -> change them
+```
+
+**AND WHAT THE DERIVATION DOES NOT REACH.** *The council* - outside the model, inside the system; it
+lowers correlated error and cannot ground an assertion. *The drive* - wanting is not a thing anything
+outside the system could refute. The proposal is that both are axes beside the ladder rather than
+steps on it. **The upper ladder is not more capability. It is more restraint.**
+
+> **STATUS OF R7, R8, R9 ABOVE: PROPOSAL, NOT ADOPTED. Corrected 2026-08-03.**
+> `aea/tooling/ladder.py` still declares **R7 = THE COUNCIL ON ITS OWN PLANS** and **R8 = THE
+> DRIVE**; `state/ladder.json` carries the same, and `climb.py` renders those titles to the
+> published page. So the walked ladder above and the shipped ladder are **two different ladders**,
+> and the first version of this section said the council and the drive had been "removed by the
+> derivation rather than by preference" - past tense, accomplished. **Nothing had been removed.**
+>
+> Found by three independent lenses in an adversarial pass, and it is the only finding against this
+> section that survived every attempt to refute it. It is also the worst kind of error for this
+> file to contain: **asserting a change that never happened, in the document about only asserting
+> what could be refuted.** Adopting the renumbering is a decision that changes the published page
+> and it has not been taken.
+
+### The three relations
+
+The ladder was being read as one kind of edge. It has three, and conflating them is what made "are
+the rungs cumulative?" unanswerable:
+
+```
+PRESUPPOSITION   N is impossible without N-1        a strict order    R0->R1->R1.5->R2->R3
+USE              N consumes N-1's output            a weaker edge     R3->R4a
+MUTUAL           N and M are only true TOGETHER     a FIXED POINT     R4b <-> R5
+```
+
+So the ladder is **a directed graph whose CONDENSATION is a DAG**, with one non-trivial strongly
+connected component, `{R4b, R5}`. It is not a staircase and not a partial order, because a cycle
+violates antisymmetry.
+
+**Two corrections, 2026-08-03, both from the adversarial pass, and the second is the one that
+matters.** The first version said "a DAG with one strongly connected component" - which is
+self-contradictory, since a DAG has no component larger than one, and it was the single sentence a
+reader would quote. Fixed above.
+
+The second is sharper: **the cycle may be an artefact of bundling.** `R5_CONTRACT.md` splits R5 into
+R5a / R5b / R5c on §8's own no-bundling law, and `ladder.py` records R4b as already split in
+practice - conditions 1 and 2 hold, only 3 is open. Take both splits seriously and the edges are
+`R4b-BOUND -> R5a -> R5b -> R5c -> R4b-POWER`, which is **acyclic**. So the claim that *some
+capabilities cannot be reached in sequence, only together* is **CORROBORATED, not established** -
+it may dissolve the moment question 1 is applied to both endpoints. The bootstrap discipline below
+holds either way, because it is about seeds and their removal rather than about cycles.
+
+### How a mutual pair is built, and the discipline that keeps it honest
+
+A cycle has no bottom, so it cannot be built in stages. It is reached by **iteration to convergence**:
+seed a weak version of one side by hand, use it to build the other, then remove the seed and check
+the pair still holds. That is bootstrapping to a fixed point, and **it already happened here** - the
+line at `aea/loop/aea.py:368` (*"your record holds NOTHING from outside this machine"*) was a
+hand-written weak stand-in for R5's output, placed so R4b could move at all.
+
+**D52 was not the error of placing the seed. It was reading the seed as the answer.** Which gives the
+rule, and it generalises to every future cycle:
+
+> **EVERY BOOTSTRAP MUST BE LABELLED AS SCAFFOLDING AND MUST BE REMOVABLE, AND THE RUNG DOES NOT
+> COUNT UNTIL IT HOLDS WITHOUT IT.**
+
+### What the logic lens changed the day it arrived
+
+Four things, none cosmetic, all in `diary/R5_CONTRACT.md`:
+
+- **"Survives" is not a conclusion.** *If H then P; P; therefore H* is affirming the consequent. Only
+  refutation is valid (modus tollens), which is the formal reason R5's gate demands a DEATH. The
+  status is **CORROBORATED** - not yet dead - and nothing downstream may treat it as true.
+- **Duhem-Quine.** You never refute a hypothesis, only a CONJUNCTION. A hypothesis row must name what
+  it **holds fixed**, or a death is unattributable and the gate counts noise.
+- **Retraction is a missing rung.** R6 derives from claims, R5 kills claims, and nothing withdraws a
+  conclusion whose premise died. That is AGM belief revision, and it reframes provenance: **lineage
+  is the retraction index, not an audit trail.** Also here: an undetected contradiction is unbounded
+  corruption, because from a contradiction anything follows.
+- **Tarski is why R5 must precede R9.** *"A system that edits its own code can edit the thing that
+  judges the edit"* is the undefinability of truth in a self-referential system. The escape is a
+  hierarchy of levels, and **R5's hashed artefact is the first object at a level the entity cannot
+  reach.**
+
 ## 1 · HOW TO GET THE JSON OUT
 
 Measured 2026-08-02: three models x four enforcement modes, twelve live calls, no token ceiling,

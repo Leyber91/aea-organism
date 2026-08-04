@@ -37,7 +37,8 @@ def field(org: dict, T: dict) -> str:
     participates in the page's state, not by what is convenient to remove."""
     secs = T.get("sectors") or {}
     standby = T.get("standby") or {}
-    out = []
+    human = org.get("human") or set()
+    out, hout = [], []
     for n in org["dead"]:
         if standby.get(n.replace("aea.", "", 1)) is not None:
             continue                       # frame-styled: belongs inline, see _svg
@@ -45,10 +46,23 @@ def field(org: dict, T: dict) -> str:
         a0, a1 = secs.get(_pkg(n), (0.0, 2 * math.pi))
         a = a0 + (h % 10000) / 10000 * (a1 - a0)
         r = 430 + ((h >> 16) % 1000) / 1000 * 62
-        out.append(f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" r="1"/>')
+        (hout if n in human else out).append(
+            f'<circle cx="{500 + r*math.cos(a):.1f}" cy="{500 + r*math.sin(a):.1f}" r="1"/>')
+    # TWO GREYS, AND THE BRIGHTER ONE IS NOT DECORATION.
+    #
+    # The field was drawn as one thing and it is three. `assembly` already buckets
+    # `if __name__ == "__main__"` separately, on the stated grounds that a person typing a command is
+    # not the organism - so the tree divides into what the loop reaches, what only a HUMAN AT A
+    # TERMINAL can reach, and what nothing reaches at all. Measured: the middle group is the LARGEST
+    # of the three. This repo is mostly instruments somebody runs by hand, and the page drew every
+    # one of them as absence.
+    #
+    # Both greys stay far below the amber the two-ink law reserves for the fired state. This is
+    # structure, not activity: a dot a person can run has never run by itself.
     return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" '
-            'width="1000" height="1000"><g fill="#191d22">\n'
-            + "\n".join(out) + "\n</g></svg>\n")
+            'width="1000" height="1000">'
+            '<g fill="#191d22">\n' + "\n".join(out) + "\n</g>"
+            '<g fill="#2b333b">\n' + "\n".join(hout) + "\n</g></svg>\n")
 
 
 def _svg(org: dict, T: dict) -> str:

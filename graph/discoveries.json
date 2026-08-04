@@ -317,6 +317,24 @@
    "type": "discovery",
    "title": "D52 - THE NUDGE IS PART OF THE MEASUREMENT, AND IT MUST BE IN THE RECORD",
    "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D53",
+   "type": "discovery",
+   "title": "D53 · One `in` where a value test belonged took the entity's memory for 430 ticks (2026-08-04)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D54",
+   "type": "discovery",
+   "title": "D54 · Four explanations for R5, three eliminated BY MEASUREMENT, and the law that carries to R6-R9 (2026-08-04)",
+   "path": "diary/DISCOVERIES.md"
+  },
+  {
+   "id": "D55",
+   "type": "discovery",
+   "title": "D55 · Every streamed reply lost its first token, and the fix for one defect is what exposed it (2026-08-04)",
+   "path": "diary/DISCOVERIES.md"
   }
  ],
  "edges": [
@@ -528,6 +546,21 @@
   {
    "src": "D51 - A LABEL IS NOT A MEASUREMENT, AND ",
    "dst": "tooling.page.render",
+   "rel": "about"
+  },
+  {
+   "src": "D53",
+   "dst": "loop.aea",
+   "rel": "about"
+  },
+  {
+   "src": "D54",
+   "dst": "lab.recall",
+   "rel": "about"
+  },
+  {
+   "src": "D54",
+   "dst": "tooling.ladder",
    "rel": "about"
   }
  ]

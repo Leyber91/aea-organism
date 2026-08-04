@@ -340,6 +340,29 @@ class Handler(BaseHTTPRequestHandler):
             body = json.dumps(out if out is not None else {"ok": False, "error": "unknown game endpoint"},
                               ensure_ascii=False).encode("utf-8")
             ctype = "application/json"
+        elif self.path == "/console.json":
+            # ONE SNAPSHOT, TWO RENDERERS. The terminal view and this page both draw
+            # `console.snapshot()`; a second copy of that logic in a template is how two
+            # instruments start disagreeing about the same machine.
+            from aea.tooling import console as _con
+            body = json.dumps(_con.snapshot(), ensure_ascii=False, default=str).encode("utf-8")
+            ctype = "application/json"
+        elif self.path.split("?")[0] == "/console":
+            # THE CONSOLE - everything going on, and nothing that is not true right now. It exists
+            # because `state()` reported "alive since 2026-07-10" with no process running: it reads
+            # heartbeat.json and calls that aliveness, so it says the same thing with the machine
+            # off. And because `wake.log` - written by the DELIBERATING loop, the thing every rung
+            # above R0 is about - was rendered by nothing at all.
+            #
+            # DELIBERATELY NOT UNDER /game. That page is where the controls happen to live because
+            # it was built when the game was the frame; 134 of 177 modules are orphaned and the
+            # boot doc still points at a milestone the work left behind. This route does not
+            # inherit any of that.
+            try:
+                body = open(os.path.join(grid.WEB, "console.html"), encoding="utf-8").read().encode("utf-8")
+            except Exception as e:
+                body = ("console.html missing: %s" % e).encode()
+            ctype = "text/html; charset=utf-8"
         elif self.path == "/state":
             body = json.dumps(state(), ensure_ascii=False).encode("utf-8")
             ctype = "application/json"

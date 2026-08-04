@@ -101,29 +101,47 @@ def _evidence(r: dict, gate: tuple) -> str:
     # a human records that it happened, because a gate whose last condition is a judgement cannot be
     # closed by arithmetic.
     if i == "R4b" and m.get("condition_1") is not None:
-        # THE MOST CONSEQUENTIAL SENTENCE ON THE PAGE, and it was a serialised dictionary. Worse,
-        # under a rung titled "It could look outside the machine" it printed `16 outbound requests`
-        # and `4/5 fetched` side by side, so a reader could not tell whether anything had already
-        # left. It has not. `dispatch_power.py` says so in its own docstring: it is a PROBE, run by
-        # a person, and it opens real sockets - while `dispatch.run` has zero callers and has never
-        # executed. Two different actors, and the page must name both or it is guessing for you.
-        n_req = m.get("requests")
-        line = ("Nothing the system chose has left the machine. The outbound path ran %s times "
-                "without opening a socket - it returns the request it WOULD have sent - and %s "
-                "leaked, across %s bits of selection channel."
-                % (n_req, "nothing" if not m.get("leaks") else "%s bytes" % m["leaks"],
-                   m.get("selection_bits")))
-        if m.get("power_topics"):
-            line += (" Separately, a probe run by a person - never the entity - opened real sockets "
-                     "and fetched %s topics, to show something is behind the door."
-                     % m["power_topics"].replace(" fetched", ""))
-        line += (" The last condition is not a number: four reviewers refused this design three "
-                 "times, and have not been asked again about the version that now exists.")
-        return line
+        # THE GATE IS THREE DECIDABLE CONDITIONS NOW, and the line must name which one is open and
+        # what produces it - a stuck rung whose blocker is unnamed reads as a rung nobody worked on.
+        parts = []
+        if m.get("condition_1"):
+            parts.append("CONTENT certified: %s outbound requests, %s leaked, %s bits of selection "
+                         "channel - no byte of any request came from model output"
+                         % (m.get("requests"), m.get("leaks") or "nothing",
+                            m.get("selection_bits")))
+        if m.get("condition_2"):
+            parts.append("CHANNEL bounded: %s bits a day, %s bytes per 30 days, a %ss floor and a "
+                         "ceiling of %s a day, all read from disk so a restart cannot reset them"
+                         % (m.get("bits_per_day"), m.get("bytes_per_30_days"),
+                            int(m.get("floor_seconds") or 0), m.get("per_day_ceiling")))
+        if not m.get("condition_3"):
+            parts.append("POWER not yet: the gate asks for %s and the entity has chosen %s, across "
+                         "%s. It is not refusing - it has nothing outside that it needs, and the "
+                         "rung above is what would give it one"
+                         % (m.get("gate_3") or "3 dispatches across 2 topics",
+                            "%s" % m.get("entity_dispatches"),
+                            "%s topic%s" % (m.get("distinct_topics"),
+                                            "" if m.get("distinct_topics") == 1 else "s")))
+        return ". ".join(parts) + "."
 
     if (r.get("measured") or {}) and i not in ("R0", "R1", "R1.5", "R2", "R3", "R4a", "R4b"):
         return ""   # measured, but no reader written yet - a dash beats a note to ourselves
     return ""
+
+
+def _conditions(r: dict) -> tuple:
+    """(met, total) for a rung whose gate is a list of decidable conditions, else (None, None).
+
+    R4b IS THE FIRST RUNG THAT IS PARTLY TRUE AND THE SPINE COULD NOT SAY SO. Its gate was rewritten
+    from "a council agrees" into three decidable conditions - CONTENT, CHANNEL, POWER - and two of
+    them are certified. `partial` renders identically whether one condition holds or all but one
+    does, which throws away the only number a reader of a stuck rung actually wants. The conditions
+    are counted from the measurement rather than declared, so a rung that gains a fourth says four."""
+    m = r.get("measured") or {}
+    keys = sorted(k for k in m if k.startswith("condition_") and isinstance(m[k], bool))
+    if not keys:
+        return None, None
+    return sum(1 for k in keys if m[k]), len(keys)
 
 
 def _climb(lad: dict):
@@ -147,6 +165,12 @@ def _climb(lad: dict):
         blocked = r.get("blocked_on")
         if ev:
             line = '<p class="rev">%s</p>' % esc(ev)
+        elif blocked and str(blocked).startswith("nothing below it"):
+            # THE FRONTIER IS NOT WAITING. Printing "waiting on nothing below it" reads as a stall
+            # when it is the opposite: this is the rung being specified right now, and the reason it
+            # comes next is that the rung BELOW it cannot finish without it.
+            line = ('<p class="rwait rnext">being defined now &mdash; %s</p>'
+                    % esc(str(blocked).replace("nothing below it - ", "")))
         elif blocked:
             line = '<p class="rwait">not started &mdash; waiting on %s</p>' % esc(str(blocked))
         else:
@@ -157,6 +181,12 @@ def _climb(lad: dict):
         label = st.upper()
         if (r.get("measured") or {}).get("bound_untested_arm") and st == "proven":
             label = "PROVEN (ONE ARM)"
+        met_n, met_of = _conditions(r)
+        frac = ''
+        if met_n is not None and met_n < met_of:
+            # THE ONLY NUMBER A READER OF A STUCK RUNG WANTS: how close, and what is left.
+            frac = ('<span class="rfrac" title="%d of %d conditions certified">%d<i>/%d</i></span>'
+                    % (met_n, met_of, met_n, met_of))
         human = str(r.get("human") or "").strip()
         items.append(
             '<li class="layer" data-k="%d" data-st="%s">'
@@ -164,10 +194,10 @@ def _climb(lad: dict):
             '<div class="lbody">'
             '<div class="lhead"><span class="rid">%s</span>'
             '<span class="rhuman">%s</span>'
-            '<span class="rstat s-%s">%s</span></div>'
+            '%s<span class="rstat s-%s">%s</span></div>'
             '<p class="rtitle">%s</p>'
             '<p class="rplain">%s</p>%s</div></li>'
-            % (k, st, esc(str(r.get("id", ""))), esc(human), st, label,
+            % (k, st, esc(str(r.get("id", ""))), esc(human), frac, st, label,
                esc(str(r.get("title", ""))), esc(str(r.get("plain", ""))), line))
 
     # ONE RULE PER FRAME, as everywhere else on this page: stepping is an attribute write over a
@@ -185,6 +215,13 @@ def _climb(lad: dict):
             css.append('#climb[data-frame="%d"] .layer[data-k="%d"] .lbody{opacity:.66}'
                        % (k, d))
         css.append('#climb[data-frame="%d"] .layer[data-k="%d"]{background:#0e1114}' % (k, k))
+        mn, mo = _conditions(rungs[k])
+        if mn is not None and mo:
+            # A DOT THAT IS PART FULL, at exactly the measured fraction. Not an animation of
+            # progress - a drawing of a number that is already true.
+            css.append('.layer[data-k="%d"] .spine i{background:linear-gradient('
+                       'to top,var(--brass) 0,var(--brass) %d%%,#0a0c0e %d%%);'
+                       'border-color:var(--brass)}' % (k, round(100.0 * mn / mo), round(100.0 * mn / mo)))
         if rungs[k].get("status") != "future":
             css.append('#climb[data-frame="%d"] .layer[data-k="%d"] .rid,'
                        '#climb[data-frame="%d"] .layer[data-k="%d"] .rhuman'

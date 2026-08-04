@@ -121,6 +121,31 @@ def pick(pool, tier=None, zone='public', meter=None, exclude=()):
     return None
 
 def call_node(n, prompt, meter, max_tokens=400):
+    """Ask one node. `n` MAY BE None, because `pick` above returns None to mean WAIT.
+
+    THE NOTE DIRECTLY ABOVE THIS FUNCTION LISTS FOUR CALLERS THAT HANDLE None - brief.py:40,
+    hades.py:40/73, relay.py:35 - and this function, two lines below the list, did not. It went
+    straight to `n['plant']` and raised `TypeError: 'NoneType' object is not subscriptable`, which
+    is not caught anywhere on the tick path, so a rate-limited meter did not delay a tick: it
+    KILLED it.
+
+    MEASURED 2026-08-04: six concurrent sandbox replicates, FIVE dead at zero ticks and the sixth
+    at one of twelve. The experiment reported "no replicate produced any moves" and looked like a
+    null result about the entity's behaviour. It was a crash in the harness's own dependency, and
+    `mind.orchestrator` is one of exactly two parts the console has been reporting UNMEASURED for
+    days - a component nothing exercises, holding an unguarded dereference, found the first time
+    anything ran it under contention.
+
+    THE FOURTH PART, which is the one that stops recurrence: the author of that note enumerated the
+    call sites that handle None and did not look at the function underneath the note. Attention
+    followed the interesting claim - "the meter is not advisory" - and skipped the boring line that
+    consumes its return value. Same shape as D53. When a function's contract changes to include
+    None, the check is not "who did I remember to update" but "who dereferences this".
+
+    Returns `call_openai`'s own failure shape so every caller sees one thing, not two."""
+    if n is None:
+        return dict(ok=False, latency=0, text="", tokens=0, status=0,
+                    error="no node available - the meter refused every candidate (None means WAIT)")
     r = grid.call_openai(n['plant'], n['model'], [{'role': 'user', 'content': prompt}], max_tokens=max_tokens)
     if r['ok'] and meter:
         meter.record(n['plant'], n['model'], r.get('tokens', 0))

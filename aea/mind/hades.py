@@ -43,12 +43,33 @@ def watch(goal, attempt, worker, pool, meter):
     # THE THIRD JUDGE PATH IN THIS FILE, and the last one still reading a fragment: 600 characters
     # of a worker's output, then a verdict on whether it met the goal. Its 150-token reply budget
     # goes too - a rod that must think before answering spends that on the preamble.
+    # `n` MAY BE None - `pick` returns None to mean WAIT when the meter refuses every candidate, and
+    # `pick_varied` can return None too. The name below is built ONCE, defensively, because both the
+    # success path and the failure path used to interpolate `n['plant']` directly.
+    #
+    # WHAT THAT COST, measured 2026-08-04. Under six concurrent replicates the groq strict-json
+    # watcher 429s, the fallback rod is refused by the meter, `n` is None - and then line 48 raised
+    # AttributeError on an unmatched regex, and the `except` meant to survive it raised TypeError on
+    # `n['plant']`. THE ERROR HANDLER HAD THE SAME BUG AS THE THING IT WAS HANDLING, so the tick did
+    # not degrade to `unverified`; it died, and took the wake with it. Five of six replicates
+    # produced zero ticks and the experiment reported "no replicate produced any moves" - a harness
+    # crash wearing the costume of a null result about the entity.
+    #
+    # THE FOURTH PART. `orchestrator.pick`'s own note asserts "every caller in the repo already
+    # handles None (brief.py:40, hades.py:40/73, relay.py:35)". It names two line numbers in THIS
+    # file and both are correct; 48 and 51 are not on the list and were never looked at. An
+    # enumeration of the callers you remember is not an audit of the callers that dereference.
+    who = f"{n['plant']}/{n['model']}" if n else "none (the meter refused every rod)"
     r = orchestrator.call_node(n, f"Judge vs GOAL. GOAL: {goal}\nWORKER: {attempt}\nOutput ONLY JSON {{\"on_goal\":bool,\"correct\":bool,\"verdict\":\"accept|redo|reground|halt\",\"why\":\"...\"}}", meter, None)
     try:
-        return json.loads(re.search(r'\{.*\}', r['text'], re.S).group(0)), f"{n['plant']}/{n['model']}"
-    except Exception:
+        m = re.search(r'\{.*\}', (r or {}).get('text') or '', re.S)
+        if m is None:
+            raise ValueError("no JSON object in the watcher's reply")
+        return json.loads(m.group(0)), who
+    except Exception as e:
         # a watcher that cannot produce a verdict must FLAG, never silently accept (that is rubber-stamping)
-        return {"on_goal": False, "correct": False, "verdict": "unverified", "why": "watcher could not parse a verdict"}, f"{n['plant']}/{n['model']}"
+        return {"on_goal": False, "correct": False, "verdict": "unverified",
+                "why": "watcher could not parse a verdict (%s)" % str(e)[:60]}, who
 
 def watch_local(goal, attempt, meter, worker_model="granite4.1:3b"):
     """Private-safe watcher (Law 3 + the privacy boundary): judges on a LOCAL Ollama model DIFFERENT from the

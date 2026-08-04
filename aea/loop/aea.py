@@ -28,7 +28,7 @@ pool = orchestrator.load_pool()
 # THE CORE draws ENERGY, it does not name fuel (Luis's continuum law): energy.draw reads the live
 # capability census + fitness + meter and burns the best frontier rod available right now, falling
 # down the ladder on failure - all the way to the local floor, so the heartbeat never stops.
-def core(prompt, max_tokens=None):
+def core(prompt, max_tokens=None, tick=None):
     """The wake's own thinking, with NO ceiling we invented.
 
     `max_tokens` defaulted to 800 and `tick` passed 1400. The 550b publishes 16384 and emits its
@@ -39,7 +39,15 @@ def core(prompt, max_tokens=None):
     Luis, 2026-07-30: "you're cutting ideas short, you're cutting consensus short... it's like
     someone is talking and you just suddenly shut him up." Nothing is bought by the cut: the plant
     bills neither tokens nor requests, and the rate limit is per-model and per-minute, which a
-    longer answer does not touch."""
+    longer answer does not touch.
+
+    KEEPING THE TRACE, added 2026-08-04. The rod deliberates before it answers and that deliberation
+    was discarded at the socket - measured: `reasoning_content` appeared ZERO times in 445KB of
+    wake.log across 195 wakes on a 550b. So every reading of this entity, including four hours of
+    monitoring on the day this was found, scored its conclusions and never its reasons. A tick that
+    chose NONE had a reason for choosing NONE, and we destroyed it before anyone could read it.
+    D13 is untouched: the trace still never enters `text`, never reaches the voice, never stands in
+    for an answer. It goes to a file, for measurement. Storing is not speaking."""
     # order="depth" - THE CORE WANTS THE BIGGEST MIND, not the best strict-match scorer.
     #
     # The census `score` counts probes whose output matched an expected string, and several of them
@@ -55,8 +63,38 @@ def core(prompt, max_tokens=None):
     r = energy.draw(prompt, tier="frontier", zone="private", mx=max_tokens, timeout=90,
                     order="depth")
     if r["ok"]:
+        _keep_trace(prompt, r, tick)
         return r["text"], f"{r['plant']}/{r['model']}"
     return "", f"none (all rods failed: {r['tried'][-3:]})"
+
+
+# THE TRACE STORE. Same shape and same discipline as `sensed.jsonl` a few hundred lines below: one
+# append-only row per call, and a failure to write it may never stop the loop.
+THINKING_PATH = os.path.join(grid.STATE, "thinking.jsonl")
+TRACE_CAP = 40000        # a 550b trace measured in the low thousands of chars; this is headroom,
+                         # not a budget, and the true length is recorded when it bites.
+
+
+def _keep_trace(prompt: str, r: dict, tick=None) -> None:
+    """Append one row of what the rod actually thought. Never raises, never prints the trace."""
+    try:
+        trace = r.get("reasoning") or ""
+        tel = r.get("telemetry") or {}
+        row = dict(at=time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()), tick=tick,
+                   rod="%s/%s" % (r.get("plant"), r.get("model")),
+                   latency=r.get("latency"),
+                   # the telemetry that says HOW it thought, not only what it thought
+                   ttfb=tel.get("ttfb"), ttfc=tel.get("ttfc"),
+                   reason_chars=tel.get("reason_chars"), content_chars=tel.get("content_chars"),
+                   reason_share=tel.get("reason_share"), truncated=tel.get("truncated"),
+                   finish_reason=tel.get("finish_reason"),
+                   prompt_chars=len(prompt or ""), answer_chars=len(r.get("text") or ""),
+                   trace_chars=len(trace), trace_truncated=len(trace) > TRACE_CAP,
+                   reasoning=trace[:TRACE_CAP])
+        with open(THINKING_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    except Exception:
+        pass                                  # never let bookkeeping stop the loop
 
 # `move` IS A SEPARATE FIELD BECAUSE THE ACTION FIELD WAS A TRAP. Measured 2026-07-30: when the
 # prompt listed six runnable moves and asked for "one concrete action", the wake wrote the move INTO
@@ -183,8 +221,19 @@ def structure(reasoning):
         # A FAILED STRUCTURING MUST NOT PRODUCE A MOVE. The fallback keeps the reasoning readable,
         # but every field the executor reads is emptied: NONE is the only safe default when the
         # formatter is the thing that broke.
+        #
+        # THE ERROR GOES IN ITS OWN FIELD, NOT IN `note_to_self`. It used to go in note_to_self, and
+        # `tick` copies note_to_self into persistent memory - so a formatter outage wrote itself
+        # into the entity's mind once per tick. Measured 2026-08-04: 430 of 739 memory entries were
+        # the literal string "(structuring failed: HTTP Error 429: Too Many Requests)" and all six
+        # entries of the wake's memory window were that string, so a rod deliberating for 9,000
+        # characters a tick carried NOTHING forward. The failure is still recorded, loudly, in
+        # `_error` - which nothing copies into memory - and `note_to_self` now carries the tail of
+        # the entity's own reasoning, where its conclusion is written.
+        _tail = " ".join(str(reasoning or "").split())[-220:]
         return {"matters_now": reasoning, "changed": "", "action": "", "move": "NONE",
-                "note_to_self": f"(structuring failed: {str(e)[:60]})"}
+                "note_to_self": _tail,
+                "_error": f"(structuring failed: {str(e)[:80]})"}
 
 fetch_json = grid.fetch_json   # one home (was duplicated verbatim here and in brief.py)
 
@@ -210,7 +259,48 @@ def load_state():
         return {"tick": 0, "memory": [], "surfaced": []}
 
 def save_state(s):
-    json.dump(s, open(STATE_PATH, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    """ATOMIC, AND IT WAS NOT. This file is the continuity proof - 542 memory notes and the tick
+    counter that makes "the entity survives restart" a true sentence.
+
+    THE DEFECT, found 2026-08-03 while answering whether two wakes could run at once:
+
+        json.dump(s, open(STATE_PATH, "w"), ...)
+
+    `open(..., "w")` truncates FIRST and writes after. A kill in that window - a taskkill, a reboot,
+    a power cut - leaves a zero-length or half-written file, and `load_state` catches the parse
+    error and returns `{"tick": 0, "memory": []}`. The entity would wake up newborn with no error
+    anywhere, and the fallback would look like a fresh start rather than a loss.
+
+    Every other store here has used `grid.atomic_save_json` for exactly this reason since the day it
+    was written - "a kill mid-write can never leave a truncated store" is its first docstring line.
+    The one file whose whole purpose is surviving a crash was the one not using it. Three processes
+    were killed by hand this morning; had one been a wake inside this function, the record would
+    have been gone and nothing would have said so."""
+    grid.atomic_save_json(STATE_PATH, s, indent=2)
+
+
+def commit_tick(mutate) -> dict:
+    """READ, MUTATE, WRITE - under a lock, so two minds cannot clobber each other.
+
+    WHY THIS IS NEEDED BEFORE ANY CONCURRENCY. `tick()` does load -> think for 27-122 seconds ->
+    append -> save. Run two of those at once and both read tick N, both append their note, both
+    write N+1: the second write wins and the first tick's thinking is erased. No exception, no log
+    line, nothing to notice - the tick counter simply does not advance and one memory note never
+    existed. That is the silent-double-work failure `live.py`'s single-instance lock was added to
+    prevent, arriving on the mind's side where there is no such lock.
+
+    THE LOCK IS HELD ONLY ACROSS THE RE-READ AND THE WRITE, never across the thinking. The whole
+    point of concurrency here is that the 27-122s of deliberation overlaps; serialising that would
+    give back everything it buys. So `mutate` receives the FRESHEST state, applies its changes, and
+    the write happens inside the same lock - which means a concurrent tick sees this one's note
+    rather than overwriting it.
+
+    `mutate(state) -> state` must be cheap and must not think."""
+    with grid.file_lock(STATE_PATH, timeout=20.0):
+        fresh = load_state()
+        out = mutate(fresh)
+        save_state(out if out is not None else fresh)
+        return out if out is not None else fresh
 
 def _moves() -> str:
     """The entity's real moves, read from `decide` rather than typed here.
@@ -243,8 +333,8 @@ def _moves() -> str:
     return "\n".join(out)
 
 
-STANDING_LINES = 6          # hard cap - this block competes with nothing, and must never win
-STANDING_CHARS = 620      # +200 for the class mapping and the already-seen line;
+STANDING_LINES = 14          # hard cap - this block competes with nothing, and must never win
+STANDING_CHARS = 1500      # +200 for the class mapping and the already-seen line;
                           # both are decision-changing and neither fits in 420 with
                           # the stuck line present. Still hard-capped: this block
                           # competes with the entity's picture of the world.
@@ -271,6 +361,89 @@ def standing(state: dict) -> str:
     because a self-report that can crowd out the world is a self-report that will."""
     from aea.kernel import impasse, crystal
     lines = []
+
+    # ============================================================================================
+    # WHAT IT ACTUALLY CHOSE, LAST SIX TICKS. Added 2026-08-03 against a live measurement.
+    #
+    # THE DEFECT: the prompt carried `state["memory"][-6:]` - the last six NOTES TO SELF - and
+    # nothing anywhere told the wake which MOVES it had made. Measured on a 300s tick: ticks 535
+    # through 540 chose `what_to_try bad_response` SIX TIMES IN A ROW, each recorded `ok`, each
+    # returning a cached answer in 0.01s while the mind spent up to 121.9s deliberating its way
+    # back to the identical choice.
+    #
+    # Every instrument read healthy. `impasse` watches capabilities for FAILURES and none of these
+    # failed. `outcomes` recorded ok. R1 counted each as the wake differing from the fallback,
+    # which it did - so a loop producing nothing was FEEDING the rung that measures deliberation.
+    #
+    # AND THE ENTITY COULD NOT HAVE KNOWN. It remembered what it told itself to remember and never
+    # what it did. That is R3's own defect one level in - intentions stored, results not - and this
+    # repository has already paid for the identical shape once, in `_read_state`'s window: "the
+    # entity read that file dozens of times and never once saw its own decisions. Its repetition
+    # was read as stubbornness; it was a nearly information-free read."
+    #
+    # THIS IS NOT A NUDGE, and the distinction is the one D52 turns on. It names no deficiency,
+    # recommends no move, and is DERIVED from the entity's own record rather than typed by a human
+    # who wants a particular answer. Giving a mind access to what it has been doing is what R3 is
+    # for; telling it what it lacks and which button fixes that is what was removed this morning.
+    # ============================================================================================
+    # ============================================================================================
+    # THE CAPABILITY SURFACE - THE EXPERIMENTAL ARM, OFF BY DEFAULT.
+    #
+    # Luis's theory, 2026-08-04: *"it has to know that it can search. It has to know that it can
+    # find... I prefer to shorten the path and to tell the entity, yes, you can search, and yes, as
+    # a result, this is what you can do."*
+    #
+    # MEASURED BEFORE BUILDING: `list_tools` - the move whose whole purpose is "THE ENTITY READS ITS
+    # OWN HANDS" - has ZERO invocations by the wake across ~300 tool calls, ever. It is told the
+    # NAMES of its moves every tick (`_moves()` derives the menu) and has never once asked what they
+    # are FOR, what they return, or which are refused where.
+    #
+    # SO THE TREATMENT IS NOT NEW TEXT. It is the output of that unchosen move, placed where it
+    # cannot be missed - derived from the registry, so a tool added tomorrow appears here with no
+    # edit. Hand-writing this would drift from the table that executes, which is the defect
+    # `_moves()` exists to avoid.
+    #
+    # AND IT IS NOT THE NUDGE. The line removed this morning named a DEFICIENCY and pointed at its
+    # REMEDY - "your record holds NOTHING from outside, N of M budget unspent" - which makes the
+    # next move for the entity. This names a CAPABILITY and stops. It says what exists; it does not
+    # say what is missing, and it recommends nothing. That distinction is the whole experiment: if
+    # a capability fact moves behaviour, the bound was awareness; if it does not, the bound is
+    # something else and the theory is wrong.
+    #
+    # OFF UNLESS `AEA_CAPABILITY_SURFACE` IS SET, so control and treatment run the SAME code and
+    # differ by one environment variable. Two branches of a forked file would differ in ways nobody
+    # tracked.
+    if os.environ.get("AEA_CAPABILITY_SURFACE"):
+        try:
+            from aea.kernel import hands as _h
+            from aea.kernel import decide as _d
+            # THE SURFACE MUST BE THE ENTITY'S OWN, NOT THIS CALL'S.
+            #
+            # The first version passed `allow=("list_tools",)` and got back "Right now I can: tell
+            # you what I can do" - technically true and useless, because `_list_tools` answers FOR
+            # THE SEAT IT IS GIVEN, which is documented in its own docstring and which I read past.
+            # The seat that matters is the wake's: every tool its declared moves can reach.
+            allow = tuple(sorted({(_d.TOOL_KNOWN.get(m) or {}).get("tool") or m
+                                  for m in _d.TOOL_KNOWN} | set(_d.KNOWN)))
+            surface = _h.invoke("list_tools", {}, zone="sensitive", allow=allow, src="standing")
+            lines.append("- WHAT YOUR MOVES ACTUALLY DO (read from your own registry):\n  "
+                         + "\n  ".join(str(surface).splitlines()[:16]))
+        except Exception as e:
+            lines.append("- (capability surface unavailable: %s)" % type(e).__name__)
+
+    try:
+        moves = [str(m) for m in (state.get("moves") or [])][-6:]
+        if moves:
+            uniq = len(set(moves))
+            line = "- your last %d moves: %s" % (len(moves), ", ".join(moves))
+            if len(moves) >= 3 and uniq == 1:
+                # A FACT ABOUT THE RECORD, NOT ADVICE. It says what happened and stops; what to do
+                # about it is the entity's to decide, which is the whole point of the rung.
+                line += "  (the same move %d times running)" % len(moves)
+            lines.append(line)
+    except Exception:
+        pass
+
     try:
         stuck = [r for r in impasse.scan() if r.get("stuck")]
     except Exception:
@@ -355,19 +528,41 @@ def standing(state: dict) -> str:
             lines.insert(min(1, len(lines)),
                          "- looking outward is OPEN: %d of %d left in the next 24h"
                          % (st["remaining"], st["budget"]["per_day_ceiling"]))
-        if not seen:
-            if st["permitted_now"]:
-                # INSERTED HIGH, NOT APPENDED. This block is hard-capped at 620 chars and was
-                # already exactly full, so an appended line is a line the wake never sees - which
-                # would have made the whole edit a no-op that looked applied. The cap is correct and
-                # the instruction beside it is "replace noise with signal instead of buying more
-                # room": an entire CLASS of evidence the record lacks outranks a scheduling detail
-                # like the date of the last brief. Second position, behind a genuine stuck
-                # capability, which is the only thing more urgent than a structural gap.
-                lines.insert(min(1, len(lines)),
-                             "- your record holds NOTHING from outside this machine: 0 outward "
-                             "looks ever, %d of %d budget unspent today"
-                             % (st["remaining"], st["budget"]["per_day_ceiling"]))
+        # ================================================================================
+        # THE NUDGE IS REMOVED, 2026-08-03, AND THIS COMMENT IS THE RECORD OF THE REMOVAL.
+        #
+        # It read, inserted second in the wake's context whenever nothing outward had ever
+        # been recorded:
+        #
+        #     "- your record holds NOTHING from outside this machine: 0 outward looks ever,
+        #       N of M budget unspent today"
+        #
+        # WHY IT GOES. R4b's condition 3 asks whether the ENTITY chooses to look outside.
+        # It chose twice, ever - both times with this line in its prompt - and zero times in
+        # the ~80 minutes after it vanished. So the line names the deficiency AND the remedy
+        # is one move away, and the gate cannot tell the entity's initiative from this
+        # sentence. That is D52 in one paragraph: WHEN YOU ADD CONTEXT TO MAKE A CAPABILITY
+        # REACHABLE, THE GATE MUST BE ABLE TO TELL YOUR ADDITION FROM THE ENTITY'S
+        # INITIATIVE - OR IT IS MEASURING YOU.
+        #
+        # Measured before removing it: of 228 wake decisions, `look_outward` was chosen 2 -
+        # 0.9% - and 8 of the 12 look_outward rows in the hands ledger were a human's probes.
+        # Two thirds of the outward traffic was never the entity at all.
+        #
+        # WHAT SURVIVES, AND WHY IT IS NOT THE SAME THING. The line above - "looking outward
+        # is OPEN: N of M left in the next 24h" - stays. It is a BUDGET FACT, the same class
+        # as every other quantity in this block, and it names no deficiency and urges no
+        # move. Deriving the map is law S1; telling the entity what it lacks and what would
+        # fix it is the nudge. If that distinction turns out to be too fine, this line is the
+        # next thing to remove, and the measurement below will say so.
+        #
+        # WHAT THIS COSTS, STATED RATHER THAN DISCOVERED LATER. The unprompted rate is
+        # probably ~0 until R5 gives the entity a hypothesis it cannot settle from its own
+        # state. Running at a 300s tick produces ~288 opportunities a day, so within one day
+        # this becomes a REAL measurement of that rate against a real n, instead of the n=2
+        # the claim currently rests on. A zero with n=288 is strong evidence that R5 is
+        # required; a zero with n=2 is nothing.
+        # ================================================================================
     except Exception:
         pass
 
@@ -410,8 +605,24 @@ def standing(state: dict) -> str:
             # ONE SENTENCE COVERING THE WHOLE CLASS, not four conditions to match against. This
             # named two tools and the wake used one of them, 28 times. The generalisation Luis asked
             # for: state the mapping from KIND OF QUESTION to move, once.
+            # THE CLASS THAT WAS MISSING SENT THE WAKE INTO A LOOP, and the trace names it.
+            #
+            # This mapped four kinds of question to four moves and was written before
+            # `check_a_belief` existed. A DISAGREEMENT between two of its own files is,
+            # superficially, "about a FILE" - so this line routed it to `read_your_state`, which
+            # re-reads a file and cannot settle which side is true. Measured 2026-08-04: the
+            # treatment arm named its contradictions 12 times across 35 traces (control: 0 in 36),
+            # called them "contradictions in my state files that need reconciliation", chose
+            # `read_your_state` six times running, and then wrote "I've been reading the same file
+            # repeatedly without taking action."
+            #
+            # The fifth clause is the one that was absent, and it is stated FIRST because it is the
+            # case the other four silently swallow: re-reading is the wrong instrument when the
+            # record is what disagrees.
             lines.append("- you keep asking whether something is true. LOOK, do not assume - and "
-                         "match the question to the move: about a FILE use `read_your_state`, "
+                         "match the question to the move: when your own record DISAGREES WITH "
+                         "ITSELF, reading it again cannot settle it - use `check_a_belief`; "
+                         "about a FILE's contents use `read_your_state`, "
                          "about HOW YOU ARE BUILT use `know_yourself`, about WHETHER YOUR ACTIONS "
                          "WORKED use `my_record`, about BEING BLOCKED use `what_to_try`.")
     except Exception as e:
@@ -493,10 +704,83 @@ def standing(state: dict) -> str:
     except Exception:
         pass
 
+    # WHAT ITS OWN RECORD CANNOT MEAN BOTH WAYS. Placed LAST and stated as a fact, because this is
+    # the third thing tried and the first two failed in opposite directions.
+    #
+    #   the nudge     named a deficiency AND its remedy - an instruction. It produced compliance
+    #   the surface   named CAPABILITIES - and the treatment arm chose NONE 16 times against the
+    #                 control's 7, using 5 distinct moves against 7. Knowing made it do LESS
+    #
+    # A capability is not a reason and a remedy is an order. A contradiction is neither: it is a
+    # fact with a hole in it, and there is no way to comply with it. The only resolution is to find
+    # out which side is false, which is a hypothesis ARRIVED AT rather than picked off a menu -
+    # and R5's gate needs one the entity generated, since `check_a_belief` was chosen zero times in
+    # 72 ticks and choosing it would not have been generation anyway.
+    #
+    # NOTHING HERE NAMES A MOVE, and `contradictions.selftest` enforces that against a word-list.
+    # The sentence a reader most wants to append - "you could check this" - is exactly the nudge
+    # again in different clothes, and appending it would destroy the only experiment this line is.
+    #
+    # INSERTED NEAR THE TOP, NOT APPENDED, AND THE FIRST ATTEMPT PROVES WHY. `append` put it after
+    # five existing lines and `STANDING_LINES=6` / `STANDING_CHARS=620` truncated it away entirely -
+    # the block was already exactly 620 characters and cut mid-sentence. Built, wired, declared, and
+    # never delivered, which is the same defect as the tool no move could reach, one layer further
+    # out. Verified by reading the rendered block back rather than by reading this code.
+    #
+    # SWITCHABLE, BECAUSE A LINE WITH NO CONTROL ARM IS NOT AN EXPERIMENT. This shipped always-on,
+    # which made it an observation: if the entity proposed something there was no way to attribute
+    # it, and if it proposed nothing there was no way to tell a failed treatment from too short a
+    # window. ON by default so production keeps it; `AEA_NO_CONTRADICTIONS` gives the control arm
+    # a prompt that differs by this line and nothing else.
+    try:
+        if not os.environ.get("AEA_NO_CONTRADICTIONS"):
+            from aea.kernel import contradictions as _cx
+            _txt = _cx.render(limit=2)
+            if _txt:
+                lines.insert(min(1, len(lines)), "- " + _txt)
+    except Exception:
+        pass                                  # never let a detector stop a tick
+
     if not lines:
         return "(nothing owed and nothing stuck)"
-    out = "\n".join(lines[:STANDING_LINES])
-    return out[:STANDING_CHARS]
+    return _fit(lines)
+
+
+def _fit(lines: list) -> str:
+    """Trim to the caps at LINE boundaries, and say out loud what was dropped.
+
+    THE SAME DEFECT SIX TIMES IN ONE DAY, and the last two were the fix for the one before.
+    `"\\n".join(lines[:N])[:CHARS]` cuts mid-token: the routing line ended
+    `- use \\`check_a` and the wake never saw the move name it was being pointed at. It reads as a
+    delivered instruction in the source and arrives as a severed string, which is indistinguishable
+    from a treatment that did not work.
+
+    Two changes, and neither is "raise the cap" - that only moves the cliff:
+
+      CUT AT LINE BOUNDARIES  a whole line is dropped or kept. A half-line is never emitted, so a
+                              move name, a hash or a number can never be severed in the middle
+      SAY WHAT WAS DROPPED    silent truncation is what made this invisible five times. Anything
+                              cut is printed, so it appears in wake.log where a reader will meet it
+
+    `lines[:N]` also counted LIST ENTRIES, not rendered lines - one multi-line entry made the block
+    11 lines against a 9-line cap without tripping anything. The cap now counts what the wake
+    actually reads."""
+    kept, used_lines, used_chars, dropped = [], 0, 0, []
+    for item in lines:
+        n_lines = len(str(item).splitlines()) or 1
+        n_chars = len(str(item)) + 1
+        if used_lines + n_lines > STANDING_LINES or used_chars + n_chars > STANDING_CHARS:
+            dropped.append(str(item))
+            continue
+        kept.append(item)
+        used_lines += n_lines
+        used_chars += n_chars
+    if dropped:
+        # NOT silent. This is the whole lesson of the six instances.
+        print("  (standing: %d line(s) dropped to fit %d chars / %d lines - %s)"
+              % (len(dropped), STANDING_CHARS, STANDING_LINES,
+                 " | ".join(d.split("\n")[0][:60] for d in dropped)))
+    return "\n".join(str(k) for k in kept)
 
 
 def tick(seed, state):
@@ -567,7 +851,7 @@ def tick(seed, state):
     except Exception:
         pass                                  # never let bookkeeping stop the loop
 
-    reasoning, who = core(prompt)            # phase 1: the MIND reasons freely, to its own ceiling
+    reasoning, who = core(prompt, tick=state["tick"])   # phase 1: the MIND reasons freely, to its own ceiling
     out = structure(reasoning)              # phase 2: the FORMATTER tool makes it structured
     # PHASE 3: THE MOVE IS TAKEN FROM THE CORE'S OWN TEXT, NOT FROM THE FORMATTER'S COPY OF IT.
     # This overrides whatever `structure` returned - deliberately, and in both directions. The
@@ -577,6 +861,29 @@ def tick(seed, state):
     out["move"] = move_from(reasoning)
     # CONTINUITY: the entity remembers across ticks (the forever-loop essence)
     state["memory"].append(f"tick{state['tick']}: {str(out.get('note_to_self',''))[:160]}")
+    # AND IT REMEMBERS WHAT IT DID, not only what it meant. Its OWN field rather than a memory note,
+    # for the reason `standing` gives: the memory window is six entries and routing results through
+    # it would evict everything the entity noticed about Luis.
+    #
+    # THE CAP IS GONE, AND ITS REMOVAL IS THE FIX. This read `(existing + [new])[-40:]`, and the
+    # trim silently broke the commit path four hours after it was written:
+    #
+    #     tick()        state["moves"] = (existing + [new])[-40:]   len stays 40 forever
+    #     commit_tick   _added = state["moves"][_before:]           _before is 40, len is 40 -> []
+    #
+    # So once the list reached forty entries, EVERY SUBSEQUENT MOVE WAS DISCARDED at commit. The
+    # sensor kept reporting `9 distinct in 40` from a frozen snapshot across roughly forty
+    # monitoring checks while the mind chose reflect, NONE and aea_state.json over and over.
+    #
+    # IT IS THE SAME DEFECT AS `reflection_log`, WHICH I FIXED THIS MORNING: a capped list breaking
+    # a length-based computation. There the post-condition required a count to increase against a
+    # list frozen at 30; here a delta is computed against a list frozen at 40. I wrote the note
+    # explaining that failure and then built this one, which is the honest measure of how little a
+    # recorded lesson helps when the shape arrives in a different costume.
+    #
+    # Trimming now happens ONCE, in `commit_tick`'s merge, which is the only place that knows both
+    # the old list and the new entries. One executor per shape, never two.
+    state["moves"] = [str(m) for m in (state.get("moves") or [])] + [str(out.get("move") or "NONE")]
     # THE DECISION STAMPS ITSELF. `decide.latest` had to date decisions by the FILE's mtime, which
     # dates the WRITE and not the THOUGHT - and two decisions written in one run shared a
     # timestamp, so the second was as "fresh" as the first no matter how long the run took. Owed
@@ -587,6 +894,37 @@ def tick(seed, state):
                               **{k: out.get(k, "") for k in ("matters_now", "changed", "action", "move")}})
     # HADES watches every autonomous tick (Law 3). Output is anonymized+strategic -> grid watcher is safe here.
     verdict, vwho = hades.watch(STANDING_GOAL, json.dumps(out), "aea-core", pool, meter)
+
+    # THE JUDGE LEAVES A RECORD, AND UNTIL NOW IT DID NOT.
+    #
+    # THE GAP, found 2026-08-04 by measuring every part BY ITS ACTION rather than by its code.
+    # HADES runs on every autonomous tick and returns accept or redo - and the only trace was a
+    # printed line in `wake.log`. So of twenty-three parts it was one of three that could not be
+    # demonstrated at all: nothing could count how often it fires, whether it ever DISAGREES, or
+    # whether it is doing anything whatsoever. An unobservable judge could return `accept`
+    # unconditionally and every instrument in this system would read healthy.
+    #
+    # That matters more than the other two unmeasured parts because HADES is the only one whose
+    # whole purpose is to say NO. `A CHECK WITH NO EXERCISED NEGATIVE CASE IS return True` - and
+    # this one had no exercised case of any kind, because nothing was counting.
+    #
+    # WHAT IS STORED IS THE VERDICT AND ITS AUTHOR, never the judged text: the tick's own content
+    # is already in `wake.log` and `aea_state.json`, and duplicating it here would make a third
+    # copy of the same prose that can drift from both. `rate of redo` is the question this store
+    # exists to answer, and the fields are the minimum that answers it.
+    try:
+        grid.append_jsonl(os.path.join(grid.STATE, "hades.jsonl"), dict(
+            at=time.time(),
+            at_iso=time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+            tick=state.get("tick"),
+            verdict=str((verdict or {}).get("verdict") or "")[:24],
+            why=str((verdict or {}).get("why") or "")[:240],
+            watcher=str(vwho or "")[:60],
+            move=str(out.get("move") or "NONE")[:60]))
+    except Exception:
+        # A FAILED RECORD MUST NOT KILL THE TICK. The judgement already happened and is already in
+        # `out`; losing its row costs a measurement, and raising here would cost the entity a tick.
+        pass
     return out, who, verdict, vwho, reasoning
 
 def main():
@@ -613,8 +951,63 @@ def main():
     print("core ladder: " + " -> ".join(names) + "\n")
     for i in range(n_ticks):
         t0 = time.time()
+        # THE DELTA IS CAPTURED BEFORE THINKING AND MERGED AFTER, so two minds can run at once.
+        #
+        # `save_state(state)` used to write this process's whole in-memory copy over whatever was on
+        # disk. That is safe for exactly one wake. `tick()` loads, thinks for 27-248 SECONDS
+        # (measured today), then appends - so with two in flight both read tick N, both append, and
+        # THE SECOND WRITE ERASES THE FIRST TICK'S THINKING. No exception, no log line: the counter
+        # simply does not advance and one memory note never existed. That is the silent-double-work
+        # failure `live.py` carries a single-instance lock to prevent, on the side with no lock.
+        #
+        # AND IT WAS ABOUT TO HAPPEN BY ITSELF. Deliberation reached 248.3s against a 300s spawn
+        # cadence - one slow tick from overlapping - so this stopped being a design question and
+        # became a timing one.
+        #
+        # WHAT IS MERGED, and only this: the tick increment, the memory notes this tick appended,
+        # and the move it chose. Everything else in `state` is re-read fresh inside the lock, so a
+        # concurrent tick's contribution survives instead of being overwritten.
+        #
+        # THE LOCK IS NEVER HELD ACROSS THE THINKING. That is the whole point of concurrency here -
+        # the 27-248s of deliberation overlaps, and only the millisecond read-modify-write is
+        # serialised. Holding it across `tick()` would give back everything concurrency buys.
+        #
+        # THE PRINTED TICK LABEL MAY COLLIDE under concurrency - two ticks that started together
+        # both display the number they claimed on entry. The STORED counter is authoritative and is
+        # assigned inside the lock. Saying so because a display that disagrees with the store is
+        # exactly the kind of small lie this repo keeps paying for.
+        # EVERY LIST `tick()` APPENDS TO IS MERGED, AND THE FIRST VERSION MISSED ONE.
+        #
+        # THE REGRESSION, found live 2026-08-03 three hours after it shipped. This merged `tick`,
+        # `memory` and `moves` - and `tick()` also appends to `surfaced`, which is where THE WAKE'S
+        # DECISION LIVES. `decide.latest` reads `d["surfaced"][-1]`, so dropping it meant the body
+        # could not see a single decision the mind made after this code went in. The log said it
+        # plainly and it took three hours to read: `tick 502 RESTING - decision is stale (10529s
+        # old, limit 5400s)` while the mind had ticked thirty-five times.
+        #
+        # So a fix for the concurrency race broke R1's wire - the rung whose entire content is THE
+        # DECISION IS READ. An enumerated merge is a whitelist, and a whitelist of mutable keys goes
+        # stale the moment anyone adds a fourth one. `_LISTS` is derived from what `tick` actually
+        # appends to, and the assertion below fails loudly if that set ever grows again.
+        _LISTS = ("memory", "moves", "surfaced")
+        _before = {k: len(state.get(k) or []) for k in _LISTS}
         out, who, verdict, vwho, reasoning = tick(seed, state)
-        save_state(state)   # persist EVERY tick - the entity survives restart (true continuity)
+        _added = {k: list((state.get(k) or [])[_before[k]:]) for k in _LISTS}
+        # A LOUD CHECK, NOT A COMMENT. If `tick` starts appending to a list this does not know
+        # about, the contribution would be silently discarded exactly as `surfaced` was.
+        _unmerged = [k for k, v in (state or {}).items() if isinstance(v, list) and k not in _LISTS]
+        if _unmerged:
+            print("  WARNING: tick() wrote list key(s) %s that commit_tick does not merge - "
+                  "their contents will be LOST. Add them to _LISTS." % _unmerged)
+
+        def _merge(fresh):
+            fresh["tick"] = int(fresh.get("tick") or 0) + 1
+            for k in _LISTS:
+                merged = list(fresh.get(k) or []) + _added[k]
+                fresh[k] = merged[-40:] if k == "moves" else merged
+            return fresh
+
+        state = commit_tick(_merge)   # persist EVERY tick - continuity, now concurrency-safe
         print(f"--- TICK {state['tick']}  (core: {who}, {round(time.time()-t0,1)}s) ---")
         print(f"  (mind thinks: {reasoning[:110].strip()}...)")
         print(f"  matters now : {out.get('matters_now','')}")
@@ -622,6 +1015,13 @@ def main():
         print(f"  action      : {out.get('action','')}")
         print(f"  move        : {out.get('move','') or 'NONE'}")
         print(f"  remembers   : {out.get('note_to_self','')}")
+        # THE FORMATTER'S FAILURE IS SAID OUT LOUD, in its own line, because it no longer rides in
+        # note_to_self. It ran at 98% of the last 40 ticks while every panel read green - the four
+        # output fields survive a formatter outage (`move_from` reads the core's own text), so
+        # nothing downstream noticed. A failure that only shows up as slightly worse prose is a
+        # failure nobody finds. `structure_failed` is what the console counts.
+        if out.get("_error"):
+            print(f"  structure_failed : {out['_error']}")
         print(f"  HADES       : ({vwho}) {verdict.get('verdict')} - {verdict.get('why','')[:90]}")
         if i < n_ticks - 1:
             time.sleep(3)   # a real loop sleeps ~30min or is scheduled; 3s here just to tick

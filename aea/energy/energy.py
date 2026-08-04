@@ -406,7 +406,13 @@ def draw(prompt: str, tier: str = "solid", zone: str = "private", mx: int | None
         pulse.emit("energy", "draw", f"{plant}/{model.rsplit('/',1)[-1]} {tier}/{zone} "
                    f"{'ok' if good else tried[-1].split(':')[-1]} {round(r.get('latency',0),1)}s", ok=good)
         if good:
+            # `reasoning` and `telemetry` travel with the answer. Until 2026-08-04 the ladder threw
+            # both away, so a caller could see WHAT a rod concluded and never how it got there or
+            # how much of its budget went into getting there. Additive: nothing reads these unless
+            # it asks, and `text` is untouched.
             return dict(ok=True, text=text, plant=plant, model=model,
+                        reasoning=(r.get("reasoning") or ""),
+                        telemetry=(r.get("telemetry") or {}),
                         latency=round(r.get("latency", 0), 1), tried=tried)
     pulse.emit("energy", "starved", f"no rod answered ({len(tried)} tried)", ok=False)
     return dict(ok=False, text="", plant=None, model=None, latency=0, tried=tried)

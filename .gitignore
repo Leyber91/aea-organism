@@ -107,3 +107,30 @@ state/personas/
 *.whl
 *.tar.gz
 state/council/
+
+# R5's artefact store. DELIBERATE, not incidental - `*.bin` above was already catching the blobs
+# by accident, which is not the same as a decision.
+#   the BYTES are never committed: they are third-party content, not ours to redistribute, and one
+#   dispatch writes up to seven of them
+#   the LEDGER is not committed either: it is runtime state, and it grows every dispatch
+# What this costs, stated rather than glossed: a third party can verify a citation only against the
+# local store. Re-fetching the URL does NOT reproduce the digest, because pages change - which is
+# the whole reason the bytes are hashed at arrival instead of being cited by address.
+state/artefacts/
+state/artefacts.jsonl
+
+# ---- 2026-08-04: the entity's own deliberation is PRIVATE ------------------------------------
+# `thinking.jsonl` is the rod's reasoning trace, kept from 2026-08-04. It reasons about Luis's
+# actual employment and financial situation every tick, in plain words. That is precisely what the
+# privacy guard forbids in anything pushed, and unlike code it cannot be redacted without
+# destroying what it is for. It stays local, permanently.
+#
+# THE FIRST VERSION OF THIS COMMENT QUOTED THE PHRASE IT WAS BANNING, and the pre-push scan caught
+# it in the staged diff. A rule that cites its own forbidden content publishes it. Describe the
+# category; never the instance.
+state/thinking.jsonl
+# Experiment records that embed sandbox paths under the user's home directory.
+state/armed_run.json
+state/awareness_run.json
+# HADES verdict text quotes the wake's own output, which quotes his priorities.
+state/hades.jsonl

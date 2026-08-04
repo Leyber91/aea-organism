@@ -259,8 +259,14 @@ RUNGS = [
     dict(
         id="R5", title="RESEARCH",
         human="It can be wrong on purpose, and find out",
+        # "SURVIVES" WAS THE WORD HERE UNTIL 2026-08-04 AND IT IS A FALLACY. A hypothesis
+        # consistent with the evidence is CORROBORATED - not yet dead, and that is all that can be
+        # said. Reading consistency as confirmation is affirming the consequent, and `research_cert`
+        # refuses the word outright with a control. This rung's own definition was contradicting its
+        # own certifier: the correction landed in the certifier and never walked back up to the text
+        # that generates the published page. The same class as a docstring outliving its function.
         power="A falsifiable hypothesis stated before searching, sources kept with what they said, "
-              "summarised against the hypothesis, ending in survives, dies, or forks - with a "
+              "summarised against the hypothesis, ending in CORROBORATED, DIED, or FORKS - with a "
               "numeric stopping rule.",
         bound="A FABRICATED SOURCE. Every citation must resolve to bytes that were actually "
               "fetched, hashed at fetch time. A research organ is the first component with a motive "
@@ -271,7 +277,17 @@ RUNGS = [
         plain="A summary cannot be wrong, which is exactly why it cannot be useful. Research means "
               "committing to something that reality is allowed to kill - so the test of this rung is "
               "not what it found, it is whether it ever admitted being wrong.",
-        blocked_on="R4 (egress) and R3 (storing what came back)",
+        # THE DEPENDENCY POINTED THE WRONG WAY, and the page printed it. `HANDOFF_R5.md` records
+        # the finding that reverses it: R4b's third condition needs the entity to CHOOSE to look
+        # outside, it chose twice while a line in its prompt told it its record held nothing from
+        # outside, and in the ~80 minutes after that line vanished - budget open - it chose zero
+        # times. It is not refusing. It has nothing outside that it NEEDS. A hypothesis it cannot
+        # settle from its own state is the first honest reason to go out, and that is R5's gate
+        # verbatim. So R5 is not waiting on R4b; R5 is what makes R4b's last condition reachable.
+        # Third instance of one pattern: R2 needed situation variety that only R4 produces, R4a
+        # needed a reason to look elsewhere, R4b needs an outward need.
+        blocked_on="nothing below it - R5 is what makes R4b's last condition reachable, "
+                   "not the other way round",
     ),
     dict(
         id="R6", title="REFLECTION",
@@ -373,7 +389,26 @@ RUNG_FUNCS = {
     # stands. Declaring `dry` here made verify_funcs report four names UNWIRED, which was the check
     # working: an organ nothing reaches is a defect, and these are not organs. They are STANDBY,
     # which is a different bucket that already exists below. Moved rather than excused.
-    "R4b": [], "R5": [], "R6": [], "R7": [], "R8": [], "R9": [],
+    "R4b": [],
+    # R5 DECLARES, AND THE DIFFERENCE FROM R4b ABOVE IS THE WHOLE RULE. `funcs` means "what this
+    # rung RUNS". R4b declares nothing because it must not run while the council's refusal stands.
+    # R5 ran on 2026-08-04 - twenty claims proposed, ten settled, five DIED, five cooldowns cleared
+    # against cited bytes - so it declares, and `verify_funcs` is now allowed to call any of these
+    # unwired. A rung that has done work and declares nothing is invisible to the same check that
+    # caught the R1 defect, which is the failure mode this table exists to prevent.
+    #
+    # TWO NAMES CAME OUT AGAIN AFTER THE CHECK SPOKE, and they came out rather than being excused.
+    # `artefacts:verify` is reached only by `research_cert`, and `fleet_check:run` only by its own
+    # `__main__` - a certifier and a batch runner, both things a HUMAN starts at a terminal. R4b's
+    # note above already settled this class: `funcs` means what the RUNG runs, and an audit tool is
+    # not an organ. Leaving them here would have bought two green names by widening what "wired"
+    # means, which is the one move this table must never make.
+    "R5": ["kernel.hypotheses:propose", "kernel.hypotheses:settle", "kernel.hypotheses:state",
+           "kernel.hypotheses:write_run", "kernel.hypotheses:rows", "kernel.hypotheses:get",
+           "kernel.hypotheses:status_is_legal",
+           "kernel.artefacts:store", "kernel.artefacts:resolve", "kernel.artefacts:rows",
+           "lab.fleet_check:believed_dead", "lab.fleet_check:run_one"],
+    "R6": [], "R7": [], "R8": [], "R9": [],
 }
 
 
@@ -1007,8 +1042,64 @@ def measure_r4b() -> dict:
     return out
 
 
+R5_RUNS_GATE = 5              # the gate's own number: five runs in which at least one claim DIED
+
+
+def measure_r5() -> dict:
+    """R5 measured from disk. Three conditions, because a rung is POWER plus BOUND plus its gate.
+
+    WHY THIS FUNCTION HAD TO EXIST BEFORE THE RUNG COULD BE CLAIMED. `status_of` reads "a rung with
+    no measurement function is FUTURE", so R5 printed FUTURE with a dash while its evidence sat on
+    disk: 52 verified artefacts, ten settled claims, five deaths, and an audit with zero violations.
+    The rung was UNMEASURED, not unproven, and those look identical on the published page. A ladder
+    that cannot see work that has been done will report the same thing as a ladder above work that
+    has not - which is exactly the conflation every gate in this file was written to prevent.
+
+        condition_1  BOUND    every citation resolves to stored, verified bytes; nothing tainted
+        condition_2  POWER    the write-ahead ordering holds, every DIED names a consequence, and
+                              every claim came from the record rather than from a menu (D51)
+        condition_3  GATE     five runs in which at least one hypothesis DIED
+
+    Condition 2 is the one that cannot be satisfied by trying harder afterwards. Read times come
+    from the artefact ledger, which hashes at the socket; claim times come from a line fsynced
+    before any probe ran. If the bytes arrived first, the claim was fitted to them."""
+    out = dict(condition_1=False, condition_2=False, condition_3=False)
+    try:
+        from aea.lab import research_cert
+        cert = research_cert.certify()
+        st = cert.get("store") or {}
+        out["artefacts"] = st.get("rows")
+        out["verified"] = st.get("verified")
+        out["tainted"] = st.get("tainted")
+        out["condition_1"] = bool(cert.get("controls_all_fire")
+                                  and not st.get("tainted")
+                                  and (st.get("citable") or 0) > 0)
+        out["gate_1"] = "controls fire, store citable and untainted"
+
+        d = cert.get("deaths") or {}
+        out["proposed"] = d.get("proposed")
+        out["settled"] = d.get("settled")
+        out["died"] = d.get("died")
+        out["corroborated"] = d.get("corroborated")
+        # every one of these must be EMPTY; a non-empty list is a dishonest settlement
+        viol = sum(len(d.get(k) or []) for k in ("uncited", "evidence_predates_claim",
+                                                 "died_without_consequence", "claim_not_from_record"))
+        out["violations"] = viol
+        out["condition_2"] = bool(d.get("ok") and (d.get("settled") or 0) > 0 and viol == 0)
+        out["gate_2"] = "zero uncited, zero post-hoc, zero deaths without consequence"
+
+        out["runs_with_a_death"] = d.get("runs_with_a_death") or 0
+        out["condition_3"] = bool(out["runs_with_a_death"] >= R5_RUNS_GATE)
+        out["gate_3"] = "%d runs in which at least one hypothesis DIED" % R5_RUNS_GATE
+    except Exception as e:
+        out["why"] = "%s: %s" % (type(e).__name__, str(e)[:80])
+    out["met"] = bool(out["condition_1"] and out["condition_2"] and out["condition_3"])
+    return out
+
+
 MEASURE = {"R0": measure_r0, "R1": measure_r1, "R1.5": measure_r15,
-           "R2": measure_r2, "R3": measure_r3, "R4a": measure_r4a, "R4b": measure_r4b}
+           "R2": measure_r2, "R3": measure_r3, "R4a": measure_r4a, "R4b": measure_r4b,
+           "R5": measure_r5}
 
 
 def status_for(rid: str, m: dict) -> str:
@@ -1077,6 +1168,23 @@ if __name__ == "__main__":
                             % (m["changed_with_reason"], PERCEPTION_GATE, m.get("distinct")))
             if r["id"] == "R3" and m.get("outcomes") is not None:
                 bits.append("%d outcomes recorded" % m["outcomes"])
+            # R5 PRINTS ITS THREE CONDITIONS, not a dash. Without this branch the rung read
+            # "PARTIAL  -" while measuring three conditions, two of them met - and a dash is
+            # documented four lines below as "the repository cannot prove it". It could prove two
+            # thirds of it. A renderer that says nothing about a measured rung tells the reader the
+            # same thing it tells them about R9, which is the conflation this whole file exists to
+            # refuse.
+            if r["id"] == "R5" and m.get("condition_1") is not None:
+                bits.append("1 BOUND %s (%s artefacts, %s tainted)"
+                            % ("ok" if m["condition_1"] else "FAILED",
+                               m.get("artefacts"), m.get("tainted")))
+                bits.append("2 HONESTY %s (%s proposed, %s settled, %s violations)"
+                            % ("ok" if m["condition_2"] else "FAILED", m.get("proposed"),
+                               m.get("settled"), m.get("violations")))
+                bits.append("3 GATE %s (%s/%s runs with a death, %s DIED %s CORROBORATED)"
+                            % ("ok" if m["condition_3"] else "not yet",
+                               m.get("runs_with_a_death"), R5_RUNS_GATE,
+                               m.get("died"), m.get("corroborated")))
             print("  %-3s %-32s %-8s %s" % (r["id"], r["title"], r["status"].upper(),
                                             "  |  ".join(bits) or "-"))
         print()

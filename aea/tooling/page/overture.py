@@ -106,9 +106,13 @@ def overture(lad: dict, org: dict, T: dict) -> str:
         '<div class="ov-lede">'
         '<p>Below is a picture of a program that runs by itself on one machine. The bright marks in '
         'it are the parts its own loop can reach when it wakes: <b>%s of %s functions</b>, which '
-        'is <b>%s per cent</b>. The other %s are written, committed, and cannot be reached by any '
-        'call this scanner can follow &mdash; and %s calls in the tree resolve to nothing it can '
-        'name, so that percentage is a floor rather than a measurement of the whole.</p>'
+        'is <b>%s per cent</b>.</p>'
+        '<p>The dark is not one thing, and that is the part worth staying for. Of the %s the loop '
+        'cannot reach, <b>%s can be run by a person at a terminal</b> &mdash; instruments, probes, '
+        'certificates, %s modules with a command line &mdash; and <b>%s are reached by nothing at '
+        'all</b>. So the largest single group here is neither alive nor dead: it is the tooling a '
+        'human operates to find out what the other %s are doing. %s calls in the tree resolve to '
+        'nothing the scanner can name, so every one of these is a floor rather than a final count.</p>'
         '<p>That ratio is the story, and this page will not round it up. Every number here was read '
         'from a file the system wrote about itself &mdash; nothing is typed by hand, nothing is '
         'simulated, and a value that could not be measured is shown as a dash rather than a guess. '
@@ -123,7 +127,9 @@ def overture(lad: dict, org: dict, T: dict) -> str:
         'wiring is. Every proof here is a receipt that something ran &mdash; never an assertion '
         'about what it is.</p>'
         '</section>'
-        % (live, total, pct, dark, org.get('unresolved') or 0, headline, online, len(rungs)))
+        % (live, total, pct, dark, len(org.get('human') or ()),
+           org.get('cli_modules') or 0, dark - len(org.get('human') or ()), live,
+           org.get('unresolved') or 0, headline, online, len(rungs)))
 
 
 def coda(lad: dict) -> str:

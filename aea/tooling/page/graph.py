@@ -15,9 +15,18 @@ def organism(lr=None, standby=None) -> dict:
     # and was drawn in the dark field. The edge is real and it is weaker than a direct call, because
     # which entry a dispatch selects is a runtime fact. The picture draws both and marks which.
     live, unresolved, via = assembly.reachable(mods, detail=True)
+    # THE DARK FIELD IS NOT ONE THING, and drawing it as one was the biggest untruth left in the
+    # picture. `assembly` already buckets `if __name__ == "__main__"` separately, on the grounds
+    # that a person typing a command is not the organism - so the tree divides three ways, not two:
+    # what the loop reaches, what only a HUMAN AT A TERMINAL can reach, and what nothing reaches at
+    # all. Measured here: the middle group is the largest of the three. This repo is mostly
+    # instruments somebody runs by hand, and until now the page drew all of them as absence.
+    mains = ["%s:<main>" % m for m, i in mods.items() if "<main>" in i["defs"]]
+    human, _hu = assembly.reachable(mods, entries=mains) if mains else (set(), 0)
     allfns = {f"{m}:{d}" for m, i in mods.items() for d in i["defs"] if d not in ("<module>", "<main>")}
     live = {k for k in live if k in allfns}
     dispatched = {k for k in via["dispatch"] if k in allfns}
+    human = {k for k in human if k in allfns} - live
 
     # DEPTH FROM THE ENTRY POINTS, by BFS over real call edges. Depth is the radius, so the picture
     # reads outward from the thing that starts: the wake.
@@ -51,6 +60,7 @@ def organism(lr=None, standby=None) -> dict:
                     edges.append((src, c))
                     dedges.add((src, c))
     return dict(lr=lr, standby=standby or {}, live=sorted(live), dead=sorted(allfns - live),
+                human=human, cli_modules=len(mains),
                 edges=edges, dedges=dedges, dispatched=dispatched, depth=depth,
                 modules=len(mods), functions=len(allfns), unresolved=unresolved,
                 direct=len({k for k in via["direct"] if k in allfns}))

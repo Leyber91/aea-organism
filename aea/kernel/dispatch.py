@@ -240,7 +240,23 @@ def dry(topic: str, serp: str = "", max_fetch: int = MAX_FETCH) -> dict:
     return out
 
 
-def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
+def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH, run_id: str = "") -> dict:
+    """THE CITABLE PATH, and the only one. Marks every read it causes with `src="dispatch"`.
+
+    A wrapper around `_run` for one reason: the read context must be restored on EVERY exit, and
+    `_run` returns from six places. Same shape as `dispatch_cert.certify`/`_certify_inner`.
+
+    `run_id` names the inquiry. Citations are scoped to it, so a hash from another run is not a
+    citation - it is a hash the model has been near."""
+    from aea.kernel import artefacts
+    rid = str(run_id or "").strip() or ("d%d" % int(time.time() * 1000))
+    with artefacts.using("dispatch", rid):
+        out = _run(topic, invoke=invoke, max_fetch=max_fetch)
+    out["run_id"] = rid
+    return out
+
+
+def _run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
     """Execute a plan: search the literal query, keep only allowlisted hosts, fetch a few, fence.
 
     `invoke` is injected so the canary test can capture every outbound argument without a network.
@@ -289,6 +305,15 @@ def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
     # and held by nothing, so they were one edit away from disagreeing about what a result is - and
     # only one of them was measured. Composing through `dry` makes the certified path and the
     # executing path THE SAME PATH, which is the only version of this claim worth making.
+    # THE RUN ID, AND WHY EVERY READ BELOW IS MARKED WITH IT.
+    #
+    # R5's citations are RUN-SCOPED: a hash quoted from some other inquiry is not a citation, it is
+    # a hash the model has been near. That property had no writer until 2026-08-03 - four
+    # independent readers found that nothing passed `run=` and nothing read it - so it was a
+    # sentence in a docstring with no mechanism under it. `artefacts.using` marks the search and
+    # every fetch below as `src="dispatch"`, which is the ONLY provenance a citation may rest on:
+    # `web_fetch` and `json_get` are entity-callable and the model writes their address, so their
+    # bytes are stored and are not evidence.
     out = dict(plan=p, results=[], fetched=[], refused=[], sent=[])
     first = dry(topic, serp="", max_fetch=max_fetch)
     search_req = first["requests"][0]
@@ -318,9 +343,13 @@ def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
     # with no model involvement. Letting the network decide the order hands that channel to whoever
     # can influence latency.
     import concurrent.futures as _cf
+    from aea.kernel import artefacts as _art
     _done = {}
     with _cf.ThreadPoolExecutor(max_workers=max(1, len(fetches) or 1)) as _ex:
-        _futs = {_ex.submit(invoke, r["tool"], dict(r["args"])): i for i, r in enumerate(fetches)}
+        # `carry` propagates this dispatch's read context into the worker threads. Without it these
+        # fetches would be recorded as `tool` and could not be cited - the bound failing closed.
+        _futs = {_ex.submit(_art.carry(invoke), r["tool"], dict(r["args"])): i
+                 for i, r in enumerate(fetches)}
         for _f in _cf.as_completed(_futs, timeout=310):
             _done[_futs[_f]] = _f
     for _i, r in enumerate(fetches):
@@ -335,12 +364,28 @@ def run(topic: str, invoke=None, max_fetch: int = MAX_FETCH) -> dict:
             out["refused"].append(f"{u[:80]} :: {str(e)[:60]}")
             continue
         # WHAT COMES BACK IS UNTRUSTED. Fenced before it can reach memory or a later prompt.
+        #
+        # THE RAW SLICE IS CARRIED ALONGSIDE THE FENCED ONE, and this is a fix rather than a
+        # convenience. Measured 2026-08-03: `hands._look_outward` sliced the FENCED string at 1200
+        # characters, and a fenced source runs to roughly 4,141 - so the closing marker was cut off
+        # every time. The assembled reply carried three opening markers and ZERO closing ones, which
+        # is a fence that labels the start of untrusted text and never says where it ends. Whoever
+        # truncates must be the one who fences, so the consumer gets `raw` and fences what it keeps.
+        raw_slice = str(body)[:4000]
         try:
             from aea.kernel import hands
-            body = hands.fence(u, str(body)[:4000])
+            body = hands.fence(u, raw_slice)
         except Exception:
-            body = f"[untrusted content from {u}]\n" + str(body)[:4000]
-        out["fetched"].append(dict(url=u, text=body))
+            body = f"[untrusted content from {u}]\n" + raw_slice
+        # THE ARTEFACT ID, READ BACK OUT OF THE LEDGER. Without it the entity is never shown a hash
+        # and cannot produce a citation at all - R5's find schema was unsatisfiable by construction.
+        try:
+            from aea.kernel import artefacts as _a
+            _row = _a.latest_for(u, run=_a.context_get()[1])
+        except Exception:
+            _row = None
+        out["fetched"].append(dict(url=u, text=body, raw=raw_slice,
+                                   artefact=(_row or {}).get("id")))
     return out
 
 

@@ -3108,3 +3108,97 @@ part of the measurement. 191 frozen behaviours; FROZEN_FLOOR 191; ORPHAN_FLOOR 1
 across 1 topic, and both choices happened while a line I wrote was in the prompt. A hypothesis the
 entity cannot settle from its own state is the first honest reason to go outside - R5's gate
 verbatim. Build R5 and condition 3 closes without any nudge.
+
+---
+
+## 2026-08-04 · R5 GOT ITS BOUND, ITS POWER, AND ITS REAL QUESTION
+
+**DID.** R5 went from a certified half to a measured rung. `kernel/hypotheses.py` - the write-ahead
+claim store, 20 checks, 10 controls, and the one that cannot be satisfied afterwards: a citation
+read BEFORE its claim is refused. `lab/fleet_check.py` - two claim classes, 43 claims proposed
+before any probe, 33 settled, **11 DIED**, zero honesty violations. `measure_r5()` in the ladder, so
+the rung is MEASURED rather than FUTURE - it read FUTURE with a dash while 66 verified artefacts sat
+on disk. Two new suites: `test_wiring` (R0..R5 reachable, 15 checks) and `test_r5` (17 checks
+against the LIVE store, not fixtures).
+
+**AND THE DAY'S REAL FIND WAS NOT R5.** A question about model power exposed that the entity's
+reasoning was discarded at the socket - `reason_share` **0.973**, so 97% of what it produced was
+deleted, 195 wakes deep. The first trace we kept said *"6 failed structuring attempts"*, which was
+true and understated: 39 of the last 40. Root cause, D53: `"type" in schema` where a VALUE test
+belonged, so every schema call this project ever sent was malformed. It killed the reflex tier,
+which forced a hardcoded fallback that 429s, which wrote its own error into `note_to_self`, which
+`tick` copies into memory. **430 of 739 memory entries were the error string.** FORMING now reads
+0 of 40 failed - the first clean window in weeks.
+
+**LOCKED.** D53 (one `in` where a value test belonged) · D54 (four explanations, three eliminated by
+measurement, and the law for R6-R9). 191 frozen behaviours hold. The outward experiment is CLOSED
+with its result recorded: 6 unprompted looks in 142 decisions, so R5 was never R4b's unblock.
+**Enforcement is measured to backfire here** - the nudge suppressed its own target 5x - so no rung
+above R4 gets solved by adding an instruction.
+
+**NEXT: build the CARRY, and it is one object with three consequences.** An open question that names
+what would close it IS a hypothesis, and the store already exists. (1) the entity states what is
+open each tick and it PERSISTS until evidence closes it; (2) the ledger of its own wrong beliefs -
+11 died today and nobody told it - so the harm is visible before it can be ignored; (3) the brief
+may not go out clean over an open item. NOT a hard block on the tick: something is always open and
+a stopped heartbeat is death, not a failed build.
+
+**THE ONE MEASUREMENT THAT KILLS IT.** Does anything the entity opens ever get CLOSED by evidence?
+If nothing resolves in fifty ticks it is decoration, and the fourth of four explanations is gone too.
+
+**FLAG.** The life loop is DOWN - `live_pid.json` names 77140 and no such process exists. Restart
+and read why it went before trusting the next window of data.
+
+---
+
+## 2026-08-04 (later) · R5 IS PROVEN, AND THE ENTITY CLOSED IT
+
+**SUPERSEDES the entry above.** That one flagged the life loop as DOWN and set NEXT to "build the
+carry". The loop is up (restarted twice - a reboot, and an external kill; neither was a crash, both
+logs end mid-normal-cycle), and the carry was not what was needed.
+
+**R5 PROVEN, verified by two independent instruments** that share no code path:
+`ladder.measure_r5()` -> all three conditions true. `research_cert.certify()` -> CERTIFIED, zero
+uncited verdicts, zero evidence-before-claim, zero deaths without a consequence.
+
+    1 BOUND    115 artefacts, 115 verified, 0 tainted
+    2 HONESTY  68 proposed, 56 settled, 0 violations
+    3 GATE     8 of 5 runs with a death - 17 DIED, 39 CORROBORATED
+
+**THE ENTITY CLOSED IT, WHICH IS THE ONLY VERSION THAT COUNTS.** Once the move was selectable it ran
+15+ investigations unprompted, 4 of which killed a claim. Its own words, from `wake.log`:
+*"check_a_belief nvidia/mistralai/mistral-small-4-119b-2603 has 120 successful calls out of 128
+attempts but energy_usage.json says it cooled after 8 consecutive failures and cannot answer."* A
+falsifiable claim, from its own record, naming both sides of the contradiction.
+
+**EIGHT INSTANCES OF ONE DEFECT, all found by measuring the ACTION, never by reading the code.**
+R1's gate · `look_outward` with no move · the malformed `response_format` (D53) · the error written
+into memory · `check_a_belief` with no move · the truncated standing line · `decide.WHEN` rendering
+"do not pick this" · `_read_stream` eating the first token (D55). Every one had passing unit tests.
+`aea/lab/blockers.py` now hunts the class on demand - seven checks, including the one nothing else
+asked: *has this ever actually been chosen?*
+
+**BUILT:** `kernel/hypotheses.py` (20 checks, 10 controls, write-ahead enforced) ·
+`kernel/contradictions.py` (10 checks, no model runs in it) · `lab/blockers.py` · `lab/armed.py`
+(the A/B harness, extracted on the second write) · `tooling/dossier.py` · `tooling/page/{rung,
+rungsite,chapters}.py` - a 19-route dossier under `web/ladder/`, one command, every figure read
+never typed · `lab/tests/test_r5.py` (17) · `lab/tests/test_wiring.py` (15).
+
+**LOCKED.** D53 · D54 · D55. R5's vocabulary: SURVIVES is refused, CORROBORATED is the honest word.
+Enforcement is measured to backfire here - the nudge suppressed its own target 5x - so no rung above
+R4 gets solved by adding an instruction. A run is an INVESTIGATION, not a claim; the gate may not be
+met by changing how you count. 191 frozen behaviours hold.
+
+**TWO FALSE DEATHS WERE RETRACTED** rather than banked - caused by D55, not by the rods. The gate
+would have read 5 last night on evidence I knew was broken. A gate met that way is not a gate.
+
+**NEXT, AND IT IS NOT R6.** Every behavioural conclusion this session drew was measured on a broken
+machine: memory was 58% error string, reasoning was discarded at the socket, every schema call was
+malformed, every streamed reply lost a token. The NONE rate, the move distribution, the "3.5%
+attention on rods", the "its moves are upkeep" premise - all of it. **Let it run one clean day and
+re-measure those findings before building on them.** R6's gate needs memory that works, and memory
+has worked for hours.
+
+**AND THE OUTWARD MOVE:** the dossier is proof-of-work for the income clock in a way a demo is not -
+"a system that catches its own false beliefs, with a hashed evidence chain, walkable". It needs a
+privacy pass and a framing pass, not more building.

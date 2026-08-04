@@ -130,6 +130,29 @@ WHEN = {
     "know_your_hands": "LIST the tools available to call, because someone needs that list and you "
                        "cannot produce it",
     "read_your_state": "read the live contents of one of your own state files right now",
+    # THE MOVE THAT SETTLES A DISAGREEMENT RATHER THAN RE-READING IT, and it spent five hours in
+    # the menu rendered as "(no description - do not pick this)".
+    #
+    # `_moves` falls back to that string when WHEN has no entry, which is correct fail-closed
+    # design - an undescribed move must not be proposable. The defect was that `check_a_belief` was
+    # added to TOOL_KNOWN and this table was not touched. MEASURED, 2026-08-04, 3+3 sandboxed
+    # replicates one environment variable apart: shown two contradictions in its own records, the
+    # treatment arm named them 12 times across 35 traces while the control named them 0 times in 36
+    # - so it SAW them - and acted zero times. Its own trace at tick 802: "there are contradictions
+    # in my state files that need reconciliation". At tick 806: "my last 6 moves: all
+    # read_your_state aea_state.json - I've been reading the same file repeatedly without taking
+    # action." It wanted to resolve them, was routed to a move that re-reads a file, and looped.
+    #
+    # Four explanations were eliminated by measurement before this was found - it does not know it
+    # can (made it worse), it must be told (5x backwards), it needs a critic (ignored), it holds
+    # nothing unresolved (it held one and still did not act). The real answer was that the menu
+    # said DO NOT PICK THIS. The condition below is written to fire on exactly the case the trace
+    # describes: a disagreement inside its own record, where re-reading cannot settle which side
+    # is true.
+    "check_a_belief":  "your own record disagrees with itself about the world, and READING it again "
+                       "cannot settle which side is true - this takes one such claim and finds out. "
+                       "Use it when two of your files cannot both be right, or when a belief you "
+                       "act on has never been checked against anything outside your own state",
     # THE ONLY CONDITION ON THIS TABLE THAT POINTS OUTSIDE THE MACHINE, and it is written to be
     # HARD to satisfy honestly. Every other move answers a question about the entity itself, so the
     # wake can always find a reason to look inward; this one has to fail that test first. It also
@@ -194,6 +217,16 @@ try:
 except Exception:
     OUTWARD_TOPICS = ()
 
+# THE CLAIMS THE RECORD CURRENTLY DOUBTS ITSELF ABOUT, derived the same way and for the same
+# reason. `believed_dead` reads `energy_usage.json` and returns the rods the record asserts cannot
+# answer; each is a claim the entity holds, acts on, and can settle by asking. Recomputed on every
+# import, so a rod that clears stops being offered without an edit anywhere. Empty on failure.
+try:
+    from aea.lab import fleet_check as _fleet
+    DOUBTED = tuple(r["key"] for r in _fleet.believed_dead())
+except Exception:
+    DOUBTED = ()
+
 TOOL_KNOWN = {
     "know_yourself":   dict(tool="self_map",   arg="topic", enum=SELF_TOPICS,   default="structure",
                             action="LOOK:self_map"),
@@ -218,6 +251,39 @@ TOOL_KNOWN = {
     # ticks were spent proving it before this line existed.
     "look_outward":    dict(tool="look_outward", arg="topic", enum=OUTWARD_TOPICS, default=None,
                             action="LOOK:look_outward"),
+    # R5 - AND THIS IS THE THIRD TIME, WHICH IS WHY IT IS WORTH A COMMENT RATHER THAN A LINE.
+    #
+    # R1's gate asked for a move the wake's surface could not express. R4b's condition 3 asked the
+    # entity to CHOOSE `look_outward` while `look_outward` had no name here - the note directly
+    # above records it. On 2026-08-04 `check_a_belief` was built, registered in `hands.TOOLS`,
+    # certified, invoked once from a terminal, and declared in `RUNG_FUNCS` - and `verify_funcs`
+    # reported it WIRED, because `hands.invoke` really does reach the implementation. It was wired
+    # to the hand and not to the mind. The wake had no word for it, so R5's gate was unsatisfiable
+    # by construction for the third time in one repository, discovered by listing which tools no
+    # move can reach - a question nothing had ever asked.
+    #
+    # NO ARGUMENT, deliberately. The claim under test is taken from `energy_usage.json`, not chosen
+    # by the model, and that is not merely the safest shape: `artefacts.CITABLE_SRC` refuses bytes
+    # whose ADDRESS the tested thing selected, so a model-picked rod would produce evidence that
+    # cannot ground a citation and `hypotheses.settle` would refuse the verdict outright. The
+    # closed shape is what makes the evidence admissible.
+    # THE ARGUMENT IS THE CLAIM IT PICKS, AND IT WAS MISSING. Measured 2026-08-04 in production:
+    # the wake chose this move five times and each time NAMED its own claim in prose -
+    # "nvidia/mistralai/mistral-small-4-119b-2603 has 120 successful calls out of 128 attempts but
+    # energy_usage.json says it cooled after 8 consecutive failures". The move took no argument, so
+    # `hands` tested `rods[0]` instead - `groq/groq/compound-mini`, six times running. The entity
+    # asked one question and a different one was answered, and its own hypothesis was thrown away
+    # at the surface.
+    #
+    # A CLOSED, DERIVED ENUM, the same shape as `look_outward` above and for the same reason.
+    # Free text would let the MODEL author the address, and `artefacts.CITABLE_SRC` refuses bytes
+    # whose address the tested thing chose - so a free-text claim would produce evidence that
+    # cannot ground a citation and `hypotheses.settle` would refuse the verdict. Deriving the set
+    # from the record keeps the address system-authored while letting the entity choose WHICH of
+    # its own contradictions to settle. Law S1: derive the map, never draw it. Empty on failure,
+    # which makes the move unselectable rather than unbounded - fail closed, like every table here.
+    "check_a_belief":  dict(tool="check_a_belief", arg="subject", enum=DOUBTED, default=None,
+                            action="LOOK:check_a_belief"),
 }
 
 # Which words in the opening of an action select which tool. Same closed-vocabulary discipline as

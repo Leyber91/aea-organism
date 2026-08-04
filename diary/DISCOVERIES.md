@@ -2195,3 +2195,184 @@ THE STRUCTURAL FINDING UNDERNEATH, and it is the third instance of one pattern: 
 refusing to look outside, it has nothing outside that it NEEDS. A hypothesis it cannot settle from
 its own state is the first honest reason to go out, and that is R5's gate verbatim. Build R5 and
 condition 3 becomes satisfiable without any nudge at all.
+
+## D53 · One `in` where a value test belonged took the entity's memory for 430 ticks (2026-08-04)
+
+Luis asked whether the models were powerful enough, whether thinking was on, and to analyse the
+thinking and not only the output. The third ask could not be answered: **the thinking was being
+thrown away at the socket.** `_read_stream` accumulated every reasoning delta, counted it into
+`reason_chars` / `reason_share`, and then dropped the text - it survived only as a fallback when
+`content` was empty. Measured: `reasoning_content` appeared ZERO times in 445KB of `wake.log`
+across 195 wakes on a 550b. We had been measuring the SIZE of the entity's deliberation and keeping
+only its conclusion, at a measured `reason_share` of **0.973** - 2.7% of what it produced.
+
+Keeping the trace paid for itself on the first tick. The 550b's own 9,368-character deliberation
+said: *"the entity has had 6 failed structuring attempts (HTTP 429)"*. Checked against the record,
+the entity's claim was TRUE and understated - **39 of the last 40 wakes, 160 of all 207.**
+
+THE CHAIN, root first:
+
+    grid.call_openai      response_format built as `schema if "type" in schema else wrap(schema)`
+                          EVERY JSON Schema has a `type` key. STRUCT_SCHEMA is {"type":"object"}.
+                          So the guard was always true, the wrapping branch was UNREACHABLE, and
+                          the raw schema went out as the response_format. 8 rods, 2 plants, 8/8
+                          HTTP 400: "unknown variant `object`, expected one of `text`,
+                          `json_object`, `json_schema`". Every schema call ever made was malformed.
+    energy ladder         phase 2 asks the reflex tier WITH a schema -> every rod 400s -> three
+                          strikes -> cooled -> retried -> 400 -> cooled. Five rods sat at ZERO
+                          successes in 96 to 111 calls. Re-probed after the fix: 0 of 7 were
+                          actually dead. The cooldowns had measured our bug.
+    aea.loop.aea:structure  only the local ollama floor answered, because it IGNORES response_format,
+                          and it returns prose. `json.loads(prose)` raised into a bare
+                          `except Exception: pass`, so the root cause was invisible for weeks.
+    the unladdered path   fell to the one hardcoded groq call -> 429 (that rod was cooled too).
+    the fallback          wrote its own error into `note_to_self`.
+    aea.loop.aea:tick     copies note_to_self into persistent memory, every tick.
+    THE ENTITY            430 of 739 memory entries were the literal string "(structuring failed:
+                          HTTP Error 429: Too Many Requests)", and ALL SIX entries of the wake's
+                          memory window were that string. A mind deliberating for 9,000 characters
+                          a tick carried nothing whatever forward.
+
+HOW IT SHOULD HAVE BEEN BUILT. Discriminate on the VALUE of `type`, never its presence - a
+response_format's type is one of three known strings and a JSON Schema's is not. Downgrade on the
+endpoint's own words when a plant rejects `json_schema` (groq and nvidia's small rods both name
+`json_object` in the 400, and groq additionally refuses unless the messages contain the word
+"json"), carrying the field names into the prompt so the weaker mode still returns the right keys -
+without that a downgrade returns `{"field1": "value1"}`, which parses and is useless. And an error
+must never be written into the same channel as a thought.
+
+WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED - the fourth part, the one that stops recurrence.
+Nothing here was unknown. D13 recorded the reasoning/content split. D28 recorded a probe scoring a
+rod's cut-off deliberation as its answer, and this file already says "ask the live thing, never the
+description of it". The reflex tier's failures were sitting in `energy_usage.json` in plain numbers
+- 111 calls, 0 ok - and no one read them, because **every panel built that day read the OUTPUT and
+the output looked fine.** `move_from` takes the move from the core's own text, deliberately
+bypassing the formatter, so a total phase-2 outage cost nothing a move-counter could see. The
+monitoring answered "is it deciding?" and never "can it still FORM the decision?", and a failure
+that only degrades prose is a failure nobody finds. Two guards existed and both looked away: the
+bare `except Exception: pass` hid the parse error, and the cooldown counter turned a malformed
+parameter into what looked like a fleet outage. **Measure the pipe, not only the water** - the
+console now carries a FORMING line, and the fix was only findable by reading the mind's own
+reasoning, which is the thing we had been deleting.
+
+## D54 · Four explanations for R5, three eliminated BY MEASUREMENT, and the law that carries to R6-R9 (2026-08-04)
+
+R5 asks the entity to state a claim before the evidence. It never has. The whole night went into
+finding out why, and the value is not the answer - it is that each candidate died to a number
+rather than to an argument. **Every rung above R4 is a DISPOSITION, not a capability, and a
+disposition cannot be debugged by reasoning about it.**
+
+**FIRST, THE ASSUMPTION THAT WAS WRONG.** We believed the entity could not infer. It can. Reading
+56 captured traces - 341,100 characters of deliberation, mean `reason_share` 0.814 - tick 794 says,
+unprompted: *"the hades=unverified block is now confirmed permanent until it flips (ticks 788-793
+all say the same thing)."* That is inference across its own history, generated by nobody. The
+faculty is present and pointed elsewhere.
+
+And its refusals are not laziness. Tick 744, in full: *"what_to_try: I'm not blocked - my_record: I
+could check but I have the summary - look_outward: I have 6 left, but do I need it? - brief: already
+written today - consolidate: known to be rate-limited - reflect: just did it - calc: no arithmetic
+needed. So MOVE: NONE is correct for entity upkeep. The real service to Luis happens through our
+dialogue, not mechanical moves."* **Forty-one of fifty-six ticks are valid arguments from a premise
+we never checked.** The premise is that its moves are upkeep and the real work is elsewhere.
+
+**THE FOUR CANDIDATES, AND HOW EACH DIED.**
+
+| explanation | test | result |
+|---|---|---|
+| it does not KNOW it can | capability surface, 3+3 sandboxed replicates, one env var apart | **ELIMINATED - it got WORSE.** NONE 16 vs 7; 5 distinct moves vs 7 |
+| it must be TOLD | the nudge, removed 2026-08-03, counted for 24h | **ELIMINATED - 5x backwards.** look_outward 0.88% with the nudge, 4.2% without |
+| it needs a CRITIC | HADES, 69 verdicts on record | **ELIMINATED.** It disagrees 30 times and one grep hit uses the verdict: a print statement |
+| it holds nothing UNRESOLVED | not yet run | **SURVIVES** |
+
+The literature named the same thing independently while we were measuring it: *agents consistently
+find relevant unexpected information but ignore it - a disconnect between what agents observe and
+how they act* (arXiv 2604.17609). Not an inference failure. An observation-action gap.
+
+**THE STRUCTURAL FINDING UNDERNEATH, and it is three absences, not one.**
+
+    NO CARRY       nothing in this system holds an item as UNFINISHED between ticks. Every input is
+                   a fact about the past or a menu for right now. There is no object meaning "open"
+    NO SALIENCE    794 memories, every one a bare 160-char string, window of 6. No weight field, so
+                   nothing can ever matter more than the last six ticks. A formative memory is
+                   structurally impossible
+    NO ACCESS      51 lessons in DISCOVERIES.md, each a principle welded to the failure that paid
+                   for it - and no move, no tool, and nothing in the wake prompt reaches any of
+                   them. `recall.py` is measured at 7/12 hit@5 and is wired to the ASSISTANT reading
+                   the repo, never to the entity living in it
+
+**THE SOLUTION SHAPE, and why it is not a fifth item on a pile.** Not a principle - a principle is a
+filter, and ten filters is ten more defensible reasons to conclude NONE. Not a figure - we have
+four judges already and the one that speaks is ignored. Not an enforcer - enforcement is the only
+thing here measured to backfire. **A STATE that carries.** An open question that names what would
+close it IS a hypothesis, which is R5's object exactly, and `hypotheses.jsonl` already stores it
+with write-ahead and ten controls. The contradiction detector, the wrong-belief ledger, the recall
+move and the memory weight are all consequences of that one object rather than separate work.
+
+**WHERE THE MANDATORY PART GOES, and this is Luis's correction to my design.** I had argued nothing
+may block, because blocking is enforcement and enforcement backfires here. The compile error defeats
+that: a compiler enforces no principle, judges no intent, tells you nothing to write, and cannot be
+satisfied by arguing better. It reports a state - *this does not run*. But the block cannot sit on
+the tick, because something is always open and a stopped heartbeat is death, not a failed build. So
+it sits on the ARTEFACT: **the entity may live with open questions; it may not report the job done
+to Luis while one stands.** The loop runs like you keep coding with a red build; nothing ships green.
+
+**THE LAW FOR R6 THROUGH R9 - the part worth carrying.**
+
+> **A rung above R4 fails at the PREMISE, not the mechanism. Build the mechanism and it will sit
+> unused behind a correct argument. Find out what the entity believes its job is FIRST.**
+
+Proved four separate ways in one night, each one a capability that existed and was unreachable:
+a tool no move could name (`check_a_belief`, R1's defect for the third time); a hypothesis store
+reachable only from a terminal; a contradiction line silently truncated by a prompt already exactly
+at its 620-char cap; and 51 written lessons the entity cannot read. Each was found by measuring the
+ACTION, never by reading the code - and in every case the code was correct.
+
+**WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED - the fourth part.** `ladder.py` already carries the
+note, in this repo, in the author's own words: *"the wake could not choose this until it was here...
+R4b's condition 3 was unsatisfiable BY CONSTRUCTION. That is R1's original defect exactly."* It was
+read, quoted, and then reproduced the same day in `check_a_belief`. The reason is placement:
+attention went to the hard, interesting artefact - the claim class, the write-ahead rule, the
+controls - and never to the six-word question underneath it, *can the wake name this?* Same shape as
+D53. **The cheap check is the one that decides whether any of the expensive work is reachable, and
+it is the one nothing ever re-reads.** Ask it out loud, before the build and again after: what
+would have to be true for the entity to USE this, and which of those is already false?
+
+## D55 · Every streamed reply lost its first token, and the fix for one defect is what exposed it (2026-08-04)
+
+`_read_stream` reads one line to decide whether the response is server-sent events, then iterates
+the socket - **starting at line two.** The first `data:` frame carries the first content delta, so
+every streamed call this system ever made returned its answer one token short. The streamed path is
+the default on every plant, so the answer is "all of them".
+
+HOW IT SURVIVED. The loss is silent and small. A prose answer missing its first token reads as a
+slightly clipped sentence and nothing downstream cares - not the ladder, not the outcome record, not
+HADES. It becomes visible only where the first character is STRUCTURAL, which in practice means the
+`{` of a JSON object - and **that path was independently broken by the malformed `response_format`
+(D53)**. One defect wore the other's costume. Every attempt to read the JSON path returned a 400
+before it could ever return a truncated body, so the second defect had no way to present itself.
+Fixing the schema this morning is the only reason this was findable tonight.
+
+HOW IT WAS CAUGHT, and the signature is the transferable part. An R5 run reported that two rods
+promoted in `model_fitness.json` could not return valid JSON. Both returned the identical string
+`'ok": true}'`. **Two different models, two different vendors, byte-identical malformed output** - a
+model failure does not reproduce to the character across vendors, so the fault had to be ours. One
+raw unstreamed request against the same payload returned `'{"ok": true}'` and named it.
+
+    streamed through call_openai   'ok": true}'
+    raw, unstreamed, same payload  '{"ok": true}'
+
+WHAT IT COST INSIDE R5, and this is why the retraction mattered more than the gate. Those two rows
+had already been settled DIED. They were false: the probe was invalid, not the claim. They were
+re-settled UNSETTLED with the reason recorded, which cost a night's progress on the gate and kept
+`condition_2` at zero violations. **A gate met on evidence its author knew was broken is not a gate.**
+
+HOW IT SHOULD HAVE BEEN BUILT. A reader that consumes input to classify it must put that input back
+- `itertools.chain([first], r)` - and the general form is that DETECTION MUST NOT CONSUME. Any
+function that peeks at a stream to decide what it is owes the caller the byte it peeked at.
+
+WHY THE KNOWLEDGE WAS PRESENT AND NOT APPLIED. `_read_stream`'s own docstring argues, at length and
+correctly, for detecting the stream from the BYTES rather than the header - "a header is the
+server's DESCRIPTION of the body; the first line is the body" - and records that the header check
+had silently demoted ollama. The author reasoned carefully about WHICH line to read and never about
+what happened to it afterwards. Attention went to the interesting half of the sentence. Same shape
+as D53 and D54: the expensive reasoning is sound and the cheap line underneath it is never re-read.

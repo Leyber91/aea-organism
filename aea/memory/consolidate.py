@@ -30,6 +30,60 @@ STORE = os.path.join(grid.STATE, "luis_memory.json")
 # ~/.claude/projects is used if it exists, and None if it does not - which the caller must handle,
 # because inventing a corpus path would mine an empty directory and report success over nothing.
 PROJECTS_ROOT = grid.external("CLAUDE_PROJECTS", default_under_home=".claude/projects")
+
+# You don't consolidate the episode you're still living: a session touched in the last LIVE seconds
+# is the ACTIVE conversation. Consolidation is for closed episodes, the way sleep replays the day
+# that finished. Module-level because two callers need it and the second one did not know it existed.
+LIVE = 600
+
+
+def _is_pending(path: str, done: set, now: float) -> bool:
+    """Is this session owed consolidation? THE ONE DEFINITION, and there used to be two.
+
+    THE DEFECT THIS CLOSES, measured live 2026-08-03 while the loop ran at a 300s tick.
+
+        live.corpus_state()   honest intersection of processed-ids with files on disk -> 23 of 24
+        consolidate.run()     the same, PLUS the LIVE window -> 0 to process
+
+    The chooser counted the session Luis was typing into as owed; the doer correctly skipped it. So
+    the ladder selected ASLEEP:consolidate, the module did nothing and exited 0, and the declared
+    post-condition - "consolidated session count strictly increases" - recorded a VERIFY_FAILED.
+    Every tick. At 1800s that was twice an hour; at 300s it is twelve times an hour, for as long as
+    anyone is working, and `outcomes.verdict_for` would have suppressed a perfectly healthy
+    capability on a streak of failures it manufactured.
+
+    The rule was a comment inside a list comprehension in one function. The other caller could not
+    see it, could not import it, and had no way to know it existed - which is how one definition
+    becomes two that agree until the day they do not. `dispatch.dry`/`run` paid for this same shape
+    with two copies of a URL regex; this is the memory-side instance.
+
+    ONE EXECUTOR PER SHAPE, NEVER TWO."""
+    return (os.path.basename(path)[:-6] not in done
+            and (now - os.path.getmtime(path)) > LIVE)
+
+
+def pending(now: float = None) -> dict:
+    """What is actually owed right now, and what was withheld and why. Never a bare count.
+
+    `eligible` is the denominator the LADDER must compare against - the corpus minus the episodes
+    still being lived. Comparing `done` against the raw corpus asks the entity to finish a file
+    that is still being written."""
+    import time as _t
+    now = _t.time() if now is None else now
+    store = load_store()
+    done = set(store.get("processed") or [])
+    paths = glob.glob(os.path.join(PROJECTS_ROOT, "*", "*.jsonl"))
+    alive = {os.path.basename(p)[:-6] for p in paths}
+    todo = [p for p in paths if _is_pending(p, done, now)]
+    live_skipped = [p for p in paths
+                    if os.path.basename(p)[:-6] not in done and (now - os.path.getmtime(p)) <= LIVE]
+    return dict(total=len(paths),
+                consolidated=sum(1 for p in done if str(p) in alive),
+                todo=len(todo), live_skipped=len(live_skipped),
+                eligible=len(paths) - len(live_skipped),
+                why=("%d session%s still being written and cannot be consolidated yet"
+                     % (len(live_skipped), "" if len(live_skipped) == 1 else "s"))
+                    if live_skipped else "")
 PROJECT = grid.external("CLAUDE_PORTFOLIO_PROJECT") or ""
 MIN_TURN = 24        # ignore trivial turns ("proceed", "go")
 MAX_CHARS = 4200     # cap his voice per session so the local model stays fast + in-context
@@ -116,12 +170,8 @@ def consolidate(limit: int):
     done = set(store["processed"])
     sessions = sorted(glob.glob(os.path.join(PROJECTS_ROOT, "*", "*.jsonl")),
                       key=os.path.getmtime, reverse=True)
-    # You don't consolidate the episode you're still living: skip sessions touched in the last 10 min
-    # (the active conversation). Consolidation is for closed episodes, like sleep replays the past day.
-    LIVE = 600
     now = _t.time()
-    todo = [p for p in sessions
-            if os.path.basename(p)[:-6] not in done and (now - os.path.getmtime(p)) > LIVE]
+    todo = [p for p in sessions if _is_pending(p, done, now)]
     print(f"CONSOLIDATION (LOCAL {LOCAL_MODEL}, private)  |  corpus {len(sessions)} sessions, "
           f"{len(done)} already consolidated, processing {min(limit, len(todo))} now\n" + "=" * 74)
     added, engine_down = 0, False

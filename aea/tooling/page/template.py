@@ -32,6 +32,7 @@ def document(*, MAXD,
              fn_n,
              frontier,
              growth,
+             invariants,
              live_n,
              mx,
              n_rungs,
@@ -50,6 +51,7 @@ def document(*, MAXD,
 <title>THE AEA - an autonomous entity, drawn from its own state</title>
 <link rel="stylesheet" href="assets/base.css">
 <link rel="stylesheet" href="assets/overture.css">
+<link rel="stylesheet" href="assets/invariants.css">
 <link rel="stylesheet" href="assets/frames.css">
 <div class="wrap">
 {overture}
@@ -73,7 +75,8 @@ def document(*, MAXD,
 <span><i style="background:var(--brass)"></i>reachable</span>
 <span><i style="background:#0a0c0e;box-shadow:0 0 0 1.4px #6d757e"></i>{len(org['dispatched'])}
  reached only through a dispatch table</span>
-<span><i style="background:#1b1f24"></i>{len(org['dead'])} functions it cannot reach</span>
+<span><i style="background:#2b333b"></i>{len(org['human'])} a person can run, it cannot</span>
+<span><i style="background:#1b1f24"></i>{len(org['dead']) - len(org['human'])} reached by nothing</span>
 </div>
 </div>
 
@@ -149,6 +152,13 @@ was recorded 7/12 under a 40-token budget — the exam was measuring our default
 <p class="deck">And the only honest way to read any of it: does the reachable surface actually grow, or does the story grow while the surface stays flat.</p>
 <div class="growth">{growth or ''}</div>
 <p class="src">state/assembly_history.jsonl — one row per run, appended.</p>
+
+<h2>WHAT IT CHECKS ABOUT ITSELF</h2>
+<p class="deck">Everything above reports what the system is. This reports how it is kept honest
+&mdash; and the verdict is produced by a machine on a schedule rather than by a person remembering
+to look. The finding underneath it was expensive: a detection that changes no number and fails no
+command is indistinguishable from no detection.</p>
+{invariants}
 
 {coda}
 <div class="honest">

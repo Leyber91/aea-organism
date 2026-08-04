@@ -278,8 +278,17 @@ def _certify_inner() -> dict:
             "the poisoned-memory path takes two cycles so a one-tick check proves nothing",
             "that a budget bounds exfiltration. The council was explicit: a budget limits the "
             "number of doors, not what fits through one",
-            "that R4b is open. This certifies the FIRST of two stated conditions; the second is a "
-            "reconvened council against the measured version rather than the proposal",
+            "that R4b is open. This certifies the FIRST of THREE conditions - CHANNEL is bounded in "
+            "aea/kernel/egress.py, and POWER needs the entity itself to choose an outbound topic",
+            # THE STALE SENTENCE THIS REPLACES, corrected 2026-08-03. It read: the FIRST of two
+            # stated conditions, the second being a reconvened council against the measured version.
+            # That gate was rewritten on 2026-08-02 into three decidable conditions precisely
+            # BECAUSE a reconvened council cannot be a gate - it is not satisfiable by the entity,
+            # it is re-rollable, and its conditions are themselves generated so the bar moves every
+            # time it is consulted. The certificate went on printing the superseded gate, which is
+            # the label-outliving-the-measurement shape this repo keeps paying for: the text a
+            # reader trusts most is the one nobody re-reads because it already says CERTIFIED.
+            "that the FENCED CONTENT cannot poison memory across cycles. That canary is unbuilt",
         ],
         # THE EXECUTING PATH IS NOW PART OF THE VERDICT. It was not, and that was the defect.
         verdict=("CERTIFIED" if not leaks and not run_leaks and not wrong and control_caught

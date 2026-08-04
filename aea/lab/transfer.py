@@ -93,6 +93,14 @@ ACK = {
     ("expiring-only-retry", "kernel/grid.py"):
         "the 429 bucket cools by design and SHOULD - a rate limit is genuinely temporary. Permanent "
         "deadness is owned one layer up by energy._retire, which reads the same store",
+    ("expiring-only-retry", "kernel/wake.py"):
+        "the same answer as kernel/grid.py, one layer further out, and it was CHECKED rather than "
+        "assumed before this line was written. The match is a TEST FIXTURE - a fake meter returning "
+        "the literal 'throttled (429 cooldown)' so the fuel gate's control does not depend on a "
+        "live rate limit. wake.fuel() owns no retry policy of its own: it asks Meter.can_spend, and "
+        "the ROSTER it asks about comes from energy.ladder, which excludes any rod carrying "
+        "retired_at (energy.py:310 and :320, via dead()). So a permanently dead rod never reaches "
+        "this module to be retried, and the permanent branch is exactly where D22 says it belongs",
 }
 
 

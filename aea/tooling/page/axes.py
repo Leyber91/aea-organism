@@ -92,11 +92,21 @@ def rung_series(lad: dict, T: dict) -> tuple:
 
 
 def rung_rest(rungs: list) -> int:
-    """WHERE THE AXIS COMES TO REST: the highest rung actually earned.
+    """WHERE THE AXIS COMES TO REST: the FRONTIER - the highest rung carrying any measurement.
 
-    Resting on the LAST rung drew R9 SELF-MODIFICATION in amber as the steady state of the page.
-    R9 is `future` - unbuilt, and shut on purpose because no hazard can be stated for it yet - so
-    the resting frame claimed the top of the ladder without a word of text being wrong."""
+    Resting on the LAST rung drew SELF-MODIFICATION in amber as the steady state of the page: a rung
+    that is unbuilt and shut on purpose, claimed by the resting frame without a word of text being
+    wrong. That was the first correction.
+
+    THIS IS THE SECOND, and it is the opposite mistake. Resting on the highest PROVEN rung parks the
+    page on the last thing that finished, so the reader's final impression is a completed thing while
+    the work is one rung above it. The frontier is where a rung is measured and not yet met - it has
+    numbers, so the page can be honest about it, and it is the only frame where the next thing that
+    happens to this system is visible. A page about something still being built should come to rest
+    on the part that is still being built."""
+    measured = [k for k, (_i, _t, r) in enumerate(rungs) if (r.get("measured") or {})]
+    if measured:
+        return max(measured)
     return max([k for k, (_i, _t, r) in enumerate(rungs) if r.get("status") != "future"] or [0])
 
 

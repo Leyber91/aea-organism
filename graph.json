@@ -7,7 +7,7 @@
   "path_model": "grid.py (aea/kernel/) defines ROOT (walk up to design/.git), STATE=ROOT/state, WEB=ROOT/web; .env (keys) loads from ROOT. Runtime code lives in aea/<domain>/ subpackages: kernel mind energy memory bench io organs loop server tooling.",
   "subgraphs": {
    "code": {
-    "count": 209,
+    "count": 229,
     "source": "aea/bench/bench_core.py"
    },
    "plan": {
@@ -15,11 +15,11 @@
     "source": "design/00_VISION.md"
    },
    "reflections": {
-    "count": 54,
+    "count": 56,
     "source": "diary/REFLECTIONS.md"
    },
    "discoveries": {
-    "count": 53,
+    "count": 56,
     "source": "diary/DISCOVERIES.md"
    },
    "references": {
@@ -48,7 +48,7 @@
     "src": "THE_PROBE",
     "dst": "code",
     "rel": "contains",
-    "count": 209
+    "count": 229
    },
    {
     "src": "THE_PROBE",
@@ -60,13 +60,13 @@
     "src": "THE_PROBE",
     "dst": "reflections",
     "rel": "contains",
-    "count": 54
+    "count": 56
    },
    {
     "src": "THE_PROBE",
     "dst": "discoveries",
     "rel": "contains",
-    "count": 53
+    "count": 56
    },
    {
     "src": "THE_PROBE",
@@ -205,9 +205,21 @@
     "reach": "organism"
    },
    {
+    "id": "kernel.artefacts",
+    "t": "module",
+    "s": "artefacts.py - R5's BOUND: ONE READ, AND THE BYTES ARE HASHED WHERE THEY",
+    "reach": "organism"
+   },
+   {
     "id": "kernel.cause",
     "t": "module",
     "s": "cause.py - WHY DID IT FAIL? Answered mechanically, with no model, so a b",
+    "reach": "organism"
+   },
+   {
+    "id": "kernel.contradictions",
+    "t": "module",
+    "s": "contradictions.py - TWO THINGS THE RECORD BELIEVES THAT CANNOT BOTH BE T",
     "reach": "organism"
    },
    {
@@ -256,6 +268,12 @@
     "id": "kernel.hands",
     "t": "module",
     "s": "hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISS",
+    "reach": "organism"
+   },
+   {
+    "id": "kernel.hypotheses",
+    "t": "module",
+    "s": "hypotheses.py - R5's POWER: a claim written down BEFORE the evidence tha",
     "reach": "organism"
    },
    {
@@ -343,9 +361,33 @@
     "reach": "organism"
    },
    {
+    "id": "kernel.wake",
+    "t": "module",
+    "s": "wake.py - THE ENTITY COMPUTES WHEN IT NEXT THINKS, AND SOMETHING DUMB EX",
+    "reach": "organism"
+   },
+   {
+    "id": "lab.armed",
+    "t": "module",
+    "s": "armed.py - THE A/B HARNESS: two arms, one environment variable apart, sa",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "lab.awareness",
+    "t": "module",
+    "s": "awareness.py - DOES IT TEST ITS OWN BELIEF, AND DOES KNOWING IT CAN CHAN",
+    "reach": "terminal-only"
+   },
+   {
     "id": "lab.battery",
     "t": "module",
     "s": "battery.py - THE CONVERSATIONAL TEST BATTERY. Many real cases, run in ba",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "lab.blockers",
+    "t": "module",
+    "s": "blockers.py - WHAT CAN THE ENTITY NOT CHOOSE, AND WHY? The defect class,",
     "reach": "terminal-only"
    },
    {
@@ -573,6 +615,12 @@
     "reach": "terminal-only"
    },
    {
+    "id": "lab.fleet_check",
+    "t": "module",
+    "s": "fleet_check.py - R5's FIRST RUN: the record makes a claim about the worl",
+    "reach": "organism"
+   },
+   {
     "id": "lab.fuels",
     "t": "module",
     "s": "fuels.py - OUR OWN CATALOGUE OF RODS, AND OUR OWN BENCHMARK OF THEM.",
@@ -735,6 +783,12 @@
     "reach": "terminal-only"
    },
    {
+    "id": "lab.research_cert",
+    "t": "module",
+    "s": "research_cert.py - R5's BOUND, CERTIFIED FROM DISK. No process trusted, ",
+    "reach": "terminal-only"
+   },
+   {
     "id": "lab.selfreport",
     "t": "module",
     "s": "selfreport.py - WHEN THE ENTITY DESCRIBES ITS OWN FUNCTIONING, IS IT RIG",
@@ -783,9 +837,21 @@
     "reach": "terminal-only"
    },
    {
+    "id": "lab.tests.test_r5",
+    "t": "module",
+    "s": "test_r5.py - R5's BEHAVIOUR, FROZEN. Every way a claim could look settle",
+    "reach": "terminal-only"
+   },
+   {
     "id": "lab.tests.test_wire_live",
     "t": "module",
     "s": "test_wire_live - PROVE THE WIRE INSIDE THE DAEMON, not only in isolation",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "lab.tests.test_wiring",
+    "t": "module",
+    "s": "test_wiring.py - EVERY RUNG FROM R0 UP IS REACHABLE, and a new disconnec",
     "reach": "terminal-only"
    },
    {
@@ -987,6 +1053,18 @@
     "reach": "terminal-only"
    },
    {
+    "id": "tooling.console",
+    "t": "module",
+    "s": "console.py - EVERYTHING THAT IS GOING ON, IN ONE PLACE, AND ONLY WHAT IS",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "tooling.dossier",
+    "t": "module",
+    "s": "dossier.py - EVERY NUMBER A RUNG PAGE SHOWS, COMPUTED ONCE, FROM DISK.",
+    "reach": "terminal-only"
+   },
+   {
     "id": "tooling.export_city",
     "t": "module",
     "s": "export_city.py - dump the REAL grid state into city.data.js for the 3D c",
@@ -1029,6 +1107,12 @@
     "reach": "terminal-only"
    },
    {
+    "id": "tooling.page.chapters",
+    "t": "module",
+    "s": "chapters.py - THE DOSSIER'S PROSE PAGES: the introduction, the process, ",
+    "reach": "terminal-only"
+   },
+   {
     "id": "tooling.page.climb",
     "t": "module",
     "s": "climb.py - THE SUBSYSTEMS, IN THE ONLY ORDER THEY CAN COME ONLINE.",
@@ -1044,6 +1128,12 @@
     "id": "tooling.page.guard",
     "t": "module",
     "s": "guard.py - THE PRIVACY SCAN, run on the RENDERED page rather than on its",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "tooling.page.invariants",
+    "t": "module",
+    "s": "invariants.py - WHAT THE SYSTEM CHECKS ABOUT ITSELF, and what those chec",
     "reach": "terminal-only"
    },
    {
@@ -1077,6 +1167,18 @@
     "reach": "terminal-only"
    },
    {
+    "id": "tooling.page.rung",
+    "t": "module",
+    "s": "rung.py - ONE JOB: render ONE rung's page. Ten identical shapes, nothing",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "tooling.page.rungsite",
+    "t": "module",
+    "s": "rungsite.py - THE ROUTES. One page per rung, plus the index, plus their ",
+    "reach": "terminal-only"
+   },
+   {
     "id": "tooling.page.sources",
     "t": "module",
     "s": "sources.py - WHERE THE NUMBERS COME FROM. Every read of durable state, i",
@@ -1092,6 +1194,12 @@
     "id": "tooling.page.template",
     "t": "module",
     "s": "template.py - THE PAGE AS TEXT, and nothing else.",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "tooling.parts",
+    "t": "module",
+    "s": "parts.py - ONE PANEL PER PART, AND EACH ONE MEASURES THE ACTION RATHER T",
     "reach": "terminal-only"
    },
    {
@@ -1122,6 +1230,12 @@
     "id": "tooling.senses",
     "t": "module",
     "s": "senses.py - WHAT CAN THIS ENTITY BE GIVEN TO PERCEIVE WITH. A survey of ",
+    "reach": "terminal-only"
+   },
+   {
+    "id": "tooling.sensors",
+    "t": "module",
+    "s": "sensors.py - THE SIGNALS NOTHING ELSE COMPUTES, AND WHAT EACH ONE CANNOT",
     "reach": "terminal-only"
    },
    {
@@ -1190,6 +1304,11 @@
    },
    {
     "id": "/city",
+    "t": "endpoint",
+    "s": "aea/server/controlroom.py"
+   },
+   {
+    "id": "/console",
     "t": "endpoint",
     "s": "aea/server/controlroom.py"
    },
@@ -2111,6 +2230,18 @@
     "t": "reflection",
     "s": "2026-08-02 · ROLES ARE THE UNIT. And the capability is not making one - ",
     "path": "diary/REFLECTIONS.md"
+   },
+   {
+    "id": "2026-08-03",
+    "t": "reflection",
+    "s": "2026-08-03 · R5 IS WHERE THE HYPOTHESIS LEADS TO ANOTHER PATH - AND WITH",
+    "path": "diary/REFLECTIONS.md"
+   },
+   {
+    "id": "2026-08-04",
+    "t": "reflection",
+    "s": "2026-08-04 · IT KNOWS AND IT IGNORES - Luis, verbatim, across one long n",
+    "path": "diary/REFLECTIONS.md"
    }
   ],
   "discoveries": [
@@ -2430,6 +2561,24 @@
     "id": "D52 - THE NUDGE IS PART OF THE MEASUREME",
     "t": "discovery",
     "s": "D52 - THE NUDGE IS PART OF THE MEASUREMENT, AND IT MUST BE IN THE RECORD",
+    "path": "diary/DISCOVERIES.md"
+   },
+   {
+    "id": "D53",
+    "t": "discovery",
+    "s": "D53 · One `in` where a value test belonged took the entity's memory for ",
+    "path": "diary/DISCOVERIES.md"
+   },
+   {
+    "id": "D54",
+    "t": "discovery",
+    "s": "D54 · Four explanations for R5, three eliminated BY MEASUREMENT, and the",
+    "path": "diary/DISCOVERIES.md"
+   },
+   {
+    "id": "D55",
+    "t": "discovery",
+    "s": "D55 · Every streamed reply lost its first token, and the fix for one def",
     "path": "diary/DISCOVERIES.md"
    }
   ],

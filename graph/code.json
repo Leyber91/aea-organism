@@ -274,6 +274,19 @@
    }
   },
   {
+   "id": "kernel.artefacts",
+   "type": "module",
+   "path": "aea/kernel/artefacts.py",
+   "purpose": "artefacts.py - R5's BOUND: ONE READ, AND THE BYTES ARE HASHED WHERE THEY ARRIVE.",
+   "reach": "organism",
+   "fns": {
+    "total": 32,
+    "live": 13,
+    "tool": 7,
+    "dead": 12
+   }
+  },
+  {
    "id": "kernel.cause",
    "type": "module",
    "path": "aea/kernel/cause.py",
@@ -283,6 +296,19 @@
     "total": 6,
     "live": 6,
     "tool": 0,
+    "dead": 0
+   }
+  },
+  {
+   "id": "kernel.contradictions",
+   "type": "module",
+   "path": "aea/kernel/contradictions.py",
+   "purpose": "contradictions.py - TWO THINGS THE RECORD BELIEVES THAT CANNOT BOTH BE TRUE.",
+   "reach": "organism",
+   "fns": {
+    "total": 6,
+    "live": 4,
+    "tool": 2,
     "dead": 0
    }
   },
@@ -319,8 +345,8 @@
    "purpose": "dispatch.py - R2c: THE ENTITY LEARNS SOMETHING IT CHOSE, AND NEVER WRITES THE ADDRESS.",
    "reach": "organism",
    "fns": {
-    "total": 9,
-    "live": 8,
+    "total": 10,
+    "live": 9,
     "tool": 1,
     "dead": 0
    }
@@ -371,10 +397,10 @@
    "purpose": "grid.py - the AEA entity's power grid (the city's electricity layer).",
    "reach": "organism",
    "fns": {
-    "total": 42,
-    "live": 16,
+    "total": 44,
+    "live": 17,
     "tool": 5,
-    "dead": 21
+    "dead": 22
    }
   },
   {
@@ -384,10 +410,23 @@
    "purpose": "hands.py - THE ENTITY TOUCHES SOMETHING OUTSIDE ITSELF, AND ASKS PERMISSION FIRST.",
    "reach": "organism",
    "fns": {
-    "total": 37,
-    "live": 21,
+    "total": 39,
+    "live": 23,
     "tool": 8,
     "dead": 8
+   }
+  },
+  {
+   "id": "kernel.hypotheses",
+   "type": "module",
+   "path": "aea/kernel/hypotheses.py",
+   "purpose": "hypotheses.py - R5's POWER: a claim written down BEFORE the evidence that could kill it.",
+   "reach": "organism",
+   "fns": {
+    "total": 12,
+    "live": 9,
+    "tool": 3,
+    "dead": 0
    }
   },
   {
@@ -573,6 +612,45 @@
    }
   },
   {
+   "id": "kernel.wake",
+   "type": "module",
+   "path": "aea/kernel/wake.py",
+   "purpose": "wake.py - THE ENTITY COMPUTES WHEN IT NEXT THINKS, AND SOMETHING DUMB EXECUTES IT.",
+   "reach": "organism",
+   "fns": {
+    "total": 18,
+    "live": 11,
+    "tool": 3,
+    "dead": 4
+   }
+  },
+  {
+   "id": "lab.armed",
+   "type": "module",
+   "path": "aea/lab/armed.py",
+   "purpose": "armed.py - THE A/B HARNESS: two arms, one environment variable apart, sandboxed and concurrent.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 7,
+    "live": 0,
+    "tool": 4,
+    "dead": 3
+   }
+  },
+  {
+   "id": "lab.awareness",
+   "type": "module",
+   "path": "aea/lab/awareness.py",
+   "purpose": "awareness.py - DOES IT TEST ITS OWN BELIEF, AND DOES KNOWING IT CAN CHANGE THAT?",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 6,
+    "live": 0,
+    "tool": 3,
+    "dead": 3
+   }
+  },
+  {
    "id": "lab.battery",
    "type": "module",
    "path": "aea/lab/battery.py",
@@ -583,6 +661,19 @@
     "live": 0,
     "tool": 22,
     "dead": 1
+   }
+  },
+  {
+   "id": "lab.blockers",
+   "type": "module",
+   "path": "aea/lab/blockers.py",
+   "purpose": "blockers.py - WHAT CAN THE ENTITY NOT CHOOSE, AND WHY? The defect class, hunted on purpose.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 5,
+    "live": 0,
+    "tool": 5,
+    "dead": 0
    }
   },
   {
@@ -1052,6 +1143,19 @@
    }
   },
   {
+   "id": "lab.fleet_check",
+   "type": "module",
+   "path": "aea/lab/fleet_check.py",
+   "purpose": "fleet_check.py - R5's FIRST RUN: the record makes a claim about the world, so go ask the world.",
+   "reach": "organism",
+   "fns": {
+    "total": 6,
+    "live": 3,
+    "tool": 1,
+    "dead": 2
+   }
+  },
+  {
    "id": "lab.fuels",
    "type": "module",
    "path": "aea/lab/fuels.py",
@@ -1403,6 +1507,19 @@
    }
   },
   {
+   "id": "lab.research_cert",
+   "type": "module",
+   "path": "aea/lab/research_cert.py",
+   "purpose": "research_cert.py - R5's BOUND, CERTIFIED FROM DISK. No process trusted, no model consulted.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 9,
+    "live": 0,
+    "tool": 9,
+    "dead": 0
+   }
+  },
+  {
    "id": "lab.selfreport",
    "type": "module",
    "path": "aea/lab/selfreport.py",
@@ -1507,6 +1624,19 @@
    }
   },
   {
+   "id": "lab.tests.test_r5",
+   "type": "module",
+   "path": "aea/lab/tests/test_r5.py",
+   "purpose": "test_r5.py - R5's BEHAVIOUR, FROZEN. Every way a claim could look settled and prove nothing.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 2,
+    "live": 0,
+    "tool": 2,
+    "dead": 0
+   }
+  },
+  {
    "id": "lab.tests.test_wire_live",
    "type": "module",
    "path": "aea/lab/tests/test_wire_live.py",
@@ -1516,6 +1646,19 @@
     "total": 3,
     "live": 0,
     "tool": 3,
+    "dead": 0
+   }
+  },
+  {
+   "id": "lab.tests.test_wiring",
+   "type": "module",
+   "path": "aea/lab/tests/test_wiring.py",
+   "purpose": "test_wiring.py - EVERY RUNG FROM R0 UP IS REACHABLE, and a new disconnection fails loudly.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 2,
+    "live": 0,
+    "tool": 2,
     "dead": 0
    }
   },
@@ -1552,10 +1695,10 @@
    "purpose": "aea.py - THE AEA: a seeded, persistent, always-on entity. NOT a swarm - ONE core mind on a loop,",
    "reach": "organism",
    "fns": {
-    "total": 10,
-    "live": 10,
+    "total": 14,
+    "live": 13,
     "tool": 0,
-    "dead": 0
+    "dead": 1
    }
   },
   {
@@ -1565,10 +1708,10 @@
    "purpose": "live.py - THE CONTINUOUS LIFE. The entity that is always alive, even when it sleeps.",
    "reach": "organism",
    "fns": {
-    "total": 20,
+    "total": 21,
     "live": 17,
     "tool": 0,
-    "dead": 3
+    "dead": 4
    }
   },
   {
@@ -1578,8 +1721,8 @@
    "purpose": "consolidate.py - MEMORY CONSOLIDATION: episodic transcripts -> semantic memory of Luis.",
    "reach": "organism",
    "fns": {
-    "total": 9,
-    "live": 1,
+    "total": 11,
+    "live": 3,
     "tool": 7,
     "dead": 1
    }
@@ -1949,6 +2092,32 @@
    }
   },
   {
+   "id": "tooling.console",
+   "type": "module",
+   "path": "aea/tooling/console.py",
+   "purpose": "console.py - EVERYTHING THAT IS GOING ON, IN ONE PLACE, AND ONLY WHAT IS TRUE RIGHT NOW.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 7,
+    "live": 0,
+    "tool": 7,
+    "dead": 0
+   }
+  },
+  {
+   "id": "tooling.dossier",
+   "type": "module",
+   "path": "aea/tooling/dossier.py",
+   "purpose": "dossier.py - EVERY NUMBER A RUNG PAGE SHOWS, COMPUTED ONCE, FROM DISK.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 4,
+    "live": 0,
+    "tool": 4,
+    "dead": 0
+   }
+  },
+  {
    "id": "tooling.export_city",
    "type": "module",
    "path": "aea/tooling/export_city.py",
@@ -1994,9 +2163,9 @@
    "purpose": "ladder.py - THE TEN RUNGS, MEASURED FROM LIVE STATE. The manifest the published page draws from.",
    "reach": "terminal-only",
    "fns": {
-    "total": 13,
+    "total": 14,
     "live": 0,
-    "tool": 13,
+    "tool": 14,
     "dead": 0
    }
   },
@@ -2040,16 +2209,29 @@
    }
   },
   {
+   "id": "tooling.page.chapters",
+   "type": "module",
+   "path": "aea/tooling/page/chapters.py",
+   "purpose": "chapters.py - THE DOSSIER'S PROSE PAGES: the introduction, the process, and the evidence behind it.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 11,
+    "live": 0,
+    "tool": 11,
+    "dead": 0
+   }
+  },
+  {
    "id": "tooling.page.climb",
    "type": "module",
    "path": "aea/tooling/page/climb.py",
    "purpose": "climb.py - THE SUBSYSTEMS, IN THE ONLY ORDER THEY CAN COME ONLINE.",
    "reach": "unreached",
    "fns": {
-    "total": 2,
+    "total": 3,
     "live": 0,
     "tool": 0,
-    "dead": 2
+    "dead": 3
    }
   },
   {
@@ -2075,6 +2257,19 @@
     "total": 3,
     "live": 0,
     "tool": 3,
+    "dead": 0
+   }
+  },
+  {
+   "id": "tooling.page.invariants",
+   "type": "module",
+   "path": "aea/tooling/page/invariants.py",
+   "purpose": "invariants.py - WHAT THE SYSTEM CHECKS ABOUT ITSELF, and what those checks have caught.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 2,
+    "live": 0,
+    "tool": 2,
     "dead": 0
    }
   },
@@ -2144,6 +2339,32 @@
    }
   },
   {
+   "id": "tooling.page.rung",
+   "type": "module",
+   "path": "aea/tooling/page/rung.py",
+   "purpose": "rung.py - ONE JOB: render ONE rung's page. Ten identical shapes, nothing arranged by hand.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 6,
+    "live": 0,
+    "tool": 6,
+    "dead": 0
+   }
+  },
+  {
+   "id": "tooling.page.rungsite",
+   "type": "module",
+   "path": "aea/tooling/page/rungsite.py",
+   "purpose": "rungsite.py - THE ROUTES. One page per rung, plus the index, plus their one stylesheet.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 2,
+    "live": 0,
+    "tool": 2,
+    "dead": 0
+   }
+  },
+  {
    "id": "tooling.page.sources",
    "type": "module",
    "path": "aea/tooling/page/sources.py",
@@ -2179,6 +2400,19 @@
     "total": 1,
     "live": 0,
     "tool": 1,
+    "dead": 0
+   }
+  },
+  {
+   "id": "tooling.parts",
+   "type": "module",
+   "path": "aea/tooling/parts.py",
+   "purpose": "parts.py - ONE PANEL PER PART, AND EACH ONE MEASURES THE ACTION RATHER THAN THE CODE.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 8,
+    "live": 0,
+    "tool": 8,
     "dead": 0
    }
   },
@@ -2244,6 +2478,19 @@
     "total": 6,
     "live": 0,
     "tool": 6,
+    "dead": 0
+   }
+  },
+  {
+   "id": "tooling.sensors",
+   "type": "module",
+   "path": "aea/tooling/sensors.py",
+   "purpose": "sensors.py - THE SIGNALS NOTHING ELSE COMPUTES, AND WHAT EACH ONE CANNOT SEE.",
+   "reach": "terminal-only",
+   "fns": {
+    "total": 10,
+    "live": 0,
+    "tool": 10,
     "dead": 0
    }
   },
@@ -2341,6 +2588,11 @@
   },
   {
    "id": "/city",
+   "type": "endpoint",
+   "served_by": "aea/server/controlroom.py"
+  },
+  {
+   "id": "/console",
    "type": "endpoint",
    "served_by": "aea/server/controlroom.py"
   },
@@ -2672,7 +2924,17 @@
    "rel": "imports"
   },
   {
+   "src": "kernel.artefacts",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
    "src": "kernel.cause",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.contradictions",
    "dst": "kernel.grid",
    "rel": "imports"
   },
@@ -2702,8 +2964,18 @@
    "rel": "imports"
   },
   {
+   "src": "kernel.decide",
+   "dst": "lab.fleet_check",
+   "rel": "imports"
+  },
+  {
    "src": "kernel.dispatch",
    "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.dispatch",
+   "dst": "kernel.artefacts",
    "rel": "imports"
   },
   {
@@ -2713,12 +2985,22 @@
   },
   {
    "src": "kernel.dispatch",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.dispatch",
    "dst": "kernel.hands",
    "rel": "imports"
   },
   {
    "src": "kernel.dispatch",
    "dst": "kernel.hands",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.dispatch",
+   "dst": "kernel.artefacts",
    "rel": "imports"
   },
   {
@@ -2769,6 +3051,16 @@
   {
    "src": "kernel.hands",
    "dst": "kernel.trust",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hands",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hands",
+   "dst": "kernel.artefacts",
    "rel": "imports"
   },
   {
@@ -2793,6 +3085,26 @@
   },
   {
    "src": "kernel.hands",
+   "dst": "lab.fleet_check",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hands",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hands",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hands",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hands",
    "dst": "kernel.laws",
    "rel": "imports"
   },
@@ -2804,6 +3116,21 @@
   {
    "src": "kernel.hands",
    "dst": "lab.pace",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hypotheses",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hypotheses",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.hypotheses",
+   "dst": "lab.research_cert",
    "rel": "imports"
   },
   {
@@ -2924,6 +3251,31 @@
   {
    "src": "kernel.unstick",
    "dst": "kernel.knobs",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.wake",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "kernel.wake",
+   "dst": "energy.energy",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.armed",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.armed",
+   "dst": "kernel.contradictions",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.awareness",
+   "dst": "kernel.grid",
    "rel": "imports"
   },
   {
@@ -3074,6 +3426,31 @@
   {
    "src": "lab.battery",
    "dst": "kernel.hands",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.blockers",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.blockers",
+   "dst": "kernel.decide",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.blockers",
+   "dst": "kernel.hands",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.blockers",
+   "dst": "loop.aea",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.blockers",
+   "dst": "loop.aea",
    "rel": "imports"
   },
   {
@@ -3752,6 +4129,26 @@
    "rel": "imports"
   },
   {
+   "src": "lab.fleet_check",
+   "dst": "energy.energy",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.fleet_check",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.fleet_check",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.fleet_check",
+   "dst": "kernel.hypotheses",
+   "rel": "imports"
+  },
+  {
    "src": "lab.fuels",
    "dst": "kernel.grid",
    "rel": "imports"
@@ -3824,6 +4221,11 @@
   {
    "src": "lab.movecontrol",
    "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.organism",
+   "dst": "tooling.parts",
    "rel": "imports"
   },
   {
@@ -4072,6 +4474,26 @@
    "rel": "imports"
   },
   {
+   "src": "lab.research_cert",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.research_cert",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.research_cert",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.research_cert",
+   "dst": "kernel.hypotheses",
+   "rel": "imports"
+  },
+  {
    "src": "lab.selfreport",
    "dst": "kernel.grid",
    "rel": "imports"
@@ -4252,6 +4674,21 @@
    "rel": "imports"
   },
   {
+   "src": "lab.tests.test_r5",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.tests.test_r5",
+   "dst": "kernel.hypotheses",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.tests.test_r5",
+   "dst": "tooling.ladder",
+   "rel": "imports"
+  },
+  {
    "src": "lab.tests.test_wire_live",
    "dst": "kernel.decide",
    "rel": "imports"
@@ -4259,6 +4696,11 @@
   {
    "src": "lab.tests.test_wire_live",
    "dst": "loop.live",
+   "rel": "imports"
+  },
+  {
+   "src": "lab.tests.test_wiring",
+   "dst": "tooling.ladder",
    "rel": "imports"
   },
   {
@@ -4382,6 +4824,21 @@
    "rel": "imports"
   },
   {
+   "src": "loop.aea",
+   "dst": "kernel.hands",
+   "rel": "imports"
+  },
+  {
+   "src": "loop.aea",
+   "dst": "kernel.decide",
+   "rel": "imports"
+  },
+  {
+   "src": "loop.aea",
+   "dst": "kernel.contradictions",
+   "rel": "imports"
+  },
+  {
    "src": "loop.live",
    "dst": "kernel.grid",
    "rel": "imports"
@@ -4443,6 +4900,11 @@
   },
   {
    "src": "loop.live",
+   "dst": "memory.consolidate",
+   "rel": "imports"
+  },
+  {
+   "src": "loop.live",
    "dst": "kernel.outcomes",
    "rel": "imports"
   },
@@ -4454,6 +4916,11 @@
   {
    "src": "loop.live",
    "dst": "kernel.perceive",
+   "rel": "imports"
+  },
+  {
+   "src": "loop.live",
+   "dst": "kernel.wake",
    "rel": "imports"
   },
   {
@@ -4822,6 +5289,11 @@
    "rel": "imports"
   },
   {
+   "src": "server.controlroom",
+   "dst": "tooling.console",
+   "rel": "imports"
+  },
+  {
    "src": "tooling.access",
    "dst": "kernel.grid",
    "rel": "imports"
@@ -4859,6 +5331,66 @@
   {
    "src": "tooling.build_graph",
    "dst": "tooling.assembly",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.wake",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.egress",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.wake",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.hypotheses",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.impasse",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.artefacts",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "lab.research_cert",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "tooling.sensors",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.console",
+   "dst": "tooling.parts",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.dossier",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.dossier",
+   "dst": "tooling.ladder",
    "rel": "imports"
   },
   {
@@ -4922,6 +5454,11 @@
    "rel": "imports"
   },
   {
+   "src": "tooling.ladder",
+   "dst": "lab.research_cert",
+   "rel": "imports"
+  },
+  {
    "src": "tooling.page.__main__",
    "dst": "tooling.page.guard",
    "rel": "imports"
@@ -4939,6 +5476,11 @@
   {
    "src": "tooling.page.axes",
    "dst": "tooling.page.layout",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.page.chapters",
+   "dst": "kernel.grid",
    "rel": "imports"
   },
   {
@@ -4978,6 +5520,11 @@
   },
   {
    "src": "tooling.page.render",
+   "dst": "tooling.page.invariants",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.page.render",
    "dst": "tooling.page.layout",
    "rel": "imports"
   },
@@ -5012,6 +5559,26 @@
    "rel": "imports"
   },
   {
+   "src": "tooling.page.rungsite",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.page.rungsite",
+   "dst": "tooling.dossier",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.page.rungsite",
+   "dst": "tooling.page.chapters",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.page.rungsite",
+   "dst": "tooling.page.rung",
+   "rel": "imports"
+  },
+  {
    "src": "tooling.page.sources",
    "dst": "kernel.grid",
    "rel": "imports"
@@ -5019,6 +5586,11 @@
   {
    "src": "tooling.page.style",
    "dst": "tooling.page.climb",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.parts",
+   "dst": "kernel.grid",
    "rel": "imports"
   },
   {
@@ -5083,6 +5655,11 @@
   },
   {
    "src": "tooling.senses",
+   "dst": "kernel.grid",
+   "rel": "imports"
+  },
+  {
+   "src": "tooling.sensors",
    "dst": "kernel.grid",
    "rel": "imports"
   },
@@ -5378,6 +5955,20 @@
    "count": 1
   },
   {
+   "src": "kernel.artefacts",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 2
+  },
+  {
+   "src": "kernel.contradictions",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "EXTRACTED",
+   "count": 1
+  },
+  {
    "src": "kernel.crystal",
    "dst": "kernel.grid",
    "rel": "calls",
@@ -5397,6 +5988,20 @@
    "rel": "calls",
    "evidence": "EXTRACTED",
    "count": 1
+  },
+  {
+   "src": "kernel.decide",
+   "dst": "lab.fleet_check",
+   "rel": "calls",
+   "evidence": "EXTRACTED",
+   "count": 1
+  },
+  {
+   "src": "kernel.dispatch",
+   "dst": "kernel.artefacts",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 4
   },
   {
    "src": "kernel.dispatch",
@@ -5456,6 +6061,13 @@
   },
   {
    "src": "kernel.hands",
+   "dst": "kernel.artefacts",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 5
+  },
+  {
+   "src": "kernel.hands",
    "dst": "kernel.dispatch",
    "rel": "calls",
    "evidence": "DISPATCH",
@@ -5512,10 +6124,31 @@
   },
   {
    "src": "kernel.hands",
+   "dst": "lab.fleet_check",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 2
+  },
+  {
+   "src": "kernel.hands",
    "dst": "lab.pace",
    "rel": "calls",
    "evidence": "TOOL",
    "count": 1
+  },
+  {
+   "src": "kernel.hypotheses",
+   "dst": "kernel.artefacts",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 5
+  },
+  {
+   "src": "kernel.hypotheses",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 2
   },
   {
    "src": "kernel.impasse",
@@ -5651,6 +6284,27 @@
    "count": 1
   },
   {
+   "src": "kernel.wake",
+   "dst": "energy.energy",
+   "rel": "calls",
+   "evidence": "EXTRACTED",
+   "count": 1
+  },
+  {
+   "src": "kernel.wake",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "EXTRACTED",
+   "count": 3
+  },
+  {
+   "src": "lab.armed",
+   "dst": "kernel.contradictions",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
    "src": "lab.battery",
    "dst": "energy.energy",
    "rel": "calls",
@@ -5754,6 +6408,20 @@
    "rel": "calls",
    "evidence": "TOOL",
    "count": 10
+  },
+  {
+   "src": "lab.blockers",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "lab.blockers",
+   "dst": "loop.aea",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
   },
   {
    "src": "lab.calibrate",
@@ -6498,6 +7166,27 @@
    "count": 3
   },
   {
+   "src": "lab.fleet_check",
+   "dst": "kernel.artefacts",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 5
+  },
+  {
+   "src": "lab.fleet_check",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "EXTRACTED",
+   "count": 4
+  },
+  {
+   "src": "lab.fleet_check",
+   "dst": "kernel.hypotheses",
+   "rel": "calls",
+   "evidence": "DISPATCH",
+   "count": 9
+  },
+  {
    "src": "lab.fuels",
    "dst": "kernel.grid",
    "rel": "calls",
@@ -6813,6 +7502,20 @@
    "count": 3
   },
   {
+   "src": "lab.research_cert",
+   "dst": "kernel.artefacts",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 10
+  },
+  {
+   "src": "lab.research_cert",
+   "dst": "kernel.hypotheses",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
    "src": "lab.selfreport",
    "dst": "kernel.grid",
    "rel": "calls",
@@ -6981,8 +7684,36 @@
    "count": 2
   },
   {
+   "src": "lab.tests.test_r5",
+   "dst": "kernel.artefacts",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 3
+  },
+  {
+   "src": "lab.tests.test_r5",
+   "dst": "kernel.hypotheses",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 2
+  },
+  {
+   "src": "lab.tests.test_r5",
+   "dst": "tooling.ladder",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
    "src": "lab.tests.test_wire_live",
    "dst": "loop.live",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 2
+  },
+  {
+   "src": "lab.tests.test_wiring",
+   "dst": "tooling.ladder",
    "rel": "calls",
    "evidence": "TOOL",
    "count": 2
@@ -7052,6 +7783,13 @@
   },
   {
    "src": "loop.aea",
+   "dst": "kernel.contradictions",
+   "rel": "calls",
+   "evidence": "EXTRACTED",
+   "count": 1
+  },
+  {
+   "src": "loop.aea",
    "dst": "kernel.crystal",
    "rel": "calls",
    "evidence": "EXTRACTED",
@@ -7069,7 +7807,14 @@
    "dst": "kernel.grid",
    "rel": "calls",
    "evidence": "EXTRACTED",
-   "count": 2
+   "count": 5
+  },
+  {
+   "src": "loop.aea",
+   "dst": "kernel.hands",
+   "rel": "calls",
+   "evidence": "EXTRACTED",
+   "count": 1
   },
   {
    "src": "loop.aea",
@@ -7139,7 +7884,7 @@
    "dst": "kernel.grid",
    "rel": "calls",
    "evidence": "EXTRACTED",
-   "count": 6
+   "count": 7
   },
   {
    "src": "loop.live",
@@ -7206,10 +7951,17 @@
   },
   {
    "src": "loop.live",
+   "dst": "kernel.wake",
+   "rel": "calls",
+   "evidence": "ENTRY",
+   "count": 1
+  },
+  {
+   "src": "loop.live",
    "dst": "memory.consolidate",
    "rel": "calls",
    "evidence": "EXTRACTED",
-   "count": 1
+   "count": 2
   },
   {
    "src": "memory.consolidate",
@@ -7646,6 +8398,13 @@
    "count": 3
   },
   {
+   "src": "server.controlroom",
+   "dst": "tooling.console",
+   "rel": "calls",
+   "evidence": "NONE",
+   "count": 1
+  },
+  {
    "src": "tooling.access",
    "dst": "kernel.grid",
    "rel": "calls",
@@ -7679,6 +8438,83 @@
    "rel": "calls",
    "evidence": "TOOL",
    "count": 2
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.artefacts",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.egress",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.hypotheses",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.impasse",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.console",
+   "dst": "kernel.wake",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 2
+  },
+  {
+   "src": "tooling.console",
+   "dst": "lab.research_cert",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.console",
+   "dst": "tooling.parts",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.console",
+   "dst": "tooling.sensors",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.dossier",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.dossier",
+   "dst": "tooling.ladder",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
   },
   {
    "src": "tooling.export_city",
@@ -7724,6 +8560,13 @@
   },
   {
    "src": "tooling.ladder",
+   "dst": "lab.research_cert",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.ladder",
    "dst": "tooling.assembly",
    "rel": "calls",
    "evidence": "TOOL",
@@ -7753,6 +8596,13 @@
   {
    "src": "tooling.page.axes",
    "dst": "tooling.page.layout",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.page.chapters",
+   "dst": "kernel.grid",
    "rel": "calls",
    "evidence": "TOOL",
    "count": 1
@@ -7808,6 +8658,13 @@
   },
   {
    "src": "tooling.page.render",
+   "dst": "tooling.page.invariants",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.page.render",
    "dst": "tooling.page.layout",
    "rel": "calls",
    "evidence": "NONE",
@@ -7856,7 +8713,35 @@
    "count": 1
   },
   {
+   "src": "tooling.page.rungsite",
+   "dst": "tooling.dossier",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.page.rungsite",
+   "dst": "tooling.page.chapters",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 5
+  },
+  {
+   "src": "tooling.page.rungsite",
+   "dst": "tooling.page.rung",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 2
+  },
+  {
    "src": "tooling.page.sources",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
+  },
+  {
+   "src": "tooling.parts",
    "dst": "kernel.grid",
    "rel": "calls",
    "evidence": "TOOL",
@@ -7903,6 +8788,13 @@
    "rel": "calls",
    "evidence": "TOOL",
    "count": 2
+  },
+  {
+   "src": "tooling.sensors",
+   "dst": "kernel.grid",
+   "rel": "calls",
+   "evidence": "TOOL",
+   "count": 1
   },
   {
    "src": "tooling.xray",

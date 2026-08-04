@@ -1597,12 +1597,25 @@ def check_conditional_zone():
     from aea.kernel import hands as _h
     fails = []
     tool = _h.TOOLS["look_outward"]
-    cert = _o.path.join(_h.grid.STATE, "dispatch_cert.json")
+    # THE PRODUCTION CERTIFICATE IS COPIED, NEVER MUTATED. Until 2026-08-03 these controls wrote
+    # FAILED / STALE / FUTURE-DATED / `{ not json` directly into `state/dispatch_cert.json` and
+    # restored it afterwards. It left thirty-four `dispatch_cert.json.corrupt.<ts>` quarantine files
+    # in production state, and - the part that matters - while the suite ran, the LIVE entity's
+    # certificate was corrupt and `look_outward` failed closed for real. Safe direction, wrong
+    # mechanism: a test may not reach into the running system's state. `hands.cert_path` now honours
+    # AEA_DISPATCH_CERT, the same call-time resolution as AEA_EGRESS_BUDGET and AEA_ARTEFACT_DIR.
+    import tempfile as _tf
+    prod = _o.path.join(_h.grid.STATE, "dispatch_cert.json")
     try:
-        backup = open(cert, encoding="utf-8").read()
+        backup = open(prod, encoding="utf-8").read()
     except Exception:
         print("  condzone  %-46s -> %-14s FAIL" % ("dispatch_cert.json is readable", "ABSENT"))
         return [("condzone:cert", "absent", "present")]
+    _sandbox = _tf.mkdtemp(prefix="condzone_")
+    cert = _o.path.join(_sandbox, "dispatch_cert.json")
+    open(cert, "w", encoding="utf-8").write(backup)
+    _prev_env = _o.environ.get("AEA_DISPATCH_CERT")
+    _o.environ["AEA_DISPATCH_CERT"] = cert
 
     def zones():
         _h._WIDENED_LOGGED.clear()
@@ -1648,7 +1661,14 @@ def check_conditional_zone():
         if not hit:
             fails.append(("condzone:absent", got, narrow))
     finally:
-        write(backup)
+        # The sandbox goes away entirely; production was never written to, so there is nothing to
+        # restore there and no quarantine file to leave behind.
+        if _prev_env is None:
+            _o.environ.pop("AEA_DISPATCH_CERT", None)
+        else:
+            _o.environ["AEA_DISPATCH_CERT"] = _prev_env
+        import shutil as _sh
+        _sh.rmtree(_sandbox, ignore_errors=True)
         _h._WIDENED_LOGGED.clear()
     # THE ENTITY MUST NOT BE ABLE TO PRODUCE THE CONDITION. This is the load-bearing claim and it is
     # checked rather than asserted: a tool that writes a file or runs code would let the entity forge
